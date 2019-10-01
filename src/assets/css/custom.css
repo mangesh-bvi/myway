@@ -1,19 +1,183 @@
 .App {
-    text-align: center;
-  }
+  text-align: center;
+}
 
-  .cls-header
-  {
-      height: 100px;
-      border:solid 1px black;
-  }
+.cls-header {
+  height: 100px;
+  border: solid 1px black;
+}
 
-  .cls-hide
-  {
-      display:none;
-  }
+.cls-hide {
+  display: none;
+}
 
-  .cls-show
-  {
-      display:block;
-  }
+.cls-show {
+  display: block;
+}
+
+@font-face {
+  font-family: "Bold Font";
+  src: url("../fonts/GoogleSans-Bold.ttf");
+}
+@font-face {
+  font-family: "Medium Font";
+  src: url("../fonts/GoogleSans-Medium.ttf");
+}
+@font-face {
+  font-family: "Italic Font";
+  src: url("../fonts/GoogleSans-Italic.ttf");
+}
+
+body {
+  background-color: #f1f2f2;
+  color: #000;
+  padding: 0;
+  margin: 0;
+}
+h2,
+label {
+  margin: 0;
+  padding: 0;
+}
+img {
+  width: 100%;
+}
+input:focus,
+button:focus {
+  outline: none;
+}
+input[type="checkbox"] {
+  display: none;
+}
+a {
+  color: #000;
+}
+a:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+h2 {
+  color: #092c74;
+  font-size: 26px;
+  font-family: "Bold Font";
+}
+.butn {
+  background-color: #39b54a;
+  color: #fff;
+  border: 1px solid #39b54a;
+  font-family: "Bold Font";
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 185px;
+  padding: 15px;
+  border-radius: 50px;
+  margin-top: 30px;
+}
+.cancel-butn {
+  background-color: #9dafbd;
+  border-color: #9dafbd;
+}
+
+/* login starts */
+.login-sect {
+  max-width: 700px;
+  width: 100%;
+}
+.login-between {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+.logo {
+  width: 212px;
+  margin: 0 auto 50px;
+}
+.login-cntr {
+  background-color: #fff;
+}
+h2 span {
+  color: #979797;
+  font-size: 16px;
+  font-family: "Medium Font";
+}
+.login-cntr h2 {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 30px;
+  padding-top: 22px;
+}
+.login-fields-cntr {
+  padding: 30px;
+}
+.login-fields label {
+  display: block;
+  font-family: "Medium Font";
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.login-fields input {
+  width: 100%;
+  border: 0;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  background-color: #ededed;
+  padding: 25px 35px;
+  font-family: "Medium Font";
+}
+.login-fields input::placeholder {
+  font-family: "Italic Font";
+  color: #77787b;
+}
+.login-fields {
+  margin-bottom: 25px;
+}
+.login-input-cntr .login-fields:last-of-type {
+  margin-bottom: 0px;
+}
+.remember-forgot {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.remember-forgot label {
+  font-family: "Medium Font";
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-left: 40px;
+  cursor: pointer;
+}
+.remember-forgot a {
+  font-family: "Medium Font";
+  letter-spacing: 0.5px;
+}
+.remember-forgot input + label::before {
+  content: "";
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  border: 1px solid #bebebe;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.remember-forgot input:checked + label::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  width: 6px;
+  height: 12px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+.login-cntr .butn {
+  margin-right: 20px;
+}
+.login-cntr .butn:last-child {
+  margin-right: 0px;
+}
+/* login ends */
