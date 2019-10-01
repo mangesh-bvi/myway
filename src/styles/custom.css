@@ -1,0 +1,40 @@
+.cls-header
+{
+    height: 50px;
+    border:solid 1px black;
+    text-align: center;
+    background-color: #000080;
+    color:white;
+    
+}
+
+.cls-side
+{
+    width: 150px;
+    height:300px;
+    border:solid 1px black;
+    text-align: center;
+}
+
+.cls-ofl
+{
+    overflow: hidden;
+    width: 100%;
+}
+
+.cls-flside
+{
+    width:20%;
+    float: left;
+    height:700px;
+    background-color: blue;
+    border: solid 1px black;
+}
+
+.cls-rt
+{
+    width: 79%;
+    height:700px;
+    float: right;
+    border:solid 1px black;
+}

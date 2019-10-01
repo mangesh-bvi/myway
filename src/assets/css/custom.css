@@ -1,0 +1,19 @@
+.App {
+    text-align: center;
+  }
+
+  .cls-header
+  {
+      height: 100px;
+      border:solid 1px black;
+  }
+
+  .cls-hide
+  {
+      display:none;
+  }
+
+  .cls-show
+  {
+      display:block;
+  }
