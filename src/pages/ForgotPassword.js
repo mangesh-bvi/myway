@@ -53,15 +53,17 @@ function ChangePasswordCheck (email) {
 
 
 
-  function handleResponse(response) {        
+  function handleResponse(response) {   
+    debugger;     
     return response.text().then(text => {
       const data = text && JSON.parse(text);
       if (!response.ok) {
        
       }
       else{
-        window.localStorage.setItem('email',data.EmailID);
-        window.localStorage.setItem('passcode',data.PassCode);
+        window.localStorage.setItem('email',data[0].EmailID);
+        window.localStorage.setItem('passcode',data[0].PassCode);
+        window.location.href="./passcode";
       }  
       return data;
     });
