@@ -131,18 +131,15 @@ function handleResponse(response) {
       alert(error[1]);
     } else {
       // hanleChangeRediect();
-      window.localStorage.setItem("username", data.UserName);
-      window.localStorage.setItem("firstname", data.FirstName);
-      window.localStorage.setItem("lastlogindate", data.LastLoginDate);
-      window.localStorage.setItem("lastname", data.LastName);
-      window.localStorage.setItem("modeoftransport", data.ModeOfTransport);
-      window.localStorage.setItem("userid", data.UserId);
-      window.localStorage.setItem("usertype", data.UserType);
-      window.localStorage.setItem(
-        "dashboardrefreshtime",
-        data.DashboardRefreshTime
-      );
-
+      window.localStorage.setItem('username',data.Table[0].UserName);   
+       window.localStorage.setItem('firstname',data.Table[0].FirstName);     
+       window.localStorage.setItem('lastlogindate',data.Table[0].LastLoginDate);       
+       window.localStorage.setItem('lastname',data.Table[0].LastName);  
+       window.localStorage.setItem('modeoftransport',data.Table[0].ModeOfTransport);  
+       window.localStorage.setItem('userid',data.Table[0].UserId);  
+       window.localStorage.setItem('usertype',data.Table[0].UserType);  
+       window.localStorage.setItem('dashboardrefreshtime',data.Table[0].DashboardRefreshTime); 
+       
       var username = window.localStorage.getItem("username");
       var password = window.localStorage.getItem("password");
       GenerateToken(username, password);
