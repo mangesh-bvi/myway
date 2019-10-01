@@ -15,6 +15,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Passcode from './pages/Passcode';
 import UpdateForgotPassword from './pages/updateforgotpassword';
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import PopupModal from './component/popup';
 // import Signin from './pages/Signin';
 // const store=createStore(reducer);
 
@@ -26,6 +27,8 @@ ReactDOM.render(<Router>
     <Route exact path="/forgotpassword" component={ForgotPassword} /> 
     <Route exact path="/passcode" component={Passcode} />
     <Route exact path="/updateforgotpassword" component={UpdateForgotPassword} />
+    <Route exact path="/popup" component={PopupModal} />
+    
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
  document.getElementById('root'));
