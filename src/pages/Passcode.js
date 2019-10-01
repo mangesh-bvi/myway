@@ -6,9 +6,8 @@ class Passcode extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      oldpassword: "",
-      password: "",
-      newpassword: ""
+      emailaddress: "",
+      passcode: ""
     };
     this.handlechange = this.handlechange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,14 +23,9 @@ class Passcode extends React.Component {
     //  e.preventDefault();
     var username = window.localStorage.getItem("username");
     this.setState({ submitted: true });
-    const { oldpassword, password, newpassword } = this.state;
-    if (
-      oldpassword !== "" &&
-      password !== "" &&
-      newpassword !== "" &&
-      password == newpassword
-    ) {
-      ChangePasswordCheck(username, password, newpassword);
+    const { emailaddress, passcode } = this.state;
+    if (emailaddress !== "" && passcode !== "") {
+      ValidatePassCode(emailaddress, passcode);
     } else {
       // var error= username===''?'Please enter the username\n':'';
       //     error+=password===''?'Please enter the passowrd':'';
@@ -42,19 +36,19 @@ class Passcode extends React.Component {
     return (
       <div>
         <div>
-          UserName&nbsp;
+          Email address&nbsp;
           <input
             type="text"
-            name={"oldpassword"}
+            name={"emailaddress"}
             onChange={this.handlechange}
-            placeholder="UserName"
+            placeholder="Email address"
           ></input>
         </div>
         <div>
           Passcode:&nbsp;
           <input
             id="password"
-            name={"password"}
+            name={"passcode"}
             onChange={this.handlechange}
             placeholder="Passcode"
             type="text"
@@ -75,18 +69,16 @@ class Passcode extends React.Component {
   }
 }
 
-function ChangePasswordCheck(password, newpassword) {
-  console.log("LOGGING IN 1");
+function ValidatePassCode(emailaddress, passcode) {
   const requestOptions = {
     method: "POST",
-    headers: authHeader(),
+    headers: authHeader("no"),
     body: JSON.stringify({
-      UserName: window.localStorage.getItem("username"),
-      OldPassword: password,
-      NewPassword: newpassword
+      EmailID: emailaddress,
+      PassCode: passcode
     })
   };
-  return fetch(`${appSettings.APIURL}/ChangeUserPassword`, requestOptions)
+  return fetch(`${appSettings.APIURL}/ValidatePasscode`, requestOptions)
     .then(handleResponse)
     .catch(error => {
       console.log(error);
@@ -99,22 +91,9 @@ function handleResponse(response) {
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
-      const error = (data && data.error) || response.statusText || data.status;
-      console.log("%c>>>>>>> Error content:", "color:red;font-weight:bold;");
-      console.dir(error);
-
-      if (response.status === 401) {
-        // auto logout if 401 response returned from api
-        // logout();
-        // location.reload(true);
-      }
-      if (response.status === 500) {
-      }
-      if (error.message) {
-        throw new Error(error.message);
-      } else {
-        throw new Error("ERROR: Something went wrong.");
-      }
+    } else {
+      window.localStorage.setItem("userid", data[0].UserId);
+      window.location.href = "./updateforgotpassword";
     }
 
     return data;
