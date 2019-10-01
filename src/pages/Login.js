@@ -56,24 +56,26 @@ class Login extends React.Component {
               Welcome <span>Login to get started!</span>
             </h2>
             <div className="login-fields-cntr">
-              <div className="login-fields">
-                <label>User Name</label>
-                <input
-                  type="text"
-                  name={"username"}
-                  onChange={this.handlechange}
-                  placeholder="Enter Your User Name"
-                />
-              </div>
-              <div className="login-fields">
-                <label>Password</label>
-                <input
-                  id="password"
-                  name={"password"}
-                  onChange={this.handlechange}
-                  placeholder="Enter Your Password"
-                  type="password"
-                />
+              <div className="login-input-cntr">
+                <div className="login-fields">
+                  <label>User Name</label>
+                  <input
+                    type="text"
+                    name={"username"}
+                    onChange={this.handlechange}
+                    placeholder="Enter Your User Name"
+                  />
+                </div>
+                <div className="login-fields">
+                  <label>Password</label>
+                  <input
+                    id="password"
+                    name={"password"}
+                    onChange={this.handlechange}
+                    placeholder="Enter Your Password"
+                    type="password"
+                  />
+                </div>
               </div>
               <div className="remember-forgot">
                 <div>
@@ -92,34 +94,10 @@ class Login extends React.Component {
                 </button>
               </div>
             </div>
-<<<<<<< HEAD
-        );
-    }
-} 
-
-function authentication (username, password) {
-   
-    console.log("LOGGING IN 1");
-    const requestOptions = {
-      method: 'POST',
-      headers:authHeader('no'),
-      body: JSON.stringify({     
-        UserName: username,
-        Password: password,
-        publicIPAddress:'202.102.302.89',
-        privateIPAddress:'172.459.202.12'
-      })
-    };
-    return fetch(`${appSettings.APIURL}/Login`, requestOptions).then(handleResponse)
-    .catch((error) => {
-        console.log(error)
-      });
-=======
           </div>
         </div>
       </section>
     );
->>>>>>> a3ed3de6b03ea152757b4a3db971bd86af3b87c6
   }
 }
 
@@ -165,36 +143,9 @@ function handleResponse(response) {
         data.DashboardRefreshTime
       );
 
-<<<<<<< HEAD
-  function handleResponse(response) {     
-    debugger;    
-    console.log(response);
-    return response.text().then(text => {
-      const data = text && JSON.parse(text);
-      if (!response.ok) {
-        var error=data.split(':');
-        error[1]=error[1].replace('}','');
-        alert(error[1]);      
-      }
-      else{
-       // hanleChangeRediect(); 
-       window.localStorage.setItem('username',data.Table[0].UserName);   
-       window.localStorage.setItem('firstname',data.Table[0].FirstName);     
-       window.localStorage.setItem('lastlogindate',data.Table[0].LastLoginDate);       
-       window.localStorage.setItem('lastname',data.Table[0].LastName);  
-       window.localStorage.setItem('modeoftransport',data.Table[0].ModeOfTransport);  
-       window.localStorage.setItem('userid',data.Table[0].UserId);  
-       window.localStorage.setItem('usertype',data.Table[0].UserType);  
-       window.localStorage.setItem('dashboardrefreshtime',data.Table[0].DashboardRefreshTime);  
-
-        var username=window.localStorage.getItem('username');
-        var password=window.localStorage.getItem('password');       
-        GenerateToken(username,password);
-=======
       var username = window.localStorage.getItem("username");
       var password = window.localStorage.getItem("password");
       GenerateToken(username, password);
->>>>>>> a3ed3de6b03ea152757b4a3db971bd86af3b87c6
       //  window.location.href="./dashboard";
       //  alert('log in successfully');
     }
