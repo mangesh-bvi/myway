@@ -1,5 +1,6 @@
 import React from "react";
 import { authHeader } from "../helpers/authHeader";
+import Logo from "./../assets/img/logo.png";
 import appSettings from "../helpers/appSetting";
 
 class ForgotPassword extends React.Component {
@@ -28,27 +29,45 @@ class ForgotPassword extends React.Component {
   }
   render() {
     return (
-      <div>
-        <div>
-          Enter email address&nbsp;
-          <input
-            type="text"
-            name={"email"}
-            onChange={this.handlechange}
-            placeholder="Email address"
-          ></input>
+      <section className="login-between">
+        <div className="login-sect">
+          <div className="logo">
+            <img src={Logo} alt="logo" />
+          </div>
+          <div className="login-cntr">
+            <h2>Forgot Password</h2>
+            <div className="login-fields-cntr">
+              <div className="login-input-cntr">
+                <div className="login-fields">
+                  <label>Registered Email ID</label>
+                  <input
+                    type="email"
+                    name={"email"}
+                    onChange={this.handlechange}
+                    placeholder="Enter Your Email ID"
+                  />
+                </div>
+              </div>
+              <div className="text-right">
+                <button
+                  type="button"
+                  className="butn"
+                  onClick={() => this.handleSubmit()}
+                >
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  className="butn cancel-butn"
+                  // onClick={() => this.handleSubmit()}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          &nbsp;
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => this.handleSubmit()}
-          >
-            Submit
-          </button>
-        </div>
-      </div>
+      </section>
     );
   }
 }

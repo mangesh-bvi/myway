@@ -56,24 +56,26 @@ class Login extends React.Component {
               Welcome <span>Login to get started!</span>
             </h2>
             <div className="login-fields-cntr">
-              <div className="login-fields">
-                <label>User Name</label>
-                <input
-                  type="text"
-                  name={"username"}
-                  onChange={this.handlechange}
-                  placeholder="Enter Your User Name"
-                />
-              </div>
-              <div className="login-fields">
-                <label>Password</label>
-                <input
-                  id="password"
-                  name={"password"}
-                  onChange={this.handlechange}
-                  placeholder="Enter Your Password"
-                  type="password"
-                />
+              <div className="login-input-cntr">
+                <div className="login-fields">
+                  <label>User Name</label>
+                  <input
+                    type="text"
+                    name={"username"}
+                    onChange={this.handlechange}
+                    placeholder="Enter Your User Name"
+                  />
+                </div>
+                <div className="login-fields">
+                  <label>Password</label>
+                  <input
+                    id="password"
+                    name={"password"}
+                    onChange={this.handlechange}
+                    placeholder="Enter Your Password"
+                    type="password"
+                  />
+                </div>
               </div>
               <div className="remember-forgot">
                 <div>
