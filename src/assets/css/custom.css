@@ -76,14 +76,27 @@ h2 {
   border-radius: 50px;
   margin-top: 30px;
   font-size: 14px;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+.butn:hover {
+  background-color: #fff;
+  color: #39b54a;
 }
 .cancel-butn {
   background-color: #9dafbd;
   border-color: #9dafbd;
 }
+.cancel-butn:hover {
+  color: #9dafbd;
+}
 .blue-butn {
   background-color: #002d73;
   border-color: #002d73;
+}
+.blue-butn:hover {
+  color: #002d73;
 }
 
 /* login starts */

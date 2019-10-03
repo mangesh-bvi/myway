@@ -9,7 +9,7 @@ class UserAgreement extends Component {
           <div className="login-cntr">
             <div className="position-relative">
               <h2>User Agreement</h2>
-              <a href="#!" className="user-agree-close">
+              <a href="/" className="user-agree-close">
                 <img src={cross} alt="cross icon" />
               </a>
             </div>
@@ -28,13 +28,13 @@ class UserAgreement extends Component {
               >
                 Accept
               </button>
-              <button
-                type="button"
+              <a
+                href="/"
                 className="butn cancel-butn"
                 // onClick={() => this.handleSubmit()}
               >
                 Close
-              </button>
+              </a>
             </div>
           </div>
         </div>

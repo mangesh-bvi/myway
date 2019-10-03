@@ -38,7 +38,7 @@ class Updateforgotpassword extends React.Component {
             <img src={Logo} alt="logo" />
           </div>
           <div className="login-cntr">
-            <h2>Change Password</h2>
+            <h2>Update Password</h2>
             <div className="login-fields-cntr">
               <div className="login-input-cntr">
                 <div className="login-fields">
