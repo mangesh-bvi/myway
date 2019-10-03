@@ -46,6 +46,7 @@ class Header extends Component{
                 <div>LastLogin:<span id='spnLastLogin'></span></div>
                 <div>Activity Log</div>
                 <div><a href="/ChangePassword">Change Password</a></div>
+                <div><a href="/qrcode">QR Code</a></div>
                 <div><a id='LogOut' onClick={this.onLogout.bind(this)} href={null}>Logout</a></div>
             </div>
            

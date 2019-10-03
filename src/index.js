@@ -16,6 +16,7 @@ import Passcode from './pages/Passcode';
 import UpdateForgotPassword from './pages/updateforgotpassword';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import PopupModal from './component/popup';
+import QRCode from './pages/QRCode';
 // import Signin from './pages/Signin';
 // const store=createStore(reducer);
 
@@ -28,7 +29,7 @@ ReactDOM.render(<Router>
     <Route exact path="/passcode" component={Passcode} />
     <Route exact path="/updateforgotpassword" component={UpdateForgotPassword} />
     <Route exact path="/popup" component={PopupModal} />
-    
+    <Route exact path="/qrcode" component={QRCode} />
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
  document.getElementById('root'));
