@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Login from './pages/Login';
 import '../node_modules/bootstrap/dist/css/bootstrap.css'
+// import './../node_modules/bootstrap/dist/js/bootstrap.js';
+
 
 import * as serviceWorker from './serviceWorker';
 // import {createStore} from 'redux';
@@ -15,7 +17,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Passcode from './pages/Passcode';
 import UpdateForgotPassword from './pages/updateforgotpassword';
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import PopupModal from './component/popup';
+ 
 // import Signin from './pages/Signin';
 // const store=createStore(reducer);
 
@@ -27,7 +29,7 @@ ReactDOM.render(<Router>
     <Route exact path="/forgotpassword" component={ForgotPassword} /> 
     <Route exact path="/passcode" component={Passcode} />
     <Route exact path="/updateforgotpassword" component={UpdateForgotPassword} />
-    <Route exact path="/popup" component={PopupModal} />
+   
     
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
