@@ -1,7 +1,10 @@
-import React from "react";
+import React  from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
+ 
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 // import { connect } from 'react-redux'
 
 class Login extends React.Component {
@@ -14,6 +17,7 @@ class Login extends React.Component {
       showLoginError: false,
       errorText: ""
     };
+   
     this.handlechange = this.handlechange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -36,15 +40,21 @@ class Login extends React.Component {
     if (username !== "" && password !== "") {
       window.localStorage.setItem("password", password);
       authentication(username, password);
+      NotificationManager.success("Login Successfully");
     } else {
+      this.setState({ settoaste: true });
+
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the passowrd" : "";
-      alert(error);
+      // alert(error);
       //  window.location='./Dashboard'
+      NotificationManager.error(error);
     }
   }
+
   render() {
     //  const { username, password } = this.state;
+
     return (
       <section className="login-between">
         <div className="login-sect">
@@ -96,6 +106,7 @@ class Login extends React.Component {
             </div>
           </div>
         </div>
+        <NotificationContainer />
       </section>
     );
   }
