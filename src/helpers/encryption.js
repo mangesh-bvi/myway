@@ -17,4 +17,3 @@ export function decryption(encrypted)
     var decrypted = decipher.update(encrypted, 'hex', 'utf8') + decipher.final('utf8');
     return decrypted;
 }
-
