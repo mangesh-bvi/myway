@@ -15,6 +15,8 @@
   display: block;
 }
 
+/* chetan css starts */
+
 @font-face {
   font-family: "Bold Font";
   src: url("../fonts/GoogleSans-Bold.ttf");
@@ -69,14 +71,19 @@ h2 {
   font-family: "Bold Font";
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  min-width: 185px;
-  padding: 15px;
+  min-width: 120px;
+  padding: 10px;
   border-radius: 50px;
   margin-top: 30px;
+  font-size: 14px;
 }
 .cancel-butn {
   background-color: #9dafbd;
   border-color: #9dafbd;
+}
+.blue-butn {
+  background-color: #002d73;
+  border-color: #002d73;
 }
 
 /* login starts */
@@ -93,7 +100,7 @@ h2 {
 }
 .logo {
   width: 212px;
-  margin: 0 auto 50px;
+  margin: 0 auto 35px;
 }
 .login-cntr {
   background-color: #fff;
@@ -119,10 +126,10 @@ h2 span {
 .login-fields input {
   width: 100%;
   border: 0;
-  font-size: 18px;
+  /* font-size: 18px; */
   letter-spacing: 0.5px;
   background-color: #ededed;
-  padding: 25px 35px;
+  padding: 15px 25px;
   font-family: "Medium Font";
 }
 .login-fields input::placeholder {
@@ -185,7 +192,36 @@ h2 span {
 .login-cntr .butn:last-child {
   margin-right: 0px;
 }
-input::placeholder:-webkit-autofill {
-  color: red;
-}
 /* login ends */
+
+/* user agreement starts */
+.agreement-pdf {
+  width: 100%;
+  height: calc(100vh - 337px);
+  border: 0;
+}
+.user-agreement-sect {
+  max-width: 90%;
+}
+.user-agreement-sect h2 {
+  padding-right: 60px;
+}
+.user-agreement-sect .login-fields-cntr {
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 20px;
+}
+.user-agreement-butns {
+  padding: 30px;
+  padding-top: 0;
+}
+.user-agree-close {
+  width: 16px;
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  transform: translateY(-50%);
+  line-height: 1;
+}
+/* user agreement ends */
+
+/* chetan css ends */

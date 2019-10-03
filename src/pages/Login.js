@@ -1,10 +1,13 @@
-import React  from "react";
+import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
- 
-import {NotificationContainer, NotificationManager} from 'react-notifications';
-import 'react-notifications/lib/notifications.css';
+
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 // import { connect } from 'react-redux'
 
 class Login extends React.Component {
@@ -17,7 +20,7 @@ class Login extends React.Component {
       showLoginError: false,
       errorText: ""
     };
-   
+
     this.handlechange = this.handlechange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
