@@ -145,10 +145,13 @@ function handleResponse(response) {
       alert(error[1]);
     } else {
       // hanleChangeRediect();
+    
+
       window.localStorage.setItem("username", data.Table[0].UserName);
       window.localStorage.setItem("firstname", data.Table[0].FirstName);
       window.localStorage.setItem("lastlogindate", data.Table[0].LastLoginDate);
       window.localStorage.setItem("lastname", data.Table[0].LastName);
+      window.localStorage.setItem("qrcode",data.Table1[0].QRCode);
       window.localStorage.setItem(
         "modeoftransport",
         data.Table[0].ModeOfTransport

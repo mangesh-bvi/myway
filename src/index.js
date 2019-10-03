@@ -17,6 +17,7 @@ import UpdateForgotPassword from "./pages/updateforgotpassword";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import PopupModal from "./component/popup";
 import UserAgreement from "./pages/UserAgreement";
+import QRCode from "./pages/QRCode";
 // import Signin from './pages/Signin';
 // const store=createStore(reducer);
 
@@ -36,6 +37,7 @@ ReactDOM.render(
     <Route exact path="/user-agreement" component={UserAgreement} />
     <Route exact path="/popup" component={PopupModal} />
 
+    <Route exact path="/qrcode" component={QRCode} />
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
   document.getElementById("root")
