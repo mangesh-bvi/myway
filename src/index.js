@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Login from './pages/Login';
 import '../node_modules/bootstrap/dist/css/bootstrap.css'
-// import './../node_modules/bootstrap/dist/js/bootstrap.js';
+import "./../node_modules/bootstrap/dist/js/bootstrap.js";
+import "./../node_modules/jquery/dist/jquery.js";
 
 
 import * as serviceWorker from './serviceWorker';
