@@ -1,6 +1,7 @@
 import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
+import Logo from "./../assets/img/logo.png";
 
 class Passcode extends React.Component {
   constructor(props) {
@@ -18,8 +19,7 @@ class Passcode extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {
-    debugger;
+  handleSubmit(e) {    
     //  e.preventDefault();
     var username = window.localStorage.getItem("username");
     this.setState({ submitted: true });
@@ -34,37 +34,39 @@ class Passcode extends React.Component {
   }
   render() {
     return (
-      <div>
-        <div>
-          Email address&nbsp;
-          <input
-            type="text"
-            name={"emailaddress"}
-            onChange={this.handlechange}
-            placeholder="Email address"
-          ></input>
+      <section className="login-between">
+        <div className="login-sect">
+          <div className="logo">
+            <img src={Logo} alt="logo" />
+          </div>
+          <div className="login-cntr">
+            <h2>Verification Code</h2>
+            <div className="login-fields-cntr">
+              <div className="login-input-cntr">
+                <div className="login-fields">
+                  <label>Verification Code</label>
+                  <input
+                    id="password"
+                    name={"passcode"}
+                    onChange={this.handlechange}
+                    placeholder="Enter the Verification Code"
+                    type="password"
+                  />
+                </div>
+              </div>
+              <div className="text-right">
+                <button
+                  type="button"
+                  className="butn"
+                  onClick={() => this.handleSubmit()}
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          Passcode:&nbsp;
-          <input
-            id="password"
-            name={"passcode"}
-            onChange={this.handlechange}
-            placeholder="Passcode"
-            type="text"
-          ></input>
-        </div>
-        <div>
-          &nbsp;
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => this.handleSubmit()}
-          >
-            Submit
-          </button>
-        </div>
-      </div>
+      </section>
     );
   }
 }
@@ -85,8 +87,7 @@ function ValidatePassCode(emailaddress, passcode) {
     });
 }
 
-function handleResponse(response) {
-  debugger;
+function handleResponse(response) { 
   console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);
