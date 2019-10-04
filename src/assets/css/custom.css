@@ -435,11 +435,13 @@ table tbody tr:last-child {
   height: 35px;
   width: 35px;
   margin-top: 7px;
+  cursor: pointer;
 }
 .header-chat-icon {
   height: 30px;
   width: 35px;
   padding-right: 7px;
+  cursor: pointer;
 }
 
 .header-login-actore-icon {
@@ -473,4 +475,233 @@ table tbody tr:last-child {
   margin-top: 5px;
 }
 
+.cls-flside
+{
+    width:20%;
+    float: left;
+    height:700px;
+    background-color: #0142aa;
+    border: none; 
+}
+
+.header-phone-li{
+  padding: 10px;
+}
+.header-phone-icon{
+  height: 30px;
+  width: 35px;  
+  cursor: pointer;
+}
+.sidemenu-ul-li{
+  padding: 15px;
+  border-bottom: 0.5px solid #265eb5;
+  color: white;
+  font-weight: 400;
+}
+
+.sidemenu-ul{
+  padding: 0;
+  list-style: none;
+}
+.header-greencounter-icon{
+  height: 30px;
+  width: 35px;  
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.qr-code-dropdown{
+
+  position: absolute;
+  will-change: transform;
+  top: 8px !important;
+  left: -120px !important;
+  transform: translate3d(0px, 30px, 0px);
+ 
+}
+
+.profile-dropdown{
+  top: 18px !important;
+  right: 0;
+  left: -35px !important;
+}
+
+.rmarrow .dropdown-toggle::after {
+  display:none;
+}
+
+.rmstylebtn{
+  border: none;
+    background-color: white;
+    padding: 0;
+}
+.drp-usericon{
+  width: 30px;
+  height: 30px;
+}
+.profile-ul{
+  list-style: none;
+  display: block;  
+  margin: 0;
+  padding: 0;
+}
+
+
+.profile-ul li{
+  padding: 0 10px 10px 10px;
+  border-bottom:1px solid #cccccc; 
+  cursor: pointer;
+ }
+ .profile-ul li:last-child{
+   border: none;
+   padding: 7px;
+   margin: 0;
+ 
+   
+ }
+ .lastlogin-ul{
+  list-style: none;
+  display: flex;
+  padding: 0;
+   
+}
+ 
+
+.lastlogin-lbl{
+  font-size:9px; 
+  display: block;
+}
+
+.lastlogin-ul li{
+
+  padding: 10px 0px 10px 0px;
+  border-bottom: 1px solid #cccccc;
+  border: none;
+}
+.lastlogin-ul li:last-child{
+  border: none;  
+  padding: 4px; 
+ }
+ .activitylog-li{
+  color: #092C74;
+   padding: 10px !important;
+ }
+ .activitylog-icon{
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+}
+ .activitylog-li:hover{
+   background-color: #cccccc;
+ }
+ .profile-setting-li{
+  color: #092C74;
+  padding: 10px !important;
+ }
+ .profile-setting-li:hover{
+  background-color: #cccccc;
+ }
+ .logout-li{
+   color: #092C74;
+ }
+ .logout-li:hover{
+  background-color: #cccccc;
+}
+.profilesetting-icon{
+  width: 30px;
+  height: 30px;
+ 
+}
+.lastlogin-li{
+  padding: 0px 0px 0px 10px !important;
+  border-bottom: 1px solid #cccccc;
+  cursor: pointer;
+}
+.lbl-cursor{
+  cursor: pointer;
+}
+.shipmentli{
+  padding: 0;
+}
+.shipmentli .card{
+  border: 0;
+  border-radius: 0;
+}
+
+.shipmentli .card .card-header{
+
+  border: none;
+  background-color: #0142AA;   
+  color: white;
+  padding: 10px 0px 0px;
+  border-radius: 0;
+}
+.shipmentli .card .collapsing{
+  background-color: #0142AA;
+} 
+
+.shipmentli .card .card-header button{
+  color: white;
+  padding-bottom: 10px;
+  width: 100%;
+  text-align: left;
+}
+.shipmentli .card .card-header button:hover{
+  text-decoration: none;
+}
+.shipmentli .card .collapse .card-body{
+  background-color: #0142AA;
+  padding: 0px 0px 0px 55px;
+  color: #8fb7f7;
+}
+.shipment-ul{
+  list-style: none;
+  display: block;
+ padding: 10px;
+ margin: 10px 10px 10px 0px;
+  border:1px solid #8fb7f7;  
+}
+.shipment-ul li{
+  padding: 5px;
+}
+.shipmentli .card .show{
+  background-color: #0142AA;
+  text-decoration: none;
+}
+ 
+.shipment-ul-lilbl2{
+ 
+    float: right;
+    text-align: right;
+}
+.cls-rt{
+  border: none;
+}
+.sidemenu-ul2{
+  list-style: none;
+  display: flex; 
+  padding: 0px;
+  color: white;
+  border-top: 1px solid #265eb5;
+}
+.sidemenu-ul2 li{
+  text-align: center;
+  padding: 15px;
+  border-right:1px solid #265eb5; 
+ }
+ .sidemenu-ul2 li:last-child{
+  border-right:none; 
+ }
+ .inofIcon{
+   width: 35px;
+   height: 35px;
+ }
+ .settingIcon{
+  width: 35px;
+  height: 35px;
+}
+.popovercls .popover-header{
+
+  background-color: white;
+}
 /* --------------------------------------------------------------------------- */

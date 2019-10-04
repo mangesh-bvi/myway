@@ -25,7 +25,7 @@ class ChangePassword extends React.Component {
     });
   }
   handleSubmit(e) {
-    debugger;
+   
     //  e.preventDefault();
 
     var oldpwd = window.localStorage.getItem("password");
@@ -117,7 +117,7 @@ function ChangePasswordCheck(password, newpassword) {
 }
 
 function handleResponse(response) {
-  debugger;
+
   console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);

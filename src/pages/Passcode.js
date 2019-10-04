@@ -19,8 +19,7 @@ class Passcode extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {
-    debugger;
+  handleSubmit(e) {    
     //  e.preventDefault();
     var username = window.localStorage.getItem("username");
     this.setState({ submitted: true });
@@ -88,8 +87,7 @@ function ValidatePassCode(emailaddress, passcode) {
     });
 }
 
-function handleResponse(response) {
-  debugger;
+function handleResponse(response) { 
   console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);

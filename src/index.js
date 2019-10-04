@@ -1,10 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import Login from "./pages/Login";
+
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
-import "./../node_modules/jquery/dist/jquery.js";
 import "./../node_modules/bootstrap/dist/js/bootstrap.js";
+import "./../node_modules/jquery/dist/jquery.js";
+
+import "./index.css";
+import Login from "./pages/Login";
 
 import * as serviceWorker from "./serviceWorker";
 // import {createStore} from 'redux';
@@ -39,7 +42,7 @@ ReactDOM.render(
       component={UpdateForgotPassword}
     />
     <Route exact path="/user-agreement" component={UserAgreement} />
-    <Route exact path="/popup" component={PopupModal} />
+    {/* <Route exact path="/popup" component={PopupModal} /> */}
 
     <Route exact path="/qrcode" component={QRCode} />
     <Route exact path="/shipping-details" component={ShippingDetails} />

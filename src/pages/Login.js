@@ -2,7 +2,8 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
-
+import axios from 'axios';
+import {encryption} from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
@@ -14,7 +15,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
+      username: "",   
       password: "",
       submitted: false,
       showLoginError: false,
@@ -29,21 +30,66 @@ class Login extends React.Component {
     this.setState({
       [e.target.name]: e.target.value
     });
-  }
-  // hanleChangeRediect() {
-  //   debugger
-  //   this.props.history.push("/Dashboard");
-  // };
-  handleSubmit(e) {
-    //  e.preventDefault();
-    // this.props.changeName("mangesh");
-    //this.props.history.push("/Dashboard");
-    this.setState({ submitted: true });
+  }  
+  handleSubmit(e) {     
+    this.setState({ submitted: true });   
     const { username, password } = this.state;
+    window.localStorage.setItem("password",password);
     if (username !== "" && password !== "") {
-      window.localStorage.setItem("password", password);
-      authentication(username, password);
-      NotificationManager.success("Login Successfully");
+      var ipaddress=window.localStorage.getItem("ipaddress");      
+      console.log('axios'+new Date());
+      axios({
+        method: 'post',
+        url: 'http://vizio.atafreight.com/mywayapi/Login',
+        data: {
+          UserName: 'demouser',
+          Password: 'Admin@1234',
+          publicIPAddress:'202.149.197.99',
+          PrivateIPAddress:'202.149.197.99'         
+        },
+        headers:authHeader('no')
+      }).then(function (response) { 
+        NotificationManager.success("Login Successfully");  
+        console.log('axios response'+new Date());    
+        var data=response.data;     
+        console.log(data);   
+        window.localStorage.setItem("username",data.Table[0].UserName);
+        window.localStorage.setItem("firstname", data.Table[0].FirstName);
+        window.localStorage.setItem("lastlogindate", data.Table[0].LastLoginDate);
+        window.localStorage.setItem("lastname", data.Table[0].LastName);
+        window.localStorage.setItem("qrcode",data.Table1[0].QRCode);
+        window.localStorage.setItem(
+          "modeoftransport",
+          data.Table[0].ModeOfTransport
+        );
+        window.localStorage.setItem("userid", data.Table[0].UserId);
+        window.localStorage.setItem("usertype", data.Table[0].UserType);
+        window.localStorage.setItem(
+          "dashboardrefreshtime",
+          data.Table[0].DashboardRefreshTime
+        );
+        var username =window.localStorage.getItem("username");
+        var password =window.localStorage.getItem("password");
+        console.log('redirect start'+new Date());
+       // window.location.href='./user-agreement';
+        GenerateToken(username, password);
+        });
+      // axios.post('http://vizio.atafreight.com/mywayapi/Login', {
+      //   UserName: 'demouser',
+      //   Password: 'Admin@1234',
+      //   publicIPAddress:'202.149.197.99',
+      //   PrivateIPAddress:'202.149.197.99',
+      //   headers:authHeader('no')
+      // })
+      // .then(function (response) {
+      //   console.log('axios response'+new Date());
+      //   console.log(response);
+      // })
+      // .catch(function (error) {
+      //   console.log(error);
+      // });  
+     //  authentication(username, password,ipaddress);
+      // NotificationManager.success("Login Successfully");
     } else {
       this.setState({ settoaste: true });
 
@@ -55,6 +101,15 @@ class Login extends React.Component {
     }
   }
 
+  componentDidMount()
+  {
+    localStorage. clear();
+    const publicIp = require('public-ip'); 
+    (async () => {
+    console.log(await publicIp.v4());
+    window.localStorage.setItem('ipaddress',await publicIp.v4());    
+    })();    
+  }
   render() {
     //  const { username, password } = this.state;
 
@@ -115,16 +170,16 @@ class Login extends React.Component {
   }
 }
 
-function authentication(username, password) {
-  console.log("LOGGING IN 1");
+function authentication(username, password,ipaddress) {
+  console.log('logtime'+new Date());   
   const requestOptions = {
     method: "POST",
     headers: authHeader("no"),
     body: JSON.stringify({
       UserName: username,
       Password: password,
-      publicIPAddress: "202.102.302.89",
-      privateIPAddress: "172.459.202.12"
+      publicIPAddress:window.localStorage.getItem("ipaddress"),
+      privateIPAddress: ""
     })
   };
   return fetch(`${appSettings.APIURL}/Login`, requestOptions)
@@ -134,9 +189,8 @@ function authentication(username, password) {
     });
 }
 
-function handleResponse(response) {
-  debugger;
-  console.log(response);
+function handleResponse(response) {  
+  console.log('logendtime'+new Date());   
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
@@ -147,7 +201,9 @@ function handleResponse(response) {
       // hanleChangeRediect();
     
 
-      window.localStorage.setItem("username", data.Table[0].UserName);
+     // window.localStorage.setItem("username", encryption(data.Table[0].UserName));
+      window.localStorage.setItem("username",data.Table[0].UserName);
+
       window.localStorage.setItem("firstname", data.Table[0].FirstName);
       window.localStorage.setItem("lastlogindate", data.Table[0].LastLoginDate);
       window.localStorage.setItem("lastname", data.Table[0].LastName);
@@ -162,10 +218,11 @@ function handleResponse(response) {
         "dashboardrefreshtime",
         data.Table[0].DashboardRefreshTime
       );
-
-      var username = window.localStorage.getItem("username");
-      var password = window.localStorage.getItem("password");
-      GenerateToken(username, password);
+      // var username =decryption(window.localStorage.getItem("username"));
+      // var password = decryption(window.localStorage.getItem("password"));
+  
+     // window.location.href="./user-agreement";
+     
       //  window.location.href="./dashboard";
       //  alert('log in successfully');
     }
@@ -175,7 +232,7 @@ function handleResponse(response) {
 }
 
 function GenerateToken(username, password) {
-  debugger;
+
   var details = {
     username: username,
     password: password,
@@ -204,16 +261,15 @@ function GenerateToken(username, password) {
 }
 
 function TokenhandleResponse(response) {
-  debugger;
-  console.log(response);
-
+ // console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
       window.localStorage.setItem("token", data.access_token);
-      window.location.href = "./dashboard";
+      window.location.href = "./user-agreement";
+      console.log('redirect'+new Date());
     }
 
     // return data;
