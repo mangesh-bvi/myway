@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import Login from "./pages/Login";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
+import "./../node_modules/jquery/dist/jquery.js";
+import "./../node_modules/bootstrap/dist/js/bootstrap.js";
 
 import * as serviceWorker from "./serviceWorker";
 // import {createStore} from 'redux';
@@ -18,6 +20,8 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import PopupModal from "./component/popup";
 import UserAgreement from "./pages/UserAgreement";
 import QRCode from "./pages/QRCode";
+import ShippingDetails from "./pages/shipping-details";
+import ShippingDetailsTwo from "./pages/shipping-details-2";
 // import Signin from './pages/Signin';
 // const store=createStore(reducer);
 
@@ -38,6 +42,8 @@ ReactDOM.render(
     <Route exact path="/popup" component={PopupModal} />
 
     <Route exact path="/qrcode" component={QRCode} />
+    <Route exact path="/shipping-details" component={ShippingDetails} />
+    <Route exact path="/shipping-details-2" component={ShippingDetailsTwo} />
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
   document.getElementById("root")

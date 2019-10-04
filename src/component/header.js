@@ -15,7 +15,9 @@ class Header extends Component {
     if (window.localStorage.getItem("username") == null) {
       window.location.href = "./login";
     } else {
-      document.getElementById('spnUser').textContent=window.localStorage.getItem('username');
+      document.getElementById(
+        "spnUser"
+      ).textContent = window.localStorage.getItem("username");
       document.getElementById(
         "spnFirstName"
       ).textContent = window.localStorage.getItem("username");
