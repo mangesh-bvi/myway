@@ -35,7 +35,7 @@ ReactDOM.render(
       component={UpdateForgotPassword}
     />
     <Route exact path="/user-agreement" component={UserAgreement} />
-    <Route exact path="/popup" component={PopupModal} />
+    {/* <Route exact path="/popup" component={PopupModal} /> */}
 
     <Route exact path="/qrcode" component={QRCode} />
     {/* <Route  path="/" component={Login} />   */}

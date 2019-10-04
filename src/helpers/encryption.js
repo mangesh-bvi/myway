@@ -1,9 +1,8 @@
 var crypto = require('crypto');
-var assert = require('assert');
 
 var algorithm = 'aes256'; // or any other algorithm supported by OpenSSL
-var key = 'password';
-var text = 'I love kittens';
+var key = 'myway';
+
 var cipher = crypto.createCipher(algorithm, key);  
 export function encryption(plainText)
 {
@@ -13,7 +12,13 @@ export function encryption(plainText)
 
 export function decryption(encrypted)
 {
-    var decipher = crypto.createDecipher(algorithm, key);
-    var decrypted = decipher.update(encrypted, 'hex', 'utf8') + decipher.final('utf8');
-    return decrypted;
+    try 
+    {
+        var decipher = crypto.createDecipher(algorithm, key);
+        var decrypted = decipher.update(encrypted, 'hex', 'utf8') + decipher.final('utf8');
+        return decrypted;
+    }    
+   catch{
+
+   }
 }

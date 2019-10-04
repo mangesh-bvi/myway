@@ -13,7 +13,7 @@ class Header extends Component {
 
   componentDidMount() {
     if (window.localStorage.getItem("username") == null) {
-      window.location.href = "./login";
+     window.location.href = "./login";
     } else {
       document.getElementById('spnUser').textContent=window.localStorage.getItem('username');
       document.getElementById(
