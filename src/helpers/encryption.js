@@ -1,24 +1,17 @@
-var crypto = require('crypto');
-
-var algorithm = 'aes256'; // or any other algorithm supported by OpenSSL
-var key = 'myway';
-
-var cipher = crypto.createCipher(algorithm, key);  
-export function encryption(plainText)
+ 
+export function encryption(plainText,type="enc")
 {
-    var encrypted = cipher.update(plainText, 'utf8', 'hex') + cipher.final('hex');
-    return encrypted;
-}
-
-export function decryption(encrypted)
-{
-    try 
+    var CryptoJS = require("crypto-js");
+    if(type==="enc")
     {
-        var decipher = crypto.createDecipher(algorithm, key);
-        var decrypted = decipher.update(encrypted, 'hex', 'utf8') + decipher.final('utf8');
-        return decrypted;
-    }    
-   catch{
-
-   }
+    var ciphertext = CryptoJS.AES.encrypt(plainText, 'bvi1secret');
+    return ciphertext.toString();
+    }
+    else{
+        var bytes  = CryptoJS.AES.decrypt(plainText.toString(), 'bvi1secret');
+        var decrypt = bytes.toString(CryptoJS.enc.Utf8);
+       return decrypt;
+    }
+    
 }
+

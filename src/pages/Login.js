@@ -68,11 +68,17 @@ class Login extends React.Component {
           "dashboardrefreshtime",
           data.Table[0].DashboardRefreshTime
         );
-        var username =window.localStorage.getItem("username");
-        var password =window.localStorage.getItem("password");
-        console.log('redirect start'+new Date());
-       // window.location.href='./user-agreement';
-        GenerateToken(username, password);
+      //   debugger;       
+      //   var b=encryption(window.localStorage.getItem("username"));
+      //   var c=encryption(b,"desc");
+      //   var username =window.localStorage.getItem("username");
+      //   var password =window.localStorage.getItem("password");
+      //   console.log('redirect start'+new Date());
+      //  // window.location.href='./user-agreement';
+      //  GenerateToken(username, password)
+      //  .then(tokenData => window.localStorage.setItem("token",tokenData)); 
+       // GenerateToken(username, password);
+        window.location.href = "./user-agreement";
         });
       // axios.post('http://vizio.atafreight.com/mywayapi/Login', {
       //   UserName: 'demouser',
@@ -103,7 +109,7 @@ class Login extends React.Component {
 
   componentDidMount()
   {
-    localStorage. clear();
+    localStorage.clear();
     const publicIp = require('public-ip'); 
     (async () => {
     console.log(await publicIp.v4());
@@ -218,47 +224,13 @@ function handleResponse(response) {
         "dashboardrefreshtime",
         data.Table[0].DashboardRefreshTime
       );
-      // var username =decryption(window.localStorage.getItem("username"));
-      // var password = decryption(window.localStorage.getItem("password"));
-  
-     // window.location.href="./user-agreement";
-     
-      //  window.location.href="./dashboard";
-      //  alert('log in successfully');
     }
 
     return data;
   });
 }
 
-function GenerateToken(username, password) {
 
-  var details = {
-    username: username,
-    password: password,
-    grant_type: "password"
-  };
-
-  var formBody = [];
-  for (var property in details) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(details[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-    },
-    body: formBody
-  };
-  return fetch(`${appSettings.APIURL}/token`, requestOptions)
-    .then(TokenhandleResponse)
-    .catch(error => {
-      console.log(error);
-    });
-}
 
 function TokenhandleResponse(response) {
  // console.log(response);
@@ -267,8 +239,7 @@ function TokenhandleResponse(response) {
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
-      window.localStorage.setItem("token", data.access_token);
-      window.location.href = "./user-agreement";
+      window.localStorage.setItem("token", data.access_token);     
       console.log('redirect'+new Date());
     }
 

@@ -13,7 +13,13 @@ class UserAgreement extends Component {
     window.location.href='./dashboard';
   }
   
-
+  componentDidMount()
+  {
+    debugger;
+    var userName=window.localStorage.getItem("username");
+    var password=window.localStorage.getItem("password");
+    GenerateToken(userName,password);
+  }
   render() {
     return (
       <section className="login-between">
@@ -74,6 +80,35 @@ function VerifyAgreement()
       console.log(error);
     });
 }
+
+ async function GenerateToken(username, password) {
+
+  var details = {
+    username: username,
+    password: password,
+    grant_type: "password"
+  };
+
+  var formBody = [];
+  for (var property in details) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(details[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    body: formBody
+  };
+  let response = await fetch(`${appSettings.APIURL}/token`,requestOptions);
+  let data = await response.json()
+  debugger;
+  window.localStorage.setItem("token",data.access_token);
+}
+
 function handleResponse(response) {
   console.log(response);
 

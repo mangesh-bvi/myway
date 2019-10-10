@@ -38,3 +38,23 @@
     float: right;
     border:solid 1px black;
 }
+
+.ag-fresh .ag-header-cell-label .ag-header-cell-text
+{
+display: inline-block;
+text-align: center;
+}
+
+.ag-fresh .ag-header-cell-label .ag-header-icon
+{
+vertical-align: top;
+}
+
+.ag-fresh .ag-header-cell-label > span
+{
+float: none;
+}
+
+.number-cell {
+    text-align: right;
+}
