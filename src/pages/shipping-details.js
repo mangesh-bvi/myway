@@ -132,7 +132,6 @@ class ShippingDetails extends Component {
                 </a>
               </div>
             </div>
-<<<<<<< HEAD
             <div style={containerStyle} className="ag-fresh">
             <AgGridReact id="mygrid"
           // properties
@@ -144,8 +143,7 @@ class ShippingDetails extends Component {
           // events
           onGridReady={this.onGridReady}
         />
-=======
-            <div className="table-scroll">
+            {/* <div className="table-scroll">
               <table>
                 <thead>
                   <tr>
@@ -296,8 +294,8 @@ class ShippingDetails extends Component {
                   </tr>
                 </tbody>
               </table>
->>>>>>> f770340f71a178114aed9f756d1f02e13c3a47d6
             </div>
+           */}
           </div>
         </div>
       </div>
