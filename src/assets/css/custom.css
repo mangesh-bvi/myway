@@ -617,7 +617,7 @@ table tbody tr:last-child {
 .cls-flside {
   width: 20%;
   float: left;
-  height: 700px;
+  height: auto;
   background-color: #0142aa;
   border: none;
 }
@@ -635,6 +635,7 @@ table tbody tr:last-child {
   border-bottom: 0.5px solid #265eb5;
   color: white;
   font-weight: 400;
+  cursor: pointer;
 }
 
 .sidemenu-ul {
@@ -826,5 +827,90 @@ table tbody tr:last-child {
 }
 .popovercls .popover-header {
   background-color: white;
+}
+ .grncuntr .card{
+  margin-top: 20px;
+  border-radius: 1px;
+  width: 480px;
+  border: none;
+    
+ }
+
+ /* .grncuntr #reactgooglegraph-1{
+    padding: 0px 50px 0px 40px;
+ } */
+
+
+ .brncuntr-select{
+  background-color: #29aae3;
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  padding: 5px 20px;
+  font-size: 12px;
+  margin-top: 10px;
+  float: right;
+  margin: 20px;
+}
+.grncuntr-lbl{
+   
+  font-weight: 500;
+  padding: 20px;
+  font-size: 20px;
+
+}
+.grncuntr svg{
+  width: 400px !important;
+  height: 300px !important;
+}
+.carbonemn-card{
+  background-color:#29aae3; 
+}
+.brncuntr-select1{
+  background-color: #8fdeff;
+  border: none;
+  border-radius: 50px;
+  color: #000000;
+  font-weight: 700; 
+  padding: 5px 20px;
+  font-size: 12px;
+  margin-top: 10px;
+  float: right;
+  margin: 20px;
+}
+.grncuntr-lbl1{
+  padding: 20px;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 20px;
+
+}
+ 
+.carbonemn-card svg {
+  width: 470px !important;
+  height: 187px !important;
+}
+
+.dot{
+  height: 235px;
+  width: 50%; 
+   
+  border-radius: 100%;
+  display: inline-block;
+  margin: 20px 110px 38px;
+  border: 1px solid #f1f3f2;
+
+}
+.dot1{
+  height: 200px;
+  width: 86%;
+  border-radius: 100%;
+  display: inline-block;
+  margin: 17px 0px 38px 17px;
+  border: 15px solid #39b54a;
+
+}
+.sidemenu-ul-li a {
+  color: #fff;
 }
 /* --------------------------------------------------------------------------- */
