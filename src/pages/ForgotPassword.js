@@ -56,13 +56,14 @@ class ForgotPassword extends React.Component {
                 >
                   Submit
                 </button>
-                <button
+                <a
+                  href="/"
                   type="button"
                   className="butn cancel-butn"
                   // onClick={() => this.handleSubmit()}
                 >
                   Cancel
-                </button>
+                </a>
               </div>
             </div>
           </div>

@@ -69,7 +69,7 @@ a:hover {
 
 h2 {
   color: #333;
-  font-size: 26px;
+  font-size: 20px;
   font-family: "Bold Font";
 }
 .butn {
@@ -267,7 +267,7 @@ h2 span {
 
 /* shipping details starts */
 .title-sect {
-  padding: 25px 30px;
+  padding: 20px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -323,7 +323,7 @@ table th {
   color: #333;
   background-color: #cbcbcb;
   /* padding: 25px 35px; */
-  padding: 25px 13px;
+  padding: 25px 12px;
   white-space: nowrap;
 }
 table td {
@@ -331,7 +331,7 @@ table td {
   color: #696969;
   background-color: #fff;
   /* padding: 12px 35px; */
-  padding: 12px 13px;
+  padding: 12px 12px;
 }
 table tbody tr {
   border-bottom: 2px solid #f1f2f2;
@@ -377,16 +377,15 @@ table tbody tr:last-child {
 /* shipping details 2 starts */
 .cust-tabs {
   border-bottom: 1px solid #d6d6d6;
-  margin-top: 15px;
 }
 .cust-tabs a {
-  font-size: 22px;
+  font-size: 16px;
   font-family: "Bold Font";
   color: #a3a3a3;
   display: inline-block;
-  padding: 15px 30px;
-  border-bottom: 5px solid transparent;
-  margin-right: 40px;
+  padding: 7px 30px;
+  border-bottom: 3px solid transparent;
+  margin-right: 20px;
 }
 .cust-tabs a.active {
   color: #333;
@@ -396,8 +395,8 @@ table tbody tr:last-child {
   /* width: 95px; */
   display: inline-block;
 }
-.cust-tabs-content {
-  padding: 30px;
+.cust-tabs-content > div {
+  padding: 20px 30px;
 }
 .cust-tabs-content .tab-pane .row .details-border:last-child {
   border-right: 0;
@@ -523,7 +522,144 @@ table tbody tr:last-child {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+}
+.sect-padd {
+  padding: 20px 30px;
+  border-bottom: 1px solid #999;
+}
+.sect-padd:last-child {
+  border-bottom: 0;
+}
+.sect-padd > .row:last-child {
+  margin-bottom: -20px;
+}
+.shipper-details .details-para {
+  color: #636466;
+}
+.shipper-details .details-title {
+  font-size: 15px;
+}
+.details-heading {
+  font-family: "Bold Font";
+  color: #333333;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.shipper-details {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.view-btn {
+  font-size: 10px;
+  min-width: 90px;
+  padding: 7px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.cust-tabs-content .tab-pane .mid-border.row .details-border:nth-child(even) {
+  border-right: 0;
+}
+.less-btn {
+  background-color: #474747;
+  border-color: #474747;
+}
+.less-btn:hover {
+  color: #474747;
+}
+.collapse-sect {
+  padding-top: 20px;
+  border-top: 1px solid #d6d6d6;
+}
+.progress-sect span {
+  font-family: "Bold Font";
+  font-size: 18px;
+}
+.progress-sect .progress {
+  height: 5px;
+  border-radius: 0;
+  overflow: initial;
+  width: 100%;
+  margin: 0 40px;
+}
+.progress-sect .progress-bar {
+  background-color: #ffb400;
+  position: relative;
+}
+.progress-sect .progress-bar:after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  background-color: #ffb400;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+.desti-places span {
+  font-size: 16px;
+  color: #333;
+}
+.desti-places {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.progress-sect {
+  margin-bottom: 20px;
+}
+.ship-detail-map {
+  height: 300px;
+}
+.map-icon {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.source-icon {
+  background-color: #39b54a;
+}
+.desti-icon {
+  background-color: #eb0029;
+}
+.map-icon img {
+  width: 25px;
+}
+.file-act-icons {
+  width: 15px;
+  line-height: 1;
+  margin-right: 15px;
+  cursor: pointer;
+}
+.file-act-cntr {
+  display: flex;
+  align-items: center;
+}
+.file-act-cntr .file-act-icons:last-child {
+  margin-right: 0;
+}
+.delete-popup {
+  text-align: center;
+}
+.delete-popup .modal-body {
+  padding: 40px;
+}
+.delete-popup .butn {
+  margin-right: 20px;
+}
+.delete-popup .butn:last-child {
+  margin-right: 0px;
+}
+.rename-cntr input {
+  padding: 10px 20px;
+}
+.delete-popup .login-fields {
+  margin-bottom: 0;
 }
 /* shipping details 2 ends */
 
