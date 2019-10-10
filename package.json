@@ -11,7 +11,13 @@
     "ag-grid-react": "^21.2.2",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
+<<<<<<< HEAD
     "crypto-js": "^3.1.9-1",
+=======
+    "chart.js": "^2.8.0",
+    "crypto-js": "^3.1.9-1",
+    "google-map-react": "^1.1.5",
+>>>>>>> f770340f71a178114aed9f756d1f02e13c3a47d6
     "jquery": "^3.4.1",
     "node-sass": "^4.12.0",
     "public-ip": "^3.2.0",
@@ -19,8 +25,13 @@
     "react": "^16.10.2",
     "react-alert": "^5.5.0",
     "react-bootstrap": "^1.0.0-beta.12",
+    "react-chartjs-2": "^2.8.0",
     "react-dom": "^16.10.2",
+<<<<<<< HEAD
     "react-dom-factories": "^1.0.2",
+=======
+    "react-google-charts": "^3.0.15",
+>>>>>>> f770340f71a178114aed9f756d1f02e13c3a47d6
     "react-notifications": "^1.4.3",
     "react-redux": "^7.1.1",
     "react-router-dom": "^5.1.0",

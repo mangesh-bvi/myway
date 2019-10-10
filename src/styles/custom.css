@@ -1,36 +1,32 @@
-.cls-header
-{
-    height: 50px;
-    border:solid 1px black;
-    text-align: center;
-    background-color: #000080;
-    color:white;
-    
+.cls-header {
+  height: 50px;
+  border: solid 1px black;
+  text-align: center;
+  background-color: #000080;
+  color: white;
 }
 
-.cls-side
-{
-    width: 150px;
-    height:300px;
-    border:solid 1px black;
-    text-align: center;
+.cls-side {
+  width: 150px;
+  height: 300px;
+  border: solid 1px black;
+  text-align: center;
 }
 
-.cls-ofl
-{
-    overflow: hidden;
-    width: 100%;
+.cls-ofl {
+  overflow: hidden;
+  width: 100%;
 }
 
-.cls-flside
-{
-    width:20%;
-    float: left;
-    height:700px;
-    background-color: blue;
-    border: solid 1px black;
+.cls-flside {
+  width: 20%;
+  float: left;
+  height: 700px;
+  background-color: blue;
+  border: solid 1px black;
 }
 
+<<<<<<< HEAD
 .cls-rt
 {
     width: 79%;
@@ -58,3 +54,12 @@ float: none;
 .number-cell {
     text-align: right;
 }
+=======
+.cls-rt {
+  width: calc(80% - 40px);
+  /* height: 700px; */
+  float: right;
+  margin: 20px;
+  background-color: #fff;
+}
+>>>>>>> f770340f71a178114aed9f756d1f02e13c3a47d6
