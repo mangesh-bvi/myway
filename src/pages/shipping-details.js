@@ -121,7 +121,7 @@ class ShippingDetails extends Component {
                         In Transit
                       </UncontrolledTooltip>
                     </td>
-                    <td>90:45:56</td>
+                    <td>19/08/2019</td>
                     <td className="clr-green">On Time</td>
                   </tr>
                   <tr>
@@ -143,7 +143,7 @@ class ShippingDetails extends Component {
                         Boxed
                       </UncontrolledTooltip>
                     </td>
-                    <td>08:20:00</td>
+                    <td>12/05/2019</td>
                     <td className="clr-yellow">Dealy Risk</td>
                   </tr>
                   <tr>
@@ -165,7 +165,7 @@ class ShippingDetails extends Component {
                         Delivered
                       </UncontrolledTooltip>
                     </td>
-                    <td>12:55:05</td>
+                    <td>20/09/2019</td>
                     <td className="clr-green">On Time</td>
                   </tr>
                   <tr>
@@ -187,7 +187,7 @@ class ShippingDetails extends Component {
                         In Plane
                       </UncontrolledTooltip>
                     </td>
-                    <td>24:08:55</td>
+                    <td>12/06/2019</td>
                     <td className="clr-red">Behind Schedue</td>
                   </tr>
                 </tbody>
