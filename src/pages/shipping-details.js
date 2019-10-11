@@ -3,6 +3,7 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import axios from 'axios';
 import "../styles/custom.css";
+import "../assets/css/ag-grid.css";
 import { UncontrolledTooltip } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -84,17 +85,98 @@ class ShippingDetails extends Component {
 
   createColumnDefs() {
     return [
-      { width:80,headerName: "NO", field: "SR_No",sortable: true },
-      { width:300,height:100,headerName: "SHIPMENT MODE", field: "ModeOfTransport",cellRenderer:transportMode,sortable: true },
-    // { headerName: "Shipment Mode", field: "ShipmentNumber",sortable: true,cellRenderer:currencyFormatter, filter: true,suppressCellFlash: true }
-    
-      { width:300,headerName: "CUSTOMER NAME", field: "Consignee",sortable: true, filter: true },
-      { width:300,headerName: "SHIPPER DETAILS", field: "Shipper",sortable: true, filter: true },
-      { width:100,headerName: "POL", field: "POL",sortable: true, filter: true },
-      { width:100,headerName: "POD", field: "POD",sortable: true, filter: true },
-      { headerName: "STATUS", field: "Status",cellRenderer:statusImage,sortable: true, filter: true },
-      { witdh:50,headerName: "ETA", field: "ETA",sortable: true, filter: true },
-      { headerName: "EVENT", field: "Event",sortable: true, filter: true }
+      {
+        headerName: "SHIPMENT NO",
+        field: "ShipmentNumber",
+        sortable: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      {
+        headerName: "SHIPMENT MODE",
+        field: "ModeOfTransport",
+        cellRenderer: transportMode,
+        sortable: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      // { headerName: "Shipment Mode", field: "ShipmentNumber",sortable: true,cellRenderer:currencyFormatter, filter: true,suppressCellFlash: true }
+
+      {
+        headerName: "CUSTOMER NAME",
+        field: "Consignee",
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      {
+        headerName: "SHIPPER DETAILS",
+        field: "Shipper",
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      {
+        headerName: "POL",
+        field: "POL",
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      {
+        headerName: "POD",
+        field: "POD",
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      {
+        headerName: "STATUS",
+        field: "Status",
+        cellRenderer: statusImage,
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      {
+        headerName: "ETA",
+        field: "ETA",
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      },
+      {
+        headerName: "EVENT",
+        field: "Event",
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        cellRenderer: function(params) {
+          return "<a href='/shipment-details'>" + params.value + "</a>";
+        }
+      }
     ];
   }
 
@@ -110,8 +192,8 @@ class ShippingDetails extends Component {
 
   render() {
     let containerStyle = {
-      height:640,
-      width:900
+      height: 640
+      // width: 900
     };
     return (
       <div>
@@ -144,6 +226,169 @@ class ShippingDetails extends Component {
           // events
           onGridReady={this.onGridReady}
         />
+              <AgGridReact
+                id="mygrid"
+                // properties
+                pagination={true}
+                paginationPageSize={10}
+                columnDefs={this.state.columnDefs}
+                rowData={this.state.rowData}
+                autoHeight={true}
+                // events
+                onGridReady={this.onGridReady}
+              />
+            </div>
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>
+                      No
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Shipment Mode{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Customer Name{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Shipper Details{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      POL{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      POD{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Status{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      ETA{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Event{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="text-center">1</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Ship} alt="ship icon" />
+                      </span>
+                    </td>
+                    <td>David Robinson</td>
+                    <td>Abc Xyz</td>
+                    <td>Port of Houston</td>
+                    <td>Western Cape</td>
+                    <td>
+                      <span className="status-img" id="transit">
+                        <img src={Transit} alt="transit icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="transit">
+                        In Transit
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>19/08/2019</td>
+                    <td className="clr-green">On Time</td>
+                  </tr>
+                  <tr>
+                    <td className="text-center">2</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Truck} alt="truck icon" />
+                      </span>
+                    </td>
+                    <td>Scott Brown</td>
+                    <td>Abc Xyz</td>
+                    <td>New York</td>
+                    <td>Virginia</td>
+                    <td>
+                      <span className="status-img" id="boxed">
+                        <img src={Box} alt="box icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="boxed">
+                        Boxed
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>12/05/2019</td>
+                    <td className="clr-yellow">Dealy Risk</td>
+                  </tr>
+                  <tr>
+                    <td className="text-center">3</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Rail} alt="rail icon" />
+                      </span>
+                    </td>
+                    <td>Robbin Miller</td>
+                    <td>Abc Xyz</td>
+                    <td>Nevada</td>
+                    <td>Los Angeles</td>
+                    <td>
+                      <span className="status-img" id="delivered">
+                        <img src={Delivered} alt="delivered icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="delivered">
+                        Delivered
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>20/09/2019</td>
+                    <td className="clr-green">On Time</td>
+                  </tr>
+                  <tr>
+                    <td className="text-center">4</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Plane} alt="plane icon" />
+                      </span>
+                    </td>
+                    <td>Smith Johnson</td>
+                    <td>Abc Xyz</td>
+                    <td>Texas</td>
+                    <td>Dubai</td>
+                    <td>
+                      <span className="status-img" id="in-plane">
+                        <img src={InPlane} alt="in-plane icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="in-plane">
+                        In Plane
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>12/06/2019</td>
+                    <td className="clr-red">Behind Schedue</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

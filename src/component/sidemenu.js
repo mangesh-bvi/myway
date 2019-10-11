@@ -1,25 +1,26 @@
-import React,{ Component } from "react";
-import "../styles/custom.css"
-import {Accordion,Button,Card} from 'react-bootstrap';
-import GreenCounterIcon from './../assets/img/green-counter.png';
-import AnalyticsIcon from './../assets/img/analytics.png';
-import RatesIcon from './../assets/img/rates.png';
-import ShipmentsIcon from './../assets/img/shipments.png';
-import DashboardIcon from './../assets/img/dashboard.png';
-import QuotesIcon from './../assets/img/quotes.png';
-import InfoIcon from './../assets/img/info.png';
-import SettingIcon from './../assets/img/Settings.png';
+import React, { Component } from "react";
+import "../styles/custom.css";
+import { Accordion, Button, Card } from "react-bootstrap";
+import GreenCounterIcon from "./../assets/img/green-counter.png";
+import AnalyticsIcon from "./../assets/img/analytics.png";
+import RatesIcon from "./../assets/img/rates.png";
+import ShipmentsIcon from "./../assets/img/shipments.png";
+import DashboardIcon from "./../assets/img/dashboard.png";
+import QuotesIcon from "./../assets/img/quotes.png";
+import InfoIcon from "./../assets/img/info.png";
+import SettingIcon from "./../assets/img/Settings.png";
 
-class SideMenu extends Component{
-    constructor(props)
-    {
-        super(props);
-        this.state={
-         
-        }
-    }
+class SideMenu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-    render(){
+  openPage = () => {
+    window.location.href = "./shipment-summary";
+  };
+
+  render() {
     return (
       <div>
         <div>
@@ -44,7 +45,12 @@ class SideMenu extends Component{
               <Accordion defaultActiveKey="0">
                 <Card>
                   <Card.Header>
-                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                    <Accordion.Toggle
+                      onClick={this.openPage}
+                      as={Button}
+                      variant="link"
+                      eventKey="1"
+                    >
                       <img
                         src={ShipmentsIcon}
                         alt="green-counter-icon"
@@ -128,8 +134,7 @@ class SideMenu extends Component{
         </div>
       </div>
     );
-
-    }
+  }
 }
 
 export default SideMenu;

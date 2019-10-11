@@ -45,14 +45,62 @@ class ShippingDetailsTwo extends Component {
       selectedFile: event.target.files[0]      
     })
   }
-  onDocumentClickHandler = () => {
-    debugger;
-    
-    const data = new FormData()
+  onDocumentClickHandler = () => { 
+   const data = new FormData()
    for(var x = 0; x<this.state.selectedFile.length; x++) {
        data.append('file', this.state.selectedFile[x])
    }
-        data.append();
+   data.append();
+   
+   debugger;
+// var FtpDeploy = require("ftp-deploy");
+// var ftpDeploy = new FtpDeploy();
+ 
+// var config = {
+//     user: "ftpdev",
+//     // Password optional, prompted if none given
+//     password: "Myw@y$2026",
+//     host: "ftp://vizio.atafreight.com/",
+//     // port: 21,
+//     // localRoot: __dirname + "/local-folder",
+//     // remoteRoot: "/public_html/remote-folder/",
+//     // // include: ['*', '**/*'],      // this would upload everything except dot files
+//     // include: ["*.php", "dist/*"],
+//     // // e.g. exclude sourcemaps, and ALL files in node_modules (including dot files)
+//     // exclude: ["dist/**/*.map", "node_modules/**", "node_modules/**/.*"],
+//     // // delete ALL existing files at destination before uploading, if true
+//     // deleteRemote: false,
+//     // // Passive mode is forced (EPSV command is not sent)
+//     // forcePasv: true
+// };
+ 
+// // use with promises
+// ftpDeploy
+//     .deploy(config)
+//     .then(res => console.log("finished:", res))
+//     .catch(err => console.log(err));
+ 
+// // use with callback
+// ftpDeploy.deploy(config, function(err, res) {
+//     if (err) console.log(err);
+//     else console.log("finished:", res);
+// });
+
+// ftpDeploy.on("uploading", function(data) {
+//   // var count=data.totalFilesCount; // total file count being transferred
+//   // var filecount=data.transferredFileCount; // number of files transferred
+//   // var filename=data.filename; // partial path with filename being uploaded
+// });
+// ftpDeploy.on("uploaded", function(data) {
+//   console.log(data); // same data as uploading event
+// });
+// ftpDeploy.on("log", function(data) {
+//   console.log(data); // same data as uploading event
+// });
+// ftpDeploy.on("upload-error", function(data) {
+//   console.log(data.err); // data will also include filename, relativePath, and other goodies
+// });
+
 //   axios.post("http://localhost:8000/upload", data, { 
 //       // receive two    parameter endpoint url ,form data
 //   })
@@ -494,6 +542,7 @@ class ShippingDetailsTwo extends Component {
                       <div>
                         <input type="button" onClick={this.onDocumentClickHandler} value="Save"></input>
                       </div>
+                      <button className="butn">Add Document</button>
                       <div className="table-scroll">
                         <table>
                           <thead>
