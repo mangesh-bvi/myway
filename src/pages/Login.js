@@ -42,15 +42,16 @@ class Login extends React.Component {
         method: 'post',
         url: 'http://vizio.atafreight.com/mywayapi/Login',
         data: {
-          UserName: 'demouser',
-          Password: 'Admin@1234',
-          publicIPAddress:'202.149.197.99',
-          PrivateIPAddress:'202.149.197.99'         
+          UserName:username,
+          Password:password,
+          publicIPAddress:ipaddress,
+          PrivateIPAddress:''         
         },
         headers:authHeader('no')
       }).then(function (response) { 
-        NotificationManager.success("Login Successfully");  
+      //  NotificationManager.success("Login Successfully");  
         console.log('axios response'+new Date());    
+        debugger;
         var data=response.data;     
         console.log(data);   
         window.localStorage.setItem("username",data.Table[0].UserName);

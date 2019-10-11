@@ -32,12 +32,35 @@ class ShippingDetailsTwo extends Component {
 
     this.state = {
       modalDel: false,
-      modalEdit: false
+      modalEdit: false,
+      selectedFile:null,
+      docFileName:''
     };
 
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
   }
+  onDocumentChangeHandler=event=>{    
+    this.setState({
+      selectedFile: event.target.files[0]      
+    })
+  }
+  onDocumentClickHandler = () => {
+    debugger;
+    
+    const data = new FormData()
+   for(var x = 0; x<this.state.selectedFile.length; x++) {
+       data.append('file', this.state.selectedFile[x])
+   }
+        data.append();
+//   axios.post("http://localhost:8000/upload", data, { 
+//       // receive two    parameter endpoint url ,form data
+//   })
+//   .then(res => { // then print response status
+//     console.log(res.statusText)
+//  })
+
+}
 
   static defaultProps = {
     center: {
@@ -46,6 +69,7 @@ class ShippingDetailsTwo extends Component {
     },
     zoom: 11
   };
+
 
   toggleDel() {
     this.setState(prevState => ({
@@ -461,6 +485,15 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="documents-tab"
                     >
+                      <div>
+                        Enter documentName:<input id="docName" type="text"></input>
+                      </div>
+                      <div>
+                        <input type="file" onChange={this.onDocumentChangeHandler}></input>
+                      </div>
+                      <div>
+                        <input type="button" onClick={this.onDocumentClickHandler} value="Save"></input>
+                      </div>
                       <div className="table-scroll">
                         <table>
                           <thead>
