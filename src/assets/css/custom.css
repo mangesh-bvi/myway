@@ -964,20 +964,18 @@ table tbody tr:last-child {
 .popovercls .popover-header {
   background-color: white;
 }
- .grncuntr .card{
+.grncuntr .card {
   margin-top: 20px;
   border-radius: 1px;
   width: 480px;
   border: none;
-    
- }
+}
 
- /* .grncuntr #reactgooglegraph-1{
+/* .grncuntr #reactgooglegraph-1{
     padding: 0px 50px 0px 40px;
  } */
 
-
- .brncuntr-select{
+.brncuntr-select {
   background-color: #29aae3;
   border: none;
   border-radius: 50px;
@@ -988,46 +986,43 @@ table tbody tr:last-child {
   float: right;
   margin: 20px;
 }
-.grncuntr-lbl{
-   
+.grncuntr-lbl {
   font-weight: 500;
   padding: 20px;
   font-size: 20px;
-
 }
-.grncuntr svg{
+.grncuntr svg {
   width: 400px !important;
   height: 300px !important;
 }
-.carbonemn-card{
-  background-color:#29aae3; 
+.carbonemn-card {
+  background-color: #29aae3;
 }
-.brncuntr-select1{
+.brncuntr-select1 {
   background-color: #8fdeff;
   border: none;
   border-radius: 50px;
   color: #000000;
-  font-weight: 700; 
+  font-weight: 700;
   padding: 5px 20px;
   font-size: 12px;
   margin-top: 10px;
   float: right;
   margin: 20px;
 }
-.grncuntr-lbl1{
+.grncuntr-lbl1 {
   padding: 20px;
   color: #ffffff;
   font-weight: 500;
   font-size: 20px;
-
 }
- 
+
 .carbonemn-card svg {
   width: 470px !important;
   height: 187px !important;
 }
 
-.dot{
+.dot {
   height: 240px;
   width: 50%;
   border-radius: 100%;
@@ -1036,58 +1031,56 @@ table tbody tr:last-child {
   border: 1px solid #f1f3f2;
   padding: 5px 7px;
   position: relative;
-
 }
-.dot1{
+.dot1 {
   height: 200px;
   width: 86%;
   border-radius: 100%;
   display: inline-block;
   margin: 17px 0px 38px 17px;
   border: 15px solid #39b54a;
-
 }
 .sidemenu-ul-li a {
   color: #fff;
 }
 
-.greenchart-img{
+.greenchart-img {
   position: absolute;
-    height: 25px;
-    width: auto;
-    left: 0;
-    right: 0;
-    margin: auto;
-    top: 0;
-    bottom: 65px;
+  height: 25px;
+  width: auto;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: 0;
+  bottom: 65px;
 }
-.greenchartlbl{
+.greenchartlbl {
   font-size: 18px;
-    color: #666;
-    font-weight: bolder;
-    text-align: center;
-    position: absolute;
-    margin: auto;
-    left: 0;
-    right: 0;
-    line-height: 20px;
-    bottom: 20px;
-    text-transform: uppercase;
-}
-.counterval{   
+  color: #666;
   font-weight: bolder;
   text-align: center;
   position: absolute;
   margin: auto;
   left: 0;
   right: 0;
-  line-height: 20px; 
+  line-height: 20px;
+  bottom: 20px;
+  text-transform: uppercase;
+}
+.counterval {
+  font-weight: bolder;
+  text-align: center;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  line-height: 20px;
   text-transform: uppercase;
   bottom: 96px;
   font-size: 28px;
   color: #ed0124;
 }
-.greenchartlbl1{
+.greenchartlbl1 {
   font-size: 18px;
   color: #666;
   font-weight: bolder;

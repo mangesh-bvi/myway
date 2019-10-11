@@ -461,6 +461,7 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="documents-tab"
                     >
+                      <button className="butn">Add Document</button>
                       <div className="table-scroll">
                         <table>
                           <thead>
