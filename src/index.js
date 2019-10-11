@@ -28,6 +28,8 @@ import ShippingDetailsTwo from "./pages/shipping-details-2";
 import GreenCounter from "./pages/GreenCounter";
 import ShipmentPlanner from "./pages/shipment-planner";
 
+// import Exmaple from './pages/Example';
+
 // import Signin from './pages/Signin';
 // const store=createStore(reducer);
 
@@ -52,6 +54,7 @@ ReactDOM.render(
     <Route exact path="/shipment-details" component={ShippingDetailsTwo} />
     <Route exact path="/green-counter" component={GreenCounter} />
     <Route exact path="/shipment-planner" component={ShipmentPlanner} />
+    {/* <Route exact path="/example" component={Exmaple} /> */}
 
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
