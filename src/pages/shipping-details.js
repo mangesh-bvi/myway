@@ -46,10 +46,6 @@ class ShippingDetails extends Component {
   }
 
   componentDidMount() {
-    //this.setState({rowData: this.CreateRow});
-    // this.gridApi.onGridReady();
-    var a = [{ ShipmentNumber: "1" }, { ShipmentNumber: "2" }];
-    this.setState({ rowData: a }); ///////its working
     let self = this;
     var userid = window.localStorage.getItem("userid");
     console.log("ship date start" + new Date());
@@ -104,7 +100,7 @@ class ShippingDetails extends Component {
       // { headerName: "Shipment Mode", field: "ShipmentNumber",sortable: true,cellRenderer:currencyFormatter, filter: true,suppressCellFlash: true }
 
       {
-        headerName: "CUSTOMER NAME",
+        headerName: "CONSIGNEE",
         field: "Consignee",
         sortable: true,
         filter: true,
@@ -114,7 +110,7 @@ class ShippingDetails extends Component {
         }
       },
       {
-        headerName: "SHIPPER DETAILS",
+        headerName: "SHIPPER",
         field: "Shipper",
         sortable: true,
         filter: true,
@@ -179,7 +175,6 @@ class ShippingDetails extends Component {
 
   createRowData() {
     return [
-      { ShipmentNumber: "1" }
       //  { ShipmentNumber: "1", transport: "AIR", custname: "Mangesh",pol:"New yaork",pod:"Virginia",status:"Yes",eta:"30-04-2019",event:"Ontime" },
       //   { no: "2", transport: "OCean", custname: "Mangesh",pol:"New yaork",pod:"Virginia",status:"Yes",eta:"30-04-2019",event:"Ontime" },
       //   { no: "3", transport: "Truck", custname: "Mangesh",pol:"New yaork",pod:"Virginia",status:"Yes",eta:"30-04-2019",event:"Ontime" },
@@ -226,7 +221,7 @@ class ShippingDetails extends Component {
               />
             </div>
             <div className="table-scroll">
-              <table>
+              {/* <table>
                 <thead>
                   <tr>
                     <th>
@@ -376,6 +371,7 @@ class ShippingDetails extends Component {
                   </tr>
                 </tbody>
               </table>
+             */}
             </div>
           </div>
         </div>

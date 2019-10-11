@@ -26,7 +26,8 @@ import QRCode from "./pages/QRCode";
 import ShippingDetails from "./pages/shipping-details";
 import ShippingDetailsTwo from "./pages/shipping-details-2";
 import GreenCounter from "./pages/GreenCounter";
- 
+import ShipmentPlanner from "./pages/shipment-planner";
+
 // import Signin from './pages/Signin';
 // const store=createStore(reducer);
 
@@ -50,6 +51,7 @@ ReactDOM.render(
     <Route exact path="/shipment-summary" component={ShippingDetails} />
     <Route exact path="/shipment-details" component={ShippingDetailsTwo} />
     <Route exact path="/green-counter" component={GreenCounter} />
+    <Route exact path="/shipment-planner" component={ShipmentPlanner} />
 
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
