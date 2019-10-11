@@ -1,14 +1,12 @@
 import React, { Component } from "react";
- 
+import appSettings from "../helpers/appSetting";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import { Bar,Line,Doughnut} from "react-chartjs-2";
+import { Bar, Line, Doughnut } from "react-chartjs-2";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
+import VizioMyWay from "./../assets/img/greencounterchart.png";
 
- 
-
- 
 var carboneOptions = {
   legend: {
     display: false
@@ -64,55 +62,117 @@ var greencounterOption = {
   rotation: 0.75 * Math.PI,
   circumference: 1.5 * Math.PI,
   cutoutPercentage: 80,
-  padding:40
-  
+  padding: 40
 };
  
 class GreenCounter extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chartData: [],
+      volumechartData: [],
+      carbonechartData: [],
+      greencounterData: [],
       selectData: [
         { key: "Year", value: "Year" },
         { key: "Month", value: "Month" }
-      ]
+      ],
+      volumeselectType: "Year",
+      carboneselectType: "Year",
+      treecount:"",
+      cotowemission:""
     };
   }
 
   componentWillMount() {
     this.HandleVolumeChartData();
+    this.HandleCarboneChartData();
+    this.HandleGreenCounterChartData();
   }
-  
-HandleChangeSelect(event){
-  debugger;
-}
-  HandleVolumeChartData() {
+
+  HandleVolumeChangeSelect(event) {
+    this.HandleVolumeChartData(event.target.value);
+  }
+  HandleCarboneChangeSelect(event) {
+    this.HandleCarboneChartData(event.target.value);
+  }
+  HandleVolumeChartData(selectval) {
+    let self = this;
+    var selectvalnew = this.state.volumeselectType;
+
+    if (typeof selectval != "undefined") {
+      selectvalnew = selectval;
+    }
+    var ipaddress = window.localStorage.getItem("ipaddress");
+    var userid = window.localStorage.getItem("userid");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/GreenCounterEmission`,
+      data: {
+        UserID: userid,
+        ViewType: selectvalnew,
+        publicIPAddress: ipaddress,
+        PrivateIPAddress: ""
+      },
+      headers: authHeader()
+    }).then(response => {
+      self.setState({ volumechartData: response.data.Table });     
+    });
+  }
+  HandleCarboneChartData(selectval) {
+    let self = this;
+    var selectcartype = this.state.carboneselectType;
+    if (typeof selectval != "undefined") {
+      selectcartype = selectval;
+    }
+
+    var ipaddress = window.localStorage.getItem("ipaddress");
+    var userid = window.localStorage.getItem("userid");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/GreenCounterEmission`,
+      data: {
+        UserID: userid,
+        ViewType: selectcartype,
+        publicIPAddress: ipaddress,
+        PrivateIPAddress: ""
+      },
+      headers: authHeader()
+    }).then(response => {
+      self.setState({
+        carbonechartData: response.data.Table
+      });
+    });
+  }
+
+  HandleGreenCounterChartData() {
     debugger;
     let self = this;
     var ipaddress = window.localStorage.getItem("ipaddress");
     var userid = window.localStorage.getItem("userid");
     axios({
       method: "post",
-      url: "http://vizio.atafreight.com/MyWayAPI/GreenCounterEmission",
+      url: `${appSettings.APIURL}/GreenCounterEmission`,
       data: {
         UserID: userid,
-        ViewType: "Month",
+        ViewType: "Web",
         publicIPAddress: ipaddress,
         PrivateIPAddress: ""
       },
       headers: authHeader()
     }).then(response => {
-      debugger;    
-      self.setState({ chartData: response.data.Table });
+      debugger;
+      console.log(response);
+      self.setState({ greencounterData: response.data.Table });
+      var greendata=response.data.Table;
+      self.setState({treecount:greendata[0]["NoOfTreesPlanted"],cotowemission:(greendata[0]["CarbonEmission"]).toFixed(2)});
     });
   }
-
   render() {
-    const label = [];
-    const volumnedata = [];
-    const carbonelable=[];   
-    const greenCounterdata = {
+    let vollabel = [];
+    let carlabel = [];
+    let volumnedata = [];
+    let carbonelabledata = [];
+    let greenCounterdata = {
       labels: ["Green", "Red"],
       datasets: [
         {
@@ -124,14 +184,18 @@ HandleChangeSelect(event){
       ],
       text: "23%"
     };
-    
-    for (let i = 0; i < this.state.chartData.length; i++) {
-        label.push(this.state.chartData[i]["CO2YEAR"]);
-      volumnedata.push(this.state.chartData[i]["Tons_Weight"]);
-      carbonelable.push(this.state.chartData[i]["CarbonEmission"])
+
+    for (let i = 0; i < this.state.volumechartData.length; i++) {
+      vollabel.push(this.state.volumechartData[i]["CO2YEAR"]);
+      volumnedata.push(this.state.volumechartData[i]["Tons_Weight"]);
+    }
+
+    for (let i = 0; i < this.state.carbonechartData.length; i++) {
+      carlabel.push(this.state.carbonechartData[i]["CO2YEAR"]);
+      carbonelabledata.push(this.state.carbonechartData[i]["CarbonEmission"]);
     }
     const volumeChartData = {
-      labels: label,
+      labels: vollabel,
       datasets: [
         {
           backgroundColor: "rgba(11,182,226,1)",
@@ -142,9 +206,8 @@ HandleChangeSelect(event){
       ]
     };
 
-
     const carboneCharData = {
-      labels: label,
+      labels: carlabel,
       datasets: [
         {
           fill: false,
@@ -164,7 +227,7 @@ HandleChangeSelect(event){
           pointHoverBorderWidth: 2,
           pointRadius: 1,
           pointHitRadius: 10,
-          data: carbonelable
+          data: carbonelabledata
         }
       ]
     };
@@ -181,21 +244,18 @@ HandleChangeSelect(event){
             <div className="col-md-6">
               <div className="card carbonechart">
                 <div>
-                  <label className="grncuntr-lbl">Volunm Analysis</label>
-                  <select className="brncuntr-select" onChange={this.HandleChangeSelect.bind(this)}>
-                    {/* <option>Year</option>
-                    <option>Month</option>
-                    <option>Day</option> */}
-                    {this.state.selectData.map((team) => <option key={team.key} value={team.value}>{team.value}</option>)}
+                  <label className="grncuntr-lbl">Volume Analysis</label>
+                  <select
+                    className="brncuntr-select"
+                    onChange={this.HandleVolumeChangeSelect.bind(this)}
+                  >
+                    {this.state.selectData.map(team => (
+                      <option key={team.key} value={team.value}>
+                        {team.value}
+                      </option>
+                    ))}
                   </select>
                 </div>
-                {/* <Chart
-                      chartType="ColumnChart"
-                      width="100%"
-                      height="100%"
-                      data={volumedata}
-                      options={options}
-                    /> */}
                 <Bar
                   data={volumeChartData}
                   width={100}
@@ -208,10 +268,15 @@ HandleChangeSelect(event){
               <div className="card carbonemn-card">
                 <div>
                   <label className="grncuntr-lbl1">Carbon Emission</label>
-                  <select className="brncuntr-select1">
-                    <option>Year</option>
-                    <option>Month</option>
-                    <option>Day</option>
+                  <select
+                    className="brncuntr-select1"
+                    onChange={this.HandleCarboneChangeSelect.bind(this)}
+                  >
+                    {this.state.selectData.map(team => (
+                      <option key={team.key} value={team.value}>
+                        {team.value}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -232,15 +297,32 @@ HandleChangeSelect(event){
                 <div>
                   <label className="grncuntr-lbl">Green Conuter</label>
                 </div>
-                {/* <div className="dot">
-                  <div className="dot1"></div>
-                </div> */}
-                <Doughnut
-                  data={greenCounterdata}
-                  width={100}
-                  height={50}
-                  options={greencounterOption}
-                />
+                <div className="dot">
+                  {/* <div className="dot1"></div> */}
+
+                  <Doughnut
+                    data={greenCounterdata}
+                    width={700}
+                    height={600}
+                    options={greencounterOption}
+                  />
+                  <img
+                    src={VizioMyWay}
+                    alt="vizio-icon"
+                    className="greenchart-img"
+                  />
+                  <label className="greenchartlbl">
+                    Tons of
+                    <br /> CO2 Emission
+                  </label>
+                  <label className="counterval">
+                    {this.state.cotowemission}
+                  </label>
+                  
+                </div>
+                <label className="greenchartlbl1">
+                  {this.state.treecount} tree Planted
+                </label>
               </div>
             </div>
           </div>
