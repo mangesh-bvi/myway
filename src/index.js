@@ -20,7 +20,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Passcode from "./pages/Passcode";
 import UpdateForgotPassword from "./pages/updateforgotpassword";
 import { BrowserRouter as Router, Route } from "react-router-dom";
- 
+
 import UserAgreement from "./pages/UserAgreement";
 import QRCode from "./pages/QRCode";
 import ShippingDetails from "./pages/shipping-details";
@@ -46,8 +46,8 @@ ReactDOM.render(
     {/* <Route exact path="/popup" component={PopupModal} /> */}
 
     <Route exact path="/qrcode" component={QRCode} />
-    <Route exact path="/shipping-details" component={ShippingDetails} />
-    <Route exact path="/shipping-details-2" component={ShippingDetailsTwo} />
+    <Route exact path="/shipment-summary" component={ShippingDetails} />
+    <Route exact path="/shipment-details" component={ShippingDetailsTwo} />
     <Route exact path="/green-counter" component={GreenCounter} />
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
