@@ -41,6 +41,7 @@ body {
   margin: 0;
 }
 h2,
+h3,
 label,
 p {
   margin: 0;
@@ -57,7 +58,8 @@ select:focus {
 input[type="search"]::-webkit-search-cancel-button {
   display: none;
 }
-input[type="checkbox"] {
+input[type="checkbox"],
+input[type="radio"] {
   display: none;
 }
 select {
@@ -75,6 +77,11 @@ a:hover {
 h2 {
   color: #333;
   font-size: 20px;
+  font-family: "Bold Font";
+}
+h3 {
+  color: #333;
+  font-size: 18px;
   font-family: "Bold Font";
 }
 .butn {
@@ -277,11 +284,16 @@ h2 span {
 
 /* shipping details starts */
 .title-sect {
-  padding: 20px 30px;
+  padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
+}
+.list-map .butn {
+  padding: 5px;
+  font-size: 12px;
+  min-width: 100px;
 }
 .title-sect .butn {
   margin-right: 15px;
@@ -829,6 +841,106 @@ table tbody tr:last-child {
   overflow: auto;
 }
 /* shipment planner ends */
+
+/* rate search starts */
+.rate-radio-cntr {
+  display: flex;
+  margin-top: 20px;
+}
+.rate-search .butn {
+  padding: 15px;
+  min-width: 170px;
+}
+.rate-radio-cntr > div {
+  margin: 0 15px;
+}
+.rate-radio-cntr label {
+  font-family: "Medium Font";
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+}
+.rate-radio-cntr input + label::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  border: 1px solid #bebebe;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+}
+.rate-radio-cntr input:checked + label::before {
+  border-color: #002d73;
+}
+.rate-radio-cntr input:checked + label {
+  color: #002d73;
+}
+.rate-radio-cntr input:checked + label::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background-color: #002d73;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+}
+/* rate search ends */
+
+/* new rate search starts */
+.new-rate-cntr {
+  padding: 30px 20px;
+  border-bottom: 1px solid #d6d6d6;
+}
+.new-radio-rate-cntr {
+  display: flex;
+  margin-top: 15px;
+  justify-content: center;
+}
+.new-radio-rate-cntr label {
+  font-family: "Regular Font";
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid #959595;
+  border-radius: 50px;
+  padding: 5px 15px;
+  font-size: 14px;
+  min-width: 140px;
+  text-align: center;
+  margin: 0 10px;
+}
+.new-radio-rate-cntr input:checked + label {
+  font-family: "Bold Font";
+  color: #fff;
+}
+.radio-blue.new-radio-rate-cntr input:checked + label {
+  background-color: #002d73;
+  border-color: #002d73;
+}
+.radio-green.new-radio-rate-cntr input:checked + label {
+  background-color: #39b54a;
+  border-color: #39b54a;
+}
+.radio-light-blue.new-radio-rate-cntr input:checked + label {
+  background-color: #29abe2;
+  border-color: #29abe2;
+}
+.radio-brown.new-radio-rate-cntr input:checked + label {
+  background-color: #333333;
+  border-color: #333333;
+}
+.radio-brown.new-radio-rate-cntr label {
+  min-width: 80px;
+}
+.rate-search {
+  margin-bottom: 40px;
+  margin-top: 40px;
+}
+/* new rate search ends */
 
 /* chetan css ends */
 

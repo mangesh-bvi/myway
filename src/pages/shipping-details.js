@@ -79,7 +79,7 @@ class ShippingDetails extends Component {
   createColumnDefs() {
     return [
       {
-        headerName: "SHIPMENT NO",
+        headerName: "Myway No",
         field: "ShipmentNumber",
         sortable: true,
         autoHeight: true,
@@ -88,7 +88,7 @@ class ShippingDetails extends Component {
         }
       },
       {
-        headerName: "SHIPMENT MODE",
+        headerName: "Mode",
         field: "ModeOfTransport",
         cellRenderer: transportMode,
         sortable: true,
@@ -100,7 +100,7 @@ class ShippingDetails extends Component {
       // { headerName: "Shipment Mode", field: "ShipmentNumber",sortable: true,cellRenderer:currencyFormatter, filter: true,suppressCellFlash: true }
 
       {
-        headerName: "CONSIGNEE",
+        headerName: "Consignee",
         field: "Consignee",
         sortable: true,
         filter: true,
@@ -110,7 +110,7 @@ class ShippingDetails extends Component {
         }
       },
       {
-        headerName: "SHIPPER",
+        headerName: "Shipper",
         field: "Shipper",
         sortable: true,
         filter: true,
@@ -140,7 +140,7 @@ class ShippingDetails extends Component {
         }
       },
       {
-        headerName: "STATUS",
+        headerName: "Status",
         field: "Status",
         cellRenderer: statusImage,
         sortable: true,
@@ -161,7 +161,7 @@ class ShippingDetails extends Component {
         }
       },
       {
-        headerName: "EVENT",
+        headerName: "Event",
         field: "Event",
         sortable: true,
         filter: true,
@@ -197,8 +197,8 @@ class ShippingDetails extends Component {
           <div className="cls-rt">
             <div className="title-sect">
               <h2>Shipments</h2>
-              <div className="d-flex align-items-center">
-                <input type="search" placeholder="Search here" />
+              <div className="d-flex align-items-center list-map">
+                {/* <input type="search" placeholder="Search here" /> */}
                 <a href="#!" className="butn light-blue-butn">
                   List View
                 </a>

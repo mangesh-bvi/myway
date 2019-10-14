@@ -58,7 +58,6 @@ class ForgotPassword extends React.Component {
                 </button>
                 <a
                   href="/"
-                  type="button"
                   className="butn cancel-butn"
                   // onClick={() => this.handleSubmit()}
                 >

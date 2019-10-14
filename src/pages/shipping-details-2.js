@@ -7,6 +7,7 @@ import SideMenu from "../component/sidemenu";
 import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import Booked from "./../assets/img/booked.png";
+import Transit from "./../assets/img/transit-small.png";
 import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
 import Inland from "./../assets/img/inland.png";
@@ -134,10 +135,14 @@ class ShippingDetailsTwo extends Component {
                             <p className="details-title">Status</p>
                             <p className="details-para">Transshipped</p>
                           </div>
+                          <div className="col-md-3 details-border">
+                            <p className="details-title">Last Update</p>
+                            <p className="details-para">9-18-2019</p>
+                          </div>
                         </div>
                         <div className="row">
                           <div className="col-md-3 details-border">
-                            <p className="details-title">Mode of Transport</p>
+                            <p className="details-title">Mode</p>
                             <p className="details-para">Ocean</p>
                           </div>
                           <div className="col-md-3 details-border">
@@ -149,14 +154,6 @@ class ShippingDetailsTwo extends Component {
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">SRT No#</p>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-md-3 details-border">
-                            <p className="details-title">Status Date</p>
-                            <p className="details-para">
-                              9-18-2019 12:00:00 AM
-                            </p>
                           </div>
                         </div>
                       </div>
@@ -222,28 +219,26 @@ class ShippingDetailsTwo extends Component {
                                 </p>
                               </div>
                               <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Departure Port Name
-                                </p>
+                                <p className="details-title">Departure Port</p>
                                 <p className="details-para">
                                   Istanbul, Istanbul, Turkey(TRIST)
                                 </p>
                               </div>
                               <div className="col-md-6 details-border">
-                                <p className="details-title">Departure Date</p>
-                                <p className="details-para">08 Sep 2019</p>
+                                <p className="details-title">
+                                  Destination Port
+                                </p>
+                                <p className="details-para">
+                                  Sines, Setúbal, Portugal(PTSIE)
+                                </p>
                               </div>
                             </div>
                           </div>
                           <div className="col-md-6 details-border">
                             <div className="row">
                               <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Destination Port Name
-                                </p>
-                                <p className="details-para">
-                                  Sines, Setúbal, Portugal(PTSIE)
-                                </p>
+                                <p className="details-title">Departure Date</p>
+                                <p className="details-para">08 Sep 2019</p>
                               </div>
                               <div className="col-md-6 details-border">
                                 <p className="details-title">Arrival Date</p>
@@ -313,28 +308,26 @@ class ShippingDetailsTwo extends Component {
                                 <p className="details-para">MSC RANIA (MSC)</p>
                               </div>
                               <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Departure Port Name
-                                </p>
+                                <p className="details-title">Departure Port</p>
                                 <p className="details-para">
                                   Sines, Setúbal, Portugal(PTSIE)
                                 </p>
                               </div>
                               <div className="col-md-6 details-border">
-                                <p className="details-title">Departure Date</p>
-                                <p className="details-para">18 Sep 2019</p>
+                                <p className="details-title">
+                                  Destination Port
+                                </p>
+                                <p className="details-para">
+                                  Long Beach, California, United States(USLGB)
+                                </p>
                               </div>
                             </div>
                           </div>
                           <div className="col-md-6 details-border">
                             <div className="row">
                               <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Destination Port Name
-                                </p>
-                                <p className="details-para">
-                                  Long Beach, California, United States(USLGB)
-                                </p>
+                                <p className="details-title">Departure Date</p>
+                                <p className="details-para">18 Sep 2019</p>
                               </div>
                               <div className="col-md-6 details-border">
                                 <p className="details-title">Arrival Date</p>
@@ -583,6 +576,16 @@ class ShippingDetailsTwo extends Component {
                           </div>
                           <p>
                             <span>Departed : </span>9 Oct 2019, 90:45:56
+                          </p>
+                        </div>
+                        <div className="track-line-cntr active">
+                          <div className="track-img-cntr">
+                            <div className="track-img">
+                              <img src={Transit} alt="transit icon" />
+                            </div>
+                          </div>
+                          <p>
+                            <span>On the way</span>
                           </p>
                         </div>
                         <div className="track-line-cntr">
