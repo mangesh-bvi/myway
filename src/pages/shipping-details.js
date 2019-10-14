@@ -17,42 +17,30 @@ import Transit from "./../assets/img/transit.png";
 import Box from "./../assets/img/box.png";
 import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-balham.css";
+import Arrived from "./../assets/img/arrived.png";
 
-const style = {
-  img: {
-    width: "35px",
-    height: "35px"
-  }
-};
+
+import ReactTable from "react-table";
+import "react-table/react-table.css";
+
 class ShippingDetails extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      // columnDefs: [
-      //   {
-      //     headerName: "A",
-      //     field: "ShipmentNumber",
-      //     valueFormatter: currencyFormatter
-      //   }],
-      columnDefs: this.createColumnDefs(),
-      rowData: this.createRowData()
-
-      // rowData: this.createRowData()
+      shipmentSummary: []
     };
+    this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
   }
 
   componentDidMount() {
-    //this.setState({rowData: this.CreateRow});
-    // this.gridApi.onGridReady();
-    var a = [{ ShipmentNumber: "1" }, { ShipmentNumber: "2" }];
-    this.setState({ rowData: a }); ///////its working
+    this.HandleListShipmentSummey();
+  }
+
+  HandleListShipmentSummey() {
+    debugger;
     let self = this;
     var userid = window.localStorage.getItem("userid");
-    console.log("ship date start" + new Date());
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/shipmentsummaryAPI`,
@@ -62,136 +50,34 @@ class ShippingDetails extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      console.log("ship end date" + new Date());
+      debugger;
       var data = [];
       data = response.data.Table1;
-      //        var a= [
-      //  { ShipmentNumber: "1"},
-      //  { ShipmentNumber: "3"}
-      //  ]
-      self.setState({ rowData: data }); ///problem not working setstat undefined
+      self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
     });
   }
 
-  onGridReady(params) {
-    this.gridApi = params.api;
-    this.columnApi = params.columnApi;
-    //rowData = this.CreateRow();
-    this.gridApi.sizeColumnsToFit();
+  HandleChangeShipmentDetails(HblNo) {
+    debugger;
+    this.props.history.push({
+      pathname: "shipment-details",
+      state: { detail: HblNo }       
+    });
   }
 
-  createColumnDefs() {
-    return [
-      {
-        headerName: "SHIPMENT NO",
-        field: "ShipmentNumber",
-        sortable: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      {
-        headerName: "SHIPMENT MODE",
-        field: "ModeOfTransport",
-        cellRenderer: transportMode,
-        sortable: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      // { headerName: "Shipment Mode", field: "ShipmentNumber",sortable: true,cellRenderer:currencyFormatter, filter: true,suppressCellFlash: true }
+  HandleRowClickEvt = (rowInfo, column) => {
+    return {
+      onClick: e => {
+        debugger;        
+        var hblNo=column.original["HBL#"];
+        this.HandleChangeShipmentDetails(hblNo);
 
-      {
-        headerName: "CUSTOMER NAME",
-        field: "Consignee",
-        sortable: true,
-        filter: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      {
-        headerName: "SHIPPER DETAILS",
-        field: "Shipper",
-        sortable: true,
-        filter: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      {
-        headerName: "POL",
-        field: "POL",
-        sortable: true,
-        filter: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      {
-        headerName: "POD",
-        field: "POD",
-        sortable: true,
-        filter: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      {
-        headerName: "STATUS",
-        field: "Status",
-        cellRenderer: statusImage,
-        sortable: true,
-        filter: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      {
-        headerName: "ETA",
-        field: "ETA",
-        sortable: true,
-        filter: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
-      },
-      {
-        headerName: "EVENT",
-        field: "Event",
-        sortable: true,
-        filter: true,
-        autoHeight: true,
-        cellRenderer: function(params) {
-          return "<a href='/shipment-details'>" + params.value + "</a>";
-        }
       }
-    ];
-  }
-
-  createRowData() {
-    return [
-      { ShipmentNumber: "1" }
-      //  { ShipmentNumber: "1", transport: "AIR", custname: "Mangesh",pol:"New yaork",pod:"Virginia",status:"Yes",eta:"30-04-2019",event:"Ontime" },
-      //   { no: "2", transport: "OCean", custname: "Mangesh",pol:"New yaork",pod:"Virginia",status:"Yes",eta:"30-04-2019",event:"Ontime" },
-      //   { no: "3", transport: "Truck", custname: "Mangesh",pol:"New yaork",pod:"Virginia",status:"Yes",eta:"30-04-2019",event:"Ontime" },
-      //   { no: "4", transport: "AIR", custname: "Mangesh",pol:"New yaork",pod:"Virginia",status:"Yes",eta:"30-04-2019",event:"Ontime" }
-    ];
-  }
+    };
+  };
 
   render() {
-    let containerStyle = {
-      height: 640
-      // width: 900
-    };
+    const { shipmentSummary } = this.state;
     return (
       <div>
         <Headers />
@@ -212,17 +98,164 @@ class ShippingDetails extends Component {
                 </a>
               </div>
             </div>
-            <div style={containerStyle} className="ag-fresh">
-              <AgGridReact
-                id="mygrid"
-                // properties
-                pagination={true}
-                paginationPageSize={10}
-                columnDefs={this.state.columnDefs}
-                rowData={this.state.rowData}
-                autoHeight={true}
-                // events
-                onGridReady={this.onGridReady}
+            <div className="ag-fresh">
+              <ReactTable
+                data={shipmentSummary}
+                columns={[
+                  {
+                    columns: [
+                      {
+                        Cell: row => {
+                          if (row.value == "Air") {                             
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Plane} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Ocean") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px" ,textAlign:"center"}} src={Ship} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Inland") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Truck} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Railway") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Rail} />
+                              </div>
+                            );
+                          }
+
+                          
+                        },
+                        Header: "Mode Of Transport",
+                        accessor: "ModeOfTransport"
+                      },
+                      {
+                        Header: "BL/HBL",
+                        accessor: "BL/HBL"
+                      },
+
+                      {
+                        Header: "Customer Name",
+                        accessor: "Consignee"
+                      },
+
+                      // {
+                      //   Header: "Shipper",
+                      //   accessor: "Shipper"
+                      // },
+
+                      {
+                        Header: "POL",
+                        accessor: "POL"
+                      },
+
+                      {
+                        Header: "POD",
+                        accessor: "POD"
+                      },
+                      {
+                        Cell: row => {
+                          if (row.value == "Planning in Progress") {                             
+                            return (
+                              <div>
+                                <img style={{ width: "35px",textAlign:"center" }} src={Delivered} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Departed") {
+                            return (
+                              <div>
+                                <img style={{ width: "35px" ,textAlign:"center"}} src={Delivered} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Transshipped") {
+                            return (
+                              <div>
+                                <img style={{ width: "35px",textAlign:"center" }} src={Transit} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Arrived") {
+                            return (
+                              <div>
+                                <img style={{ width: "35px",textAlign:"center" }} src={Arrived} />
+                              </div>
+                            );
+                          } 
+                          if (row.value == "Delivered") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Delivered} />
+                              </div>
+                            );
+                          }
+
+                          if (row.value == "DO Issued") {
+                            return (
+                              <div>
+                                {row.value}
+                              </div>
+                            );
+                          }
+                           
+                          
+                        },
+                        Header: "Status",
+                        accessor: "Status"
+                      },
+                      {
+                        Header: "ETA",
+                        accessor: "ETA"
+                      },
+                      {
+                        Header: "Event",
+                        accessor: "Event",
+                        Cell:row=>{
+                          if(row.value=="N/A"){
+                          return(<>
+                           <label className="">{row.value}</label>
+
+                          </>);
+                        }
+                        if(row.value=="On Time"){
+                          return(<>
+                           <label className="girdevtgreen">{row.value}</label>
+
+                          </>);
+                        }
+                        if(row.value=="Behind Schedue"){
+                          return(<>
+                           <label className="girdevtred">{row.value}</label>
+
+                          </>);
+                        }
+                        if(row.value=="Delay Risk"){
+                          return(<>
+                           <label className="girdevtyellow">{row.value}</label>
+
+                          </>);
+                        }
+                      }
+
+                      }
+                    ]
+                  }
+                ]}
+                defaultPageSize={10}
+                className="-striped -highlight"
+                getTrProps={this.HandleRowClickEvt}
               />
             </div>
             <div className="table-scroll">
