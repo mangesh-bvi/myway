@@ -77,7 +77,7 @@ class ShipmentPlanner extends Component {
       headers:authHeader()
     }).then(function (response) { 
       debugger;
-      let optionItems = this.state.companydrp.map((planet) =>
+      let optionItems = response.data.map((planet) =>
       <option onchange={this.companyChange} atrCompLocType={planet.MyCompLocationType} atrCompLocId={planet.MyCompLocationID} value={planet.MyCompID}>{planet.MyCompName}</option>
       );
       self.setState({consigneedrp:response.data});

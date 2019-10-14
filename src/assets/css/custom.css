@@ -618,7 +618,8 @@ table tbody tr:last-child {
   justify-content: space-between;
 }
 .progress-sect {
-  margin-bottom: 20px;
+  /*  */
+  padding: 40px 40px 0px 30px;
 }
 .ship-detail-map {
   height: 300px;
@@ -1256,4 +1257,14 @@ table tbody tr:last-child {
   width: 50%;
   margin: 0 85px 0;
 }
+
+.girdevtred{
+color: #eb0029;
+}
+.girdevtyellow{
+  color: #ffb400;
+  }
+  .girdevtgreen{
+    color: #39b54a;
+    }
 /* --------------------------------------------------------------------------- */

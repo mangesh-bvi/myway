@@ -5,49 +5,474 @@ import appSettings from "../helpers/appSetting";
 import axios from 'axios';
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
+import Plane from "./../assets/img/plane.png";
+import Transit from "./../assets/img/transit.png";
+import Box from "./../assets/img/box.png";
+import Delivered from "./../assets/img/delivered.png";
+import InPlane from "./../assets/img/in-plane.png";
+import Arrived from "./../assets/img/arrived.png";
 
-class ShippingDetails  extends React.Component {
+
+import ReactTable from "react-table";
+import "react-table/react-table.css";
+
+class ShippingDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
-      products: []
-    }
+      shipmentSummary: []
+    };
+    this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
   }
 
   componentDidMount() {
-    let self = this;
-   var userid=window.localStorage.getItem("userid");
-   console.log("ship date start"+new Date());
-   axios({
-     method: 'post',
-     url: `${appSettings.APIURL}/shipmentsummaryAPI`,
-     data: {
-       UserId: userid,
-       PageNo:1   
-     },
-     headers:authHeader()
-   }).then(function (response) { 
-     debugger;
-    console.log("ship end date"+new Date());
-        var data=[];
-        data=response.data.Table1;  
-     self.setState({products:data});///problem not working setstat undefined
-   });
+    this.HandleListShipmentSummey();
   }
 
-  render() {
-    const { error, products} = this.state;
-    function Greeting(props) {
+  HandleListShipmentSummey() {
+    debugger;
+    let self = this;
+    var userid = window.localStorage.getItem("userid");
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/shipmentsummaryAPI`,
+      data: {
+        UserId: userid,
+        PageNo: 1
+      },
+      headers: authHeader()
+    }).then(function(response) {
       debugger;
-      const isLoggedIn = props.isLoggedIn;
-      if (isLoggedIn==="NYCAI-SEP19-0001270") {
-        return <img src={Truck}></img>;
+      var data = [];
+      data = response.data.Table1;
+      self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
+    });
+  }
+
+  HandleChangeShipmentDetails(HblNo) {
+    debugger;
+    this.props.history.push({
+      pathname: "shipment-details",
+      state: { detail: HblNo }       
+    });
+  }
+
+  HandleRowClickEvt = (rowInfo, column) => {
+    return {
+      onClick: e => {
+        debugger;        
+        var hblNo=column.original["HBL#"];
+        this.HandleChangeShipmentDetails(hblNo);
+
       }
-      else{
-        return <img src={Rail}></img>;
-      }
-    
+    };
+  };
+
+  render() {
+    const { shipmentSummary } = this.state;
+    return (
+      <div>
+        <Headers />
+        <div className="cls-ofl">
+          <div className="cls-flside">
+            <SideMenu />
+          </div>
+          <div className="cls-rt">
+            <div className="title-sect">
+              <h2>Shipments</h2>
+              <div className="d-flex align-items-center">
+                <input type="search" placeholder="Search here" />
+                <a href="#!" className="butn light-blue-butn">
+                  List View
+                </a>
+                <a href="#!" className="butn">
+                  Map
+                </a>
+              </div>
+            </div>
+            <div className="ag-fresh">
+              <ReactTable
+                data={shipmentSummary}
+                columns={[
+                  {
+                    columns: [
+                      {
+                        Cell: row => {
+                          if (row.value == "Air") {                             
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Plane} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Ocean") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px" ,textAlign:"center"}} src={Ship} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Inland") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Truck} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Railway") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Rail} />
+                              </div>
+                            );
+                          }
+
+                          
+                        },
+                        Header: "Mode Of Transport",
+                        accessor: "ModeOfTransport"
+                      },
+                      {
+                        Header: "BL/HBL",
+                        accessor: "BL/HBL"
+                      },
+
+                      {
+                        Header: "Customer Name",
+                        accessor: "Consignee"
+                      },
+
+                      // {
+                      //   Header: "Shipper",
+                      //   accessor: "Shipper"
+                      // },
+
+                      {
+                        Header: "POL",
+                        accessor: "POL"
+                      },
+
+                      {
+                        Header: "POD",
+                        accessor: "POD"
+                      },
+                      {
+                        Cell: row => {
+                          if (row.value == "Planning in Progress") {                             
+                            return (
+                              <div>
+                                <img style={{ width: "35px",textAlign:"center" }} src={Delivered} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Departed") {
+                            return (
+                              <div>
+                                <img style={{ width: "35px" ,textAlign:"center"}} src={Delivered} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Transshipped") {
+                            return (
+                              <div>
+                                <img style={{ width: "35px",textAlign:"center" }} src={Transit} />
+                              </div>
+                            );
+                          }
+                          if (row.value == "Arrived") {
+                            return (
+                              <div>
+                                <img style={{ width: "35px",textAlign:"center" }} src={Arrived} />
+                              </div>
+                            );
+                          } 
+                          if (row.value == "Delivered") {
+                            return (
+                              <div>
+                                <img style={{ width: "45px",textAlign:"center" }} src={Delivered} />
+                              </div>
+                            );
+                          }
+
+                          if (row.value == "DO Issued") {
+                            return (
+                              <div>
+                                {row.value}
+                              </div>
+                            );
+                          }
+                           
+                          
+                        },
+                        Header: "Status",
+                        accessor: "Status"
+                      },
+                      {
+                        Header: "ETA",
+                        accessor: "ETA"
+                      },
+                      {
+                        Header: "Event",
+                        accessor: "Event",
+                        Cell:row=>{
+                          if(row.value=="N/A"){
+                          return(<>
+                           <label className="">{row.value}</label>
+
+                          </>);
+                        }
+                        if(row.value=="On Time"){
+                          return(<>
+                           <label className="girdevtgreen">{row.value}</label>
+
+                          </>);
+                        }
+                        if(row.value=="Behind Schedue"){
+                          return(<>
+                           <label className="girdevtred">{row.value}</label>
+
+                          </>);
+                        }
+                        if(row.value=="Delay Risk"){
+                          return(<>
+                           <label className="girdevtyellow">{row.value}</label>
+
+                          </>);
+                        }
+                      }
+
+                      }
+                    ]
+                  }
+                ]}
+                defaultPageSize={10}
+                className="-striped -highlight"
+                getTrProps={this.HandleRowClickEvt}
+              />
+            </div>
+            <div className="table-scroll">
+              {/* <table>
+                <thead>
+                  <tr>
+                    <th>
+                      No
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Shipment Mode{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Customer Name{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Shipper Details{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      POL{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      POD{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Status{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      ETA{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                    <th>
+                      Event{" "}
+                      <span className="down-arrow">
+                        <img src={DownArrow} alt="down arrow icon" />
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="text-center">1</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Ship} alt="ship icon" />
+                      </span>
+                    </td>
+                    <td>David Robinson</td>
+                    <td>Abc Xyz</td>
+                    <td>Port of Houston</td>
+                    <td>Western Cape</td>
+                    <td>
+                      <span className="status-img" id="transit">
+                        <img src={Transit} alt="transit icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="transit">
+                        In Transit
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>19/08/2019</td>
+                    <td className="clr-green">On Time</td>
+                  </tr>
+                  <tr>
+                    <td className="text-center">2</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Truck} alt="truck icon" />
+                      </span>
+                    </td>
+                    <td>Scott Brown</td>
+                    <td>Abc Xyz</td>
+                    <td>New York</td>
+                    <td>Virginia</td>
+                    <td>
+                      <span className="status-img" id="boxed">
+                        <img src={Box} alt="box icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="boxed">
+                        Boxed
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>12/05/2019</td>
+                    <td className="clr-yellow">Dealy Risk</td>
+                  </tr>
+                  <tr>
+                    <td className="text-center">3</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Rail} alt="rail icon" />
+                      </span>
+                    </td>
+                    <td>Robbin Miller</td>
+                    <td>Abc Xyz</td>
+                    <td>Nevada</td>
+                    <td>Los Angeles</td>
+                    <td>
+                      <span className="status-img" id="delivered">
+                        <img src={Delivered} alt="delivered icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="delivered">
+                        Delivered
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>20/09/2019</td>
+                    <td className="clr-green">On Time</td>
+                  </tr>
+                  <tr>
+                    <td className="text-center">4</td>
+                    <td>
+                      <span className="shipment-img">
+                        <img src={Plane} alt="plane icon" />
+                      </span>
+                    </td>
+                    <td>Smith Johnson</td>
+                    <td>Abc Xyz</td>
+                    <td>Texas</td>
+                    <td>Dubai</td>
+                    <td>
+                      <span className="status-img" id="in-plane">
+                        <img src={InPlane} alt="in-plane icon" />
+                      </span>
+                      <UncontrolledTooltip placement="right" target="in-plane">
+                        In Plane
+                      </UncontrolledTooltip>
+                    </td>
+                    <td>12/06/2019</td>
+                    <td className="clr-red">Behind Schedue</td>
+                  </tr>
+                </tbody>
+              </table>
+             */}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+function transportMode(params) {
+  var element = document.createElement("span");
+  var imageElement = document.createElement("img");
+  switch (params.value) {
+    case "Air": {
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAAAoCAYAAAChDJfXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABOVJREFUeNrsmm1oHVUQhjcxNcRqDSopWmskhlQJosZYajT4VaWoUPxTRGqLiAqKtegPtUp/Cv7yA/EDFUFFtIIiogSp1rQ2aomxRUpjCEGRejGGGAwx3iYmzuBz6HDYvR8n2b3X6MDL2ezdm7PnPTPvzJmkZn5+PvqvW51/o7PjUh1OEzwuWG4+mhU8Lzi8FBbeP/BNMgnYGR4B7tkbA0lQUncKGjxS3xN8WmlCahPuTzMeEdwjuE/wu6BVsCpgnjlBfQypm0BVkjDJeJLZtb1cXxMwz4RggOu3IfYpQV5wHT/XVRsJU4w2JHrZ0bWeW5dqzu2vZd5BwZN4WIfggZgQrCgJM+AUQbOgkZcdwK3XBcw1IhgWNAku5t5RwcuQ3iZ4CP2oChKcN+iCd5gQ6F1ASKh9wni9uddtPED15tFA3UmNBLdbE1wP8fNKwfkB830nGBW0ALUxwY/gF8EKwcOBvz81El4S7DH33fXVgVnCecMGxg8ET4CdaId64P2BYZcKCeehC81oxAFS6EVoRbn2FdnnQvTBmnrY1zyj2eIOQ1ZFSPiDcSu6sAMV17TWx3evCphTBXcf31/vfbaFeawH3CK4tci7pu4JQ7y0Ise9zxmvDMzvn0FGF97l7JCZy2EKIb5bsCyTs0NMwXQwprQdpXxuJ931lznvJC7fDT72skfkadA2wSWCBwXPmQ1KnYQ84wWCYwVIuiGweMqbdDtZ5Nk+tEEzyiMeWTlIyYWSUOMfpTlF6g7fFbi4StoEKfwwoTUWeoqsh4B63Hy6yha6gsykIfk9hdbpZJpG0M7BTAnZTejNlRMOZ+IBQ5S01WatkPCD4M2Y9Wj4dvLMKrLbTYJdeEdJJNSZw1N3iS82sNhiVYI1FXi/YUhqB9ofuReR3eV7RSFhVBY3l3E4yooEt4BzQTmmInwqHj5XCglHvXK5mCBlZSMsIkS0b6bg04zWU4iEWVMs7avSLNAf8J0GU+qvLUZCjhyuAnQnB5yx6N9rusbLBRupTqfobhXUhDyquxXGNBV9GPNcC2XvLKFjSZzh+jeaMZWwZly/i7Qacfh7XzBeijAeoEztQGV9a6OULaeWV2J+9jRnGoKnF2G3z8F7W3m/Bk9H3klYSyIJerBag4IOxuRpR4B2mn7CzVxb7ASvM3QWzy5jd+xORRQ8h4oc8tabY7fOc7LJYElrGCd193meWjIJLdQJw8a13X1HQA+uVY41kqJ0l7Sx+lcMyb7djksXO5D9ymK1Q3WkHB1LIqHdtMMik5e3UU7vDiDApdIJipxawi5f4PnbIEAX+RH6k/M2ZnSh4ZREQhvjoHHd7eygHqvfXWAMd5kuk99UOZvrEynhdYHPEHappQ/flkfHm6Cb0YUmCOil7FyIreT3j6MH/mdWN5SAp9MkIKmzZP9ctpqXUgL2C95ahDnXGS/wT3avG5HUMHk2SdHT9gTdoce8ttef0T/t8MUg3YXClzGfX0ZVNwMBI1lVU0npZTyF+daQIUYQtA3UIo6g1YaA4SxLyizNecEXJuc3e+eWF+hlZGa1Gc7VQBU6Ex3/C3UPWuMIeDGqwD+BZElCJ0XWtyavaxfoCgh4xatLliQJLhT6TJZwKfhVyKnYMTOrVpirPbZ7XaLXTHhES9kTjsWUxxoSb1A6V9Rq/v8Xvij6W4ABAHWlLKncQ6K0AAAAAElFTkSuQmCC";
+      imageElement.style.width = "65px";
+      element.append(imageElement);
+      break;
+    }
+    case "Ocean": {
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAAAoCAYAAAChDJfXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABNtJREFUeNrsWktIFWEUHmVKwrxJyO0hlYlYJvbOSokoS3riImohQkS0aBXRql1E9Fi0ibbtIoKIkCjsYVKWmVghIkpIJBWhiEhxEUuunVPfH4fhn3/+uV6te/PA54wz53+d//zndSdjfHzc+d8p05mmaSEwufxn/dp1unc5hLma598JX9JFAO1vXv8Wgg9tJ+zRPI8TjqedJgQclRhhkDCfkJXAEdoEgSabHvJGTrYQ/mgM4QZhHuFsAmMUEpZMghDypkITvPQD17EEx2ojPDa8308oI7QSnljwTdpxYFWvxH0xrssJWwmlok01oZ/QEWKsIUJfwHumYUu+SRNChFDnecbHoNbz7ACu17DDaWUYpdFrNrRbRCiA92iHxwgi1qwtAbZDaZ6JrwjXUhjtIOoNcukmm3CdsEAMOioWnE24gPerCG8tDWShBV8BYCPUYgu+GxMRgpp4nec89mIHmgi7CLsthcBtuwzvlxGihM+E90ngK/UJ9kILoQsaoWhE3LOl3wb3V0LotvAOdwzvj2JxnZZ8rYgVTHzlyRDCHI+PV/efoQlsN3ZAI7qTZKd+THXeEySEIh8jFcexeAD3uRzn+IOhL5NqZsHOBPFlCr5IAF/ORIWgdqMFi9XRN8JXwjNCFWEf4aphrHJL9awUsYqJqoCkaQJL9zBhFv6fQTiFgMi7m7M9z9TOcBR3mvCRcAvexEu6IGghxgtLcYw14f5ckSTF4O7CuiCde8vVaAUbsduGtrwJFSH46gkNBr5jXCUIexzuQl1dWP5EIkEWwEFoRbXHesctDaItn42mhLYJQ7D27PYWQ6XDUh8G59iiBvYkM+ykkrxINyzDfahaMYINFdwcgae4hDPH/z9CtncS1v0iJtYMb7EedkXt3BaRhOkoKvhKLPh2Bqi74uNgbqMPD7v1O14hsLVvRE5QI4SQDaPp4hoRRnSWeB8TIfdiTMQV5Tobt5UtjK2JIgFu0rEYt95PVR7C93NgtAYh8VXPsZHltXOaPjiyPC9241+iQ9DqHrXJrs8CGpAu16BmkMh5HgmoC/wNiookrj4o9HyK4sYC2/g7RWgv1twhky8/IYzCSKpylpsGAsjHhsalFgQlIS8IA87vgmZlGghhP9bbhgTQSghjCKAceIusFBZAAYw8r+le2ECiHYkR1xnPIGlKRcrzaHcoIeQKDZhrW6n5R0naOWshRBEN5iKbvO+k5m+QJxB8KY8XSgi12Hl2JVc8pbVUIRV9jpgyTpMQGhBVNfnUBlKBOIy/DCHETGUoWTCRYW4PUuoVjr5Uzr89rNUUMHLgj3M1Y5X51CgiSLp0cf8mjS1SfZUY4gGV27xD8UW5etekCafA2IyIqgiNckSa/BJupkIIhj3GK6TNKwnrYEw5KOlEG57YZmGl+9AmhkWWiASuDRNfTdgAIau+XkD4si/2+S1oWyH6iqGvLuRB1ZhXv+MpGWbwN0v4SKMKyYVOpVxNnDCGgXUeY8AneWKBzdT0FUdipvuledDn+TeR1XrnNezTho3jTZkLeT/SaISEKiHtQRjF5xhIZZaZ2EllbcuhmlE8b0W7fPS1BHy92DEXhZsC3PfB7gzjeK1BXPIJfb0TfS2FsHrwzsW8CiHYD6KvcmhFPna/xfH5WSBj+uu16Q+3ftFPAQYA5/saaEeazjMAAAAASUVORK5CYII=";
+      imageElement.style.width = "65px";
+      element.append(imageElement);
+      break;
+    }
+    case "Truck": {
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAAAoCAYAAAChDJfXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4FJREFUeNrsmm9IE2Ecx7dmiQwjpD9ERDNGBBHhHEJlmNQLexNIJRERSSlRYRBIFL3qXUQS0Yt6EUFIbyIkighjhNSLCLMXMsIYokgkYRKtEFtrfX/5PXg4zu1uu7ut7X7w4Xbe4/ncd8/z+3f6M5mMr9Jtic8zX1WuAdFIo5l7+EGqlB90eORd/iLksDXgPFdUH/hclishi60HPWA5z3vBE/Dbhnl9ADOlLsIGcA4EwUMg3rUDHLZpXiLCjVIWIcwVUA36wSv+/Bc4wq3xBiTyuPcyirm0lLfDZnAWBMBd8Fa5JmLMg07QyGtxi/evoQiumj9XnoDoIBO7ANYWyW99BzfBVDGjwzoK8NNNZ0WrBXVgY6Ei2LUd4twCbloL/YyXMXoilFh0CIGjFsYPgjmwD/wAzwqYZxOTs1w2DYaspvBWRFhNzJrkCZ/AHnr4wQKyyTAxYw3gOvjjlGN8bHKsGkl6mT8Ukk4/ByMmxnVQLFm1427UDjN8WDNxvlCbBZO6usXIn32hCEGntsMWopnsu4sg6bIfOw225RjTBUbBUzOVrRURROUx5TxJx+e2rVTSdPnGI7q5VbPAi1IsyW3e2yXCBAumUrF+ZrORReYmIhwHJ8AVClVxecIweMSKdG8lJ0uvGSrDlSxCiuG5xkubHcwTim0SAVbxc5DneX3R/6MIWuZ5KUsOY5TBlpUID8AOC1t5ezmuhAli1qJeP8EFxyhvoFp9Cz1A6dh+BC+UokmuH+OevM2kJWrh/rU8toGdWcZJGJR3FTF+dk0Eqdu7uZokHgdYwkpfsI9LNs3raSYtaZu+PLWKTDEr3EShroFvboggzZWTnMA9pUCRBspBcAZcZrl9Vfm9GDFrWqNV+glDSiToYXl9h2KLCIc4votCOCKCPPguZSLyuwO6Ci3GLSCTafctdJYKsbBy1DpFzTzeVxxkilEjxLFtSlisskMErVwOEb2nNvLeLfQVdlkTUc3oNV+CSVP7Is+Qtwjybd4CK3TJSQNF0U9GE+qlDSvByJr5N+rpiFWr53FAlyAl7NgOo7pz8cRbwX7wVdkSrdwySU5k3gERZukTOhlxJukTDjBKjdOHOOYYZb9pL0zT7OKc4sMGeL8UV47dAkiWuJufxT/UMXWeU6pEzVk6GiLVfv60wfUxXZ5gp6kt9CmDecXzzRP83n+veWnzP/srwACl7smbzjqnDwAAAABJRU5ErkJggg==";
+      imageElement.style.width = "65px";
+      element.append(imageElement);
+      break;
+    }
+    case "rail": {
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAAAoCAYAAAChDJfXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA7VJREFUeNrsWltLVFEUnpm8UKMhocVgZolGEmbpJEZEWBA+KBZB9A+i6DUM6il6CIKCHqIrIb10gx6UyaLLgxVRKoiIJiKmRRdkiEpEFKe16Du1PMzsfS4zBLoXfMw5ns0+a397rW/tvY/BRCIRWOoWChgzJBgSDAn/LEveRGtq5e0+wsFFNt4pwiXCGN909/ZoI6F6EU56mFCqjIQU9onwwuNLtxE2E2YJdz32UUxowHUH4buHPnIIhxylQwqLE7o8DqAQJMz56KNKkNCLSXFry1UkGGF0GAnSmglNmjY8W1cVzzkyjhKyFW0mCecIPxURdpKQr+hjGn4MprtEljtoU6F5XqYhwBrkCs3zfAcpsCoTkXANVWOZos2Apo9HyOuwos0E4avi+RDhIqFI0eYHoT8TJHCdfe0zBeeQMn5tCDArxv8hjE0QR5V1E64vZmGscNBmo+b5hjQIY5FDYSzMRCTcIGzRkPde08djwhc4mco+a4RxEHsAlfr/IvRlggQOz1c+U3AWKePXBtKlCUYYPURCI+GAps1bwk2NMB4h5CrafIMwTik04wShQFPOrxCG0x0JlQ7abHIgjLmaNqsJeRphLHCwbV5jhNEIoxFGVxaUH1+iNbUcoq2EyBIY+9Pu3p77ySIhvEQIWLD6zUqyZj8PIgpREq08fgNNqBPLUc5LPvPbKdbr1jHaDrG05a1zsUdnp1HurHeO4r3sY1TsTB9gXxMW4jmCM5BKUTYf4rpPJYwjQAvu5wkX8HK2TsIplB8uVTP4O/+eBZFsfDh7Gk7FsbdvdEnADDZjx4Xjl22+HsY48gQBzwj3RDs+X9yL56MB2zmlShitmRsWBFiOvRT1fJ1wcFK0iwu2I5iBdkSVE4ujDE4LP+2n3l2IArZ6me/2/BfXJW5K5Dx+czSlNUtBaML2rANwY2VJ+vsr7Cl8CimqYMhNiRwTTsgPMSsJu0WuW8vSrTaWi6EfVth6tQkRPc22bXijGLyMkhYxtpBIbbYPbiKBQ60By9NjCG0OzSqRe51Y3UXRV6tIgWo4zOEa87m4imEgLHJnhDCWC5Kf4L4K5JcIYbQqXn8gyXeLkGYDcgsDtwZVLwiIYbPEM3UbzmaDkKgg4A6I8mNMtnUuyUvlXYKASfjJ6dsmIjiCdhER2W1OFkvJ2hSIWeDF1Dicsu/OuFrsJ6wXYdce8PbFKJXVYWClGPwANGbGNrF7CNsJawkfCe8Iz4XO/TkHxAfZoPl3HbN3MCQYEgwJC+23AAMANuThyCefxrQAAAAASUVORK5CYII=";
+      imageElement.style.width = "65px";
+      element.append(imageElement);
+      break;
+    }
+  }
+  return element;
+}
+
+function statusImage(parameter) {
+  var element = document.createElement("span");
+  var imageElement = document.createElement("img");
+  switch (parameter.value) {
+    case "Departed": {
+      //delivered
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAAAoCAYAAAChDJfXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABOVJREFUeNrsmm1oHVUQhjcxNcRqDSopWmskhlQJosZYajT4VaWoUPxTRGqLiAqKtegPtUp/Cv7yA/EDFUFFtIIiogSp1rQ2aomxRUpjCEGRejGGGAwx3iYmzuBz6HDYvR8n2b3X6MDL2ezdm7PnPTPvzJmkZn5+PvqvW51/o7PjUh1OEzwuWG4+mhU8Lzi8FBbeP/BNMgnYGR4B7tkbA0lQUncKGjxS3xN8WmlCahPuTzMeEdwjuE/wu6BVsCpgnjlBfQypm0BVkjDJeJLZtb1cXxMwz4RggOu3IfYpQV5wHT/XVRsJU4w2JHrZ0bWeW5dqzu2vZd5BwZN4WIfggZgQrCgJM+AUQbOgkZcdwK3XBcw1IhgWNAku5t5RwcuQ3iZ4CP2oChKcN+iCd5gQ6F1ASKh9wni9uddtPED15tFA3UmNBLdbE1wP8fNKwfkB830nGBW0ALUxwY/gF8EKwcOBvz81El4S7DH33fXVgVnCecMGxg8ET4CdaId64P2BYZcKCeehC81oxAFS6EVoRbn2FdnnQvTBmnrY1zyj2eIOQ1ZFSPiDcSu6sAMV17TWx3evCphTBXcf31/vfbaFeawH3CK4tci7pu4JQ7y0Ise9zxmvDMzvn0FGF97l7JCZy2EKIb5bsCyTs0NMwXQwprQdpXxuJ931lznvJC7fDT72skfkadA2wSWCBwXPmQ1KnYQ84wWCYwVIuiGweMqbdDtZ5Nk+tEEzyiMeWTlIyYWSUOMfpTlF6g7fFbi4StoEKfwwoTUWeoqsh4B63Hy6yha6gsykIfk9hdbpZJpG0M7BTAnZTejNlRMOZ+IBQ5S01WatkPCD4M2Y9Wj4dvLMKrLbTYJdeEdJJNSZw1N3iS82sNhiVYI1FXi/YUhqB9ofuReR3eV7RSFhVBY3l3E4yooEt4BzQTmmInwqHj5XCglHvXK5mCBlZSMsIkS0b6bg04zWU4iEWVMs7avSLNAf8J0GU+qvLUZCjhyuAnQnB5yx6N9rusbLBRupTqfobhXUhDyquxXGNBV9GPNcC2XvLKFjSZzh+jeaMZWwZly/i7Qacfh7XzBeijAeoEztQGV9a6OULaeWV2J+9jRnGoKnF2G3z8F7W3m/Bk9H3klYSyIJerBag4IOxuRpR4B2mn7CzVxb7ASvM3QWzy5jd+xORRQ8h4oc8tabY7fOc7LJYElrGCd193meWjIJLdQJw8a13X1HQA+uVY41kqJ0l7Sx+lcMyb7djksXO5D9ymK1Q3WkHB1LIqHdtMMik5e3UU7vDiDApdIJipxawi5f4PnbIEAX+RH6k/M2ZnSh4ZREQhvjoHHd7eygHqvfXWAMd5kuk99UOZvrEynhdYHPEHappQ/flkfHm6Cb0YUmCOil7FyIreT3j6MH/mdWN5SAp9MkIKmzZP9ctpqXUgL2C95ahDnXGS/wT3avG5HUMHk2SdHT9gTdoce8ttef0T/t8MUg3YXClzGfX0ZVNwMBI1lVU0npZTyF+daQIUYQtA3UIo6g1YaA4SxLyizNecEXJuc3e+eWF+hlZGa1Gc7VQBU6Ex3/C3UPWuMIeDGqwD+BZElCJ0XWtyavaxfoCgh4xatLliQJLhT6TJZwKfhVyKnYMTOrVpirPbZ7XaLXTHhES9kTjsWUxxoSb1A6V9Rq/v8Xvij6W4ABAHWlLKncQ6K0AAAAAElFTkSuQmCC";
+      imageElement.style.width = "45px";
+      element.append(imageElement);
+      break;
+    }
+    case "Transshipped": {
+      //box
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAtCAYAAAA6GuKaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABR1JREFUeNrkmVtoHGUUx6cxIYTYEEq0DTEo8YKxtTXtGmuLSKGWsFSK1NuDL0UQhaKCFHyQ6oMIpUSxiuKFij6IUkFQCKEGpFRrG9KmS21WpSwJ0gfjojEa1pCYeI78PjkdvtmZ3R00oQf+zGaZ/eZ/7udMViwuLgbLTeqCZSj17kPbVVendWa34HbBNYI1gkbBhCAvOCb4pZbDiz9PBitceKRAulWwR3Azf18UTAqaId8imBccFXwuWKiWdH1K1lWN90Hsa8GAnh+65zrBA4KsoF3wdrXE61LKi8cEVwreF3zgIawyLugXjAp6BPf+n4l4l6BT8IngRMy9atl3BQXBDo3K/5J0I9Z6VLCb2P0y5jcZwTbi+mOKQNYWg4qrRwLReN0AukO/PRMTn0r2YcE5lBsnhLaizBhnnBfM1Ep6tWCT4FZBF9/NcfhZwRWCRyARJTvwxgXBO+b7i4THBQzRw/d5o0QxKekuSG6CdID2JzloDOIqvVz/DMX494SMun+X4DvB6+Z3gbHoIUETpXKjYC2eVEV/EpzGQwUfabXIPYRBQBMYEnyL9j6Zcr3JxPpuyOVQQL3yZoiwyirBNJ9LVJVR06DWoUQWTBNaA5b0Fgj/IPgI98XJBGTUK8cFs4JXBE9BOEc9ng/9ThvO9XjNJ3lwRNAheBBP3KmkbfU4hHVv4MYkMov7umkeTpF+Hugj7LzaIPgmwTNWw0m9+lq45Cnhg1z3mHj1STOe2Wvu0/K30iTZUAThtZBeoCE1l3nORs79A26aJ97ZQ2PtGa7vCYYN0Q0mWeoglSdhtnM9XKaa3E0rnyefGiCfx2NnTYI6wtN4rhg3MFnig3Q8S1STa4SsLpmq8RBE8sTzJMm5Bo+08526+VeS7Q6uVoEJvHEJ4SRTnk5t+0PuU5d/RixHDU5a4m7zlFOX/V94Kokq1keVsPISCiQeTdWyT+LqFqzuYn8Ed0aFQRNW1YT+S/AjCMu1KLg5dH6BTqmEX7VdshxptdLzJNYLZG7UA4apr+MJK07UOa55OeW2E/+XEC9HWl11n+BDto2wdJIovaaxuAfnPAokJRo1AvxLPIp0G7E8SUzFDepOgQwxbQkFVRANizPgP8SF9IyP9F5mj366YyXSiUV7PQpUQtSKVpUnyLGCkD5Q75mv3TT3OK52I2OS1cglXD0WcoPRgKdilJOVGE4NcAvEVX6Lai6tWKrHKDBD4R9NoIBa+1mIL2CIkdBY6pNVhJiSvcmMwWM8W3vC70m2cafALlN34xTYh7KzhMYELf8IdT6coOsxUIeZZxrx8OGwh5Js41Os/FkqwjkesBWEFcgw3BzjGlCBOqgCbnJcx72tpvEcN6XzZbVqVEhVsm6VaOmDPCzjUaAORT/F4s7FbwieEzxtjcZZOTvg05hS2xHDHhgCLczTOkzdyCuEkud+Jb6T9eo0w1Vtr8VqEDdTxG3jBWb2y/MF5GVHus/U8WVDOkMjCWgI22JWp/TfT1chL5rPWax+P+/qRpcq6TZqc4nhaj2lr7iULb2f8MqZKe7MUguPJmYCtx++RRxnwDSveo8meYlYRtrTIl1kljhIvJ5k1jhPR9wC+lBqoIo5PLxITNVK+gBzxmYDPfQrwSkzk7RXENNRG89g3M6ZlPQcC+xwyLI7QYHQGIkZ9qsmaqXW/251QT5DzM8xvp5grwt4S+UjWukWn+i9R6V7XA8KdEfcU25br4h0Wv+SiwqfhjSIRobHcpK/BRgADKHKUh1T7dEAAAAASUVORK5CYII=";
+      imageElement.style.width = "45px";
+      element.append(imageElement);
+      break;
+    }
+    case "Planning in Progress": {
+      //transit
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAtCAYAAAA6GuKaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABIJJREFUeNrsmX1olVUcx6/mHBfNN25e1liIDmmMEZYvYyLhCxWaiKjjKkEvotmIJYn4h2ISVn8EvmSUL4Uo/mGmiExGDUJkvcgIS8YgRMQUW7uuVcq4Tq93fn/0eeB4vc9d2dXnueCBD/e5e549+55zfuf3+56zQf39/ZFia4MjRdiGeBexx8YGraVUvCieNjnimmgXTaLHHui+krxTdMBtnHhDlIjT4lcxUkwXU8QuOhAa0TbCK8Tv4jORFjbtf4qvxWvidfGuSIZF9AsiKnaLSrGcjpj4g+Jz8Q7P7Q/LQqwhJG6Il0WH+ED8IBJ0oE1UhSk8hom/WHx2fUJcEFfFDFEu/hCjwiS6W8T5NPHzxCOiTvSJy6LayyBhCY/ziLpF/FaI1WKSOCB6CaFz/2Wka5imH4mtQrdTLLIq4vlthNsIZ0QZIdL0b0RbjNWLp0QXq3o6K7qzgKLtXWfFbERbu+Tcf5awac8XHiVUpk308GOxUWwl4W8Qi1jVhWpfESKVWT+vYJaPkwJziq5BoE3XdVZzjOd+EZvFMXpvyX5ygUR3ENsJR5N9vsQC/M7PML0q3iSWbJTXi1ZCZAOjYL1toWPnqWQNBRK+n/idz/eZ4gnCMeMnupbPKCnH0s0RRjQl1tKxR8VQwihCzEdJWxP52ZNiDO+fRCjFeDbCPS8UqsnBnSw2m+VlYqE47MS5rzW1aRjNSC5AmL3sQ7GXP/AeZTVOIYg4I7OQ62Us2uFiFbFp2WEl921NzOX6FfGME9tNhN03cFcb5G0CZE13kSetpM7hpWYPD4kzCE7QqWbCpIqQWs1s3N8qlMeapumx5eQlxGwS52Xit1O9gt8E5Gg9+NhaYvlgVjiEert1KUfCf7hH/L+io/dgKwON6QsUkhhlsy/P71kqfJ6c2jXAs/dVtOXiWfiOqeJLnF0u11dPgWgh/WWCEu2VaC/VrcCstHLfUt5zVDWrUjtIhXMpIodwgh34lAY2qnEc3DaKT5oC0kg26iY7fUKVrOUdp/xyf66UZzZwD2ITiI+wf7M0uFP8lPV8r3P9NyN/EdOVws94afSmY0lTfL9IiKXQtICq+T1Wos+vIvp1ahauro1QuPmAImAaM57EFqe8ijiQ6KCb+fk1bBJ2eqLDnqctrPbhFKuLqbic4Zisrtgq4s+OVy8a0ZZ1RhSb6BI3Z/uJHkExCUurcHL9XcVlXOSfo9U433vx0W0BCh6GrWjOJbqMzavtsr+gCtVRmiMBCk+g5WQu0QmmYLtzMHKOklyPeco84DheyiZ3t1vKXdETqPPprF/+FuNUhl/IDPCHbt1D50odUeNxknUYsT1ZXueOhZj22QQMdTYIn3KmMYNr75Cnkev3cYJx9pfesdYW7q9yDNhH3Kvk2nOR6ziOaOeo4nS+I4TlJPDNHB14nXqLY4NNiPiNjoxh3ziKGevGK1wlPZUTbqU8c5kNRoa8W44rtP8APM79KCTzHSG4omP0MoMtvc6qLcfrdgSd9/xcnh15LWbES8kkR90cGSrRxbwbL4p2W4ABAMe3OG5D9/DzAAAAAElFTkSuQmCC"; //transit
+      imageElement.style.width = "45px";
+      element.append(imageElement);
+      break;
     }
     if(error) {
       return (
