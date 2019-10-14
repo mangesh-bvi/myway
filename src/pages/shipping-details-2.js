@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
 import { Progress, Button, Modal, ModalBody } from "reactstrap";
 import GoogleMapReact from "google-map-react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import ShipBig from "./../assets/img/ship-big.png";
+// import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import Booked from "./../assets/img/booked.png";
 import Transit from "./../assets/img/transit-small.png";
@@ -15,6 +15,9 @@ import Delivery from "./../assets/img/delivery.png";
 import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
+import appSettings from "../helpers/appSetting";
+import axios from "axios";
+import { authHeader } from "../helpers/authHeader";
 
 const SourceIcon = () => (
   <div className="map-icon source-icon">
@@ -33,12 +36,101 @@ class ShippingDetailsTwo extends Component {
 
     this.state = {
       modalDel: false,
-      modalEdit: false
+      modalEdit: false,
+      detailsData: {},
+      addressData: [],
+      containerData: [],
+      ShowCard: true,
+      documentData: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
+    // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
   }
+
+  componentDidMount() {
+    debugger;
+
+    var HblNo = this.props.location.state.detail;
+
+    this.HandleShipmentDetails(HblNo);
+  }
+  HandleShipmentDocument() {
+    debugger;
+    let self = this;
+    var HblNo = this.props.location.state.detail;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ViewUploadShipmentDocument`,
+      data: {
+        HBLNo: HblNo
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var documentdata = response.data;
+    });
+  }
+
+  HandleShipmentDetails(HblNo) {
+    let self = this;
+
+    var userid = window.localStorage.getItem("userid");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
+      data: {
+        UserId: userid,
+        HBLNo: HblNo
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var shipmentdata = response.data;
+      self.setState({
+        detailsData: shipmentdata.Table[0],
+        addressData: shipmentdata.Table1,
+        containerData: shipmentdata.Table2
+      });
+    });
+  }
+  onDocumentChangeHandler = event => {
+    this.setState({
+      selectedFile: event.target.files[0]
+    });
+  };
+  onDocumentClickHandler = () => {
+    const docData = new FormData();
+    var docName = document.getElementById("docName").value;
+    var docDesc = document.getElementById("docDesc").value;
+    if (docName == "") {
+      alert("Please enter document name");
+      return false;
+    }
+    if (docDesc == "") {
+      alert("Please enter document description");
+      return false;
+    }
+    debugger;
+    //docData.append();
+    docData.append("ShipmentNumber", "BCM2453770");
+    docData.append("HBLNo", "BCM23770");
+    docData.append("DocDescription", docDesc);
+    docData.append("name", docName);
+    docData.append("FileData", this.state.selectedFile);
+    // docData.append()
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/UploadShipmentDocument`,
+      data: docData,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result);
+    });
+  };
 
   static defaultProps = {
     center: {
@@ -58,8 +150,13 @@ class ShippingDetailsTwo extends Component {
       modalEdit: !prevState.modalEdit
     }));
   }
+  HandleShowHideFun() {
+    this.setState({ ShowCard: !this.state.ShowCard });
+  }
 
   render() {
+    const { detailsData, addressData, containerData, ShowCard } = this.state;
+
     return (
       <div>
         <Headers />
@@ -96,6 +193,7 @@ class ShippingDetailsTwo extends Component {
                         role="tab"
                         aria-controls="documents"
                         aria-selected="false"
+                        onClick={this.HandleShipmentDocument.bind(this)}
                       >
                         Documents
                       </a>
@@ -125,62 +223,68 @@ class ShippingDetailsTwo extends Component {
                           <div className="col-md-3 details-border">
                             <p className="details-title">HBL#</p>
                             <a href="#!" className="details-para">
-                              AQTYISTSE015723
+                              {detailsData.HBLNO}
                             </a>
                           </div>
                           <div className="col-md-3 details-border">
-                            <p className="details-para">MEDUI1105929</p>
+                            <p className="details-para">{detailsData.HBLNO}</p>
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">Status</p>
-                            <p className="details-para">Transshipped</p>
+                            <p className="details-para">{detailsData.Status}</p>
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">Last Update</p>
-                            <p className="details-para">9-18-2019</p>
+                            <p className="details-para">
+                              {detailsData["Status Date"]}
+                            </p>
                           </div>
                         </div>
                         <div className="row">
                           <div className="col-md-3 details-border">
                             <p className="details-title">Mode</p>
-                            <p className="details-para">Ocean</p>
+                            <p className="details-para">
+                              {detailsData.ModeOfTransport}
+                            </p>
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">Cargo Type</p>
-                            <p className="details-para">Straight</p>
+                            <p className="details-para">
+                              {detailsData.CargoType}
+                            </p>
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">ATA Booking No#</p>
+                            <p className="details-para"></p>
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">SRT No#</p>
+                            <p className="details-para">
+                              {detailsData["SRT No#"]}
+                            </p>
                           </div>
                         </div>
                       </div>
                       <div className="sect-padd">
                         <div className="row">
-                          <div className="col-md-6 details-border shipper-details">
-                            <p className="details-heading">Shipper</p>
-                            <p className="details-title">
-                              Blueground Turizm Ve Services Hizmetleri Ticaret
-                              A.S.
-                            </p>
-                            <p className="details-para">
-                              Gayrettepe Esentepe MAH.Buyukdere Caddesi. No:16
-                              Istanbloom Rezidans K:9 D:63 Istanbul, 34000
-                              Turkey
-                            </p>
-                          </div>
-                          <div className="col-md-6 details-border shipper-details">
-                            <p className="details-heading">
-                              Ultimate Consignee
-                            </p>
-                            <p className="details-title">BLUEGROUND US INC</p>
-                            <p className="details-para">
-                              311 W 43RD Road 12th Floor, New York, 10036 United
-                              States.
-                            </p>
-                          </div>
+                          {addressData.map(function(addkey, i) {
+                            //  <p className="details-heading" key={i}>{addkey.EntityType}</p>
+                            return (
+                              <div
+                                className="col-md-6 details-border shipper-details"
+                                key={i}
+                              >
+                                <p className="details-heading">
+                                  {addkey.EntityType}
+                                </p>
+                                {/* <p className="details-title">
+                                  Blueground Turizm Ve Services Hizmetleri
+                                  Ticaret A.S.
+                                </p> */}
+                                <p className="details-para">{addkey.Address}</p>
+                              </div>
+                            );
+                          })}
                         </div>
                         <div className="row">
                           <div className="col-md-12">
@@ -190,109 +294,163 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         </div>
                       </div>
-                      <div className="sect-padd">
-                        <div className="progress-sect">
-                          <div className="d-flex align-items-center">
-                            <span className="clr-green">POL</span>
-                            <Progress value="30" />
-                            <span className="clr-red">POD</span>
-                          </div>
-                          <div className="desti-places">
-                            <span>Port of Houston</span>
-                            <span>Western Cape</span>
-                          </div>
+                      <div className="progress-sect">
+                        <div className="d-flex align-items-center">
+                          <span className="clr-green">POL</span>
+                          <Progress value="30" />
+                          <span className="clr-red">POD</span>
                         </div>
-                        <p className="details-heading">
-                          Routing Information - 1
-                        </p>
-                        <div className="row mid-border">
-                          <div className="col-md-6 details-border">
-                            <div className="row">
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Type Of Move</p>
-                                <p className="details-para">Door To Port</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Vessel Name</p>
-                                <p className="details-para">
-                                  MSC KRYSTAL (MSC)
-                                </p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Departure Port</p>
-                                <p className="details-para">
-                                  Istanbul, Istanbul, Turkey(TRIST)
-                                </p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Destination Port
-                                </p>
-                                <p className="details-para">
-                                  Sines, Setúbal, Portugal(PTSIE)
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-md-6 details-border">
-                            <div className="row">
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Departure Date</p>
-                                <p className="details-para">08 Sep 2019</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Arrival Date</p>
-                                <p className="details-para">16 Sep 2019</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Booking Number</p>
-                                <p className="details-para">081ISTI1930988</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Booking Date</p>
-                                <p className="details-para">23 Aug 2019</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="collapse-sect">
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Container Agents</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Flag</p>
-                              <p className="details-para">Panama</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">
-                                Voyage Identification
-                              </p>
-                              <p className="details-para">NT936R</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">IMO Number</p>
-                              <p className="details-para">9372470</p>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Document Cutoff</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Port Cutoff</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-md-12">
-                            <a href="#!" className="butn view-btn less-btn">
-                              Show Less
-                            </a>
-                          </div>
+                        <div className="desti-places">
+                          <span>Port of Houston</span>
+                          <span>Western Cape</span>
                         </div>
                       </div>
-                      <div className="sect-padd">
+                      {containerData.map(function(routedata, i) {
+                        return (
+                          <div className="sect-padd">
+                            <p className="details-heading">
+                              Routing Information - {i + 1}
+                            </p>
+                            <div className="row mid-border">
+                              <div className="col-md-6 details-border">
+                                <div className="row">
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">
+                                      Type Of Move
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata.TypeOfMove}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">Vessel Name</p>
+                                    <p className="details-para">
+                                      {routedata.VesselName}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">
+                                      Departure Port Name
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata.DeparturePortName}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">
+                                      Departure Date
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata.DepartureDate}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="col-md-6 details-border">
+                                <div className="row">
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">
+                                      Destination Port Name
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata.DestinationPortName}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">
+                                      Arrival Date
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata["Arrival Date"]}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">
+                                      Booking Number
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata["Booking Number"]}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-6 details-border">
+                                    <p className="details-title">
+                                      Booking Date
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata.BookingDate}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {ShowCard ? (
+                              <div className="collapse-sect">
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Container Agents
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata["Container Agents"]}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Flag</p>
+                                    <p className="details-para">
+                                      {routedata.Flag}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Voyage Identification
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata["Voyage Identification"]}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">IMO Number</p>
+                                    <p className="details-para">
+                                      {routedata["IMO Number"]}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Document Cutoff
+                                    </p>
+                                    <p className="details-para">
+                                      {routedata["Document Cutoff"]}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Port Cutoff</p>
+                                    <p className="details-para">
+                                      {routedata["Port Cutoff"]}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                            {
+                              <div className="row">
+                                <div className="col-md-12">
+                                  <a
+                                    href="#!"
+                                    className="butn view-btn less-btn"
+                                  >
+                                    Show Less
+                                  </a>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        );
+                      })}
+                      {/* <div className="sect-padd">
                         <p className="details-heading">
                           Routing Information - 2
                         </p>
@@ -343,8 +501,8 @@ class ShippingDetailsTwo extends Component {
                               </div>
                             </div>
                           </div>
-                        </div>
-                        {/* <div className="collapse-sect">
+                        </div> */}
+                      {/* <div className="collapse-sect">
                           <div className="row">
                             <div className="col-md-3 details-border">
                               <p className="details-title">Container Agents</p>
@@ -373,14 +531,14 @@ class ShippingDetailsTwo extends Component {
                             </div>
                           </div>
                         </div> */}
-                        <div className="row">
+                      {/* <div className="row">
                           <div className="col-md-12">
                             <a href="#!" className="butn view-btn">
                               view more
                             </a>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="sect-padd">
                         <p className="details-heading">Container Details</p>
                         <div className="row">
@@ -454,6 +612,27 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="documents-tab"
                     >
+                      <div>
+                        Enter documentName:
+                        <input id="docName" type="text"></input>
+                      </div>
+                      <div>
+                        Enter document Description:
+                        <input id="docDesc" type="text"></input>
+                      </div>
+                      <div>
+                        <input
+                          type="file"
+                          onChange={this.onDocumentChangeHandler}
+                        ></input>
+                      </div>
+                      <div>
+                        <input
+                          type="button"
+                          onClick={this.onDocumentClickHandler}
+                          value="Save"
+                        ></input>
+                      </div>
                       <button className="butn">Add Document</button>
                       <div className="table-scroll">
                         <table>

@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import "../styles/custom.css";
+import axios from 'axios';
 import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import DatePicker from "react-datepicker";
+import { authHeader } from "../helpers/authHeader";
+import appSettings from "../helpers/appSetting";
 import "react-datepicker/dist/react-datepicker.css";
 import GoogleMapReact from "google-map-react";
 import Headers from "../component/header";
@@ -18,6 +21,7 @@ import Delivery from "./../assets/img/delivery.png";
 import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
+import { de } from "date-fns/esm/locale";
 
 const SourceIcon = () => (
   <div className="map-circ source-circ" id="source-circ">
@@ -41,7 +45,9 @@ class ShipmentPlanner extends Component {
     this.state = {
       modalTransit: false,
       modalEdit: false,
-      startDate: new Date()
+      startDate: new Date(),
+      companydrp:[],
+      consigneedrp:[]
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
@@ -55,7 +61,28 @@ class ShipmentPlanner extends Component {
     },
     zoom: 11
   };
-
+   
+  companyChange=(e)=>{
+    debugger;
+    let self=this;
+    axios({
+      method: 'post',
+      url: `${appSettings.APIURL}/FetchConsigneeCompany`,
+      data:{
+        UserID:window.localStorage.getItem('userid'),
+        MyCompID:1340354108,
+        MyCompLocationID:419001,
+        MyCompLocationType:3
+      },
+      headers:authHeader()
+    }).then(function (response) { 
+      debugger;
+      let optionItems = response.data.map((planet) =>
+      <option onchange={this.companyChange} atrCompLocType={planet.MyCompLocationType} atrCompLocId={planet.MyCompLocationID} value={planet.MyCompID}>{planet.MyCompName}</option>
+      );
+      self.setState({consigneedrp:response.data});
+    });
+  }
   handleChange = date => {
     this.setState({
       startDate: date
@@ -73,7 +100,31 @@ class ShipmentPlanner extends Component {
     }));
   }
 
+  componentDidMount()
+  {
+    let self=this;
+    axios({
+      method: 'post',
+      url: `${appSettings.APIURL}/FetchShipperCompany`,
+      data:{
+        UserID:window.localStorage.getItem('userid')
+      },
+      headers:authHeader()
+    }).then(function (response) { 
+      debugger;
+      self.setState({companydrp:response.data});
+    });
+  }
+ 
+
+
+
   render() {
+    debugger;
+    let optionItems = this.state.companydrp.map((planet) =>
+    <option onchange={this.companyChange} atrCompLocType={planet.MyCompLocationType} atrCompLocId={planet.MyCompLocationID} value={planet.MyCompID}>{planet.MyCompName}</option>
+    );
+  
     return (
       <div>
         <Headers />
@@ -92,27 +143,16 @@ class ShipmentPlanner extends Component {
                     <div className="login-input-cntr">
                       <div className="login-fields">
                         <label>Select Company</label>
-                        <select>
-                          <option>
-                            BLUEGROUND TURIZM VE SERVIS HIZMETLERI TICARET A.S.
-                            (Istanbul)
-                          </option>
-                          <option>
-                            BLUEGROUND TURIZM VE SERVIS HIZMETLERI TICARET A.S.
-                            (Istanbul)
-                          </option>
-                          <option>
-                            BLUEGROUND TURIZM VE SERVIS HIZMETLERI TICARET A.S.
-                            (Istanbul)
-                          </option>
+                        <select onChange={this.companyChange} id="drpCompany">
+                          <option>Select</option>
+                                {optionItems}
                         </select>
                       </div>
                       <div className="login-fields">
-                        <label>Select Company</label>
-                        <select>
-                          <option>BLUEGROUND US INC (New York)</option>
-                          <option>BLUEGROUND US INC (New York)</option>
-                          <option>BLUEGROUND US INC (New York)</option>
+                        <label>Select Consignee Company</label>
+                        <select id>
+                          <option>Select</option>
+                         {this.state.consigneedrp}
                         </select>
                       </div>
                       <div className="login-fields">

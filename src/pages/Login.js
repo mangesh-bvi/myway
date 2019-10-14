@@ -42,15 +42,15 @@ class Login extends React.Component {
         method: 'post',
         url: 'http://vizio.atafreight.com/mywayapi/Login',
         data: {
-          UserName: 'demouser',
-          Password: 'Admin@1234',
-          publicIPAddress:'202.149.197.99',
-          PrivateIPAddress:'202.149.197.99'         
+          UserName:username,
+          Password:password,
+          publicIPAddress:ipaddress,
+          PrivateIPAddress:''         
         },
         headers:authHeader('no')
-      }).then(function (response) { 
-        NotificationManager.success("Login Successfully");  
+      }).then(function (response) {      
         console.log('axios response'+new Date());    
+        debugger;
         var data=response.data;     
         console.log(data);   
         window.localStorage.setItem("username",data.Table[0].UserName);
@@ -67,35 +67,12 @@ class Login extends React.Component {
         window.localStorage.setItem(
           "dashboardrefreshtime",
           data.Table[0].DashboardRefreshTime
-        );
-      //   debugger;       
-      //   var b=encryption(window.localStorage.getItem("username"));
-      //   var c=encryption(b,"desc");
-      //   var username =window.localStorage.getItem("username");
-      //   var password =window.localStorage.getItem("password");
-      //   console.log('redirect start'+new Date());
-      //  // window.location.href='./user-agreement';
-      //  GenerateToken(username, password)
-      //  .then(tokenData => window.localStorage.setItem("token",tokenData)); 
-       // GenerateToken(username, password);
-        window.location.href = "./user-agreement";
+        );      
+        window.localStorage.setItem("IsEnabled",data.Table[0].IsEnabled);
+        GenerateToken(username,password);
+        //window.location.href = "./user-agreement";
         });
-      // axios.post('http://vizio.atafreight.com/mywayapi/Login', {
-      //   UserName: 'demouser',
-      //   Password: 'Admin@1234',
-      //   publicIPAddress:'202.149.197.99',
-      //   PrivateIPAddress:'202.149.197.99',
-      //   headers:authHeader('no')
-      // })
-      // .then(function (response) {
-      //   console.log('axios response'+new Date());
-      //   console.log(response);
-      // })
-      // .catch(function (error) {
-      //   console.log(error);
-      // });  
-     //  authentication(username, password,ipaddress);
-      // NotificationManager.success("Login Successfully");
+     
     } else {
       this.setState({ settoaste: true });
 
@@ -176,86 +153,58 @@ class Login extends React.Component {
   }
 }
 
-function authentication(username, password,ipaddress) {
-  console.log('logtime'+new Date());   
+
+
+function GenerateToken(username, password) {
+  debugger;
+  var details = {
+    username: username,
+    password: password,
+    grant_type: "password"
+  };
+
+  var formBody = [];
+  for (var property in details) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(details[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
   const requestOptions = {
     method: "POST",
-    headers: authHeader("no"),
-    body: JSON.stringify({
-      UserName: username,
-      Password: password,
-      publicIPAddress:window.localStorage.getItem("ipaddress"),
-      privateIPAddress: ""
-    })
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    body: formBody
   };
-  return fetch(`${appSettings.APIURL}/Login`, requestOptions)
-    .then(handleResponse)
+  return fetch(`${appSettings.APIURL}/token`, requestOptions)
+    .then(TokenhandleResponse)
     .catch(error => {
       console.log(error);
     });
 }
 
-function handleResponse(response) {  
-  console.log('logendtime'+new Date());   
-  return response.text().then(text => {
-    const data = text && JSON.parse(text);
-    if (!response.ok) {
-      var error = data.split(":");
-      error[1] = error[1].replace("}", "");
-      alert(error[1]);
-    } else {
-      // hanleChangeRediect();
-    
-
-     // window.localStorage.setItem("username", encryption(data.Table[0].UserName));
-      window.localStorage.setItem("username",data.Table[0].UserName);
-
-      window.localStorage.setItem("firstname", data.Table[0].FirstName);
-      window.localStorage.setItem("lastlogindate", data.Table[0].LastLoginDate);
-      window.localStorage.setItem("lastname", data.Table[0].LastName);
-      window.localStorage.setItem("qrcode",data.Table1[0].QRCode);
-      window.localStorage.setItem(
-        "modeoftransport",
-        data.Table[0].ModeOfTransport
-      );
-      window.localStorage.setItem("userid", data.Table[0].UserId);
-      window.localStorage.setItem("usertype", data.Table[0].UserType);
-      window.localStorage.setItem(
-        "dashboardrefreshtime",
-        data.Table[0].DashboardRefreshTime
-      );
-    }
-
-    return data;
-  });
-}
-
-
-
 function TokenhandleResponse(response) {
- // console.log(response);
+  debugger;
+  console.log(response);
+
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
-      window.localStorage.setItem("token", data.access_token);     
-      console.log('redirect'+new Date());
+      window.localStorage.setItem("token", data.access_token);
+      if(window.localStorage.getItem("IsEnabled")==true)
+      {
+        window.location.href = "./dashboard";
+      }
+      else{
+          window.location.href = "./user-agreement";
+      }
+      
     }
 
     // return data;
   });
 }
-// const mapStateToProps=(state)=>{
-//   return {
-//     username:state.username
-//   };
-// }
-
-// const mapDispatchToProps=(dispatch)=>{
-//     return {
-//         changeName:(username)=>{dispatch({type:'ChangeName',payload:username})}
-//     }
-// }
-
 export default Login;
