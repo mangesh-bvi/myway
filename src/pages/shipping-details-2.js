@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from 'axios';
 import "../styles/custom.css";
 import { Progress, Button, Modal, ModalBody } from "reactstrap";
 import GoogleMapReact from "google-map-react";
@@ -14,6 +15,8 @@ import Delivery from "./../assets/img/delivery.png";
 import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
+import {authHeader} from '../helpers/authHeader';
+import appSettings from "../helpers/appSetting";
 
 const SourceIcon = () => (
   <div className="map-icon source-icon">
@@ -34,7 +37,8 @@ class ShippingDetailsTwo extends Component {
       modalDel: false,
       modalEdit: false,
       selectedFile:null,
-      docFileName:''
+      docFileName:'',
+      docDesc:''
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -46,67 +50,38 @@ class ShippingDetailsTwo extends Component {
     })
   }
   onDocumentClickHandler = () => { 
-   const data = new FormData()
-   for(var x = 0; x<this.state.selectedFile.length; x++) {
-       data.append('file', this.state.selectedFile[x])
+   const docData = new FormData()
+   var docName=document.getElementById('docName').value;
+   var docDesc=document.getElementById('docDesc').value;
+   if(docName=="")
+   {
+     alert('Please enter document name');
+     return false;
    }
-   data.append();
-   
+   if(docDesc=='')
+   {
+     alert('Please enter document description');
+     return false;
+   }
    debugger;
-// var FtpDeploy = require("ftp-deploy");
-// var ftpDeploy = new FtpDeploy();
- 
-// var config = {
-//     user: "ftpdev",
-//     // Password optional, prompted if none given
-//     password: "Myw@y$2026",
-//     host: "ftp://vizio.atafreight.com/",
-//     // port: 21,
-//     // localRoot: __dirname + "/local-folder",
-//     // remoteRoot: "/public_html/remote-folder/",
-//     // // include: ['*', '**/*'],      // this would upload everything except dot files
-//     // include: ["*.php", "dist/*"],
-//     // // e.g. exclude sourcemaps, and ALL files in node_modules (including dot files)
-//     // exclude: ["dist/**/*.map", "node_modules/**", "node_modules/**/.*"],
-//     // // delete ALL existing files at destination before uploading, if true
-//     // deleteRemote: false,
-//     // // Passive mode is forced (EPSV command is not sent)
-//     // forcePasv: true
-// };
- 
-// // use with promises
-// ftpDeploy
-//     .deploy(config)
-//     .then(res => console.log("finished:", res))
-//     .catch(err => console.log(err));
- 
-// // use with callback
-// ftpDeploy.deploy(config, function(err, res) {
-//     if (err) console.log(err);
-//     else console.log("finished:", res);
-// });
-
-// ftpDeploy.on("uploading", function(data) {
-//   // var count=data.totalFilesCount; // total file count being transferred
-//   // var filecount=data.transferredFileCount; // number of files transferred
-//   // var filename=data.filename; // partial path with filename being uploaded
-// });
-// ftpDeploy.on("uploaded", function(data) {
-//   console.log(data); // same data as uploading event
-// });
-// ftpDeploy.on("log", function(data) {
-//   console.log(data); // same data as uploading event
-// });
-// ftpDeploy.on("upload-error", function(data) {
-//   console.log(data.err); // data will also include filename, relativePath, and other goodies
-// });
-
-//   axios.post("http://localhost:8000/upload", data, { 
-//       // receive two    parameter endpoint url ,form data
-//   })
-//   .then(res => { // then print response status
-//     console.log(res.statusText)
-//  })
+   //docData.append();
+   docData.append('ShipmentNumber','BCM2453770');
+   docData.append('HBLNo','BCM23770');
+   docData.append('DocDescription',docDesc);
+   docData.append('name',docName);
+   docData.append('FileData', this.state.selectedFile)
+  // docData.append()
+   
+   axios({
+    method: 'post',
+    url: `${appSettings.APIURL}/UploadShipmentDocument`,
+    data:docData,
+    headers:authHeader()
+  }).then(function (response) { 
+    debugger;
+   alert(response.data[0].Result);
+  });
+   
 
 }
 
@@ -535,6 +510,9 @@ class ShippingDetailsTwo extends Component {
                     >
                       <div>
                         Enter documentName:<input id="docName" type="text"></input>
+                      </div>
+                      <div>
+                        Enter document Description:<input id="docDesc" type="text"></input>
                       </div>
                       <div>
                         <input type="file" onChange={this.onDocumentChangeHandler}></input>
