@@ -40,8 +40,8 @@ class ShippingDetailsTwo extends Component {
       addressData: [],
       containerData: [],
       ShowCard:true,
-      bl_hblno:"",
-      hblNo:""
+      documentData:[]
+       
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -49,6 +49,7 @@ class ShippingDetailsTwo extends Component {
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     
   }
+  
   componentDidMount() {
     debugger;
     
@@ -57,9 +58,28 @@ class ShippingDetailsTwo extends Component {
     
     this.HandleShipmentDetails(HblNo);
   }
+HandleShipmentDocument()
+{
+  debugger;
+  let self = this;
+  var HblNo=this.props.location.state.detail;
+  axios({
+    method: "post",
+    url: `${appSettings.APIURL}/ViewUploadShipmentDocument`,
+    data: {
+                
+      HBLNo: HblNo
+    },
+    headers: authHeader()
+  }).then(function(response) {
+    debugger;
+    var documentdata = response.data;
+    
+  });
+}
 
   HandleShipmentDetails(HblNo) {
-    debugger;
+   
     let self = this;
 
     var userid = window.localStorage.getItem("userid");
@@ -144,6 +164,7 @@ this.setState({ ShowCard: !this.state.ShowCard });
                         role="tab"
                         aria-controls="documents"
                         aria-selected="false"
+                        onClick={this.HandleShipmentDocument.bind(this)}
                       >
                         Documents
                       </a>
@@ -349,7 +370,9 @@ this.setState({ ShowCard: !this.state.ShowCard });
                                   </div>
                                   <div className="col-md-3 details-border">
                                     <p className="details-title">Flag</p>
-                                    <p className="details-para">{routedata.Flag}</p>
+                                    <p className="details-para">
+                                      {routedata.Flag}
+                                    </p>
                                   </div>
                                   <div className="col-md-3 details-border">
                                     <p className="details-title">
@@ -392,7 +415,6 @@ this.setState({ ShowCard: !this.state.ShowCard });
                                   <a
                                     href="#!"
                                     className="butn view-btn less-btn"
-                                    
                                   >
                                     Show Less
                                   </a>
@@ -456,7 +478,7 @@ this.setState({ ShowCard: !this.state.ShowCard });
                             </div>
                           </div>
                         </div> */}
-                        {/* <div className="collapse-sect">
+                      {/* <div className="collapse-sect">
                           <div className="row">
                             <div className="col-md-3 details-border">
                               <p className="details-title">Container Agents</p>
@@ -485,7 +507,7 @@ this.setState({ ShowCard: !this.state.ShowCard });
                             </div>
                           </div>
                         </div> */}
-                        {/* <div className="row">
+                      {/* <div className="row">
                           <div className="col-md-12">
                             <a href="#!" className="butn view-btn">
                               view more
