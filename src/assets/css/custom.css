@@ -50,7 +50,8 @@ img {
   width: 100%;
 }
 input:focus,
-button:focus {
+button:focus,
+select:focus {
   outline: none;
 }
 input[type="search"]::-webkit-search-cancel-button {
@@ -58,6 +59,10 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 input[type="checkbox"] {
   display: none;
+}
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 a {
   color: #000;
@@ -164,7 +169,8 @@ h2 span {
   letter-spacing: 0.5px;
   margin-bottom: 10px;
 }
-.login-fields input {
+.login-fields input,
+.login-fields select {
   width: 100%;
   border: 0;
   /* font-size: 18px; */
@@ -172,6 +178,10 @@ h2 span {
   background-color: #ededed;
   padding: 15px 25px;
   font-family: "Medium Font";
+}
+.login-fields select {
+  background: #ededed url("./../img/down-arrow.png") no-repeat right 25px center;
+  padding-right: 50px;
 }
 .login-fields input::placeholder {
   font-family: "Italic Font";
@@ -663,6 +673,163 @@ table tbody tr:last-child {
   margin-bottom: 0;
 }
 /* shipping details 2 ends */
+
+/* shipment planner starts */
+.title-border {
+  border-bottom: 1px solid #d6d6d6;
+}
+.planner-cntr {
+  padding: 30px 0px 30px 30px;
+}
+.planner-cntr select,
+.planner-cntr input {
+  font-size: 14px;
+  font-family: "Regular Font";
+}
+.planner-cntr label {
+  font-size: 15px;
+}
+.planner-cntr .login-fields {
+  margin-bottom: 30px;
+}
+.react-datepicker-wrapper {
+  width: 100%;
+}
+.react-datepicker-wrapper input {
+  background: #ededed url(./../img/calendar.png) no-repeat right 25px center;
+  background-size: 20px;
+  padding-right: 60px;
+}
+.planner-cntr .butn {
+  margin-top: 45px;
+  min-width: 175px;
+}
+.full-map .ship-detail-map {
+  height: 100%;
+}
+.full-map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.map-circ {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+.desti-circ {
+  background-color: #eb0029;
+}
+.source-circ {
+  background-color: #39b449;
+}
+.planner-top-butns .butn {
+  font-size: 12px;
+  min-width: 150px;
+  padding: 8px;
+  margin-top: 0;
+  margin-right: 20px;
+}
+.planner-top-butns .butn:last-child {
+  margin-right: 0;
+}
+.planner-top-butns {
+  text-align: right;
+  padding: 15px 0;
+}
+.full-map-cntr {
+  position: relative;
+  height: calc(100% - 65px);
+}
+.transit-sect {
+  padding: 20px 40px;
+  border-bottom: 1px solid #d6d6d6;
+}
+.transit-popup {
+  margin: 10px auto;
+  max-width: 60%;
+}
+.transit-sect .details-title {
+  color: #39b54a;
+  letter-spacing: 0.5px;
+}
+.transit-sect .details-para {
+  color: #002d73;
+  letter-spacing: 0.5px;
+  font-family: "Medium Font";
+}
+.transit-sect .details-border {
+  /* padding-top: 15px;
+  padding-bottom: 15px; */
+  text-align: left;
+  margin-bottom: 0;
+}
+.transit-sect .details-border:first-child {
+  align-items: initial;
+}
+.transit-sect .details-border:last-child {
+  align-items: flex-end;
+  border: 0;
+}
+.desti-name {
+  color: #002d73;
+  font-family: "Medium Font";
+  letter-spacing: 0.5px;
+}
+.desti-route {
+  color: #1d201d;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-family: "Regular Font";
+}
+.transit-sect .butn {
+  font-size: 12px;
+  min-width: 90px;
+  margin: 0;
+  padding: 8px;
+}
+.transit-popup .transit-sect:first-child {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.transit-popup .transit-sect:last-child {
+  border-bottom: 0;
+}
+.transit-popup .modal-content {
+  border-radius: 0;
+}
+.days-title {
+  font-family: "Medium Font";
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  color: #18191a;
+  padding: 5px 0 5px 20px;
+}
+.days-count {
+  font-family: "Medium Font";
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  color: #fff;
+  background-color: #29abe2;
+  flex: 0 0 45px;
+  text-align: center;
+  padding: 5px 0;
+}
+.days-cntr {
+  background-color: #f1f2f2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+.transit-sect-overflow {
+  height: calc(100vh - 105px);
+  overflow: auto;
+}
+/* shipment planner ends */
 
 /* chetan css ends */
 

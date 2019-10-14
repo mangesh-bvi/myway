@@ -259,7 +259,7 @@ class ShippingDetails extends Component {
               />
             </div>
             <div className="table-scroll">
-              <table>
+              {/* <table>
                 <thead>
                   <tr>
                     <th>
@@ -409,6 +409,7 @@ class ShippingDetails extends Component {
                   </tr>
                 </tbody>
               </table>
+             */}
             </div>
           </div>
         </div>
