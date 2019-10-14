@@ -15,10 +15,7 @@ class UserAgreement extends Component {
   
   componentDidMount()
   {
-    debugger;
-    var userName=window.localStorage.getItem("username");
-    var password=window.localStorage.getItem("password");
-    GenerateToken(userName,password);
+    VerifyAgreement();
   }
   render() {
     return (
@@ -69,8 +66,8 @@ function VerifyAgreement()
     headers: authHeader(),
     body: JSON.stringify({
       UserName: window.localStorage.getItem("username"),       
-      publicIPAddress: "202.102.302.89",
-      privateIPAddress: "172.459.202.12",
+      publicIPAddress:window.localStorage.getItem("ipaddress"),
+      privateIPAddress: "",
       LocalTimeZone:"India Standard Time"
     })
   };
@@ -81,44 +78,18 @@ function VerifyAgreement()
     });
 }
 
- async function GenerateToken(username, password) {
-
-  var details = {
-    username: username,
-    password: password,
-    grant_type: "password"
-  };
-
-  var formBody = [];
-  for (var property in details) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(details[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-    },
-    body: formBody
-  };
-  let response = await fetch(`${appSettings.APIURL}/token`,requestOptions);
-  let data = await response.json()
-  debugger;
-  window.localStorage.setItem("token",data.access_token);
-}
+ 
 
 function handleResponse(response) {
   console.log(response);
-
+ debugger;
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
       localStorage.clear();
       window.location.href='./login';
     } else {      
-      window.location.href = "./dashboard";
+     // window.location.href = "./dashboard";
     }
 
     // return data;

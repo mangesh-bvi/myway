@@ -101,6 +101,46 @@ HandleShipmentDocument()
       });
     });
   }
+  onDocumentChangeHandler=event=>{    
+    this.setState({
+      selectedFile: event.target.files[0]      
+    })
+  }
+  onDocumentClickHandler = () => { 
+   const docData = new FormData()
+   var docName=document.getElementById('docName').value;
+   var docDesc=document.getElementById('docDesc').value;
+   if(docName=="")
+   {
+     alert('Please enter document name');
+     return false;
+   }
+   if(docDesc=='')
+   {
+     alert('Please enter document description');
+     return false;
+   }
+   debugger;
+   //docData.append();
+   docData.append('ShipmentNumber','BCM2453770');
+   docData.append('HBLNo','BCM23770');
+   docData.append('DocDescription',docDesc);
+   docData.append('name',docName);
+   docData.append('FileData', this.state.selectedFile)
+  // docData.append()
+   
+   axios({
+    method: 'post',
+    url: `${appSettings.APIURL}/UploadShipmentDocument`,
+    data:docData,
+    headers:authHeader()
+  }).then(function (response) { 
+    debugger;
+   alert(response.data[0].Result);
+  });
+   
+
+}
 
   static defaultProps = {
     center: {
@@ -109,6 +149,7 @@ HandleShipmentDocument()
     },
     zoom: 11
   };
+
 
   toggleDel() {
     this.setState(prevState => ({
@@ -588,6 +629,18 @@ this.setState({ ShowCard: !this.state.ShowCard });
                       role="tabpanel"
                       aria-labelledby="documents-tab"
                     >
+                      <div>
+                        Enter documentName:<input id="docName" type="text"></input>
+                      </div>
+                      <div>
+                        Enter document Description:<input id="docDesc" type="text"></input>
+                      </div>
+                      <div>
+                        <input type="file" onChange={this.onDocumentChangeHandler}></input>
+                      </div>
+                      <div>
+                        <input type="button" onClick={this.onDocumentClickHandler} value="Save"></input>
+                      </div>
                       <button className="butn">Add Document</button>
                       <div className="table-scroll">
                         <table>
