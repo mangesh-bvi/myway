@@ -54,7 +54,11 @@ class ShipmentPlanner extends Component {
       linerId:'',
       modeofTransport:'',
       sailingDate:'',
-      transitModeId:''
+      transitModeId:'',
+      totalAvgDays:'',
+      totalMinDays:'',
+      totalMaxDays:'',
+      transitpopup:[]
 
     };
 
@@ -161,6 +165,7 @@ class ShipmentPlanner extends Component {
     debugger;
     var supConsId=this.state.supConsId;
     var sailingDate=document.getElementById('saleDate').value;
+    let self=this;
     axios({
       method: 'post',
       url: `${appSettings.APIURL}/FetchShipmentPlannerMapData`,
@@ -172,11 +177,19 @@ class ShipmentPlanner extends Component {
       },
       headers:authHeader()
     }).then(function (response) { 
-      debugger;
-      let optionItems = response.data.map((comp) =>
-      <option value={comp.TransitModeID}>{comp.TransitMode}</option>
-      );
-
+     debugger;
+      var totalAvg=0;
+      var totalMin=0;
+      var totalMax=0;
+      for (let index = 0; index < response.data.length; index++) {
+        totalAvg+=parseInt(response.data[index].NTransit_Time);
+        totalMin+=parseInt(response.data[index].NMin_Transit_Time);
+        totalMax+=parseInt(response.data[index].NMax_Transit_Time);
+      }
+      self.setState({transitpopup:response.data};)
+      self.setState({totalAvgDays:totalAvg});
+      self.setState({totalMinDays:totalMin});
+      self.setState({totalMaxDays:totalMax});
     });
   }
   toggleTransit() {
@@ -314,19 +327,19 @@ class ShipmentPlanner extends Component {
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Average Days</p>
-                              <p class="details-para">37</p>
+                              <p class="details-para">{this.state.totalAvgDays}</p>
                             </div>
                           </div>
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Minimum Days</p>
-                              <p class="details-para">34</p>
+                              <p class="details-para">{this.state.totalMinDays}</p>
                             </div>
                           </div>
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Maximum Days</p>
-                              <p class="details-para">44</p>
+                              <p class="details-para">{this.state.totalMaxDays}</p>
                             </div>
                           </div>
                         </div>
