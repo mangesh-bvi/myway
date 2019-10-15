@@ -699,7 +699,7 @@ this.setState({ ShowCard: !this.state.ShowCard });
                     <div className="ship-detail-map">
                       <GoogleMapReact
                         bootstrapURLKeys={{
-                          key: "AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"
+                          key: appSettings.Keys
                         }}
                         defaultCenter={this.props.center}
                         defaultZoom={this.props.zoom}

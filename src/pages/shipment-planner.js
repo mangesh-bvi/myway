@@ -47,7 +47,15 @@ class ShipmentPlanner extends Component {
       modalEdit: false,
       startDate: new Date(),
       companydrp:[],
-      consigneedrp:[]
+      consigneedrp:[],
+      transportModedrp:[],
+      linerdrp:[],
+      supConsId:'',
+      linerId:'',
+      modeofTransport:'',
+      sailingDate:'',
+      transitModeId:''
+
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
@@ -65,30 +73,112 @@ class ShipmentPlanner extends Component {
   companyChange=(e)=>{
     debugger;
     let self=this;
+    let compArray=[];
+    for (let index = 0; index < this.state.companydrp.length; index++) {
+       if(this.state.companydrp[index].MyCompID==e.target.value)
+       {
+         compArray=this.state.companydrp[index];
+         break;
+       }
+    }
     axios({
       method: 'post',
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
       data:{
         UserID:window.localStorage.getItem('userid'),
-        MyCompID:1340354108,
-        MyCompLocationID:419001,
-        MyCompLocationType:3
+        MyCompID:compArray.MyCompID,
+        MyCompLocationID:compArray.MyCompLocationID,
+        MyCompLocationType:compArray.MyCompLocationType
       },
       headers:authHeader()
     }).then(function (response) { 
       debugger;
-      let optionItems = response.data.map((planet) =>
-      <option onchange={this.companyChange} atrCompLocType={planet.MyCompLocationType} atrCompLocId={planet.MyCompLocationID} value={planet.MyCompID}>{planet.MyCompName}</option>
+      let optionItems = response.data.map((comp) =>
+      <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
       );
-      self.setState({consigneedrp:response.data});
+      self.setState({consigneedrp:optionItems});
     });
   }
-  handleChange = date => {
+
+  consigneeChange=(e)=>{
+    debugger;
+    let self=this;
+    let supconsid=1250;//e.target.value;
+    self.setState({supConsId:supconsid})
+    axios({
+      method: 'post',
+      url: `${appSettings.APIURL}/FetchTransportMode`,
+      data:{
+        SupConsID:supconsid,       
+      },
+      headers:authHeader()
+    }).then(function (response) { 
+      debugger;
+      let optionItems = response.data.map((comp) =>
+      <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
+      );
+      self.setState({transportModedrp:optionItems});
+    });
+  }
+
+  transportModeChange=(e)=>{
+    debugger;
+    let self=this;
+    let transportmode=e.target.value;
+    self.setState({modeofTransport:transportmode})
+    axios({
+      method: 'post',
+      url: `${appSettings.APIURL}/FetchLiners`,
+      data:{
+        Type:2,
+        SupConsID:self.state.supConsId,  
+        ModeType:transportmode   
+      },
+      headers:authHeader()
+    }).then(function (response) { 
+      debugger;
+      let optionItems = response.data.map((comp) =>
+      <option value={comp.TransitModeID}>{comp.TransitMode}</option>
+      );
+      self.setState({linerdrp:optionItems});
+    });
+  }
+
+  fetchLinerChange=(e)=>{
+    debugger;
+    let self=this;
+    self.setState({transitModeId:e.target.value});
+  }
+
+  handleChange = (e) => {
+    debugger;
     this.setState({
-      startDate: date
+      sailingDate: e
     });
   };
 
+  handleSubmit=()=>{
+    debugger;
+    var supConsId=this.state.supConsId;
+    var sailingDate=document.getElementById('saleDate').value;
+    axios({
+      method: 'post',
+      url: `${appSettings.APIURL}/FetchShipmentPlannerMapData`,
+      data:{
+        SupConsID:this.state.supConsId,
+        LinerID:this.state.transitModeId,  
+        ModeOfTransport:this.state.modeofTransport,
+        SailingDate:sailingDate
+      },
+      headers:authHeader()
+    }).then(function (response) { 
+      debugger;
+      let optionItems = response.data.map((comp) =>
+      <option value={comp.TransitModeID}>{comp.TransitMode}</option>
+      );
+
+    });
+  }
   toggleTransit() {
     this.setState(prevState => ({
       modalTransit: !prevState.modalTransit
@@ -150,37 +240,36 @@ class ShipmentPlanner extends Component {
                       </div>
                       <div className="login-fields">
                         <label>Select Consignee Company</label>
-                        <select id>
+                        <select onChange={this.consigneeChange} id="drpConsigneeCompany">
                           <option>Select</option>
                          {this.state.consigneedrp}
                         </select>
                       </div>
                       <div className="login-fields">
                         <label>Select Mode</label>
-                        <select>
-                          <option>SEA Consolidation</option>
-                          <option>SEA Consolidation</option>
-                          <option>SEA Consolidation</option>
+                        <select onChange={this.transportModeChange}>
+                          <option>Select</option>
+                          {this.state.transportModedrp}
+                        
                         </select>
                       </div>
                       <div className="login-fields">
                         <label>Select Liner</label>
-                        <select>
-                          <option>MSC (Primary)</option>
-                          <option>MSC (Primary)</option>
-                          <option>MSC (Primary)</option>
+                        <select onChange={this.fetchLinerChange}>
+                          <option>select</option>
+                          {this.state.linerdrp}
                         </select>
                       </div>
                       <div className="login-fields">
                         <label>Select Date</label>
-                        <DatePicker
+                        <DatePicker id="saleDate"
                           selected={this.state.startDate}
                           onChange={this.handleChange}
                         />
                       </div>
                     </div>
                     <div className="text-right">
-                      <button className="butn">Submit</button>
+                      <button onClick={this.handleSubmit} className="butn">Submit</button>
                     </div>
                   </div>
                 </div>
@@ -200,7 +289,7 @@ class ShipmentPlanner extends Component {
                       <div className="ship-detail-map">
                         <GoogleMapReact
                           bootstrapURLKeys={{
-                            key: "AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"
+                            key: appSettings.Keys
                           }}
                           defaultCenter={this.props.center}
                           defaultZoom={this.props.zoom}

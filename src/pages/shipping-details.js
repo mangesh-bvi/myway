@@ -1,8 +1,15 @@
-import React from 'react';
-import { Table } from 'react-bootstrap';
+import React, { Component } from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
-import axios from 'axios';
+import axios from "axios";
+import "../styles/custom.css";
+import "../assets/css/ag-grid.css";
+import { UncontrolledTooltip } from "reactstrap";
+import Headers from "../component/header";
+import SideMenu from "../component/sidemenu";
+import LoginActore from "./../assets/img/login-actore.jfif";
+import DownArrow from "./../assets/img/down-arrow.png";
+import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
@@ -474,38 +481,48 @@ function statusImage(parameter) {
       element.append(imageElement);
       break;
     }
-    if(error) {
-      return (
-        <div>Error: {error.message}</div>
-      )
-    } else {
-      return(
-        <div>
-          <h2>Product List</h2>
-          <Table striped bordered hover>          
-            <thead>
-              <tr>
-                <th>#ID</th>
-                <th>Product Name</th>
-                <th>SKU</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(product => (
-                <tr key={product.ShipmentNumber}>
-                  <td>{product.ShipmentNumber}</td>   
-                  <td> <Greeting isLoggedIn={product.ShipmentNumber} ></Greeting></td>     
-                  <td>{product.ShipmentNumber}</td>
-                  <td>{product.ShipmentNumber}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
-      )
+    case "Arrived": {
+      //plane
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAtCAYAAAA6GuKaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4lJREFUeNrUmUloU1EUhtOSGoNYRNpqrFoV0booIkoRq0jFhdSAiogiWHTh0oW4EF2IiOBSnBYiIqgIdmMRFXFhkSIOFAfEkTg1tjZprEMdqIbE/8AfuFzee3lJ3pAc+Ej6kvvy33vPPcNrVTabDVSaVVWs6Lr6Bq9/NwSOgAkgA46Dl3YGpoaTgWqfFusfGAf6KLaTE7FlfomW1R0Co+AsqAGby1202GcwFfwCl0AbWFAJoiN8/4jYchM/RQ+ASTyMAa62CN7kt2gRsRfsB1GDlRabwlfx7y6wAjT7KVpWcQ5IgLVgoxq9GEUalWv3wVOwzcpN3I7TkxmPE3SFEFf4Lz8XwT/Bd2VMGIigJPijXB+TnUCcjgdt/HATmFmg2JSWLCS8vTH4Xr/J+NcG12aBHeCQlWjZ1q1ghnJw0jZFxzTRsuWfHIjtS+WNmeglnJX8+FHwlv5XrHU6lJC6zESLn20HD8B5h3z7DlhGN7kIclXaHtALHirfXQUWg1Pgt3J9hBHGUPQ68BVcdqjGEFsJPoJjzIBitTyYL/hZgMlGdvmKVQEVNAhRLeAcT2upJitzAIznKqv3nKbF62rusPj+baub6qIjHBxzMOwlTK5HOIkR/r0aTAeH6b+2k0tIiYluW4QRKZcVxS2vKytvW/QPJSl4IXpIcQuZwM1iqjwZ+A20eiC6kavazuR1IZ9bmPm0DOoBHawDBlwSHOahz9Ui10C8lB5RJrIb1DFOP3dJeAvrEakvntjNttIjmhVMYabwVop+pxU1bpjE7y9g0Cr7WonO2SLWt/MtUr4bTa9kyKs8XwWL9toa2Ceu4SKdVLKl748QzCzJOuUgg8Aupvuy6RGtTJLbabrK+koRHWBUucVgUGMUp/exMyhmRc6AZy4Jl8i1hYnogy5aBN8F75UByznDHj79eWzQMm3gDd0SPcrXiWYZ8ZVWjM9jDdLPTBljwa5ah8suUqvVRHl9WoL9XD6zCGmdsVe2kDriVrWHatKP3eP7tIt1iFXMjnJ3M3ZFZ/TA7qFJfb2TpcONfFWeE+VmKfesB7PZU8rOnlB6SldEtzM8lWoitpt9YsZOPV2K9bIaLMUG7TxfCZrUuKr12Ywcaa/OgC46qmVGmfUwY3jZmC66mx1Lhis8FihDCxqk5SZudcLh5x+uiG7mYepVWvxInvEhP0XL8+Q2UqilvBZdkf9m/i/AANKv82bJ/oh9AAAAAElFTkSuQmCC"; //in-plane
+      imageElement.style.width = "45px";
+      element.append(imageElement);
+      break;
     }
   }
+  return element;
+}
+function etaDate(params) {
+  if (params.value != undefined && params.value != "") {
+    return formatDate(params.value);
+  }
+}
+function formatDate(date) {
+  var monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+  debugger;
+  var day = date.getDate();
+  var monthIndex = date.getMonth();
+  var year = date.getFullYear();
+
+  return day + " /" + monthIndex + "/" + year;
 }
 
-export default ShippingDetails ;
+function formatNumber(number) {
+  return Math.floor(number)
+    .toString()
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+export default ShippingDetails;
