@@ -19,7 +19,6 @@ import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
 
-
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -61,17 +60,16 @@ class ShippingDetails extends Component {
     debugger;
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: HblNo }       
+      state: { detail: HblNo }
     });
   }
 
   HandleRowClickEvt = (rowInfo, column) => {
     return {
       onClick: e => {
-        debugger;        
-        var hblNo=column.original["HBL#"];
+        debugger;
+        var hblNo = column.original["HBL#"];
         this.HandleChangeShipmentDetails(hblNo);
-
       }
     };
   };
@@ -106,36 +104,46 @@ class ShippingDetails extends Component {
                     columns: [
                       {
                         Cell: row => {
-                          if (row.value == "Air") {                             
+                          if (row.value == "Air") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Plane} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Plane}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Ocean") {
                             return (
                               <div>
-                                <img style={{ width: "45px" ,textAlign:"center"}} src={Ship} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Ship}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Inland") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Truck} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Truck}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Railway") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Rail} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Rail}
+                                />
                               </div>
                             );
                           }
-
-                          
                         },
                         Header: "Mode Of Transport",
                         accessor: "ModeOfTransport"
@@ -166,51 +174,60 @@ class ShippingDetails extends Component {
                       },
                       {
                         Cell: row => {
-                          if (row.value == "Planning in Progress") {                             
+                          if (row.value == "Planning in Progress") {
                             return (
                               <div>
-                                <img style={{ width: "35px",textAlign:"center" }} src={Delivered} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Delivered}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Departed") {
                             return (
                               <div>
-                                <img style={{ width: "35px" ,textAlign:"center"}} src={Delivered} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Delivered}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Transshipped") {
                             return (
                               <div>
-                                <img style={{ width: "35px",textAlign:"center" }} src={Transit} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Transit}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Arrived") {
                             return (
                               <div>
-                                <img style={{ width: "35px",textAlign:"center" }} src={Arrived} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Arrived}
+                                />
                               </div>
                             );
-                          } 
+                          }
                           if (row.value == "Delivered") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Delivered} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Delivered}
+                                />
                               </div>
                             );
                           }
 
                           if (row.value == "DO Issued") {
-                            return (
-                              <div>
-                                {row.value}
-                              </div>
-                            );
+                            return <div>{row.value}</div>;
                           }
-                           
-                          
                         },
                         Header: "Status",
                         accessor: "Status"
@@ -222,33 +239,42 @@ class ShippingDetails extends Component {
                       {
                         Header: "Event",
                         accessor: "Event",
-                        Cell:row=>{
-                          if(row.value=="N/A"){
-                          return(<>
-                           <label className="">{row.value}</label>
-
-                          </>);
+                        Cell: row => {
+                          if (row.value == "N/A") {
+                            return (
+                              <>
+                                <label className="">{row.value}</label>
+                              </>
+                            );
+                          }
+                          if (row.value == "On Time") {
+                            return (
+                              <>
+                                <label className="girdevtgreen">
+                                  {row.value}
+                                </label>
+                              </>
+                            );
+                          }
+                          if (row.value == "Behind Schedue") {
+                            return (
+                              <>
+                                <label className="girdevtred">
+                                  {row.value}
+                                </label>
+                              </>
+                            );
+                          }
+                          if (row.value == "Delay Risk") {
+                            return (
+                              <>
+                                <label className="girdevtyellow">
+                                  {row.value}
+                                </label>
+                              </>
+                            );
+                          }
                         }
-                        if(row.value=="On Time"){
-                          return(<>
-                           <label className="girdevtgreen">{row.value}</label>
-
-                          </>);
-                        }
-                        if(row.value=="Behind Schedue"){
-                          return(<>
-                           <label className="girdevtred">{row.value}</label>
-
-                          </>);
-                        }
-                        if(row.value=="Delay Risk"){
-                          return(<>
-                           <label className="girdevtyellow">{row.value}</label>
-
-                          </>);
-                        }
-                      }
-
                       }
                     ]
                   }

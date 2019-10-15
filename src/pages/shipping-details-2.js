@@ -1,4 +1,4 @@
-import React, { Component ,Fragment} from "react";
+import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
 import { Progress, Button, Modal, ModalBody } from "reactstrap";
 import GoogleMapReact from "google-map-react";
@@ -7,6 +7,7 @@ import SideMenu from "../component/sidemenu";
 // import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import Booked from "./../assets/img/booked.png";
+import Transit from "./../assets/img/transit-small.png";
 import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
 import Inland from "./../assets/img/inland.png";
@@ -39,27 +40,40 @@ class ShippingDetailsTwo extends Component {
       detailsData: {},
       addressData: [],
       containerData: [],
-      ShowCard:true,
-      bl_hblno:"",
-      hblNo:""
+      ShowCard: true,
+      documentData: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
-    
   }
+
   componentDidMount() {
     debugger;
-    
-    var HblNo=this.props.location.state.detail;
-     
-    
+
+    var HblNo = this.props.location.state.detail;
+
     this.HandleShipmentDetails(HblNo);
+  }
+  HandleShipmentDocument() {
+    debugger;
+    let self = this;
+    var HblNo = this.props.location.state.detail;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ViewUploadShipmentDocument`,
+      data: {
+        HBLNo: HblNo
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var documentdata = response.data;
+    });
   }
 
   HandleShipmentDetails(HblNo) {
-    debugger;
     let self = this;
 
     var userid = window.localStorage.getItem("userid");
@@ -67,7 +81,7 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        UserId: userid,         
+        UserId: userid,
         HBLNo: HblNo
       },
       headers: authHeader()
@@ -81,46 +95,42 @@ class ShippingDetailsTwo extends Component {
       });
     });
   }
-  onDocumentChangeHandler=event=>{    
+  onDocumentChangeHandler = event => {
     this.setState({
-      selectedFile: event.target.files[0]      
-    })
-  }
-  onDocumentClickHandler = () => { 
-   const docData = new FormData()
-   var docName=document.getElementById('docName').value;
-   var docDesc=document.getElementById('docDesc').value;
-   if(docName=="")
-   {
-     alert('Please enter document name');
-     return false;
-   }
-   if(docDesc=='')
-   {
-     alert('Please enter document description');
-     return false;
-   }
-   debugger;
-   //docData.append();
-   docData.append('ShipmentNumber','BCM2453770');
-   docData.append('HBLNo','BCM23770');
-   docData.append('DocDescription',docDesc);
-   docData.append('name',docName);
-   docData.append('FileData', this.state.selectedFile)
-  // docData.append()
-   
-   axios({
-    method: 'post',
-    url: `${appSettings.APIURL}/UploadShipmentDocument`,
-    data:docData,
-    headers:authHeader()
-  }).then(function (response) { 
+      selectedFile: event.target.files[0]
+    });
+  };
+  onDocumentClickHandler = () => {
+    const docData = new FormData();
+    var docName = document.getElementById("docName").value;
+    var docDesc = document.getElementById("docDesc").value;
+    if (docName == "") {
+      alert("Please enter document name");
+      return false;
+    }
+    if (docDesc == "") {
+      alert("Please enter document description");
+      return false;
+    }
     debugger;
-   alert(response.data[0].Result);
-  });
-   
+    //docData.append();
+    docData.append("ShipmentNumber", "BCM2453770");
+    docData.append("HBLNo", "BCM23770");
+    docData.append("DocDescription", docDesc);
+    docData.append("name", docName);
+    docData.append("FileData", this.state.selectedFile);
+    // docData.append()
 
-}
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/UploadShipmentDocument`,
+      data: docData,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result);
+    });
+  };
 
   static defaultProps = {
     center: {
@@ -129,7 +139,6 @@ class ShippingDetailsTwo extends Component {
     },
     zoom: 11
   };
-
 
   toggleDel() {
     this.setState(prevState => ({
@@ -141,13 +150,12 @@ class ShippingDetailsTwo extends Component {
       modalEdit: !prevState.modalEdit
     }));
   }
-HandleShowHideFun(){
-this.setState({ ShowCard: !this.state.ShowCard });
-}
-
+  HandleShowHideFun() {
+    this.setState({ ShowCard: !this.state.ShowCard });
+  }
 
   render() {
-    const { detailsData, addressData ,containerData,ShowCard} = this.state; 
+    const { detailsData, addressData, containerData, ShowCard } = this.state;
 
     return (
       <div>
@@ -185,6 +193,7 @@ this.setState({ ShowCard: !this.state.ShowCard });
                         role="tab"
                         aria-controls="documents"
                         aria-selected="false"
+                        onClick={this.HandleShipmentDocument.bind(this)}
                       >
                         Documents
                       </a>
@@ -224,10 +233,16 @@ this.setState({ ShowCard: !this.state.ShowCard });
                             <p className="details-title">Status</p>
                             <p className="details-para">{detailsData.Status}</p>
                           </div>
+                          <div className="col-md-3 details-border">
+                            <p className="details-title">Last Update</p>
+                            <p className="details-para">
+                              {detailsData["Status Date"]}
+                            </p>
+                          </div>
                         </div>
                         <div className="row">
                           <div className="col-md-3 details-border">
-                            <p className="details-title">Mode of Transport</p>
+                            <p className="details-title">Mode</p>
                             <p className="details-para">
                               {detailsData.ModeOfTransport}
                             </p>
@@ -246,15 +261,6 @@ this.setState({ ShowCard: !this.state.ShowCard });
                             <p className="details-title">SRT No#</p>
                             <p className="details-para">
                               {detailsData["SRT No#"]}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-md-3 details-border">
-                            <p className="details-title">Status Date</p>
-
-                            <p className="details-para">
-                              {detailsData["Status Date"]}
                             </p>
                           </div>
                         </div>
@@ -390,7 +396,9 @@ this.setState({ ShowCard: !this.state.ShowCard });
                                   </div>
                                   <div className="col-md-3 details-border">
                                     <p className="details-title">Flag</p>
-                                    <p className="details-para">{routedata.Flag}</p>
+                                    <p className="details-para">
+                                      {routedata.Flag}
+                                    </p>
                                   </div>
                                   <div className="col-md-3 details-border">
                                     <p className="details-title">
@@ -433,7 +441,6 @@ this.setState({ ShowCard: !this.state.ShowCard });
                                   <a
                                     href="#!"
                                     className="butn view-btn less-btn"
-                                    
                                   >
                                     Show Less
                                   </a>
@@ -459,28 +466,26 @@ this.setState({ ShowCard: !this.state.ShowCard });
                                 <p className="details-para">MSC RANIA (MSC)</p>
                               </div>
                               <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Departure Port Name
-                                </p>
+                                <p className="details-title">Departure Port</p>
                                 <p className="details-para">
                                   Sines, Setúbal, Portugal(PTSIE)
                                 </p>
                               </div>
                               <div className="col-md-6 details-border">
-                                <p className="details-title">Departure Date</p>
-                                <p className="details-para">18 Sep 2019</p>
+                                <p className="details-title">
+                                  Destination Port
+                                </p>
+                                <p className="details-para">
+                                  Long Beach, California, United States(USLGB)
+                                </p>
                               </div>
                             </div>
                           </div>
                           <div className="col-md-6 details-border">
                             <div className="row">
                               <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Destination Port Name
-                                </p>
-                                <p className="details-para">
-                                  Long Beach, California, United States(USLGB)
-                                </p>
+                                <p className="details-title">Departure Date</p>
+                                <p className="details-para">18 Sep 2019</p>
                               </div>
                               <div className="col-md-6 details-border">
                                 <p className="details-title">Arrival Date</p>
@@ -497,7 +502,7 @@ this.setState({ ShowCard: !this.state.ShowCard });
                             </div>
                           </div>
                         </div> */}
-                        {/* <div className="collapse-sect">
+                      {/* <div className="collapse-sect">
                           <div className="row">
                             <div className="col-md-3 details-border">
                               <p className="details-title">Container Agents</p>
@@ -526,7 +531,7 @@ this.setState({ ShowCard: !this.state.ShowCard });
                             </div>
                           </div>
                         </div> */}
-                        {/* <div className="row">
+                      {/* <div className="row">
                           <div className="col-md-12">
                             <a href="#!" className="butn view-btn">
                               view more
@@ -608,16 +613,25 @@ this.setState({ ShowCard: !this.state.ShowCard });
                       aria-labelledby="documents-tab"
                     >
                       <div>
-                        Enter documentName:<input id="docName" type="text"></input>
+                        Enter documentName:
+                        <input id="docName" type="text"></input>
                       </div>
                       <div>
-                        Enter document Description:<input id="docDesc" type="text"></input>
+                        Enter document Description:
+                        <input id="docDesc" type="text"></input>
                       </div>
                       <div>
-                        <input type="file" onChange={this.onDocumentChangeHandler}></input>
+                        <input
+                          type="file"
+                          onChange={this.onDocumentChangeHandler}
+                        ></input>
                       </div>
                       <div>
-                        <input type="button" onClick={this.onDocumentClickHandler} value="Save"></input>
+                        <input
+                          type="button"
+                          onClick={this.onDocumentClickHandler}
+                          value="Save"
+                        ></input>
                       </div>
                       <button className="butn">Add Document</button>
                       <div className="table-scroll">
@@ -741,6 +755,16 @@ this.setState({ ShowCard: !this.state.ShowCard });
                           </div>
                           <p>
                             <span>Departed : </span>9 Oct 2019, 90:45:56
+                          </p>
+                        </div>
+                        <div className="track-line-cntr active">
+                          <div className="track-img-cntr">
+                            <div className="track-img">
+                              <img src={Transit} alt="transit icon" />
+                            </div>
+                          </div>
+                          <p>
+                            <span>On the way</span>
                           </p>
                         </div>
                         <div className="track-line-cntr">

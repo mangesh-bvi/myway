@@ -2,15 +2,15 @@
   font-size: 14px;
 }
 .ag-header {
-  height: 71px !important;
-  min-height: 71px !important;
+  height: 51px !important;
+  min-height: 51px !important;
 }
 .ag-header-row {
-  height: 71px !important;
+  height: 51px !important;
 }
 .ag-header-cell-label {
   font-family: "Bold Font";
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   color: #333;
   padding: 15px 12px;
   text-align: center;
