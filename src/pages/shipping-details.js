@@ -1,8 +1,15 @@
-import React from 'react';
-import { Table } from 'react-bootstrap';
+import React, { Component } from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
-import axios from 'axios';
+import axios from "axios";
+import "../styles/custom.css";
+import "../assets/css/ag-grid.css";
+import { UncontrolledTooltip } from "reactstrap";
+import Headers from "../component/header";
+import SideMenu from "../component/sidemenu";
+import LoginActore from "./../assets/img/login-actore.jfif";
+import DownArrow from "./../assets/img/down-arrow.png";
+import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
@@ -30,7 +37,7 @@ class ShippingDetails extends Component {
   }
 
   HandleListShipmentSummey() {
-    debugger;
+    
     let self = this;
     var userid = window.localStorage.getItem("userid");
 
@@ -43,15 +50,13 @@ class ShippingDetails extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-      var data = [];
+          var data = [];
       data = response.data.Table1;
       self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
     });
   }
 
-  HandleChangeShipmentDetails(HblNo) {
-    debugger;
+  HandleChangeShipmentDetails(HblNo) {    
     this.props.history.push({
       pathname: "shipment-details",
       state: { detail: HblNo }       
@@ -61,7 +66,7 @@ class ShippingDetails extends Component {
   HandleRowClickEvt = (rowInfo, column) => {
     return {
       onClick: e => {
-        debugger;        
+             
         var hblNo=column.original["HBL#"];
         this.HandleChangeShipmentDetails(hblNo);
 
@@ -70,7 +75,7 @@ class ShippingDetails extends Component {
   };
 
   render() {
-    const { shipmentSummary } = this.state;
+    const { shipmentSummary, } = this.state;
     return (
       <div>
         <Headers />
@@ -94,41 +99,53 @@ class ShippingDetails extends Component {
             <div className="ag-fresh">
               <ReactTable
                 data={shipmentSummary}
+                filterable  
+                                            
                 columns={[
                   {
                     columns: [
                       {
                         Cell: row => {
-                          if (row.value == "Air") {                             
+                          if (row.value == "Air") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Plane} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Plane}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Ocean") {
                             return (
                               <div>
-                                <img style={{ width: "45px" ,textAlign:"center"}} src={Ship} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Ship}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Inland") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Truck} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Truck}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Railway") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Rail} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Rail}
+                                />
                               </div>
                             );
                           }
-
-                          
                         },
                         Header: "Mode Of Transport",
                         accessor: "ModeOfTransport"
@@ -159,51 +176,60 @@ class ShippingDetails extends Component {
                       },
                       {
                         Cell: row => {
-                          if (row.value == "Planning in Progress") {                             
+                          if (row.value == "Planning in Progress") {
                             return (
                               <div>
-                                <img style={{ width: "35px",textAlign:"center" }} src={Delivered} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Delivered}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Departed") {
                             return (
                               <div>
-                                <img style={{ width: "35px" ,textAlign:"center"}} src={Delivered} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Delivered}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Transshipped") {
                             return (
                               <div>
-                                <img style={{ width: "35px",textAlign:"center" }} src={Transit} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Transit}
+                                />
                               </div>
                             );
                           }
                           if (row.value == "Arrived") {
                             return (
                               <div>
-                                <img style={{ width: "35px",textAlign:"center" }} src={Arrived} />
+                                <img
+                                  style={{ width: "35px", textAlign: "center" }}
+                                  src={Arrived}
+                                />
                               </div>
                             );
-                          } 
+                          }
                           if (row.value == "Delivered") {
                             return (
                               <div>
-                                <img style={{ width: "45px",textAlign:"center" }} src={Delivered} />
+                                <img
+                                  style={{ width: "45px", textAlign: "center" }}
+                                  src={Delivered}
+                                />
                               </div>
                             );
                           }
 
                           if (row.value == "DO Issued") {
-                            return (
-                              <div>
-                                {row.value}
-                              </div>
-                            );
+                            return <div>{row.value}</div>;
                           }
-                           
-                          
                         },
                         Header: "Status",
                         accessor: "Status"
@@ -215,194 +241,50 @@ class ShippingDetails extends Component {
                       {
                         Header: "Event",
                         accessor: "Event",
-                        Cell:row=>{
-                          if(row.value=="N/A"){
-                          return(<>
-                           <label className="">{row.value}</label>
-
-                          </>);
+                        Cell: row => {
+                          if (row.value == "N/A") {
+                            return (
+                              <>
+                                <label className="">{row.value}</label>
+                              </>
+                            );
+                          }
+                          if (row.value == "On Time") {
+                            return (
+                              <>
+                                <label className="girdevtgreen">
+                                  {row.value}
+                                </label>
+                              </>
+                            );
+                          }
+                          if (row.value == "Behind Schedue") {
+                            return (
+                              <>
+                                <label className="girdevtred">
+                                  {row.value}
+                                </label>
+                              </>
+                            );
+                          }
+                          if (row.value == "Delay Risk") {
+                            return (
+                              <>
+                                <label className="girdevtyellow">
+                                  {row.value}
+                                </label>
+                              </>
+                            );
+                          }
                         }
-                        if(row.value=="On Time"){
-                          return(<>
-                           <label className="girdevtgreen">{row.value}</label>
-
-                          </>);
-                        }
-                        if(row.value=="Behind Schedue"){
-                          return(<>
-                           <label className="girdevtred">{row.value}</label>
-
-                          </>);
-                        }
-                        if(row.value=="Delay Risk"){
-                          return(<>
-                           <label className="girdevtyellow">{row.value}</label>
-
-                          </>);
-                        }
-                      }
-
                       }
                     ]
                   }
                 ]}
-                defaultPageSize={10}
                 className="-striped -highlight"
+                defaultPageSize={10}
                 getTrProps={this.HandleRowClickEvt}
               />
-            </div>
-            <div className="table-scroll">
-              {/* <table>
-                <thead>
-                  <tr>
-                    <th>
-                      No
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      Shipment Mode{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      Customer Name{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      Shipper Details{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      POL{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      POD{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      Status{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      ETA{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                    <th>
-                      Event{" "}
-                      <span className="down-arrow">
-                        <img src={DownArrow} alt="down arrow icon" />
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="text-center">1</td>
-                    <td>
-                      <span className="shipment-img">
-                        <img src={Ship} alt="ship icon" />
-                      </span>
-                    </td>
-                    <td>David Robinson</td>
-                    <td>Abc Xyz</td>
-                    <td>Port of Houston</td>
-                    <td>Western Cape</td>
-                    <td>
-                      <span className="status-img" id="transit">
-                        <img src={Transit} alt="transit icon" />
-                      </span>
-                      <UncontrolledTooltip placement="right" target="transit">
-                        In Transit
-                      </UncontrolledTooltip>
-                    </td>
-                    <td>19/08/2019</td>
-                    <td className="clr-green">On Time</td>
-                  </tr>
-                  <tr>
-                    <td className="text-center">2</td>
-                    <td>
-                      <span className="shipment-img">
-                        <img src={Truck} alt="truck icon" />
-                      </span>
-                    </td>
-                    <td>Scott Brown</td>
-                    <td>Abc Xyz</td>
-                    <td>New York</td>
-                    <td>Virginia</td>
-                    <td>
-                      <span className="status-img" id="boxed">
-                        <img src={Box} alt="box icon" />
-                      </span>
-                      <UncontrolledTooltip placement="right" target="boxed">
-                        Boxed
-                      </UncontrolledTooltip>
-                    </td>
-                    <td>12/05/2019</td>
-                    <td className="clr-yellow">Dealy Risk</td>
-                  </tr>
-                  <tr>
-                    <td className="text-center">3</td>
-                    <td>
-                      <span className="shipment-img">
-                        <img src={Rail} alt="rail icon" />
-                      </span>
-                    </td>
-                    <td>Robbin Miller</td>
-                    <td>Abc Xyz</td>
-                    <td>Nevada</td>
-                    <td>Los Angeles</td>
-                    <td>
-                      <span className="status-img" id="delivered">
-                        <img src={Delivered} alt="delivered icon" />
-                      </span>
-                      <UncontrolledTooltip placement="right" target="delivered">
-                        Delivered
-                      </UncontrolledTooltip>
-                    </td>
-                    <td>20/09/2019</td>
-                    <td className="clr-green">On Time</td>
-                  </tr>
-                  <tr>
-                    <td className="text-center">4</td>
-                    <td>
-                      <span className="shipment-img">
-                        <img src={Plane} alt="plane icon" />
-                      </span>
-                    </td>
-                    <td>Smith Johnson</td>
-                    <td>Abc Xyz</td>
-                    <td>Texas</td>
-                    <td>Dubai</td>
-                    <td>
-                      <span className="status-img" id="in-plane">
-                        <img src={InPlane} alt="in-plane icon" />
-                      </span>
-                      <UncontrolledTooltip placement="right" target="in-plane">
-                        In Plane
-                      </UncontrolledTooltip>
-                    </td>
-                    <td>12/06/2019</td>
-                    <td className="clr-red">Behind Schedue</td>
-                  </tr>
-                </tbody>
-              </table>
-             */}
             </div>
           </div>
         </div>
@@ -474,38 +356,48 @@ function statusImage(parameter) {
       element.append(imageElement);
       break;
     }
-    if(error) {
-      return (
-        <div>Error: {error.message}</div>
-      )
-    } else {
-      return(
-        <div>
-          <h2>Product List</h2>
-          <Table striped bordered hover>          
-            <thead>
-              <tr>
-                <th>#ID</th>
-                <th>Product Name</th>
-                <th>SKU</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(product => (
-                <tr key={product.ShipmentNumber}>
-                  <td>{product.ShipmentNumber}</td>   
-                  <td> <Greeting isLoggedIn={product.ShipmentNumber} ></Greeting></td>     
-                  <td>{product.ShipmentNumber}</td>
-                  <td>{product.ShipmentNumber}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
-      )
+    case "Arrived": {
+      //plane
+      imageElement.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAtCAYAAAA6GuKaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4lJREFUeNrUmUloU1EUhtOSGoNYRNpqrFoV0booIkoRq0jFhdSAiogiWHTh0oW4EF2IiOBSnBYiIqgIdmMRFXFhkSIOFAfEkTg1tjZprEMdqIbE/8AfuFzee3lJ3pAc+Ej6kvvy33vPPcNrVTabDVSaVVWs6Lr6Bq9/NwSOgAkgA46Dl3YGpoaTgWqfFusfGAf6KLaTE7FlfomW1R0Co+AsqAGby1202GcwFfwCl0AbWFAJoiN8/4jYchM/RQ+ASTyMAa62CN7kt2gRsRfsB1GDlRabwlfx7y6wAjT7KVpWcQ5IgLVgoxq9GEUalWv3wVOwzcpN3I7TkxmPE3SFEFf4Lz8XwT/Bd2VMGIigJPijXB+TnUCcjgdt/HATmFmg2JSWLCS8vTH4Xr/J+NcG12aBHeCQlWjZ1q1ghnJw0jZFxzTRsuWfHIjtS+WNmeglnJX8+FHwlv5XrHU6lJC6zESLn20HD8B5h3z7DlhGN7kIclXaHtALHirfXQUWg1Pgt3J9hBHGUPQ68BVcdqjGEFsJPoJjzIBitTyYL/hZgMlGdvmKVQEVNAhRLeAcT2upJitzAIznKqv3nKbF62rusPj+baub6qIjHBxzMOwlTK5HOIkR/r0aTAeH6b+2k0tIiYluW4QRKZcVxS2vKytvW/QPJSl4IXpIcQuZwM1iqjwZ+A20eiC6kavazuR1IZ9bmPm0DOoBHawDBlwSHOahz9Ui10C8lB5RJrIb1DFOP3dJeAvrEakvntjNttIjmhVMYabwVop+pxU1bpjE7y9g0Cr7WonO2SLWt/MtUr4bTa9kyKs8XwWL9toa2Ceu4SKdVLKl748QzCzJOuUgg8Aupvuy6RGtTJLbabrK+koRHWBUucVgUGMUp/exMyhmRc6AZy4Jl8i1hYnogy5aBN8F75UByznDHj79eWzQMm3gDd0SPcrXiWYZ8ZVWjM9jDdLPTBljwa5ah8suUqvVRHl9WoL9XD6zCGmdsVe2kDriVrWHatKP3eP7tIt1iFXMjnJ3M3ZFZ/TA7qFJfb2TpcONfFWeE+VmKfesB7PZU8rOnlB6SldEtzM8lWoitpt9YsZOPV2K9bIaLMUG7TxfCZrUuKr12Ywcaa/OgC46qmVGmfUwY3jZmC66mx1Lhis8FihDCxqk5SZudcLh5x+uiG7mYepVWvxInvEhP0XL8+Q2UqilvBZdkf9m/i/AANKv82bJ/oh9AAAAAElFTkSuQmCC"; //in-plane
+      imageElement.style.width = "45px";
+      element.append(imageElement);
+      break;
     }
   }
+  return element;
+}
+function etaDate(params) {
+  if (params.value != undefined && params.value != "") {
+    return formatDate(params.value);
+  }
+}
+function formatDate(date) {
+  var monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+  debugger;
+  var day = date.getDate();
+  var monthIndex = date.getMonth();
+  var year = date.getFullYear();
+
+  return day + " /" + monthIndex + "/" + year;
 }
 
-export default ShippingDetails ;
+function formatNumber(number) {
+  return Math.floor(number)
+    .toString()
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+export default ShippingDetails;

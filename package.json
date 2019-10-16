@@ -28,6 +28,7 @@
     "react-dom-factories": "^1.0.2",
     "react-google-charts": "^3.0.15",
     "react-notifications": "^1.4.3",
+    "react-rangeslider": "^2.2.0",
     "react-redux": "^7.1.1",
     "react-router-dom": "^5.1.0",
     "react-scripts": "3.1.1",
