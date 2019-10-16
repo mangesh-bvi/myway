@@ -19,7 +19,6 @@ import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
 
-
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -59,7 +58,7 @@ class ShippingDetails extends Component {
   HandleChangeShipmentDetails(HblNo) {    
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: HblNo }       
+      state: { detail: HblNo }
     });
   }
 
@@ -69,7 +68,6 @@ class ShippingDetails extends Component {
              
         var hblNo=column.original["HBL#"];
         this.HandleChangeShipmentDetails(hblNo);
-
       }
     };
   };

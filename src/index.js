@@ -27,6 +27,8 @@ import ShippingDetails from "./pages/shipping-details";
 import ShippingDetailsTwo from "./pages/shipping-details-2";
 import GreenCounter from "./pages/GreenCounter";
 import ShipmentPlanner from "./pages/shipment-planner";
+import RateSearch from "./pages/rate-search";
+import NewRateSearch from "./pages/new-rate-search";
 
 // import Exmaple from './pages/Example';
 
@@ -54,6 +56,8 @@ ReactDOM.render(
     <Route exact path="/shipment-details" component={ShippingDetailsTwo} />
     <Route exact path="/green-counter" component={GreenCounter} />
     <Route exact path="/shipment-planner" component={ShipmentPlanner} />
+    <Route exact path="/rate-search" component={RateSearch} />
+    <Route exact path="/new-rate-search" component={NewRateSearch} />
     {/* <Route exact path="/example" component={Exmaple} /> */}
 
     {/* <Route  path="/" component={Login} />   */}
