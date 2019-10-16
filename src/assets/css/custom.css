@@ -84,6 +84,9 @@ h3 {
   font-size: 18px;
   font-family: "Bold Font";
 }
+.min-hei-auto {
+  min-height: auto;
+}
 .butn {
   background-color: #39b54a;
   color: #fff;
@@ -124,6 +127,15 @@ h3 {
 }
 .light-blue-butn:hover {
   color: #29abe2;
+}
+.white-butn {
+  background-color: #fff;
+  border-color: #333;
+  color: #333;
+}
+.white-butn:hover {
+  background-color: #333;
+  color: #fff;
 }
 .clr-green {
   color: #39b54a;
@@ -943,6 +955,199 @@ table tbody tr:last-child {
 }
 /* new rate search ends */
 
+/* rate table starts */
+.no-bg {
+  background-color: initial;
+}
+.rate-table-below {
+  padding-top: 20px;
+}
+.rate-table-left {
+  background-color: #fff;
+  padding: 7px;
+}
+.top-select .butn {
+  font-family: "Medium Font";
+  color: #000;
+  text-transform: capitalize;
+  margin: 0;
+  background-color: #fff;
+  border-color: #d3d3d3;
+  min-width: auto;
+  flex: 0 0 32%;
+}
+.top-select .butn:hover {
+  background-color: #d3d3d3;
+  color: #fff;
+}
+.cont-costs {
+  padding: 12px;
+}
+.cont-costs .remember-forgot input + label::before {
+  width: 16px;
+  height: 16px;
+}
+.cont-costs .remember-forgot label {
+  padding-left: 28px;
+  color: #696969;
+  letter-spacing: 0;
+  font-size: 14px;
+}
+.cont-costs .remember-forgot input:checked + label::after {
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  top: 49%;
+}
+.cont-costs span {
+  font-family: "Medium Font";
+  font-size: 14px;
+  color: #39b54a;
+}
+.cont-costs .remember-forgot > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.cont-costs .remember-forgot > div:last-child {
+  margin-bottom: 0px;
+}
+.pol-pod-maps {
+  height: 160px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.rate-map-ovrly {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  font-family: "Medium Font";
+  color: #fff;
+  font-size: 14px;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 65px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1px;
+}
+.rate-map-plus {
+  right: 0;
+  left: initial;
+  font-size: 24px;
+  width: 40px;
+}
+.pod-maps .rate-map-ovrly {
+  bottom: 0;
+  top: initial;
+  left: initial;
+  right: 0;
+}
+.pod-maps .rate-map-plus {
+  left: 0;
+}
+.pol-pod-popup label,
+.pol-pod-popup input {
+  width: auto;
+  display: inline-block;
+}
+.pol-pod-popup .login-fields {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.pol-pod-popup .login-fields:last-of-type {
+  margin-bottom: 0;
+}
+.pol-pod-popup label {
+  margin-bottom: 0;
+  margin-right: 20px;
+  flex: 0 0 130px;
+  text-align: left;
+}
+.pol-pod-popup input {
+  flex-grow: 1;
+}
+.rate-table-range .input-range__track--active {
+  background: #0042a9 !important;
+}
+.rate-table-range .input-range__track {
+  border-radius: 0 !important;
+  background: #0042a9 !important;
+}
+.rate-table-range .input-range__label {
+  color: #050505 !important;
+  font-family: "Regular Font" !important;
+  font-size: 12px !important;
+}
+.rate-table-range .input-range__slider {
+  border: 2px solid #0042a9 !important;
+  background-color: #fff !important;
+}
+.rate-table-range .input-range {
+  width: 300px !important;
+}
+.input-range__slider-container .input-range__label-container {
+  display: none;
+}
+.rate-table-range {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  position: relative;
+}
+.rate-table-range .cust-labl {
+  font-size: 12px;
+  font-family: "Bold Font";
+  text-transform: uppercase;
+  position: absolute;
+  left: 25px;
+  top: calc(50% - 13px);
+  transform: translateY(-50%);
+}
+.rate-table-range .cust-labl.clr-red {
+  right: 25px;
+  left: initial;
+}
+.rate-table-header {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+}
+.rate-table-header > * {
+  padding-right: 25px;
+  padding-left: 25px;
+  border-right: 1px solid #d6d6d6;
+}
+.rate-table-header > *:last-child {
+  border-right: 0;
+}
+.rate-table-header .title-sect {
+  flex-grow: 1;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.ReactTable .rt-thead {
+  display: none !important;
+}
+.ReactTable.-striped .rt-tr.-odd,
+.ReactTable.-striped .rt-tr.-even {
+  background: #fff !important;
+}
+.ReactTable .rt-tbody .rt-tr-group {
+  border-bottom: 2px solid #e6e7e8 !important;
+}
+.ReactTable .rt-tbody .rt-td {
+  border-right: 0 !important;
+  font-family: "Medium Font";
+  font-size: 14px;
+  color: #858585;
+}
+/* rate table ends */
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
@@ -1370,13 +1575,13 @@ table tbody tr:last-child {
   margin: 0 85px 0;
 }
 
-.girdevtred{
-color: #eb0029;
+.girdevtred {
+  color: #eb0029;
 }
-.girdevtyellow{
+.girdevtyellow {
   color: #ffb400;
-  }
-  .girdevtgreen{
-    color: #39b54a;
-    }
+}
+.girdevtgreen {
+  color: #39b54a;
+}
 /* --------------------------------------------------------------------------- */
