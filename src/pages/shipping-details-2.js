@@ -12,12 +12,17 @@ import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
 import Inland from "./../assets/img/inland.png";
 import Delivery from "./../assets/img/delivery.png";
-import Edit from "./../assets/img/pencil.png";
+import Eye from "./../assets/img/eye.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
+ 
+
+
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 
 const SourceIcon = () => (
   <div className="map-icon source-icon">
@@ -29,6 +34,7 @@ const DestiIcon = () => (
     <img src={ShipWhite} />
   </div>
 );
+var docuemntFileName = "";
 
 class ShippingDetailsTwo extends Component {
   constructor(props) {
@@ -41,11 +47,15 @@ class ShippingDetailsTwo extends Component {
       addressData: [],
       containerData: [],
       ShowCard: true,
-      documentData: []
+      documentData: [],
+      sr_no:0,
+      filtered: [],
+      viewDocument:false
     };
 
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
+    // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
   }
 
@@ -56,6 +66,28 @@ class ShippingDetailsTwo extends Component {
 
     this.HandleShipmentDetails(HblNo);
   }
+  HandleDocumentDownloadFile(evt,row){    
+     debugger;
+     var filePath = row.original["HBL#"];
+  }
+
+  HandleDocumentView(evt,row){    
+    
+    debugger;
+    var HblNo = row.original["HBL#"];
+    this.setState({modalEdit:true});
+
+
+ }
+ HandleDocumentDelete(evt,row){    
+  debugger;
+  var HblNo = row.original["HBL#"];
+  this.setState({modalDel:true});
+}
+
+
+   
+   
   HandleShipmentDocument() {
     debugger;
     let self = this;
@@ -69,7 +101,13 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      var documentdata = response.data;
+      var documentdata=[];
+      documentdata=response.data;    
+      documentdata.forEach(function(file,i) {
+        file.sr_no = i+1; 
+      })
+       
+      self.setState({ documentData: documentdata });
     });
   }
 
@@ -155,7 +193,13 @@ class ShippingDetailsTwo extends Component {
   }
 
   render() {
-    const { detailsData, addressData, containerData, ShowCard } = this.state;
+    const {
+      detailsData,
+      addressData,
+      containerData,
+      ShowCard,
+      documentData
+    } = this.state;
 
     return (
       <div>
@@ -450,95 +494,6 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         );
                       })}
-                      {/* <div className="sect-padd">
-                        <p className="details-heading">
-                          Routing Information - 2
-                        </p>
-                        <div className="row mid-border">
-                          <div className="col-md-6 details-border">
-                            <div className="row">
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Type Of Move</p>
-                                <p className="details-para">Door To Port</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Vessel Name</p>
-                                <p className="details-para">MSC RANIA (MSC)</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Departure Port</p>
-                                <p className="details-para">
-                                  Sines, Setúbal, Portugal(PTSIE)
-                                </p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">
-                                  Destination Port
-                                </p>
-                                <p className="details-para">
-                                  Long Beach, California, United States(USLGB)
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-md-6 details-border">
-                            <div className="row">
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Departure Date</p>
-                                <p className="details-para">18 Sep 2019</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Arrival Date</p>
-                                <p className="details-para">10 Oct 2019</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Booking Number</p>
-                                <p className="details-para">081ISTI1930988</p>
-                              </div>
-                              <div className="col-md-6 details-border">
-                                <p className="details-title">Booking Date</p>
-                                <p className="details-para">22 Aug 2019</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div> */}
-                      {/* <div className="collapse-sect">
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Container Agents</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Flag</p>
-                              <p className="details-para">Panama</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">
-                                Voyage Identification
-                              </p>
-                              <p className="details-para">NT936R</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">IMO Number</p>
-                              <p className="details-para">9372470</p>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Document Cutoff</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Port Cutoff</p>
-                            </div>
-                          </div>
-                        </div> */}
-                      {/* <div className="row">
-                          <div className="col-md-12">
-                            <a href="#!" className="butn view-btn">
-                              view more
-                            </a>
-                          </div>
-                        </div>
-                      </div> */}
                       <div className="sect-padd">
                         <p className="details-heading">Container Details</p>
                         <div className="row">
@@ -635,67 +590,61 @@ class ShippingDetailsTwo extends Component {
                       </div>
                       <button className="butn">Add Document</button>
                       <div className="table-scroll">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Sr. No.</th>
-                              <th>Title</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>Medical-1</td>
-                              <td className="file-act-cntr">
-                                <div
-                                  onClick={this.toggleEdit}
-                                  className="file-act-icons"
-                                >
-                                  <img src={Edit} alt="edit icon" />
-                                </div>
-                                <div
-                                  onClick={this.toggleDel}
-                                  className="file-act-icons"
-                                >
-                                  <img src={Delete} alt="delete icon" />
-                                </div>
-                                <a
-                                  href={Download}
-                                  download
-                                  className="file-act-icons"
-                                >
-                                  <img src={Download} alt="download icon" />
-                                </a>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>Medical-2</td>
-                              <td className="file-act-cntr">
-                                <div
-                                  onClick={this.toggleEdit}
-                                  className="file-act-icons"
-                                >
-                                  <img src={Edit} alt="edit icon" />
-                                </div>
-                                <div
-                                  onClick={this.toggleDel}
-                                  className="file-act-icons"
-                                >
-                                  <img src={Delete} alt="delete icon" />
-                                </div>
-                                <a
-                                  href={Download}
-                                  download
-                                  className="file-act-icons"
-                                >
-                                  <img src={Download} alt="download icon" />
-                                </a>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                        <ReactTable
+                          data={documentData}
+                          showPagination={false}
+                          columns={[
+                            {
+                              columns: [
+                                {
+                                  Header: "Sr_No",
+                                  accessor: "sr_no"
+                                },
+
+                                {
+                                  Header: "Title",
+                                  accessor: "DocumentDescription"
+                                },
+                                {
+                                  Header: "Action",
+                                  Cell: row => {
+                                    return (
+                                      <div>
+                                        <img
+                                          className="actionicon"
+                                          src={Eye}
+                                          alt="view-icon"
+                                          onClick={e =>
+                                            this.HandleDocumentView(e, row)
+                                          }
+                                        />
+                                        <img
+                                          className="actionicon"
+                                          src={Delete}
+                                          alt="delete-icon"
+                                          onClick={e =>
+                                            this.HandleDocumentDelete(e, row)
+                                          }
+                                        />
+                                        <img
+                                          className="actionicon"
+                                          src={Download}
+                                          alt="download-icon"
+                                          onClick={e =>
+                                            this.HandleDownloadFile(e, row)
+                                          }
+                                        />
+                                      </div>
+                                    );
+                                  }
+                                }
+                              ]
+                            }
+                          ]}
+                          // getTrProps={this.HandleDEDFile.bind(this)}
+                          defaultPageSize={5}
+                          className="-striped -highlight"
+                        />
                       </div>
                     </div>
                     <div
@@ -713,7 +662,7 @@ class ShippingDetailsTwo extends Component {
                     <div className="ship-detail-map">
                       <GoogleMapReact
                         bootstrapURLKeys={{
-                          key: "AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"
+                          key: appSettings.Keys
                         }}
                         defaultCenter={this.props.center}
                         defaultZoom={this.props.zoom}
@@ -829,12 +778,13 @@ class ShippingDetailsTwo extends Component {
                 >
                   <ModalBody>
                     <div className="rename-cntr login-fields">
-                      <label>Rename your document</label>
-                      <input type="text" placeholder="Rename here..." />
+                      <iframe
+                        src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
+                         
+                        className="agreement-pdf"
+                      ></iframe>
                     </div>
-                    <Button className="butn" onClick={this.toggleEdit}>
-                      Done
-                    </Button>
+                     
                     <Button
                       className="butn cancel-butn"
                       onClick={this.toggleEdit}

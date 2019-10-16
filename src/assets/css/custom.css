@@ -1508,14 +1508,15 @@ table tbody tr:last-child {
 }
 
 .dot {
-  height: 240px;
-  width: 50%;
+  height: 289px;
+  width: 93%;
   border-radius: 100%;
   display: inline-block;
-  margin: 0 85px 0;
+
   border: 1px solid #f1f3f2;
-  padding: 5px 7px;
+  padding: 5px 8px;
   position: relative;
+  margin-left: 60px;
 }
 .dot1 {
   height: 200px;
@@ -1584,4 +1585,28 @@ table tbody tr:last-child {
 .girdevtgreen {
   color: #39b54a;
 }
+
+.actionicon {
+  width: 20px !important;
+  margin-left: 20px;
+  cursor: pointer;
+}
+.grncntrsld .rangeslider-vertical .rangeslider__handle {
+  width: 30px;
+  height: 20px;
+  left: -10px;
+  box-shadow: none;
+  border-radius: 10%;
+  background-color: #63cd16;
+  border: none;
+}
+
+.grncntrsld .rangeslider-vertical .rangeslider__labels {
+  top: 10px;
+}
+
+.grncntrsld .rangeslider-vertical .rangeslider__fill {
+  background-color: #63cd16;
+}
+
 /* --------------------------------------------------------------------------- */
