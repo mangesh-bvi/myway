@@ -186,7 +186,7 @@ class ShipmentPlanner extends Component {
         totalMin+=parseInt(response.data[index].NMin_Transit_Time);
         totalMax+=parseInt(response.data[index].NMax_Transit_Time);
       }
-      self.setState({transitpopup:response.data};)
+      self.setState({transitpopup:response.data});
       self.setState({totalAvgDays:totalAvg});
       self.setState({totalMinDays:totalMin});
       self.setState({totalMaxDays:totalMax});
