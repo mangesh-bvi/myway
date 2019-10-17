@@ -2,8 +2,8 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
-import axios from 'axios';
-import {encryption} from "../helpers/encryption";
+import axios from "axios";
+import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
@@ -15,11 +15,12 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",   
+      username: "",
       password: "",
       submitted: false,
       showLoginError: false,
-      errorText: ""
+      errorText: "",
+      loading:false
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -32,32 +33,35 @@ class Login extends React.Component {
     });
   }  
   handleSubmit(e) {     
-    this.setState({ submitted: true });   
+    this.setState({ submitted: true, loading:true });   
     const { username, password } = this.state;
-    window.localStorage.setItem("password",password);
+    window.localStorage.setItem("password", password);
     if (username !== "" && password !== "") {
-      var ipaddress=window.localStorage.getItem("ipaddress");      
-      console.log('axios'+new Date());
+      var ipaddress = window.localStorage.getItem("ipaddress");
+      console.log("axios" + new Date());
       axios({
-        method: 'post',
-        url: 'http://vizio.atafreight.com/mywayapi/Login',
+        method: "post",
+        url: "http://vizio.atafreight.com/mywayapi/Login",
         data: {
-          UserName:username,
-          Password:password,
-          publicIPAddress:ipaddress,
-          PrivateIPAddress:''         
+          UserName: username,
+          Password: password,
+          publicIPAddress: ipaddress,
+          PrivateIPAddress: ""
         },
-        headers:authHeader('no')
-      }).then(function (response) {      
-        console.log('axios response'+new Date());    
+        headers: authHeader("no")
+      }).then(function(response) {
+        console.log("axios response" + new Date());
         debugger;
-        var data=response.data;     
-        console.log(data);   
-        window.localStorage.setItem("username",data.Table[0].UserName);
+        var data = response.data;
+        console.log(data);
+        window.localStorage.setItem("username", data.Table[0].UserName);
         window.localStorage.setItem("firstname", data.Table[0].FirstName);
-        window.localStorage.setItem("lastlogindate", data.Table[0].LastLoginDate);
+        window.localStorage.setItem(
+          "lastlogindate",
+          data.Table[0].LastLoginDate
+        );
         window.localStorage.setItem("lastname", data.Table[0].LastName);
-        window.localStorage.setItem("qrcode",data.Table1[0].QRCode);
+        window.localStorage.setItem("qrcode", data.Table1[0].QRCode);
         window.localStorage.setItem(
           "modeoftransport",
           data.Table[0].ModeOfTransport
@@ -67,14 +71,13 @@ class Login extends React.Component {
         window.localStorage.setItem(
           "dashboardrefreshtime",
           data.Table[0].DashboardRefreshTime
-        );      
-        window.localStorage.setItem("IsEnabled",data.Table[0].IsEnabled);
-        GenerateToken(username,password);
+        );
+        window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
+        GenerateToken(username, password);
         //window.location.href = "./user-agreement";
-        });
-     
+      });
     } else {
-      this.setState({ settoaste: true });
+      this.setState({ settoaste: true, loading:true });
 
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the passowrd" : "";
@@ -84,18 +87,17 @@ class Login extends React.Component {
     }
   }
 
-  componentDidMount()
-  {
+  componentDidMount() {
     localStorage.clear();
-    const publicIp = require('public-ip'); 
+    const publicIp = require("public-ip");
     (async () => {
-    console.log(await publicIp.v4());
-    window.localStorage.setItem('ipaddress',await publicIp.v4());    
-    })();    
+      console.log(await publicIp.v4());
+      window.localStorage.setItem("ipaddress", await publicIp.v4());
+    })();
   }
   render() {
     //  const { username, password } = this.state;
-
+    const {loading} = this.state;
     return (
       <section className="login-between">
         <div className="login-sect">
@@ -140,7 +142,9 @@ class Login extends React.Component {
                   type="button"
                   className="butn"
                   onClick={this.handleSubmit}
+                  disabled={loading}
                 >
+                  {loading && <i className="fa fa-refresh fa-spin"></i>}
                   Login
                 </button>
               </div>
@@ -152,8 +156,6 @@ class Login extends React.Component {
     );
   }
 }
-
-
 
 function GenerateToken(username, password) {
   debugger;
@@ -194,14 +196,11 @@ function TokenhandleResponse(response) {
       //alert('oops!error occured');
     } else {
       window.localStorage.setItem("token", data.access_token);
-      if(window.localStorage.getItem("IsEnabled")==true)
-      {
+      if (window.localStorage.getItem("IsEnabled") == true) {
         window.location.href = "./dashboard";
+      } else {
+        window.location.href = "./user-agreement";
       }
-      else{
-          window.location.href = "./user-agreement";
-      }
-      
     }
 
     // return data;

@@ -13,6 +13,10 @@ class ForgotPassword extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  HandleCancel(){
+
+    this.props.history.push("/");
+  }
   handlechange(e) {
     this.setState({
       [e.target.name]: e.target.value
@@ -56,13 +60,12 @@ class ForgotPassword extends React.Component {
                 >
                   Submit
                 </button>
-                <a
-                  href="/"
-                  className="butn cancel-butn"
-                  // onClick={() => this.handleSubmit()}
-                >
-                  Cancel
-                </a>
+                <button
+                      className="butn cancel-butn"
+                      onClick={this.HandleCancel.bind(this)}
+                    >
+                      Cancel
+                    </button>
               </div>
             </div>
           </div>

@@ -6,6 +6,9 @@ import { Bar, Line, Doughnut } from "react-chartjs-2";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
 import VizioMyWay from "./../assets/img/greencounterchart.png";
+import Slider from 'react-rangeslider'
+import 'react-rangeslider/lib/index.css'
+
 
 var carboneOptions = {
   legend: {
@@ -72,6 +75,7 @@ class GreenCounter extends Component {
       volumechartData: [],
       carbonechartData: [],
       greencounterData: [],
+      volume: 0,
       selectData: [
         { key: "Year", value: "Year" },
         { key: "Month", value: "Month" }
@@ -87,6 +91,11 @@ class GreenCounter extends Component {
     this.HandleVolumeChartData();
     this.HandleCarboneChartData();
     this.HandleGreenCounterChartData();
+  }
+  handleOnChange = (value) => {
+    this.setState({
+      volume: value
+    })
   }
 
   HandleVolumeChangeSelect(event) {
@@ -168,6 +177,7 @@ class GreenCounter extends Component {
     });
   }
   render() {
+    let { volume } = this.state
     let vollabel = [];
     let carlabel = [];
     let volumnedata = [];
@@ -231,7 +241,7 @@ class GreenCounter extends Component {
         }
       ]
     };
-
+    var lbl={ 1: '1M', 2: '2M', 3: '3M'};
     return (
       <>
         <Headers />
@@ -244,6 +254,7 @@ class GreenCounter extends Component {
             <div className="col-md-6">
               <div className="card carbonechart">
                 <div>
+                <div className="volcls">
                   <label className="grncuntr-lbl">Volume Analysis</label>
                   <select
                     className="brncuntr-select"
@@ -262,6 +273,7 @@ class GreenCounter extends Component {
                   height={50}
                   options={volumeOptions}
                 />
+                </div>
               </div>
             </div>
             <div className="col-md-6">
@@ -280,11 +292,7 @@ class GreenCounter extends Component {
                   </select>
                 </div>
                 <div>
-                  {/* <Chart
-                    chartType="Line"
-                    data={Carbonedata}
-                    options={carboneoptions}
-                  /> */}
+                  
                   <Line
                     data={carboneCharData}
                     width={100}
@@ -297,28 +305,45 @@ class GreenCounter extends Component {
                 <div>
                   <label className="grncuntr-lbl">Green Conuter</label>
                 </div>
-                <div className="dot">
-                  {/* <div className="dot1"></div> */}
+                <div className="row">
+                  <div className="col-md-8">
+                    <div className="dot">
+                      {/* <div className="dot1"></div> */}
 
-                  <Doughnut
-                    data={greenCounterdata}
-                    width={700}
-                    height={600}
-                    options={greencounterOption}
-                  />
-                  <img
-                    src={VizioMyWay}
-                    alt="vizio-icon"
-                    className="greenchart-img"
-                  />
-                  <label className="greenchartlbl">
-                    Tons of
-                    <br /> CO2 Emission
-                  </label>
-                  <label className="counterval">
-                    {this.state.cotowemission}
-                  </label>
-                  
+                      <Doughnut
+                        data={greenCounterdata}
+                        width={700}
+                        height={600}
+                        options={greencounterOption}
+                      />
+                      <img
+                        src={VizioMyWay}
+                        alt="vizio-icon"
+                        className="greenchart-img"
+                      />
+                      <label className="greenchartlbl">
+                        Tons of
+                        <br /> CO2 Emission
+                      </label>
+                      <label className="counterval">
+                        {this.state.cotowemission}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="grncntrsld">
+                    <Slider
+                      value={volume}
+                      orientation="vertical"
+                      onChange={this.handleOnChange}
+                      min={1}
+                      max={3}
+                      step={1}
+                      labels={lbl}
+                      reverse={false}
+                    />
+                    </div>
+                  </div>
                 </div>
                 <label className="greenchartlbl1">
                   {this.state.treecount} tree Planted

@@ -5,6 +5,7 @@ import axios from "axios";
 import "../styles/custom.css";
 import "../assets/css/react-table.css";
 import { UncontrolledTooltip } from "reactstrap";
+import { Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import LoginActore from "./../assets/img/login-actore.jfif";
@@ -18,17 +19,26 @@ import Box from "./../assets/img/box.png";
 import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
+import Eye from "./../assets/img/eye.png";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-class ShippingDetails extends Component {
+class SpotRateTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      modalDel: false,
       shipmentSummary: []
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
+    this.toggleDel = this.toggleDel.bind(this);
+  }
+
+  toggleDel() {
+    this.setState(prevState => ({
+      modalDel: !prevState.modalDel
+    }));
   }
 
   componentDidMount() {
@@ -81,16 +91,7 @@ class ShippingDetails extends Component {
           </div>
           <div className="cls-rt">
             <div className="title-sect">
-              <h2>Shipments</h2>
-              <div className="d-flex align-items-center">
-                <input type="search" placeholder="Search here" />
-                <a href="#!" className="butn light-blue-butn">
-                  List View
-                </a>
-                <a href="#!" className="butn">
-                  Map
-                </a>
-              </div>
+              <h2>Spot Rate</h2>
             </div>
             <div className="ag-fresh">
               <ReactTable
@@ -99,6 +100,10 @@ class ShippingDetails extends Component {
                 columns={[
                   {
                     columns: [
+                      {
+                        Header: "Customer Name",
+                        accessor: "Consignee"
+                      },
                       {
                         Cell: row => {
                           if (row.value == "Air") {
@@ -130,24 +135,9 @@ class ShippingDetails extends Component {
                             );
                           }
                         },
-                        Header: "Mode",
+                        Header: "Shipment Type",
                         accessor: "ModeOfTransport"
                       },
-                      {
-                        Header: "BL/HBL",
-                        accessor: "BL/HBL"
-                      },
-
-                      {
-                        Header: "Customer Name",
-                        accessor: "Consignee"
-                      },
-
-                      // {
-                      //   Header: "Shipper",
-                      //   accessor: "Shipper"
-                      // },
-
                       {
                         Header: "POL",
                         accessor: "POL"
@@ -156,6 +146,10 @@ class ShippingDetails extends Component {
                       {
                         Header: "POD",
                         accessor: "POD"
+                      },
+                      {
+                        Header: "Expiry Date",
+                        accessor: "ETA"
                       },
                       {
                         Cell: row => {
@@ -215,58 +209,43 @@ class ShippingDetails extends Component {
                         accessor: "Status"
                       },
                       {
-                        Header: "ETA",
-                        accessor: "ETA"
-                      },
-                      {
-                        Header: "Event",
-                        accessor: "Event",
-                        Cell: row => {
-                          if (row.value == "N/A") {
-                            return (
-                              <>
-                                <label className="">{row.value}</label>
-                              </>
-                            );
-                          }
-                          if (row.value == "On Time") {
-                            return (
-                              <>
-                                <label className="girdevtgreen">
-                                  {row.value}
-                                </label>
-                              </>
-                            );
-                          }
-                          if (row.value == "Behind Schedue") {
-                            return (
-                              <>
-                                <label className="girdevtred">
-                                  {row.value}
-                                </label>
-                              </>
-                            );
-                          }
-                          if (row.value == "Delay Risk") {
-                            return (
-                              <>
-                                <label className="girdevtyellow">
-                                  {row.value}
-                                </label>
-                              </>
-                            );
-                          }
-                        }
+                        Cell: () => {
+                          return (
+                            <div
+                              onClick={this.toggleDel}
+                              className="tab-icon-view"
+                            >
+                              <img src={Eye} alt="eye icon" />
+                            </div>
+                          );
+                        },
+                        Header: "Actions"
                       }
                     ]
                   }
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={10}
-                getTrProps={this.HandleRowClickEvt}
+                // getTrProps={this.HandleRowClickEvt}
               />
             </div>
           </div>
+          <Modal
+            className="delete-popup"
+            isOpen={this.state.modalDel}
+            toggle={this.toggleDel}
+            centered={true}
+          >
+            <ModalBody>
+              <p>Are you sure ?</p>
+              <Button className="butn" onClick={this.toggleDel}>
+                Yes
+              </Button>
+              <Button className="butn cancel-butn" onClick={this.toggleDel}>
+                No
+              </Button>
+            </ModalBody>
+          </Modal>
         </div>
       </div>
     );
@@ -380,4 +359,4 @@ function formatNumber(number) {
     .toString()
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
-export default ShippingDetails;
+export default SpotRateTable;

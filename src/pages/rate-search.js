@@ -28,7 +28,7 @@ class RateSearch extends Component {
                       type="radio"
                       name="cust-select"
                       id="exist-cust"
-                      checked
+                      defaultChecked
                     />
                     <label htmlFor="exist-cust">Existing Customer</label>
                   </div>
@@ -45,7 +45,7 @@ class RateSearch extends Component {
                   name="search-rate"
                 />
               </div>
-              <a href="#!" className="butn blue-butn">
+              <a href="new-rate-search" className="butn blue-butn">
                 Search Rates
               </a>
             </div>
