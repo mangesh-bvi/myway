@@ -1405,5 +1405,16 @@ color: #eb0029;
 .grncntrsld .rangeslider-vertical .rangeslider__fill {
   background-color: #63cd16;
 }
- 
+.google-icon-div {
+  width: 35px;
+  height: 35px;
+}
+.google-icon {
+  width: 30px;
+  height: 30px;
+}
+.yellowicon{
+  width: 30px;
+  height: 30px;
+}
 /* --------------------------------------------------------------------------- */

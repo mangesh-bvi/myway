@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import "../styles/custom.css";
 import { Progress, Button, Modal, ModalBody } from "reactstrap";
 import GoogleMapReact from "google-map-react";
@@ -780,7 +780,7 @@ class ShippingDetailsTwo extends Component {
                     <div className="rename-cntr login-fields">
                       <iframe
                         src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
-                         
+                        title="Document View" 
                         className="agreement-pdf"
                       ></iframe>
                     </div>
