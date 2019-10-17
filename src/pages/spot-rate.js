@@ -5,24 +5,30 @@ import SideMenu from "../component/sidemenu";
 import GoogleMapReact from "google-map-react";
 import { Button, Modal, ModalBody } from "reactstrap";
 import InputRange from "react-input-range";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 import "react-input-range/lib/css/index.css";
-import ReactTable from "react-table";
-import maersk from "./../assets/img/maersk.png";
 import "react-table/react-table.css";
 
 const SourceIcon = () => <div className="map-circ source-circ" />;
 const DestiIcon = () => <div className="map-circ desti-circ" />;
 
-class RateTable extends Component {
+class SpotRate extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       modalEdit: false,
+      modalSpot: false,
       value: 50
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.toggleSpot = this.toggleSpot.bind(this);
+    // this.spotRateMsg = this.spotRateMsg.bind(this);
   }
 
   static defaultProps = {
@@ -38,40 +44,21 @@ class RateTable extends Component {
       modalEdit: !prevState.modalEdit
     }));
   }
+  toggleSpot() {
+    this.setState(prevState => ({
+      modalSpot: !prevState.modalSpot
+    }));
+  }
+  spotRateMsg() {
+    NotificationManager.success(
+      "Request for Spot Rate is successfully submitted."
+    );
+  }
 
   render() {
-    var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" },
-      { validUntil: "Valid Until : AUGUST", tt: "TT", price: "$150.00" },
-      { validUntil: "Valid Until : OCTOBER", tt: "TT", price: "$135.00" },
-      { validUntil: "Valid Until : DECEMBER", tt: "TT", price: "$155.00" }
-    ];
-    var data2 = [
-      {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        finalPayment: "$45,986.00"
-      },
-      {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
-      },
-      {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
-      }
-    ];
     return (
       <div>
+        <NotificationContainer />
         <Headers />
         <div className="cls-ofl">
           <div className="cls-flside">
@@ -207,89 +194,15 @@ class RateTable extends Component {
                     </a>
                   </div>
                 </div>
-                <div className="col-md-8 react-rate-table">
-                  <ReactTable
-                    columns={[
-                      {
-                        columns: [
-                          {
-                            Cell: row => {
-                              return (
-                                <React.Fragment>
-                                  <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                    <div className="remember-forgot d-block m-0">
-                                      <input
-                                        id="maersk-logo"
-                                        type="checkbox"
-                                        name={"rate-tab-check"}
-                                      />
-                                      <label htmlFor="maersk-logo"></label>
-                                    </div>
-                                  </div>
-                                  <div className="rate-tab-img">
-                                    <img src={maersk} alt="maersk icon" />
-                                  </div>
-                                </React.Fragment>
-                              );
-                            },
-                            minWidth: 200
-                          },
-                          {
-                            accessor: "validUntil",
-                            minWidth: 175
-                          },
-                          {
-                            accessor: "tt",
-                            minWidth: 80
-                          },
-                          {
-                            accessor: "price",
-                            minWidth: 80
-                          }
-                        ]
-                      }
-                    ]}
-                    data={data1}
-                    defaultPageSize={10}
-                    className="-striped -highlight"
-                    SubComponent={row => {
-                      return (
-                        <div style={{ padding: "20px 0" }}>
-                          <ReactTable
-                            data={data2}
-                            columns={[
-                              {
-                                columns: [
-                                  {
-                                    Header: "Charge Code",
-                                    accessor: "chargeCode"
-                                  },
-                                  {
-                                    Header: "Charge Name",
-                                    accessor: "chargeName"
-                                  },
-                                  {
-                                    Header: "Units",
-                                    accessor: "units"
-                                  },
-                                  {
-                                    Header: "Unit Price",
-                                    accessor: "unitPrice"
-                                  },
-                                  {
-                                    Header: "Final Payment",
-                                    accessor: "finalPayment"
-                                  }
-                                ]
-                              }
-                            ]}
-                            defaultPageSize={3}
-                            showPagination={false}
-                          />
-                        </div>
-                      );
-                    }}
-                  />
+                <div className="col-md-8">
+                  <div className="spot-rate">
+                    <div className="no-rate">
+                      <p>No Rates Found, Ask for Spot Rates</p>
+                    </div>
+                    <button onClick={this.toggleSpot} className="butn">
+                      Spot Rate
+                    </button>
+                  </div>
                   <p className="bottom-profit">
                     Profit -------$ Customer Segment A Profit Margin %15
                   </p>
@@ -319,6 +232,41 @@ class RateTable extends Component {
                 </Button>
               </ModalBody>
             </Modal>
+            <Modal
+              className="delete-popup spot-rate-popup pol-pod-popup"
+              isOpen={this.state.modalSpot}
+              toggle={this.toggleSpot}
+              centered={true}
+            >
+              <h3>Add Below Details</h3>
+              <ModalBody>
+                <div className="rename-cntr login-fields">
+                  <label>Commodity</label>
+                  <select>
+                    <option>Select</option>
+                    <option>Select</option>
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div className="rename-cntr login-fields">
+                  <label>Cargo</label>
+                  <select>
+                    <option>Select</option>
+                    <option>Select</option>
+                    <option>Select</option>
+                  </select>
+                </div>
+                <Button
+                  className="butn"
+                  onClick={() => {
+                    this.spotRateMsg();
+                    this.toggleSpot();
+                  }}
+                >
+                  Send
+                </Button>
+              </ModalBody>
+            </Modal>
           </div>
         </div>
       </div>
@@ -326,4 +274,4 @@ class RateTable extends Component {
   }
 }
 
-export default RateTable;
+export default SpotRate;

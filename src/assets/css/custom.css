@@ -690,11 +690,21 @@ table tbody tr:last-child {
 .delete-popup .butn:last-child {
   margin-right: 0px;
 }
-.rename-cntr input {
+.rename-cntr input,
+.rename-cntr select {
   padding: 10px 20px;
 }
 .delete-popup .login-fields {
   margin-bottom: 0;
+}
+.add-docu-btn {
+  text-align: right;
+  margin-bottom: 20px;
+}
+.add-docu-btn .butn {
+  font-size: 12px;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 /* shipping details 2 ends */
 
@@ -1130,23 +1140,132 @@ table tbody tr:last-child {
   padding-top: 20px;
   padding-bottom: 20px;
 }
-.ReactTable .rt-thead {
+.react-rate-table .ReactTable .rt-thead {
+  display: none !important;
+}
+.react-rate-table .ReactTable .ReactTable .rt-thead {
+  display: flex !important;
+}
+.ReactTable .rt-thead.-headerGroups {
   display: none !important;
 }
 .ReactTable.-striped .rt-tr.-odd,
 .ReactTable.-striped .rt-tr.-even {
   background: #fff !important;
 }
-.ReactTable .rt-tbody .rt-tr-group {
-  border-bottom: 2px solid #e6e7e8 !important;
+.ReactTable .rt-tr {
+  align-items: center;
 }
-.ReactTable .rt-tbody .rt-td {
-  border-right: 0 !important;
-  font-family: "Medium Font";
+.rate-tab-img {
+  width: 100px;
+  display: inline-block;
+}
+.ReactTable .rt-th,
+.ReactTable .rt-td {
+  padding: 15px 20px !important;
+}
+.rate-tab-check.cont-costs .remember-forgot input + label::before {
+  top: -4px;
+}
+.rate-tab-check.cont-costs .remember-forgot label {
+  padding-left: 36px;
+}
+.rate-tab-check.cont-costs .remember-forgot input:checked + label::after {
+  transform: translateY(-100%) rotate(45deg);
+}
+.ReactTable {
+  border: 0 !important;
+}
+.ReactTable.-striped .rt-tr .rt-td:last-child {
+  text-align: right;
+}
+.ReactTable .ReactTable .rt-thead .rt-th,
+.ReactTable .ReactTable .rt-thead .rt-td {
+  border-right: 1px solid #dcdcdc !important;
+  font-family: "Bold Font";
   font-size: 14px;
-  color: #858585;
+  color: #000;
+}
+.ReactTable .ReactTable .rt-thead .rt-th:last-child {
+  border-right: 0 !important;
+}
+.ReactTable .rt-thead.-header {
+  box-shadow: initial !important;
+  background: #fff;
+  border-bottom: 1px solid #dcdcdc;
+}
+.ReactTable .ReactTable .rt-tbody .rt-tr-group {
+  border-bottom: 1px solid #dcdcdc !important;
+}
+.ReactTable .ReactTable .rt-tbody .rt-tr-group:last-child {
+  border-bottom: 0px !important;
+}
+.ReactTable .ReactTable .rt-tbody .rt-td {
+  text-align: center;
+}
+.ReactTable .ReactTable .rt-tbody .rt-td:first-child {
+  text-align: left;
+}
+.ReactTable .ReactTable .rt-thead .rt-tr .rt-th:first-child {
+  text-align: left;
+}
+.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover {
+  background-color: #fff !important;
+}
+.ReactTable .ReactTable:before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 20px solid #fff;
+}
+.ReactTable .ReactTable {
+  position: relative;
+}
+.bottom-profit {
+  font-family: "Regular Font";
+  color: #5f5f60;
+  margin-top: 20px;
+  text-align: right;
 }
 /* rate table ends */
+
+/* spot rate starts */
+.spot-rate {
+  background-color: #fff;
+  padding: 40px;
+  min-height: calc(100% - 44px);
+  text-align: center;
+}
+.no-rate {
+  min-height: 140px;
+  background-color: #ededed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.no-rate p {
+  font-family: "Italic Font";
+  color: #77787b;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+.spot-rate-popup h3 {
+  margin-top: 30px;
+  font-size: 20px;
+  margin-bottom: -10px;
+}
+/* spot rate ends */
+
+/* booking table starts */
+.tab-icon-view {
+  width: 20px;
+}
+/* booking table ends */
 
 /* chetan css ends */
 

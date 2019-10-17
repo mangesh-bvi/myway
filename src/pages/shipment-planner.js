@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../styles/custom.css";
-import axios from 'axios';
+import axios from "axios";
 import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { authHeader } from "../helpers/authHeader";
@@ -46,20 +46,19 @@ class ShipmentPlanner extends Component {
       modalTransit: false,
       modalEdit: false,
       startDate: new Date(),
-      companydrp:[],
-      consigneedrp:[],
-      transportModedrp:[],
-      linerdrp:[],
-      supConsId:'',
-      linerId:'',
-      modeofTransport:'',
-      sailingDate:'',
-      transitModeId:'',
-      totalAvgDays:'',
-      totalMinDays:'',
-      totalMaxDays:'',
-      transitpopup:[]
-
+      companydrp: [],
+      consigneedrp: [],
+      transportModedrp: [],
+      linerdrp: [],
+      supConsId: "",
+      linerId: "",
+      modeofTransport: "",
+      sailingDate: "",
+      transitModeId: "",
+      totalAvgDays: "",
+      totalMinDays: "",
+      totalMaxDays: "",
+      transitpopup: []
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
@@ -73,125 +72,124 @@ class ShipmentPlanner extends Component {
     },
     zoom: 11
   };
-   
-  companyChange=(e)=>{
+
+  companyChange = e => {
     debugger;
-    let self=this;
-    let compArray=[];
+    let self = this;
+    let compArray = [];
     for (let index = 0; index < this.state.companydrp.length; index++) {
-       if(this.state.companydrp[index].MyCompID==e.target.value)
-       {
-         compArray=this.state.companydrp[index];
-         break;
-       }
+      if (this.state.companydrp[index].MyCompID == e.target.value) {
+        compArray = this.state.companydrp[index];
+        break;
+      }
     }
     axios({
-      method: 'post',
+      method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
-      data:{
-        UserID:window.localStorage.getItem('userid'),
-        MyCompID:compArray.MyCompID,
-        MyCompLocationID:compArray.MyCompLocationID,
-        MyCompLocationType:compArray.MyCompLocationType
+      data: {
+        UserID: window.localStorage.getItem("userid"),
+        MyCompID: compArray.MyCompID,
+        MyCompLocationID: compArray.MyCompLocationID,
+        MyCompLocationType: compArray.MyCompLocationType
       },
-      headers:authHeader()
-    }).then(function (response) { 
+      headers: authHeader()
+    }).then(function(response) {
       debugger;
-      let optionItems = response.data.map((comp) =>
-      <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
-      );
-      self.setState({consigneedrp:optionItems});
+      let optionItems = response.data.map(comp => (
+        <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
+      ));
+      self.setState({ consigneedrp: optionItems });
     });
-  }
+  };
 
-  consigneeChange=(e)=>{
+  consigneeChange = e => {
     debugger;
-    let self=this;
-    let supconsid=1250;//e.target.value;
-    self.setState({supConsId:supconsid})
+    let self = this;
+    let supconsid = 1250; //e.target.value;
+    self.setState({ supConsId: supconsid });
     axios({
-      method: 'post',
+      method: "post",
       url: `${appSettings.APIURL}/FetchTransportMode`,
-      data:{
-        SupConsID:supconsid,       
+      data: {
+        SupConsID: supconsid
       },
-      headers:authHeader()
-    }).then(function (response) { 
+      headers: authHeader()
+    }).then(function(response) {
       debugger;
-      let optionItems = response.data.map((comp) =>
-      <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
-      );
-      self.setState({transportModedrp:optionItems});
+      let optionItems = response.data.map(comp => (
+        <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
+      ));
+      self.setState({ transportModedrp: optionItems });
     });
-  }
+  };
 
-  transportModeChange=(e)=>{
+  transportModeChange = e => {
     debugger;
-    let self=this;
-    let transportmode=e.target.value;
-    self.setState({modeofTransport:transportmode})
+    let self = this;
+    let transportmode = e.target.value;
+    self.setState({ modeofTransport: transportmode });
     axios({
-      method: 'post',
+      method: "post",
       url: `${appSettings.APIURL}/FetchLiners`,
-      data:{
-        Type:2,
-        SupConsID:self.state.supConsId,  
-        ModeType:transportmode   
+      data: {
+        Type: 2,
+        SupConsID: self.state.supConsId,
+        ModeType: transportmode
       },
-      headers:authHeader()
-    }).then(function (response) { 
+      headers: authHeader()
+    }).then(function(response) {
       debugger;
-      let optionItems = response.data.map((comp) =>
-      <option value={comp.TransitModeID}>{comp.TransitMode}</option>
-      );
-      self.setState({linerdrp:optionItems});
+      let optionItems = response.data.map(comp => (
+        <option value={comp.TransitModeID}>{comp.TransitMode}</option>
+      ));
+      self.setState({ linerdrp: optionItems });
     });
-  }
+  };
 
-  fetchLinerChange=(e)=>{
+  fetchLinerChange = e => {
     debugger;
-    let self=this;
-    self.setState({transitModeId:e.target.value});
-  }
+    let self = this;
+    self.setState({ transitModeId: e.target.value });
+  };
 
-  handleChange = (e) => {
+  handleChange = e => {
     debugger;
     this.setState({
       sailingDate: e
     });
   };
 
-  handleSubmit=()=>{
+  handleSubmit = () => {
     debugger;
-    var supConsId=this.state.supConsId;
-    var sailingDate=document.getElementById('saleDate').value;
-    let self=this;
+    var supConsId = this.state.supConsId;
+    var sailingDate = document.getElementById("saleDate").value;
+    let self = this;
     axios({
-      method: 'post',
+      method: "post",
       url: `${appSettings.APIURL}/FetchShipmentPlannerMapData`,
-      data:{
-        SupConsID:this.state.supConsId,
-        LinerID:this.state.transitModeId,  
-        ModeOfTransport:this.state.modeofTransport,
-        SailingDate:sailingDate
+      data: {
+        SupConsID: this.state.supConsId,
+        LinerID: this.state.transitModeId,
+        ModeOfTransport: this.state.modeofTransport,
+        SailingDate: sailingDate
       },
-      headers:authHeader()
-    }).then(function (response) { 
-     debugger;
-      var totalAvg=0;
-      var totalMin=0;
-      var totalMax=0;
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var totalAvg = 0;
+      var totalMin = 0;
+      var totalMax = 0;
       for (let index = 0; index < response.data.length; index++) {
-        totalAvg+=parseInt(response.data[index].NTransit_Time);
-        totalMin+=parseInt(response.data[index].NMin_Transit_Time);
-        totalMax+=parseInt(response.data[index].NMax_Transit_Time);
+        totalAvg += parseInt(response.data[index].NTransit_Time);
+        totalMin += parseInt(response.data[index].NMin_Transit_Time);
+        totalMax += parseInt(response.data[index].NMax_Transit_Time);
       }
-      self.setState({transitpopup:response.data};)
-      self.setState({totalAvgDays:totalAvg});
-      self.setState({totalMinDays:totalMin});
-      self.setState({totalMaxDays:totalMax});
+      self.setState({ transitpopup: response.data });
+      self.setState({ totalAvgDays: totalAvg });
+      self.setState({ totalMinDays: totalMin });
+      self.setState({ totalMaxDays: totalMax });
     });
-  }
+  };
   toggleTransit() {
     this.setState(prevState => ({
       modalTransit: !prevState.modalTransit
@@ -203,31 +201,34 @@ class ShipmentPlanner extends Component {
     }));
   }
 
-  componentDidMount()
-  {
-    let self=this;
+  componentDidMount() {
+    let self = this;
     axios({
-      method: 'post',
+      method: "post",
       url: `${appSettings.APIURL}/FetchShipperCompany`,
-      data:{
-        UserID:window.localStorage.getItem('userid')
+      data: {
+        UserID: window.localStorage.getItem("userid")
       },
-      headers:authHeader()
-    }).then(function (response) { 
+      headers: authHeader()
+    }).then(function(response) {
       debugger;
-      self.setState({companydrp:response.data});
+      self.setState({ companydrp: response.data });
     });
   }
- 
-
-
 
   render() {
     debugger;
-    let optionItems = this.state.companydrp.map((planet) =>
-    <option onchange={this.companyChange} atrCompLocType={planet.MyCompLocationType} atrCompLocId={planet.MyCompLocationID} value={planet.MyCompID}>{planet.MyCompName}</option>
-    );
-  
+    let optionItems = this.state.companydrp.map(planet => (
+      <option
+        onchange={this.companyChange}
+        atrCompLocType={planet.MyCompLocationType}
+        atrCompLocId={planet.MyCompLocationID}
+        value={planet.MyCompID}
+      >
+        {planet.MyCompName}
+      </option>
+    ));
+
     return (
       <div>
         <Headers />
@@ -248,14 +249,17 @@ class ShipmentPlanner extends Component {
                         <label>Select Company</label>
                         <select onChange={this.companyChange} id="drpCompany">
                           <option>Select</option>
-                                {optionItems}
+                          {optionItems}
                         </select>
                       </div>
                       <div className="login-fields">
                         <label>Select Consignee Company</label>
-                        <select onChange={this.consigneeChange} id="drpConsigneeCompany">
+                        <select
+                          onChange={this.consigneeChange}
+                          id="drpConsigneeCompany"
+                        >
                           <option>Select</option>
-                         {this.state.consigneedrp}
+                          {this.state.consigneedrp}
                         </select>
                       </div>
                       <div className="login-fields">
@@ -263,7 +267,6 @@ class ShipmentPlanner extends Component {
                         <select onChange={this.transportModeChange}>
                           <option>Select</option>
                           {this.state.transportModedrp}
-                        
                         </select>
                       </div>
                       <div className="login-fields">
@@ -275,14 +278,17 @@ class ShipmentPlanner extends Component {
                       </div>
                       <div className="login-fields">
                         <label>Select Date</label>
-                        <DatePicker id="saleDate"
+                        <DatePicker
+                          id="saleDate"
                           selected={this.state.startDate}
                           onChange={this.handleChange}
                         />
                       </div>
                     </div>
                     <div className="text-right">
-                      <button onClick={this.handleSubmit} className="butn">Submit</button>
+                      <button onClick={this.handleSubmit} className="butn">
+                        Submit
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -327,19 +333,25 @@ class ShipmentPlanner extends Component {
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Average Days</p>
-                              <p class="details-para">{this.state.totalAvgDays}</p>
+                              <p class="details-para">
+                                {this.state.totalAvgDays}
+                              </p>
                             </div>
                           </div>
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Minimum Days</p>
-                              <p class="details-para">{this.state.totalMinDays}</p>
+                              <p class="details-para">
+                                {this.state.totalMinDays}
+                              </p>
                             </div>
                           </div>
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Maximum Days</p>
-                              <p class="details-para">{this.state.totalMaxDays}</p>
+                              <p class="details-para">
+                                {this.state.totalMaxDays}
+                              </p>
                             </div>
                           </div>
                         </div>
