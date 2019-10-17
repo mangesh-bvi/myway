@@ -706,6 +706,32 @@ table tbody tr:last-child {
   padding-right: 20px;
   padding-left: 20px;
 }
+.file-upload + label {
+  border: 1px solid #99afc9;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center !important;
+  margin-top: 15px;
+  cursor: pointer;
+  font-family: "Bold Font";
+  color: #002d73;
+  margin: 0 !important;
+  width: 100% !important;
+  font-size: 14px;
+}
+.file-icon {
+  width: 15px;
+  display: inline-block;
+  margin-right: 10px;
+  position: relative;
+  top: -1px;
+}
+.file-name {
+  font-family: "Regular Font";
+  font-size: 14px;
+  width: calc(100% - 150px);
+  margin-left: auto;
+}
 /* shipping details 2 ends */
 
 /* shipment planner starts */
