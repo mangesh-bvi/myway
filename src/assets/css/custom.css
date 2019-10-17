@@ -1380,3 +1380,19 @@ color: #eb0029;
     color: #39b54a;
     }
 /* --------------------------------------------------------------------------- */
+
+/*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
+
+.dynamic-fields select {
+  background: #ededed url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=) no-repeat right 25px center;
+  padding-right: 50px;
+  margin-bottom: 10px;
+}
+
+.dynamic-remove{
+  position: absolute;
+  left: 100%;
+  margin-left: 20px;
+  width: auto !important;
+}
+/*--------------------------------- Rashmi CSS (End) ---------------------------------*/
