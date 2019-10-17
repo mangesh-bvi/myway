@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import "react-datepicker/dist/react-datepicker.css";
-import GoogleMapReact from "google-map-react";
+// import {GoogleMapReact,Polyline} from "google-map-react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Truck from "./../assets/img/truck.png";
@@ -22,10 +22,19 @@ import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 import { de } from "date-fns/esm/locale";
+import YellowFlag from "./../assets/img/yellow-flag.png";
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+  Polyline
+} from "react-google-maps";
+ 
 
 const SourceIcon = () => (
-  <div className="map-circ source-circ" id="source-circ">
-    <UncontrolledTooltip show placement="right" target="source-circ">
+  <div className="google-icon-div" id="source-circ">
+    <UncontrolledTooltip placement="auto" target="source-circ" trigger="hover">
       Istanbul
     </UncontrolledTooltip>
   </div>
@@ -58,20 +67,18 @@ class ShipmentPlanner extends Component {
       totalAvgDays: "",
       totalMinDays: "",
       totalMaxDays: "",
-      transitpopup: []
+      transitpopup: [],
+      zoom: 4,
+      center: {
+        lat: 25.37852,
+        lng: 75.02354
+      },
+      mapsData: []
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
   }
-
-  static defaultProps = {
-    center: {
-      lat: 59.95,
-      lng: 30.33
-    },
-    zoom: 11
-  };
 
   companyChange = e => {
     debugger;
@@ -184,10 +191,12 @@ class ShipmentPlanner extends Component {
         totalMin += parseInt(response.data[index].NMin_Transit_Time);
         totalMax += parseInt(response.data[index].NMax_Transit_Time);
       }
+      var Data = response.data;
       self.setState({ transitpopup: response.data });
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
+      self.setState({ mapsData: Data.Table });
     });
   };
   toggleTransit() {
@@ -217,12 +226,81 @@ class ShipmentPlanner extends Component {
   }
 
   render() {
-    debugger;
-    let optionItems = this.state.companydrp.map(planet => (
+    const { mapsData } = this.state;
+    let iconMarker = new window.google.maps.MarkerImage(
+      YellowFlag,
+      null /* size is determined at runtime */,
+      null /* origin is 0,0 */,
+      null /* anchor is bottom center of the scaled image */,
+      new window.google.maps.Size(32, 32)
+    );
+
+    var startendData = new Object();
+    startendData.lat = 0;
+    startendData.lng = 0;
+    var latlan = [];
+    const places = [
+ 
+    {lat: 19.09824118,lng: 72.82493592,latitude1: 55.8103146,longitude1: -80.1751609},
+     
+      // {lat: 49.24859, lng: 8.887826},
+      // {lat: 19.090405, lng: 72.86875},
+    ];
+    mapsData.map(mdata => {
+      debugger;
+      var abc = mdata.CStLatLong;
+      latlan.push(abc.split(","));
+    });
+    latlan.map((ldata) => {
+      debugger;
+      startendData=new Object();
+      startendData.lat = Number(ldata[0]);
+      startendData.lng = Number(ldata[1]);
+      // places.push(startendData);
+    });
+    console.log(places);
+    const pathCoordinates = [
+      { lat: 25.8103146, lng: -80.1751609 },
+      { lat: 35.8103146, lng: -90.1751609 }
+    ];
+
+    const GoogleMapExample = withGoogleMap(props => (
+      <GoogleMap
+        defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+        defaultZoom={3}
+      >
+        <Polyline
+          path={pathCoordinates}
+          geodesic={true}
+          options={{
+            strokeColor: "#ff2527",
+            strokeOpacity: 0.75,
+            strokeWeight: 2
+          }}
+        />
+        {places.map(function(mid, i) {
+          return (
+          
+              <Marker
+               
+                position={{
+                  lat: mid.lat,
+                  lng: mid.lat
+                }}
+              />
+           
+             
+          );
+        })}
+      </GoogleMap>
+    ));
+
+    let optionItems = this.state.companydrp.map((planet, i) => (
       <option
-        onchange={this.companyChange}
+        onChange={this.companyChange}
         atrCompLocType={planet.MyCompLocationType}
         atrCompLocId={planet.MyCompLocationID}
+        key={i}
         value={planet.MyCompID}
       >
         {planet.MyCompName}
@@ -306,16 +384,25 @@ class ShipmentPlanner extends Component {
                   <div className="full-map-cntr">
                     <div className="ship-detail-maps full-map mt-0">
                       <div className="ship-detail-map">
-                        <GoogleMapReact
+                        <GoogleMapExample
+                          containerElement={
+                            <div style={{ height: `100%`, width: "100%" }} />
+                          }
+                          mapElement={<div style={{ height: `100%` }} />}
+                          loadingElement={<div style={{ height: `100%` }} />}
+                        ></GoogleMapExample>
+                        {/* <MyMapComponent isMarkerShown /> */}
+
+                        {/* <GoogleMapReact
                           bootstrapURLKeys={{
                             key: appSettings.Keys
                           }}
-                          defaultCenter={this.props.center}
-                          defaultZoom={this.props.zoom}
+                          defaultCenter={this.state.center}
+                          defaultZoom={this.state.zoom}
                         >
-                          <SourceIcon lat={59.955413} lng={30.337844} />
+                          <SourceIcon lat={21.1500964} lng={79.0127049} />
                           <DestiIcon lat={59.9} lng={30.3} />
-                        </GoogleMapReact>
+                        </GoogleMapReact> */}
                       </div>
                     </div>
                   </div>

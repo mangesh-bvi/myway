@@ -5,6 +5,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Passcode from './page/Passcode';
 import Updateforgotpassword from './pages/updateforgotpassword'
 import QRCode from './pages/QRCode'
+import AddUser from "./pages/AddUser"
 import Aux from "./child";
 
 export default class layout extends Component {
@@ -18,6 +19,7 @@ export default class layout extends Component {
         <Passcode/>
         <Updateforgotpassword/>
         <QRCode/>
+        <AddUser/>
         <div className="main-content" style={{backgroundColor:"#f5f8f9"}}>{children}</div>
       </Aux>
     );

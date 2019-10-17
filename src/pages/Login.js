@@ -19,7 +19,8 @@ class Login extends React.Component {
       password: "",
       submitted: false,
       showLoginError: false,
-      errorText: ""
+      errorText: "",
+      loading:false
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -30,9 +31,9 @@ class Login extends React.Component {
     this.setState({
       [e.target.name]: e.target.value
     });
-  }
-  handleSubmit(e) {
-    this.setState({ submitted: true });
+  }  
+  handleSubmit(e) {     
+    this.setState({ submitted: true, loading:true });   
     const { username, password } = this.state;
     window.localStorage.setItem("password", password);
     if (username !== "" && password !== "") {
@@ -76,7 +77,7 @@ class Login extends React.Component {
         //window.location.href = "./user-agreement";
       });
     } else {
-      this.setState({ settoaste: true });
+      this.setState({ settoaste: true, loading:true });
 
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the passowrd" : "";
@@ -96,7 +97,7 @@ class Login extends React.Component {
   }
   render() {
     //  const { username, password } = this.state;
-
+    const {loading} = this.state;
     return (
       <section className="login-between">
         <div className="login-sect">
@@ -141,7 +142,9 @@ class Login extends React.Component {
                   type="button"
                   className="butn"
                   onClick={this.handleSubmit}
+                  disabled={loading}
                 >
+                  {loading && <i className="fa fa-refresh fa-spin"></i>}
                   Login
                 </button>
               </div>

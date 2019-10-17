@@ -1753,5 +1753,32 @@ table tbody tr:last-child {
 .grncntrsld .rangeslider-vertical .rangeslider__fill {
   background-color: #63cd16;
 }
-
+.google-icon-div {
+  width: 35px;
+  height: 35px;
+}
+.google-icon {
+  width: 30px;
+  height: 30px;
+}
+.yellowicon{
+  width: 30px;
+  height: 30px;
+}
 /* --------------------------------------------------------------------------- */
+
+/*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
+
+.dynamic-fields select {
+  background: #ededed url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=) no-repeat right 25px center;
+  padding-right: 50px;
+  margin-bottom: 10px;
+}
+
+.dynamic-remove{
+  position: absolute;
+  left: 100%;
+  margin-left: 20px;
+  width: auto !important;
+}
+/*--------------------------------- Rashmi CSS (End) ---------------------------------*/
