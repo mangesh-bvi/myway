@@ -6,6 +6,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 // import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
+import FileUpload from "./../assets/img/file.png";
 import Booked from "./../assets/img/booked.png";
 import Transit from "./../assets/img/transit-small.png";
 import Departed from "./../assets/img/departed.png";
@@ -50,7 +51,10 @@ class ShippingDetailsTwo extends Component {
       sr_no: 0,
       filtered: [],
       viewDocument: false,
-      bookedStatus:[]
+      bookedStatus:[],
+      selectedFile: "",
+      selectedFileName: "",
+      consigneeFileName: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -131,7 +135,14 @@ class ShippingDetailsTwo extends Component {
   }
   onDocumentChangeHandler = event => {
     this.setState({
-      selectedFile: event.target.files[0]
+      selectedFile: event.target.files[0],
+      selectedFileName: event.target.files[0].name
+    });
+  };
+  onDocumentConsignee = event => {
+    this.setState({
+      // selectedFile: event.target.files[0],
+      consigneeFileName: event.target.files[0].name
     });
   };
   onDocumentClickHandler = () => {
@@ -817,31 +828,59 @@ class ShippingDetailsTwo extends Component {
                         placeholder="Enter Document Description"
                       />
                     </div>
-                    <div>
+                    <div className="rename-cntr login-fields d-block">
                       {/* <input
                         type="file"
                         onChange={this.onDocumentChangeHandler}
                       ></input> */}
-                      <input
-                        id="file-upload"
-                        className="file-upload d-none"
-                        type="file"
-                        onChange={this.onDocumentChangeHandler}
-                      />
-                      <label htmlFor="file-upload">
-                        <div className="file-icon">
-                          {/* <img src={FileUpload} alt="file-upload" /> */}
+                      <div className="d-flex w-100 align-items-center">
+                        <label>Document File</label>
+                        <div className="w-100">
+                          <input
+                            id="file-upload"
+                            className="file-upload d-none"
+                            type="file"
+                            onChange={this.onDocumentChangeHandler}
+                          />
+                          <label htmlFor="file-upload">
+                            <div className="file-icon">
+                              <img src={FileUpload} alt="file-upload" />
+                            </div>
+                            Add Document Files
+                          </label>
                         </div>
-                        <span>Add File</span> or Drop File here
-                      </label>
+                      </div>
+                      <p className="file-name">{this.state.selectedFileName}</p>
                     </div>
-                    <div>
-                      {/* <input
+                    <div className="rename-cntr login-fields d-block">
+                      <div className="d-flex w-100 align-items-center">
+                        <label>Consignee Document</label>
+                        <div className="w-100">
+                          <input
+                            id="docu-upload"
+                            className="file-upload d-none"
+                            type="file"
+                            onChange={this.onDocumentConsignee}
+                          />
+                          <label htmlFor="docu-upload">
+                            <div className="file-icon">
+                              <img src={FileUpload} alt="file-upload" />
+                            </div>
+                            Add Consignee Files
+                          </label>
+                        </div>
+                      </div>
+                      <p className="file-name">
+                        {this.state.consigneeFileName}
+                      </p>
+                    </div>
+                    {/* <div>
+                      <input
                         type="button"
                         onClick={this.onDocumentClickHandler}
                         value="Save"
-                      ></input> */}
-                    </div>
+                      ></input>
+                    </div> */}
                     <Button
                       className="butn"
                       onClick={() => {
