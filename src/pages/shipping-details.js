@@ -130,7 +130,16 @@ class ShippingDetails extends Component {
                             );
                           }
                         },
-                        Header: "Mode",
+                        Header: () => (
+                          <div
+                            style={{
+                              textAlign: "center"
+                            }}
+                          >
+                            Mode
+                          </div>
+                        ),
+                        // Header: "Mode",
                         accessor: "ModeOfTransport"
                       },
                       {
@@ -139,7 +148,11 @@ class ShippingDetails extends Component {
                       },
 
                       {
-                        Header: "Customer Name",
+                        Header: "Consignee",
+                        accessor: "Consignee"
+                      },
+                      {
+                        Header: "Shipper",
                         accessor: "Consignee"
                       },
 
@@ -161,47 +174,35 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           if (row.value == "Planning in Progress") {
                             return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
+                              <div className="status-img">
+                                <img src={Delivered} />
                               </div>
                             );
                           }
                           if (row.value == "Departed") {
                             return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
+                              <div className="status-img">
+                                <img src={Delivered} />
                               </div>
                             );
                           }
                           if (row.value == "Transshipped") {
                             return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Transit}
-                                />
+                              <div className="status-img">
+                                <img src={Transit} />
                               </div>
                             );
                           }
                           if (row.value == "Arrived") {
                             return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Arrived}
-                                />
+                              <div className="status-img">
+                                <img src={Arrived} />
                               </div>
                             );
                           }
                           if (row.value == "Delivered") {
                             return (
-                              <div className="shipment-img">
+                              <div className="status-img">
                                 <img src={Delivered} />
                               </div>
                             );
@@ -211,7 +212,16 @@ class ShippingDetails extends Component {
                             return <div>{row.value}</div>;
                           }
                         },
-                        Header: "Status",
+                        Header: () => (
+                          <div
+                            style={{
+                              textAlign: "center"
+                            }}
+                          >
+                            Status
+                          </div>
+                        ),
+                        // Header: "Status",
                         accessor: "Status"
                       },
                       {

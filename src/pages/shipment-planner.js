@@ -30,7 +30,6 @@ import {
   Marker,
   Polyline
 } from "react-google-maps";
- 
 
 const SourceIcon = () => (
   <div className="google-icon-div" id="source-circ">
@@ -53,6 +52,8 @@ class ShipmentPlanner extends Component {
 
     this.state = {
       modalTransit: false,
+      modalDelivery: false,
+      modalVisual: false,
       modalEdit: false,
       startDate: new Date(),
       companydrp: [],
@@ -77,11 +78,12 @@ class ShipmentPlanner extends Component {
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
+    this.toggleDelivery = this.toggleDelivery.bind(this);
+    this.toggleVisual = this.toggleVisual.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
   }
 
   companyChange = e => {
-    debugger;
     let self = this;
     let compArray = [];
     for (let index = 0; index < this.state.companydrp.length; index++) {
@@ -101,7 +103,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       let optionItems = response.data.map(comp => (
         <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
       ));
@@ -110,7 +111,6 @@ class ShipmentPlanner extends Component {
   };
 
   consigneeChange = e => {
-    debugger;
     let self = this;
     let supconsid = 1250; //e.target.value;
     self.setState({ supConsId: supconsid });
@@ -122,7 +122,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       let optionItems = response.data.map(comp => (
         <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
       ));
@@ -131,7 +130,6 @@ class ShipmentPlanner extends Component {
   };
 
   transportModeChange = e => {
-    debugger;
     let self = this;
     let transportmode = e.target.value;
     self.setState({ modeofTransport: transportmode });
@@ -145,7 +143,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       let optionItems = response.data.map(comp => (
         <option value={comp.TransitModeID}>{comp.TransitMode}</option>
       ));
@@ -154,20 +151,17 @@ class ShipmentPlanner extends Component {
   };
 
   fetchLinerChange = e => {
-    debugger;
     let self = this;
     self.setState({ transitModeId: e.target.value });
   };
 
   handleChange = e => {
-    debugger;
     this.setState({
       sailingDate: e
     });
   };
 
   handleSubmit = () => {
-    debugger;
     var supConsId = this.state.supConsId;
     var sailingDate = document.getElementById("saleDate").value;
     let self = this;
@@ -182,7 +176,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var totalAvg = 0;
       var totalMin = 0;
       var totalMax = 0;
@@ -204,6 +197,16 @@ class ShipmentPlanner extends Component {
       modalTransit: !prevState.modalTransit
     }));
   }
+  toggleDelivery() {
+    this.setState(prevState => ({
+      modalDelivery: !prevState.modalDelivery
+    }));
+  }
+  toggleVisual() {
+    this.setState(prevState => ({
+      modalVisual: !prevState.modalVisual
+    }));
+  }
   toggleEdit() {
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
@@ -220,7 +223,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       self.setState({ companydrp: response.data });
     });
   }
@@ -240,20 +242,22 @@ class ShipmentPlanner extends Component {
     startendData.lng = 0;
     var latlan = [];
     const places = [
- 
-    {lat: 19.09824118,lng: 72.82493592,latitude1: 55.8103146,longitude1: -80.1751609},
-     
+      {
+        lat: 19.09824118,
+        lng: 72.82493592,
+        latitude1: 55.8103146,
+        longitude1: -80.1751609
+      }
+
       // {lat: 49.24859, lng: 8.887826},
       // {lat: 19.090405, lng: 72.86875},
     ];
     mapsData.map(mdata => {
-      debugger;
       var abc = mdata.CStLatLong;
       latlan.push(abc.split(","));
     });
-    latlan.map((ldata) => {
-      debugger;
-      startendData=new Object();
+    latlan.map(ldata => {
+      startendData = new Object();
       startendData.lat = Number(ldata[0]);
       startendData.lng = Number(ldata[1]);
       // places.push(startendData);
@@ -280,16 +284,12 @@ class ShipmentPlanner extends Component {
         />
         {places.map(function(mid, i) {
           return (
-          
-              <Marker
-               
-                position={{
-                  lat: mid.lat,
-                  lng: mid.lat
-                }}
-              />
-           
-             
+            <Marker
+              position={{
+                lat: mid.lat,
+                lng: mid.lat
+              }}
+            />
           );
         })}
       </GoogleMap>
@@ -372,8 +372,18 @@ class ShipmentPlanner extends Component {
                 </div>
                 <div className="col-md-7">
                   <div className="planner-top-butns">
-                    <button className="butn cancel-butn">Delivery Date</button>
-                    <button className="butn cancel-butn">Visual Summary</button>
+                    <button
+                      onClick={this.toggleDelivery}
+                      className="butn cancel-butn"
+                    >
+                      Delivery Date
+                    </button>
+                    <button
+                      onClick={this.toggleVisual}
+                      className="butn cancel-butn"
+                    >
+                      Visual Summary
+                    </button>
                     <button
                       onClick={this.toggleTransit}
                       className="butn cancel-butn"
@@ -407,6 +417,134 @@ class ShipmentPlanner extends Component {
                     </div>
                   </div>
                 </div>
+                <Modal
+                  className="visual-popup"
+                  isOpen={this.state.modalVisual}
+                  toggle={this.toggleVisual}
+                  centered={true}
+                >
+                  <ModalBody className="p-0">
+                    <table
+                      width="100%"
+                      border="0"
+                      align="center"
+                      cellPadding="0"
+                      cellSpacing="0"
+                    >
+                      <tbody>
+                        <tr>
+                          <td id="ContentPlaceHolder1_td_bg" className="water">
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-6">
+                                <div className="manage-txt">
+                                  Managed by
+                                  <span id="ContentPlaceHolder1_lbloriginmangedby">
+                                    Ata Freight Line
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-6 text-center">
+                                <div className="avarage-day supplier-avarage-day">
+                                  <span id="ContentPlaceHolder1_lbl_avg_days_header">
+                                    1
+                                  </span>
+                                  Days Avarage
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-12 col-sm-12">
+                                <div className="avarage-day avrage-time">
+                                  <span id="ContentPlaceHolder1_lbl_avg_days_center">
+                                    42 DAYS{" "}
+                                  </span>
+                                  AVERAGE
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-9 col-sm-12 col-sm-12">
+                                <div className="manage-txt origin-port">
+                                  Managed by
+                                  <span id="ContentPlaceHolder1_lblMiddleManagedBy">
+                                    Ata Freight Line Via Cma Cgm
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-12">
+                                <div className="avarage-day destination-port">
+                                  <span id="ContentPlaceHolder1_lbl_avg_days_footer">
+                                    1
+                                  </span>
+                                  Days Avarage
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-12">
+                                <div className="manage-txt footer-manage">
+                                  Managed by
+                                  <span id="ContentPlaceHolder1_lblDeliveryManagedBy">
+                                    Ata Freight Line
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </ModalBody>
+                </Modal>
+                <Modal
+                  className="delivery-popup"
+                  isOpen={this.state.modalDelivery}
+                  toggle={this.toggleDelivery}
+                  centered={true}
+                >
+                  <ModalBody className="p-0">
+                    <div className="container-fluid p-0">
+                      <div className="transit-sect">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="d-flex align-items-center">
+                            <div className="shipment-img mr-3">
+                              <img src={Truck} alt="truck icon" />
+                            </div>
+                            <div>
+                              <p className="desti-name">
+                                Frankfurt am Main, Hessen, Germany
+                              </p>
+                              <p className="desti-route">
+                                to Mumbai (ex Bombay), Maharashtra, India
+                                Carrier Air France
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="delivery-inner">
+                        <div className="row">
+                          <div className="col-md-4 text-center">
+                            <p class="details-title">Departure Date</p>
+                            <p class="details-para">10/18/2019</p>
+                          </div>
+                          <div className="col-md-4 text-center">
+                            <p class="details-title">ETA</p>
+                            <p class="details-para">10/19/2019</p>
+                          </div>
+                          <div className="col-md-4 text-center">
+                            <p class="details-title">Estimated Delivery Date</p>
+                            <p class="details-para">10/23/2019</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ModalBody>
+                </Modal>
                 <Modal
                   className="transit-popup"
                   isOpen={this.state.modalTransit}

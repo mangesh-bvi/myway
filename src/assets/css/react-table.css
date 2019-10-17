@@ -8,6 +8,7 @@
   padding: 25px 12px !important;
   white-space: nowrap;
   border-right: 0 !important;
+  text-align: left;
 }
 .ReactTable .rt-thead.-filters {
   display: none;
