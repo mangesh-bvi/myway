@@ -111,7 +111,7 @@ class NewRateSearch extends Component {
                 </div>
               </div>
             </div>
-            <a href="#!" className="butn blue-butn rate-search">
+            <a href="rate-table" className="butn blue-butn rate-search">
               Search
             </a>
           </div>

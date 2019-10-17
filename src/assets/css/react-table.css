@@ -1,0 +1,27 @@
+.ReactTable {
+  font-size: 14px;
+}
+.ReactTable .rt-th {
+  font-family: "Bold Font";
+  color: #333;
+  background-color: #cbcbcb;
+  padding: 25px 12px !important;
+  white-space: nowrap;
+  border-right: 0 !important;
+}
+.ReactTable .rt-thead.-filters {
+  display: none;
+}
+.ReactTable .rt-tbody .rt-td {
+  font-family: "Medium Font";
+  color: #696969;
+  background-color: #fff;
+  padding: 12px !important;
+  border-right: 0 !important;
+}
+.ReactTable .rt-tbody .rt-tr-group {
+  border-bottom: 2px solid #f1f2f2 !important;
+}
+.ReactTable .rt-tbody .rt-tr-group:last-child {
+  border-bottom: 0 !important;
+}
