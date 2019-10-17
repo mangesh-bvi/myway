@@ -85,6 +85,16 @@ class SideMenu extends Component {
               </Accordion>
             </li>
             <li className="sidemenu-ul-li">
+              <a href="shipment-planner">
+                <img
+                  src={RatesIcon}
+                  alt="green-counter-icon"
+                  className="header-greencounter-icon"
+                />
+                Shipment Planner
+              </a>
+            </li>
+            <li className="sidemenu-ul-li">
               <img
                 src={GreenCounterIcon}
                 alt="green-counter-icon"
@@ -93,12 +103,14 @@ class SideMenu extends Component {
               Bookings
             </li>
             <li className="sidemenu-ul-li">
-              <img
-                src={RatesIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Rates
+              <a href="rate-search">
+                <img
+                  src={RatesIcon}
+                  alt="green-counter-icon"
+                  className="header-greencounter-icon"
+                />
+                Rates
+              </a>
             </li>
             <li className="sidemenu-ul-li">
               <img

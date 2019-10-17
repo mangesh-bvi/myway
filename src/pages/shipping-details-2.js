@@ -18,8 +18,6 @@ import Download from "./../assets/img/csv.png";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
- 
-
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -42,18 +40,20 @@ class ShippingDetailsTwo extends Component {
 
     this.state = {
       modalDel: false,
+      modalDocu: false,
       modalEdit: false,
       detailsData: {},
       addressData: [],
       containerData: [],
       ShowCard: true,
       documentData: [],
-      sr_no:0,
+      sr_no: 0,
       filtered: [],
-      viewDocument:false
+      viewDocument: false
     };
 
     this.toggleDel = this.toggleDel.bind(this);
+    this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
@@ -66,28 +66,22 @@ class ShippingDetailsTwo extends Component {
 
     this.HandleShipmentDetails(HblNo);
   }
-  HandleDocumentDownloadFile(evt,row){    
-     debugger;
-     var filePath = row.original["HBL#"];
+  HandleDocumentDownloadFile(evt, row) {
+    debugger;
+    var filePath = row.original["HBL#"];
   }
 
-  HandleDocumentView(evt,row){    
-    
+  HandleDocumentView(evt, row) {
     debugger;
     var HblNo = row.original["HBL#"];
-    this.setState({modalEdit:true});
+    this.setState({ modalEdit: true });
+  }
+  HandleDocumentDelete(evt, row) {
+    debugger;
+    var HblNo = row.original["HBL#"];
+    this.setState({ modalDel: true });
+  }
 
-
- }
- HandleDocumentDelete(evt,row){    
-  debugger;
-  var HblNo = row.original["HBL#"];
-  this.setState({modalDel:true});
-}
-
-
-   
-   
   HandleShipmentDocument() {
     debugger;
     let self = this;
@@ -101,12 +95,12 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      var documentdata=[];
-      documentdata=response.data;    
-      documentdata.forEach(function(file,i) {
-        file.sr_no = i+1; 
-      })
-       
+      var documentdata = [];
+      documentdata = response.data;
+      documentdata.forEach(function(file, i) {
+        file.sr_no = i + 1;
+      });
+
       self.setState({ documentData: documentdata });
     });
   }
@@ -181,6 +175,11 @@ class ShippingDetailsTwo extends Component {
   toggleDel() {
     this.setState(prevState => ({
       modalDel: !prevState.modalDel
+    }));
+  }
+  toggleDocu() {
+    this.setState(prevState => ({
+      modalDocu: !prevState.modalDocu
     }));
   }
   toggleEdit() {
@@ -374,7 +373,7 @@ class ShippingDetailsTwo extends Component {
                                   </div>
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
-                                      Departure Port Name
+                                      Departure Port
                                     </p>
                                     <p className="details-para">
                                       {routedata.DeparturePortName}
@@ -382,10 +381,10 @@ class ShippingDetailsTwo extends Component {
                                   </div>
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
-                                      Departure Date
+                                      Destination Port
                                     </p>
                                     <p className="details-para">
-                                      {routedata.DepartureDate}
+                                      {routedata.DestinationPortName}
                                     </p>
                                   </div>
                                 </div>
@@ -394,10 +393,10 @@ class ShippingDetailsTwo extends Component {
                                 <div className="row">
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
-                                      Destination Port Name
+                                      Departure Date
                                     </p>
                                     <p className="details-para">
-                                      {routedata.DestinationPortName}
+                                      {routedata.DepartureDate}
                                     </p>
                                   </div>
                                   <div className="col-md-6 details-border">
@@ -567,28 +566,11 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="documents-tab"
                     >
-                      <div>
-                        Enter documentName:
-                        <input id="docName" type="text"></input>
+                      <div className="add-docu-btn">
+                        <button onClick={this.toggleDocu} className="butn mt-0">
+                          Add Document
+                        </button>
                       </div>
-                      <div>
-                        Enter document Description:
-                        <input id="docDesc" type="text"></input>
-                      </div>
-                      <div>
-                        <input
-                          type="file"
-                          onChange={this.onDocumentChangeHandler}
-                        ></input>
-                      </div>
-                      <div>
-                        <input
-                          type="button"
-                          onClick={this.onDocumentClickHandler}
-                          value="Save"
-                        ></input>
-                      </div>
-                      <button className="butn">Add Document</button>
                       <div className="table-scroll">
                         <ReactTable
                           data={documentData}
@@ -771,6 +753,65 @@ class ShippingDetailsTwo extends Component {
                   </ModalBody>
                 </Modal>
                 <Modal
+                  className="delete-popup pol-pod-popup"
+                  isOpen={this.state.modalDocu}
+                  toggle={this.toggleDocu}
+                  centered={true}
+                >
+                  <ModalBody>
+                    <div className="rename-cntr login-fields">
+                      <label>Document Name</label>
+                      <input
+                        id="docName"
+                        type="text"
+                        placeholder="Enter Document Name"
+                      />
+                    </div>
+                    <div className="rename-cntr login-fields">
+                      <label>Document Description</label>
+                      <input
+                        id="docDesc"
+                        type="text"
+                        placeholder="Enter Document Description"
+                      />
+                    </div>
+                    <div>
+                      {/* <input
+                        type="file"
+                        onChange={this.onDocumentChangeHandler}
+                      ></input> */}
+                      <input
+                        id="file-upload"
+                        className="file-upload d-none"
+                        type="file"
+                        onChange={this.onDocumentChangeHandler}
+                      />
+                      <label htmlFor="file-upload">
+                        <div className="file-icon">
+                          <img src={FileUpload} alt="file-upload" />
+                        </div>
+                        <span>Add File</span> or Drop File here
+                      </label>
+                    </div>
+                    <div>
+                      {/* <input
+                        type="button"
+                        onClick={this.onDocumentClickHandler}
+                        value="Save"
+                      ></input> */}
+                    </div>
+                    <Button
+                      className="butn"
+                      onClick={() => {
+                        this.toggleDocu();
+                        this.onDocumentClickHandler();
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </ModalBody>
+                </Modal>
+                <Modal
                   className="delete-popup"
                   isOpen={this.state.modalEdit}
                   toggle={this.toggleEdit}
@@ -784,7 +825,7 @@ class ShippingDetailsTwo extends Component {
                         className="agreement-pdf"
                       ></iframe>
                     </div>
-                     
+
                     <Button
                       className="butn cancel-butn"
                       onClick={this.toggleEdit}
