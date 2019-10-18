@@ -3,6 +3,7 @@ import "../styles/custom.css";
 import axios from "axios";
 import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import DatePicker from "react-datepicker";
+import Moment from 'react-moment';
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Truck from "./../assets/img/truck.png";
+import Plane from "./../assets/img/plane.png";
 import Ship from "./../assets/img/ship.png";
 import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
@@ -69,6 +71,14 @@ class ShipmentPlanner extends Component {
       totalMinDays: "",
       totalMaxDays: "",
       transitpopup: [],
+      deliveryPopup:[],
+      firstAvg:"",
+      firstmgmt:"",
+      secondAvg:"",
+      secondmgmt:"",
+      visualCarrier:"",
+      thirdAvg:"",
+      thirdmgmt:"",
       zoom: 4,
       center: {
         lat: 25.37852,
@@ -176,16 +186,29 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var totalAvg = 0;
       var totalMin = 0;
       var totalMax = 0;
-      for (let index = 0; index < response.data.length; index++) {
-        totalAvg += parseInt(response.data[index].NTransit_Time);
-        totalMin += parseInt(response.data[index].NMin_Transit_Time);
-        totalMax += parseInt(response.data[index].NMax_Transit_Time);
+      for (let index = 0; index < response.data.Table.length; index++) {
+        if(index==0)
+        {
+          self.setState({firstAvg:response.data.Table[index].NTransit_Time});
+        }
+        else if(index==1)
+        {
+          self.setState({secondAvg:response.data.Table[index].NTransit_Time});
+        }
+        else{
+          self.setState({thirdAvg:response.data.Table[index].NTransit_Time});
+        }
+        totalAvg += parseInt(response.data.Table[index].NTransit_Time);
+        totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
+        totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
       var Data = response.data;
-      self.setState({ transitpopup: response.data });
+      self.setState({ transitpopup: response.data.Table });
+      self.setState({ deliveryPopup: response.data.Table1 });
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
@@ -227,8 +250,13 @@ class ShipmentPlanner extends Component {
     });
   }
 
+  renderTableHeader() {
+    return <div><div>1223333</div></div>
+ }
+
   render() {
-    const { mapsData } = this.state;
+   
+    const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar } = this.state;
     let iconMarker = new window.google.maps.MarkerImage(
       YellowFlag,
       null /* size is determined at runtime */,
@@ -306,8 +334,24 @@ class ShipmentPlanner extends Component {
         {planet.MyCompName}
       </option>
     ));
+    
+    function TransitionImage(props) {
+      const imgType = props.imgType;
+      if (imgType=="Road") {
+        return <img src={Truck}></img>;
+      }
+      else if(imgType=="Air-Midnight Wonder")
+      {
+        return <img src={Plane}></img>;
+      }
+      else{
+        return <img src={Ship}></img>;
+      }
+     
+    }
 
     return (
+     
       <div>
         <Headers />
         <div className="cls-ofl">
@@ -431,7 +475,7 @@ class ShipmentPlanner extends Component {
                       cellPadding="0"
                       cellSpacing="0"
                     >
-                      <tbody>
+                      <tbody>                      
                         <tr>
                           <td id="ContentPlaceHolder1_td_bg" className="water">
                             <div className="row">
@@ -448,9 +492,9 @@ class ShipmentPlanner extends Component {
                               <div className="col-xs-12 col-sm-6 text-center">
                                 <div className="avarage-day supplier-avarage-day">
                                   <span id="ContentPlaceHolder1_lbl_avg_days_header">
-                                    1
+                                    {this.state.firstAvg}
                                   </span>
-                                  Days Avarage
+                                  &nbsp;Days Avarage
                                 </div>
                               </div>
                             </div>
@@ -458,9 +502,9 @@ class ShipmentPlanner extends Component {
                               <div className="col-xs-12 col-sm-12 col-sm-12">
                                 <div className="avarage-day avrage-time">
                                   <span id="ContentPlaceHolder1_lbl_avg_days_center">
-                                    42 DAYS{" "}
+                                  {this.state.secondAvg}
                                   </span>
-                                  AVERAGE
+                                  &nbsp;Days AVERAGE
                                 </div>
                               </div>
                             </div>
@@ -478,9 +522,9 @@ class ShipmentPlanner extends Component {
                               <div className="col-xs-12 col-sm-12">
                                 <div className="avarage-day destination-port">
                                   <span id="ContentPlaceHolder1_lbl_avg_days_footer">
-                                    1
+                                  {this.state.thirdAvg}
                                   </span>
-                                  Days Avarage
+                                 &nbsp; Days Avarage
                                 </div>
                               </div>
                             </div>
@@ -507,20 +551,23 @@ class ShipmentPlanner extends Component {
                   centered={true}
                 >
                   <ModalBody className="p-0">
-                    <div className="container-fluid p-0">
+                    {deliveryPopup.map((cell,i)=>
+                    {
+                      debugger;
+                     return <div className="container-fluid p-0">
                       <div className="transit-sect">
                         <div className="d-flex justify-content-between align-items-center">
                           <div className="d-flex align-items-center">
                             <div className="shipment-img mr-3">
-                              <img src={Truck} alt="truck icon" />
+                              <TransitionImage imgType={cell.Mode}/>
                             </div>
                             <div>
                               <p className="desti-name">
-                                Frankfurt am Main, Hessen, Germany
+                                {cell.POLLocation}
                               </p>
                               <p className="desti-route">
-                                to Mumbai (ex Bombay), Maharashtra, India
-                                Carrier Air France
+                                to {cell.DestinationPort}
+                                ,Carrier {cell.Carrier}
                               </p>
                             </div>
                           </div>
@@ -530,19 +577,30 @@ class ShipmentPlanner extends Component {
                         <div className="row">
                           <div className="col-md-4 text-center">
                             <p class="details-title">Departure Date</p>
-                            <p class="details-para">10/18/2019</p>
+                            <p class="details-para"><Moment format="DD/MM/YYYY">
+                                                    {cell.SailingDate}
+                                                    </Moment></p>
                           </div>
                           <div className="col-md-4 text-center">
                             <p class="details-title">ETA</p>
-                            <p class="details-para">10/19/2019</p>
+                            <p class="details-para"><Moment format="DD/MM/YYYY">
+                                                      {cell.ETA}
+                                                    </Moment></p>
                           </div>
                           <div className="col-md-4 text-center">
                             <p class="details-title">Estimated Delivery Date</p>
-                            <p class="details-para">10/23/2019</p>
+                            <p class="details-para">
+                            <Moment format="DD/MM/YYYY">
+                            {cell.CargoArrivalDate}
+                           </Moment>
+                           </p>
                           </div>
                         </div>
                       </div>
                     </div>
+                    }
+                    )}
+                   
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -554,12 +612,13 @@ class ShipmentPlanner extends Component {
                   <ModalBody className="p-0">
                     <div className="container-fluid p-0">
                       <div className="transit-sect">
+                    
                         <div className="row">
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Average Days</p>
                               <p class="details-para">
-                                {this.state.totalAvgDays}
+                                {this.state.totalAvgDays}                                
                               </p>
                             </div>
                           </div>
@@ -582,154 +641,50 @@ class ShipmentPlanner extends Component {
                         </div>
                       </div>
                       <div className="transit-sect-overflow">
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Truck} alt="truck icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">Istanbul</p>
-                                <p className="desti-route">
-                                  to Istanbul, Istanbul, Turkey
-                                </p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">2</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Ship} alt="ship icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">
-                                  Istanbul, Istanbul, Turkey
-                                </p>
-                                <p className="desti-route">
-                                  to Sines, Setúbal, Portugal
-                                </p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">24</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">22</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">26</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Ship} alt="ship icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">
-                                  Sines, Setúbal, Portugal
-                                </p>
-                                <p className="desti-route">
-                                  to Baltimore, Maryland, United States
-                                </p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">11</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">10</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">14</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Truck} alt="truck icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">
-                                  Baltimore, Maryland, United States
-                                </p>
-                                <p className="desti-route">to New York</p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">2</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                      {transitpopup.map((cell,i)=>{
+                        debugger;
+                        var imgSrc='';
+                       
+                          return  <div className="transit-sect">
+                             <div className="d-flex justify-content-between align-items-center">
+                               <div className="d-flex align-items-center">
+                                 <div className="shipment-img mr-3">                                   
+                                 <TransitionImage imgType={cell.CModeOfTransport}/>
+                                 </div>
+                                 <div>
+                                   <p className="desti-name">{cell.StartLocation}</p>
+                                   <p className="desti-route">
+                                     to {cell.EndLocation}
+                                   </p>
+                                 </div>
+                               </div>
+                               <button className="butn cancel-butn">View</button>
+                             </div>
+                             <div className="row">
+                               <div className="col-md-4">
+                                 <div className="days-cntr">
+                                   <p className="days-title">Average Days</p>
+                                   <span className="days-count">{cell.NTransit_Time}</span>
+                                 </div>
+                               </div>
+                               <div className="col-md-4">
+                                 <div className="days-cntr">
+                                   <p className="days-title">Minimum Days</p>
+                                   <span className="days-count">{cell.NMin_Transit_Time}</span>
+                                 </div>
+                               </div>
+                               <div className="col-md-4">
+                                 <div className="days-cntr">
+                                   <p className="days-title">Maximum Days</p>
+                                   <span className="days-count">{cell.NMax_Transit_Time}</span>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+                      })}
+                 
+                      
+                 
                       </div>
                     </div>
                   </ModalBody>
