@@ -1,5 +1,13 @@
 .ReactTable {
   font-size: 14px;
+  border: 0 !important;
+}
+.ReactTable .rt-thead.-headerGroups {
+  display: none !important;
+}
+.ReactTable.-striped .rt-tr.-odd,
+.ReactTable.-striped .rt-tr.-even {
+  background: #fff !important;
 }
 .ReactTable .rt-th {
   font-family: "Bold Font";
@@ -8,7 +16,6 @@
   padding: 25px 12px !important;
   white-space: nowrap;
   border-right: 0 !important;
-  text-align: left;
 }
 .ReactTable .rt-thead.-filters {
   display: none;
@@ -19,6 +26,7 @@
   background-color: #fff;
   padding: 12px !important;
   border-right: 0 !important;
+  text-align: center;
 }
 .ReactTable .rt-tbody .rt-tr-group {
   border-bottom: 2px solid #f1f2f2 !important;
@@ -26,3 +34,37 @@
 .ReactTable .rt-tbody .rt-tr-group:last-child {
   border-bottom: 0 !important;
 }
+.ReactTable .rt-th,
+.ReactTable .rt-td {
+  text-overflow: initial !important;
+  white-space: initial !important;
+}
+.ReactTable .rt-tr {
+  align-items: center;
+}
+
+/* pagination starts */
+.ReactTable .-pagination .-previous,
+.ReactTable .-pagination .-next {
+  flex: 0 0 150px !important;
+}
+.ReactTable .-pagination .-previous .-btn,
+.ReactTable .-pagination .-next .-btn {
+  background-color: #39b54a;
+  color: #fff;
+  border: 1px solid #39b54a;
+  font-family: "Bold Font";
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+}
+.ReactTable .-pagination .-btn:not([disabled]):hover {
+  background: #fff !important;
+  color: #39b54a !important;
+}
+.ReactTable .-pagination {
+  font-family: "Regular Font";
+}
+/* pagination ends */

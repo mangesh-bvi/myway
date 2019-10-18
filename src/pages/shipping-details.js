@@ -36,6 +36,7 @@ class ShippingDetails extends Component {
   }
 
   HandleListShipmentSummey() {
+    debugger;
     let self = this;
     var userid = window.localStorage.getItem("userid");
 
@@ -100,6 +101,10 @@ class ShippingDetails extends Component {
                   {
                     columns: [
                       {
+                        Header: "BL/HBL",
+                        accessor: "BL/HBL"
+                      },
+                      {
                         Cell: row => {
                           if (row.value == "Air") {
                             return (
@@ -130,30 +135,16 @@ class ShippingDetails extends Component {
                             );
                           }
                         },
-                        Header: () => (
-                          <div
-                            style={{
-                              textAlign: "center"
-                            }}
-                          >
-                            Mode
-                          </div>
-                        ),
-                        // Header: "Mode",
+                        Header: "Mode",
                         accessor: "ModeOfTransport"
                       },
-                      {
-                        Header: "BL/HBL",
-                        accessor: "BL/HBL"
-                      },
-
                       {
                         Header: "Consignee",
                         accessor: "Consignee"
                       },
                       {
                         Header: "Shipper",
-                        accessor: "Consignee"
+                        accessor: "Shipper"
                       },
 
                       // {
@@ -212,16 +203,7 @@ class ShippingDetails extends Component {
                             return <div>{row.value}</div>;
                           }
                         },
-                        Header: () => (
-                          <div
-                            style={{
-                              textAlign: "center"
-                            }}
-                          >
-                            Status
-                          </div>
-                        ),
-                        // Header: "Status",
+                        Header: "Status",
                         accessor: "Status"
                       },
                       {
