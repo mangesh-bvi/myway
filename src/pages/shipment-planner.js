@@ -167,7 +167,7 @@ class ShipmentPlanner extends Component {
 
   handleChange = e => {
     this.setState({
-      sailingDate: e
+      startDate: e
     });
   };
 
