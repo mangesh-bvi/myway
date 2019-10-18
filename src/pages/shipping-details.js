@@ -4,6 +4,8 @@ import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
 import "../assets/css/react-table.css";
+import GoogleMapReact from "google-map-react";
+import ShipWhite from "./../assets/img/ship-white.png";
 import { UncontrolledTooltip } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -18,17 +20,32 @@ import Box from "./../assets/img/box.png";
 import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
-
+import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+
+const SourceIcon = () => (
+  <div className="map-icon source-icon">
+    <img src={ShipWhite} />
+  </div>
+);
+const DestiIcon = () => (
+  <div className="map-icon desti-icon">
+    <img src={ShipWhite} />
+  </div>
+);
 
 class ShippingDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shipmentSummary: []
+      shipmentSummary: [],
+      listDis: "none",
+      mapDis: "block"
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
+    this.MapButn = this.MapButn.bind(this);
+    this.listButn = this.listButn.bind(this);
   }
 
   componentDidMount() {
@@ -36,7 +53,6 @@ class ShippingDetails extends Component {
   }
 
   HandleListShipmentSummey() {
-    debugger;
     let self = this;
     var userid = window.localStorage.getItem("userid");
 
@@ -71,6 +87,21 @@ class ShippingDetails extends Component {
     };
   };
 
+  MapButn() {
+    this.setState({ listDis: "block", mapDis: "none" });
+  }
+  listButn() {
+    this.setState({ listDis: "none", mapDis: "block" });
+  }
+
+  static defaultProps = {
+    center: {
+      lat: 59.95,
+      lng: 30.33
+    },
+    zoom: 11
+  };
+
   render() {
     const { shipmentSummary } = this.state;
     return (
@@ -85,17 +116,43 @@ class ShippingDetails extends Component {
               <h2>Shipments</h2>
               <div className="d-flex align-items-center">
                 <input type="search" placeholder="Search here" />
-                <a href="#!" className="butn light-blue-butn">
+                <a
+                  href="#!"
+                  onClick={this.listButn}
+                  style={{ display: this.state.listDis }}
+                  className="butn light-blue-butn mr-0"
+                >
                   List View
                 </a>
-                <a href="#!" className="butn">
-                  Map
+                <a
+                  href="#!"
+                  onClick={this.MapButn}
+                  style={{ display: this.state.mapDis }}
+                  className="butn"
+                >
+                  Map View
                 </a>
               </div>
             </div>
-            <div className="ag-fresh">
+            <div style={{ display: this.state.listDis }} className="map-tab">
+              <div className="full-map">
+                <GoogleMapReact
+                  bootstrapURLKeys={{
+                    key: appSettings.Keys
+                  }}
+                  defaultCenter={this.props.center}
+                  defaultZoom={this.props.zoom}
+                >
+                  <SourceIcon lat={59.955413} lng={30.337844} />
+                  <DestiIcon lat={59.9} lng={30.3} />
+                </GoogleMapReact>
+              </div>
+            </div>
+            <div style={{ display: this.state.mapDis }} className="ag-fresh">
               <ReactTable
                 data={shipmentSummary}
+                // noDataText="<i className='fa fa-refresh fa-spin'></i>"
+                noDataText=""
                 filterable
                 columns={[
                   {
@@ -359,7 +416,6 @@ function formatDate(date) {
     "November",
     "December"
   ];
-  debugger;
   var day = date.getDate();
   var monthIndex = date.getMonth();
   var year = date.getFullYear();

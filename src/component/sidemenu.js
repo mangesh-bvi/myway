@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import "../styles/custom.css";
 import { Accordion, Button, Card } from "react-bootstrap";
 import GreenCounterIcon from "./../assets/img/green-counter.png";
@@ -16,11 +17,14 @@ class SideMenu extends Component {
     this.state = {};
   }
 
-  openPage = () => {
-    window.location.href = "./shipment-summary";
-  };
-
   render() {
+    var urlShipSum = window.location.pathname;
+    window.localStorage.setItem("defActKey", "0");
+    if (urlShipSum === "/shipment-summary") {
+      window.localStorage.setItem("defActKey", "1");
+    } else {
+      window.localStorage.setItem("defActKey", "0");
+    }
     return (
       <div>
         <div>
@@ -42,22 +46,21 @@ class SideMenu extends Component {
               Quotes
             </li>
             <li className="sidemenu-ul-li shipmentli">
-              <Accordion defaultActiveKey="0">
+              <Accordion
+                defaultActiveKey={window.localStorage.getItem("defActKey")}
+              >
                 <Card>
                   <Card.Header>
-                    <Accordion.Toggle
-                      onClick={this.openPage}
-                      as={Button}
-                      variant="link"
-                      eventKey="1"
-                    >
-                      <img
-                        src={ShipmentsIcon}
-                        alt="green-counter-icon"
-                        className="header-greencounter-icon"
-                      />
-                      Shipment
-                    </Accordion.Toggle>
+                    <Link to="/shipment-summary" style={{ display: "block" }}>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        <img
+                          src={ShipmentsIcon}
+                          alt="green-counter-icon"
+                          className="header-greencounter-icon"
+                        />
+                        Shipment
+                      </Accordion.Toggle>
+                    </Link>
                   </Card.Header>
                   <Accordion.Collapse eventKey="1">
                     <Card.Body>

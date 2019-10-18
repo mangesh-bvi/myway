@@ -68,3 +68,13 @@
   font-family: "Regular Font";
 }
 /* pagination ends */
+
+.ReactTable .rt-noData {
+  background: rgba(0, 0, 0, 0.1) url("./../img/table-loader.gif") no-repeat
+    center center !important;
+  /* pointer-events: initial !important; */
+  background-size: 80px !important;
+  padding: 40px !important;
+  width: 100%;
+  height: 100%;
+}
