@@ -51,6 +51,7 @@ class ShippingDetailsTwo extends Component {
       sr_no: 0,
       filtered: [],
       viewDocument: false,
+      bookedStatus:[],
       selectedFile: "",
       selectedFileName: "",
       consigneeFileName: ""
@@ -117,8 +118,8 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        UserId: userid,
-        HBLNo: HblNo
+        UserId:874588,// userid,
+        HBLNo:'AQTYMSE190317' //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
@@ -127,7 +128,8 @@ class ShippingDetailsTwo extends Component {
       self.setState({
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
-        containerData: shipmentdata.Table2
+        containerData: shipmentdata.Table2,
+        bookedStatus:shipmentdata.Table4
       });
     });
   }
@@ -202,15 +204,56 @@ class ShippingDetailsTwo extends Component {
     this.setState({ ShowCard: !this.state.ShowCard });
   }
 
+  
   render() {
     const {
       detailsData,
       addressData,
       containerData,
       ShowCard,
-      documentData
+      documentData,
+      bookedStatus
     } = this.state;
-
+    let bookingIsActive="";
+    let bookDate="";
+    let departedIsActive="";
+    let departedDate="";
+    let arrivedIsActive="";
+    let arrivedDate="";
+    let inlandIsActive="track-hide";
+    let inlandDate="";
+    let deliveredIsActive="";
+    let deliverDate="";
+   for (let index = 0; index < bookedStatus.length; index++) {
+       if(bookedStatus[index].Status=="Booked")
+       {
+         debugger;
+         bookingIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+         bookDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;
+       }
+      else if(bookedStatus[index].Status=="Departed")
+      {
+        departedIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        departedDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+      else if(bookedStatus[index].Status=="Arrived")
+      {
+        arrivedIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        arrivedDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+      else if(bookedStatus[index].Status=="Inland")
+      {
+        inlandIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        inlandDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+      else if(bookedStatus[index].Status=="Delivered")
+      {
+        debugger;
+        deliveredIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        deliverDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+   }
+  
     return (
       <div>
         <Headers />
@@ -678,28 +721,28 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         </div>
                       </div>
-                      <div className="track-details">
-                        <div className="track-line-cntr active">
+                      <div className="track-details">                                            
+                        <div className={bookingIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Booked} alt="booked icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Booked : </span>6 Oct 2019, 10:45:00
+                            <span>Booked : </span>{bookDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr active">
+                        <div className={departedIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Departed} alt="departed icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Departed : </span>9 Oct 2019, 90:45:56
+                            <span>Departed : </span>{departedDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr active">
+                        {/* <div className="track-line-cntr active">
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Transit} alt="transit icon" />
@@ -708,36 +751,35 @@ class ShippingDetailsTwo extends Component {
                           <p>
                             <span>On the way</span>
                           </p>
-                        </div>
-                        <div className="track-line-cntr">
+                        </div> */}
+                        <div className={arrivedIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Arrived} alt="arrived icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Arrived : </span>ETA 9 Oct 2019, 10:45:00
+                            <span>Arrived : </span>{arrivedDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr">
+                        <div className={inlandIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Inland} alt="inland icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Inland Transportation : </span>ETA 9 Oct 2019,
-                            10:45:00
+                            <span>Inland Transportation : </span>{inlandDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr">
+                        <div className={deliveredIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Delivery} alt="delivery icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Delivered : </span>ETA 9 Oct 2019, 10:45:00
+                            <span>Delivered : </span>{deliverDate}
                           </p>
                         </div>
                       </div>

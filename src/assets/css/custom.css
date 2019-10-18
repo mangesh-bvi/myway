@@ -508,6 +508,9 @@ table tbody tr:last-child {
   bottom: 0;
   z-index: -1;
 }
+.track-hide{
+  display:none;
+}
 .track-img {
   width: 30px;
 }
