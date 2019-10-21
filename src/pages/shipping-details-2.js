@@ -788,7 +788,7 @@ class ShippingDetailsTwo extends Component {
                       />
                       <label htmlFor="file-upload">
                         <div className="file-icon">
-                          <img src={FileUpload} alt="file-upload" />
+                          {/* <img src={FileUpload} alt="file-upload" /> */}
                         </div>
                         <span>Add File</span> or Drop File here
                       </label>
