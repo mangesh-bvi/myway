@@ -115,7 +115,7 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
+        <option value={comp.MappingID}>{comp.MappedCompName}</option>
       ));
       self.setState({ consigneedrp: optionItems });
     });
@@ -123,7 +123,7 @@ class ShipmentPlanner extends Component {
 
   consigneeChange = e => {
     let self = this;
-    let supconsid = 1250; //e.target.value;
+    let supconsid =e.target.value;
     self.setState({ supConsId: supconsid });
     axios({
       method: "post",
