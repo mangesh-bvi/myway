@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -8,7 +9,6 @@ import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
-import "react-table/react-table.css";
 
 const SourceIcon = () => <div className="map-circ source-circ" />;
 const DestiIcon = () => <div className="map-circ desti-circ" />;

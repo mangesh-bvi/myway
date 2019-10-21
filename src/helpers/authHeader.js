@@ -1,3 +1,5 @@
+import { encryption } from "./encryption";
+
 export function authHeader (token='token') {
     if(token==='no')
     {
@@ -5,7 +7,7 @@ export function authHeader (token='token') {
     }
     else{
        // var token=window.localStorage.getItem('token');
-        var tokenValue="Bearer "+window.localStorage.getItem('token');
+        var tokenValue="Bearer "+encryption(window.localStorage.getItem('token'),"desc");
         return { 'Authorization':tokenValue, 'Content-Type': 'application/json'}
     }
   

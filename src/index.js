@@ -29,6 +29,7 @@ import GreenCounter from "./pages/GreenCounter";
 import ShipmentPlanner from "./pages/shipment-planner";
 import RateSearch from "./pages/rate-search";
 import NewRateSearch from "./pages/new-rate-search";
+import AddUser from "./pages/AddUser";
 import RateTable from "./pages/rate-table";
 import SpotRate from "./pages/spot-rate";
 import SpotRateTable from "./pages/spotRateTable";
@@ -63,6 +64,7 @@ ReactDOM.render(
     <Route exact path="/shipment-planner" component={ShipmentPlanner} />
     <Route exact path="/rate-search" component={RateSearch} />
     <Route exact path="/new-rate-search" component={NewRateSearch} />
+    <Route exact path="/AddUser" component={AddUser} />
     <Route exact path="/rate-table" component={RateTable} />
     <Route exact path="/spot-rate" component={SpotRate} />
     <Route exact path="/spot-rate-table" component={SpotRateTable} />

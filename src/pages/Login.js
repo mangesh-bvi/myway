@@ -9,6 +9,7 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import { delay } from "q";
 // import { connect } from 'react-redux'
 
 class Login extends React.Component {
@@ -19,7 +20,8 @@ class Login extends React.Component {
       password: "",
       submitted: false,
       showLoginError: false,
-      errorText: ""
+      errorText: "",
+      loading: false
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -32,9 +34,9 @@ class Login extends React.Component {
     });
   }
   handleSubmit(e) {
-    this.setState({ submitted: true });
+    this.setState({ submitted: true, loading: true });
     const { username, password } = this.state;
-    window.localStorage.setItem("password", password);
+    window.localStorage.setItem("password",encryption(password,"enc"));
     if (username !== "" && password !== "") {
       var ipaddress = window.localStorage.getItem("ipaddress");
       console.log("axios" + new Date());
@@ -49,24 +51,25 @@ class Login extends React.Component {
         },
         headers: authHeader("no")
       }).then(function(response) {
+        debugger;
         console.log("axios response" + new Date());
         debugger;
         var data = response.data;
         console.log(data);
-        window.localStorage.setItem("username", data.Table[0].UserName);
-        window.localStorage.setItem("firstname", data.Table[0].FirstName);
+        window.localStorage.setItem("username",encryption(data.Table[0].UserName,"enc"));
+        window.localStorage.setItem("firstname",encryption(data.Table[0].FirstName,"enc"));
         window.localStorage.setItem(
           "lastlogindate",
-          data.Table[0].LastLoginDate
+          encryption(data.Table[0].LastLoginDate,"enc")
         );
-        window.localStorage.setItem("lastname", data.Table[0].LastName);
+        window.localStorage.setItem("lastname",encryption(data.Table[0].LastName,"enc"));
         window.localStorage.setItem("qrcode", data.Table1[0].QRCode);
         window.localStorage.setItem(
           "modeoftransport",
           data.Table[0].ModeOfTransport
         );
-        window.localStorage.setItem("userid", data.Table[0].UserId);
-        window.localStorage.setItem("usertype", data.Table[0].UserType);
+        window.localStorage.setItem("userid",encryption(data.Table[0].UserId,"enc") );
+        window.localStorage.setItem("usertype",encryption(data.Table[0].UserType,"enc"));
         window.localStorage.setItem(
           "dashboardrefreshtime",
           data.Table[0].DashboardRefreshTime
@@ -74,16 +77,22 @@ class Login extends React.Component {
         window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
         GenerateToken(username, password);
         //window.location.href = "./user-agreement";
-      });
-      NotificationManager.success("Login Successfully.!");
+      }).catch(error => {
+        debugger;
+        var err=error.response.data.split(':');
+        NotificationManager.error(err[1].replace('}',''));
+        setTimeout(function(){ window.location.href="./" }, 5000);
+    });
     } else {
-      this.setState({ settoaste: true });
+      debugger;
+      this.setState({ settoaste: true, loading: true });
 
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the passowrd" : "";
       // alert(error);
       //  window.location='./Dashboard'
       NotificationManager.error(error);
+      setTimeout(function(){ window.location.href="./" }, 5000);
     }
   }
 
@@ -97,7 +106,7 @@ class Login extends React.Component {
   }
   render() {
     //  const { username, password } = this.state;
-
+    const { loading } = this.state;
     return (
       <section className="login-between">
         <div className="login-sect">
@@ -140,10 +149,17 @@ class Login extends React.Component {
               <div className="text-right">
                 <button
                   type="button"
-                  className="butn"
+                  className="butn login-butn"
                   onClick={this.handleSubmit}
+                  disabled={loading}
                 >
-                  Login
+                  {loading && (
+                    <i
+                      style={{ marginRight: 15 }}
+                      className="fa fa-refresh fa-spin"
+                    ></i>
+                  )}
+                  {loading ? "Please Wait ..." : "Login"}
                 </button>
               </div>
             </div>
@@ -193,7 +209,7 @@ function TokenhandleResponse(response) {
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
-      window.localStorage.setItem("token", data.access_token);
+      window.localStorage.setItem("token",encryption(data.access_token,"enc"));
       if (window.localStorage.getItem("IsEnabled") == true) {
         window.location.href = "./dashboard";
       } else {

@@ -2,6 +2,7 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
+import { encryption } from "../helpers/encryption";
 
 class ChangePassword extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class ChangePassword extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
-    if (window.localStorage.getItem("username") == null) {
+    if (encryption(window.localStorage.getItem("username"),"desc") == null) {
       window.location.href = "./";
     }
   }
@@ -28,7 +29,7 @@ class ChangePassword extends React.Component {
    
     //  e.preventDefault();
 
-    var oldpwd = window.localStorage.getItem("password");
+    var oldpwd =encryption(window.localStorage.getItem("password"),"desc");
     this.setState({ submitted: true });
     const { oldpassword, password, newpassword } = this.state;
     if (oldpassword !== oldpwd) {
@@ -104,7 +105,7 @@ function ChangePasswordCheck(password, newpassword) {
     method: "POST",
     headers: authHeader(),
     body: JSON.stringify({
-      UserName: window.localStorage.getItem("username"),
+      UserName:encryption(window.localStorage.getItem("username"),"desc"),
       OldPassword: password,
       NewPassword: newpassword
     })
