@@ -1360,6 +1360,46 @@ table tbody tr:last-child {
 }
 /* booking table ends */
 
+/* dashboard starts */
+.dash-outer {
+  padding: 20px;
+}
+.dash-sects {
+  background-color: #f1f2f2;
+  height: 100%;
+}
+.dash-sects-cntr {
+  margin-right: -10px;
+  margin-left: -10px;
+}
+.dash-sects-cntr > div {
+  margin-top: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+.dash-sects h3 {
+  color: #002d73;
+  border-bottom: 1px solid #cdcece;
+  padding: 20px;
+}
+.dash-sects-dtls {
+  padding: 20px;
+}
+.dash-sects-dtls p {
+  color: #6d6e71;
+  font-family: "Medium Font";
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+.dash-sects-dtls p:last-child {
+  margin-bottom: 0;
+}
+.dash-sects-dtls p span {
+  color: #000;
+  font-family: "Bold Font";
+}
+/* dashboard ends */
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
