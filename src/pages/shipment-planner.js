@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import Moment from 'react-moment';
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
+import { encryption } from "../helpers/encryption";
 import "react-datepicker/dist/react-datepicker.css";
 // import {GoogleMapReact,Polyline} from "google-map-react";
 import Headers from "../component/header";
@@ -106,7 +107,7 @@ class ShipmentPlanner extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
       data: {
-        UserID: window.localStorage.getItem("userid"),
+        UserID:encryption(window.localStorage.getItem("userid"),"desc"),
         MyCompID: compArray.MyCompID,
         MyCompLocationID: compArray.MyCompLocationID,
         MyCompLocationType: compArray.MyCompLocationType
@@ -242,7 +243,7 @@ class ShipmentPlanner extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchShipperCompany`,
       data: {
-        UserID: window.localStorage.getItem("userid")
+        UserID:encryption(window.localStorage.getItem("userid"),"desc")
       },
       headers: authHeader()
     }).then(function(response) {

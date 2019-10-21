@@ -11,6 +11,7 @@ import UserIcon from "./../assets/img/user.png";
 import ActivityLogIcon from "./../assets/img/activity-log.png";
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
 import LogoutIcon from "./../assets/img/logout.png";
+import { encryption } from "../helpers/encryption";
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 
 
@@ -24,22 +25,22 @@ class Header extends Component {
   }
 
   componentDidMount() {
-    if (window.localStorage.getItem("username") == null) {
+    if (encryption(window.localStorage.getItem("username"),"desc") == null) {
      window.location.href = "./login";
     } else {
       document.getElementById(
         "spnUser"
-      ).textContent = window.localStorage.getItem("username");
+      ).textContent =encryption(window.localStorage.getItem("username"),"desc");
       document.getElementById(
         "spnFirstName"
-      ).textContent = window.localStorage.getItem("username");
+      ).textContent =encryption(window.localStorage.getItem("username"),"desc");
       document.getElementById(
         "spnLastLogin"
-      ).textContent = window.localStorage.getItem("lastlogindate");
+      ).textContent =encryption(window.localStorage.getItem("lastlogindate"),"desc");
       this.setState({
         lastlogin: (document.getElementById(
           "spnLastLogin"
-        ).textContent = window.localStorage.getItem("lastlogindate"))
+        ).textContent =encryption(window.localStorage.getItem("lastlogindate"),"desc"))
       });
     }
   }
@@ -225,7 +226,7 @@ class Header extends Component {
             <PopoverBody>
               <label>Log-in</label>
               <br/>
-              <label>{window.localStorage.getItem("lastlogindate")}</label>
+              <label>{encryption(window.localStorage.getItem("lastlogindate"),"desc")}</label>
             </PopoverBody>
           </UncontrolledPopover>
          

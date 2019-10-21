@@ -16,6 +16,7 @@ import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
 import Transit from "./../assets/img/transit.png";
+import { encryption } from "../helpers/encryption";
 import Box from "./../assets/img/box.png";
 import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
@@ -54,7 +55,7 @@ class ShippingDetails extends Component {
 
   HandleListShipmentSummey() {
     let self = this;
-    var userid = window.localStorage.getItem("userid");
+    var userid =encryption(window.localStorage.getItem("userid"),"desc");
 
     axios({
       method: "post",
@@ -65,6 +66,13 @@ class ShippingDetails extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
+      var air=response.data.Table[0].Count;
+      var ocean=response.data.Table[1].Count;
+      var inland=response.data.Table[2].Count;
+      window.localStorage.setItem("aircount",air);
+      window.localStorage.setItem("oceancount",ocean);
+      window.localStorage.setItem("inlandcount",inland);
       var data = [];
       data = response.data.Table1;
       self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
@@ -159,7 +167,8 @@ class ShippingDetails extends Component {
                     columns: [
                       {
                         Header: "BL/HBL",
-                        accessor: "BL/HBL"
+                        accessor: "BL/HBL",
+                        sortable:true
                       },
                       {
                         Cell: row => {
@@ -193,7 +202,10 @@ class ShippingDetails extends Component {
                           }
                         },
                         Header: "Mode",
-                        accessor: "ModeOfTransport"
+                        accessor: "ModeOfTransport",
+                        sortable:true,
+                        filterable:true
+
                       },
                       {
                         Header: "Consignee",
@@ -261,7 +273,7 @@ class ShippingDetails extends Component {
                           }
                         },
                         Header: "Status",
-                        accessor: "Status"
+                        accessor: "Status"                      
                       },
                       {
                         Header: "ETA",

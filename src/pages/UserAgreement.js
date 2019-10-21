@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import cross from "./../assets/img/close.png";
 import {authHeader} from '../helpers/authHeader';
 import appSettings from "../helpers/appSetting";
+import { encryption } from "../helpers/encryption";
 
 class UserAgreement extends Component {
   constructor(props) {
@@ -61,11 +62,13 @@ class UserAgreement extends Component {
 }
 function VerifyAgreement()
 {
+  debugger;
+  var userName=encryption(window.localStorage.getItem("username"),"desc");
   const requestOptions = {
     method: "POST",
     headers: authHeader(),
     body: JSON.stringify({
-      UserName: window.localStorage.getItem("username"),       
+      UserName:userName,       
       publicIPAddress:window.localStorage.getItem("ipaddress"),
       privateIPAddress: "",
       LocalTimeZone:"India Standard Time"

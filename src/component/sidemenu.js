@@ -14,7 +14,9 @@ import SettingIcon from "./../assets/img/Settings.png";
 class SideMenu extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      aircount:"0"
+    };
   }
 
   render() {
@@ -25,6 +27,7 @@ class SideMenu extends Component {
     } else {
       window.localStorage.setItem("defActKey", "0");
     }
+  
     return (
       <div>
         <div>
@@ -67,20 +70,16 @@ class SideMenu extends Component {
                       <ul className="shipment-ul">
                         <li>
                           <label className="shipment-ul-lilbl1">Air</label>
-                          <label className="shipment-ul-lilbl2">25</label>
+                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("aircount")}</label>
                         </li>
                         <li>
                           <label className="shipment-ul-lilbl1">Ocean</label>
-                          <label className="shipment-ul-lilbl2">10</label>
+                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("oceancount")}</label>
                         </li>
                         <li>
-                          <label className="shipment-ul-lilbl1">Truck</label>
-                          <label className="shipment-ul-lilbl2">5</label>
-                        </li>
-                        <li>
-                          <label className="shipment-ul-lilbl1">LCL</label>
-                          <label className="shipment-ul-lilbl2">1</label>
-                        </li>
+                          <label className="shipment-ul-lilbl1">Inland</label>
+                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("inlandcount")}</label>
+                        </li>                       
                       </ul>
                     </Card.Body>
                   </Accordion.Collapse>

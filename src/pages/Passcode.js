@@ -2,6 +2,7 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
+import { encryption } from "../helpers/encryption";
 
 class Passcode extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class Passcode extends React.Component {
   }
   handleSubmit(e) {    
     //  e.preventDefault();
-    var username = window.localStorage.getItem("username");
+    var username = window.localStorage.getItem(encryption("username","desc"));
     this.setState({ submitted: true });
     const { emailaddress, passcode } = this.state;
     if (emailaddress !== "" && passcode !== "") {
