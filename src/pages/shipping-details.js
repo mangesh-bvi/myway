@@ -42,17 +42,37 @@ class ShippingDetails extends Component {
     this.state = {
       shipmentSummary: [],
       listDis: "none",
-      mapDis: "block"
+      mapDis: "block",
+      filterAll: '',
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.MapButn = this.MapButn.bind(this);
     this.listButn = this.listButn.bind(this);
+    this.filterAll = this.filterAll.bind(this);
   }
 
   componentDidMount() {
     this.HandleListShipmentSummey();
   }
 
+  onFilteredChange(filtered) {
+        debugger;
+    if (filtered.length > 1 && this.state.filterAll.length) {
+      // NOTE: this removes any FILTER ALL filter
+      const filterAll = '';
+      this.setState({ shipmentSummary: filtered.filter((item) => item.id != 'all'), filterAll })
+    }
+     
+       
+  }
+  filterAll(e) {
+    debugger;
+    const { value } = e.target;
+    const filterAll = value;
+    const shipmentSummary = [{ id: 'all', value: filterAll }];
+     
+    this.setState({ filterAll, shipmentSummary });
+  }
   HandleListShipmentSummey() {
     let self = this;
     var userid =encryption(window.localStorage.getItem("userid"),"desc");
@@ -123,7 +143,7 @@ class ShippingDetails extends Component {
             <div className="title-sect">
               <h2>Shipments</h2>
               <div className="d-flex align-items-center">
-                <input type="search" placeholder="Search here" />
+                <input type="search" value={this.state.filterAll} onChange={this.filterAll} placeholder="Search here" />
                 <a
                   href="#!"
                   onClick={this.listButn}
@@ -161,6 +181,8 @@ class ShippingDetails extends Component {
                 data={shipmentSummary}
                 // noDataText="<i className='fa fa-refresh fa-spin'></i>"
                 noDataText=""
+                filtered={this.state.filtered}
+                onFilteredChange={this.onFilteredChange.bind(this)}
                 filterable
                 columns={[
                   {

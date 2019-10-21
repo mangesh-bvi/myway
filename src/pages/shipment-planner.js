@@ -151,6 +151,7 @@ class ShipmentPlanner extends Component {
         lat: 25.37852,
         lng: 75.02354
       },
+      
       mapsData: [],
       MapsDetailsData: [],
       showingMaps: false,
@@ -457,7 +458,7 @@ class ShipmentPlanner extends Component {
  }
 
   render() {
-    const { mapsData,MapsDetailsData} = this.state;
+    const { mapsData,MapsDetailsData,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,transitpopup } = this.state;
 
     let optionItems = this.state.companydrp.map((planet, i) => (
       <option
