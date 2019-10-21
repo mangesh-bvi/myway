@@ -299,8 +299,8 @@ class ShipmentPlanner extends Component {
         break;
       }
     }
-debugger;
-    self.setState({mappingId:compArray[0].MappingID});
+ 
+     
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
