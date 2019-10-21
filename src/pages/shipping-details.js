@@ -186,6 +186,7 @@ class ShippingDetails extends Component {
                                   style={{ width: "35px", textAlign: "center" }}
                                   src={Transit}
                                 />
+                                
                               </div>
                             );
                           }

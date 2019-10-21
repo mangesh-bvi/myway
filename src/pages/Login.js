@@ -75,6 +75,7 @@ class Login extends React.Component {
         GenerateToken(username, password);
         //window.location.href = "./user-agreement";
       });
+      NotificationManager.success("Login Successfully.!");
     } else {
       this.setState({ settoaste: true });
 
