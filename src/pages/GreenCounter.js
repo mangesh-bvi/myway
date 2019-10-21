@@ -8,6 +8,7 @@ import { authHeader } from "../helpers/authHeader";
 import VizioMyWay from "./../assets/img/greencounterchart.png";
 import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
+import { encryption } from "../helpers/encryption";
 
 
 var carboneOptions = {
@@ -112,7 +113,7 @@ class GreenCounter extends Component {
       selectvalnew = selectval;
     }
     var ipaddress = window.localStorage.getItem("ipaddress");
-    var userid = window.localStorage.getItem("userid");
+    var userid =encryption(window.localStorage.getItem("userid"),"desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/GreenCounterEmission`,
@@ -135,7 +136,7 @@ class GreenCounter extends Component {
     }
 
     var ipaddress = window.localStorage.getItem("ipaddress");
-    var userid = window.localStorage.getItem("userid");
+    var userid =encryption(window.localStorage.getItem("userid"),"desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/GreenCounterEmission`,
@@ -157,7 +158,7 @@ class GreenCounter extends Component {
     debugger;
     let self = this;
     var ipaddress = window.localStorage.getItem("ipaddress");
-    var userid = window.localStorage.getItem("userid");
+    var userid =encryption(window.localStorage.getItem("userid"),"desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/GreenCounterEmission`,
