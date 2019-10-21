@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import "../styles/custom.css";
+import axios from "axios";
+import { authHeader } from "../helpers/authHeader";
 import GoogleMapReact from "google-map-react";
 import ShipWhite from "./../assets/img/ship-white.png";
 import PlaneWhite from "./../assets/img/plane-white.png";
@@ -7,6 +9,7 @@ import TruckWhite from "./../assets/img/truck-white.png";
 import appSettings from "../helpers/appSetting";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
+import { encryption } from "../helpers/encryption";
 
 const SourceIcon = () => (
   <div className="map-icon source-icon">
@@ -38,6 +41,24 @@ class Dashboard extends Component {
     zoom: 11
   };
 
+  componentDidMount()
+  {
+     this.BindMapData();
+  }
+  BindMapData()
+  {
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"),"desc")
+      },
+      headers: authHeader()
+    }).then(function(response) {
+       debugger;
+    });
+  }
+ 
   render() {
     return (
       <div>
