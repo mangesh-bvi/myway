@@ -151,7 +151,6 @@ class ShipmentPlanner extends Component {
         lat: 25.37852,
         lng: 75.02354
       },
-      
       mapsData: [],
       MapsDetailsData: [],
       showingMaps: false,
@@ -300,7 +299,7 @@ class ShipmentPlanner extends Component {
         break;
       }
     }
- 
+debugger;
      
     axios({
       method: "post",
@@ -322,7 +321,7 @@ class ShipmentPlanner extends Component {
 
   consigneeChange = e => {
     let self = this;
-    let supconsid = self.state.mappingId;
+    let supconsid = 1250;
     self.setState({ supConsId: supconsid });
     axios({
       method: "post",
@@ -408,13 +407,14 @@ class ShipmentPlanner extends Component {
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
-      self.setState({ transitpopup: response.data });
+      self.setState({ transitpopup: response.data.Table });
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
       debugger;
       var submitdata=response;
       self.HandleSubmitDetailsData(submitdata); 
+       console.log(self.transitpopup);
     });
   };
   toggleTransit() {
@@ -458,7 +458,7 @@ class ShipmentPlanner extends Component {
  }
 
   render() {
-    const { mapsData,MapsDetailsData,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,transitpopup } = this.state;
+const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,MapsDetailsData } = this.state;
 
     let optionItems = this.state.companydrp.map((planet, i) => (
       <option
@@ -488,7 +488,6 @@ class ShipmentPlanner extends Component {
     }
 
     return (
-     
       <div>
         <Headers />
         <div className="cls-ofl">
@@ -618,7 +617,7 @@ class ShipmentPlanner extends Component {
                       cellPadding="0"
                       cellSpacing="0"
                     >
-                      <tbody>                      
+                      <tbody>
                         <tr>
                           <td id="ContentPlaceHolder1_td_bg" className="water">
                             <div className="row">
@@ -645,7 +644,7 @@ class ShipmentPlanner extends Component {
                               <div className="col-xs-12 col-sm-12 col-sm-12">
                                 <div className="avarage-day avrage-time">
                                   <span id="ContentPlaceHolder1_lbl_avg_days_center">
-                                  {this.state.secondAvg}
+                                    {this.state.secondAvg}
                                   </span>
                                   &nbsp;Days AVERAGE
                                 </div>
@@ -665,9 +664,9 @@ class ShipmentPlanner extends Component {
                               <div className="col-xs-12 col-sm-12">
                                 <div className="avarage-day destination-port">
                                   <span id="ContentPlaceHolder1_lbl_avg_days_footer">
-                                  {this.state.thirdAvg}
+                                    {this.state.thirdAvg}
                                   </span>
-                                 &nbsp; Days Avarage
+                                  &nbsp; Days Avarage
                                 </div>
                               </div>
                             </div>
@@ -694,56 +693,61 @@ class ShipmentPlanner extends Component {
                   centered={true}
                 >
                   <ModalBody className="p-0">
-                    {deliveryPopup.map((cell,i)=>
-                    {
+                    {deliveryPopup.map((cell, i) => {
                       debugger;
-                     return <div className="container-fluid p-0">
-                      <div className="transit-sect">
-                        <div className="d-flex justify-content-between align-items-center">
-                          <div className="d-flex align-items-center">
-                            <div className="shipment-img mr-3">
-                              <TransitionImage imgType={cell.Mode}/>
+                      return (
+                        <div className="container-fluid p-0">
+                          <div className="transit-sect">
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div className="d-flex align-items-center">
+                                <div className="shipment-img mr-3">
+                                  <TransitionImage imgType={cell.Mode} />
+                                </div>
+                                <div>
+                                  <p className="desti-name">
+                                    {cell.POLLocation}
+                                  </p>
+                                  <p className="desti-route">
+                                    to {cell.DestinationPort}
+                                    ,Carrier {cell.Carrier}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                            <div>
-                              <p className="desti-name">
-                                {cell.POLLocation}
-                              </p>
-                              <p className="desti-route">
-                                to {cell.DestinationPort}
-                                ,Carrier {cell.Carrier}
-                              </p>
+                          </div>
+                          <div className="delivery-inner">
+                            <div className="row">
+                              <div className="col-md-4 text-center">
+                                <p class="details-title">Departure Date</p>
+                                <p class="details-para">
+                                  <Moment format="DD/MM/YYYY">
+                                    {cell.SailingDate}
+                                  </Moment>
+                                </p>
+                              </div>
+                              <div className="col-md-4 text-center">
+                                <p class="details-title">ETA</p>
+                                <p class="details-para">
+                                  <Moment format="DD/MM/YYYY">
+                                    {cell.ETA}
+                                  </Moment>
+                                </p>
+                              </div>
+                              <div className="col-md-4 text-center">
+                                <p class="details-title">
+                                  Estimated Delivery Date
+                                </p>
+                                <p class="details-para">
+                                  <Moment format="DD/MM/YYYY">
+                                    {cell.CargoArrivalDate}
+                                  </Moment>
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="delivery-inner">
-                        <div className="row">
-                          <div className="col-md-4 text-center">
-                            <p class="details-title">Departure Date</p>
-                            <p class="details-para"><Moment format="DD/MM/YYYY">
-                                                    {cell.SailingDate}
-                                                    </Moment></p>
-                          </div>
-                          <div className="col-md-4 text-center">
-                            <p class="details-title">ETA</p>
-                            <p class="details-para"><Moment format="DD/MM/YYYY">
-                                                      {cell.ETA}
-                                                    </Moment></p>
-                          </div>
-                          <div className="col-md-4 text-center">
-                            <p class="details-title">Estimated Delivery Date</p>
-                            <p class="details-para">
-                            <Moment format="DD/MM/YYYY">
-                            {cell.CargoArrivalDate}
-                           </Moment>
-                           </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    }
-                    )}
-                   
+                      );
+                    })}
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -755,13 +759,12 @@ class ShipmentPlanner extends Component {
                   <ModalBody className="p-0">
                     <div className="container-fluid p-0">
                       <div className="transit-sect">
-                    
                         <div className="row">
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Average Days</p>
                               <p class="details-para">
-                                {this.state.totalAvgDays}                                
+                                {this.state.totalAvgDays}
                               </p>
                             </div>
                           </div>
@@ -784,50 +787,61 @@ class ShipmentPlanner extends Component {
                         </div>
                       </div>
                       <div className="transit-sect-overflow">
-                      {transitpopup.map((cell,i)=>{
-                        debugger;
-                        var imgSrc='';
-                       
-                          return  <div className="transit-sect">
-                             <div className="d-flex justify-content-between align-items-center">
-                               <div className="d-flex align-items-center">
-                                 <div className="shipment-img mr-3">                                   
-                                 <TransitionImage imgType={cell.CModeOfTransport}/>
-                                 </div>
-                                 <div>
-                                   <p className="desti-name">{cell.StartLocation}</p>
-                                   <p className="desti-route">
-                                     to {cell.EndLocation}
-                                   </p>
-                                 </div>
-                               </div>
-                               <button className="butn cancel-butn">View</button>
-                             </div>
-                             <div className="row">
-                               <div className="col-md-4">
-                                 <div className="days-cntr">
-                                   <p className="days-title">Average Days</p>
-                                   <span className="days-count">{cell.NTransit_Time}</span>
-                                 </div>
-                               </div>
-                               <div className="col-md-4">
-                                 <div className="days-cntr">
-                                   <p className="days-title">Minimum Days</p>
-                                   <span className="days-count">{cell.NMin_Transit_Time}</span>
-                                 </div>
-                               </div>
-                               <div className="col-md-4">
-                                 <div className="days-cntr">
-                                   <p className="days-title">Maximum Days</p>
-                                   <span className="days-count">{cell.NMax_Transit_Time}</span>
-                                 </div>
-                               </div>
-                             </div>
-                           </div>
-                      })}
-                 
-                      
-                 
+                        {transitpopup.map(cell => {
+                          debugger;
+                          var imgSrc = "";
+
+                          return (
+                            <div className="transit-sect">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                  <div className="shipment-img mr-3">
+                                    <TransitionImage
+                                      imgType={cell.CModeOfTransport}
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="desti-name">
+                                      {cell.StartLocation}
+                                    </p>
+                                    <p className="desti-route">
+                                      to {cell.EndLocation}
+                                    </p>
+                                  </div>
+                                </div>
+                                <button className="butn cancel-butn">
+                                  View
+                                </button>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Average Days</p>
+                                    <span className="days-count">
+                                      {cell.NTransit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Minimum Days</p>
+                                    <span className="days-count">
+                                      {cell.NMin_Transit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Maximum Days</p>
+                                    <span className="days-count">
+                                      {cell.NMax_Transit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </ModalBody>
