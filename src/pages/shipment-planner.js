@@ -3,13 +3,16 @@ import "../styles/custom.css";
 import axios from "axios";
 import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import DatePicker from "react-datepicker";
+import Moment from 'react-moment';
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
+import { encryption } from "../helpers/encryption";
 import "react-datepicker/dist/react-datepicker.css";
 // import {GoogleMapReact,Polyline} from "google-map-react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Truck from "./../assets/img/truck.png";
+import Plane from "./../assets/img/plane.png";
 import Ship from "./../assets/img/ship.png";
 import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
@@ -30,7 +33,6 @@ import {
   Marker,
   Polyline
 } from "react-google-maps";
- 
 
 const SourceIcon = () => (
   <div className="google-icon-div" id="source-circ">
@@ -53,6 +55,8 @@ class ShipmentPlanner extends Component {
 
     this.state = {
       modalTransit: false,
+      modalDelivery: false,
+      modalVisual: false,
       modalEdit: false,
       startDate: new Date(),
       companydrp: [],
@@ -68,6 +72,14 @@ class ShipmentPlanner extends Component {
       totalMinDays: "",
       totalMaxDays: "",
       transitpopup: [],
+      deliveryPopup:[],
+      firstAvg:"",
+      firstmgmt:"",
+      secondAvg:"",
+      secondmgmt:"",
+      visualCarrier:"",
+      thirdAvg:"",
+      thirdmgmt:"",
       zoom: 4,
       center: {
         lat: 25.37852,
@@ -77,11 +89,12 @@ class ShipmentPlanner extends Component {
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
+    this.toggleDelivery = this.toggleDelivery.bind(this);
+    this.toggleVisual = this.toggleVisual.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
   }
 
   companyChange = e => {
-    debugger;
     let self = this;
     let compArray = [];
     for (let index = 0; index < this.state.companydrp.length; index++) {
@@ -94,14 +107,13 @@ class ShipmentPlanner extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
       data: {
-        UserID: window.localStorage.getItem("userid"),
+        UserID:encryption(window.localStorage.getItem("userid"),"desc"),
         MyCompID: compArray.MyCompID,
         MyCompLocationID: compArray.MyCompLocationID,
         MyCompLocationType: compArray.MyCompLocationType
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       let optionItems = response.data.map(comp => (
         <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
       ));
@@ -110,7 +122,6 @@ class ShipmentPlanner extends Component {
   };
 
   consigneeChange = e => {
-    debugger;
     let self = this;
     let supconsid = 1250; //e.target.value;
     self.setState({ supConsId: supconsid });
@@ -122,7 +133,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       let optionItems = response.data.map(comp => (
         <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
       ));
@@ -131,7 +141,6 @@ class ShipmentPlanner extends Component {
   };
 
   transportModeChange = e => {
-    debugger;
     let self = this;
     let transportmode = e.target.value;
     self.setState({ modeofTransport: transportmode });
@@ -145,7 +154,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       let optionItems = response.data.map(comp => (
         <option value={comp.TransitModeID}>{comp.TransitMode}</option>
       ));
@@ -154,20 +162,17 @@ class ShipmentPlanner extends Component {
   };
 
   fetchLinerChange = e => {
-    debugger;
     let self = this;
     self.setState({ transitModeId: e.target.value });
   };
 
   handleChange = e => {
-    debugger;
     this.setState({
-      sailingDate: e
+      startDate: e
     });
   };
 
   handleSubmit = () => {
-    debugger;
     var supConsId = this.state.supConsId;
     var sailingDate = document.getElementById("saleDate").value;
     let self = this;
@@ -186,13 +191,25 @@ class ShipmentPlanner extends Component {
       var totalAvg = 0;
       var totalMin = 0;
       var totalMax = 0;
-      for (let index = 0; index < response.data.length; index++) {
-        totalAvg += parseInt(response.data[index].NTransit_Time);
-        totalMin += parseInt(response.data[index].NMin_Transit_Time);
-        totalMax += parseInt(response.data[index].NMax_Transit_Time);
+      for (let index = 0; index < response.data.Table.length; index++) {
+        if(index==0)
+        {
+          self.setState({firstAvg:response.data.Table[index].NTransit_Time});
+        }
+        else if(index==1)
+        {
+          self.setState({secondAvg:response.data.Table[index].NTransit_Time});
+        }
+        else{
+          self.setState({thirdAvg:response.data.Table[index].NTransit_Time});
+        }
+        totalAvg += parseInt(response.data.Table[index].NTransit_Time);
+        totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
+        totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
       var Data = response.data;
-      self.setState({ transitpopup: response.data });
+      self.setState({ transitpopup: response.data.Table });
+      self.setState({ deliveryPopup: response.data.Table1 });
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
@@ -202,6 +219,16 @@ class ShipmentPlanner extends Component {
   toggleTransit() {
     this.setState(prevState => ({
       modalTransit: !prevState.modalTransit
+    }));
+  }
+  toggleDelivery() {
+    this.setState(prevState => ({
+      modalDelivery: !prevState.modalDelivery
+    }));
+  }
+  toggleVisual() {
+    this.setState(prevState => ({
+      modalVisual: !prevState.modalVisual
     }));
   }
   toggleEdit() {
@@ -216,17 +243,21 @@ class ShipmentPlanner extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchShipperCompany`,
       data: {
-        UserID: window.localStorage.getItem("userid")
+        UserID:encryption(window.localStorage.getItem("userid"),"desc")
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       self.setState({ companydrp: response.data });
     });
   }
 
+  renderTableHeader() {
+    return <div><div>1223333</div></div>
+ }
+
   render() {
-    const { mapsData } = this.state;
+   
+    const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar } = this.state;
     let iconMarker = new window.google.maps.MarkerImage(
       YellowFlag,
       null /* size is determined at runtime */,
@@ -240,20 +271,22 @@ class ShipmentPlanner extends Component {
     startendData.lng = 0;
     var latlan = [];
     const places = [
- 
-    {lat: 19.09824118,lng: 72.82493592,latitude1: 55.8103146,longitude1: -80.1751609},
-     
+      {
+        lat: 19.09824118,
+        lng: 72.82493592,
+        latitude1: 55.8103146,
+        longitude1: -80.1751609
+      }
+
       // {lat: 49.24859, lng: 8.887826},
       // {lat: 19.090405, lng: 72.86875},
     ];
     mapsData.map(mdata => {
-      debugger;
       var abc = mdata.CStLatLong;
       latlan.push(abc.split(","));
     });
-    latlan.map((ldata) => {
-      debugger;
-      startendData=new Object();
+    latlan.map(ldata => {
+      startendData = new Object();
       startendData.lat = Number(ldata[0]);
       startendData.lng = Number(ldata[1]);
       // places.push(startendData);
@@ -280,16 +313,12 @@ class ShipmentPlanner extends Component {
         />
         {places.map(function(mid, i) {
           return (
-          
-              <Marker
-               
-                position={{
-                  lat: mid.lat,
-                  lng: mid.lat
-                }}
-              />
-           
-             
+            <Marker
+              position={{
+                lat: mid.lat,
+                lng: mid.lat
+              }}
+            />
           );
         })}
       </GoogleMap>
@@ -306,8 +335,24 @@ class ShipmentPlanner extends Component {
         {planet.MyCompName}
       </option>
     ));
+    
+    function TransitionImage(props) {
+      const imgType = props.imgType;
+      if (imgType=="Road") {
+        return <img src={Truck}></img>;
+      }
+      else if(imgType=="Air-Midnight Wonder")
+      {
+        return <img src={Plane}></img>;
+      }
+      else{
+        return <img src={Ship}></img>;
+      }
+     
+    }
 
     return (
+     
       <div>
         <Headers />
         <div className="cls-ofl">
@@ -372,8 +417,18 @@ class ShipmentPlanner extends Component {
                 </div>
                 <div className="col-md-7">
                   <div className="planner-top-butns">
-                    <button className="butn cancel-butn">Delivery Date</button>
-                    <button className="butn cancel-butn">Visual Summary</button>
+                    <button
+                      onClick={this.toggleDelivery}
+                      className="butn cancel-butn"
+                    >
+                      Delivery Date
+                    </button>
+                    <button
+                      onClick={this.toggleVisual}
+                      className="butn cancel-butn"
+                    >
+                      Visual Summary
+                    </button>
                     <button
                       onClick={this.toggleTransit}
                       className="butn cancel-butn"
@@ -408,6 +463,148 @@ class ShipmentPlanner extends Component {
                   </div>
                 </div>
                 <Modal
+                  className="visual-popup"
+                  isOpen={this.state.modalVisual}
+                  toggle={this.toggleVisual}
+                  centered={true}
+                >
+                  <ModalBody className="p-0">
+                    <table
+                      width="100%"
+                      border="0"
+                      align="center"
+                      cellPadding="0"
+                      cellSpacing="0"
+                    >
+                      <tbody>                      
+                        <tr>
+                          <td id="ContentPlaceHolder1_td_bg" className="water">
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-6">
+                                <div className="manage-txt">
+                                  Managed by
+                                  <span id="ContentPlaceHolder1_lbloriginmangedby">
+                                    Ata Freight Line
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-6 text-center">
+                                <div className="avarage-day supplier-avarage-day">
+                                  <span id="ContentPlaceHolder1_lbl_avg_days_header">
+                                    {this.state.firstAvg}
+                                  </span>
+                                  &nbsp;Days Avarage
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-12 col-sm-12">
+                                <div className="avarage-day avrage-time">
+                                  <span id="ContentPlaceHolder1_lbl_avg_days_center">
+                                  {this.state.secondAvg}
+                                  </span>
+                                  &nbsp;Days AVERAGE
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-9 col-sm-12 col-sm-12">
+                                <div className="manage-txt origin-port">
+                                  Managed by
+                                  <span id="ContentPlaceHolder1_lblMiddleManagedBy">
+                                    Ata Freight Line Via Cma Cgm
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-12">
+                                <div className="avarage-day destination-port">
+                                  <span id="ContentPlaceHolder1_lbl_avg_days_footer">
+                                  {this.state.thirdAvg}
+                                  </span>
+                                 &nbsp; Days Avarage
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-xs-12 col-sm-12">
+                                <div className="manage-txt footer-manage">
+                                  Managed by
+                                  <span id="ContentPlaceHolder1_lblDeliveryManagedBy">
+                                    Ata Freight Line
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </ModalBody>
+                </Modal>
+                <Modal
+                  className="delivery-popup"
+                  isOpen={this.state.modalDelivery}
+                  toggle={this.toggleDelivery}
+                  centered={true}
+                >
+                  <ModalBody className="p-0">
+                    {deliveryPopup.map((cell,i)=>
+                    {
+                      debugger;
+                     return <div className="container-fluid p-0">
+                      <div className="transit-sect">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="d-flex align-items-center">
+                            <div className="shipment-img mr-3">
+                              <TransitionImage imgType={cell.Mode}/>
+                            </div>
+                            <div>
+                              <p className="desti-name">
+                                {cell.POLLocation}
+                              </p>
+                              <p className="desti-route">
+                                to {cell.DestinationPort}
+                                ,Carrier {cell.Carrier}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="delivery-inner">
+                        <div className="row">
+                          <div className="col-md-4 text-center">
+                            <p class="details-title">Departure Date</p>
+                            <p class="details-para"><Moment format="DD/MM/YYYY">
+                                                    {cell.SailingDate}
+                                                    </Moment></p>
+                          </div>
+                          <div className="col-md-4 text-center">
+                            <p class="details-title">ETA</p>
+                            <p class="details-para"><Moment format="DD/MM/YYYY">
+                                                      {cell.ETA}
+                                                    </Moment></p>
+                          </div>
+                          <div className="col-md-4 text-center">
+                            <p class="details-title">Estimated Delivery Date</p>
+                            <p class="details-para">
+                            <Moment format="DD/MM/YYYY">
+                            {cell.CargoArrivalDate}
+                           </Moment>
+                           </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    }
+                    )}
+                   
+                  </ModalBody>
+                </Modal>
+                <Modal
                   className="transit-popup"
                   isOpen={this.state.modalTransit}
                   toggle={this.toggleTransit}
@@ -416,12 +613,13 @@ class ShipmentPlanner extends Component {
                   <ModalBody className="p-0">
                     <div className="container-fluid p-0">
                       <div className="transit-sect">
+                    
                         <div className="row">
                           <div class="col-md-4 details-border">
                             <div>
                               <p class="details-title">Total Average Days</p>
                               <p class="details-para">
-                                {this.state.totalAvgDays}
+                                {this.state.totalAvgDays}                                
                               </p>
                             </div>
                           </div>
@@ -444,154 +642,50 @@ class ShipmentPlanner extends Component {
                         </div>
                       </div>
                       <div className="transit-sect-overflow">
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Truck} alt="truck icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">Istanbul</p>
-                                <p className="desti-route">
-                                  to Istanbul, Istanbul, Turkey
-                                </p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">2</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Ship} alt="ship icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">
-                                  Istanbul, Istanbul, Turkey
-                                </p>
-                                <p className="desti-route">
-                                  to Sines, Setúbal, Portugal
-                                </p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">24</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">22</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">26</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Ship} alt="ship icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">
-                                  Sines, Setúbal, Portugal
-                                </p>
-                                <p className="desti-route">
-                                  to Baltimore, Maryland, United States
-                                </p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">11</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">10</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">14</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="transit-sect">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center">
-                              <div className="shipment-img mr-3">
-                                <img src={Truck} alt="truck icon" />
-                              </div>
-                              <div>
-                                <p className="desti-name">
-                                  Baltimore, Maryland, United States
-                                </p>
-                                <p className="desti-route">to New York</p>
-                              </div>
-                            </div>
-                            <button className="butn cancel-butn">View</button>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Average Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Minimum Days</p>
-                                <span className="days-count">1</span>
-                              </div>
-                            </div>
-                            <div className="col-md-4">
-                              <div className="days-cntr">
-                                <p className="days-title">Maximum Days</p>
-                                <span className="days-count">2</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                      {transitpopup.map((cell,i)=>{
+                        debugger;
+                        var imgSrc='';
+                       
+                          return  <div className="transit-sect">
+                             <div className="d-flex justify-content-between align-items-center">
+                               <div className="d-flex align-items-center">
+                                 <div className="shipment-img mr-3">                                   
+                                 <TransitionImage imgType={cell.CModeOfTransport}/>
+                                 </div>
+                                 <div>
+                                   <p className="desti-name">{cell.StartLocation}</p>
+                                   <p className="desti-route">
+                                     to {cell.EndLocation}
+                                   </p>
+                                 </div>
+                               </div>
+                               <button className="butn cancel-butn">View</button>
+                             </div>
+                             <div className="row">
+                               <div className="col-md-4">
+                                 <div className="days-cntr">
+                                   <p className="days-title">Average Days</p>
+                                   <span className="days-count">{cell.NTransit_Time}</span>
+                                 </div>
+                               </div>
+                               <div className="col-md-4">
+                                 <div className="days-cntr">
+                                   <p className="days-title">Minimum Days</p>
+                                   <span className="days-count">{cell.NMin_Transit_Time}</span>
+                                 </div>
+                               </div>
+                               <div className="col-md-4">
+                                 <div className="days-cntr">
+                                   <p className="days-title">Maximum Days</p>
+                                   <span className="days-count">{cell.NMax_Transit_Time}</span>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+                      })}
+                 
+                      
+                 
                       </div>
                     </div>
                   </ModalBody>

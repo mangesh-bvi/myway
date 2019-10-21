@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import "../styles/custom.css";
 import { Accordion, Button, Card } from "react-bootstrap";
 import GreenCounterIcon from "./../assets/img/green-counter.png";
@@ -13,14 +14,20 @@ import SettingIcon from "./../assets/img/Settings.png";
 class SideMenu extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      aircount:"0"
+    };
   }
 
-  openPage = () => {
-    window.location.href = "./shipment-summary";
-  };
-
   render() {
+    var urlShipSum = window.location.pathname;
+    window.localStorage.setItem("defActKey", "0");
+    if (urlShipSum === "/shipment-summary") {
+      window.localStorage.setItem("defActKey", "1");
+    } else {
+      window.localStorage.setItem("defActKey", "0");
+    }
+  
     return (
       <div>
         <div>
@@ -42,42 +49,37 @@ class SideMenu extends Component {
               Quotes
             </li>
             <li className="sidemenu-ul-li shipmentli">
-              <Accordion defaultActiveKey="0">
+              <Accordion
+                defaultActiveKey={window.localStorage.getItem("defActKey")}
+              >
                 <Card>
                   <Card.Header>
-                    <Accordion.Toggle
-                      onClick={this.openPage}
-                      as={Button}
-                      variant="link"
-                      eventKey="1"
-                    >
-                      <img
-                        src={ShipmentsIcon}
-                        alt="green-counter-icon"
-                        className="header-greencounter-icon"
-                      />
-                      Shipment
-                    </Accordion.Toggle>
+                    <Link to="/shipment-summary" style={{ display: "block" }}>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        <img
+                          src={ShipmentsIcon}
+                          alt="green-counter-icon"
+                          className="header-greencounter-icon"
+                        />
+                        Shipment
+                      </Accordion.Toggle>
+                    </Link>
                   </Card.Header>
                   <Accordion.Collapse eventKey="1">
                     <Card.Body>
                       <ul className="shipment-ul">
                         <li>
                           <label className="shipment-ul-lilbl1">Air</label>
-                          <label className="shipment-ul-lilbl2">25</label>
+                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("aircount")}</label>
                         </li>
                         <li>
                           <label className="shipment-ul-lilbl1">Ocean</label>
-                          <label className="shipment-ul-lilbl2">10</label>
+                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("oceancount")}</label>
                         </li>
                         <li>
-                          <label className="shipment-ul-lilbl1">Truck</label>
-                          <label className="shipment-ul-lilbl2">5</label>
-                        </li>
-                        <li>
-                          <label className="shipment-ul-lilbl1">LCL</label>
-                          <label className="shipment-ul-lilbl2">1</label>
-                        </li>
+                          <label className="shipment-ul-lilbl1">Inland</label>
+                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("inlandcount")}</label>
+                        </li>                       
                       </ul>
                     </Card.Body>
                   </Accordion.Collapse>

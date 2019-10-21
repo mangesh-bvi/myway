@@ -6,6 +6,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 // import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
+import FileUpload from "./../assets/img/file.png";
 import Booked from "./../assets/img/booked.png";
 import Transit from "./../assets/img/transit-small.png";
 import Departed from "./../assets/img/departed.png";
@@ -49,7 +50,11 @@ class ShippingDetailsTwo extends Component {
       documentData: [],
       sr_no: 0,
       filtered: [],
-      viewDocument: false
+      viewDocument: false,
+      bookedStatus:[],
+      selectedFile: "",
+      selectedFileName: "",
+      consigneeFileName: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -113,8 +118,8 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        UserId: userid,
-        HBLNo: HblNo
+        UserId:874588,// userid,
+        HBLNo:'AQTYMSE190317' //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
@@ -123,13 +128,21 @@ class ShippingDetailsTwo extends Component {
       self.setState({
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
-        containerData: shipmentdata.Table2
+        containerData: shipmentdata.Table2,
+        bookedStatus:shipmentdata.Table4
       });
     });
   }
   onDocumentChangeHandler = event => {
     this.setState({
-      selectedFile: event.target.files[0]
+      selectedFile: event.target.files[0],
+      selectedFileName: event.target.files[0].name
+    });
+  };
+  onDocumentConsignee = event => {
+    this.setState({
+      // selectedFile: event.target.files[0],
+      consigneeFileName: event.target.files[0].name
     });
   };
   onDocumentClickHandler = () => {
@@ -191,15 +204,56 @@ class ShippingDetailsTwo extends Component {
     this.setState({ ShowCard: !this.state.ShowCard });
   }
 
+  
   render() {
     const {
       detailsData,
       addressData,
       containerData,
       ShowCard,
-      documentData
+      documentData,
+      bookedStatus
     } = this.state;
-
+    let bookingIsActive="";
+    let bookDate="";
+    let departedIsActive="";
+    let departedDate="";
+    let arrivedIsActive="";
+    let arrivedDate="";
+    let inlandIsActive="track-hide";
+    let inlandDate="";
+    let deliveredIsActive="";
+    let deliverDate="";
+   for (let index = 0; index < bookedStatus.length; index++) {
+       if(bookedStatus[index].Status=="Booked")
+       {
+         debugger;
+         bookingIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+         bookDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;
+       }
+      else if(bookedStatus[index].Status=="Departed")
+      {
+        departedIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        departedDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+      else if(bookedStatus[index].Status=="Arrived")
+      {
+        arrivedIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        arrivedDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+      else if(bookedStatus[index].Status=="Inland")
+      {
+        inlandIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        inlandDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+      else if(bookedStatus[index].Status=="Delivered")
+      {
+        debugger;
+        deliveredIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
+        deliverDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+      }
+   }
+  
     return (
       <div>
         <Headers />
@@ -667,28 +721,28 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         </div>
                       </div>
-                      <div className="track-details">
-                        <div className="track-line-cntr active">
+                      <div className="track-details">                                            
+                        <div className={bookingIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Booked} alt="booked icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Booked : </span>6 Oct 2019, 10:45:00
+                            <span>Booked : </span>{bookDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr active">
+                        <div className={departedIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Departed} alt="departed icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Departed : </span>9 Oct 2019, 90:45:56
+                            <span>Departed : </span>{departedDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr active">
+                        {/* <div className="track-line-cntr active">
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Transit} alt="transit icon" />
@@ -697,36 +751,35 @@ class ShippingDetailsTwo extends Component {
                           <p>
                             <span>On the way</span>
                           </p>
-                        </div>
-                        <div className="track-line-cntr">
+                        </div> */}
+                        <div className={arrivedIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Arrived} alt="arrived icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Arrived : </span>ETA 9 Oct 2019, 10:45:00
+                            <span>Arrived : </span>{arrivedDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr">
+                        <div className={inlandIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Inland} alt="inland icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Inland Transportation : </span>ETA 9 Oct 2019,
-                            10:45:00
+                            <span>Inland Transportation : </span>{inlandDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr">
+                        <div className={deliveredIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Delivery} alt="delivery icon" />
                             </div>
                           </div>
                           <p>
-                            <span>Delivered : </span>ETA 9 Oct 2019, 10:45:00
+                            <span>Delivered : </span>{deliverDate}
                           </p>
                         </div>
                       </div>
@@ -775,31 +828,59 @@ class ShippingDetailsTwo extends Component {
                         placeholder="Enter Document Description"
                       />
                     </div>
-                    <div>
+                    <div className="rename-cntr login-fields d-block">
                       {/* <input
                         type="file"
                         onChange={this.onDocumentChangeHandler}
                       ></input> */}
-                      <input
-                        id="file-upload"
-                        className="file-upload d-none"
-                        type="file"
-                        onChange={this.onDocumentChangeHandler}
-                      />
-                      <label htmlFor="file-upload">
-                        <div className="file-icon">
-                          {/* <img src={FileUpload} alt="file-upload" /> */}
+                      <div className="d-flex w-100 align-items-center">
+                        <label>Document File</label>
+                        <div className="w-100">
+                          <input
+                            id="file-upload"
+                            className="file-upload d-none"
+                            type="file"
+                            onChange={this.onDocumentChangeHandler}
+                          />
+                          <label htmlFor="file-upload">
+                            <div className="file-icon">
+                              <img src={FileUpload} alt="file-upload" />
+                            </div>
+                            Add Document Files
+                          </label>
                         </div>
-                        <span>Add File</span> or Drop File here
-                      </label>
+                      </div>
+                      <p className="file-name">{this.state.selectedFileName}</p>
                     </div>
-                    <div>
-                      {/* <input
+                    <div className="rename-cntr login-fields d-block">
+                      <div className="d-flex w-100 align-items-center">
+                        <label>Consignee Document</label>
+                        <div className="w-100">
+                          <input
+                            id="docu-upload"
+                            className="file-upload d-none"
+                            type="file"
+                            onChange={this.onDocumentConsignee}
+                          />
+                          <label htmlFor="docu-upload">
+                            <div className="file-icon">
+                              <img src={FileUpload} alt="file-upload" />
+                            </div>
+                            Add Consignee Files
+                          </label>
+                        </div>
+                      </div>
+                      <p className="file-name">
+                        {this.state.consigneeFileName}
+                      </p>
+                    </div>
+                    {/* <div>
+                      <input
                         type="button"
                         onClick={this.onDocumentClickHandler}
                         value="Save"
-                      ></input> */}
-                    </div>
+                      ></input>
+                    </div> */}
                     <Button
                       className="butn"
                       onClick={() => {

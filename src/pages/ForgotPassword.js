@@ -2,6 +2,7 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import Logo from "./../assets/img/logo.png";
 import appSettings from "../helpers/appSetting";
+import { encryption } from "../helpers/encryption";
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -94,8 +95,8 @@ function handleResponse(response) {
     const data = text && JSON.parse(text);
     if (!response.ok) {
     } else {
-      window.localStorage.setItem("email", data[0].EmailID);
-      window.localStorage.setItem("passcode", data[0].PassCode);
+      window.localStorage.setItem("email",encryption(data[0].EmailID,"enc"));
+      window.localStorage.setItem("passcode",encryption(data[0].PassCode,"enc"));
       window.location.href = "./passcode";
     }
     return data;
