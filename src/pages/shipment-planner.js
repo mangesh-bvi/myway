@@ -459,7 +459,7 @@ debugger;
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
+        <option value={comp.MappingID}>{comp.MappedCompName}</option>
       ));
       self.setState({ consigneedrp: optionItems });
     });
@@ -467,7 +467,7 @@ debugger;
 
   consigneeChange = e => {
     let self = this;
-    let supconsid = 1250 //1567;
+    let supconsid =e.target.value;
     self.setState({ supConsId: supconsid });
     axios({
       method: "post",
@@ -554,13 +554,13 @@ debugger;
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
       self.setState({ transitpopup: response.data.Table });
+      self.setState({ deliveryPopup: response.data.Table1 });
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
       debugger;
       var submitdata=response;
       self.HandleSubmitDetailsData(submitdata); 
-       
     });
   };
   toggleTransit() {
@@ -934,7 +934,7 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
                         </div>
                       </div>
                       <div className="transit-sect-overflow">
-                        {transitpopup.map(cell => {
+                        {transitpopup.map((cell, i) => {
                           debugger;
                           var imgSrc = "";
 
