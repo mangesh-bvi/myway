@@ -1,20 +1,19 @@
 import React from "react";
 import appSettings from "../helpers/appSetting";
 // import Logo from "./../assets/img/logo.png";
+// import {
+//     NotificationContainer,
+//     NotificationManager
+//   } from "react-notifications";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import {authHeader} from "../helpers/authHeader";
 import { is } from "@babel/types";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
 
 var string = "";
-class AddUser extends React.Component{
+class AddSalesUser extends React.Component{
 
   constructor() {
     super()
@@ -35,8 +34,6 @@ class AddUser extends React.Component{
         { key: "Y", value: "Yes" },
         { key: "N", value: "No" }
       ],
-      selectImpExp: [],
-      selectCompany: [],
       chkModeOfTrans: [],
       hideDocument: [],
       miscelleneous: [],
@@ -52,10 +49,12 @@ class AddUser extends React.Component{
       isConsignee: false,
       isShipper: false,
       isChecked: [],
-      fields: {},
-      errors: {},
-      IsEmailExist: false,
-      errorMessage: ""
+      selectSalesUserType: [
+        { key: "SM", value: "Sales Manager" },
+        { key: "BM", value: "Branch Manager" },
+        { key: "NM", value: "National Manager" },
+        { key: "GM", value: "Global Manager" },
+      ],
       
     }
 
@@ -63,51 +62,42 @@ class AddUser extends React.Component{
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   
-  createUI(){
-    var i = 1
-    return this.state.values.map((el, index) => 
-        <div key={index}>
-         <select
-                    onChange={(el) => this.HandleChangeCompany1(el, index)}
-                    name={"Company"+i}
-                  >
-                    {this.state.selectCompany.map(team => (
-                      <option key={team.RegCompID} value={team.SuperCompID}>
-                        {team.RegCompName}
-                      </option>
-                    ))}
-         </select>
-         <input type='button' value='remove' className='dynamic-remove' onClick={this.removeClick.bind(this, i)}/>
-         <div className="remember-forgot col-md-1">
-            <div>
-                <input id={"Consignee" + i} type="checkbox" name={"Consignee" + i} onChange={this.toggleChangeCon1.bind(this,index,"C")}/>
-                <label htmlFor={"Consignee" + i}>Consignee</label>
-            </div>
-            <div>
-                <input id={"Shipper" + i} type="checkbox" name={"Shipper" + i}/>
-                <label htmlFor={"Shipper" + i}>Shipper</label>
-            </div>
-         </div>
+//   createUI(){
+//     var i = 1
+//     return this.state.values.map((el, index) => 
+//         <div key={index}>
+//          <select
+//                     onChange={(el) => this.HandleChangeCompany1(el, index)}
+//                     name={"Company"+i}
+//                   >
+//                     {this.state.selectCompany.map(team => (
+//                       <option key={team.RegCompID} value={team.SuperCompID}>
+//                         {team.RegCompName}
+//                       </option>
+//                     ))}
+//          </select>
+//          <input type='button' value='remove' className='dynamic-remove' onClick={this.removeClick.bind(this, i)}/>
+//          <div className="remember-forgot col-md-1">
+//             <div>
+//                 <input id={"Consignee" + i} type="checkbox" name={"Consignee" + i} onChange={this.toggleChangeCon1.bind(this,index,"C")}/>
+//                 <label htmlFor={"Consignee" + i}>Consignee</label>
+//             </div>
+//             <div>
+//                 <input id={"Shipper" + i} type="checkbox" name={"Shipper" + i}/>
+//                 <label htmlFor={"Shipper" + i}>Shipper</label>
+//             </div>
+//          </div>
          
-        </div>          
-    )
-    i++;
- }
+//         </div>          
+//     )
+//     i++;
+//  }
 
 
-  HandleChangeSelect(field,e) {
-    let fields = this.state.fields;
-    if (e.target.value == "Select") {
-      fields[field] = ""
-    }
-    else
-    {
-    fields[field] = e.target.value;
-    }
+  HandleChangeSelect(e) {
     this.setState({
-      [e.target.name]: e.target.value,
-      fields
-    });
+      [e.target.name]: e.target.value
+  });
   }
 
   HandleChangeCompany(e)
@@ -137,7 +127,6 @@ class AddUser extends React.Component{
       debugger;
       console.log(response);
       self.setState({ selectCountry: response.data.Table, selectUserType: response.data.Table1,
-        selectImpExp: response.data.Table2, selectCompany: response.data.Table4, 
         chkModeOfTrans: response.data.Table3, hideDocument: response.data.Table5,
         miscelleneous: response.data.Table6, accessrights: response.data.Table7
         });
@@ -161,58 +150,13 @@ class AddUser extends React.Component{
     this.setState({ values });
  }
 
- handlechange(field,e) {
+ handlechange(e) {
    debugger;
-  let fields = this.state.fields;
-  fields[field] = e.target.value;        
   this.setState({
-    [e.target.name]: e.target.value,
-    fields
+    [e.target.name]: e.target.value
   });
 }
 
-handleBlur(field,e)
-{
-  debugger;
-  let self = this;
-  let fields = this.state.fields;
-  fields[field] = e.target.value;
-  this.setState({
-    fields
-  });
-  let errors = {};
-  let formIsValid = true;
-  const {emailid} =this.state;
-  axios({
-    method: "post",
-    url: "http://vizio.atafreight.com/MyWayAPI/CheckEmailIDExists",
-    data: {
-      EmailID:emailid,
-      ProfileType: 1
-    },
-    headers: authHeader()
-  }).then(function(response) {
-    debugger;
-    if(response.data[0].CanCreateUser == 1 && response.data[0].Result == "User Not Found")
-    {
-      self.setState({
-        IsEmailExist: false       
-      });
-    }
-    else{
-      self.setState({
-        IsEmailExist: true,
-        errorMessage: response.data[0].Result
-      });
-      // if(!fields["emailid"]){
-        formIsValid = false;
-        errors["emailid"] = self.state.errorMessage;
-        self.setState({errors: errors});
-      // }
-    }
-    return formIsValid
-  })
-}
 
 toggleChange(name, event) {
   
@@ -310,40 +254,6 @@ else
   })
 }
 }
-handleValidation(){
-  let fields = this.state.fields;
-  let errors = {};
-  let formIsValid = true;
-
-  if(!fields["username"]){
-    formIsValid = false;
-    errors["username"] = "Enter user name";
- }
- if(!fields["password"]){
-  formIsValid = false;
-  errors["password"] = "Enter password";
-}
-if(!fields["emailid"]){
-  formIsValid = false;
-  errors["emailid"] = "Enter email id";
-}
-if(!fields["firstname"]){
-  formIsValid = false;
-  errors["firstname"] = "Enter first name";
-}
-if(!fields["lastname"]){
-  formIsValid = false;
-  errors["lastname"] = "Enter last name";
-}
-if(!fields["country"]){
-  formIsValid = false;
-  errors["country"] = "Select country";
-}
-
- this.setState({errors: errors});
- return formIsValid;
-}
-
  handleSubmit(e) {    
    debugger; 
    var userid = encryption(window.localStorage.getItem("userid"),"desc");
@@ -373,7 +283,7 @@ if(!fields["country"]){
       lastname, refreshtime, country, isenabled, usertype, usercreation,
       isadmin, ImpExp, displayShipper, displayConsignee, MobileEnable,
       Company, Consignee, Shipper} = this.state;
-      if(this.handleValidation() && this.state.IsEmailExist == false){
+    
       axios({
         method: "post",
         url: "http://vizio.atafreight.com/MyWayAPI/CreateUser",
@@ -415,18 +325,6 @@ if(!fields["country"]){
         debugger;
       })
   }
-  else {
-    debugger;
-    this.setState({ settoaste: true, loading: true });
-
-    // var error = username === "" ? "Please enter the username\n" : "";
-    // error += password === "" ? "Please enter the passowrd" : "";
-    // alert(error);
-    //  window.location='./Dashboard'
-    // NotificationManager.error(error);
-    
-    }
-  }
 
     render() {
       var a = 1;
@@ -439,42 +337,49 @@ if(!fields["country"]){
           </div>
           <div className="cls-rt">
           <div>
-          <h2>Add User</h2>
+          <h2>Add Sales User</h2>
           <div className="login-input-cntr">
             <div className="row">
+            <div className="login-fields col-md-4">
+               <label>Sales User Type</label>
+               
+               <select
+                    onChange={this.HandleChangeSelect.bind(this)}
+                    name={"salesUserType"}
+                  >
+                    {this.state.selectSalesUserType.map(team => (
+                      <option key={team.key} value={team.value}>
+                        {team.value}
+                      </option>
+                    ))}
+                  </select>                
+               </div>
                 <div className="login-fields col-md-4">
                   <label>User Name</label>
                   <input
                     type="text"
                     name={"username"}
-                    onChange={this.handlechange.bind(this, "username")}
+                    onChange={this.handlechange}
                     placeholder="Enter Your User Name"
-                    value={this.state.fields["username"]}
                   />
-                  <span style={{color: "red"}}>{this.state.errors["username"]}</span>
                </div>
                <div className="login-fields col-md-4">
                   <label>Password</label>
                   <input
                     type="text"
                     name={"password"}
-                    onChange={this.handlechange.bind(this, "password")}
+                    onChange={this.handlechange}
                     placeholder="Enter Your Password"
-                    value={this.state.fields["password"]}
                   />
-                  <span style={{color: "red"}}>{this.state.errors["password"]}</span>
                </div>
                <div className="login-fields col-md-4">
                   <label>Email Id</label>
                   <input
                     type="text"
                     name={"emailid"}
-                    onChange={this.handlechange.bind(this, "emailid")}
+                    onChange={this.handlechange}
                     placeholder="Enter Your Email Id"
-                    value={this.state.fields["emailid"]}
-                    onBlur={this.handleBlur.bind(this, "emailid")}
                   />
-                  <span style={{color: "red"}}>{this.state.errors["emailid"]}</span>
                </div>
                </div>
             <div className="row">
@@ -483,54 +388,32 @@ if(!fields["country"]){
                   <input
                     type="text"
                     name={"firstname"}
-                    onChange={this.handlechange.bind(this, "firstname")}
+                    onChange={this.handlechange}
                     placeholder="Enter Your First Name"
-                    value={this.state.fields["firstname"]}
                   />
-                  <span style={{color: "red"}}>{this.state.errors["firstname"]}</span>
                </div>
                <div className="login-fields col-md-4">
                   <label>Last Name</label>
                   <input
                     type="text"
                     name={"lastname"}
-                    onChange={this.handlechange.bind(this, "lastname")}
+                    onChange={this.handlechange}
                     placeholder="Enter Your Last Name"
-                    value={this.state.fields["lastname"]}
                   />
-                  <span style={{color: "red"}}>{this.state.errors["lastname"]}</span>
                </div>
                <div className="login-fields col-md-4">
                <label>Country</label>
                
                <select
-                    onChange={this.HandleChangeSelect.bind(this, "country")}
+                    onChange={this.HandleChangeSelect.bind(this)}
                     name={"country"}
-                    value={this.state.fields["country"]}
-                  > <option key={"Select"} value={"Select"}>--Select--</option>
+                  >
                     {this.state.selectCountry.map(team => (
                       <option key={team.SUCountry} value={team.SUCountry}>
                         {team.CountryName}
                       </option>
                     ))}
-                  </select>
-                  <span style={{color: "red"}}>{this.state.errors["country"]}</span>
-                {/* <div>
-                    Selected Value: {JSON.stringify(this.state.value)}
-                </div> */}
-                  {/* <input
-                    type="text"
-                    name={"username"}
-                    onChange={this.handlechange}
-                    placeholder="Select Country"
-                  /> */}
-                   {/* <DropDownList
-                    data={this.Country}
-                    textField="text"
-                    dataItemKey="id"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                   /> */}
+                  </select>                
                </div>
                </div>
                <div className="row">
@@ -597,7 +480,7 @@ if(!fields["country"]){
                     ))}
                   </select>
                </div>
-                <div className="login-fields col-md-2">
+                {/* <div className="login-fields col-md-2">
                   <label>Imp. Exp.</label>
                   <select
                     onChange={this.HandleChangeSelect.bind(this)}
@@ -609,10 +492,10 @@ if(!fields["country"]){
                       </option>
                     ))}
                   </select>
-               </div>
+               </div> */}
                </div>
                <div className="row">
-               <div className="login-fields col-md-2">
+               {/* <div className="login-fields col-md-2">
                   <label>Display As Shipper</label>
                   <select
                     onChange={this.HandleChangeSelect.bind(this)}
@@ -624,8 +507,8 @@ if(!fields["country"]){
                       </option>
                     ))}
                   </select>
-               </div>
-               <div className="login-fields col-md-2">
+               </div> */}
+               {/* <div className="login-fields col-md-2">
                   <label>Display As Consignee</label>
                   <select
                     onChange={this.HandleChangeSelect.bind(this)}
@@ -637,7 +520,7 @@ if(!fields["country"]){
                       </option>
                     ))}
                   </select>
-               </div>
+               </div> */}
                <div className="login-fields col-md-4">
                  <label>Mode Of Transport</label>
                  <div className="remember-forgot col-md-1">
@@ -645,7 +528,7 @@ if(!fields["country"]){
                  {
                    
                 this.state.chkModeOfTrans.map((chkModeOfTrans, index) =>
-            <div key={chkModeOfTrans.ID}>
+            <div>
                     <input id={chkModeOfTrans.ID} type="checkbox" name={chkModeOfTrans.Value} value={chkModeOfTrans.ID} 
                     defaultChecked={this.state.chkModeOfTrans.Value} onChange={this.toggleChange.bind(this, chkModeOfTrans.Value)} />
                        <label htmlFor={chkModeOfTrans.ID}>{chkModeOfTrans.Value}</label> 
@@ -666,7 +549,7 @@ if(!fields["country"]){
                  </div>
                </div>
                </div>
-               <div className="row">
+               {/* <div className="row">
                 <div className="login-fields dynamic-fields col-md-4">
                   <label>Company Name</label>
                   <div>
@@ -696,8 +579,8 @@ if(!fields["country"]){
                   {this.state.values}
                   </div>
                   
-               </div>
-               <input type='button' value='add more' onClick={this.addClick.bind(this)}/>
+               </div> */}
+               {/* <input type='button' value='add more' onClick={this.addClick.bind(this)}/> */}
                <div className="row">
                <div className="login-fields col-md-12">
                  <label>Mode Of Transport</label>
@@ -706,7 +589,7 @@ if(!fields["country"]){
                  {
                    
                 this.state.hideDocument.map((hideDocument, index) =>
-                <div className="remember-forgot col-md-4" key={hideDocument.DocumentID}>
+                <div className="remember-forgot col-md-4">
                   <input id={hideDocument.DocumentID} type="checkbox" name={hideDocument.DocumentName} value={hideDocument.DocumentID} 
                    defaultChecked={hideDocument.IsSelected} onClick = {this.toggleChangeHideDoc.bind(this,  index)} />
                   <label htmlFor={hideDocument.DocumentID}>{hideDocument.DocumentName}</label> 
@@ -727,9 +610,9 @@ if(!fields["country"]){
                  {
                    
                 this.state.miscelleneous.map((miscelleneous, index) =>
-                <div key={miscelleneous.InvFlag}>
+                <div>
                     <input id={miscelleneous.InvFlag} type="checkbox" value={miscelleneous.InvFlag} 
-                    defaultChecked={miscelleneous.IsSelected} />
+                    checked={miscelleneous.IsSelected} />
                        <label htmlFor={miscelleneous.InvFlag}>{miscelleneous.InvFlag}</label> 
                                    
                 </div>
@@ -745,7 +628,7 @@ if(!fields["country"]){
                  <div className="row">
                  {
                 this.state.accessrights.map((accessrights, index) =>
-                <div className="remember-forgot col-md-3" key={accessrights.id}>
+                <div className="remember-forgot col-md-3">
                     <input id={accessrights.id} type="checkbox" value={accessrights.Value} onChange={this.toggleChangeAccRight.bind(this, index, accessrights.id)}
                     checked={!this.state.isChecked}/>
                        <label htmlFor={accessrights.id}>{accessrights.Value}</label> 
@@ -778,4 +661,4 @@ if(!fields["country"]){
    
 }
 
-export default AddUser;
+export default AddSalesUser;
