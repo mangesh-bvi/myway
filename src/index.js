@@ -36,6 +36,7 @@ import SpotRateTable from "./pages/spotRateTable";
 import QuoteTable from "./pages/quoteTable";
 import BookingTable from "./pages/bookingTable";
 import ViewUser from "./pages/viewUser";
+import AddSalesUser from "./pages/AddSalesUser";
 
 // import Exmaple from './pages/Example';
 
@@ -72,6 +73,7 @@ ReactDOM.render(
     <Route exact path="/quote-table" component={QuoteTable} />
     <Route exact path="/booking-table" component={BookingTable} />
     <Route exact path="/view-user" component={ViewUser} />
+    <Route exact path="/AddSalesUser" component={AddSalesUser} />
     {/* <Route exact path="/example" component={Exmaple} /> */}
 
     {/* <Route  path="/" component={Login} />   */}

@@ -44,18 +44,34 @@ class Dashboard extends Component {
     zoom: 11
   };
 
+  // componentDidMount() {
+  //   let self = this;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/FetchNewbooking`,
+  //     data: {
+  //       UserID: encryption(window.localStorage.getItem("userid"), "desc")
+  //     },
+  //     headers: authHeader()
+  //   }).then(function(response) {
+  //     debugger;
+  //     self.setState({ bookingData: response.data.Table });
+  //   });
+  // }
+
   componentDidMount() {
-    let self = this;
+    this.BindMapData();
+  }
+  BindMapData() {
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/FetchNewbooking`,
+      url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      self.setState({ bookingData: response.data.Table });
     });
   }
 

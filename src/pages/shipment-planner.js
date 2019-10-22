@@ -14,6 +14,7 @@ import SideMenu from "../component/sidemenu";
 import Truck from "./../assets/img/truck.png";
 import Plane from "./../assets/img/plane.png";
 import Ship from "./../assets/img/ship.png";
+
 import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import Booked from "./../assets/img/booked.png";
@@ -31,24 +32,231 @@ import {
   withGoogleMap,
   GoogleMap,
   Marker,
-  Polyline
+  InfoWindow,
+  Polyline,google
 } from "react-google-maps";
+ 
+const { compose } = require("recompose");
 
-const SourceIcon = () => (
-  <div className="google-icon-div" id="source-circ">
-    <UncontrolledTooltip placement="auto" target="source-circ" trigger="hover">
-      Istanbul
-    </UncontrolledTooltip>
-  </div>
-);
-const DestiIcon = () => (
-  <div className="map-circ desti-circ" id="desti-circ">
-    <UncontrolledTooltip show placement="right" target="desti-circ">
-      New York
-    </UncontrolledTooltip>
-  </div>
-);
+const MapWithAMakredInfoWindow = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+    defaultZoom={3}
+  >
+    {props.markers.map(marker => {
+      const onClick = props.onClick.bind(this, marker);
+      return (
+        <Marker
+          key={marker.id}
+          onClick={onClick}
+          position={{ lat: Number(marker.lat), lng: Number(marker.lng) }}
+        >
+          {props.selectedMarker === marker && (
+            <InfoWindow>
+              <div>
+                <h4>{marker.RegCompanyName}</h4>
+                <br />
+                <b>{marker.locationName}</b>
+              </div>
+            </InfoWindow>
+          )}         
+        </Marker>
+      );
+    })}
+  </GoogleMap>
+));
 
+const MapWithAMakredInfoWindowLine = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+    defaultZoom={3}
+  >
+    {props.markers.map(marker => {
+      debugger;
+
+      const onClick = props.onClick.bind(this, marker);
+
+      var start = marker.StartLatLng;
+      var end = marker.EndLatLng;
+      var OID=marker.ORDERID;
+      let iconMarker = new window.google.maps.MarkerImage(
+        YellowFlag,
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
+      );
+      var lineSymbol = {
+        path: window.google.maps.SymbolPath.CIRCLE,
+        scale: 8,
+        strokeColor: '#393'
+      };
+      // function animateCircle(line) {
+      //   var count = 0;
+      //   window.setInterval(function() {
+      //     count = (count + 1) % 200;
+
+      //     var icons = line.get("icons");
+      //     icons[0].offset = count / 2 + "%";
+      //     line.set("icons", icons);
+      //   }, 20);
+      // }
+
+      return (
+        <div>
+          <Polyline
+            path={marker.Rounting}
+            geodesic={true}
+                options={{
+                    strokeColor: "#ff2527",
+                    strokeOpacity: 0.75,
+                    strokeWeight: 2,
+                    icons: [
+                        {
+                            // icon: lineSymbol,
+                            offset: "100%",
+                            repeat: "20px"
+                        }
+                    ]
+                }}
+          />
+          {OID === 1 && (
+            <>
+              <Marker
+                key={1}
+                onClick={onClick}
+                position={{
+                  lat: start[0].lat,
+                  lng: start[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+              <Marker
+                key={2}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: end[0].lat,
+                  lng: end[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            </>
+          )}
+          {OID === 2 && (
+            <>
+              <Marker
+                key={3}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: end[0].lat,
+                  lng: end[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+              <Marker
+                key={4}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: start[0].lat,
+                  lng: start[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ConsigneeName}</h4>
+                      <br />
+                      <b>{marker.EndLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            </>
+          )}
+          {OID === 3 && (
+            <>
+            <Marker
+                key={5}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: start[0].lat,
+                  lng: start[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+              <Marker
+                key={6}
+                onClick={onClick}
+                position={{
+                  lat: end[0].lat,
+                  lng: end[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ConsigneeName}</h4>
+                      <br />
+                      <b>{marker.EndLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            </>
+          )}
+        </div>
+      );
+    })}
+     
+  </GoogleMap>
+));
+ 
 class ShipmentPlanner extends Component {
   constructor(props) {
     super(props);
@@ -85,24 +293,160 @@ class ShipmentPlanner extends Component {
         lat: 25.37852,
         lng: 75.02354
       },
-      mapsData: []
+      mapsData: [],
+      MapsDetailsData: [],
+      showingMaps: true,
+      selectedMarker: false,
+      mappingId:0
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
     this.toggleDelivery = this.toggleDelivery.bind(this);
     this.toggleVisual = this.toggleVisual.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.HandleOnPageLoad = this.HandleOnPageLoad.bind(this);
+    this.HandleSubmitDetailsData=this.HandleSubmitDetailsData.bind(this);
+  }
+
+  handleClick = (marker, event) => {
+    debugger;
+    this.setState({ selectedMarker: marker });
+  };
+  HandleSubmitDetailsData(submitdata) {
+    debugger;
+    
+    var DetailsData = submitdata.data.Table;
+    
+    var FinalData=[];
+    for (let i=0;i<DetailsData.length;i++)
+    {
+      var finalList=new Object()
+      finalList.ORDERID=DetailsData[i].ORDERID
+      finalList.CModeOfTransport=DetailsData[i].CModeOfTransport;
+      finalList.StartLocation=DetailsData[i].StartLocation;
+      finalList.ShipperName=DetailsData[i].ShipperName;
+      finalList.EndLocation=DetailsData[i].EndLocation;
+      finalList.ConsigneeName=DetailsData[i].ConsigneeName;
+      
+
+// Start Location Lat lng
+      var CStLatLong=DetailsData[i].CStLatLong;
+      var startlatlng=[]
+      var startlatlnglst=new Object();
+      startlatlnglst.lat=Number(CStLatLong.split(",")[0]);
+      startlatlnglst.lng=Number(CStLatLong.split(",")[1]);
+      startlatlng.push(startlatlnglst);
+      finalList.StartLatLng=startlatlng;
+
+// End Location Lat Lng 
+      var CEdLatLong=DetailsData[i].CEdLatLong;
+      var endlatlng=[]
+      var endlatlnglst=new Object();
+      endlatlnglst.lat=Number(CEdLatLong.split(",")[0]);
+      endlatlnglst.lng=Number(CEdLatLong.split(",")[1]);
+      endlatlng.push(endlatlnglst);
+      finalList.EndLatLng=endlatlng;
+      
+// Rounting line      
+     var RouteLatLong = DetailsData[i].RouteLatLong;
+     var RouteArray = [];
+     var ComplexData = [];
+     RouteArray.push(RouteLatLong.split(";"));
+      
+     var routlen=RouteArray[0];
+     for(let k=0;k<routlen.length;k++)
+     {
+       var routelatlng=new Object();
+       var latlngvar=routlen[k];
+       routelatlng.lat=Number(latlngvar.split(",")[0]);
+       routelatlng.lng=Number(latlngvar.split(",")[1]);
+       ComplexData.push(routelatlng);    
+     }
+     finalList.Rounting =ComplexData;
+     FinalData.push(finalList);
+     
+    }
+    console.log(FinalData);
+    this.setState({ MapsDetailsData: FinalData ,showingMaps:false});
+    
+     
+     
+  }
+  HandleOnPageLoad() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RegCompanyLocation`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"),"desc")
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      var resdata = response.data;
+      var jDataArry = [];
+      var aDataArry = [];
+      var CompanyData = [];
+      var LatLng = resdata[0].Location;
+      var locationName = resdata[0].LocationName;
+      var CompanyName = resdata[0].RegCompanyName;
+      jDataArry.push(LatLng.split(";"));
+      aDataArry.push(locationName.split(";"));
+      CompanyData.push(CompanyName.split(";"));
+      var finalDataForMap = [];
+      var jDataArryLen = jDataArry[0].length;
+      var jCheck = 0;
+      for (let i = 0; i < jDataArryLen; i++) {
+        var temp = jDataArry[0][i].split(",");
+        var latData = temp[0].trim();
+        var longData = jDataArry[0][i].split(",")[1].trim();
+        var locName = aDataArry[0][i];
+        var compName = CompanyData[0][i];
+        var jData = new Object();
+        jData.lat = latData;
+        jData.lng = longData;
+        jData.locationName = locName;
+        jData.RegCompanyName = compName;       
+        debugger; 
+        if (jCheck > 0) {
+          if (
+            !finalDataForMap[jCheck - 1]["lat"].includes(latData) &&
+            !finalDataForMap[jCheck - 1]["lng"].includes(latData)
+          ) {
+            finalDataForMap.push(jData);
+
+            jCheck = jCheck + 1;
+          } else {
+            var index = finalDataForMap.findIndex(x => x.lat ===latData && x.lng=== longData);
+            if (index >= 0) {
+              var tempCompData = finalDataForMap[index]["RegCompanyName"];
+              //finalDataForMap[index]["RegCompanyName"] //=finalDataForMap[index]["RegCompanyName"] + "," + 
+              finalDataForMap[index]["RegCompanyName"]= tempCompData + "," + compName;
+            }
+          }
+        } else {
+          finalDataForMap.push(jData);
+          jCheck = jCheck + 1;
+        }
+      }
+      console.log(finalDataForMap);
+      
+      self.setState({ mapsData: finalDataForMap });
+      console.log(self.state.mapsData);
+    });
   }
 
   companyChange = e => {
     let self = this;
     let compArray = [];
+ 
     for (let index = 0; index < this.state.companydrp.length; index++) {
       if (this.state.companydrp[index].MyCompID == e.target.value) {
         compArray = this.state.companydrp[index];
         break;
       }
     }
+debugger;
+     
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
@@ -115,7 +459,7 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.MappedCompID}>{comp.MappedCompName}</option>
+        <option value={comp.MappingID}>{comp.MappedCompName}</option>
       ));
       self.setState({ consigneedrp: optionItems });
     });
@@ -123,7 +467,7 @@ class ShipmentPlanner extends Component {
 
   consigneeChange = e => {
     let self = this;
-    let supconsid = 1250; //e.target.value;
+    let supconsid =e.target.value;
     self.setState({ supConsId: supconsid });
     axios({
       method: "post",
@@ -188,6 +532,8 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
+      console.log(response.data);
+      // self.setState({ showingMaps: true });
       var totalAvg = 0;
       var totalMin = 0;
       var totalMax = 0;
@@ -207,13 +553,14 @@ class ShipmentPlanner extends Component {
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
-      var Data = response.data;
       self.setState({ transitpopup: response.data.Table });
       self.setState({ deliveryPopup: response.data.Table1 });
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
-      self.setState({ mapsData: Data.Table });
+      debugger;
+      var submitdata=response;
+      self.HandleSubmitDetailsData(submitdata); 
     });
   };
   toggleTransit() {
@@ -238,6 +585,7 @@ class ShipmentPlanner extends Component {
   }
 
   componentDidMount() {
+    debugger;
     let self = this;
     axios({
       method: "post",
@@ -249,6 +597,7 @@ class ShipmentPlanner extends Component {
     }).then(function(response) {
       self.setState({ companydrp: response.data });
     });
+    this.HandleOnPageLoad();
   }
 
   renderTableHeader() {
@@ -256,73 +605,7 @@ class ShipmentPlanner extends Component {
  }
 
   render() {
-   
-    const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar } = this.state;
-    let iconMarker = new window.google.maps.MarkerImage(
-      YellowFlag,
-      null /* size is determined at runtime */,
-      null /* origin is 0,0 */,
-      null /* anchor is bottom center of the scaled image */,
-      new window.google.maps.Size(32, 32)
-    );
-
-    var startendData = new Object();
-    startendData.lat = 0;
-    startendData.lng = 0;
-    var latlan = [];
-    const places = [
-      {
-        lat: 19.09824118,
-        lng: 72.82493592,
-        latitude1: 55.8103146,
-        longitude1: -80.1751609
-      }
-
-      // {lat: 49.24859, lng: 8.887826},
-      // {lat: 19.090405, lng: 72.86875},
-    ];
-    mapsData.map(mdata => {
-      var abc = mdata.CStLatLong;
-      latlan.push(abc.split(","));
-    });
-    latlan.map(ldata => {
-      startendData = new Object();
-      startendData.lat = Number(ldata[0]);
-      startendData.lng = Number(ldata[1]);
-      // places.push(startendData);
-    });
-    console.log(places);
-    const pathCoordinates = [
-      { lat: 25.8103146, lng: -80.1751609 },
-      { lat: 35.8103146, lng: -90.1751609 }
-    ];
-
-    const GoogleMapExample = withGoogleMap(props => (
-      <GoogleMap
-        defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
-        defaultZoom={3}
-      >
-        <Polyline
-          path={pathCoordinates}
-          geodesic={true}
-          options={{
-            strokeColor: "#ff2527",
-            strokeOpacity: 0.75,
-            strokeWeight: 2
-          }}
-        />
-        {places.map(function(mid, i) {
-          return (
-            <Marker
-              position={{
-                lat: mid.lat,
-                lng: mid.lat
-              }}
-            />
-          );
-        })}
-      </GoogleMap>
-    ));
+const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,MapsDetailsData } = this.state;
 
     let optionItems = this.state.companydrp.map((planet, i) => (
       <option
@@ -352,7 +635,6 @@ class ShipmentPlanner extends Component {
     }
 
     return (
-     
       <div>
         <Headers />
         <div className="cls-ofl">
@@ -439,25 +721,31 @@ class ShipmentPlanner extends Component {
                   <div className="full-map-cntr">
                     <div className="ship-detail-maps full-map mt-0">
                       <div className="ship-detail-map">
-                        <GoogleMapExample
-                          containerElement={
-                            <div style={{ height: `100%`, width: "100%" }} />
-                          }
-                          mapElement={<div style={{ height: `100%` }} />}
-                          loadingElement={<div style={{ height: `100%` }} />}
-                        ></GoogleMapExample>
-                        {/* <MyMapComponent isMarkerShown /> */}
-
-                        {/* <GoogleMapReact
-                          bootstrapURLKeys={{
-                            key: appSettings.Keys
-                          }}
-                          defaultCenter={this.state.center}
-                          defaultZoom={this.state.zoom}
-                        >
-                          <SourceIcon lat={21.1500964} lng={79.0127049} />
-                          <DestiIcon lat={59.9} lng={30.3} />
-                        </GoogleMapReact> */}
+                        {this.state.showingMaps ? (
+                          <MapWithAMakredInfoWindow
+                            markers={mapsData}
+                            onClick={this.handleClick}
+                            selectedMarker={this.state.selectedMarker}
+                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                            containerElement={
+                              <div style={{ height: `100%`, width: "100%" }} />
+                            }
+                            mapElement={<div style={{ height: `100%` }} />}
+                            loadingElement={<div style={{ height: `100%` }} />}
+                          ></MapWithAMakredInfoWindow>
+                        ) : (
+                          <MapWithAMakredInfoWindowLine
+                            markers={MapsDetailsData}
+                            onClick={this.handleClick}
+                            selectedMarker={this.state.selectedMarker}
+                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                            containerElement={
+                              <div style={{ height: `100%`, width: "100%" }} />
+                            }
+                            mapElement={<div style={{ height: `100%` }} />}
+                            loadingElement={<div style={{ height: `100%` }} />}
+                          ></MapWithAMakredInfoWindowLine>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -476,7 +764,7 @@ class ShipmentPlanner extends Component {
                       cellPadding="0"
                       cellSpacing="0"
                     >
-                      <tbody>                      
+                      <tbody>
                         <tr>
                           <td id="ContentPlaceHolder1_td_bg" className="water">
                             <div className="row">
@@ -503,7 +791,7 @@ class ShipmentPlanner extends Component {
                               <div className="col-xs-12 col-sm-12 col-sm-12">
                                 <div className="avarage-day avrage-time">
                                   <span id="ContentPlaceHolder1_lbl_avg_days_center">
-                                  {this.state.secondAvg}
+                                    {this.state.secondAvg}
                                   </span>
                                   &nbsp;Days AVERAGE
                                 </div>
@@ -523,9 +811,9 @@ class ShipmentPlanner extends Component {
                               <div className="col-xs-12 col-sm-12">
                                 <div className="avarage-day destination-port">
                                   <span id="ContentPlaceHolder1_lbl_avg_days_footer">
-                                  {this.state.thirdAvg}
+                                    {this.state.thirdAvg}
                                   </span>
-                                 &nbsp; Days Avarage
+                                  &nbsp; Days Avarage
                                 </div>
                               </div>
                             </div>
@@ -552,56 +840,61 @@ class ShipmentPlanner extends Component {
                   centered={true}
                 >
                   <ModalBody className="p-0">
-                    {deliveryPopup.map((cell,i)=>
-                    {
+                    {deliveryPopup.map((cell, i) => {
                       debugger;
-                     return <div className="container-fluid p-0">
-                      <div className="transit-sect">
-                        <div className="d-flex justify-content-between align-items-center">
-                          <div className="d-flex align-items-center">
-                            <div className="shipment-img mr-3">
-                              <TransitionImage imgType={cell.Mode}/>
+                      return (
+                        <div className="container-fluid p-0">
+                          <div className="transit-sect">
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div className="d-flex align-items-center">
+                                <div className="shipment-img mr-3">
+                                  <TransitionImage imgType={cell.Mode} />
+                                </div>
+                                <div>
+                                  <p className="desti-name">
+                                    {cell.POLLocation}
+                                  </p>
+                                  <p className="desti-route">
+                                    to {cell.DestinationPort}
+                                    ,Carrier {cell.Carrier}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                            <div>
-                              <p className="desti-name">
-                                {cell.POLLocation}
-                              </p>
-                              <p className="desti-route">
-                                to {cell.DestinationPort}
-                                ,Carrier {cell.Carrier}
-                              </p>
+                          </div>
+                          <div className="delivery-inner">
+                            <div className="row">
+                              <div className="col-md-4 text-center">
+                                <p className="details-title">Departure Date</p>
+                                <p className="details-para">
+                                  <Moment format="DD/MM/YYYY">
+                                    {cell.SailingDate}
+                                  </Moment>
+                                </p>
+                              </div>
+                              <div className="col-md-4 text-center">
+                                <p className="details-title">ETA</p>
+                                <p className="details-para">
+                                  <Moment format="DD/MM/YYYY">
+                                    {cell.ETA}
+                                  </Moment>
+                                </p>
+                              </div>
+                              <div className="col-md-4 text-center">
+                                <p className="details-title">
+                                  Estimated Delivery Date
+                                </p>
+                                <p className="details-para">
+                                  <Moment format="DD/MM/YYYY">
+                                    {cell.CargoArrivalDate}
+                                  </Moment>
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="delivery-inner">
-                        <div className="row">
-                          <div className="col-md-4 text-center">
-                            <p class="details-title">Departure Date</p>
-                            <p class="details-para"><Moment format="DD/MM/YYYY">
-                                                    {cell.SailingDate}
-                                                    </Moment></p>
-                          </div>
-                          <div className="col-md-4 text-center">
-                            <p class="details-title">ETA</p>
-                            <p class="details-para"><Moment format="DD/MM/YYYY">
-                                                      {cell.ETA}
-                                                    </Moment></p>
-                          </div>
-                          <div className="col-md-4 text-center">
-                            <p class="details-title">Estimated Delivery Date</p>
-                            <p class="details-para">
-                            <Moment format="DD/MM/YYYY">
-                            {cell.CargoArrivalDate}
-                           </Moment>
-                           </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    }
-                    )}
-                   
+                      );
+                    })}
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -613,28 +906,27 @@ class ShipmentPlanner extends Component {
                   <ModalBody className="p-0">
                     <div className="container-fluid p-0">
                       <div className="transit-sect">
-                    
                         <div className="row">
-                          <div class="col-md-4 details-border">
+                          <div className="col-md-4 details-border">
                             <div>
-                              <p class="details-title">Total Average Days</p>
-                              <p class="details-para">
-                                {this.state.totalAvgDays}                                
+                              <p className="details-title">Total Average Days</p>
+                              <p className="details-para">
+                                {this.state.totalAvgDays}
                               </p>
                             </div>
                           </div>
-                          <div class="col-md-4 details-border">
+                          <div className="col-md-4 details-border">
                             <div>
-                              <p class="details-title">Total Minimum Days</p>
-                              <p class="details-para">
+                              <p className="details-title">Total Minimum Days</p>
+                              <p className="details-para">
                                 {this.state.totalMinDays}
                               </p>
                             </div>
                           </div>
-                          <div class="col-md-4 details-border">
+                          <div className="col-md-4 details-border">
                             <div>
-                              <p class="details-title">Total Maximum Days</p>
-                              <p class="details-para">
+                              <p className="details-title">Total Maximum Days</p>
+                              <p className="details-para">
                                 {this.state.totalMaxDays}
                               </p>
                             </div>
@@ -642,50 +934,61 @@ class ShipmentPlanner extends Component {
                         </div>
                       </div>
                       <div className="transit-sect-overflow">
-                      {transitpopup.map((cell,i)=>{
-                        debugger;
-                        var imgSrc='';
-                       
-                          return  <div className="transit-sect">
-                             <div className="d-flex justify-content-between align-items-center">
-                               <div className="d-flex align-items-center">
-                                 <div className="shipment-img mr-3">                                   
-                                 <TransitionImage imgType={cell.CModeOfTransport}/>
-                                 </div>
-                                 <div>
-                                   <p className="desti-name">{cell.StartLocation}</p>
-                                   <p className="desti-route">
-                                     to {cell.EndLocation}
-                                   </p>
-                                 </div>
-                               </div>
-                               <button className="butn cancel-butn">View</button>
-                             </div>
-                             <div className="row">
-                               <div className="col-md-4">
-                                 <div className="days-cntr">
-                                   <p className="days-title">Average Days</p>
-                                   <span className="days-count">{cell.NTransit_Time}</span>
-                                 </div>
-                               </div>
-                               <div className="col-md-4">
-                                 <div className="days-cntr">
-                                   <p className="days-title">Minimum Days</p>
-                                   <span className="days-count">{cell.NMin_Transit_Time}</span>
-                                 </div>
-                               </div>
-                               <div className="col-md-4">
-                                 <div className="days-cntr">
-                                   <p className="days-title">Maximum Days</p>
-                                   <span className="days-count">{cell.NMax_Transit_Time}</span>
-                                 </div>
-                               </div>
-                             </div>
-                           </div>
-                      })}
-                 
-                      
-                 
+                        {transitpopup.map((cell, i) => {
+                          debugger;
+                          var imgSrc = "";
+
+                          return (
+                            <div className="transit-sect">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                  <div className="shipment-img mr-3">
+                                    <TransitionImage
+                                      imgType={cell.CModeOfTransport}
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="desti-name">
+                                      {cell.StartLocation}
+                                    </p>
+                                    <p className="desti-route">
+                                      to {cell.EndLocation}
+                                    </p>
+                                  </div>
+                                </div>
+                                <button className="butn cancel-butn">
+                                  View
+                                </button>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Average Days</p>
+                                    <span className="days-count">
+                                      {cell.NTransit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Minimum Days</p>
+                                    <span className="days-count">
+                                      {cell.NMin_Transit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Maximum Days</p>
+                                    <span className="days-count">
+                                      {cell.NMax_Transit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </ModalBody>
