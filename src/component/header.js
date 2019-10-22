@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
 import Logo from "./../assets/img/logo.png";
 import "../assets/css/custom.css";
 import BellIcon from "./../assets/img/bell.png";
@@ -14,33 +14,35 @@ import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 
-
-
-
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = {tooltipOpen: false,lastlogin:""};
-    
+    this.state = { tooltipOpen: false, lastlogin: "" };
   }
 
   componentDidMount() {
-    if (encryption(window.localStorage.getItem("username"),"desc") == null) {
-     window.location.href = "./login";
+    if (encryption(window.localStorage.getItem("username"), "desc") == null) {
+      window.location.href = "./login";
     } else {
-      document.getElementById(
-        "spnUser"
-      ).textContent =encryption(window.localStorage.getItem("username"),"desc");
-      document.getElementById(
-        "spnFirstName"
-      ).textContent =encryption(window.localStorage.getItem("username"),"desc");
-      document.getElementById(
-        "spnLastLogin"
-      ).textContent =encryption(window.localStorage.getItem("lastlogindate"),"desc");
+      document.getElementById("spnUser").textContent = encryption(
+        window.localStorage.getItem("username"),
+        "desc"
+      );
+      document.getElementById("spnFirstName").textContent = encryption(
+        window.localStorage.getItem("username"),
+        "desc"
+      );
+      document.getElementById("spnLastLogin").textContent = encryption(
+        window.localStorage.getItem("lastlogindate"),
+        "desc"
+      );
       this.setState({
         lastlogin: (document.getElementById(
           "spnLastLogin"
-        ).textContent =encryption(window.localStorage.getItem("lastlogindate"),"desc"))
+        ).textContent = encryption(
+          window.localStorage.getItem("lastlogindate"),
+          "desc"
+        ))
       });
     }
   }
@@ -49,7 +51,7 @@ class Header extends Component {
       tooltipOpen: !this.state.tooltipOpen
     });
   }
-  closepopover(){
+  closepopover() {
     this.setState({
       tooltipOpen: false
     });
@@ -166,6 +168,7 @@ class Header extends Component {
                             <li
                               className="activitylog-li"
                               onClick={this.toggle.bind(this)}
+                              id="abcd"
                             >
                               <img
                                 src={ActivityLogIcon}
@@ -175,12 +178,14 @@ class Header extends Component {
                               Activity Log
                             </li>
                             <li className="profile-setting-li">
-                              <img
-                                src={ProfileSettingIcon}
-                                alt="profile-icon"
-                                className="profilesetting-icon"
-                              />
-                              Profile Setting
+                              <a href="changePassword">
+                                <img
+                                  src={ProfileSettingIcon}
+                                  alt="profile-icon"
+                                  className="profilesetting-icon"
+                                />
+                                Profile Setting
+                              </a>
                             </li>
                             <li
                               className="logout-li"
@@ -205,31 +210,32 @@ class Header extends Component {
             </div>
           </div>
         </div>
-         
-          <UncontrolledPopover
-            trigger="Legacy"
-            placement="auto"
-            target="activelog-open"
-            isOpen={this.state.tooltipOpen}
-            rootClose ={this.closepopover.bind(this)}
-            className="popovercls"
-          >
-            <PopoverHeader>
-              <img
-                src={ActivityLogIcon}
-                alt="activity-icon"
-                className="activitylog-icon"
-              />
-              Activity Log
-            </PopoverHeader>
-            
-            <PopoverBody>
-              <label>Log-in</label>
-              <br/>
-              <label>{encryption(window.localStorage.getItem("lastlogindate"),"desc")}</label>
-            </PopoverBody>
-          </UncontrolledPopover>
-         
+
+        <UncontrolledPopover
+          trigger="legacy"
+          placement="top"
+          target="abcd"
+          // isOpen={this.state.tooltipOpen}
+          rootClose={this.closepopover.bind(this)}
+          className="popovercls"
+        >
+          <PopoverHeader>
+            <img
+              src={ActivityLogIcon}
+              alt="activity-icon"
+              className="activitylog-icon"
+            />
+            Activity Log
+          </PopoverHeader>
+
+          <PopoverBody>
+            <label>Log-in</label>
+            <br />
+            <label>
+              {encryption(window.localStorage.getItem("lastlogindate"), "desc")}
+            </label>
+          </PopoverBody>
+        </UncontrolledPopover>
       </div>
     );
   }

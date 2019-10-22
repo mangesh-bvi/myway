@@ -4,6 +4,7 @@ import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
 import "../assets/css/react-table.css";
+import { encryption } from "../helpers/encryption";
 import { UncontrolledTooltip } from "reactstrap";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
@@ -47,7 +48,7 @@ class QuoteTable extends Component {
 
   HandleListShipmentSummey() {
     let self = this;
-    var userid = window.localStorage.getItem("userid");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
       method: "post",

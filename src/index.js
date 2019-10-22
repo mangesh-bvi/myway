@@ -35,6 +35,7 @@ import SpotRate from "./pages/spot-rate";
 import SpotRateTable from "./pages/spotRateTable";
 import QuoteTable from "./pages/quoteTable";
 import BookingTable from "./pages/bookingTable";
+import ViewUser from "./pages/viewUser";
 
 // import Exmaple from './pages/Example';
 
@@ -70,6 +71,7 @@ ReactDOM.render(
     <Route exact path="/spot-rate-table" component={SpotRateTable} />
     <Route exact path="/quote-table" component={QuoteTable} />
     <Route exact path="/booking-table" component={BookingTable} />
+    <Route exact path="/view-user" component={ViewUser} />
     {/* <Route exact path="/example" component={Exmaple} /> */}
 
     {/* <Route  path="/" component={Login} />   */}
