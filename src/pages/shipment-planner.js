@@ -14,6 +14,7 @@ import SideMenu from "../component/sidemenu";
 import Truck from "./../assets/img/truck.png";
 import Plane from "./../assets/img/plane.png";
 import Ship from "./../assets/img/ship.png";
+
 import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import Booked from "./../assets/img/booked.png";
@@ -32,7 +33,7 @@ import {
   GoogleMap,
   Marker,
   InfoWindow,
-  Polyline
+  Polyline,google
 } from "react-google-maps";
  
 const { compose } = require("recompose");
@@ -61,8 +62,7 @@ const MapWithAMakredInfoWindow = compose(
                 <b>{marker.locationName}</b>
               </div>
             </InfoWindow>
-          )}
-          }
+          )}         
         </Marker>
       );
     })}
@@ -77,44 +77,186 @@ const MapWithAMakredInfoWindowLine = compose(
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={3}
   >
-    {
-      
-      props.markers.map(marker => {
+    {props.markers.map(marker => {
       debugger;
-       
-      // const onClick = props.onClick.bind(this, marker);
-     
-        var start=marker.StartLatLng;
-        var end=marker.EndLatLng;
-        
-        return (
-          <div>
-            <Polyline
-              path={marker.Rounting}
-              options={{
-                strokeColor: "#ff2527",
-                strokeOpacity: 2,
-                strokeWeight: 3
-              }}
-            />
-            {/* <StartPing /> */}
-             
-                <Marker
-                 
+
+      const onClick = props.onClick.bind(this, marker);
+
+      var start = marker.StartLatLng;
+      var end = marker.EndLatLng;
+      var OID=marker.ORDERID;
+      let iconMarker = new window.google.maps.MarkerImage(
+        YellowFlag,
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
+      );
+      var lineSymbol = {
+        path: window.google.maps.SymbolPath.CIRCLE,
+        scale: 8,
+        strokeColor: '#393'
+      };
+      // function animateCircle(line) {
+      //   var count = 0;
+      //   window.setInterval(function() {
+      //     count = (count + 1) % 200;
+
+      //     var icons = line.get("icons");
+      //     icons[0].offset = count / 2 + "%";
+      //     line.set("icons", icons);
+      //   }, 20);
+      // }
+
+      return (
+        <div>
+          <Polyline
+            path={marker.Rounting}
+            geodesic={true}
+                options={{
+                    strokeColor: "#ff2527",
+                    strokeOpacity: 0.75,
+                    strokeWeight: 2,
+                    icons: [
+                        {
+                            // icon: lineSymbol,
+                            offset: "100%",
+                            repeat: "20px"
+                        }
+                    ]
+                }}
+          />
+          {OID === 1 && (
+            <>
+              <Marker
+                key={1}
+                onClick={onClick}
                 position={{
                   lat: start[0].lat,
                   lng: start[0].lng
                 }}
-              />
-          
-          </div>
-        );
-      
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+              <Marker
+                key={2}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: end[0].lat,
+                  lng: end[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            </>
+          )}
+          {OID === 2 && (
+            <>
+              <Marker
+                key={3}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: end[0].lat,
+                  lng: end[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+              <Marker
+                key={4}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: start[0].lat,
+                  lng: start[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ConsigneeName}</h4>
+                      <br />
+                      <b>{marker.EndLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            </>
+          )}
+          {OID === 3 && (
+            <>
+            <Marker
+                key={5}
+                onClick={onClick}
+                icon={iconMarker}
+                position={{
+                  lat: start[0].lat,
+                  lng: start[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+              <Marker
+                key={6}
+                onClick={onClick}
+                position={{
+                  lat: end[0].lat,
+                  lng: end[0].lng
+                }}
+              >
+                {props.selectedMarker === marker && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ConsigneeName}</h4>
+                      <br />
+                      <b>{marker.EndLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            </>
+          )}
+        </div>
+      );
     })}
-   
+     
   </GoogleMap>
 ));
-
+ 
 class ShipmentPlanner extends Component {
   constructor(props) {
     super(props);
@@ -153,7 +295,7 @@ class ShipmentPlanner extends Component {
       },
       mapsData: [],
       MapsDetailsData: [],
-      showingMaps: false,
+      showingMaps: true,
       selectedMarker: false,
       mappingId:0
     };
@@ -225,7 +367,8 @@ class ShipmentPlanner extends Component {
      
     }
     console.log(FinalData);
-    this.setState({ MapsDetailsData: FinalData });
+    this.setState({ MapsDetailsData: FinalData ,showingMaps:false});
+    
      
      
   }
@@ -235,7 +378,7 @@ class ShipmentPlanner extends Component {
       method: "post",
       url: `${appSettings.APIURL}/RegCompanyLocation`,
       data: {
-        UserID: window.localStorage.getItem("userid")
+        UserID: encryption(window.localStorage.getItem("userid"),"desc")
       },
       headers: authHeader()
     }).then(function(response) {
@@ -285,7 +428,10 @@ class ShipmentPlanner extends Component {
           jCheck = jCheck + 1;
         }
       }
+      console.log(finalDataForMap);
+      
       self.setState({ mapsData: finalDataForMap });
+      console.log(self.state.mapsData);
     });
   }
 
@@ -321,7 +467,7 @@ debugger;
 
   consigneeChange = e => {
     let self = this;
-    let supconsid = 1250;
+    let supconsid = 1250 //1567;
     self.setState({ supConsId: supconsid });
     axios({
       method: "post",
@@ -414,7 +560,7 @@ debugger;
       debugger;
       var submitdata=response;
       self.HandleSubmitDetailsData(submitdata); 
-       console.log(self.transitpopup);
+       
     });
   };
   toggleTransit() {
@@ -439,6 +585,7 @@ debugger;
   }
 
   componentDidMount() {
+    debugger;
     let self = this;
     axios({
       method: "post",
@@ -718,26 +865,26 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
                           <div className="delivery-inner">
                             <div className="row">
                               <div className="col-md-4 text-center">
-                                <p class="details-title">Departure Date</p>
-                                <p class="details-para">
+                                <p className="details-title">Departure Date</p>
+                                <p className="details-para">
                                   <Moment format="DD/MM/YYYY">
                                     {cell.SailingDate}
                                   </Moment>
                                 </p>
                               </div>
                               <div className="col-md-4 text-center">
-                                <p class="details-title">ETA</p>
-                                <p class="details-para">
+                                <p className="details-title">ETA</p>
+                                <p className="details-para">
                                   <Moment format="DD/MM/YYYY">
                                     {cell.ETA}
                                   </Moment>
                                 </p>
                               </div>
                               <div className="col-md-4 text-center">
-                                <p class="details-title">
+                                <p className="details-title">
                                   Estimated Delivery Date
                                 </p>
-                                <p class="details-para">
+                                <p className="details-para">
                                   <Moment format="DD/MM/YYYY">
                                     {cell.CargoArrivalDate}
                                   </Moment>
@@ -760,26 +907,26 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
                     <div className="container-fluid p-0">
                       <div className="transit-sect">
                         <div className="row">
-                          <div class="col-md-4 details-border">
+                          <div className="col-md-4 details-border">
                             <div>
-                              <p class="details-title">Total Average Days</p>
-                              <p class="details-para">
+                              <p className="details-title">Total Average Days</p>
+                              <p className="details-para">
                                 {this.state.totalAvgDays}
                               </p>
                             </div>
                           </div>
-                          <div class="col-md-4 details-border">
+                          <div className="col-md-4 details-border">
                             <div>
-                              <p class="details-title">Total Minimum Days</p>
-                              <p class="details-para">
+                              <p className="details-title">Total Minimum Days</p>
+                              <p className="details-para">
                                 {this.state.totalMinDays}
                               </p>
                             </div>
                           </div>
-                          <div class="col-md-4 details-border">
+                          <div className="col-md-4 details-border">
                             <div>
-                              <p class="details-title">Total Maximum Days</p>
-                              <p class="details-para">
+                              <p className="details-title">Total Maximum Days</p>
+                              <p className="details-para">
                                 {this.state.totalMaxDays}
                               </p>
                             </div>

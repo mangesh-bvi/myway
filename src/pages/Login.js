@@ -79,7 +79,8 @@ class Login extends React.Component {
         //window.location.href = "./user-agreement";
       }).catch(error => {
         debugger;
-        var err=error.response.data.split(':');
+        var temperror=error.response.data
+        var err=temperror.split(':');
         NotificationManager.error(err[1].replace('}',''));
         setTimeout(function(){ window.location.href="./" }, 5000);
     });

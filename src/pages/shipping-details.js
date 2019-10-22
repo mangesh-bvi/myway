@@ -24,6 +24,7 @@ import Arrived from "./../assets/img/arrived.png";
 import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import matchSorter from "match-sorter";
 
 const SourceIcon = () => (
   <div className="map-icon source-icon">
@@ -43,39 +44,48 @@ class ShippingDetails extends Component {
       shipmentSummary: [],
       listDis: "none",
       mapDis: "block",
-      filterAll: '',
+      filterAll: "",
+      filtered: []
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.MapButn = this.MapButn.bind(this);
     this.listButn = this.listButn.bind(this);
     this.filterAll = this.filterAll.bind(this);
+    this.onFilteredChange = this.onFilteredChange.bind(this);
   }
 
   componentDidMount() {
     this.HandleListShipmentSummey();
   }
 
-  onFilteredChange(filtered) {
-        debugger;
-    if (filtered.length > 1 && this.state.filterAll.length) {
+  onFilteredChange(shipmentSummary) {
+    // console.log('filtered:',filtered);
+    // const { sortedData } = this.reactTable.getResolvedState();
+    // console.log('sortedData:', sortedData);
+    debugger;
+    // extra check for the "filterAll"
+    if (shipmentSummary.length > 1 && this.state.filterAll.length) {
       // NOTE: this removes any FILTER ALL filter
-      const filterAll = '';
-      this.setState({ shipmentSummary: filtered.filter((item) => item.id != 'all'), filterAll })
-    }
-     
-       
+      const filterAll = this.state.filterAll;
+      var filterdata=this.state.shipmentSummary.filter(filterAll);
+      this.setState({
+        shipmentSummary: filterdata 
+      });
+    } else this.setState({ shipmentSummary });
   }
   filterAll(e) {
     debugger;
     const { value } = e.target;
     const filterAll = value;
-    const shipmentSummary = [{ id: 'all', value: filterAll }];
-     
+    const shipmentSummary = this.state.shipmentSummary;
+    // NOTE: this completely clears any COLUMN filters
+    this.onFilteredChange(shipmentSummary)
     this.setState({ filterAll, shipmentSummary });
+    
   }
   HandleListShipmentSummey() {
     let self = this;
-    var userid =encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
       method: "post",
@@ -87,12 +97,12 @@ class ShippingDetails extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      var air=response.data.Table[0].Count;
-      var ocean=response.data.Table[1].Count;
-      var inland=response.data.Table[2].Count;
-      window.localStorage.setItem("aircount",air);
-      window.localStorage.setItem("oceancount",ocean);
-      window.localStorage.setItem("inlandcount",inland);
+      var air = response.data.Table[0].Count;
+      var ocean = response.data.Table[1].Count;
+      var inland = response.data.Table[2].Count;
+      window.localStorage.setItem("aircount", air);
+      window.localStorage.setItem("oceancount", ocean);
+      window.localStorage.setItem("inlandcount", inland);
       var data = [];
       data = response.data.Table1;
       self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
@@ -143,7 +153,12 @@ class ShippingDetails extends Component {
             <div className="title-sect">
               <h2>Shipments</h2>
               <div className="d-flex align-items-center">
-                <input type="search" value={this.state.filterAll} onChange={this.filterAll} placeholder="Search here" />
+                <input
+                  type="search"
+                  value={this.state.filterAll}
+                  onChange={this.filterAll}
+                  placeholder="Search here"
+                />
                 <a
                   href="#!"
                   onClick={this.listButn}
@@ -181,16 +196,17 @@ class ShippingDetails extends Component {
                 data={shipmentSummary}
                 // noDataText="<i className='fa fa-refresh fa-spin'></i>"
                 noDataText=""
-                filtered={this.state.filtered}
                 onFilteredChange={this.onFilteredChange.bind(this)}
-                filterable
+                filtered={this.state.filtered}
+                defaultFilterMethod={(filter, row) =>
+                  String(row[filter.id]) === filter.value} 
                 columns={[
                   {
                     columns: [
                       {
                         Header: "BL/HBL",
                         accessor: "BL/HBL",
-                        sortable:true
+                        sortable: true
                       },
                       {
                         Cell: row => {
@@ -200,34 +216,32 @@ class ShippingDetails extends Component {
                                 <img src={Plane} />
                               </div>
                             );
-                          }
-                          if (row.value == "Ocean") {
+                          } else if (row.value == "Ocean") {
                             return (
                               <div className="shipment-img">
                                 <img src={Ship} />
                               </div>
                             );
-                          }
-                          if (row.value == "Inland") {
+                          } else if (row.value == "Inland") {
                             return (
                               <div className="shipment-img">
                                 <img src={Truck} />
                               </div>
                             );
-                          }
-                          if (row.value == "Railway") {
+                          } else if (row.value == "Railway") {
                             return (
                               <div className="shipment-img">
                                 <img src={Rail} />
                               </div>
                             );
+                          } else {
+                            return row.value;
                           }
                         },
                         Header: "Mode",
                         accessor: "ModeOfTransport",
-                        sortable:true,
-                        filterable:true
-
+                        sortable: true,
+                        filterable: true
                       },
                       {
                         Header: "Consignee",
@@ -237,12 +251,6 @@ class ShippingDetails extends Component {
                         Header: "Shipper",
                         accessor: "Shipper"
                       },
-
-                      // {
-                      //   Header: "Shipper",
-                      //   accessor: "Shipper"
-                      // },
-
                       {
                         Header: "POL",
                         accessor: "POL"
@@ -260,42 +268,38 @@ class ShippingDetails extends Component {
                                 <img src={Delivered} />
                               </div>
                             );
-                          }
-                          if (row.value == "Departed") {
+                          } else if (row.value == "Departed") {
                             return (
                               <div className="status-img">
                                 <img src={Delivered} />
                               </div>
                             );
-                          }
-                          if (row.value == "Transshipped") {
+                          } else if (row.value == "Transshipped") {
                             return (
                               <div className="status-img">
                                 <img src={Transit} />
                               </div>
                             );
-                          }
-                          if (row.value == "Arrived") {
+                          } else if (row.value == "Arrived") {
                             return (
                               <div className="status-img">
                                 <img src={Arrived} />
                               </div>
                             );
-                          }
-                          if (row.value == "Delivered") {
+                          } else if (row.value == "Delivered") {
                             return (
                               <div className="status-img">
                                 <img src={Delivered} />
                               </div>
                             );
-                          }
-
-                          if (row.value == "DO Issued") {
+                          } else if (row.value == "DO Issued") {
                             return <div>{row.value}</div>;
+                          } else {
+                            return row.value;
                           }
                         },
                         Header: "Status",
-                        accessor: "Status"                      
+                        accessor: "Status"
                       },
                       {
                         Header: "ETA",
@@ -307,42 +311,42 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           if (row.value == "N/A") {
                             return (
-                              <>
+                              <div>
                                 <label className="">{row.value}</label>
-                              </>
+                              </div>
                             );
-                          }
-                          if (row.value == "On Time") {
+                          } else if (row.value == "On Time") {
                             return (
-                              <>
+                              <div>
                                 <label className="girdevtgreen">
                                   {row.value}
                                 </label>
-                              </>
+                              </div>
                             );
-                          }
-                          if (row.value == "Behind Schedue") {
+                          } else if (row.value == "Behind Schedue") {
                             return (
-                              <>
+                              <div>
                                 <label className="girdevtred">
                                   {row.value}
                                 </label>
-                              </>
+                              </div>
                             );
-                          }
-                          if (row.value == "Delay Risk") {
+                          } else if (row.value == "Delay Risk") {
                             return (
-                              <>
+                              <div>
                                 <label className="girdevtyellow">
                                   {row.value}
                                 </label>
-                              </>
+                              </div>
                             );
+                          } else {
+                            return row.value;
                           }
                         }
                       }
                     ]
-                  }
+                  },
+                   
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={10}
