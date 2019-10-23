@@ -79,6 +79,15 @@ class ViewUser extends Component {
     });
   }
 
+  HandleDocumentView(evt, row) {
+    debugger;
+    var userId = row.original["UserId"];
+    this.props.history.push({
+      pathname: "addUser",
+      state: { detail: userId }
+    });
+  }
+
   render() {
     var data1 = [
       {
@@ -174,14 +183,12 @@ class ViewUser extends Component {
                         Cell: row => {
                           return (
                             <div>
-                              <a href="/adduser">
-                                <img
-                                  className="actionicon"
-                                  src={Pencil}
-                                  alt="view-icon"
-                                  // onClick={e => this.HandleDocumentView(e, row)}
-                                />
-                              </a>
+                              <img
+                                className="actionicon"
+                                src={Pencil}
+                                alt="view-icon"
+                                onClick={e => this.HandleDocumentView(e, row)}
+                              />
                               <img
                                 className="actionicon"
                                 src={Delete}
