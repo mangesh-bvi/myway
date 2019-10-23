@@ -15,7 +15,7 @@ class SideMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      aircount:"0"
+      aircount: "0"
     };
   }
 
@@ -27,26 +27,30 @@ class SideMenu extends Component {
     } else {
       window.localStorage.setItem("defActKey", "0");
     }
-  
+
     return (
       <div>
         <div>
           <ul className="sidemenu-ul">
             <li className="sidemenu-ul-li">
-              <img
-                src={DashboardIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />{" "}
-              Dashboard
+              <a href="/dashboard">
+                <img
+                  src={DashboardIcon}
+                  alt="green-counter-icon"
+                  className="header-greencounter-icon"
+                />
+                Dashboard
+              </a>
             </li>
             <li className="sidemenu-ul-li">
-              <img
-                src={QuotesIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Quotes
+              <a href="quote-table">
+                <img
+                  src={QuotesIcon}
+                  alt="green-counter-icon"
+                  className="header-greencounter-icon"
+                />
+                Quotes
+              </a>
             </li>
             <li className="sidemenu-ul-li shipmentli">
               <Accordion
@@ -70,16 +74,22 @@ class SideMenu extends Component {
                       <ul className="shipment-ul">
                         <li>
                           <label className="shipment-ul-lilbl1">Air</label>
-                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("aircount")}</label>
+                          <label className="shipment-ul-lilbl2">
+                            {window.localStorage.getItem("aircount")}
+                          </label>
                         </li>
                         <li>
                           <label className="shipment-ul-lilbl1">Ocean</label>
-                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("oceancount")}</label>
+                          <label className="shipment-ul-lilbl2">
+                            {window.localStorage.getItem("oceancount")}
+                          </label>
                         </li>
                         <li>
                           <label className="shipment-ul-lilbl1">Inland</label>
-                          <label className="shipment-ul-lilbl2">{window.localStorage.getItem("inlandcount")}</label>
-                        </li>                       
+                          <label className="shipment-ul-lilbl2">
+                            {window.localStorage.getItem("inlandcount")}
+                          </label>
+                        </li>
                       </ul>
                     </Card.Body>
                   </Accordion.Collapse>
@@ -97,12 +107,14 @@ class SideMenu extends Component {
               </a>
             </li>
             <li className="sidemenu-ul-li">
-              <img
-                src={GreenCounterIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Bookings
+              <a href="booking-table">
+                <img
+                  src={GreenCounterIcon}
+                  alt="green-counter-icon"
+                  className="header-greencounter-icon"
+                />
+                Bookings
+              </a>
             </li>
             <li className="sidemenu-ul-li">
               <a href="rate-search">

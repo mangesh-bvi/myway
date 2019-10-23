@@ -16,8 +16,8 @@ import "react-notifications/lib/notifications.css";
 var string = "";
 class AddUser extends React.Component{
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       values: [],
       selectCountry: [
@@ -56,7 +56,8 @@ class AddUser extends React.Component{
       errors: {},
       IsEmailExist: false,
       errorMessage: "",
-      IsUserExist: false
+      IsUserExist: false,
+      srnos: ''
       
     }
 
@@ -479,6 +480,26 @@ if (this.state.IsUserExist == true) {
     
     }
   }
+
+  componentDidMount() {
+    debugger;
+    var userId = this.props.location.state.detail;
+    this.setState({ srnos: userId})
+
+    // let self = this;
+    // axios({
+    //   method: "post",
+    //   url: `${appSettings.APIURL}/UserDataForEdit`,
+    //   data: {
+    //     UserID: encryption(window.localStorage.getItem("userid"), "desc")
+    //   },
+    //   headers: authHeader()
+    // }).then(function(response) {
+    //   debugger;
+    //   self.setState({ viewData: response.data });
+    // });
+  }
+  
 
     render() {
       var a = 1;
