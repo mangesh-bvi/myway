@@ -7,10 +7,19 @@ class RateSearch extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      IsSearchRate: false
+    };
+  }
+  EnableRates() {
+    document.getElementById("SearchRate").classList.remove("disableRates");
   }
 
+  componentDidMount() {
+    document.getElementById("SearchRate").classList.add("disableRates");
+  }
   render() {
+    const { IsSearchRate } = this.state;
     return (
       <div>
         <Headers />
@@ -41,11 +50,16 @@ class RateSearch extends Component {
               <div className="login-fields mt-5 mb-0">
                 <input
                   type="text"
+                  onChange={this.EnableRates}
                   placeholder="Search Account/Customer"
                   name="search-rate"
                 />
               </div>
-              <a href="new-rate-search" className="butn blue-butn">
+              <a
+                href="new-rate-search"
+                id="SearchRate"
+                className="butn blue-butn"
+              >
                 Search Rates
               </a>
             </div>
