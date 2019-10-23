@@ -55,7 +55,8 @@ class AddUser extends React.Component{
       fields: {},
       errors: {},
       IsEmailExist: false,
-      errorMessage: ""
+      errorMessage: "",
+      IsUserExist: false
       
     }
 
@@ -71,6 +72,7 @@ class AddUser extends React.Component{
                     onChange={(el) => this.HandleChangeCompany1(el, index)}
                     name={"Company"+i}
                   >
+                    <option key={"Select"} value={"Select"}>--Select--</option>
                     {this.state.selectCompany.map(team => (
                       <option key={team.RegCompID} value={team.SuperCompID}>
                         {team.RegCompName}
@@ -96,7 +98,7 @@ class AddUser extends React.Component{
 
 
   HandleChangeSelect(field,e) {
-    let fields = this.state.fields;
+    let fields = this.state.fields; 
     if (e.target.value == "Select") {
       fields[field] = ""
     }
@@ -105,8 +107,7 @@ class AddUser extends React.Component{
     fields[field] = e.target.value;
     }
     this.setState({
-      [e.target.name]: e.target.value,
-      fields
+      [e.target.name]: e.target.value
     });
   }
 
@@ -196,7 +197,8 @@ handleBlur(field,e)
     if(response.data[0].CanCreateUser == 1 && response.data[0].Result == "User Not Found")
     {
       self.setState({
-        IsEmailExist: false       
+        IsEmailExist: false,
+        errorMessage: ""       
       });
     }
     else{
@@ -205,15 +207,57 @@ handleBlur(field,e)
         errorMessage: response.data[0].Result
       });
       // if(!fields["emailid"]){
-        formIsValid = false;
-        errors["emailid"] = self.state.errorMessage;
-        self.setState({errors: errors});
+        
       // }
     }
+    formIsValid = false;
+    errors["emailid"] = self.state.errorMessage;
+    self.setState({errors: errors});
     return formIsValid
   })
 }
 
+handleBlurUser(field,e)
+{
+  debugger;
+  let self = this;
+  let fields = this.state.fields;
+  fields[field] = e.target.value;
+  this.setState({
+    fields
+  });
+  let errors = {};
+  let formIsValid = true;
+  const {username} =this.state;
+  axios({
+    method: "post",
+    url: "http://vizio.atafreight.com/MyWayAPI/CheckUserNameExists",
+    data: {
+      UserName:username
+    },
+    headers: authHeader()
+  }).then(function(response) {
+    debugger;
+    self.setState({
+      IsUserExist: true,
+      errorMessage: response.data[0].UserName + " already exists"
+    });
+    formIsValid = false;
+    errors["username"] = self.state.errorMessage;
+    self.setState({errors: errors});
+ 
+  }).catch(error => {
+    debugger;
+    self.setState({
+      IsUserExist: false,
+      errorMessage: ""
+    });
+    formIsValid = true;
+    errors["username"] = "";
+    self.setState({errors: errors});
+  })
+  return formIsValid
+}
 toggleChange(name, event) {
   
   if(name == "Air"){
@@ -311,6 +355,7 @@ else
 }
 }
 handleValidation(){
+  debugger;
   let fields = this.state.fields;
   let errors = {};
   let formIsValid = true;
@@ -339,7 +384,14 @@ if(!fields["country"]){
   formIsValid = false;
   errors["country"] = "Select country";
 }
-
+if (this.state.IsEmailExist == true) {
+  formIsValid = false;
+  errors["emailid"] = this.state.errorMessage;
+}
+if (this.state.IsUserExist == true) {
+  formIsValid = false;
+  errors["username"] = this.state.errorMessage;
+}
  this.setState({errors: errors});
  return formIsValid;
 }
@@ -373,7 +425,7 @@ if(!fields["country"]){
       lastname, refreshtime, country, isenabled, usertype, usercreation,
       isadmin, ImpExp, displayShipper, displayConsignee, MobileEnable,
       Company, Consignee, Shipper} = this.state;
-      if(this.handleValidation() && this.state.IsEmailExist == false){
+      if(this.handleValidation()){
       axios({
         method: "post",
         url: "http://vizio.atafreight.com/MyWayAPI/CreateUser",
@@ -450,6 +502,7 @@ if(!fields["country"]){
                     onChange={this.handlechange.bind(this, "username")}
                     placeholder="Enter Your User Name"
                     value={this.state.fields["username"]}
+                    onBlur={this.handleBlurUser.bind(this, "username")}
                   />
                   <span style={{color: "red"}}>{this.state.errors["username"]}</span>
                </div>
@@ -548,7 +601,7 @@ if(!fields["country"]){
                 <div className="login-fields col-md-2">
                   <label>Is Enabled</label>
                   <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    onChange={this.HandleChangeSelect.bind(this, "isenabled")}
                     name={"isenabled"}
                   >
                     {this.state.selectIsEnable.map(team => (
@@ -561,7 +614,7 @@ if(!fields["country"]){
                 <div className="login-fields col-md-2">
                   <label>User Type</label>
                   <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    onChange={this.HandleChangeSelect.bind(this, "usertype")}
                     name={"usertype"}
                   >
                     {this.state.selectUserType.map(team => (
@@ -574,7 +627,7 @@ if(!fields["country"]){
                 <div className="login-fields col-md-2">
                   <label>User Creation</label>
                   <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    onChange={this.HandleChangeSelect.bind(this,"usercreation")}
                     name={"usercreation"}
                   >
                     {this.state.selectIsEnable.map(team => (
@@ -587,7 +640,7 @@ if(!fields["country"]){
                 <div className="login-fields col-md-2">
                   <label>Is Admin</label>
                   <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    onChange={this.HandleChangeSelect.bind(this, "isadmin")}
                     name={"isadmin"}
                   >
                     {this.state.selectIsAdmin.map(team => (
@@ -600,7 +653,7 @@ if(!fields["country"]){
                 <div className="login-fields col-md-2">
                   <label>Imp. Exp.</label>
                   <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    onChange={this.HandleChangeSelect.bind(this, "ImpExp")}
                     name={"ImpExp"}
                   >
                     {this.state.selectImpExp.map(team => (
@@ -615,7 +668,7 @@ if(!fields["country"]){
                <div className="login-fields col-md-2">
                   <label>Display As Shipper</label>
                   <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    onChange={this.HandleChangeSelect.bind(this, "displayShipper")}
                     name={"displayShipper"}
                   >
                     {this.state.selectIsEnable.map(team => (
@@ -628,7 +681,7 @@ if(!fields["country"]){
                <div className="login-fields col-md-2">
                   <label>Display As Consignee</label>
                   <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    onChange={this.HandleChangeSelect.bind(this,"displayConsignee")}
                     name={"displayConsignee"}
                   >
                     {this.state.selectIsEnable.map(team => (
@@ -674,6 +727,7 @@ if(!fields["country"]){
                     onChange={this.HandleChangeCompany.bind(this)}
                     name={"Company"}
                   >
+                    <option key={"Select"} value={"Select"}>--Select--</option>
                     {this.state.selectCompany.map(team => (
                       <option key={team.RegCompID} value={team.RegCompID}>
                         {team.RegCompName}
