@@ -553,13 +553,23 @@ debugger;
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
-      self.setState({ transitpopup: response.data.Table });
-      self.setState({ deliveryPopup: response.data.Table1 });
+      var deliveryData=response.data.Table1;
+      if(deliveryData!="undefined" && deliveryData!=null)
+      {
+        self.setState({ deliveryPopup: deliveryData});
+      }
+      var transitData=response.data.Table;
+      if(transitData!=="undefined"&& transitData!=null ){
+        self.setState({ transitpopup: transitData });
+      }
+      
+      
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
-      debugger;
+       
       var submitdata=response;
+      console.log(self.state.deliveryPopup);
       self.HandleSubmitDetailsData(submitdata); 
     });
   };
@@ -840,61 +850,64 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
                   centered={true}
                 >
                   <ModalBody className="p-0">
-                    {deliveryPopup.map((cell, i) => {
-                      debugger;
-                      return (
-                        <div className="container-fluid p-0">
-                          <div className="transit-sect">
-                            <div className="d-flex justify-content-between align-items-center">
-                              <div className="d-flex align-items-center">
-                                <div className="shipment-img mr-3">
-                                  <TransitionImage imgType={cell.Mode} />
+                    {deliveryPopup.length > 0 &&
+                      deliveryPopup.map((cell, i) => {
+                        debugger;
+                        return (
+                          <div className="container-fluid p-0">
+                            <div className="transit-sect">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                  <div className="shipment-img mr-3">
+                                    <TransitionImage imgType={cell.Mode} />
+                                  </div>
+                                  <div>
+                                    <p className="desti-name">
+                                      {cell.POLLocation}
+                                    </p>
+                                    <p className="desti-route">
+                                      to {cell.DestinationPort}
+                                      ,Carrier {cell.Carrier}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div>
-                                  <p className="desti-name">
-                                    {cell.POLLocation}
+                              </div>
+                            </div>
+                            <div className="delivery-inner">
+                              <div className="row">
+                                <div className="col-md-4 text-center">
+                                  <p className="details-title">
+                                    Departure Date
                                   </p>
-                                  <p className="desti-route">
-                                    to {cell.DestinationPort}
-                                    ,Carrier {cell.Carrier}
+                                  <p className="details-para">
+                                    <Moment format="DD/MM/YYYY">
+                                      {cell.SailingDate}
+                                    </Moment>
+                                  </p>
+                                </div>
+                                <div className="col-md-4 text-center">
+                                  <p className="details-title">ETA</p>
+                                  <p className="details-para">
+                                    <Moment format="DD/MM/YYYY">
+                                      {cell.ETA}
+                                    </Moment>
+                                  </p>
+                                </div>
+                                <div className="col-md-4 text-center">
+                                  <p className="details-title">
+                                    Estimated Delivery Date
+                                  </p>
+                                  <p className="details-para">
+                                    <Moment format="DD/MM/YYYY">
+                                      {cell.CargoArrivalDate}
+                                    </Moment>
                                   </p>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <div className="delivery-inner">
-                            <div className="row">
-                              <div className="col-md-4 text-center">
-                                <p className="details-title">Departure Date</p>
-                                <p className="details-para">
-                                  <Moment format="DD/MM/YYYY">
-                                    {cell.SailingDate}
-                                  </Moment>
-                                </p>
-                              </div>
-                              <div className="col-md-4 text-center">
-                                <p className="details-title">ETA</p>
-                                <p className="details-para">
-                                  <Moment format="DD/MM/YYYY">
-                                    {cell.ETA}
-                                  </Moment>
-                                </p>
-                              </div>
-                              <div className="col-md-4 text-center">
-                                <p className="details-title">
-                                  Estimated Delivery Date
-                                </p>
-                                <p className="details-para">
-                                  <Moment format="DD/MM/YYYY">
-                                    {cell.CargoArrivalDate}
-                                  </Moment>
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -909,7 +922,9 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
                         <div className="row">
                           <div className="col-md-4 details-border">
                             <div>
-                              <p className="details-title">Total Average Days</p>
+                              <p className="details-title">
+                                Total Average Days
+                              </p>
                               <p className="details-para">
                                 {this.state.totalAvgDays}
                               </p>
@@ -917,7 +932,9 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
                           </div>
                           <div className="col-md-4 details-border">
                             <div>
-                              <p className="details-title">Total Minimum Days</p>
+                              <p className="details-title">
+                                Total Minimum Days
+                              </p>
                               <p className="details-para">
                                 {this.state.totalMinDays}
                               </p>
@@ -925,7 +942,9 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
                           </div>
                           <div className="col-md-4 details-border">
                             <div>
-                              <p className="details-title">Total Maximum Days</p>
+                              <p className="details-title">
+                                Total Maximum Days
+                              </p>
                               <p className="details-para">
                                 {this.state.totalMaxDays}
                               </p>

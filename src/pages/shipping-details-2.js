@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
 import { Progress, Button, Modal, ModalBody } from "reactstrap";
 import GoogleMapReact from "google-map-react";
@@ -19,9 +19,18 @@ import Download from "./../assets/img/csv.png";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
-
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+  InfoWindow,
+  Polyline,
+  google
+} from "react-google-maps";
+const { compose } = require("recompose");
 
 const SourceIcon = () => (
   <div className="map-icon source-icon">
@@ -33,7 +42,81 @@ const DestiIcon = () => (
     <img src={ShipWhite} />
   </div>
 );
+
 var docuemntFileName = "";
+
+const MapWithAMakredInfoWindow = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultCenter={{ lat: 32.24165126, lng: 67.78319374 }}
+    defaultZoom={2}
+  >
+    {props.markers.map((marker,i) => {
+      // const onClick = props.onClick.bind(this, marker);
+      var start = marker.StartLatLng;
+      var end = marker.EndLatLng;
+      debugger; 
+      var lineSymbol = {
+        path: window.google.maps.SymbolPath.CIRCLE,
+        scale: 8,
+        strokeColor: '#393'
+      };
+      return (
+        <Fragment>
+         
+          <Marker
+            key={i}
+            // onClick={onClick}
+            position={{ lat: start[0].lat, lng: start[0].lng }}
+            icon={lineSymbol}
+          >
+            <InfoWindow>
+              <div>
+                <h4>csadd</h4>
+                <br />
+                <b>dsadsa</b>
+              </div>
+            </InfoWindow>
+          </Marker>
+          <Marker
+            key={i}
+            // onClick={onClick}
+            position={{ lat: end[0].lat, lng: end[0].lng }}
+          >
+            <InfoWindow>
+              <div>
+                <h4>csadd</h4>
+                <br />
+                <b>dsadsa</b>
+              </div>
+            </InfoWindow>
+          </Marker>
+        </Fragment>
+      );
+    })}
+
+    {/* <Marker key={1} position={{ lat: 19.090405, lng: 72.86875 }}>
+      <InfoWindow>
+        <div>
+          <h4>csadd</h4>
+          <br />
+          <b>dsadsa</b>
+        </div>
+      </InfoWindow>
+    </Marker>
+    <Marker key={2} position={{ lat: 21.143956, lng: 79.093453 }}>
+      <InfoWindow>
+        <div>
+          <h4>csadd</h4>
+          <br />
+          <b>dsadsa</b>
+        </div>
+      </InfoWindow>
+    </Marker> */}
+  </GoogleMap>
+));
 
 class ShippingDetailsTwo extends Component {
   constructor(props) {
@@ -51,10 +134,14 @@ class ShippingDetailsTwo extends Component {
       sr_no: 0,
       filtered: [],
       viewDocument: false,
-      bookedStatus:[],
+      bookedStatus: [],
       selectedFile: "",
       selectedFileName: "",
-      consigneeFileName: ""
+      consigneeFileName: "",
+      ConsigneeID: 0,
+      ShipperID: 0,
+      HblNo: "",
+      MapsDetailsData:[]
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -62,14 +149,100 @@ class ShippingDetailsTwo extends Component {
     this.toggleEdit = this.toggleEdit.bind(this);
     // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
+    // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
   }
 
   componentDidMount() {
     debugger;
 
-    var HblNo = this.props.location.state.detail;
+    var hblno = this.props.location.state.detail;
 
-    this.HandleShipmentDetails(HblNo);
+    this.HandleShipmentDetails();
+  }
+
+  HandleMapDetailsData(mdetails) {
+   debugger;
+
+    var DetailsData = mdetails.Table;
+
+    var FinalData=[];
+    for (let i=0;i<DetailsData.length;i++)
+    {
+      var finalList=new Object()
+      finalList.ORDERID=DetailsData[i].ORDERID
+      finalList.CModeOfTransport=DetailsData[i].CModeOfTransport;
+      finalList.StartLocation=DetailsData[i].StartLocation;
+      finalList.ShipperName=DetailsData[i].ShipperName;
+      finalList.EndLocation=DetailsData[i].EndLocation;
+      finalList.ConsigneeName=DetailsData[i].ConsigneeName;
+      
+
+// Start Location Lat lng
+      var CStLatLong=DetailsData[i].CStLatLong;
+      var startlatlng=[]
+      var startlatlnglst=new Object();
+      startlatlnglst.lat=Number(CStLatLong.split(",")[0]);
+      startlatlnglst.lng=Number(CStLatLong.split(",")[1]);
+      startlatlng.push(startlatlnglst);
+      finalList.StartLatLng=startlatlng;
+
+// End Location Lat Lng 
+      var CEdLatLong=DetailsData[i].CEdLatLong;
+      var endlatlng=[]
+      var endlatlnglst=new Object();
+      endlatlnglst.lat=Number(CEdLatLong.split(",")[0]);
+      endlatlnglst.lng=Number(CEdLatLong.split(",")[1]);
+      endlatlng.push(endlatlnglst);
+      finalList.EndLatLng=endlatlng;
+      
+// Rounting line      
+     var RouteLatLong = DetailsData[i].RouteLatLong;
+     var RouteArray = [];
+     var ComplexData = [];
+     RouteArray.push(RouteLatLong.split(";"));
+      
+     var routlen=RouteArray[0];
+     for(let k=0;k<routlen.length;k++)
+     {
+       var routelatlng=new Object();
+       var latlngvar=routlen[k];
+       routelatlng.lat=Number(latlngvar.split(",")[0]);
+       routelatlng.lng=Number(latlngvar.split(",")[1]);
+       ComplexData.push(routelatlng);    
+     }
+     finalList.Rounting =ComplexData;
+     FinalData.push(finalList);
+     
+    }
+    console.log(FinalData);
+    this.setState({ MapsDetailsData: FinalData});
+    
+  }
+  HandleShipmentDetailsMap(sid, cid) {
+    debugger;
+    let self = this;
+    var shipperId = sid;
+    var consigneeId = cid;
+    var hblno = this.state.HblNo;
+    var SwitchConsigneeID = 0;
+    var SwitchShipperID = 0;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BindShipmentSummaryMap`,
+      data: {
+        ShipperID: 1340354108, //shipperId,
+        ConsigneeID: 1340464123, //consigneeId,
+        SwitchConsigneeID: 0,
+        SwitchShipperID: 0,
+        HBLNo: "BOM 237730"
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var resdata=response.data
+      self.HandleMapDetailsData(resdata);
+    });
   }
   HandleDocumentDownloadFile(evt, row) {
     debugger;
@@ -110,28 +283,31 @@ class ShippingDetailsTwo extends Component {
     });
   }
 
-  HandleShipmentDetails(HblNo) {
+  HandleShipmentDetails() {
     let self = this;
-
     var userid = window.localStorage.getItem("userid");
+    var HblNo = self.state.HblNo;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        UserId:874588,// userid,
-        HBLNo:'AQTYMSE190317' //HblNo
+        UserId: 874588, // userid,
+        HBLNo: "AQTYMSE190317" //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var shipmentdata = response.data;
       self.setState({
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
-        bookedStatus:shipmentdata.Table4
+        bookedStatus: shipmentdata.Table4
       });
+      var sid = shipmentdata.Table[0].ShipperId;
+      var cid = shipmentdata.Table[0].ConsigneeID;
+      self.HandleShipmentDetailsMap(sid, cid);
     });
+    // console.log(this.state.ConsigneeID);
   }
   onDocumentChangeHandler = event => {
     this.setState({
@@ -204,7 +380,6 @@ class ShippingDetailsTwo extends Component {
     this.setState({ ShowCard: !this.state.ShowCard });
   }
 
-  
   render() {
     const {
       detailsData,
@@ -212,48 +387,68 @@ class ShippingDetailsTwo extends Component {
       containerData,
       ShowCard,
       documentData,
-      bookedStatus
+      bookedStatus,
+      MapsDetailsData
     } = this.state;
-    let bookingIsActive="";
-    let bookDate="";
-    let departedIsActive="";
-    let departedDate="";
-    let arrivedIsActive="";
-    let arrivedDate="";
-    let inlandIsActive="track-hide";
-    let inlandDate="";
-    let deliveredIsActive="";
-    let deliverDate="";
-   for (let index = 0; index < bookedStatus.length; index++) {
-       if(bookedStatus[index].Status=="Booked")
-       {
-         debugger;
-         bookingIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
-         bookDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;
-       }
-      else if(bookedStatus[index].Status=="Departed")
-      {
-        departedIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
-        departedDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
+    let bookingIsActive = "";
+    let bookDate = "";
+    let departedIsActive = "";
+    let departedDate = "";
+    let arrivedIsActive = "";
+    let arrivedDate = "";
+    let inlandIsActive = "track-hide";
+    let inlandDate = "";
+    let deliveredIsActive = "";
+    let deliverDate = "";
+    for (let index = 0; index < bookedStatus.length; index++) {
+      if (bookedStatus[index].Status == "Booked") {
+        bookingIsActive =
+          bookedStatus[index].ActualDate == null
+            ? "track-line-cntr"
+            : "track-line-cntr active";
+        bookDate =
+          bookedStatus[index].ActualDate == null
+            ? "ETA " + bookedStatus[index].EstimationDate
+            : bookedStatus[index].ActualDate;
+      } else if (bookedStatus[index].Status == "Departed") {
+        departedIsActive =
+          bookedStatus[index].ActualDate == null
+            ? "track-line-cntr"
+            : "track-line-cntr active";
+        departedDate =
+          bookedStatus[index].ActualDate == null
+            ? "ETA " + bookedStatus[index].EstimationDate
+            : bookedStatus[index].ActualDate;
+      } else if (bookedStatus[index].Status == "Arrived") {
+        arrivedIsActive =
+          bookedStatus[index].ActualDate == null
+            ? "track-line-cntr"
+            : "track-line-cntr active";
+        arrivedDate =
+          bookedStatus[index].ActualDate == null
+            ? "ETA " + bookedStatus[index].EstimationDate
+            : bookedStatus[index].ActualDate;
+      } else if (bookedStatus[index].Status == "Inland") {
+        inlandIsActive =
+          bookedStatus[index].ActualDate == null
+            ? "track-line-cntr"
+            : "track-line-cntr active";
+        inlandDate =
+          bookedStatus[index].ActualDate == null
+            ? "ETA " + bookedStatus[index].EstimationDate
+            : bookedStatus[index].ActualDate;
+      } else if (bookedStatus[index].Status == "Delivered") {
+        deliveredIsActive =
+          bookedStatus[index].ActualDate == null
+            ? "track-line-cntr"
+            : "track-line-cntr active";
+        deliverDate =
+          bookedStatus[index].ActualDate == null
+            ? "ETA " + bookedStatus[index].EstimationDate
+            : bookedStatus[index].ActualDate;
       }
-      else if(bookedStatus[index].Status=="Arrived")
-      {
-        arrivedIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
-        arrivedDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
-      }
-      else if(bookedStatus[index].Status=="Inland")
-      {
-        inlandIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
-        inlandDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
-      }
-      else if(bookedStatus[index].Status=="Delivered")
-      {
-        debugger;
-        deliveredIsActive=bookedStatus[index].ActualDate==null?"track-line-cntr":"track-line-cntr active";
-        deliverDate=bookedStatus[index].ActualDate==null?"ETA "+bookedStatus[index].EstimationDate:bookedStatus[index].ActualDate;             
-      }
-   }
-  
+    }
+
     return (
       <div>
         <Headers />
@@ -696,7 +891,7 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-md-4">
                   <div className="ship-detail-maps">
                     <div className="ship-detail-map">
-                      <GoogleMapReact
+                      {/* <GoogleMapReact
                         bootstrapURLKeys={{
                           key: appSettings.Keys
                         }}
@@ -705,7 +900,18 @@ class ShippingDetailsTwo extends Component {
                       >
                         <SourceIcon lat={59.955413} lng={30.337844} />
                         <DestiIcon lat={59.9} lng={30.3} />
-                      </GoogleMapReact>
+                      </GoogleMapReact> */}
+                      <MapWithAMakredInfoWindow
+                        markers={MapsDetailsData}
+                        // onClick={this.handleClick}
+                        selectedMarker={this.state.selectedMarker}
+                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                        containerElement={
+                          <div style={{ height: `100%`, width: "100%" }} />
+                        }
+                        mapElement={<div style={{ height: `100%` }} />}
+                        loadingElement={<div style={{ height: `100%` }} />}
+                      ></MapWithAMakredInfoWindow>
                     </div>
                     <div className="shipment-track-cntr">
                       <div className="shipment-track">
@@ -721,7 +927,7 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         </div>
                       </div>
-                      <div className="track-details">                                            
+                      <div className="track-details">
                         <div className={bookingIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
@@ -729,7 +935,8 @@ class ShippingDetailsTwo extends Component {
                             </div>
                           </div>
                           <p>
-                            <span>Booked : </span>{bookDate}
+                            <span>Booked : </span>
+                            {bookDate}
                           </p>
                         </div>
                         <div className={departedIsActive}>
@@ -739,7 +946,8 @@ class ShippingDetailsTwo extends Component {
                             </div>
                           </div>
                           <p>
-                            <span>Departed : </span>{departedDate}
+                            <span>Departed : </span>
+                            {departedDate}
                           </p>
                         </div>
                         {/* <div className="track-line-cntr active">
@@ -759,7 +967,8 @@ class ShippingDetailsTwo extends Component {
                             </div>
                           </div>
                           <p>
-                            <span>Arrived : </span>{arrivedDate}
+                            <span>Arrived : </span>
+                            {arrivedDate}
                           </p>
                         </div>
                         <div className={inlandIsActive}>
@@ -769,7 +978,8 @@ class ShippingDetailsTwo extends Component {
                             </div>
                           </div>
                           <p>
-                            <span>Inland Transportation : </span>{inlandDate}
+                            <span>Inland Transportation : </span>
+                            {inlandDate}
                           </p>
                         </div>
                         <div className={deliveredIsActive}>
@@ -779,7 +989,8 @@ class ShippingDetailsTwo extends Component {
                             </div>
                           </div>
                           <p>
-                            <span>Delivered : </span>{deliverDate}
+                            <span>Delivered : </span>
+                            {deliverDate}
                           </p>
                         </div>
                       </div>
@@ -902,7 +1113,7 @@ class ShippingDetailsTwo extends Component {
                     <div className="rename-cntr login-fields">
                       <iframe
                         src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
-                        title="Document View" 
+                        title="Document View"
                         className="agreement-pdf"
                       ></iframe>
                     </div>

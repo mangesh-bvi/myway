@@ -56,6 +56,7 @@ class Dashboard extends Component {
       headers: authHeader()
     }).then(function(response) {
        debugger;
+       console.log(response);
     });
   }
  
