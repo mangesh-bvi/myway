@@ -127,12 +127,14 @@ class SideMenu extends Component {
               </a>
             </li>
             <li className="sidemenu-ul-li">
-              <img
-                src={AnalyticsIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Analytics
+              <a href="analytics">
+                <img
+                  src={AnalyticsIcon}
+                  alt="green-counter-icon"
+                  className="header-greencounter-icon"
+                />
+                Analytics
+              </a>
             </li>
             <li className="sidemenu-ul-li">
               <a href="green-counter">

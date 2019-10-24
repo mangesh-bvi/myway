@@ -17,7 +17,7 @@ import { encryption } from "../helpers/encryption";
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = { tooltipOpen: false, lastlogin: "" };
+    this.state = { tooltipOpen: false, lastlogin: "", searchButn: true };
   }
 
   componentDidMount() {
@@ -44,6 +44,9 @@ class Header extends Component {
           "desc"
         ))
       });
+    }
+    if (window.location.pathname === "/rate-search") {
+      this.setState({ searchButn: false });
     }
   }
   toggle() {
@@ -74,9 +77,13 @@ class Header extends Component {
             </div>
             <div className="col-xs col-sm-6 col-md-9">
               <ul className="header-ul">
-                <li>
-                  <button className="header-btn">SEARCH RATES</button>
-                </li>
+                {this.state.searchButn && (
+                  <li>
+                    <a href="/rate-search" className="header-btn">
+                      SEARCH RATES
+                    </a>
+                  </li>
+                )}
                 <li>
                   <img
                     src={BellIcon}

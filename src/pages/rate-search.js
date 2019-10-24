@@ -11,30 +11,27 @@ class RateSearch extends Component {
       IsSearchRate: false
     };
   }
-  EnableRates=e=> {
+  EnableRates = e => {
     debugger;
-    if(e.target.value=='')
-    {
-     document.getElementById("SearchRate").classList.add("disableRates");
+    if (e.target.value == "") {
+      document.getElementById("SearchRate").classList.add("disableRates");
+    } else {
+      document.getElementById("SearchRate").classList.remove("disableRates");
     }
-    else{
-       document.getElementById("SearchRate").classList.remove("disableRates");
-    }
-  }
+  };
 
-  HideSearchText()
-  {
-       document.getElementById('searchtxt').style.display = "none";
-       document.getElementById("SearchRate").classList.remove("disableRates");
+  HideSearchText() {
+    document.getElementById("searchtxt").style.display = "none";
+    document.getElementById("SearchRate").classList.remove("disableRates");
   }
-  ShowSearchText()
-  {
-       document.getElementById('searchtxt').style.display = "block";
+  ShowSearchText() {
+    document.getElementById("SearchRate").classList.add("disableRates");
+    document.getElementById("searchtxt").style.display = "block";
   }
 
   componentDidMount() {
-   // document.getElementById("SearchRate").classList.add("disableRates");
-   document.getElementById("SearchRate").classList.add("disableRates");
+    // document.getElementById("SearchRate").classList.add("disableRates");
+    document.getElementById("SearchRate").classList.add("disableRates");
   }
   render() {
     const { IsSearchRate } = this.state;
@@ -53,7 +50,7 @@ class RateSearch extends Component {
                   <div>
                     <input
                       type="radio"
-                      onClick={this.ShowSearchText} 
+                      onClick={this.ShowSearchText}
                       name="cust-select"
                       id="exist-cust"
                       defaultChecked
@@ -61,7 +58,12 @@ class RateSearch extends Component {
                     <label htmlFor="exist-cust">Existing Customer</label>
                   </div>
                   <div>
-                    <input type="radio" onClick={this.HideSearchText} name="cust-select" id="new-cust" />
+                    <input
+                      type="radio"
+                      onClick={this.HideSearchText}
+                      name="cust-select"
+                      id="new-cust"
+                    />
                     <label htmlFor="new-cust">New Customer</label>
                   </div>
                 </div>

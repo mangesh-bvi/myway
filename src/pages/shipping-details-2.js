@@ -53,19 +53,18 @@ const MapWithAMakredInfoWindow = compose(
     defaultCenter={{ lat: 32.24165126, lng: 67.78319374 }}
     defaultZoom={2}
   >
-    {props.markers.map((marker,i) => {
+    {props.markers.map((marker, i) => {
       // const onClick = props.onClick.bind(this, marker);
       var start = marker.StartLatLng;
       var end = marker.EndLatLng;
-      debugger; 
+      debugger;
       var lineSymbol = {
         path: window.google.maps.SymbolPath.CIRCLE,
         scale: 8,
-        strokeColor: '#393'
+        strokeColor: "#393"
       };
       return (
         <Fragment>
-         
           <Marker
             key={i}
             // onClick={onClick}
@@ -141,7 +140,7 @@ class ShippingDetailsTwo extends Component {
       ConsigneeID: 0,
       ShipperID: 0,
       HblNo: "",
-      MapsDetailsData:[]
+      MapsDetailsData: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -161,62 +160,57 @@ class ShippingDetailsTwo extends Component {
   }
 
   HandleMapDetailsData(mdetails) {
-   debugger;
+    debugger;
 
     var DetailsData = mdetails.Table;
 
-    var FinalData=[];
-    for (let i=0;i<DetailsData.length;i++)
-    {
-      var finalList=new Object()
-      finalList.ORDERID=DetailsData[i].ORDERID
-      finalList.CModeOfTransport=DetailsData[i].CModeOfTransport;
-      finalList.StartLocation=DetailsData[i].StartLocation;
-      finalList.ShipperName=DetailsData[i].ShipperName;
-      finalList.EndLocation=DetailsData[i].EndLocation;
-      finalList.ConsigneeName=DetailsData[i].ConsigneeName;
-      
+    var FinalData = [];
+    for (let i = 0; i < DetailsData.length; i++) {
+      var finalList = new Object();
+      finalList.ORDERID = DetailsData[i].ORDERID;
+      finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
+      finalList.StartLocation = DetailsData[i].StartLocation;
+      finalList.ShipperName = DetailsData[i].ShipperName;
+      finalList.EndLocation = DetailsData[i].EndLocation;
+      finalList.ConsigneeName = DetailsData[i].ConsigneeName;
 
-// Start Location Lat lng
-      var CStLatLong=DetailsData[i].CStLatLong;
-      var startlatlng=[]
-      var startlatlnglst=new Object();
-      startlatlnglst.lat=Number(CStLatLong.split(",")[0]);
-      startlatlnglst.lng=Number(CStLatLong.split(",")[1]);
+      // Start Location Lat lng
+      var CStLatLong = DetailsData[i].CStLatLong;
+      var startlatlng = [];
+      var startlatlnglst = new Object();
+      startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
+      startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
       startlatlng.push(startlatlnglst);
-      finalList.StartLatLng=startlatlng;
+      finalList.StartLatLng = startlatlng;
 
-// End Location Lat Lng 
-      var CEdLatLong=DetailsData[i].CEdLatLong;
-      var endlatlng=[]
-      var endlatlnglst=new Object();
-      endlatlnglst.lat=Number(CEdLatLong.split(",")[0]);
-      endlatlnglst.lng=Number(CEdLatLong.split(",")[1]);
+      // End Location Lat Lng
+      var CEdLatLong = DetailsData[i].CEdLatLong;
+      var endlatlng = [];
+      var endlatlnglst = new Object();
+      endlatlnglst.lat = Number(CEdLatLong.split(",")[0]);
+      endlatlnglst.lng = Number(CEdLatLong.split(",")[1]);
       endlatlng.push(endlatlnglst);
-      finalList.EndLatLng=endlatlng;
-      
-// Rounting line      
-     var RouteLatLong = DetailsData[i].RouteLatLong;
-     var RouteArray = [];
-     var ComplexData = [];
-     RouteArray.push(RouteLatLong.split(";"));
-      
-     var routlen=RouteArray[0];
-     for(let k=0;k<routlen.length;k++)
-     {
-       var routelatlng=new Object();
-       var latlngvar=routlen[k];
-       routelatlng.lat=Number(latlngvar.split(",")[0]);
-       routelatlng.lng=Number(latlngvar.split(",")[1]);
-       ComplexData.push(routelatlng);    
-     }
-     finalList.Rounting =ComplexData;
-     FinalData.push(finalList);
-     
+      finalList.EndLatLng = endlatlng;
+
+      // Rounting line
+      var RouteLatLong = DetailsData[i].RouteLatLong;
+      var RouteArray = [];
+      var ComplexData = [];
+      RouteArray.push(RouteLatLong.split(";"));
+
+      var routlen = RouteArray[0];
+      for (let k = 0; k < routlen.length; k++) {
+        var routelatlng = new Object();
+        var latlngvar = routlen[k];
+        routelatlng.lat = Number(latlngvar.split(",")[0]);
+        routelatlng.lng = Number(latlngvar.split(",")[1]);
+        ComplexData.push(routelatlng);
+      }
+      finalList.Rounting = ComplexData;
+      FinalData.push(finalList);
     }
     console.log(FinalData);
-    this.setState({ MapsDetailsData: FinalData});
-    
+    this.setState({ MapsDetailsData: FinalData });
   }
   HandleShipmentDetailsMap(sid, cid) {
     debugger;
@@ -240,7 +234,7 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      var resdata=response.data
+      var resdata = response.data;
       self.HandleMapDetailsData(resdata);
     });
   }
@@ -510,6 +504,23 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="details-tab"
                     >
+                      <div className="sect-padd">
+                        <p className="details-heading">Booking Details</p>
+                        <div className="row">
+                          <div className="col-md-3 details-border">
+                            <p className="details-title">Mode Of Transport</p>
+                            <p className="details-para">Ocean</p>
+                          </div>
+                          <div className="col-md-3 details-border">
+                            <p className="details-title">Cargo Type</p>
+                            <p className="details-para">FCL</p>
+                          </div>
+                          <div className="col-md-3 details-border">
+                            <p className="details-title">Inco Terms</p>
+                            <p className="details-para">EXW</p>
+                          </div>
+                        </div>
+                      </div>
                       <div className="sect-padd">
                         <div className="row">
                           <div className="col-md-3 details-border">
