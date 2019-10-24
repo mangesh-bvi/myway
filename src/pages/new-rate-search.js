@@ -26,6 +26,16 @@ class NewRateSearch extends Component {
       { value: "abc", label: "abc" },
       { value: "def", label: "def" }
     ];
+    const optionsPOL = [
+      { value: "10.5736", label: "10.5736" },
+      { value: "20.6987", label: "20.6987" },
+      { value: "30.0369", label: "30.0369" }
+    ];
+    const optionsPOD = [
+      { value: "35.5736", label: "35.5736" },
+      { value: "69.6987", label: "69.6987" },
+      { value: "60.0369", label: "60.0369" }
+    ];
     return (
       <div>
         <Headers />
@@ -115,24 +125,33 @@ class NewRateSearch extends Component {
                   type="checkbox"
                   name={"special equipment"}
                 />
-                <label htmlFor="spe-equip">Special Equipment</label>
+                <label htmlFor="spe-equip" className="m-auto">
+                  Special Equipment
+                </label>
               </div>
               <div className="spe-equ">
-                <label>Kind of Special Equipment</label>
+                {/* <label>Kind of Special Equipment</label> */}
                 <Select
-                  className="rate-dropdown"
+                  className="rate-dropdown m-auto"
                   closeMenuOnSelect={false}
                   components={animatedComponents}
                   options={optionsSpeEqu}
+                  placeholder="Select Kind of Special Equipment"
                 />
               </div>
               <div className="spe-equ">
-                <label>Temperature of Special Equipment</label>
-                <input type="text" placeholder="Enter temperature in Celcius" />
+                {/* <label>Temperature of Equipment</label> */}
+                <input
+                  type="text"
+                  className="m-auto w-50"
+                  placeholder="Enter Temperature of Equipment"
+                />
               </div>
               <div className="remember-forgot">
                 <input id="haz-mat" type="checkbox" name={"haz-mat"} />
-                <label htmlFor="haz-mat">HazMat</label>
+                <label htmlFor="haz-mat" className="m-auto">
+                  HazMat
+                </label>
               </div>
               {/* <div className="new-radio-rate-cntr radio-brown">
                 <div>
@@ -161,8 +180,11 @@ class NewRateSearch extends Component {
             <div className="new-rate-cntr">
               <h3>Inco Terms</h3>
               <div className="spe-equ">
-                <label>Inco Terms</label>
-                <input type="text" placeholder="Inco Terms" />
+                <input
+                  type="text"
+                  placeholder="Inco Terms"
+                  className="m-auto w-50"
+                />
               </div>
             </div>
             <div className="new-rate-cntr">
@@ -188,6 +210,46 @@ class NewRateSearch extends Component {
                 <div>
                   <input type="radio" name="type-move" id="p2d" />
                   <label htmlFor="p2d">Port2Door</label>
+                </div>
+              </div>
+            </div>
+            <div className="new-rate-cntr">
+              <h3>Select Location</h3>
+              <div className="row">
+                <div className="col-md-6">
+                  <Select
+                    className="rate-dropdown w-100"
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    options={optionsPOL}
+                    placeholder="Select POL"
+                  />
+                </div>
+                <div className="col-md-6">
+                  <Select
+                    className="rate-dropdown w-100"
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    options={optionsPOD}
+                    placeholder="Select POD"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="new-rate-cntr">
+              <h3>Enter Addresses</h3>
+              <div className="row">
+                <div className="col-md-6">
+                  <textarea
+                    className="rate-address"
+                    placeholder="Enter PU Address"
+                  ></textarea>
+                </div>
+                <div className="col-md-6">
+                  <textarea
+                    className="rate-address"
+                    placeholder="Enter Delivery Address"
+                  ></textarea>
                 </div>
               </div>
             </div>

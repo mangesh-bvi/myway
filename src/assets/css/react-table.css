@@ -42,6 +42,9 @@
 .ReactTable .rt-tr {
   align-items: center;
 }
+.ReactTable .rt-tbody .rt-expandable + .rt-td {
+  text-align: left;
+}
 
 /* pagination starts */
 .ReactTable .-pagination .-previous,
