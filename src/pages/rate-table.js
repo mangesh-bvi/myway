@@ -94,7 +94,7 @@ class RateTable extends Component {
                 />
               </div>
               <div>
-                <a href="#!" className="blue-butn butn m-0">
+                <a href="rate-finalizing" className="blue-butn butn m-0">
                   Proceed
                 </a>
               </div>
@@ -207,6 +207,7 @@ class RateTable extends Component {
                     </a>
                   </div>
                 </div>
+
                 <div className="col-md-8 react-rate-table">
                   <ReactTable
                     columns={[
