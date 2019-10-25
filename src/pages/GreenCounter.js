@@ -76,6 +76,7 @@ class GreenCounter extends Component {
       volumechartData: [],
       carbonechartData: [],
       greencounterData: [],
+      totalTreePlanted:'',
       volume: 0,
       selectData: [
         { key: "Year", value: "Year" },
@@ -92,6 +93,7 @@ class GreenCounter extends Component {
     this.HandleVolumeChartData();
     this.HandleCarboneChartData();
     this.HandleGreenCounterChartData();
+    this.TreePlantaiondata();
   }
   handleOnChange = value => {
     this.setState({
@@ -153,9 +155,26 @@ class GreenCounter extends Component {
       });
     });
   }
+  
+  TreePlantaiondata()
+  {
+    let self=this;
+    var d = new Date();
+    var year = d.getFullYear();
+    axios({
+      method: "post",  
+      url: `${appSettings.APIURL}/TreePlantationData`,
+      data: {
+        YEAR:year      
+      },
+      headers: authHeader()
+    }).then(response => {      
+     self.setState({totalTreePlanted:response.data[0].TreePlanted});     
+      
+    });
 
-  HandleGreenCounterChartData() {
-    debugger;
+  }
+  HandleGreenCounterChartData() {  
     let self = this;
     var ipaddress = window.localStorage.getItem("ipaddress");
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -181,7 +200,7 @@ class GreenCounter extends Component {
     });
   }
   render() {
-    let { volume } = this.state;
+    let { volume,totalTreePlanted } = this.state;
     let vollabel = [];
     let carlabel = [];
     let volumnedata = [];
@@ -277,9 +296,12 @@ class GreenCounter extends Component {
                     height={50}
                     options={volumeOptions}
                   />
+                  <div>Total Tree Planted:-{totalTreePlanted}</div>
                 </div>
               </div>
             </div>
+          
+          
             <div className="col-md-6">
               <div className="card carbonemn-card">
                 <div>

@@ -1039,6 +1039,12 @@ table tbody tr:last-child {
   margin-top: 15px;
   justify-content: center;
 }
+.new-radio-rate-cntr-hide {
+ display:none;
+}
+.new-radio-rate-cntr-show {
+  display:block;
+ }
 .new-radio-rate-cntr label {
   font-family: "Regular Font";
   letter-spacing: 0.5px;
