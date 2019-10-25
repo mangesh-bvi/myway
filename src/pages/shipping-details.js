@@ -58,30 +58,22 @@ class ShippingDetails extends Component {
     this.HandleListShipmentSummey();
   }
 
-  onFilteredChange(shipmentSummary) {
-    // console.log('filtered:',filtered);
-    // const { sortedData } = this.reactTable.getResolvedState();
-    // console.log('sortedData:', sortedData);
+  onFilteredChange(filtered) {
     debugger;
-    // extra check for the "filterAll"
-    if (shipmentSummary.length > 1 && this.state.filterAll.length) {
+    if (filtered.length > 1 && this.state.filterAll.length) {
       // NOTE: this removes any FILTER ALL filter
-      const filterAll = this.state.filterAll;
-      var filterdata=this.state.shipmentSummary.filter(filterAll);
-      this.setState({
-        shipmentSummary: filterdata 
-      });
-    } else this.setState({ shipmentSummary });
+      const filterAll = '';
+      this.setState({ filtered: filtered.filter((item) => item.id != 'all'), filterAll })
+    }
+    else
+      this.setState({ filtered });
   }
   filterAll(e) {
-    debugger;
     const { value } = e.target;
     const filterAll = value;
-    const shipmentSummary = this.state.shipmentSummary;
+    const filtered = [{ id: 'all', value: filterAll }];
     // NOTE: this completely clears any COLUMN filters
-    this.onFilteredChange(shipmentSummary)
-    this.setState({ filterAll, shipmentSummary });
-    
+    this.setState({ filterAll, filtered });
   }
   HandleListShipmentSummey() {
     let self = this;
@@ -199,7 +191,8 @@ class ShippingDetails extends Component {
                 onFilteredChange={this.onFilteredChange.bind(this)}
                 filtered={this.state.filtered}
                 defaultFilterMethod={(filter, row) =>
-                  String(row[filter.id]) === filter.value} 
+                  String(row[filter.id]) === filter.value
+                }
                 columns={[
                   {
                     columns: [
@@ -346,7 +339,37 @@ class ShippingDetails extends Component {
                       }
                     ]
                   },
-                   
+                  {
+                    // NOTE - this is a "filter all" DUMMY column
+                    // you can't HIDE it because then it wont FILTER
+                    // but it has a size of ZERO with no RESIZE and the
+                    // FILTER component is NULL (it adds a little to the front)
+                    // You culd possibly move it to the end
+                    show: false,
+                    Header: "All",
+                    id: 'all',
+                    width: 0,
+                    resizable: false,
+                    sortable: false,
+                    Filter: () => { },
+                    getProps: () => {
+                      return {
+                        // style: { padding: "0px"}
+                      }
+                    },
+                    filterMethod: (filter, rows) => {
+                      // using match-sorter
+                      // it will take the content entered into the "filter"
+                      // and search for it in EITHER the firstName or lastName
+                      const result = matchSorter(rows, filter.value, {
+                        keys: ["BL/HBL", "Consignee", "ConsigneeID"],
+                        threshold: matchSorter.rankings.WORD_STARTS_WITH
+                      });
+                       
+                      return result;
+                    },
+                    filterAll: true,
+                  }
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={10}

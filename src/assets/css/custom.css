@@ -52,7 +52,8 @@ img {
 }
 input:focus,
 button:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none;
 }
 input[type="search"]::-webkit-search-cancel-button {
@@ -1018,12 +1019,20 @@ table tbody tr:last-child {
   transform: translateY(-50%);
   border-radius: 50%;
 }
+.disableRates {
+  pointer-events: none;
+  background-color: #999;
+  border-color: #999;
+}
 /* rate search ends */
 
 /* new rate search starts */
 .new-rate-cntr {
   padding: 30px 20px;
   border-bottom: 1px solid #d6d6d6;
+}
+.new-rate-cntr h3 {
+  text-align: center;
 }
 .new-radio-rate-cntr {
   display: flex;
@@ -1068,6 +1077,66 @@ table tbody tr:last-child {
 .rate-search {
   margin-bottom: 40px;
   margin-top: 40px;
+}
+.rate-dropdown {
+  margin: 15px auto 0;
+  width: 50%;
+}
+.rate-dropdown:focus {
+  outline: none;
+}
+.rate-dropdown .css-1rhbuit-multiValue {
+  font-family: "Bold Font";
+  letter-spacing: 0.5px;
+  border-radius: 50px !important;
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #333;
+  color: #fff;
+}
+.rate-dropdown .css-12jo7m5 {
+  color: #fff;
+  font-size: 100%;
+}
+.rate-dropdown .css-yk16xz-control,
+.rate-dropdown .css-yk16xz-control:hover {
+  border-color: #959595;
+}
+.rate-dropdown .css-1pahdxg-control {
+  border-color: #959595 !important;
+  box-shadow: initial !important;
+}
+.rate-dropdown .css-yt9ioa-option {
+  font-family: "Regular Font";
+  text-align: left;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+}
+.spe-equ {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+.spe-equ label {
+  font-family: "Medium Font";
+  margin-right: 20px;
+}
+.spe-equ .rate-dropdown {
+  margin: initial;
+}
+.spe-equ input[type="text"],
+.rate-address {
+  font-family: "Regular Font";
+  letter-spacing: 0.5px;
+  border: 1px solid #959595;
+  padding: 5px 10px;
+}
+.rate-address {
+  width: 100%;
+  resize: none;
+  border-radius: 5px;
+  height: 150px;
+  margin-top: 15px;
 }
 /* new rate search ends */
 
@@ -1288,7 +1357,8 @@ table tbody tr:last-child {
 }
 .ReactTable .rt-thead.-header {
   box-shadow: initial !important;
-  background: #fff;
+  background: #cbcbcb;
+  /* background: #fff; */
   border-bottom: 1px solid #dcdcdc;
 }
 .ReactTable .ReactTable .rt-tbody .rt-tr-group {
@@ -1468,6 +1538,20 @@ table tbody tr:last-child {
 }
 /* view user starts */
 
+/* analytics starts */
+.analy-radio {
+  margin: 0;
+  justify-content: initial;
+}
+.analy-radio label {
+  margin: 0;
+  border-radius: 0;
+  color: #29abe2;
+  border-color: #29abe2;
+  min-width: 100px;
+}
+/* analytics ends */
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
@@ -1487,12 +1571,18 @@ table tbody tr:last-child {
 
 .header-btn {
   background-color: #29aae3;
-  border: none;
+  border: 1px solid #29aae3;
   border-radius: 50px;
   color: #fff;
   padding: 5px 20px;
   font-size: 12px;
   margin-top: 10px;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+.header-btn:hover {
+  color: #29aae3;
+  background-color: #fff;
 }
 
 .header-ul {
@@ -1944,6 +2034,26 @@ table tbody tr:last-child {
 .yellowicon {
   width: 30px;
   height: 30px;
+}
+.mapcontainerno{
+
+  color: #39b54a;
+  font-size:16px;
+  font-weight: 500;
+  display: inline;
+  margin: 10px;
+  padding-top: 10px;
+cursor: pointer;
+}
+.gm-style-iw{
+  width: 265px;
+  
+} 
+.greenicon{
+  display: inline;
+  width: 16px;
+  height: 16px;
+  
 }
 /* --------------------------------------------------------------------------- */
 

@@ -6,10 +6,10 @@ import { Bar, Line, Doughnut } from "react-chartjs-2";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
 import VizioMyWay from "./../assets/img/greencounterchart.png";
-import Slider from 'react-rangeslider'
-import 'react-rangeslider/lib/index.css'
+import Logo from "./../assets/img/logo.png";
+import Slider from "react-rangeslider";
+import "react-rangeslider/lib/index.css";
 import { encryption } from "../helpers/encryption";
-
 
 var carboneOptions = {
   legend: {
@@ -68,7 +68,7 @@ var greencounterOption = {
   cutoutPercentage: 80,
   padding: 40
 };
- 
+
 class GreenCounter extends Component {
   constructor(props) {
     super(props);
@@ -83,8 +83,8 @@ class GreenCounter extends Component {
       ],
       volumeselectType: "Year",
       carboneselectType: "Year",
-      treecount:"",
-      cotowemission:""
+      treecount: "",
+      cotowemission: ""
     };
   }
 
@@ -93,11 +93,11 @@ class GreenCounter extends Component {
     this.HandleCarboneChartData();
     this.HandleGreenCounterChartData();
   }
-  handleOnChange = (value) => {
+  handleOnChange = value => {
     this.setState({
       volume: value
-    })
-  }
+    });
+  };
 
   HandleVolumeChangeSelect(event) {
     this.HandleVolumeChartData(event.target.value);
@@ -113,7 +113,7 @@ class GreenCounter extends Component {
       selectvalnew = selectval;
     }
     var ipaddress = window.localStorage.getItem("ipaddress");
-    var userid =encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/GreenCounterEmission`,
@@ -125,7 +125,7 @@ class GreenCounter extends Component {
       },
       headers: authHeader()
     }).then(response => {
-      self.setState({ volumechartData: response.data.Table });     
+      self.setState({ volumechartData: response.data.Table });
     });
   }
   HandleCarboneChartData(selectval) {
@@ -136,7 +136,7 @@ class GreenCounter extends Component {
     }
 
     var ipaddress = window.localStorage.getItem("ipaddress");
-    var userid =encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/GreenCounterEmission`,
@@ -158,7 +158,7 @@ class GreenCounter extends Component {
     debugger;
     let self = this;
     var ipaddress = window.localStorage.getItem("ipaddress");
-    var userid =encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/GreenCounterEmission`,
@@ -173,12 +173,15 @@ class GreenCounter extends Component {
       debugger;
       console.log(response);
       self.setState({ greencounterData: response.data.Table });
-      var greendata=response.data.Table;
-      self.setState({treecount:greendata[0]["NoOfTreesPlanted"],cotowemission:(greendata[0]["CarbonEmission"]).toFixed(2)});
+      var greendata = response.data.Table;
+      self.setState({
+        treecount: greendata[0]["NoOfTreesPlanted"],
+        cotowemission: greendata[0]["CarbonEmission"].toFixed(2)
+      });
     });
   }
   render() {
-    let { volume } = this.state
+    let { volume } = this.state;
     let vollabel = [];
     let carlabel = [];
     let volumnedata = [];
@@ -242,7 +245,7 @@ class GreenCounter extends Component {
         }
       ]
     };
-    var lbl={ 1: '1M', 2: '2M', 3: '3M'};
+    var lbl = { 1: "1M", 2: "2M", 3: "3M" };
     return (
       <>
         <Headers />
@@ -255,25 +258,25 @@ class GreenCounter extends Component {
             <div className="col-md-6">
               <div className="card carbonechart">
                 <div>
-                <div className="volcls">
-                  <label className="grncuntr-lbl">Volume Analysis</label>
-                  <select
-                    className="brncuntr-select"
-                    onChange={this.HandleVolumeChangeSelect.bind(this)}
-                  >
-                    {this.state.selectData.map(team => (
-                      <option key={team.key} value={team.value}>
-                        {team.value}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <Bar
-                  data={volumeChartData}
-                  width={100}
-                  height={50}
-                  options={volumeOptions}
-                />
+                  <div className="volcls">
+                    <label className="grncuntr-lbl">Volume Analysis</label>
+                    <select
+                      className="brncuntr-select"
+                      onChange={this.HandleVolumeChangeSelect.bind(this)}
+                    >
+                      {this.state.selectData.map(team => (
+                        <option key={team.key} value={team.value}>
+                          {team.value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <Bar
+                    data={volumeChartData}
+                    width={100}
+                    height={50}
+                    options={volumeOptions}
+                  />
                 </div>
               </div>
             </div>
@@ -293,7 +296,6 @@ class GreenCounter extends Component {
                   </select>
                 </div>
                 <div>
-                  
                   <Line
                     data={carboneCharData}
                     width={100}
@@ -318,7 +320,7 @@ class GreenCounter extends Component {
                         options={greencounterOption}
                       />
                       <img
-                        src={VizioMyWay}
+                        src={Logo}
                         alt="vizio-icon"
                         className="greenchart-img"
                       />
@@ -333,16 +335,16 @@ class GreenCounter extends Component {
                   </div>
                   <div className="col-md-4">
                     <div className="grncntrsld">
-                    <Slider
-                      value={volume}
-                      orientation="vertical"
-                      onChange={this.handleOnChange}
-                      min={1}
-                      max={3}
-                      step={1}
-                      labels={lbl}
-                      reverse={false}
-                    />
+                      <Slider
+                        value={volume}
+                        orientation="vertical"
+                        onChange={this.handleOnChange}
+                        min={1}
+                        max={3}
+                        step={1}
+                        labels={lbl}
+                        reverse={false}
+                      />
                     </div>
                   </div>
                 </div>

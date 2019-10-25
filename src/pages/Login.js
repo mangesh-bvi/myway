@@ -55,6 +55,7 @@ class Login extends React.Component {
         console.log("axios response" + new Date());
         debugger;
         var data = response.data;
+        window.localStorage.setItem("st",new Date());
         console.log(data);
         window.localStorage.setItem("username",encryption(data.Table[0].UserName,"enc"));
         window.localStorage.setItem("firstname",encryption(data.Table[0].FirstName,"enc"));

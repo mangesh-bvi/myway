@@ -7,10 +7,34 @@ class RateSearch extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      IsSearchRate: false
+    };
+  }
+  EnableRates = e => {
+    debugger;
+    if (e.target.value == "") {
+      document.getElementById("SearchRate").classList.add("disableRates");
+    } else {
+      document.getElementById("SearchRate").classList.remove("disableRates");
+    }
+  };
+
+  HideSearchText() {
+    document.getElementById("searchtxt").style.display = "none";
+    document.getElementById("SearchRate").classList.remove("disableRates");
+  }
+  ShowSearchText() {
+    document.getElementById("SearchRate").classList.add("disableRates");
+    document.getElementById("searchtxt").style.display = "block";
   }
 
+  componentDidMount() {
+    // document.getElementById("SearchRate").classList.add("disableRates");
+    document.getElementById("SearchRate").classList.add("disableRates");
+  }
   render() {
+    const { IsSearchRate } = this.state;
     return (
       <div>
         <Headers />
@@ -26,6 +50,7 @@ class RateSearch extends Component {
                   <div>
                     <input
                       type="radio"
+                      onClick={this.ShowSearchText}
                       name="cust-select"
                       id="exist-cust"
                       defaultChecked
@@ -33,19 +58,30 @@ class RateSearch extends Component {
                     <label htmlFor="exist-cust">Existing Customer</label>
                   </div>
                   <div>
-                    <input type="radio" name="cust-select" id="new-cust" />
+                    <input
+                      type="radio"
+                      onClick={this.HideSearchText}
+                      name="cust-select"
+                      id="new-cust"
+                    />
                     <label htmlFor="new-cust">New Customer</label>
                   </div>
                 </div>
               </div>
               <div className="login-fields mt-5 mb-0">
                 <input
+                  id="searchtxt"
                   type="text"
+                  onChange={this.EnableRates}
                   placeholder="Search Account/Customer"
                   name="search-rate"
                 />
               </div>
-              <a href="new-rate-search" className="butn blue-butn">
+              <a
+                href="new-rate-search"
+                id="SearchRate"
+                className="butn blue-butn"
+              >
                 Search Rates
               </a>
             </div>
