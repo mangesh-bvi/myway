@@ -26,22 +26,26 @@ class AdminSideMenu extends Component {
         <div>
           <ul className="sidemenu-ul">
             <li className="sidemenu-ul-li">
+            <a href="view-user">
               <img
                 src={DashboardIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />{" "}
               View User
+              </a>
             </li>
             <li className="sidemenu-ul-li">
+            <a href="AddUser">
               <img
                 src={QuotesIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />
+              </a>
               Add User
             </li>
-            <li className="sidemenu-ul-li">
+            {/* <li className="sidemenu-ul-li">
               <img
                 src={GreenCounterIcon}
                 alt="green-counter-icon"
@@ -84,7 +88,7 @@ class AdminSideMenu extends Component {
                 />
                 Event Management
               </a>
-            </li>
+            </li> */}
           </ul>
           <ul className="sidemenu-ul2" style={{ marginTop: "84%" }}>
             

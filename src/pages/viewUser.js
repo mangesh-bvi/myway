@@ -7,7 +7,7 @@ import Moment from "react-moment";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
 import Headers from "../component/header";
-import SideMenu from "../component/sidemenu";
+import AdminSideMenu from "../component/adminSideMenu";
 import GoogleMapReact from "google-map-react";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
@@ -84,7 +84,7 @@ class ViewUser extends Component {
     var userId = row.original["UserId"];
     this.props.history.push({
       pathname: "addUser",
-      state: { detail: userId }
+      state: { detail: userId, page: "Edit" }
     });
   }
 
@@ -149,7 +149,7 @@ class ViewUser extends Component {
         <Headers />
         <div className="cls-ofl">
           <div className="cls-flside">
-            <SideMenu />
+            <AdminSideMenu />
           </div>
           <div className="cls-rt no-bg min-hei-auto">
             <div className="title-sect">
