@@ -3,7 +3,7 @@ import "../styles/custom.css";
 import axios from "axios";
 import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import DatePicker from "react-datepicker";
-import Moment from 'react-moment';
+import Moment from "react-moment";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
@@ -33,9 +33,10 @@ import {
   GoogleMap,
   Marker,
   InfoWindow,
-  Polyline,google
+  Polyline,
+  google
 } from "react-google-maps";
- 
+
 const { compose } = require("recompose");
 
 const MapWithAMakredInfoWindow = compose(
@@ -62,7 +63,7 @@ const MapWithAMakredInfoWindow = compose(
                 <b>{marker.locationName}</b>
               </div>
             </InfoWindow>
-          )}         
+          )}
         </Marker>
       );
     })}
@@ -84,7 +85,7 @@ const MapWithAMakredInfoWindowLine = compose(
 
       var start = marker.StartLatLng;
       var end = marker.EndLatLng;
-      var OID=marker.ORDERID;
+      var OID = marker.ORDERID;
       let iconMarker = new window.google.maps.MarkerImage(
         YellowFlag,
         null /* size is determined at runtime */,
@@ -95,7 +96,7 @@ const MapWithAMakredInfoWindowLine = compose(
       var lineSymbol = {
         path: window.google.maps.SymbolPath.CIRCLE,
         scale: 8,
-        strokeColor: '#393'
+        strokeColor: "#393"
       };
       // function animateCircle(line) {
       //   var count = 0;
@@ -113,18 +114,18 @@ const MapWithAMakredInfoWindowLine = compose(
           <Polyline
             path={marker.Rounting}
             geodesic={true}
-                options={{
-                    strokeColor: "#ff2527",
-                    strokeOpacity: 0.75,
-                    strokeWeight: 2,
-                    icons: [
-                        {
-                            // icon: lineSymbol,
-                            offset: "100%",
-                            repeat: "20px"
-                        }
-                    ]
-                }}
+            options={{
+              strokeColor: "#ff2527",
+              strokeOpacity: 0.75,
+              strokeWeight: 2,
+              icons: [
+                {
+                  // icon: lineSymbol,
+                  offset: "100%",
+                  repeat: "20px"
+                }
+              ]
+            }}
           />
           {OID === 1 && (
             <>
@@ -211,7 +212,7 @@ const MapWithAMakredInfoWindowLine = compose(
           )}
           {OID === 3 && (
             <>
-            <Marker
+              <Marker
                 key={5}
                 onClick={onClick}
                 icon={iconMarker}
@@ -253,10 +254,9 @@ const MapWithAMakredInfoWindowLine = compose(
         </div>
       );
     })}
-     
   </GoogleMap>
 ));
- 
+
 class ShipmentPlanner extends Component {
   constructor(props) {
     super(props);
@@ -280,14 +280,14 @@ class ShipmentPlanner extends Component {
       totalMinDays: "",
       totalMaxDays: "",
       transitpopup: [],
-      deliveryPopup:[],
-      firstAvg:"",
-      firstmgmt:"",
-      secondAvg:"",
-      secondmgmt:"",
-      visualCarrier:"",
-      thirdAvg:"",
-      thirdmgmt:"",
+      deliveryPopup: [],
+      firstAvg: "",
+      firstmgmt: "",
+      secondAvg: "",
+      secondmgmt: "",
+      visualCarrier: "",
+      thirdAvg: "",
+      thirdmgmt: "",
       zoom: 4,
       center: {
         lat: 25.37852,
@@ -297,7 +297,7 @@ class ShipmentPlanner extends Component {
       MapsDetailsData: [],
       showingMaps: true,
       selectedMarker: false,
-      mappingId:0
+      mappingId: 0
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
@@ -305,7 +305,7 @@ class ShipmentPlanner extends Component {
     this.toggleVisual = this.toggleVisual.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     this.HandleOnPageLoad = this.HandleOnPageLoad.bind(this);
-    this.HandleSubmitDetailsData=this.HandleSubmitDetailsData.bind(this);
+    this.HandleSubmitDetailsData = this.HandleSubmitDetailsData.bind(this);
   }
 
   handleClick = (marker, event) => {
@@ -314,63 +314,56 @@ class ShipmentPlanner extends Component {
   };
   HandleSubmitDetailsData(submitdata) {
     debugger;
-    
+
     var DetailsData = submitdata.data.Table;
-    
-    var FinalData=[];
-    for (let i=0;i<DetailsData.length;i++)
-    {
-      var finalList=new Object()
-      finalList.ORDERID=DetailsData[i].ORDERID
-      finalList.CModeOfTransport=DetailsData[i].CModeOfTransport;
-      finalList.StartLocation=DetailsData[i].StartLocation;
-      finalList.ShipperName=DetailsData[i].ShipperName;
-      finalList.EndLocation=DetailsData[i].EndLocation;
-      finalList.ConsigneeName=DetailsData[i].ConsigneeName;
-      
 
-// Start Location Lat lng
-      var CStLatLong=DetailsData[i].CStLatLong;
-      var startlatlng=[]
-      var startlatlnglst=new Object();
-      startlatlnglst.lat=Number(CStLatLong.split(",")[0]);
-      startlatlnglst.lng=Number(CStLatLong.split(",")[1]);
+    var FinalData = [];
+    for (let i = 0; i < DetailsData.length; i++) {
+      var finalList = new Object();
+      finalList.ORDERID = DetailsData[i].ORDERID;
+      finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
+      finalList.StartLocation = DetailsData[i].StartLocation;
+      finalList.ShipperName = DetailsData[i].ShipperName;
+      finalList.EndLocation = DetailsData[i].EndLocation;
+      finalList.ConsigneeName = DetailsData[i].ConsigneeName;
+
+      // Start Location Lat lng
+      var CStLatLong = DetailsData[i].CStLatLong;
+      var startlatlng = [];
+      var startlatlnglst = new Object();
+      startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
+      startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
       startlatlng.push(startlatlnglst);
-      finalList.StartLatLng=startlatlng;
+      finalList.StartLatLng = startlatlng;
 
-// End Location Lat Lng 
-      var CEdLatLong=DetailsData[i].CEdLatLong;
-      var endlatlng=[]
-      var endlatlnglst=new Object();
-      endlatlnglst.lat=Number(CEdLatLong.split(",")[0]);
-      endlatlnglst.lng=Number(CEdLatLong.split(",")[1]);
+      // End Location Lat Lng
+      var CEdLatLong = DetailsData[i].CEdLatLong;
+      var endlatlng = [];
+      var endlatlnglst = new Object();
+      endlatlnglst.lat = Number(CEdLatLong.split(",")[0]);
+      endlatlnglst.lng = Number(CEdLatLong.split(",")[1]);
       endlatlng.push(endlatlnglst);
-      finalList.EndLatLng=endlatlng;
-      
-// Rounting line      
-     var RouteLatLong = DetailsData[i].RouteLatLong;
-     var RouteArray = [];
-     var ComplexData = [];
-     RouteArray.push(RouteLatLong.split(";"));
-      
-     var routlen=RouteArray[0];
-     for(let k=0;k<routlen.length;k++)
-     {
-       var routelatlng=new Object();
-       var latlngvar=routlen[k];
-       routelatlng.lat=Number(latlngvar.split(",")[0]);
-       routelatlng.lng=Number(latlngvar.split(",")[1]);
-       ComplexData.push(routelatlng);    
-     }
-     finalList.Rounting =ComplexData;
-     FinalData.push(finalList);
-     
+      finalList.EndLatLng = endlatlng;
+
+      // Rounting line
+      var RouteLatLong = DetailsData[i].RouteLatLong;
+      var RouteArray = [];
+      var ComplexData = [];
+      RouteArray.push(RouteLatLong.split(";"));
+
+      var routlen = RouteArray[0];
+      for (let k = 0; k < routlen.length; k++) {
+        var routelatlng = new Object();
+        var latlngvar = routlen[k];
+        routelatlng.lat = Number(latlngvar.split(",")[0]);
+        routelatlng.lng = Number(latlngvar.split(",")[1]);
+        ComplexData.push(routelatlng);
+      }
+      finalList.Rounting = ComplexData;
+      FinalData.push(finalList);
     }
     console.log(FinalData);
-    this.setState({ MapsDetailsData: FinalData ,showingMaps:false});
-    
-     
-     
+    this.setState({ MapsDetailsData: FinalData, showingMaps: false });
   }
   HandleOnPageLoad() {
     let self = this;
@@ -378,7 +371,7 @@ class ShipmentPlanner extends Component {
       method: "post",
       url: `${appSettings.APIURL}/RegCompanyLocation`,
       data: {
-        UserID: encryption(window.localStorage.getItem("userid"),"desc")
+        UserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
     }).then(function(response) {
@@ -405,8 +398,8 @@ class ShipmentPlanner extends Component {
         jData.lat = latData;
         jData.lng = longData;
         jData.locationName = locName;
-        jData.RegCompanyName = compName;       
-        debugger; 
+        jData.RegCompanyName = compName;
+        debugger;
         if (jCheck > 0) {
           if (
             !finalDataForMap[jCheck - 1]["lat"].includes(latData) &&
@@ -416,11 +409,14 @@ class ShipmentPlanner extends Component {
 
             jCheck = jCheck + 1;
           } else {
-            var index = finalDataForMap.findIndex(x => x.lat ===latData && x.lng=== longData);
+            var index = finalDataForMap.findIndex(
+              x => x.lat === latData && x.lng === longData
+            );
             if (index >= 0) {
               var tempCompData = finalDataForMap[index]["RegCompanyName"];
-              //finalDataForMap[index]["RegCompanyName"] //=finalDataForMap[index]["RegCompanyName"] + "," + 
-              finalDataForMap[index]["RegCompanyName"]= tempCompData + "," + compName;
+              //finalDataForMap[index]["RegCompanyName"] //=finalDataForMap[index]["RegCompanyName"] + "," +
+              finalDataForMap[index]["RegCompanyName"] =
+                tempCompData + "," + compName;
             }
           }
         } else {
@@ -429,7 +425,7 @@ class ShipmentPlanner extends Component {
         }
       }
       console.log(finalDataForMap);
-      
+
       self.setState({ mapsData: finalDataForMap });
       console.log(self.state.mapsData);
     });
@@ -438,20 +434,20 @@ class ShipmentPlanner extends Component {
   companyChange = e => {
     let self = this;
     let compArray = [];
- 
+
     for (let index = 0; index < this.state.companydrp.length; index++) {
       if (this.state.companydrp[index].MyCompID == e.target.value) {
         compArray = this.state.companydrp[index];
         break;
       }
     }
-debugger;
-     
+    debugger;
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
       data: {
-        UserID:encryption(window.localStorage.getItem("userid"),"desc"),
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
         MyCompID: compArray.MyCompID,
         MyCompLocationID: compArray.MyCompLocationID,
         MyCompLocationType: compArray.MyCompLocationType
@@ -467,7 +463,7 @@ debugger;
 
   consigneeChange = e => {
     let self = this;
-    let supconsid =e.target.value;
+    let supconsid = e.target.value;
     self.setState({ supConsId: supconsid });
     axios({
       method: "post",
@@ -538,39 +534,35 @@ debugger;
       var totalMin = 0;
       var totalMax = 0;
       for (let index = 0; index < response.data.Table.length; index++) {
-        if(index==0)
-        {
-          self.setState({firstAvg:response.data.Table[index].NTransit_Time});
-        }
-        else if(index==1)
-        {
-          self.setState({secondAvg:response.data.Table[index].NTransit_Time});
-        }
-        else{
-          self.setState({thirdAvg:response.data.Table[index].NTransit_Time});
+        if (index == 0) {
+          self.setState({ firstAvg: response.data.Table[index].NTransit_Time });
+        } else if (index == 1) {
+          self.setState({
+            secondAvg: response.data.Table[index].NTransit_Time
+          });
+        } else {
+          self.setState({ thirdAvg: response.data.Table[index].NTransit_Time });
         }
         totalAvg += parseInt(response.data.Table[index].NTransit_Time);
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
-      var deliveryData=response.data.Table1;
-      if(deliveryData!="undefined" && deliveryData!=null)
-      {
-        self.setState({ deliveryPopup: deliveryData});
+      var deliveryData = response.data.Table1;
+      if (deliveryData != "undefined" && deliveryData != null) {
+        self.setState({ deliveryPopup: deliveryData });
       }
-      var transitData=response.data.Table;
-      if(transitData!=="undefined"&& transitData!=null ){
+      var transitData = response.data.Table;
+      if (transitData !== "undefined" && transitData != null) {
         self.setState({ transitpopup: transitData });
       }
-      
-      
+
       self.setState({ totalAvgDays: totalAvg });
       self.setState({ totalMinDays: totalMin });
       self.setState({ totalMaxDays: totalMax });
-       
-      var submitdata=response;
+
+      var submitdata = response;
       console.log(self.state.deliveryPopup);
-      self.HandleSubmitDetailsData(submitdata); 
+      self.HandleSubmitDetailsData(submitdata);
     });
   };
   toggleTransit() {
@@ -601,7 +593,7 @@ debugger;
       method: "post",
       url: `${appSettings.APIURL}/FetchShipperCompany`,
       data: {
-        UserID:encryption(window.localStorage.getItem("userid"),"desc")
+        UserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
     }).then(function(response) {
@@ -611,11 +603,24 @@ debugger;
   }
 
   renderTableHeader() {
-    return <div><div>1223333</div></div>
- }
+    return (
+      <div>
+        <div>1223333</div>
+      </div>
+    );
+  }
 
   render() {
-const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,MapsDetailsData } = this.state;
+    const {
+      mapsData,
+      transitpopup,
+      deliveryPopup,
+      firstAvg,
+      secondAvg,
+      thirdAvg,
+      carriar,
+      MapsDetailsData
+    } = this.state;
 
     let optionItems = this.state.companydrp.map((planet, i) => (
       <option
@@ -628,20 +633,16 @@ const { mapsData,transitpopup,deliveryPopup,firstAvg,secondAvg,thirdAvg,carriar,
         {planet.MyCompName}
       </option>
     ));
-    
+
     function TransitionImage(props) {
       const imgType = props.imgType;
-      if (imgType=="Road") {
+      if (imgType == "Road") {
         return <img src={Truck}></img>;
-      }
-      else if(imgType=="Air-Midnight Wonder")
-      {
+      } else if (imgType == "Air-Midnight Wonder") {
         return <img src={Plane}></img>;
-      }
-      else{
+      } else {
         return <img src={Ship}></img>;
       }
-     
     }
 
     return (

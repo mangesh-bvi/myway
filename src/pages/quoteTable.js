@@ -92,7 +92,7 @@ class QuoteTable extends Component {
           </div>
           <div className="cls-rt">
             <div className="title-sect">
-              <h2>Quote</h2>
+              <h2>Quote Table</h2>
             </div>
             <div className="ag-fresh">
               <ReactTable
