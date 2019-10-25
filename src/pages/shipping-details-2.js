@@ -153,10 +153,20 @@ class ShippingDetailsTwo extends Component {
 
   componentDidMount() {
     debugger;
+    let self = this;
+    var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split("=")[1];
+    if(url!=""&& url!=null)
+    {
+      self.HandleShipmentDetails(url);
+    }
+    else{
+      var hblno = this.props.location.state.detail;
+      self.HandleShipmentDetails(hblno);
+    }
+    
 
-    var hblno = this.props.location.state.detail;
-
-    this.HandleShipmentDetails();
+    // self.setState({ HblNo: hblno });
+    
   }
 
   HandleMapDetailsData(mdetails) {
@@ -277,16 +287,17 @@ class ShippingDetailsTwo extends Component {
     });
   }
 
-  HandleShipmentDetails() {
+  HandleShipmentDetails(hblno) {
+    debugger;
     let self = this;
     var userid = window.localStorage.getItem("userid");
-    var HblNo = self.state.HblNo;
+    var HblNo = hblno;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
         UserId: 874588, // userid,
-        HBLNo: "AQTYMSE190317" //HblNo
+        HBLNo: HblNo //HblNo
       },
       headers: authHeader()
     }).then(function(response) {

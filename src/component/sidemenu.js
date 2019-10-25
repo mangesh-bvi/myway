@@ -146,6 +146,16 @@ class SideMenu extends Component {
                 Green Counter
               </a>
             </li>
+            <li className="sidemenu-ul-li">
+              <a href="view-user">
+                <img
+                  src={GreenCounterIcon}
+                  alt="green-counter-icon"
+                  className="header-greencounter-icon"
+                />
+                Admin
+              </a>
+            </li>
           </ul>
           <ul className="sidemenu-ul2" style={{ marginTop: "84%" }}>
             <li style={{ width: "50%" }}>
