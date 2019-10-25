@@ -347,7 +347,7 @@ class RateFinalizing extends Component {
                     <div className="">
                       <div className="row">
                         <div className="col-md-4">
-                          <p className="details-title">Account/Customer</p>
+                          <p className="details-title">Account/Consignee</p>
                           <p className="details-para">abcd</p>
                         </div>
                         <div className="col-md-4">
@@ -364,7 +364,7 @@ class RateFinalizing extends Component {
                     </div>
                     <div className="text-right">
                       <a href="rate-table" className="butn more-padd">
-                        Add New Customer
+                        Add New Consignee
                       </a>
                     </div>
                     <div className="row">
