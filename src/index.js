@@ -67,7 +67,7 @@ ReactDOM.render(
     <Route exact path="/shipment-planner" component={ShipmentPlanner} />
     <Route exact path="/rate-search" component={RateSearch} />
     <Route exact path="/new-rate-search" component={NewRateSearch} />
-    <Route exact path="/AddUser" component={AddUser} />
+    <Route exact path="/add-user" component={AddUser} />
     <Route exact path="/rate-table" component={RateTable} />
     <Route exact path="/spot-rate" component={SpotRate} />
     <Route exact path="/spot-rate-table" component={SpotRateTable} />

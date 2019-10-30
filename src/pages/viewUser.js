@@ -82,10 +82,18 @@ class ViewUser extends Component {
   HandleDocumentView(evt, row) {
     debugger;
     var userId = row.original["UserId"];
-    this.props.history.push({
-      pathname: "addUser",
-      state: { detail: userId, page: "Edit" }
-    });
+    if (row.original["UserType"] == "Sales User") {
+      this.props.history.push({
+        pathname: "AddSalesUser",
+        state: { detail: userId, page: "Edit" }
+      });
+    }
+    else{
+      this.props.history.push({
+        pathname: "Add-user",
+        state: { detail: userId, page: "Edit" }
+      });
+    }
   }
 
   render() {
@@ -167,7 +175,7 @@ class ViewUser extends Component {
                       },
                       {
                         Header: "User Name",
-                        accessor: "CreatedByName"
+                        accessor: "Username"
                       },
                       {
                         Header: "Is Enabled",

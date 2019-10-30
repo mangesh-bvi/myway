@@ -36,14 +36,14 @@ class AdminSideMenu extends Component {
               </a>
             </li>
             <li className="sidemenu-ul-li">
-            <a href="AddUser">
+            <a href="add-user">
               <img
                 src={QuotesIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
-              />
-              </a>
+              />{" "}
               Add User
+              </a>
             </li>
             {/* <li className="sidemenu-ul-li">
               <img

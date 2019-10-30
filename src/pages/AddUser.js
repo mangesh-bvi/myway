@@ -31,6 +31,10 @@ class AddUser extends React.Component{
         { key: true, value: "True" },
         { key: false, value: "False" }
       ],
+      selectUserCreate: [
+        { key: 1, value: "True" },
+        { key: 0, value: "False" }
+      ],  
       selectUserType: [],
       selectIsAdmin: [
         { key: "Y", value: "Yes" },
@@ -61,9 +65,12 @@ class AddUser extends React.Component{
       srnos: '',
       username: '',
       Documents: '',
+      AccessIDs: '',
       RegCompany:[],
       editRegCompany:[],
-      selectedFile: null
+      selectedFile: null,
+      disabled: true,
+      IsMobileEnabled: false
       
     }
 
@@ -102,7 +109,11 @@ class AddUser extends React.Component{
                     
                   </select>
                     }
-                  <input type='button' value='remove' id={"remove" + (index+1)} className='dynamic-remove' onClick={this.removeClick.bind(this, index)}/>
+                    {(() => {
+                      if (i>0) {
+                  return <input type='button' value='remove' id={"remove" + (index+1)} className='dynamic-remove' onClick={this.removeClick.bind(this, index)}/>
+                      }
+                    })()}
                   {(() => {
                       if ((this.state.editRegCompany[i].CompType).includes('C,S') || (this.state.editRegCompany[i].CompType).includes('S,C')) {
                         return <div className="remember-forgot col-md-1">
@@ -113,7 +124,7 @@ class AddUser extends React.Component{
                         <div>
                           <input id={"Shipper" + (index+1)} type="checkbox" name={"Shipper" + (index+1)} defaultChecked={true} onChange={this.toggleChangeShip1.bind(this,index, "S")}/>
                             <label htmlFor={"Shipper" + (index+1)}>Shipper</label>
-                        </div>}
+                        </div>
                         
                       </div>
                      } else if ((this.state.editRegCompany[i].CompType).includes('S')) {
@@ -128,18 +139,32 @@ class AddUser extends React.Component{
                    </div>
                    
                  </div>
-                } else {
+                } else if ((this.state.editRegCompany[i].CompType).includes('C')) {
                   return <div className="remember-forgot col-md-1">
                    <div>
-                     <input id="Consignee" type="checkbox" name="Consignee" defaultChecked={true} onChange={this.toggleChangeCon1.bind(this,index, "C")}/>
-                       <label htmlFor="Consignee">Consignee</label>
+                     <input id={"Consignee" + (index+1)} type="checkbox" name="Consignee" defaultChecked={true} onChange={this.toggleChangeCon1.bind(this,index, "C")}/>
+                       <label htmlFor={"Consignee" + (index+1)}>Consignee</label>
                    </div>
                    <div>
-                     <input id="Shipper" type="checkbox" name="Shipper" onChange={this.toggleChangeShip1.bind(this,index, "S")}/>
-                       <label htmlFor="Shipper">Shipper</label>
+                     <input id={"Shipper" + (index+1)} type="checkbox" name="Shipper" onChange={this.toggleChangeShip1.bind(this,index, "S")}/>
+                       <label htmlFor={"Shipper" + (index+1)}>Shipper</label>
                    </div>
                    
                  </div>
+               }
+               else
+               {
+                return <div className="remember-forgot col-md-1">
+                <div>
+                  <input id={"Consignee" + (index+1)} type="checkbox" name="Consignee"  onChange={this.toggleChangeCon1.bind(this,index, "C")}/>
+                    <label htmlFor={"Consignee" + (index+1)}>Consignee</label>
+                </div>
+                <div>
+                  <input id={"Shipper" + (index+1)} type="checkbox" name="Shipper" onChange={this.toggleChangeShip1.bind(this,index, "S")}/>
+                    <label htmlFor={"Shipper" + (index+1)}>Shipper</label>
+                </div>
+                
+              </div>
                }
               })()}
                 
@@ -153,6 +178,60 @@ class AddUser extends React.Component{
          
       </div> ) 
     }
+    else if(el.includes("d"))
+    {
+      return <div>
+         <select
+                    onChange={(el) => this.HandleChangeCompany1(el, index)}
+                    name={"Company"}
+                  >
+                    <option key={"Select"} value={"Select"}>--Select--</option>
+                    {this.state.selectCompany.map(team => (
+                      <option key={team.RegCompID} value={team.RegCompID}>
+                        {team.RegCompName}
+                      </option>
+                    ))}
+         </select>
+         {/* <input type='button' value='remove' id={"remove" + (index+1)} className='dynamic-remove' onClick={this.removeClick.bind(this, index)}/> */}
+         <div className="remember-forgot col-md-1">
+            <div>
+                <input id={"Consignee"} type="checkbox" name={"Consignee"} onChange={this.toggleChangeCon.bind(this,"C")}/>
+                <label htmlFor={"Consignee"}>Consignee</label>
+            </div>
+            <div>
+                <input id={"Shipper"} type="checkbox" name={"Shipper"} onChange={this.toggleChangeShip.bind(this,"S")}/>
+                <label htmlFor={"Shipper"}>Shipper</label>
+            </div>
+         </div>
+         
+        </div>
+    }
+    else if (el.includes("a")) {
+      return <div>
+      <select
+        onChange={(el) => this.HandleChangeCompany1(el, index)}
+        name={"Company"}
+      >
+        <option key={"Select"} value={"Select"}>--Select--</option>
+        {this.state.selectCompany.map(team => (
+          <option key={team.RegCompID} value={team.RegCompID}>
+            {team.RegCompName}
+          </option>
+        ))}
+      </select>
+      <div className="remember-forgot col-md-1">
+       <div>
+         <input id="Consignee" type="checkbox" name="Consignee" disabled={this.state.disabled} onChange={this.toggleChangeCon.bind(this, "C")}/>
+           <label htmlFor="Consignee">Consignee</label>
+       </div>
+       <div>
+         <input id="Shipper" type="checkbox" name="Shipper" disabled={this.state.disabled} onChange={this.toggleChangeShip.bind(this, "S")}/>
+           <label htmlFor="Shipper">Shipper</label>
+       </div>
+       
+     </div>
+      </div>
+    }
      else{
       return <div key={index+1}>
          <select
@@ -161,7 +240,7 @@ class AddUser extends React.Component{
                   >
                     <option key={"Select"} value={"Select"}>--Select--</option>
                     {this.state.selectCompany.map(team => (
-                      <option key={team.RegCompID} value={team.SuperCompID}>
+                      <option key={team.RegCompID} value={team.RegCompID}>
                         {team.RegCompName}
                       </option>
                     ))}
@@ -201,17 +280,42 @@ class AddUser extends React.Component{
 
   HandleChangeCompany(e)
   {
-       this.state.companies[0] = e.target.value
+    debugger;
+    if (this.state.editRegCompany.length<1) {
+      this.state.companies[0] = e.target.value
       this.state.editRegCompany.push({CompType:"",RegCompID:this.state.companies[0],IsEnable:true})
+    }
+    else
+    {
+      this.state.editRegCompany[0].RegCompID = e.target.value
+    }
+    this.setState({
+    disabled: !this.state.disabled})
        //this.setState({values: this.state.values})
   }
 
   HandleChangeCompany1(e, index)
   {
     debugger;
-    this.state.companies[index+1] = e.target.value
-    this.state.editRegCompany.push({CompType:"",RegCompID:parseInt(this.state.companies[index+1]),IsEnable:true})
-    // this.setState({values: this.state.values})
+    if (e.target.value == 'Select') {
+      this.state.disabled = true;
+      this.state.editRegCompany[index].CompType = "";
+    }
+    else
+    {
+      if (this.state.editRegCompany.length < (index+1)) {
+      this.state.editRegCompany.push({CompType:"",RegCompID:parseInt(e.target.value),IsEnable:true, IsDelete:false})
+      // this.setState({values: this.state.values})
+      }
+      else
+      {
+      this.state.editRegCompany[index].RegCompID = e.target.value
+      this.state.editRegCompany[index].IsDelete = false;
+      }
+      this.state.disabled = false;
+    }
+    this.setState({editRegCompany: this.state.editRegCompany, disabled: this.state.disabled})
+    //e.preventDefault();
   }
 
   componentWillMount() {
@@ -230,8 +334,10 @@ class AddUser extends React.Component{
       let MOD =[];
       let arr = [];
       let arrDoc = [];
+      let arrAcc = [];
       arr = self.state.modeoftrans.split(',') 
-      arrDoc = self.state.Documents.slice(0, -1).split(',')
+      arrDoc = self.state.Documents
+      arrAcc =  self.state.AccessIDs.slice(0, -1).split(',')
       for (const [index, value] of response.data.Table3.entries()) {
         debugger;
         if(arr.includes(value.ID))
@@ -252,19 +358,21 @@ class AddUser extends React.Component{
         }
       }
 
-      // for (const [index, value] of response.data.Table7.entries()) {
-      //   if (arrDoc.includes(value.DocumentID)) {
-      //     self.state.accessrights.push({"id":value.DocumentID, "Value":value.DocumentName, "IsSelected":1})
-      //   }
-      //   else{
-      //     self.state.hideDocument.push({"DocumentID":value.DocumentID, "DocumentName":value.DocumentName, "IsSelected":0})
-      //   }
-      // }
+       for (const [index, value] of response.data.Table7.entries()) {
+         debugger;
+       if (arrAcc.includes(value.id.toString())) {
+           self.state.accessrights.push({"id":value.id, "Value":value.Value, "IsSelected":1})
+         }
+       else{
+           self.state.accessrights.push({"id":value.id, "Value":value.Value, "IsSelected":0})
+         }
+       }
+
       self.setState({ selectCountry: response.data.Table, selectUserType: response.data.Table1,
         selectImpExp: response.data.Table2, selectCompany: response.data.Table4, 
         chkModeOfTrans: MOD, 
         hideDocument: self.state.hideDocument,
-        miscelleneous: response.data.Table6, accessrights: response.data.Table7
+        miscelleneous: response.data.Table6, accessrights: self.state.accessrights
         });
     })
 
@@ -284,7 +392,11 @@ class AddUser extends React.Component{
     debugger;
     let values = [...this.state.values];
     values.splice(i,1);
-    this.setState({ values });
+    if(this.state.editRegCompany.length>i)
+    {
+    this.state.editRegCompany[i].IsDelete = true;
+    }
+    this.setState({ values, editRegCompan: this.state.editRegCompany });
  }
 
  handlechange(field,e) {
@@ -307,12 +419,11 @@ handleBlur(field,e)
   });
   let errors = {};
   let formIsValid = true;
-  const {emailid} =this.state;
   axios({
     method: "post",
     url: "http://vizio.atafreight.com/MyWayAPI/CheckEmailIDExists",
     data: {
-      EmailID:emailid,
+      EmailID:this.state.fields["emailid"],
       ProfileType: 1
     },
     headers: authHeader()
@@ -352,12 +463,11 @@ handleBlurUser(field,e)
   });
   let errors = {};
   let formIsValid = true;
-  const {username} =this.state;
   axios({
     method: "post",
     url: "http://vizio.atafreight.com/MyWayAPI/CheckUserNameExists",
     data: {
-      UserName:username
+      UserName:this.state.fields["username"]
     },
     headers: authHeader()
   }).then(function(response) {
@@ -408,53 +518,68 @@ toggleChange(index,name, event) {
   
 }
 
+toggleMobileChange(field,e)
+{
+  debugger;
+  let fields = this.state.fields;
+  fields[field] = !this.state.IsMobileEnabled;        
+  this.setState({
+    IsMobileEnabled: !this.state.IsMobileEnabled,
+    fields
+  });
+}
 
 toggleChangeCon(name, event) {
   debugger;
-  if (this.state.companies[0].includes(":C") != true) {
+  if (this.state.editRegCompany[0].CompType.includes("C") != true) {
+    this.state.editRegCompany[0].CompType += ","+ name
     this.setState({
-      [this.state.companies[0]]: this.state.companies[0]+=":"+name,
-      isConsignee: !this.state.isConsignee
-    });
-  }
-  else
-  {
-    if (this.state.companies[0].split(':').includes("S")) {
-      this.state.companies[0] =this.state.companies[0].split(':')[0]+":S"
-    }
-    else{
-      this.state.companies[0] =this.state.companies[0].split(':')[0]
-    }   
-    this.setState({
-      [this.state .companies[0]]: this.state.companies[0],
-      isConsignee: !this.state.isConsignee
-    })
-  }
-}
-
-toggleChangeCon1(index, name, event) {
-  debugger;
-  if (this.state.companies[index+1].includes(":C") != true) {
-    this.state.editRegCompany[index].CompType += name+","
-    this.setState({
-      [this.state.companies[index+1]]: this.state.companies[index+1]+=":"+name,
+      // [this.state.companies[0]]: this.state.companies[0]+=":"+name,
       isConsignee: !this.state.isConsignee,
       editRegCompany: this.state.editRegCompany
     });
   }
   else
   {
-    if (this.state.companies[index+1].split(':').includes("S")) {
-      this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]+":S"
-      // this.state.editRegCompany.push({CompType:"",RegCompID:parseInt(this.state.companies[index+1]),IsEnable:true})
-      this.state.editRegCompany[index].CompType = 'S,'
+    if (this.state.editRegCompany[0].CompType.includes("S")) {
+      // this.state.companies[0] =this.state.companies[0].split(':')[0]+":S"
+      this.state.editRegCompany[0].CompType = ',S'
     }
     else{
-      this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]
+      // this.state.companies[0] =this.state.companies[0].split(':')[0]
+      this.state.editRegCompany[0].CompType = ''
+    }   
+    this.setState({
+      // [this.state .companies[0]]: this.state.companies[0],
+      isConsignee: !this.state.isConsignee,
+      editRegCompany: this.state.editRegCompany
+    })
+  }
+}
+
+toggleChangeCon1(index, name, event) {
+  debugger;
+  if (this.state.editRegCompany[index].CompType.includes("C") != true) {
+    this.state.editRegCompany[index].CompType += ","+ name
+    this.setState({
+      // [this.state.companies[index]]: this.state.companies[index]+=":"+name,
+      isConsignee: !this.state.isConsignee,
+      editRegCompany: this.state.editRegCompany
+    });
+  }
+  else
+  {
+    if (this.state.editRegCompany[index].CompType.includes("S")) {
+      // this.state.companies[index] =this.state.companies[index+1].split(':')[0]+":S"
+      // this.state.editRegCompany.push({CompType:"",RegCompID:parseInt(this.state.companies[index+1]),IsEnable:true})
+      this.state.editRegCompany[index].CompType = ',S'
+    }
+    else{
+      // this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]
       this.state.editRegCompany[index].CompType = ''
     }   
     this.setState({
-      [this.state .companies[index+1]]: this.state.companies[index+1],
+      // [this.state .companies[index+1]]: this.state.companies[index+1],
       isConsignee: !this.state.isConsignee,
       editRegCompany: this.state.editRegCompany
     })
@@ -467,49 +592,54 @@ toggleChangeCon1(index, name, event) {
 
 toggleChangeShip(name,event)
 {
-  if (this.state.companies[0].includes(":S") != true) {
+  if (this.state.editRegCompany[0].CompType.includes("S") != true) {
+    this.state.editRegCompany[0].CompType += ","+name
     this.setState({
-      [this.state.companies[0]]: this.state.companies[0]+=":"+name,
-      isConsignee: !this.state.isConsignee
-    });
-  }
-  else
-  {
-    if (this.state.companies[0].split(':').includes("C")) {
-      this.state.companies[0] =this.state.companies[0].split(':')[0]+":C"
-    }
-    else{
-      this.state.companies[0] =this.state.companies[0].split(':')[0]
-    }   
-    this.setState({
-      [this.state .companies[0]]: this.state.companies[0],
-      isConsignee: !this.state.isConsignee
-    })
-  }
-}
-
-toggleChangeShip1(index, name, event) {
-  debugger;
-  if (this.state.companies[index+1].includes(":S") != true) {
-    this.state.editRegCompany[index].CompType += name+","
-    this.setState({
-      [this.state.companies[index+1]]: this.state.companies[index+1]+=":"+name,
+      // [this.state.companies[0]]: this.state.companies[0]+=":"+name,
       isConsignee: !this.state.isConsignee,
       editRegCompany: this.state.editRegCompany
     });
   }
   else
   {
-    if (this.state.companies[index+1].split(':').includes("C")) {
+    if (this.state.editRegCompany[0].CompType.includes("C")) {
+      // this.state.companies[0] =this.state.companies[0].split(':')[0]+":C"
+      this.state.editRegCompany[0].CompType = 'C,'
+    }
+    else{
+      // this.state.companies[0] =this.state.companies[0].split(':')[0]
+      this.state.editRegCompany[0].CompType = ''
+    }   
+    this.setState({
+      // [this.state .companies[0]]: this.state.companies[0],
+      isConsignee: !this.state.isConsignee,
+      editRegCompany: this.state.editRegCompany
+    })
+  }
+}
+
+toggleChangeShip1(index, name, event) {
+  debugger;
+  if (this.state.editRegCompany[index].CompType.includes("S") != true) {
+    this.state.editRegCompany[index].CompType += ","+name
+    this.setState({
+      // [this.state.companies[index]]: this.state.companies[index]+=":"+name,
+      isConsignee: !this.state.isConsignee,
+      editRegCompany: this.state.editRegCompany
+    });
+  }
+  else
+  {
+    if (this.state.editRegCompany[index].CompType.includes("C")) {
       this.state.editRegCompany[index].CompType = 'C,'
-      this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]+":C"
+      // this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]+":C"
     }
     else{
       this.state.editRegCompany[index].CompType = ''
-      this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]
+      // this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]
     }   
     this.setState({
-      [this.state .companies[index+1]]: this.state.companies[index+1],
+      // [this.state .companies[index+1]]: this.state.companies[index+1],
       isConsignee: !this.state.isConsignee,
       editRegCompany: this.state.editRegCompany
     })
@@ -520,13 +650,20 @@ toggleChangeShip1(index, name, event) {
   }
 }
 
-toggleChangeAccRight(e,index,AccessID)
+toggleChangeAccRight(index, e)
 {
   debugger;
-  // this.setState({
-  //   [this.state.isChecked[index][index]]: !this.state.isChecked ,
-  //   [this.state.isChecked[index][index+1]]: AccessID
-  // })
+  if ([this.state.accessrights[index].IsSelected] == 0) {
+    this.setState({
+      [this.state.accessrights[index].IsSelected]: [this.state.accessrights[index].IsSelected=1]
+    })
+  }
+  else
+  {
+    this.setState({
+      [this.state.accessrights[index].IsSelected]: [this.state.accessrights[index].IsSelected=0]
+    })
+  }
 
 
 }
@@ -597,6 +734,7 @@ if (this.state.IsUserExist == true) {
     let Document = "";
     let HideInvoiceDetails = "";
     var RegisteredCompany = "";
+    var Modules = "";
     // if (this.state.isAir === true) {
     //   ModeOfTransport+="A";
     // }
@@ -623,16 +761,18 @@ if (this.state.IsUserExist == true) {
     for(const[index,value] of this.state.editRegCompany.entries())
     {
       debugger;
-      if (value.CompType.includes('C') && value.CompType.includes('S')) {
-        this.state.RegCompany.push(value.RegCompID+":C")
-        this.state.RegCompany.push(value.RegCompID+":S")
-      }
-      else if (value.CompType.includes('C')) {
-        this.state.RegCompany.push(value.RegCompID+":C")
-      }
-      else if (value.CompType.includes('S')) {
-        this.state.RegCompany.push(value.RegCompID+":S")
-      }
+      if (value.IsDelete == false) {
+        if (value.CompType.includes('C') && value.CompType.includes('S')) {
+          this.state.RegCompany.push(value.RegCompID+":C")
+          this.state.RegCompany.push(value.RegCompID+":S")
+        }
+        else if (value.CompType.includes('C')) {
+          this.state.RegCompany.push(value.RegCompID+":C")
+        }
+        else if (value.CompType.includes('S')) {
+          this.state.RegCompany.push(value.RegCompID+":S")
+        }
+    }
     }
     // for(const[index,value] of this.state.companies.entries())
     // {
@@ -656,6 +796,15 @@ if (this.state.IsUserExist == true) {
        }
     })
     Document = Document.slice(0, -1);
+
+    this.state.accessrights.map((accessrights, index) => {
+      if(this.state.accessrights[index].IsSelected == true)
+      {
+        Modules+=((this.state.accessrights[index].id)+",");       
+      }
+   })
+
+   Modules = Modules.slice(0, -1);
     // const { username, password, emailid, firstname, 
     //   lastname, refreshtime, country, isenabled, usertype, usercreation,
     //   isadmin, ImpExp, displayShipper, displayConsignee, MobileEnable,
@@ -716,11 +865,11 @@ if (this.state.IsUserExist == true) {
     docData.append("CountryCode",this.state.fields["country"]);
     docData.append("RefreshTime",this.state.fields["refreshtime"]);
     docData.append("IsNew",true);
-    docData.append("IsMobileEnabled",false);
+    docData.append("IsMobileEnabled",this.state.IsMobileEnabled);
     docData.append("ProfileType",1);
     docData.append("ProfileSubType",0);
     docData.append("HasMobileAccess",true);
-    docData.append("ModuleID","1,2,3");
+    docData.append("ModuleID",Modules);
     docData.append("DocumentID",Document);
     docData.append("IsHideInvoiceDetails",true);
     docData.append("IsHideHBLShowMBLDocument",true);
@@ -769,7 +918,12 @@ if (this.state.IsUserExist == true) {
       }).then(function(response) {
         debugger;
         alert(response.data[0].Message)
-      }).catch(error => console.log(error.response))
+        setTimeout(function(){ window.location.href="/add-user" }, 1000);
+      }).catch(
+        error =>{ 
+          alert(error.response.data.split("'")[1]);
+          console.log(error.response)}
+        )
   }
   else {
     debugger;
@@ -786,6 +940,7 @@ if (this.state.IsUserExist == true) {
     let Document = "";
     let HideInvoiceDetails = "";
     var RegisteredCompany = "";
+    var Modules = "";
     // if (this.state.isAir === true) {
     //   ModeOfTransport+="A";
     // }
@@ -811,16 +966,18 @@ if (this.state.IsUserExist == true) {
 
     for(const[index,value] of this.state.editRegCompany.entries())
     {
-      if (value.CompType.includes('C') && value.CompType.includes('S')) {
-        this.state.RegCompany.push(value.RegCompID+":C")
-        this.state.RegCompany.push(value.RegCompID+":S")
-      }
-      else if (value.CompType.includes('C')) {
-        this.state.RegCompany.push(value.RegCompID+":C")
-      }
-      else if (value.CompType.includes('S')) {
-        this.state.RegCompany.push(value.RegCompID+":S")
-      }
+      if (value.IsDelete == false) {
+        if (value.CompType.includes('C') && value.CompType.includes('S')) {
+          this.state.RegCompany.push(value.RegCompID+":C")
+          this.state.RegCompany.push(value.RegCompID+":S")
+        }
+        else if (value.CompType.includes('C')) {
+          this.state.RegCompany.push(value.RegCompID+":C")
+        }
+        else if (value.CompType.includes('S')) {
+          this.state.RegCompany.push(value.RegCompID+":S")
+        }
+    }
     }
     // for(const[index,value] of this.state.companies.entries())
     // {
@@ -844,6 +1001,15 @@ if (this.state.IsUserExist == true) {
        }
     })
     Document = Document.slice(0, -1);
+
+    this.state.accessrights.map((accessrights, index) => {
+      if(this.state.accessrights[index].IsSelected == true)
+      {
+        Modules+=((this.state.accessrights[index].id)+",");       
+      }
+   })
+
+   Modules = Modules.slice(0, -1);
     // const { username, password, emailid, firstname, 
     //   lastname, refreshtime, country, isenabled, usertype, usercreation,
     //   isadmin, ImpExp, displayShipper, displayConsignee, MobileEnable,
@@ -881,7 +1047,7 @@ if (this.state.IsUserExist == true) {
     // docData.append("Logo",this.state.selectedFile);
     // docData.append("RegisteredCompany",RegisteredCompany);
 
-    docData.append("UserID",874585);
+    docData.append("UserID",this.props.location.state.detail);
     docData.append("UserName",this.state.fields["username"]);
     docData.append("Password",this.state.fields["password"]);
     docData.append("IsEnabled",this.state.fields["isenabled"]);
@@ -890,7 +1056,7 @@ if (this.state.IsUserExist == true) {
     docData.append("DisplayAsConsignee",this.state.fields["displayConsignee"]);
     docData.append("UserType",this.state.fields["usertype"]);
     docData.append("ModeOfTransport",ModeOfTransport);
-    docData.append("CanCreateUser",0);
+    docData.append("CanCreateUser",this.state.fields["usercreation"]);
     docData.append("CreatedBy",userid);
     docData.append("EmailID",this.state.fields["emailid"]);
     docData.append("ImpExp",this.state.fields["ImpExp"]);
@@ -903,11 +1069,11 @@ if (this.state.IsUserExist == true) {
     docData.append("CountryCode",this.state.fields["country"]);
     docData.append("RefreshTime",this.state.fields["refreshtime"]);
     docData.append("IsNew",true);
-    docData.append("IsMobileEnabled",false);
+    docData.append("IsMobileEnabled",this.state.fields["MobileEnabled"]);
     docData.append("ProfileType",1);
     docData.append("ProfileSubType",0);
     docData.append("HasMobileAccess",true);
-    docData.append("ModuleID","1,2,3");
+    docData.append("ModuleID",Modules);
     docData.append("DocumentID",Document);
     docData.append("IsHideInvoiceDetails",this.state.miscelleneous[0].IsSelected);
     docData.append("IsHideHBLShowMBLDocument",this.state.miscelleneous[1].IsSelected);
@@ -955,7 +1121,16 @@ if (this.state.IsUserExist == true) {
         headers: authHeader()
       }).then(function(response) {
         debugger;
-      }).catch(error => console.log(error.response))
+        alert(response.data[0].Result)
+        var tempsucc=response.data[0].Result
+        NotificationManager.error(tempsucc);
+        setTimeout(function(){ window.location.href="/Add-user" }, 1000);
+      }).catch(
+        error => {
+          debugger;
+          alert(error.response.data.split("'")[1]);
+          console.log(error.response)
+        })
   }
   else {
     debugger;
@@ -992,18 +1167,35 @@ if (this.state.IsUserExist == true) {
       fields["refreshtime"] = response.data.Table[0].DashboardRefreshTime;
       fields["isenabled"] = response.data.Table[0].IsEnabled;
       fields["usertype"] = response.data.Table[0].UserType;
-      fields["usercreation"] = response.data.Table[0].CanCreateUser;
+      if (response.data.Table[0].CanCreateUser == true) {
+        fields["usercreation"] = 1;
+      }
+      else
+      {
+        fields["usercreation"] = 0;
+      }
+      // fields["usercreation"] = response.data.Table[0].CanCreateUser;
       fields["isadmin"] = response.data.Table[0].IsAdmin;
       fields["ImpExp"] = response.data.Table[0].ImpExp;
       fields["displayShipper"] = response.data.Table[0].DisplayAsShipper;
       fields["displayConsignee"] = response.data.Table[0].DisplayAsConsignee;
-      fields["MobileEnable"] = response.data.Table[0].HasMobileAccess;
+      fields["MobileEnabled"] = response.data.Table[0].HasMobileAccess;
+      // this.state.IsMobileEnabled = response.data.Table[0].HasMobileAccess;
       for (const [index, value] of response.data.Table3.entries()) {
         self.state.Documents +=  value.DocumentID + ","
       }
+
+      for (const [index, value] of response.data.Table1.entries()) {
+        self.state.AccessIDs +=  value.Module_id + ","
+      }
+
       var arr='';
       var arrfinal=[];
+      var arrCompany = [];
       var arrData=response.data.Table2;
+      var i=0;
+      if(arrData.length>0)
+      {
       for(let k=0;k<arrData.length;k++)
       {     
             if(arr.includes(arrData[k].RegCompID))
@@ -1024,15 +1216,30 @@ if (this.state.IsUserExist == true) {
             else{
               arr+=arrData[k].RegCompID+',';
               arrfinal.push(arrData[k]);
-              self.state.values.push('e'+k)
+              self.state.values.push('e'+i++)
             }
             
       }
+      }
+      else
+      {
+        self.state.values.push('d')
+      }
       
+      for (const [index, value] of arrfinal.entries()) {
+      arrCompany.push({"CompType": value.CompType, "RegCompID":value.RegCompID, "IsEnabled":true, "IsDelete": false})
+      }
+      // self.state.hideDocument.push({"DocumentID":value.DocumentID, "DocumentName":value.DocumentName, "IsSelected":1})
+      
+
       self.setState({ fields, modeoftrans: response.data.Table[0].ModeOfTransport, 
-        editRegCompany:arrfinal});
+        editRegCompany:arrCompany});
        
     });
+  }
+  else
+  {
+    this.state.values.push('a')
   }
   }
   
@@ -1052,7 +1259,15 @@ if (this.state.IsUserExist == true) {
           </div>
           <div className="cls-rt">
           <div>
-          <h2>Add User</h2>
+          {(() => {if(this.props.location.state != undefined)
+          {
+            return <h2>Edit User</h2>
+          }
+          else
+          {
+            return <h2>Add User</h2>
+          }})()}
+          
           <div className="login-input-cntr">
             <div className="row">
                 <div className="login-fields col-md-4">
@@ -1070,7 +1285,7 @@ if (this.state.IsUserExist == true) {
                <div className="login-fields col-md-4">
                   <label>Password</label>
                   <input
-                    type="text"
+                    type="password"
                     name={"password"}
                     onChange={this.handlechange.bind(this, "password")}
                     placeholder="Enter Your Password"
@@ -1195,7 +1410,7 @@ if (this.state.IsUserExist == true) {
                     name={"usercreation"}
                     value={this.state.fields["usercreation"]}
                   >
-                    {this.state.selectIsEnable.map(team => (
+                    {this.state.selectUserCreate.map(team => (
                       <option key={team.key} value={team.key}>
                         {team.value}
                       </option>
@@ -1283,7 +1498,7 @@ if (this.state.IsUserExist == true) {
                  <label>Is Mobile Enabled?</label>
                  <div className="remember-forgot col-md-1">
                    <div>
-                     <input id="MobileEnable" type="checkbox" name="MobileEnable" defaultChecked={this.state.fields["MobileEnable"]} onChange={this.toggleChange}/>
+                     <input id="MobileEnable" type="checkbox" name="MobileEnable" defaultChecked={this.state.fields["MobileEnabled"]} onChange={this.toggleMobileChange.bind(this,"MobileEnable")}/>
                      <label htmlFor="MobileEnable"></label>
                    </div>
                  </div>
@@ -1292,10 +1507,12 @@ if (this.state.IsUserExist == true) {
                <div className="row">
                 <div className="login-fields dynamic-fields col-md-4">
                   <label>Company Name</label>
-                  <div>
+                  {/* {(() => {
+                    if (this.props.location.state == undefined) {
+                  return <div>
                   <select
                     onChange={this.HandleChangeCompany.bind(this)}
-                    name={"Company"}
+                    name={"Companys"}
                   >
                     <option key={"Select"} value={"Select"}>--Select--</option>
                     {this.state.selectCompany.map(team => (
@@ -1316,6 +1533,8 @@ if (this.state.IsUserExist == true) {
                    
                  </div>
                   </div>
+                  }
+                  })()} */}
                   {/* {this.state.editRegCompany.map(team => (
                   <div>
                   <select
@@ -1399,8 +1618,8 @@ if (this.state.IsUserExist == true) {
                  {
                 this.state.accessrights.map((accessrights, index) =>
                 <div className="remember-forgot col-md-3" key={accessrights.id}>
-                    <input id={accessrights.id} type="checkbox" value={accessrights.Value} onChange={this.toggleChangeAccRight.bind(this, index, accessrights.id)}
-                    />
+                    <input id={accessrights.id} type="checkbox" value={accessrights.Value} onChange={this.toggleChangeAccRight.bind(this, index)}
+                    defaultChecked={accessrights.IsSelected}/>
                        <label htmlFor={accessrights.id}>{accessrights.Value}</label> 
                              
                 </div>
@@ -1416,7 +1635,19 @@ if (this.state.IsUserExist == true) {
                </div>
                </div>
                <div className="text-right">
-                <button
+               {(() => {if(this.props.location.state != undefined)
+                {
+                  return <button
+                  type="button"
+                  className="butn"
+                  onClick={this.handleUpdate}
+                >
+                  Update
+                </button>
+                }
+                else
+                {
+                  return <button
                   type="button"
                   className="butn"
                   onClick={this.handleSubmit}
@@ -1424,15 +1655,7 @@ if (this.state.IsUserExist == true) {
                 >
                   Submit
                 </button>
-                <button
-                  type="button"
-                  className="butn"
-                  onClick={this.handleUpdate}
-                  // disabled={loading}
-                >
-                  {/* {loading && <i className="fa fa-refresh fa-spin"></i>} */}
-                  Update
-                </button>
+                }})()}
               </div>
             </div>
         </div>
