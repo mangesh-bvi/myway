@@ -33,19 +33,8 @@ const MapWithAMakredInfoWindow = compose(
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={3}
   >
-      
     {props.markers.map(marker => {
       const onClick = props.onClick.bind(this, marker);
-      // const pageRediract = hblno => {
-      //   debugger;
-      //   <Redirect
-      //     to={{
-      //       pathname: "shipment-details",
-      //       state: { detail: hblno }
-      //     }}
-      //   />;
-      //   // this.props.history.push({ pathname: "", detail: hblno });
-      // };
       let blueShip = new window.google.maps.MarkerImage(
         BlueShip,
         new window.google.maps.Size(32, 32)
@@ -75,7 +64,7 @@ const MapWithAMakredInfoWindow = compose(
               <InfoWindow>
                 <div>
                   {props.ModalData.map(function(mdata, i) {
-                    let Hblno= mdata["HBL#"];
+                    let Hblno = mdata["HBL#"];
                     let shipmentdetails = "shipment-details?hblno=" + Hblno;
                     return (
                       <>
@@ -86,12 +75,11 @@ const MapWithAMakredInfoWindow = compose(
                           }}
                         >
                           <img src={GreenPlus} className="greenicon" />
-                          <a href={shipmentdetails}><p
-                            className="mapcontainerno"
-                            
-                          >
-                            {mdata.ContainerNo}
-                          </p></a>
+                          <a href={shipmentdetails}>
+                            <p className="mapcontainerno">
+                              {mdata.ContainerNo}
+                            </p>
+                          </a>
                         </div>
                       </>
                     );
@@ -121,6 +109,21 @@ const MapWithAMakredInfoWindow = compose(
                     return (
                       <>
                         <p className="mapcontainerno">{mdata.ContainerNo}</p>
+                        <button
+                          type="button"
+                          class="btn btn-info"
+                          data-toggle="collapse"
+                          data-target="#demo"
+                        >
+                          Simple collapsible
+                        </button>
+                        <div id="demo" class="collapse in">
+                          Lorem ipsum dolor sit amet, consectetur adipisicing
+                          elit, sed do eiusmod tempor incididunt ut labore et
+                          dolore magna aliqua. Ut enim ad minim veniam, quis
+                          nostrud exercitation ullamco laboris nisi ut aliquip
+                          ex ea commodo consequat.
+                        </div>
                       </>
                     );
                   })}
@@ -166,7 +169,6 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      bookingData: [],
       zoom: 0,
       center: {
         lat: 25.37852,
@@ -177,6 +179,7 @@ class Dashboard extends Component {
       ActiveShipmentData: [],
       QuotesData: [],
       InvoicesData: [],
+      BookingData: [],
       ModalData: []
     };
     this.BindMapData = this.BindMapData.bind(this);
@@ -185,16 +188,52 @@ class Dashboard extends Component {
     this.HandleRediractPageShipmentDetails = this.HandleRediractPageShipmentDetails.bind(
       this
     );
+    this.HandleShipmentPage = this.HandleShipmentPage.bind(this);
+    this.HandleBookingTablePage = this.HandleBookingTablePage.bind(this);
+    this.HandleQuotesTablePage = this.HandleQuotesTablePage.bind(this);
+    this.HandleBookingCardApi = this.HandleBookingCardApi.bind(this);
   }
 
-  handelrediract=(e)=>{
-
-    alert("yes");
-  }
   componentDidMount() {
     this.BindMapData();
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
+    this.HandleBookingCardApi();
+  }
+  // Active Shipment Card on ...View More click to rediract Shipment-summary page
+  HandleShipmentPage() {
+    this.props.history.push({ pathname: "shipment-summary" });
+  }
+
+  // Booking Card on ...View More click to rediract booking page
+  HandleBookingTablePage() {
+    this.props.history.push({ pathname: "booking-table" });
+  }
+
+  // Quotes Card on ...View More click to rediract Quotes page
+  HandleQuotesTablePage() {
+    this.props.history.push({ pathname: "quote-table" });
+  }
+  // Invoices Card on ...View More click to rediract Quotes page
+  // HandleShipmentPage()
+  // {
+  //   this.props.history.push({pathname: "shipment-summary"});
+  // }
+
+  //Booking Card Bind Api Call
+  HandleBookingCardApi() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/FetchNewbooking`,
+      data: {
+        UserID: 874588
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      var bookData = response.data.Table;
+      self.setState({ BookingData: bookData });
+    });
   }
 
   HandleRediractPageShipmentDetails(hblno) {
@@ -216,7 +255,8 @@ class Dashboard extends Component {
       debugger;
 
       var activeshipment = response.data.Table;
-      var invoicesData = response.data.Table2;
+      var invoicesData = response.data.Table1;
+      console.log(invoicesData);
       selt.setState({
         ActiveShipmentData: activeshipment,
         InvoicesData: invoicesData
@@ -234,7 +274,6 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var quotesdata = response.data.Table;
       selt.setState({ QuotesData: quotesdata });
     });
@@ -276,7 +315,6 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      console.log(response.data);
       mdata = response.data;
       self.setState({ mapsData: mdata });
     });
@@ -288,37 +326,101 @@ class Dashboard extends Component {
       selectedMarker,
       ActiveShipmentData,
       InvoicesData,
-      ModalData
+      ModalData,
+      BookingData,
+      QuotesData
     } = this.state;
     let self = this;
+
     const ActiveShipment = ActiveShipmentData.map(function(addkey, i) {
-      return (
-        <>
-          <p>
-            Shipment ID:
-            <span>{addkey.ShipmentID}</span>
-          </p>
-          <p>
-            HBL No :{" "}
-            <span
-              onClick={() =>
-                self.HandleRediractPageShipmentDetails(addkey["HBL#"])
-              }
-              style={{ cursor: "pointer" }}
-            >
-              {addkey["HBL#"]}
-            </span>
-          </p>
-          <p>
-            Status :<span>{addkey.ShipmentStatus}</span>
-          </p>
-          <p>
-            Mode of Transport :<span>{addkey.ModeOfTransport}</span>
-          </p>
-        </>
-      );
+      if (i < 5) {
+        return (
+          <>
+            <p>
+              Shipment ID:
+              <span>{addkey.ShipmentID}</span>
+            </p>
+            <p>
+              HBL No :{" "}
+              <span
+                onClick={() =>
+                  self.HandleRediractPageShipmentDetails(addkey["HBL#"])
+                }
+                style={{ cursor: "pointer" }}
+              >
+                {addkey["HBL#"]}
+              </span>
+            </p>
+            <p>
+              Status :<span>{addkey.ShipmentStatus}</span>
+            </p>
+            <p>
+              Mode of Transport :<span>{addkey.ModeOfTransport}</span>
+            </p>
+          </>
+        );
+      }
+    });
+    const Booking = BookingData.map(function(book, i) {
+      if (i < 5) {
+        return (
+          <>
+            <p>
+              Booking Ref. :<span>{book.BookingNo}</span>
+            </p>
+            <p>
+              ETD : <span>{book.ETD}</span>
+            </p>
+            <p>
+              POL : <span>{book.POL}</span>
+            </p>
+            <p>
+              POD : <span>{book.POD}</span>
+            </p>
+          </>
+        );
+      }
     });
 
+    const Quotes = QuotesData.map(function(quotes, i) {
+      if (i < 5) {
+        return (
+          <>
+            <p>
+              Customer Name : <span>{quotes.CompanyName}</span>
+            </p>
+            <p>
+              Shipment Type : <span>{quotes.type}</span>
+            </p>
+            <p>
+              Expected Date : <span>{quotes.ExpiryDate}</span>
+            </p>
+            <p>
+              Status : <span>{quotes.CurrentStatus}</span>
+            </p>
+          </>
+        );
+      } else {
+        return;
+      }
+    });
+
+    const Invoices = InvoicesData.map(function(invoice, i) {
+      if (i < 5) {
+        return (
+          <>
+            <p>
+              Shipment No : <span>{invoice.InvoiceNumber}</span>
+            </p>
+            <p>
+              Customer Name : <span>{invoice.BillToName}</span>
+            </p>
+          </>
+        );
+      } else {
+        return;
+      }
+    });
     return (
       <div>
         <Headers />
@@ -354,6 +456,12 @@ class Dashboard extends Component {
                           {ActiveShipment}
                         </div>
                       </div>
+                      <span
+                        className="viewmore-span"
+                        onClick={this.HandleShipmentPage}
+                      >
+                        ...View More
+                      </span>
                     </div>
                   </div>
                   <div className="col-md-3">
@@ -361,24 +469,14 @@ class Dashboard extends Component {
                       <h3>Booking</h3>
                       <div className="dash-sects-dtls">
                         {/* <i className="fa fa-refresh fa-spin"></i> */}
-                        <div className="dash-sects-dtls-inner">
-                          <p>
-                            Booking Ref. :{" "}
-                            {/* {this.state.bookingData.map(team => ( */}
-                            <span></span>
-                            {/* ))} */}
-                          </p>
-                          <p>
-                            ETD : <span>12 Oct 2019, 20:30</span>
-                          </p>
-                          <p>
-                            POL : <span>Ambarli, Istanbul, Turkey</span>
-                          </p>
-                          <p>
-                            POD : <span>Baltimore, Maryland, USA</span>
-                          </p>
-                        </div>
+                        <div className="dash-sects-dtls-inner">{Booking}</div>
                       </div>
+                      <span
+                        className="viewmore-span"
+                        onClick={this.HandleBookingTablePage}
+                      >
+                        ...View More
+                      </span>
                     </div>
                   </div>
                   <div className="col-md-3">
@@ -386,21 +484,14 @@ class Dashboard extends Component {
                       <h3>Quotes</h3>
                       <div className="dash-sects-dtls">
                         {/* <i className="fa fa-refresh fa-spin"></i> */}
-                        <div className="dash-sects-dtls-inner">
-                          <p>
-                            Customer Name : <span>David Robinson</span>
-                          </p>
-                          <p>
-                            Shipment Type : <span>Air</span>
-                          </p>
-                          <p>
-                            Expected Date : <span>09 - 12 -2019</span>
-                          </p>
-                          <p>
-                            Status : <span>Accepted</span>
-                          </p>
-                        </div>
+                        <div className="dash-sects-dtls-inner">{Quotes}</div>
                       </div>
+                      <span
+                        className="viewmore-span"
+                        onClick={this.HandleQuotesTablePage}
+                      >
+                        ...View More
+                      </span>
                     </div>
                   </div>
                   <div className="col-md-3">
@@ -408,15 +499,9 @@ class Dashboard extends Component {
                       <h3>Invoices</h3>
                       <div className="dash-sects-dtls">
                         {/* <i className="fa fa-refresh fa-spin"></i> */}
-                        <div className="dash-sects-dtls-inner">
-                          <p>
-                            Shipment No : <span>SH 01</span>
-                          </p>
-                          <p>
-                            Customer Name : <span>BLUEGROUND US INC</span>
-                          </p>
-                        </div>
+                        <div className="dash-sects-dtls-inner">{Invoices}</div>
                       </div>
+                      <span className="viewmore-span">...View More</span>
                     </div>
                   </div>
                 </div>

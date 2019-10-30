@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import axios from "axios";
+import { authHeader } from "../helpers/authHeader";
+import appSettings from "../helpers/appSetting";
 import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
@@ -9,6 +12,15 @@ import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+  InfoWindow
+} from "react-google-maps";
+
+
 
 const SourceIcon = () => <div className="map-circ source-circ" />;
 const DestiIcon = () => <div className="map-circ desti-circ" />;
@@ -19,10 +31,13 @@ class RateTable extends Component {
 
     this.state = {
       modalEdit: false,
-      value: 50
+      value: 50,
+      RateDetails:[],
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.HandleRateDetails = this.HandleRateDetails.bind(this);
+
   }
 
   static defaultProps = {
@@ -33,10 +48,47 @@ class RateTable extends Component {
     zoom: 11
   };
 
+componentDidMount(){
+  this.HandleRateDetails();
+}
+
   toggleEdit() {
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
     }));
+  }
+
+  HandleRateDetails(){
+debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RateSearchQuery`,
+      data: {
+        //UserID: 874588,
+        QuoteType: "FCL",
+        ModeOfTransport: "Ocean",
+        Type: "Export",
+        TypeOfMove: 1,
+        PortOfDischargeCode: "TRPAM",
+        PortOfLoadingCode: "INNSA",
+        Containerdetails: [
+          {
+            ProfileCodeID: 16,
+            ContainerCode: "40HC",
+            Type: "40 High Cube",
+            ContainerQuantity: 2
+          }
+        ]
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      console.log(response);
+      var ratetable=response.data.Table;
+      self.setState({ RateDetails: ratetable });
+
+       
+    });
   }
 
   render() {

@@ -2111,6 +2111,14 @@ cursor: pointer;
   height: 16px;
   
 }
+.viewmore-span{
+  text-align: center;
+    float: right;
+    color: #002d73;
+    font-size: 12px;
+    padding: 10px;
+    cursor: pointer;
+}
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
