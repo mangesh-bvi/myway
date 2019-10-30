@@ -924,6 +924,13 @@ table tbody tr:last-child {
   display: block;
   min-height: 540px;
 }
+.air {
+  background: url(./../img/air-bg.jpg) no-repeat;
+  background-size: 100%;
+  width: 100%;
+  display: block;
+  min-height: 540px;
+}
 .manage-txt {
   padding-top: 23%;
   /* padding-top: 25%; */
@@ -1038,6 +1045,12 @@ table tbody tr:last-child {
   display: flex;
   margin-top: 15px;
   justify-content: center;
+}
+.new-radio-rate-cntr-hide {
+  display: none;
+}
+.new-radio-rate-cntr-show {
+  display: block;
 }
 .new-radio-rate-cntr label {
   font-family: "Regular Font";
@@ -1552,6 +1565,71 @@ table tbody tr:last-child {
 }
 /* analytics ends */
 
+/* rate finalizing starts */
+.rate-fin-tit {
+  padding-top: 25px;
+  padding-bottom: 20px;
+}
+.rate-final-contr {
+  padding: 0 15px;
+}
+.rate-final-contr .details-title {
+  margin-bottom: 0;
+}
+.rate-final-contr .details-para {
+  font-size: 16px;
+  font-family: "Medium Font";
+}
+.rate-final-contr .row > div {
+  margin-top: 20px;
+}
+.rate-final-contr .react-rate-table {
+  background-color: #f1f2f2;
+  margin-bottom: 20px;
+}
+.more-padd {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.rate-final-contr select,
+.rate-final-contr input {
+  margin-top: 10px;
+}
+.rate-final-contr .login-fields {
+  margin-bottom: 0px;
+}
+.rate-final-left {
+  /* padding: 15px 0; */
+  padding: 0;
+  height: 100%;
+}
+.rate-final-left .cont-costs {
+  padding-right: 0;
+  padding-left: 0;
+}
+.rate-final-left > div {
+  padding: 15px;
+  border-bottom: 1px solid #d6d6d6;
+}
+.amnt-popup .modal-body {
+  padding: 30px 20px;
+}
+.amnt-popup .details-title {
+  flex: 0 0 150px;
+}
+.amnt-popup .modal-body .d-flex {
+  margin-bottom: 20px;
+}
+.amnt-popup .txt-cntr .d-flex:last-child {
+  margin-bottom: 0px;
+}
+.spe-equ .rate-address {
+  border-radius: 0;
+  margin: 0;
+  height: 80px;
+}
+/* rate finalizing ends */
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
@@ -2006,6 +2084,9 @@ table tbody tr:last-child {
   margin-left: 20px;
   cursor: pointer;
 }
+.action-cntr a:first-child .actionicon {
+  margin-left: 0;
+}
 .grncntrsld .rangeslider-vertical .rangeslider__handle {
   width: 30px;
   height: 20px;
@@ -2035,25 +2116,30 @@ table tbody tr:last-child {
   width: 30px;
   height: 30px;
 }
-.mapcontainerno{
-
+.mapcontainerno {
   color: #39b54a;
-  font-size:16px;
+  font-size: 16px;
   font-weight: 500;
   display: inline;
   margin: 10px;
   padding-top: 10px;
-cursor: pointer;
+  cursor: pointer;
 }
-.gm-style-iw{
+.gm-style-iw {
   width: 265px;
-  
-} 
-.greenicon{
+}
+.greenicon {
   display: inline;
   width: 16px;
   height: 16px;
-  
+}
+.viewmore-span{
+  text-align: center;
+    float: right;
+    color: #002d73;
+    font-size: 12px;
+    padding: 10px;
+    cursor: pointer;
 }
 /* --------------------------------------------------------------------------- */
 

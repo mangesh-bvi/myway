@@ -38,6 +38,8 @@ import BookingTable from "./pages/bookingTable";
 import ViewUser from "./pages/viewUser";
 import AddSalesUser from "./pages/AddSalesUser";
 import Analytics from "./pages/analytics";
+import RateFinalizing from "./pages/rateFinalizing";
+import RateFinalizingStill from "./pages/rateFinalizingStill";
 
 // import Exmaple from './pages/Example';
 
@@ -76,6 +78,12 @@ ReactDOM.render(
     <Route exact path="/view-user" component={ViewUser} />
     <Route exact path="/AddSalesUser" component={AddSalesUser} />
     <Route exact path="/analytics" component={Analytics} />
+    <Route exact path="/rate-finalizing" component={RateFinalizing} />
+    <Route
+      exact
+      path="/rate-finalizing-still"
+      component={RateFinalizingStill}
+    />
     {/* <Route exact path="/example" component={Exmaple} /> */}
 
     {/* <Route  path="/" component={Login} />   */}

@@ -4,15 +4,88 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { de } from "date-fns/esm/locale";
 
 const animatedComponents = makeAnimated();
+const { compose } = require("recompose");
+const {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  GroundOverlay
+} = require("react-google-maps");
+
+const Map1WithAMakredInfoWindow = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultZoom={2}
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+  ></GoogleMap>
+));
+const Map2WithAMakredInfoWindow = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultZoom={2}
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+  ></GoogleMap>
+));
 
 class NewRateSearch extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      shipmentType: "",
+      modeoftransport: "",
+      containerLoadType: "",
+      equipmentType: "",
+      isSpecialEquipment: "0",
+      specialEquipment: "",
+      tempratureEquipment: "",
+      isHazMat: "",
+      incoTerms: "",
+      typesofMove: "",
+      POL: "",
+      POD: "",
+      PUAddress: "",
+      PDAddress: ""
+    };
   }
+
+  ShipmentTypeClick = e => {
+    let type = e.target.value;
+    this.setState({ shipmentType: type });
+  };
+  modeofTransportClick = e => {
+    let type = e.target.value;
+    debugger;
+    this.setState({ modeoftransport: type });
+    document.getElementById("dvroad").classList.add("new-radio-rate-cntr-hide");
+    document.getElementById("dvair").classList.add("new-radio-rate-cntr-hide");
+    document.getElementById("dvsea").classList.add("new-radio-rate-cntr-hide");
+    if (type == "air") {
+      document
+        .getElementById("dvair")
+        .classList.remove("new-radio-rate-cntr-hide");
+    } else if (type == "sea") {
+      this.setState({ containerLoadType: "fcl" });
+      document
+        .getElementById("dvsea")
+        .classList.remove("new-radio-rate-cntr-hide");
+    } else if (type == "road") {
+      document
+        .getElementById("dvroad")
+        .classList.remove("new-radio-rate-cntr-hide");
+    }
+  };
+  ContainerLoadTypeClick = e => {
+    let type = e.target.value;
+    this.setState({ containerLoadType: type });
+  };
 
   render() {
     const options = [
@@ -48,7 +121,13 @@ class NewRateSearch extends Component {
               <h3>Shipment Type</h3>
               <div className="new-radio-rate-cntr radio-blue">
                 <div>
-                  <input type="radio" name="ship-type" id="export" />
+                  <input
+                    type="radio"
+                    name="ship-type"
+                    value="export"
+                    onClick={this.ShipmentTypeClick}
+                    id="export"
+                  />
                   <label htmlFor="export">Export</label>
                 </div>
                 <div>
@@ -61,96 +140,231 @@ class NewRateSearch extends Component {
                   <label htmlFor="import">Import</label>
                 </div>
                 <div>
-                  <input type="radio" name="ship-type" id="cross" />
+                  <input
+                    type="radio"
+                    name="ship-type"
+                    value="cross"
+                    onClick={this.ShipmentTypeClick}
+                    id="cross"
+                  />
                   <label htmlFor="cross">Cross Trade</label>
                 </div>
                 <div>
-                  <input type="radio" name="ship-type" id="domestic" />
+                  <input
+                    type="radio"
+                    name="ship-type"
+                    value="domestic"
+                    onClick={this.ShipmentTypeClick}
+                    id="domestic"
+                  />
                   <label htmlFor="domestic">Domestic</label>
                 </div>
               </div>
             </div>
             <div className="new-rate-cntr">
               <h3>Mode of Transport</h3>
-              <div className="new-radio-rate-cntr radio-green">
+              <div className="new-radio-rate-cntr  radio-green">
                 <div>
-                  <input type="radio" name="mode-transport" id="sea" />
+                  <input
+                    type="radio"
+                    name="mode-transport"
+                    value="sea"
+                    onClick={this.modeofTransportClick}
+                    id="sea"
+                  />
                   <label htmlFor="sea">Sea</label>
                 </div>
                 <div>
                   <input
                     type="radio"
                     name="mode-transport"
+                    value="air"
+                    onClick={this.modeofTransportClick}
                     id="air"
                     defaultChecked
                   />
                   <label htmlFor="air">Air</label>
                 </div>
                 <div>
-                  <input type="radio" name="mode-transport" id="road" />
+                  <input
+                    type="radio"
+                    name="mode-transport"
+                    name="mode-transport"
+                    value="road"
+                    onClick={this.modeofTransportClick}
+                    id="road"
+                  />
                   <label htmlFor="road">Road</label>
                 </div>
               </div>
             </div>
+
             <div className="new-rate-cntr">
               <h3>Container Load</h3>
-              <div className="new-radio-rate-cntr radio-light-blue">
+              <div
+                id="dvsea"
+                className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-sea radio-light-blue"
+              >
                 <div>
                   <input
                     type="radio"
                     name="cntr-load"
+                    value="fcl"
+                    onClick={this.ContainerLoadTypeClick}
                     id="fcl"
                     defaultChecked
                   />
                   <label htmlFor="fcl">FCL</label>
                 </div>
                 <div>
-                  <input type="radio" name="cntr-load" id="lcl" />
+                  <input
+                    type="radio"
+                    value="lcl"
+                    onClick={this.ContainerLoadTypeClick}
+                    name="cntr-load"
+                    id="lcl"
+                  />
                   <label htmlFor="lcl">LCL</label>
                 </div>
               </div>
+              <div
+                id="dvair"
+                className="new-radio-rate-cntr cls-air radio-light-blue"
+              >
+                <div>
+                  <input
+                    type="radio"
+                    name="cntr-load-air"
+                    value="air"
+                    onClick={this.ContainerLoadTypeClick}
+                    id="fcl"
+                    defaultChecked
+                  />
+                  <label htmlFor="fcl">AIR</label>
+                </div>
+              </div>
+              <div
+                id="dvroad"
+                className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-road radio-light-blue"
+              >
+                <div>
+                  <input
+                    type="radio"
+                    name="cntr-load-road"
+                    value="ftl"
+                    onClick={this.ContainerLoadTypeClick}
+                    id="fcl"
+                    defaultChecked
+                  />
+                  <label htmlFor="fcl">FTL</label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    value="ltl"
+                    onClick={this.ContainerLoadTypeClick}
+                    name="cntr-load-road"
+                    id="lcl"
+                  />
+                  <label htmlFor="lcl">LTL</label>
+                </div>
+              </div>
             </div>
+            {this.state.containerLoadType != "fcl" ? (
+              <div className="new-rate-cntr">
+                <h3>CBM / Dimensions</h3>
+                <div className="row">
+                  <div className="col-md-3">
+                    <div className="spe-equ">
+                      <input
+                        type="text"
+                        placeholder="Enter Length"
+                        className="w-100"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="spe-equ">
+                      <input
+                        type="text"
+                        placeholder="Enter Width"
+                        className="w-100"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="spe-equ">
+                      <input
+                        type="text"
+                        placeholder="Enter Height"
+                        className="w-100"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="spe-equ">
+                      <input
+                        type="text"
+                        placeholder={
+                          this.state.modeoftransport != "air" ? "CBM" : "KG"
+                        }
+                        className="w-100"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
             <div className="new-rate-cntr">
-              <h3>Equipment Types</h3>
-              <Select
-                className="rate-dropdown"
-                closeMenuOnSelect={false}
-                components={animatedComponents}
-                isMulti
-                options={options}
-              />
-              <div className="remember-forgot">
-                <input
-                  id="spe-equip"
-                  type="checkbox"
-                  name={"special equipment"}
-                />
-                <label htmlFor="spe-equip" className="m-auto">
-                  Special Equipment
-                </label>
-              </div>
-              <div className="spe-equ">
-                {/* <label>Kind of Special Equipment</label> */}
-                <Select
-                  className="rate-dropdown m-auto"
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  options={optionsSpeEqu}
-                  placeholder="Select Kind of Special Equipment"
-                />
-              </div>
-              <div className="spe-equ">
-                {/* <label>Temperature of Equipment</label> */}
-                <input
-                  type="text"
-                  className="m-auto w-50"
-                  placeholder="Enter Temperature of Equipment"
-                />
-              </div>
+              {this.state.containerLoadType != "lcl" ? (
+                <div>
+                  <h3>Equipment Types</h3>
+                  <Select
+                    className="rate-dropdown"
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    isMulti
+                    options={options}
+                  />
+                  <div className="remember-forgot">
+                    <input
+                      id="spe-equip"
+                      type="checkbox"
+                      name={"special equipment"}
+                    />
+                    <label htmlFor="spe-equip" className="m-auto">
+                      Special Equipment
+                    </label>
+                  </div>
+                  <div className="spe-equ">
+                    {/* <label>Kind of Special Equipment</label> */}
+                    <Select
+                      className="rate-dropdown m-auto"
+                      closeMenuOnSelect={false}
+                      components={animatedComponents}
+                      options={optionsSpeEqu}
+                      placeholder="Select Kind of Special Equipment"
+                    />
+                  </div>
+                  <div className="spe-equ">
+                    {/* <label>Temperature of Equipment</label> */}
+                    <input
+                      type="text"
+                      className="m-auto w-50"
+                      placeholder="Enter Temperature of Equipment"
+                    />
+                  </div>
+                </div>
+              ) : null}
               <div className="remember-forgot">
                 <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                 <label htmlFor="haz-mat" className="m-auto">
                   HazMat
+                </label>
+                <input id="haz-mat" type="checkbox" name={"haz-mat"} />
+                <label htmlFor="haz-mat" className="m-auto">
+                  Unstackable
                 </label>
               </div>
               {/* <div className="new-radio-rate-cntr radio-brown">
@@ -214,6 +428,36 @@ class NewRateSearch extends Component {
               </div>
             </div>
             <div className="new-rate-cntr">
+              <h3>Enter Addresses</h3>
+              <div className="row">
+                <div className="col-md-6">
+                  <textarea
+                    className="rate-address"
+                    placeholder="Enter PU Address"
+                  ></textarea>
+                </div>
+                <div className="col-md-6">
+                  <textarea
+                    className="rate-address"
+                    placeholder="Enter Delivery Address"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div className="new-rate-cntr">
+              <h3>Countries</h3>
+              <div className="spe-equ">
+                {/* <label>Kind of Special Equipment</label> */}
+                <Select
+                  className="rate-dropdown m-auto"
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  options={optionsSpeEqu}
+                  placeholder="Select Country"
+                />
+              </div>
+            </div>
+            <div className="new-rate-cntr">
               <h3>Select Location</h3>
               <div className="row">
                 <div className="col-md-6">
@@ -236,20 +480,28 @@ class NewRateSearch extends Component {
                 </div>
               </div>
             </div>
+
             <div className="new-rate-cntr">
-              <h3>Enter Addresses</h3>
               <div className="row">
                 <div className="col-md-6">
-                  <textarea
-                    className="rate-address"
-                    placeholder="Enter PU Address"
-                  ></textarea>
+                  <div>
+                    <Map1WithAMakredInfoWindow
+                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                      loadingElement={<div style={{ height: `100%` }} />}
+                      containerElement={<div style={{ height: `400px` }} />}
+                      mapElement={<div style={{ height: `100%` }} />}
+                    />
+                  </div>
                 </div>
                 <div className="col-md-6">
-                  <textarea
-                    className="rate-address"
-                    placeholder="Enter Delivery Address"
-                  ></textarea>
+                  <div>
+                    <Map2WithAMakredInfoWindow
+                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                      loadingElement={<div style={{ height: `100%` }} />}
+                      containerElement={<div style={{ height: `400px` }} />}
+                      mapElement={<div style={{ height: `100%` }} />}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -11,6 +11,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import DownArrow from "./../assets/img/down-arrow.png";
+import Copy from "./../assets/img/copy.png";
 import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
@@ -30,7 +31,7 @@ class QuoteTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
-      shipmentSummary: []
+      quotesData: []
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -52,16 +53,18 @@ class QuoteTable extends Component {
 
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/shipmentsummaryAPI`,
+      url: `${appSettings.APIURL}/SalesQuoteGridAPI`,
       data: {
         UserId: userid,
-        PageNo: 1
+        fromDate: "2019-01-01",
+        Todate: "2019-10-26"
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var data = [];
-      data = response.data.Table1;
-      self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
+      data = response.data.Table;
+      self.setState({ quotesData: data }); ///problem not working setstat undefined
     });
   }
 
@@ -82,7 +85,7 @@ class QuoteTable extends Component {
   };
 
   render() {
-    const { shipmentSummary } = this.state;
+    const { quotesData } = this.state;
     return (
       <div>
         <Headers />
@@ -92,145 +95,63 @@ class QuoteTable extends Component {
           </div>
           <div className="cls-rt">
             <div className="title-sect">
-              <h2>Quote</h2>
+              <h2>Quote Table</h2>
             </div>
             <div className="ag-fresh">
               <ReactTable
-                data={shipmentSummary}
+                data={quotesData}
                 filterable
                 columns={[
                   {
                     Header: "Quote No",
-                    accessor: "BL/HBL"
+                    accessor: "Quote#"
                   },
                   {
-                    columns: [
-                      {
-                        Header: "Customer Name",
-                        accessor: "Consignee"
-                      },
-                      {
-                        Cell: row => {
-                          if (row.value == "Air") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Plane} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Ocean") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Ship} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Inland") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Truck} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Railway") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Rail} />
-                              </div>
-                            );
-                          }
-                        },
-                        Header: "Shipment Type",
-                        accessor: "ModeOfTransport"
-                      },
-                      {
-                        Header: "POL",
-                        accessor: "POL"
-                      },
-
-                      {
-                        Header: "POD",
-                        accessor: "POD"
-                      },
-                      {
-                        Header: "Expiry Date",
-                        accessor: "ETA"
-                      },
-                      {
-                        Cell: row => {
-                          if (row.value == "Planning in Progress") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Departed") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Transshipped") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Transit}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Arrived") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Arrived}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Delivered") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Delivered} />
-                              </div>
-                            );
-                          }
-
-                          if (row.value == "DO Issued") {
-                            return <div>{row.value}</div>;
-                          }
-                        },
-                        Header: "Status",
-                        accessor: "Status"
-                      },
-                      {
-                        Cell: () => {
-                          return (
-                            <div
-                              onClick={this.toggleDel}
-                              className="tab-icon-view"
-                            >
-                              <img src={Eye} alt="eye icon" />
-                            </div>
-                          );
-                        },
-                        Header: "Actions"
-                      }
-                    ]
+                    Header: "Company",
+                    accessor: "Company"
+                  },
+                  {
+                    Header: "Contact",
+                    accessor: "Contact"
+                  },
+                  {
+                    Header: "type",
+                    accessor: "type"
+                  },
+                  {
+                    Header: "POD",
+                    accessor: "POD"
+                  },
+                  {
+                    Header: "Notes",
+                    accessor: "Notes"
+                  },
+                  {
+                    Header: "Actions",
+                    Cell: row => {
+                      return (
+                        <div className="action-cntr">
+                          <a href="/rate-finalizing-still">
+                            <img
+                              className="actionicon"
+                              src={Eye}
+                              alt="view-icon"
+                            />
+                          </a>
+                          <a href="/rate-finalizing">
+                            <img
+                              className="actionicon"
+                              src={Copy}
+                              alt="view-icon"
+                            />
+                          </a>
+                        </div>
+                      );
+                    }
                   }
                 ]}
                 className="-striped -highlight"
-                defaultPageSize={10}
+                defaultPageSize={5}
                 // getTrProps={this.HandleRowClickEvt}
               />
             </div>

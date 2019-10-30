@@ -4,34 +4,24 @@ import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
 import "../assets/css/react-table.css";
-import { UncontrolledTooltip } from "reactstrap";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import LoginActore from "./../assets/img/login-actore.jfif";
-import DownArrow from "./../assets/img/down-arrow.png";
-import Ship from "./../assets/img/ship.png";
-import Truck from "./../assets/img/truck.png";
-import Rail from "./../assets/img/rail.png";
-import Plane from "./../assets/img/plane.png";
-import Transit from "./../assets/img/transit.png";
-import Box from "./../assets/img/box.png";
-import Delivered from "./../assets/img/delivered.png";
-import InPlane from "./../assets/img/in-plane.png";
-import Arrived from "./../assets/img/arrived.png";
 import Eye from "./../assets/img/eye.png";
+import Copy from "./../assets/img/copy.png";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import { encryption } from "../helpers/encryption";
 
 class BookingTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       modalDel: false,
-      shipmentSummary: []
+      bookingData: []
     };
-    this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
+    this.HandleBookingList = this.HandleBookingList.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
   }
 
@@ -42,46 +32,30 @@ class BookingTable extends Component {
   }
 
   componentDidMount() {
-    this.HandleListShipmentSummey();
+    this.HandleBookingList();
   }
 
-  HandleListShipmentSummey() {
+  HandleBookingList() {
     let self = this;
-    var userid = window.localStorage.getItem("userid");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/shipmentsummaryAPI`,
+      url: `${appSettings.APIURL}/BookingGridAPI`,
       data: {
-        UserId: userid,
-        PageNo: 1
+        UserId: userid
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var data = [];
-      data = response.data.Table1;
-      self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
+      data = response.data;
+      self.setState({ bookingData: data }); ///problem not working setstat undefined
     });
   }
-
-  HandleChangeShipmentDetails(HblNo) {
-    this.props.history.push({
-      pathname: "shipment-details",
-      state: { detail: HblNo }
-    });
-  }
-
-  HandleRowClickEvt = (rowInfo, column) => {
-    return {
-      onClick: e => {
-        var hblNo = column.original["HBL#"];
-        this.HandleChangeShipmentDetails(hblNo);
-      }
-    };
-  };
 
   render() {
-    const { shipmentSummary } = this.state;
+    const { bookingData } = this.state;
     return (
       <div>
         <Headers />
@@ -91,140 +65,80 @@ class BookingTable extends Component {
           </div>
           <div className="cls-rt">
             <div className="title-sect">
-              <h2>Booking</h2>
+              <h2>Booking Table</h2>
             </div>
             <div className="ag-fresh">
               <ReactTable
-                data={shipmentSummary}
+                data={bookingData}
+                noDataText=""
                 filterable
                 columns={[
                   {
                     Header: "Booking No",
-                    accessor: "BL/HBL"
+                    accessor: "BookingNo"
                   },
                   {
-                    columns: [
-                      {
-                        Cell: row => {
-                          if (row.value == "Air") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Plane} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Ocean") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Ship} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Inland") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Truck} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Railway") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Rail} />
-                              </div>
-                            );
-                          }
-                        },
-                        Header: "Shipment Type",
-                        accessor: "ModeOfTransport"
-                      },
-                      {
-                        Header: "Customer Name",
-                        accessor: "Consignee"
-                      },
-                      {
-                        Header: "POL",
-                        accessor: "POL"
-                      },
-                      {
-                        Header: "POD",
-                        accessor: "POD"
-                      },
-                      {
-                        Cell: row => {
-                          if (row.value == "Planning in Progress") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Departed") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Transshipped") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Transit}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Arrived") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Arrived}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Delivered") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Delivered} />
-                              </div>
-                            );
-                          }
-
-                          if (row.value == "DO Issued") {
-                            return <div>{row.value}</div>;
-                          }
-                        },
-                        Header: "Status",
-                        accessor: "Status"
-                      },
-                      {
-                        Cell: () => {
-                          return (
-                            <div
-                              onClick={this.toggleDel}
-                              className="tab-icon-view"
-                            >
-                              <img src={Eye} alt="eye icon" />
-                            </div>
-                          );
-                        },
-                        Header: "Actions"
-                      }
-                    ]
+                    Header: "Consignee",
+                    accessor: "Consignee_Name"
+                  },
+                  {
+                    Header: "Shipper Name",
+                    accessor: "Shipper_Name"
+                  },
+                  {
+                    Header: "POL",
+                    accessor: "POL"
+                  },
+                  {
+                    Header: "POD",
+                    accessor: "POD"
+                  },
+                  {
+                    Header: "PackageCount",
+                    accessor: "PackageCount"
+                  },
+                  {
+                    Header: "Weight",
+                    accessor: "Weight"
+                  },
+                  {
+                    Header: "Volume",
+                    accessor: "Volume"
+                  },
+                  {
+                    Header: "Incoterm",
+                    accessor: "Incoterm"
+                  },
+                  {
+                    Header: "Commodity",
+                    accessor: "Commodity"
+                  },
+                  {
+                    Header: "Actions",
+                    Cell: row => {
+                      return (
+                        <div className="action-cntr">
+                          <a href="/rate-finalizing-still">
+                            <img
+                              className="actionicon"
+                              src={Eye}
+                              alt="view-icon"
+                            />
+                          </a>
+                          <a href="/rate-finalizing">
+                            <img
+                              className="actionicon"
+                              src={Copy}
+                              alt="view-icon"
+                            />
+                          </a>
+                        </div>
+                      );
+                    }
                   }
                 ]}
                 className="-striped -highlight"
-                defaultPageSize={10}
+                defaultPageSize={5}
                 // getTrProps={this.HandleRowClickEvt}
               />
             </div>

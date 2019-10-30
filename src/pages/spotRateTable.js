@@ -101,7 +101,7 @@ class SpotRateTable extends Component {
                   {
                     columns: [
                       {
-                        Header: "Customer Name",
+                        Header: "Consignee Name",
                         accessor: "Consignee"
                       },
                       {
