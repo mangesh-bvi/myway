@@ -74,7 +74,7 @@ class BookingTable extends Component {
                 filterable
                 columns={[
                   {
-                    Header: "Booking No",
+                    Header: "No.",
                     accessor: "BookingNo"
                   },
                   {
@@ -82,7 +82,7 @@ class BookingTable extends Component {
                     accessor: "Consignee_Name"
                   },
                   {
-                    Header: "Shipper Name",
+                    Header: "Shipper",
                     accessor: "Shipper_Name"
                   },
                   {
@@ -92,22 +92,6 @@ class BookingTable extends Component {
                   {
                     Header: "POD",
                     accessor: "POD"
-                  },
-                  {
-                    Header: "PackageCount",
-                    accessor: "PackageCount"
-                  },
-                  {
-                    Header: "Weight",
-                    accessor: "Weight"
-                  },
-                  {
-                    Header: "Volume",
-                    accessor: "Volume"
-                  },
-                  {
-                    Header: "Incoterm",
-                    accessor: "Incoterm"
                   },
                   {
                     Header: "Commodity",

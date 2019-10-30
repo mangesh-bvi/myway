@@ -34,6 +34,8 @@ class Login extends React.Component {
     });
   }
   handleSubmit(e) {
+    debugger
+    e.preventDefault();
     this.setState({ submitted: true, loading: true });
     const { username, password } = this.state;
     window.localStorage.setItem("password",encryption(password,"enc"));
@@ -118,6 +120,7 @@ class Login extends React.Component {
           <div className="logo">
             <img src={Logo} alt="logo" />
           </div>
+<<<<<<< HEAD
           <div className="login-cntr">
             <h2>
               Welcome <span>Login to get started!</span>
@@ -144,33 +147,61 @@ class Login extends React.Component {
                     placeholder="Enter Your Password"
                     type="password"
                   />
+=======
+          <form onSubmit={this.handleSubmit}>
+            <div className="login-cntr">
+              <h2>
+                Welcome <span>Login to get started!</span>
+              </h2>
+              <div className="login-fields-cntr">
+                <div className="login-input-cntr">
+                  <div className="login-fields">
+                    <label>User Name</label>
+                    <input
+                      type="text"
+                      name={"username"}
+                      onChange={this.handlechange}
+                      placeholder="Enter Your User Name"
+                    />
+                  </div>
+                  <div className="login-fields">
+                    <label>Password</label>
+                    <input
+                      id="password"
+                      name={"password"}
+                      onChange={this.handlechange}
+                      placeholder="Enter Your Password"
+                      type="password"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="remember-forgot">
-                <div>
-                  <input id="remember" type="checkbox" name={"remember me"} />
-                  <label htmlFor="remember">Remember Me</label>
+                <div className="remember-forgot">
+                  <div>
+                    <input id="remember" type="checkbox" name={"remember me"} />
+                    <label htmlFor="remember">Remember Me</label>
+                  </div>
+                  <a href="./forgotPassword">Forgot Password?</a>
+>>>>>>> c93bf6131dbf052f9fd054d03f057e793ddc90ef
                 </div>
-                <a href="./forgotPassword">Forgot Password?</a>
-              </div>
-              <div className="text-right">
-                <button
-                  type="button"
-                  className="butn login-butn"
-                  onClick={this.handleSubmit}
-                  disabled={loading}
-                >
-                  {loading && (
-                    <i
-                      style={{ marginRight: 15 }}
-                      className="fa fa-refresh fa-spin"
-                    ></i>
-                  )}
-                  {loading ? "Please Wait ..." : "Login"}
-                </button>
+                <div className="text-right">
+                  <button
+                    type="submit"
+                    className="butn login-butn"
+                    //onClick={}
+                    disabled={loading}
+                  >
+                    {loading && (
+                      <i
+                        style={{ marginRight: 15 }}
+                        className="fa fa-refresh fa-spin"
+                      ></i>
+                    )}
+                    {loading ? "Please Wait ..." : "Login"}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </form>
         </div>
         <NotificationContainer />
       </section>
@@ -216,9 +247,10 @@ function TokenhandleResponse(response) {
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
+      debugger;
       window.localStorage.setItem("token",encryption(data.access_token,"enc"));
-      if (window.localStorage.getItem("IsEnabled") == true) {
-        window.location.href = "./dashboard";
+      if (window.localStorage.getItem("IsEnabled") == "true") {
+        window.location.href = "./shipment-summary";
       } else {
         window.location.href = "./user-agreement";
       }
