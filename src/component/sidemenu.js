@@ -15,18 +15,42 @@ class SideMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      aircount: "0"
+      aircount: "0",
+      activeRateSearch: "",
+      activeSpotList: ""
     };
   }
 
   render() {
     var urlShipSum = window.location.pathname;
-    window.localStorage.setItem("defActKey", "0");
+    window.localStorage.setItem("defShipActKey", "0");
     if (urlShipSum === "/shipment-summary") {
-      window.localStorage.setItem("defActKey", "1");
+      window.localStorage.setItem("defShipActKey", "1");
     } else {
+      window.localStorage.setItem("defShipActKey", "0");
+    }
+
+    var urlShipSum = window.location.pathname;
+    window.localStorage.setItem("defActKey", "0");
+    if (urlShipSum === "/rate-search") {
+      window.localStorage.setItem("defActKey", "1");
+      this.state.activeRateSearch = "rate-active"
+    } else if (urlShipSum === "/spot-rate-table") {
+      window.localStorage.setItem("defActKey", "1");
+      this.state.activeSpotList = "rate-active"
+    }
+    else
+    {
       window.localStorage.setItem("defActKey", "0");
     }
+
+    // var urlShipSum = window.location.pathname;
+    // window.localStorage.setItem("defspotActKey", "0");
+    // if (urlShipSum === "/spot-rate-table") {
+    //   window.localStorage.setItem("defspotActKey", "1");
+    // } else {
+    //   window.localStorage.setItem("defspotActKey", "0");
+    // }
 
     return (
       <div>
@@ -54,7 +78,7 @@ class SideMenu extends Component {
             </li>
             <li className="sidemenu-ul-li shipmentli">
               <Accordion
-                defaultActiveKey={window.localStorage.getItem("defActKey")}
+                defaultActiveKey={window.localStorage.getItem("defShipActKey")}
               >
                 <Card>
                   <Card.Header>
@@ -116,15 +140,53 @@ class SideMenu extends Component {
                 Bookings
               </a>
             </li>
-            <li className="sidemenu-ul-li">
-              <a href="rate-search">
-                <img
-                  src={RatesIcon}
-                  alt="green-counter-icon"
-                  className="header-greencounter-icon"
-                />
-                Rates
-              </a>
+            <li className="sidemenu-ul-li shipmentli">
+              <Accordion
+                defaultActiveKey={window.localStorage.getItem("defActKey")}
+                // defaultActiveKey={window.localStorage.getItem("defspotActKey")}
+              >
+                <Card>
+                  <Card.Header>
+                    <Link to="/rate-search" style={{ display: "block" }}>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        <img
+                          src={RatesIcon}
+                          alt="green-counter-icon"
+                          className="header-greencounter-icon"
+                        />
+                        Rates
+                      </Accordion.Toggle>
+                    </Link>
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="1">
+                    <Card.Body>
+                      <ul className="shipment-ul">
+                        <li>
+                          {/* <label className="shipment-ul-lilbl1">Rate Search</label> */}
+                          <a href="rate-search" className={this.state.activeRateSearch}>
+                            <img
+                              src={RatesIcon}
+                              alt="green-counter-icon"
+                              className="header-greencounter-icon"
+                            />
+                            Rate Search
+                          </a>
+                        </li>
+                        <li>
+                          <a href="spot-rate-table" className={this.state.activeSpotList}>
+                            <img
+                              src={RatesIcon}
+                              alt="green-counter-icon"
+                              className="header-greencounter-icon"
+                            />
+                            Spot Rate Listing
+                          </a>
+                        </li>                     
+                      </ul>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              </Accordion>
             </li>
             <li className="sidemenu-ul-li">
               <a href="analytics">

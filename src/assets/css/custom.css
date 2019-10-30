@@ -2159,4 +2159,11 @@ table tbody tr:last-child {
   margin-left: 20px;
   width: auto !important;
 }
+.rate-active {
+  color:#fbc915 !important;
+}
+.shareicon{
+  font-size: xx-large !important;
+  margin-right: 25px;
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/

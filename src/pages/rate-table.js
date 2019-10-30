@@ -122,6 +122,7 @@ debugger;
         finalPayment: "$3456.00"
       }
     ];
+    var i = 0;
     return (
       <div>
         <Headers />
@@ -267,16 +268,17 @@ debugger;
                         columns: [
                           {
                             Cell: row => {
+                              i++;
                               return (
                                 <React.Fragment>
                                   <div className="cont-costs rate-tab-check p-0 d-inline-block">
                                     <div className="remember-forgot d-block m-0">
                                       <input
-                                        id="maersk-logo"
+                                        id={"maersk-logo"+i}
                                         type="checkbox"
                                         name={"rate-tab-check"}
                                       />
-                                      <label htmlFor="maersk-logo"></label>
+                                      <label htmlFor={"maersk-logo"+i}></label>
                                     </div>
                                   </div>
                                   <div className="rate-tab-img">
