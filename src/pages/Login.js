@@ -120,34 +120,6 @@ class Login extends React.Component {
           <div className="logo">
             <img src={Logo} alt="logo" />
           </div>
-<<<<<<< HEAD
-          <div className="login-cntr">
-            <h2>
-              Welcome <span>Login to get started!</span>
-            </h2>
-            <div className="login-fields-cntr">
-              <div className="login-input-cntr">
-                <div className="login-fields">
-                  <label>User Name</label>
-                  <input
-                    type="text"
-                    name={"username"}
-                    onChange={this.handlechange}
-                    value={this.state.username}
-                    placeholder="Enter Your User Name"
-                  />
-                </div>
-                <div className="login-fields">
-                  <label>Password</label>
-                  <input
-                    id="password"
-                    name={"password"}
-                    onChange={this.handlechange}
-                    value={this.state.password}
-                    placeholder="Enter Your Password"
-                    type="password"
-                  />
-=======
           <form onSubmit={this.handleSubmit}>
             <div className="login-cntr">
               <h2>
@@ -161,6 +133,7 @@ class Login extends React.Component {
                       type="text"
                       name={"username"}
                       onChange={this.handlechange}
+                      value={this.state.username}
                       placeholder="Enter Your User Name"
                     />
                   </div>
@@ -170,6 +143,7 @@ class Login extends React.Component {
                       id="password"
                       name={"password"}
                       onChange={this.handlechange}
+                      value={this.state.password}
                       placeholder="Enter Your Password"
                       type="password"
                     />
@@ -181,7 +155,6 @@ class Login extends React.Component {
                     <label htmlFor="remember">Remember Me</label>
                   </div>
                   <a href="./forgotPassword">Forgot Password?</a>
->>>>>>> c93bf6131dbf052f9fd054d03f057e793ddc90ef
                 </div>
                 <div className="text-right">
                   <button
