@@ -66,11 +66,13 @@ const MapWithAMakredInfoWindow = compose(
                   {props.ModalData.map(function(mdata, i) {
                     let Hblno = mdata["HBL#"];
                     let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                    var finalinvoce=inovceno[i].split("|")[0];
                     return (
                       <>
                         <div
                           style={{
-                            borderBottom: "1px solid #F1F2F2;",
+                            borderBottom: "1px solid #F1F2F2",
                             overflow: "auto"
                           }}
                         >
@@ -80,6 +82,8 @@ const MapWithAMakredInfoWindow = compose(
                               {mdata.ContainerNo}
                             </p>
                           </a>
+                          <p>{mdata["HBL#"]}</p>
+                          <p>{finalinvoce}</p>
                         </div>
                       </>
                     );
@@ -106,23 +110,26 @@ const MapWithAMakredInfoWindow = compose(
               <InfoWindow>
                 <div>
                   {props.ModalData.map(function(mdata, i) {
+                    let Hblno = mdata["HBL#"];
+                    let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                    var finalinvoce=inovceno[i].split("|")[0];
                     return (
                       <>
-                        <p className="mapcontainerno">{mdata.ContainerNo}</p>
-                        <button
-                          type="button"
-                          class="btn btn-info"
-                          data-toggle="collapse"
-                          data-target="#demo"
+                        <div
+                          style={{
+                            borderBottom: "1px solid #F1F2F2",
+                            overflow: "auto"
+                          }}
                         >
-                          Simple collapsible
-                        </button>
-                        <div id="demo" class="collapse in">
-                          Lorem ipsum dolor sit amet, consectetur adipisicing
-                          elit, sed do eiusmod tempor incididunt ut labore et
-                          dolore magna aliqua. Ut enim ad minim veniam, quis
-                          nostrud exercitation ullamco laboris nisi ut aliquip
-                          ex ea commodo consequat.
+                          <img src={GreenPlus} className="greenicon" />
+                          <a href={shipmentdetails}>
+                            <p className="mapcontainerno">
+                              {mdata.ContainerNo}
+                            </p>
+                          </a>
+                          <p>{mdata["HBL#"]}</p>
+                          <p>{finalinvoce}</p>
                         </div>
                       </>
                     );
@@ -150,9 +157,30 @@ const MapWithAMakredInfoWindow = compose(
               <InfoWindow>
                 <div>
                   {props.ModalData.map(function(mdata, i) {
+                    debugger;
+                    let Hblno = mdata["HBL#"];
+                    let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                    var finalinvoce=inovceno[i].split("|")[0];
+
+
                     return (
                       <>
-                        <p className="mapcontainerno">{mdata.ContainerNo}</p>
+                        <div
+                          style={{
+                            borderBottom: "1px solid #F1F2F2",
+                            overflow: "auto"
+                          }}
+                        >
+                          <img src={GreenPlus} className="greenicon" />
+                          <a href={shipmentdetails}>
+                            <p className="mapcontainerno">
+                              {mdata.ContainerNo}
+                            </p>
+                          </a>
+                          <p>{mdata["HBL#"]}</p>
+                          <p>{finalinvoce}</p>
+                        </div>
                       </>
                     );
                   })}
@@ -295,7 +323,7 @@ class Dashboard extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-
+      console.log(response);
       selt.setState({
         selectedMarker: marker,
         ModalData: response.data.Table1

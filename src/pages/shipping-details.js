@@ -119,6 +119,7 @@ class ShippingDetails extends Component {
 
   MapButn() {
     this.setState({ listDis: "block", mapDis: "none" });
+    this.props.history.push("dashboard");
   }
   listButn() {
     this.setState({ listDis: "none", mapDis: "block" });
