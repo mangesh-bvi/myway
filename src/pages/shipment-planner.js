@@ -285,9 +285,10 @@ class ShipmentPlanner extends Component {
       firstmgmt: "",
       secondAvg: "",
       secondmgmt: "",
+      via:"",
       visualCarrier: "",
+      imageClass:"air",
       thirdAvg: "",
-      thirdmgmt: "",
       zoom: 4,
       center: {
         lat: 25.37852,
@@ -433,6 +434,7 @@ class ShipmentPlanner extends Component {
 
   companyChange = e => {
     let self = this;
+    document.getElementById("drpConsigneeCompany").selectedIndex = "0";
     let compArray = [];
 
     for (let index = 0; index < this.state.companydrp.length; index++) {
@@ -464,6 +466,7 @@ class ShipmentPlanner extends Component {
   consigneeChange = e => {
     let self = this;
     let supconsid = e.target.value;
+    document.getElementById("drpMode").selectedIndex = "0";
     self.setState({ supConsId: supconsid });
     axios({
       method: "post",
@@ -483,6 +486,7 @@ class ShipmentPlanner extends Component {
   transportModeChange = e => {
     let self = this;
     let transportmode = e.target.value;
+    document.getElementById("drpLiner").selectedIndex = "0";
     self.setState({ modeofTransport: transportmode });
     axios({
       method: "post",
@@ -527,7 +531,7 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+     debugger;
       console.log(response.data);
       // self.setState({ showingMaps: true });
       var totalAvg = 0;
@@ -536,12 +540,25 @@ class ShipmentPlanner extends Component {
       for (let index = 0; index < response.data.Table.length; index++) {
         if (index == 0) {
           self.setState({ firstAvg: response.data.Table[index].NTransit_Time });
+          self.setState({ firstmgmt: response.data.Table[index].ManagedBy });
         } else if (index == 1) {
+          debugger;
           self.setState({
             secondAvg: response.data.Table[index].NTransit_Time
           });
+          var mode=response.data.Table[index].RouteMode.split('-');
+          if(mode[0].toLowerCase()=='sea')
+          {
+            self.setState({ imageClass:"water" });
+          }
+          else{
+            self.setState({ imageClass:"air" });
+          }
+          self.setState({ secondmgmt: response.data.Table[index].ManagedBy });
+          self.setState({ via: response.data.Table[index].Line });
         } else {
           self.setState({ thirdAvg: response.data.Table[index].NTransit_Time });
+          self.setState({ thirdmgmt: response.data.Table[index].ManagedBy });
         }
         totalAvg += parseInt(response.data.Table[index].NTransit_Time);
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
@@ -550,6 +567,11 @@ class ShipmentPlanner extends Component {
       var deliveryData = response.data.Table1;
       if (deliveryData != "undefined" && deliveryData != null) {
         self.setState({ deliveryPopup: deliveryData });
+      }
+      else{
+        var data= [ { POLLocation:""}];
+      
+        self.setState({ deliveryPopup: data });
       }
       var transitData = response.data.Table;
       if (transitData !== "undefined" && transitData != null) {
@@ -645,6 +667,14 @@ class ShipmentPlanner extends Component {
       }
     }
 
+    function DeliveryPopupCheck(props) {
+      debugger;
+      const data = props.noData;
+      if (data == "nodata") {
+        return "No schedule available";
+      } 
+    }
+
     return (
       <div>
         <Headers />
@@ -674,21 +704,21 @@ class ShipmentPlanner extends Component {
                           onChange={this.consigneeChange}
                           id="drpConsigneeCompany"
                         >
-                          <option>Select</option>
+                          <option value={0}>Select</option>
                           {this.state.consigneedrp}
                         </select>
                       </div>
                       <div className="login-fields">
                         <label>Select Mode</label>
-                        <select onChange={this.transportModeChange}>
-                          <option>Select</option>
+                        <select id="drpMode" onChange={this.transportModeChange}>
+                          <option value={0}>Select</option>
                           {this.state.transportModedrp}
                         </select>
                       </div>
                       <div className="login-fields">
                         <label>Select Liner</label>
-                        <select onChange={this.fetchLinerChange}>
-                          <option>select</option>
+                        <select id="drpLiner" onChange={this.fetchLinerChange}>
+                          <option value={0}>select</option>
                           {this.state.linerdrp}
                         </select>
                       </div>
@@ -777,13 +807,13 @@ class ShipmentPlanner extends Component {
                     >
                       <tbody>
                         <tr>
-                          <td id="ContentPlaceHolder1_td_bg" className="water">
+                          <td id="ContentPlaceHolder1_td_bg" className={this.state.imageClass}>
                             <div className="row">
                               <div className="col-xs-12 col-sm-6">
                                 <div className="manage-txt">
                                   Managed by
                                   <span id="ContentPlaceHolder1_lbloriginmangedby">
-                                    Ata Freight Line
+                                  &nbsp;{this.state.firstmgmt}
                                   </span>
                                 </div>
                               </div>
@@ -813,7 +843,7 @@ class ShipmentPlanner extends Component {
                                 <div className="manage-txt origin-port">
                                   Managed by
                                   <span id="ContentPlaceHolder1_lblMiddleManagedBy">
-                                    Ata Freight Line Via Cma Cgm
+                                  &nbsp;{this.state.secondmgmt} via {this.state.via}
                                   </span>
                                 </div>
                               </div>
@@ -833,7 +863,7 @@ class ShipmentPlanner extends Component {
                                 <div className="manage-txt footer-manage">
                                   Managed by
                                   <span id="ContentPlaceHolder1_lblDeliveryManagedBy">
-                                    Ata Freight Line
+                                  &nbsp;{this.state.thirdmgmt}
                                   </span>
                                 </div>
                               </div>
@@ -850,64 +880,73 @@ class ShipmentPlanner extends Component {
                   toggle={this.toggleDelivery}
                   centered={true}
                 >
-                  <ModalBody className="p-0">
-                    {deliveryPopup.length > 0 &&
+                  <ModalBody className="p-0">                              
+                    {
                       deliveryPopup.map((cell, i) => {
                         debugger;
-                        return (
-                          <div className="container-fluid p-0">
-                            <div className="transit-sect">
-                              <div className="d-flex justify-content-between align-items-center">
-                                <div className="d-flex align-items-center">
-                                  <div className="shipment-img mr-3">
-                                    <TransitionImage imgType={cell.Mode} />
+                        if(cell.POLLocation=="")
+                        {
+                           return(
+                             <div className="container-fluid p-0">no schedule available</div>
+                           );
+                        }
+                        else{
+                          return (                         
+                            <div className="container-fluid p-0">
+                              <div className="transit-sect">
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <div className="d-flex align-items-center">
+                                    <div className="shipment-img mr-3">
+                                      <TransitionImage imgType={cell.Mode} />
+                                    </div>
+                                    <div>
+                                      <p className="desti-name">
+                                        {cell.POLLocation}
+                                      </p>
+                                      <p className="desti-route">
+                                        to {cell.DestinationPort}
+                                        ,Carrier {cell.Carrier}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <p className="desti-name">
-                                      {cell.POLLocation}
+                                </div>
+                              </div>
+                              <div className="delivery-inner">
+                                <div className="row">
+                                  <div className="col-md-4 text-center">
+                                    <p className="details-title">
+                                      Departure Date
                                     </p>
-                                    <p className="desti-route">
-                                      to {cell.DestinationPort}
-                                      ,Carrier {cell.Carrier}
+                                    <p className="details-para">
+                                      <Moment format="DD/MM/YYYY">
+                                        {cell.SailingDate}
+                                      </Moment>
+                                    </p>
+                                  </div>
+                                  <div className="col-md-4 text-center">
+                                    <p className="details-title">ETA</p>
+                                    <p className="details-para">
+                                      <Moment format="DD/MM/YYYY">
+                                        {cell.ETA}
+                                      </Moment>
+                                    </p>
+                                  </div>
+                                  <div className="col-md-4 text-center">
+                                    <p className="details-title">
+                                      Estimated Delivery Date
+                                    </p>
+                                    <p className="details-para">
+                                      <Moment format="DD/MM/YYYY">
+                                        {cell.CargoArrivalDate}
+                                      </Moment>
                                     </p>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div className="delivery-inner">
-                              <div className="row">
-                                <div className="col-md-4 text-center">
-                                  <p className="details-title">
-                                    Departure Date
-                                  </p>
-                                  <p className="details-para">
-                                    <Moment format="DD/MM/YYYY">
-                                      {cell.SailingDate}
-                                    </Moment>
-                                  </p>
-                                </div>
-                                <div className="col-md-4 text-center">
-                                  <p className="details-title">ETA</p>
-                                  <p className="details-para">
-                                    <Moment format="DD/MM/YYYY">
-                                      {cell.ETA}
-                                    </Moment>
-                                  </p>
-                                </div>
-                                <div className="col-md-4 text-center">
-                                  <p className="details-title">
-                                    Estimated Delivery Date
-                                  </p>
-                                  <p className="details-para">
-                                    <Moment format="DD/MM/YYYY">
-                                      {cell.CargoArrivalDate}
-                                    </Moment>
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
+                          );
+                        }
+                 
                       })}
                   </ModalBody>
                 </Modal>

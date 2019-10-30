@@ -924,6 +924,13 @@ table tbody tr:last-child {
   display: block;
   min-height: 540px;
 }
+.air {
+  background: url(./../img/air-bg.jpg) no-repeat;
+  background-size: 100%;
+  width: 100%;
+  display: block;
+  min-height: 540px;
+}
 .manage-txt {
   padding-top: 23%;
   /* padding-top: 25%; */
