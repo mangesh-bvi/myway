@@ -1040,11 +1040,11 @@ table tbody tr:last-child {
   justify-content: center;
 }
 .new-radio-rate-cntr-hide {
- display:none;
+  display: none;
 }
 .new-radio-rate-cntr-show {
-  display:block;
- }
+  display: block;
+}
 .new-radio-rate-cntr label {
   font-family: "Regular Font";
   letter-spacing: 0.5px;
@@ -1584,7 +1584,8 @@ table tbody tr:last-child {
   padding-right: 20px;
   padding-left: 20px;
 }
-.rate-final-contr select {
+.rate-final-contr select,
+.rate-final-contr input {
   margin-top: 10px;
 }
 .rate-final-contr .login-fields {
@@ -1605,6 +1606,20 @@ table tbody tr:last-child {
 }
 .amnt-popup .modal-body {
   padding: 30px 20px;
+}
+.amnt-popup .details-title {
+  flex: 0 0 150px;
+}
+.amnt-popup .modal-body .d-flex {
+  margin-bottom: 20px;
+}
+.amnt-popup .txt-cntr .d-flex:last-child {
+  margin-bottom: 0px;
+}
+.spe-equ .rate-address {
+  border-radius: 0;
+  margin: 0;
+  height: 80px;
 }
 /* rate finalizing ends */
 
@@ -2062,6 +2077,9 @@ table tbody tr:last-child {
   margin-left: 20px;
   cursor: pointer;
 }
+.action-cntr a:first-child .actionicon {
+  margin-left: 0;
+}
 .grncntrsld .rangeslider-vertical .rangeslider__handle {
   width: 30px;
   height: 20px;
@@ -2091,25 +2109,22 @@ table tbody tr:last-child {
   width: 30px;
   height: 30px;
 }
-.mapcontainerno{
-
+.mapcontainerno {
   color: #39b54a;
-  font-size:16px;
+  font-size: 16px;
   font-weight: 500;
   display: inline;
   margin: 10px;
   padding-top: 10px;
-cursor: pointer;
+  cursor: pointer;
 }
-.gm-style-iw{
+.gm-style-iw {
   width: 265px;
-  
-} 
-.greenicon{
+}
+.greenicon {
   display: inline;
   width: 16px;
   height: 16px;
-  
 }
 .viewmore-span{
   text-align: center;

@@ -11,6 +11,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import DownArrow from "./../assets/img/down-arrow.png";
+import Copy from "./../assets/img/copy.png";
 import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
@@ -55,10 +56,9 @@ class QuoteTable extends Component {
       url: `${appSettings.APIURL}/SalesQuoteGridAPI`,
       data: {
         UserId: userid,
-        fromDate:'2019-01-01',
-        Todate:'2019-10-26'
-
-      },   
+        fromDate: "2019-01-01",
+        Todate: "2019-10-26"
+      },
       headers: authHeader()
     }).then(function(response) {
       debugger;
@@ -125,9 +125,30 @@ class QuoteTable extends Component {
                   {
                     Header: "Notes",
                     accessor: "Notes"
+                  },
+                  {
+                    Header: "Actions",
+                    Cell: row => {
+                      return (
+                        <div className="action-cntr">
+                          <a href="/rate-finalizing-still">
+                            <img
+                              className="actionicon"
+                              src={Eye}
+                              alt="view-icon"
+                            />
+                          </a>
+                          <a href="/rate-finalizing">
+                            <img
+                              className="actionicon"
+                              src={Copy}
+                              alt="view-icon"
+                            />
+                          </a>
+                        </div>
+                      );
+                    }
                   }
-                 
-             
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}

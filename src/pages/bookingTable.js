@@ -7,7 +7,8 @@ import "../assets/css/react-table.css";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-
+import Eye from "./../assets/img/eye.png";
+import Copy from "./../assets/img/copy.png";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -36,13 +37,13 @@ class BookingTable extends Component {
 
   HandleBookingList() {
     let self = this;
-    var userid =encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookingGridAPI`,
       data: {
-        UserId: userid       
+        UserId: userid
       },
       headers: authHeader()
     }).then(function(response) {
@@ -52,8 +53,6 @@ class BookingTable extends Component {
       self.setState({ bookingData: data }); ///problem not working setstat undefined
     });
   }
-
- 
 
   render() {
     const { bookingData } = this.state;
@@ -66,7 +65,7 @@ class BookingTable extends Component {
           </div>
           <div className="cls-rt">
             <div className="title-sect">
-              <h2>Booking</h2>
+              <h2>Booking Table</h2>
             </div>
             <div className="ag-fresh">
               <ReactTable
@@ -113,8 +112,30 @@ class BookingTable extends Component {
                   {
                     Header: "Commodity",
                     accessor: "Commodity"
+                  },
+                  {
+                    Header: "Actions",
+                    Cell: row => {
+                      return (
+                        <div className="action-cntr">
+                          <a href="/rate-finalizing-still">
+                            <img
+                              className="actionicon"
+                              src={Eye}
+                              alt="view-icon"
+                            />
+                          </a>
+                          <a href="/rate-finalizing">
+                            <img
+                              className="actionicon"
+                              src={Copy}
+                              alt="view-icon"
+                            />
+                          </a>
+                        </div>
+                      );
+                    }
                   }
-    
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}

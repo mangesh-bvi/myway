@@ -1,21 +1,21 @@
 import React, { Component } from "react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
+import FileUpload from "./../assets/img/file.png";
 import ReactTable from "react-table";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 
-class RateFinalizing extends Component {
+class RateFinalizingStill extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       modalProfit: false,
       modalRequest: false,
-      modalNewConsignee: false
+      selectedFileName: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
-    this.toggleNewConsignee = this.toggleNewConsignee.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
   }
 
@@ -24,16 +24,16 @@ class RateFinalizing extends Component {
       modalProfit: !prevState.modalProfit
     }));
   }
-  toggleNewConsignee() {
-    this.setState(prevState => ({
-      modalNewConsignee: !prevState.modalNewConsignee
-    }));
-  }
   toggleRequest() {
     this.setState(prevState => ({
       modalRequest: !prevState.modalRequest
     }));
   }
+  onDocumentChangeHandler = event => {
+    this.setState({
+      selectedFileName: event.target.files[0].name
+    });
+  };
 
   render() {
     var data1 = [
@@ -321,29 +321,6 @@ class RateFinalizing extends Component {
                           </p>
                         </div>
                       </div>
-                      <div className="row">
-                        <div className="col-md-6 d-flex align-items-center">
-                          <button
-                            onClick={this.toggleProfit}
-                            className="butn more-padd m-0"
-                          >
-                            Add Profit
-                          </button>
-                        </div>
-                        <div className="col-md-6 text-right">
-                          <button
-                            onClick={this.toggleRequest}
-                            className="butn more-padd m-0"
-                          >
-                            Request Change
-                          </button>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <a href="rate-table" className="butn">
-                          Edit
-                        </a>
-                      </div>
                     </div>
                   </UncontrolledCollapse>
 
@@ -369,32 +346,45 @@ class RateFinalizing extends Component {
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <button
-                        onClick={this.toggleNewConsignee}
-                        className="butn more-padd"
-                      >
-                        Add New Consignee
-                      </button>
-                    </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select>
-                          <option>Select</option>
-                        </select>
+                        <input type="text" value="Dummy" disabled />
                       </div>
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Cargo Details</p>
-                        <select>
-                          <option>Select</option>
-                        </select>
+                        <input type="text" value="Dummy" disabled />
                       </div>
                     </div>
-                    <div className="text-right">
+                    {/* <div className="text-right">
                       <a href="quote-table" className="butn">
                         Send
                       </a>
+                    </div> */}
+                    <div className="rename-cntr login-fields d-block">
+                      {/* <input
+                        type="file"
+                        onChange={this.onDocumentChangeHandler}
+                      ></input> */}
+                      <div className="d-flex w-100 mt-4 align-items-center">
+                        <div className="w-100">
+                          <input
+                            id="file-upload"
+                            className="file-upload d-none"
+                            type="file"
+                            onChange={this.onDocumentChangeHandler}
+                          />
+                          <label htmlFor="file-upload">
+                            <div className="file-icon">
+                              <img src={FileUpload} alt="file-upload" />
+                            </div>
+                            Add File
+                          </label>
+                        </div>
+                      </div>
+                      <p className="file-name w-100 text-center mt-1">
+                        {this.state.selectedFileName}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -408,61 +398,15 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
-              <div className="txt-cntr">
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Amount</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input
-                      type="text"
-                      placeholder="Enter Amount"
-                      class="w-100"
-                    />
-                  </div>
+              <div className="d-flex align-items-center">
+                <p className="details-title mr-3">Amount</p>
+                <div class="spe-equ d-block m-0 flex-grow-1">
+                  <input type="text" placeholder="Enter Amount" class="w-100" />
                 </div>
               </div>
               <div className="text-center">
                 <Button className="butn" onClick={this.toggleProfit}>
                   Done
-                </Button>
-              </div>
-            </ModalBody>
-          </Modal>
-          <Modal
-            className="amnt-popup"
-            isOpen={this.state.modalNewConsignee}
-            toggle={this.toggleNewConsignee}
-            centered={true}
-          >
-            <ModalBody>
-              <div className="txt-cntr">
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Consignee Name</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Address</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <textarea class="rate-address"></textarea>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Notification Person</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Email Id</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div>
-              </div>
-              <div className="text-center">
-                <Button className="butn" onClick={this.toggleNewConsignee}>
-                  Create
                 </Button>
               </div>
             </ModalBody>
@@ -481,4 +425,4 @@ class RateFinalizing extends Component {
   }
 }
 
-export default RateFinalizing;
+export default RateFinalizingStill;
