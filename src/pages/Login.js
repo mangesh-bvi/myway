@@ -216,8 +216,8 @@ function TokenhandleResponse(response) {
       //alert('oops!error occured');
     } else {
       window.localStorage.setItem("token",encryption(data.access_token,"enc"));
-      if (window.localStorage.getItem("IsEnabled") == true) {
-        window.location.href = "./dashboard";
+      if (window.localStorage.getItem("IsEnabled") == false) {
+        window.location.href = "./shipment-summary";
       } else {
         window.location.href = "./user-agreement";
       }
