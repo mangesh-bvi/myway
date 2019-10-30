@@ -13,52 +13,53 @@ class NewRateSearch extends Component {
     super(props);
 
     this.state = {
-      shipmentType:'',
-      modeoftransport:'',
-      containerLoadType:'',
-      equipmentType:'',
-      isSpecialEquipment:'0',
-      specialEquipment:'',
-      tempratureEquipment:'',
-      isHazMat:'',
-      incoTerms:'',
-      typesofMove:'',
-      POL:'',
-      POD:'',
-      PUAddress:'',
-      PDAddress:''
+      shipmentType: "",
+      modeoftransport: "",
+      containerLoadType: "",
+      equipmentType: "",
+      isSpecialEquipment: "0",
+      specialEquipment: "",
+      tempratureEquipment: "",
+      isHazMat: "",
+      incoTerms: "",
+      typesofMove: "",
+      POL: "",
+      POD: "",
+      PUAddress: "",
+      PDAddress: ""
     };
   }
-  
-  ShipmentTypeClick=(e)=>{
-   let type=e.target.value;
-   this.setState({shipmentType:type});
-  }
-  modeofTransportClick=(e)=>{
+
+  ShipmentTypeClick = e => {
+    let type = e.target.value;
+    this.setState({ shipmentType: type });
+  };
+  modeofTransportClick = e => {
     debugger;
-    let type=e.target.value;
+    let type = e.target.value;
     debugger;
-    this.setState({modeoftransport:type});
+    this.setState({ modeoftransport: type });
     document.getElementById("dvroad").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvair").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvsea").classList.add("new-radio-rate-cntr-hide");
-    if(type=="air")
-    {
-      document.getElementById("dvair").classList.remove("new-radio-rate-cntr-hide");
+    if (type == "air") {
+      document
+        .getElementById("dvair")
+        .classList.remove("new-radio-rate-cntr-hide");
+    } else if (type == "sea") {
+      document
+        .getElementById("dvsea")
+        .classList.remove("new-radio-rate-cntr-hide");
+    } else if (type == "road") {
+      document
+        .getElementById("dvroad")
+        .classList.remove("new-radio-rate-cntr-hide");
     }
-    else if(type=="sea")
-    {
-      document.getElementById("dvsea").classList.remove("new-radio-rate-cntr-hide");
-    }
-    else if(type=="road")
-    {
-      document.getElementById("dvroad").classList.remove("new-radio-rate-cntr-hide");
-    }
-   }
-   ContainerLoadTypeClick=(e)=>{
-    let type=e.target.value;
-    this.setState({containerLoadType:type});
-   }
+  };
+  ContainerLoadTypeClick = e => {
+    let type = e.target.value;
+    this.setState({ containerLoadType: type });
+  };
 
   render() {
     const options = [
@@ -94,7 +95,13 @@ class NewRateSearch extends Component {
               <h3>Shipment Type</h3>
               <div className="new-radio-rate-cntr radio-blue">
                 <div>
-                  <input type="radio" name="ship-type" value="export" onClick={this.ShipmentTypeClick} id="export" />
+                  <input
+                    type="radio"
+                    name="ship-type"
+                    value="export"
+                    onClick={this.ShipmentTypeClick}
+                    id="export"
+                  />
                   <label htmlFor="export">Export</label>
                 </div>
                 <div>
@@ -107,11 +114,23 @@ class NewRateSearch extends Component {
                   <label htmlFor="import">Import</label>
                 </div>
                 <div>
-                  <input type="radio" name="ship-type" value="cross" onClick={this.ShipmentTypeClick} id="cross" />
+                  <input
+                    type="radio"
+                    name="ship-type"
+                    value="cross"
+                    onClick={this.ShipmentTypeClick}
+                    id="cross"
+                  />
                   <label htmlFor="cross">Cross Trade</label>
                 </div>
                 <div>
-                  <input type="radio" name="ship-type" value="domestic" onClick={this.ShipmentTypeClick} id="domestic" />
+                  <input
+                    type="radio"
+                    name="ship-type"
+                    value="domestic"
+                    onClick={this.ShipmentTypeClick}
+                    id="domestic"
+                  />
                   <label htmlFor="domestic">Domestic</label>
                 </div>
               </div>
@@ -120,22 +139,35 @@ class NewRateSearch extends Component {
               <h3>Mode of Transport</h3>
               <div className="new-radio-rate-cntr  radio-green">
                 <div>
-                  <input type="radio" name="mode-transport" value="sea" onClick={this.modeofTransportClick} id="sea" />
+                  <input
+                    type="radio"
+                    name="mode-transport"
+                    value="sea"
+                    onClick={this.modeofTransportClick}
+                    id="sea"
+                  />
                   <label htmlFor="sea">Sea</label>
                 </div>
                 <div>
                   <input
                     type="radio"
                     name="mode-transport"
-                    value="air" onClick={this.modeofTransportClick} 
+                    value="air"
+                    onClick={this.modeofTransportClick}
                     id="air"
                     defaultChecked
                   />
                   <label htmlFor="air">Air</label>
                 </div>
                 <div>
-                  <input type="radio" name="mode-transport" name="mode-transport"
-                    value="road" onClick={this.modeofTransportClick}  id="road" />
+                  <input
+                    type="radio"
+                    name="mode-transport"
+                    name="mode-transport"
+                    value="road"
+                    onClick={this.modeofTransportClick}
+                    id="road"
+                  />
                   <label htmlFor="road">Road</label>
                 </div>
               </div>
@@ -143,7 +175,10 @@ class NewRateSearch extends Component {
 
             <div className="new-rate-cntr">
               <h3>Container Load</h3>
-              <div id="dvsea" className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-sea radio-light-blue">
+              <div
+                id="dvsea"
+                className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-sea radio-light-blue"
+              >
                 <div>
                   <input
                     type="radio"
@@ -156,11 +191,20 @@ class NewRateSearch extends Component {
                   <label htmlFor="fcl">FCL</label>
                 </div>
                 <div>
-                  <input type="radio" value="lcl"  onClick={this.ContainerLoadTypeClick} name="cntr-load" id="lcl" />
+                  <input
+                    type="radio"
+                    value="lcl"
+                    onClick={this.ContainerLoadTypeClick}
+                    name="cntr-load"
+                    id="lcl"
+                  />
                   <label htmlFor="lcl">LCL</label>
                 </div>
               </div>
-              <div id="dvair" className="new-radio-rate-cntr cls-air radio-light-blue">
+              <div
+                id="dvair"
+                className="new-radio-rate-cntr cls-air radio-light-blue"
+              >
                 <div>
                   <input
                     type="radio"
@@ -171,9 +215,12 @@ class NewRateSearch extends Component {
                     defaultChecked
                   />
                   <label htmlFor="fcl">AIR</label>
-                </div>              
+                </div>
               </div>
-              <div id="dvroad" className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-road radio-light-blue">
+              <div
+                id="dvroad"
+                className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-road radio-light-blue"
+              >
                 <div>
                   <input
                     type="radio"
@@ -186,7 +233,13 @@ class NewRateSearch extends Component {
                   <label htmlFor="fcl">FTL</label>
                 </div>
                 <div>
-                  <input type="radio" value="ltl"  onClick={this.ContainerLoadTypeClick} name="cntr-load-road" id="lcl" />
+                  <input
+                    type="radio"
+                    value="ltl"
+                    onClick={this.ContainerLoadTypeClick}
+                    name="cntr-load-road"
+                    id="lcl"
+                  />
                   <label htmlFor="lcl">LTL</label>
                 </div>
               </div>
@@ -223,16 +276,12 @@ class NewRateSearch extends Component {
                 </div>
                 <div className="col-md-3">
                   <div className="spe-equ">
-                    <input
-                      type="text"
-                      placeholder="CBM"
-                      className="w-100"
-                    />
+                    <input type="text" placeholder="CBM" className="w-100" />
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="new-rate-cntr">
               <h3>Equipment Types</h3>
               <Select
@@ -393,7 +442,16 @@ class NewRateSearch extends Component {
                 </div>
               </div>
             </div>
-           
+            <div className="new-rate-cntr">
+              <h3>Quantity</h3>
+              <div className="spe-equ">
+                <input
+                  type="text"
+                  placeholder="Enter Quantity"
+                  className="m-auto w-50"
+                />
+              </div>
+            </div>
             <div className="text-center">
               <a href="rate-table" className="butn blue-butn rate-search">
                 Search

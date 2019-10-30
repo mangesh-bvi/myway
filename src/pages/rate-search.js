@@ -55,7 +55,7 @@ class RateSearch extends Component {
                       id="exist-cust"
                       defaultChecked
                     />
-                    <label htmlFor="exist-cust">Existing Customer</label>
+                    <label htmlFor="exist-cust">Existing Consignee</label>
                   </div>
                   <div>
                     <input
@@ -64,7 +64,7 @@ class RateSearch extends Component {
                       name="cust-select"
                       id="new-cust"
                     />
-                    <label htmlFor="new-cust">New Customer</label>
+                    <label htmlFor="new-cust">New Consignee</label>
                   </div>
                 </div>
               </div>
@@ -73,7 +73,7 @@ class RateSearch extends Component {
                   id="searchtxt"
                   type="text"
                   onChange={this.EnableRates}
-                  placeholder="Search Account/Customer"
+                  placeholder="Search Account/Consignee"
                   name="search-rate"
                 />
               </div>

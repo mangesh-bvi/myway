@@ -33,7 +33,6 @@ const MapWithAMakredInfoWindow = compose(
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={3}
   >
-      
     {props.markers.map(marker => {
       const onClick = props.onClick.bind(this, marker);
       // const pageRediract = hblno => {
@@ -75,7 +74,7 @@ const MapWithAMakredInfoWindow = compose(
               <InfoWindow>
                 <div>
                   {props.ModalData.map(function(mdata, i) {
-                    let Hblno= mdata["HBL#"];
+                    let Hblno = mdata["HBL#"];
                     let shipmentdetails = "shipment-details?hblno=" + Hblno;
                     return (
                       <>
@@ -86,12 +85,11 @@ const MapWithAMakredInfoWindow = compose(
                           }}
                         >
                           <img src={GreenPlus} className="greenicon" />
-                          <a href={shipmentdetails}><p
-                            className="mapcontainerno"
-                            
-                          >
-                            {mdata.ContainerNo}
-                          </p></a>
+                          <a href={shipmentdetails}>
+                            <p className="mapcontainerno">
+                              {mdata.ContainerNo}
+                            </p>
+                          </a>
                         </div>
                       </>
                     );
@@ -187,10 +185,9 @@ class Dashboard extends Component {
     );
   }
 
-  handelrediract=(e)=>{
-
+  handelrediract = e => {
     alert("yes");
-  }
+  };
   componentDidMount() {
     this.BindMapData();
     this.HandleQuotesData();
@@ -388,7 +385,7 @@ class Dashboard extends Component {
                         {/* <i className="fa fa-refresh fa-spin"></i> */}
                         <div className="dash-sects-dtls-inner">
                           <p>
-                            Customer Name : <span>David Robinson</span>
+                            Consignee Name : <span>David Robinson</span>
                           </p>
                           <p>
                             Shipment Type : <span>Air</span>
@@ -413,7 +410,7 @@ class Dashboard extends Component {
                             Shipment No : <span>SH 01</span>
                           </p>
                           <p>
-                            Customer Name : <span>BLUEGROUND US INC</span>
+                            Consignee Name : <span>BLUEGROUND US INC</span>
                           </p>
                         </div>
                       </div>
