@@ -6,25 +6,57 @@ import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import GoogleMapReact from "google-map-react";
 import { Button, Modal, ModalBody } from "reactstrap";
 import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
-import {
+import { withScriptjs, withGoogleMap, GoogleMap,Marker } from "react-google-maps";
+import GreenIcon from './../assets/img/green-circle.png';
+import RedIcon from "./../assets/img/red-circle.png";
+
+
+
+const { compose } = require("recompose");
+const POLMaps = compose(
   withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker,
-  InfoWindow
-} from "react-google-maps";
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultZoom={8}
+    defaultCenter={{ lat: 59.955413, lng: 30.337844 }}
+  >
+    <Marker
+      position={{
+        lat: 59.955413,
+        lng: 30.337844
+      }}
+      icon={GreenIcon}
+    ></Marker>
+  </GoogleMap>
+));
+const PODMaps = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultZoom={8}
+    defaultCenter={{ lat: 29.955413, lng: 50.337844 }}
+  >
 
+<Marker
+    position={{
+      lat:29.955413 ,
+      lng:50.337844 
+    }}
+    icon={RedIcon}
+    >
 
+    </Marker>
 
-const SourceIcon = () => <div className="map-circ source-circ" />;
-const DestiIcon = () => <div className="map-circ desti-circ" />;
-
+  </GoogleMap>
+));
+ 
 class RateTable extends Component {
   constructor(props) {
     super(props);
@@ -226,7 +258,7 @@ debugger;
                         >
                           +
                         </span>
-                        <GoogleMapReact
+                        {/* <GoogleMapReact
                           bootstrapURLKeys={{
                             key: "AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"
                           }}
@@ -234,7 +266,15 @@ debugger;
                           defaultZoom={this.props.zoom}
                         >
                           <SourceIcon lat={59.955413} lng={30.337844} />
-                        </GoogleMapReact>
+                        </GoogleMapReact> */}
+                        <POLMaps
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                          containerElement={
+                            <div style={{ height: `100%`, width: "100%" }} />
+                          }
+                          mapElement={<div style={{ height: `100%` }} />}
+                          loadingElement={<div style={{ height: `100%` }} />}
+                        ></POLMaps>
                       </div>
                       <div className="pol-pod-maps pod-maps">
                         <span className="rate-map-ovrly">POD</span>
@@ -244,15 +284,14 @@ debugger;
                         >
                           +
                         </span>
-                        <GoogleMapReact
-                          bootstrapURLKeys={{
-                            key: "AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"
-                          }}
-                          defaultCenter={this.props.center}
-                          defaultZoom={this.props.zoom}
-                        >
-                          <DestiIcon lat={59.955413} lng={30.337844} />
-                        </GoogleMapReact>
+                        <PODMaps
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                          containerElement={
+                            <div style={{ height: `100%`, width: "100%" }} />
+                          }
+                          mapElement={<div style={{ height: `100%` }} />}
+                          loadingElement={<div style={{ height: `100%` }} />}
+                        ></PODMaps>
                       </div>
                     </div>
                     <a href="#!" className="butn white-butn w-100 mt-0">
