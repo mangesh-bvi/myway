@@ -146,6 +146,7 @@ class ShippingDetails extends Component {
             <div className="title-sect">
               <h2>Shipments</h2>
               <div className="d-flex align-items-center">
+                <i class="fa fa-share-alt shareicon" aria-hidden="true"></i>
                 <input
                   type="search"
                   value={this.state.filterAll}
