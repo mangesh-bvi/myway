@@ -355,7 +355,7 @@ class GreenCounter extends Component {
                       </label>
                     </div>
                   </div>
-                  <div className="col-md-4">
+                  {/* <div className="col-md-4">
                     <div className="grncntrsld">
                       <Slider
                         value={volume}
@@ -368,7 +368,7 @@ class GreenCounter extends Component {
                         reverse={false}
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <label className="greenchartlbl1">
                   {this.state.treecount} tree Planted

@@ -82,10 +82,13 @@ class Login extends React.Component {
         //window.location.href = "./user-agreement";
       }).catch(error => {
         debugger;
+        this.setState({loading: false })
         var temperror=error.response.data
         var err=temperror.split(':');
         NotificationManager.error(err[1].replace('}',''));
-        setTimeout(function(){ window.location.href="./" }, 5000);
+        // this.state.usernamee = '';
+        this.setState({username: '', password:''})
+        setTimeout(5000);
     });
     } else {
       debugger;
@@ -130,6 +133,7 @@ class Login extends React.Component {
                       type="text"
                       name={"username"}
                       onChange={this.handlechange}
+                      value={this.state.username}
                       placeholder="Enter Your User Name"
                     />
                   </div>
@@ -139,6 +143,7 @@ class Login extends React.Component {
                       id="password"
                       name={"password"}
                       onChange={this.handlechange}
+                      value={this.state.password}
                       placeholder="Enter Your Password"
                       type="password"
                     />
@@ -215,9 +220,10 @@ function TokenhandleResponse(response) {
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
+      debugger;
       window.localStorage.setItem("token",encryption(data.access_token,"enc"));
-      if (window.localStorage.getItem("IsEnabled") == true) {
-        window.location.href = "./dashboard";
+      if (window.localStorage.getItem("IsEnabled") == "true") {
+        window.location.href = "./shipment-summary";
       } else {
         window.location.href = "./user-agreement";
       }

@@ -422,6 +422,21 @@ if (this.state.IsUserExist == true) {
       }
    })
 
+  if (this.state.fields["isenabled"] == undefined || this.state.fields["isenabled"]=="") {
+    this.state.fields["isenabled"] = this.state.selectIsEnable[0].key;
+  }
+
+  if (this.state.fields["isadmin"] == undefined || this.state.fields["isadmin"]=="") {
+    this.state.fields["isadmin"] = this.state.selectIsAdmin[0].key;
+  }
+
+  if (this.state.fields["displayShipper"] == undefined || this.state.fields["displayShipper"]=="") {
+    this.state.fields["displayShipper"] = this.state.selectIsEnable[0].key;
+  }
+  if (this.state.fields["displayConsignee"] == undefined || this.state.fields["displayConsignee"]=="") {
+    this.state.fields["displayConsignee"] = this.state.selectIsEnable[0].key;
+  }
+
    Modules = Modules.slice(0, -1);
     var username = this.state.fields["username"];
     var pW = this.state.fields["password"];
@@ -437,7 +452,7 @@ if (this.state.IsUserExist == true) {
     docData.append("CanCreateUser",0);
     docData.append("CreatedBy",userid);
     docData.append("EmailID",this.state.fields["emailid"]);
-    docData.append("ImpExp",this.state.fields["ImpExp"]);
+    docData.append("ImpExp","");
     docData.append("IsAdmin",this.state.fields["isadmin"]);
     docData.append("IsMywayUser","Y");
     docData.append("MywayUserName",this.state.fields["username"]);
@@ -449,14 +464,14 @@ if (this.state.IsUserExist == true) {
     docData.append("IsNew",true);
     docData.append("IsMobileEnabled",this.state.fields["MobileEnabled"]);
     docData.append("ProfileType",2);
-    docData.append("ProfileSubType",0);
+    docData.append("ProfileSubType",1);
     docData.append("HasMobileAccess",true);
     docData.append("ModuleID",Modules);
     docData.append("DocumentID",Document);
     docData.append("IsHideInvoiceDetails",true);
     docData.append("IsHideHBLShowMBLDocument",true);
     docData.append("Logo",this.state.selectedFile);
-    docData.append("RegisteredCompany",RegisteredCompany);
+    docData.append("RegisteredCompany","");
     // var docDesc = document.getElementById("docDesc").value;
       if(this.handleValidation()){
       axios({

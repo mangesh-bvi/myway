@@ -70,10 +70,10 @@ class AddUser extends React.Component{
       editRegCompany:[],
       selectedFile: null,
       disabled: true,
-      IsMobileEnabled: false
+      IsMobileEnabled: false,
       
     }
-
+    
     this.handlechange = this.handlechange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -805,13 +805,27 @@ if (this.state.IsUserExist == true) {
    })
 
    Modules = Modules.slice(0, -1);
-    // const { username, password, emailid, firstname, 
-    //   lastname, refreshtime, country, isenabled, usertype, usercreation,
-    //   isadmin, ImpExp, displayShipper, displayConsignee, MobileEnable,
-    //   Company, Consignee, Shipper} = this.state;
-    var username = this.state.fields["username"];
-    var pW = this.state.fields["password"];
-    var isenabled = this.state.fields["isenabled"]
+    if (this.state.fields["usertype"] == undefined || this.state.fields["usertype"]=="") {
+      this.state.fields["usertype"] = this.state.selectUserType[0].UserType;
+    }
+    if (this.state.fields["isenabled"] == undefined || this.state.fields["isenabled"]=="") {
+      this.state.fields["isenabled"] = this.state.selectIsEnable[0].key;
+    }
+    if (this.state.fields["isadmin"] == undefined || this.state.fields["isadmin"]=="") {
+      this.state.fields["isadmin"] = this.state.selectIsAdmin[0].key;
+    }
+    if (this.state.fields["ImpExp"] == undefined || this.state.fields["ImpExp"]=="") {
+      this.state.fields["ImpExp"] = this.state.selectImpExp[0].ID;
+    }
+    if (this.state.fields["displayShipper"] == undefined || this.state.fields["displayShipper"]=="") {
+      this.state.fields["displayShipper"] = this.state.selectIsEnable[0].key;
+    }
+    if (this.state.fields["displayConsignee"] == undefined || this.state.fields["displayConsignee"]=="") {
+      this.state.fields["displayConsignee"] = this.state.selectIsEnable[0].key;
+    }
+    // if (this.state.fields["isenabled"] == undefined || this.state.fields["isenabled"]=="") {
+    //   this.state.fields["isenabled"] = this.state.selectIsEnable[0].value;
+    // }
     
     // docData.append("UserName",this.state.fields["username"]);
     // docData.append("Password",this.state.fields["password"]);
