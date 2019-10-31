@@ -4,6 +4,8 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { Button, Modal, ModalBody } from "reactstrap";
+import Pencil from "./../assets/img/pencil.png";
 import { de } from "date-fns/esm/locale";
 
 const animatedComponents = makeAnimated();
@@ -52,8 +54,22 @@ class NewRateSearch extends Component {
       POL: "",
       POD: "",
       PUAddress: "",
-      PDAddress: ""
+      PDAddress: "",
+      modalPuAdd: false,
+      cbmLength: "",
+      cbmWidth: "",
+      cbmHeight: "",
+      cbmQuantity: "",
+      cbmVal: ""
     };
+
+    this.togglePuAdd = this.togglePuAdd.bind(this);
+  }
+
+  togglePuAdd() {
+    this.setState(prevState => ({
+      modalPuAdd: !prevState.modalPuAdd
+    }));
   }
 
   ShipmentTypeClick = e => {
@@ -139,6 +155,67 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
+  };
+  cntrLoadPlusClick = e => {
+    document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
+    document.getElementById("cntrLoadPlusClick").classList.add("d-none");
+    document.getElementById("cntrLoadName").classList.add("d-none");
+    document.getElementById("cntrLoadMinusClick").classList.remove("d-none");
+  };
+  cntrLoadMinusClick = e => {
+    document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+    document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    document.getElementById("cntrLoadName").classList.remove("d-none");
+    document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+  };
+  cbmChange = e => {
+    debugger;
+    let type = e.target.value;
+    let nme = e.target.name;
+    if (nme === "length") {
+      this.setState({ cbmLength: type });
+    } else if (nme === "width") {
+      this.setState({ cbmWidth: type });
+    } else if (nme === "height") {
+      this.setState({ cbmHeight: type });
+    } else if (nme === "qnty") {
+      this.setState({ cbmQuantity: type });
+    }
+
+    if (
+      this.state.cbmLength !== "" &&
+      this.state.cbmWidth !== "" &&
+      this.state.cmbHeight !== "" &&
+      this.state.cmbQuantity !== ""
+    ) {
+      let cbmVal =
+        parseFloat(this.state.cbmLength) +
+        parseFloat(this.state.cbmWidth) +
+        parseFloat(this.state.cbmHeight);
+      this.setState({ cbmVal });
+
+      // next
+      document.getElementById("cbm").classList.add("cbm");
+      document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document
+        .getElementById("cntrLoadIconCntr")
+        .classList.add("cntrLoadIconCntr");
+      document.getElementById("cntrLoadName").classList.remove("d-none");
+      document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+      document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    }
+  };
+  cbmPlusClick = e => {
+    document.getElementById("cbmInner").classList.remove("cbmType");
+    document.getElementById("cbmPlusClick").classList.add("d-none");
+    document.getElementById("cbmName").classList.add("d-none");
+    document.getElementById("cbmMinusClick").classList.remove("d-none");
+  };
+  cbmMinusClick = e => {
+    document.getElementById("cbmInner").classList.add("cbmType");
+    document.getElementById("cbmPlusClick").classList.remove("d-none");
+    document.getElementById("cbmName").classList.remove("d-none");
+    document.getElementById("cbmMinusClick").classList.add("d-none");
   };
 
   equipChange = e => {
@@ -241,8 +318,8 @@ class NewRateSearch extends Component {
               </div>
             </div>
             <div className="new-rate-cntr" id="modeTransport">
-              <h3>Mode of Transport</h3>
               <div className="rate-title-cntr">
+                <h3>Mode of Transport</h3>
                 <div className="iconSelection" id="modeTransIconCntr">
                   <p className="side-selection" id="modeTransName">
                     {this.state.modeoftransport}
@@ -296,115 +373,179 @@ class NewRateSearch extends Component {
                 </div>
               </div>
             </div>
-
             <div className="new-rate-cntr" id="containerLoad">
-              <h3>Container Load</h3>
-              <div
-                id="dvsea"
-                className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-sea radio-light-blue"
-              >
-                <div>
-                  <input
-                    type="radio"
-                    name="cntr-load"
-                    value="fcl"
-                    onClick={this.ContainerLoadTypeClick}
-                    id="fcl"
-                  />
-                  <label htmlFor="fcl">FCL</label>
-                </div>
-                <div>
-                  <input
-                    type="radio"
-                    value="lcl"
-                    onClick={this.ContainerLoadTypeClick}
-                    name="cntr-load"
-                    id="lcl"
-                  />
-                  <label htmlFor="lcl">LCL</label>
+              <div className="rate-title-cntr">
+                <h3>Container Load</h3>
+                <div className="iconSelection" id="cntrLoadIconCntr">
+                  <p className="side-selection" id="cntrLoadName">
+                    {this.state.containerLoadType}
+                  </p>
+                  <i
+                    className="fa fa-plus"
+                    id="cntrLoadPlusClick"
+                    onClick={this.cntrLoadPlusClick}
+                  ></i>
+                  <i
+                    className="fa fa-minus d-none"
+                    id="cntrLoadMinusClick"
+                    onClick={this.cntrLoadMinusClick}
+                  ></i>
                 </div>
               </div>
-              <div
-                id="dvair"
-                className="new-radio-rate-cntr cls-air radio-light-blue"
-              >
-                <div>
-                  <input
-                    type="radio"
-                    name="cntr-load-air"
-                    value="air"
-                    onClick={this.ContainerLoadTypeClick}
-                    id="Air"
-                  />
-                  <label htmlFor="Air">AIR</label>
+              <div id="cntrLoadInner">
+                <div
+                  id="dvsea"
+                  className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-sea radio-light-blue"
+                >
+                  <div>
+                    <input
+                      type="radio"
+                      name="cntr-load"
+                      value="fcl"
+                      onClick={this.ContainerLoadTypeClick}
+                      id="fcl"
+                    />
+                    <label htmlFor="fcl">FCL</label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      value="lcl"
+                      onClick={this.ContainerLoadTypeClick}
+                      name="cntr-load"
+                      id="lcl"
+                    />
+                    <label htmlFor="lcl">LCL</label>
+                  </div>
                 </div>
-              </div>
-              <div
-                id="dvroad"
-                className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-road radio-light-blue"
-              >
-                <div>
-                  <input
-                    type="radio"
-                    name="cntr-load-road"
-                    value="ftl"
-                    onClick={this.ContainerLoadTypeClick}
-                    id="ftl"
-                  />
-                  <label htmlFor="ftl">FTL</label>
+                <div
+                  id="dvair"
+                  className="new-radio-rate-cntr cls-air radio-light-blue"
+                >
+                  <div>
+                    <input
+                      type="radio"
+                      name="cntr-load-air"
+                      value="air"
+                      onClick={this.ContainerLoadTypeClick}
+                      id="Air"
+                    />
+                    <label htmlFor="Air">AIR</label>
+                  </div>
                 </div>
-                <div>
-                  <input
-                    type="radio"
-                    value="ltl"
-                    onClick={this.ContainerLoadTypeClick}
-                    name="cntr-load-road"
-                    id="ltl"
-                  />
-                  <label htmlFor="ltl">LTL</label>
+                <div
+                  id="dvroad"
+                  className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-road radio-light-blue"
+                >
+                  <div>
+                    <input
+                      type="radio"
+                      name="cntr-load-road"
+                      value="ftl"
+                      onClick={this.ContainerLoadTypeClick}
+                      id="ftl"
+                    />
+                    <label htmlFor="ftl">FTL</label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      value="ltl"
+                      onClick={this.ContainerLoadTypeClick}
+                      name="cntr-load-road"
+                      id="ltl"
+                    />
+                    <label htmlFor="ltl">LTL</label>
+                  </div>
                 </div>
               </div>
             </div>
             {this.state.containerLoadType != "fcl" ? (
-              <div className="new-rate-cntr">
+              <div className="new-rate-cntr" id="cbm">
                 <h3>CBM / Dimensions</h3>
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="spe-equ">
-                      <input
-                        type="text"
-                        placeholder="Enter Length"
-                        className="w-100"
-                      />
-                    </div>
+                <div className="rate-title-cntr">
+                  <div className="iconSelection" id="cbmIconCntr">
+                    <p className="side-selection" id="cbmName">
+                      {this.state.modeoftransport}
+                    </p>
+                    <i
+                      className="fa fa-plus"
+                      id="cbmPlusClick"
+                      onClick={this.cntrLoadPlusClick}
+                    ></i>
+                    <i
+                      className="fa fa-minus d-none"
+                      id="cbmMinusClick"
+                      onClick={this.cntrLoadMinusClick}
+                    ></i>
                   </div>
-                  <div className="col-md-3">
-                    <div className="spe-equ">
-                      <input
-                        type="text"
-                        placeholder="Enter Width"
-                        className="w-100"
-                      />
+                </div>
+                <div id="cbmInner">
+                  <div className="row">
+                    <div className="col-md">
+                      <div className="spe-equ">
+                        <input
+                          type="text"
+                          placeholder="Length (cm)"
+                          className="w-100"
+                          name="length"
+                          onBlur={this.cbmChange}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="spe-equ">
-                      <input
-                        type="text"
-                        placeholder="Enter Height"
-                        className="w-100"
-                      />
+                    <div className="col-md">
+                      <div className="spe-equ">
+                        <input
+                          type="text"
+                          placeholder="Width (cm)"
+                          className="w-100"
+                          name="width"
+                          onBlur={this.cbmChange}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="spe-equ">
-                      <input
-                        type="text"
-                        placeholder={
-                          this.state.modeoftransport != "air" ? "CBM" : "KG"
-                        }
-                        className="w-100"
-                      />
+                    <div className="col-md">
+                      <div className="spe-equ">
+                        <input
+                          type="text"
+                          placeholder="Height (cm)"
+                          className="w-100"
+                          name="height"
+                          onBlur={this.cbmChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md">
+                      <div className="spe-equ">
+                        <input
+                          type="text"
+                          placeholder="Quantity"
+                          className="w-100"
+                          name="qnty"
+                          onBlur={this.cbmChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md">
+                      <div className="spe-equ">
+                        <input
+                          type="text"
+                          placeholder="Gross Weight"
+                          className="w-100"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md">
+                      <div className="spe-equ">
+                        <input
+                          type="text"
+                          placeholder={
+                            this.state.modeoftransport != "air" ? "CBM" : "KG"
+                          }
+                          className="w-100"
+                          value={this.state.cbmVal}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -453,7 +594,7 @@ class NewRateSearch extends Component {
                   </div>
                 </div>
               ) : null}
-              <div className="remember-forgot">
+              <div className="remember-forgot justify-content-center">
                 <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                 <label htmlFor="haz-mat">HazMat</label>
                 <input id="haz-mat" type="checkbox" name={"haz-mat"} />
@@ -521,15 +662,20 @@ class NewRateSearch extends Component {
               </div>
             </div>
             <div className="new-rate-cntr">
-              <h3>Enter Addresses</h3>
+              <h3 className="mb-3">Enter Addresses</h3>
               <div className="row">
                 <div className="col-md-6">
-                  <textarea
-                    className="rate-address"
-                    placeholder="Enter PU Address"
-                    disabled
-                    value="Lotus Park, Ram Mandir (East), Mumbai : 400 000"
-                  ></textarea>
+                  <div className="position-relative">
+                    <div className="pu-edit" onClick={this.togglePuAdd}>
+                      <img src={Pencil} alt="edit icon" />
+                    </div>
+                    <textarea
+                      className="rate-address"
+                      placeholder="Enter PU Address"
+                      disabled
+                      value="Lotus Park, Ram Mandir (East), Mumbai : 400 000"
+                    ></textarea>
+                  </div>
                 </div>
                 <div className="col-md-6">
                   <textarea
@@ -610,6 +756,57 @@ class NewRateSearch extends Component {
             </div>
           </div>
         </div>
+        <Modal
+          className="amnt-popup"
+          isOpen={this.state.modalPuAdd}
+          toggle={this.togglePuAdd}
+          centered={true}
+        >
+          <ModalBody>
+            <div className="txt-cntr">
+              <div className="d-flex align-items-center">
+                <p className="details-title mr-3">Street</p>
+                <div class="spe-equ d-block m-0 flex-grow-1">
+                  <textarea class="rate-address"></textarea>
+                </div>
+              </div>
+              <div className="d-flex align-items-center">
+                <p className="details-title mr-3">Country</p>
+                <div class="spe-equ d-block m-0 flex-grow-1 login-fields">
+                  <select>
+                    <option>bkj</option>
+                    <option>bkj</option>
+                    <option>bkj</option>
+                  </select>
+                </div>
+              </div>
+              <div className="d-flex align-items-center">
+                <p className="details-title mr-3">Consignee Name</p>
+                <div class="spe-equ d-block m-0 flex-grow-1">
+                  <input type="text" class="w-100" />
+                </div>
+              </div>
+
+              <div className="d-flex align-items-center">
+                <p className="details-title mr-3">Notification Person</p>
+                <div class="spe-equ d-block m-0 flex-grow-1">
+                  <input type="text" class="w-100" />
+                </div>
+              </div>
+              <div className="d-flex align-items-center">
+                <p className="details-title mr-3">Email Id</p>
+                <div class="spe-equ d-block m-0 flex-grow-1">
+                  <input type="text" class="w-100" />
+                </div>
+              </div>
+            </div>
+            <div className="text-center">
+              <Button className="butn" onClick={this.togglePuAdd}>
+                Create
+              </Button>
+            </div>
+          </ModalBody>
+        </Modal>
       </div>
     );
   }

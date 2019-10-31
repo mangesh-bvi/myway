@@ -216,7 +216,7 @@ h2 span {
 .remember-forgot {
   margin-top: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 .remember-forgot label {
@@ -765,7 +765,8 @@ table tbody tr:last-child {
   cursor: pointer;
 }
 .shipmentTypeIconCntr,
-.modeTransIconCntr {
+.modeTransIconCntr,
+.cntrLoadIconCntr {
   display: block !important;
 }
 .planner-cntr {
@@ -1062,20 +1063,23 @@ table tbody tr:last-child {
   display: block;
 }
 .remShipmentType,
-.modeTransType {
+.modeTransType,
+.cntrLoadType,
+.cbmType {
   height: 0;
   opacity: 0;
   margin-top: 0 !important;
 }
 .shipmentType + .new-rate-cntr,
 .modeTransport + .new-rate-cntr,
-.containerLoad + .new-rate-cntr {
+.containerLoad + .new-rate-cntr,
+.cbm + .new-rate-cntr {
   display: block;
 }
 .new-rate-cntr {
   padding: 30px 20px;
   border-bottom: 1px solid #d6d6d6;
-  /* display: none; */
+  display: none;
 }
 .new-rate-cntr h3 {
   text-align: center;
@@ -1190,6 +1194,13 @@ table tbody tr:last-child {
   border-radius: 5px;
   height: 150px;
   margin-top: 15px;
+}
+.pu-edit {
+  width: 15px;
+  position: absolute;
+  right: 0;
+  top: -10px;
+  cursor: pointer;
 }
 /* new rate search ends */
 
@@ -2200,9 +2211,9 @@ table tbody tr:last-child {
   width: auto !important;
 }
 .rate-active {
-  color:#fbc915 !important;
+  color: #fbc915 !important;
 }
-.shareicon{
+.shareicon {
   font-size: xx-large !important;
   margin-right: 25px;
 }

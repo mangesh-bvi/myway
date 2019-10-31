@@ -20,8 +20,6 @@ import {
   InfoWindow
 } from "react-google-maps";
 
-
-
 const SourceIcon = () => <div className="map-circ source-circ" />;
 const DestiIcon = () => <div className="map-circ desti-circ" />;
 
@@ -32,12 +30,11 @@ class RateTable extends Component {
     this.state = {
       modalEdit: false,
       value: 50,
-      RateDetails:[],
+      RateDetails: []
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
     this.HandleRateDetails = this.HandleRateDetails.bind(this);
-
   }
 
   static defaultProps = {
@@ -48,9 +45,9 @@ class RateTable extends Component {
     zoom: 11
   };
 
-componentDidMount(){
-  this.HandleRateDetails();
-}
+  componentDidMount() {
+    this.HandleRateDetails();
+  }
 
   toggleEdit() {
     this.setState(prevState => ({
@@ -58,8 +55,8 @@ componentDidMount(){
     }));
   }
 
-  HandleRateDetails(){
-debugger;
+  HandleRateDetails() {
+    debugger;
     let self = this;
     axios({
       method: "post",
@@ -84,10 +81,8 @@ debugger;
       headers: authHeader()
     }).then(function(response) {
       console.log(response);
-      var ratetable=response.data.Table;
+      var ratetable = response.data.Table;
       self.setState({ RateDetails: ratetable });
-
-       
     });
   }
 
@@ -274,11 +269,13 @@ debugger;
                                   <div className="cont-costs rate-tab-check p-0 d-inline-block">
                                     <div className="remember-forgot d-block m-0">
                                       <input
-                                        id={"maersk-logo"+i}
+                                        id={"maersk-logo" + i}
                                         type="checkbox"
                                         name={"rate-tab-check"}
                                       />
-                                      <label htmlFor={"maersk-logo"+i}></label>
+                                      <label
+                                        htmlFor={"maersk-logo" + i}
+                                      ></label>
                                     </div>
                                   </div>
                                   <div className="rate-tab-img">
