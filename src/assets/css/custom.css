@@ -2141,6 +2141,30 @@ table tbody tr:last-child {
     padding: 10px;
     cursor: pointer;
 }
+
+.polpodcls .css-1hb7zxy-IndicatorsContainer{
+  display: none;
+}
+.accordion .card-header:after {
+  font-family: 'FontAwesome';  
+  content: "\f068";
+  float: right; 
+}
+.accordion .card-header.collapsed:after {
+  /* symbol for "collapsed" panels */
+  content: "\f067"; 
+}
+.pinmodal .card{
+  border: none;
+}
+.pinmodal .card-header{
+  padding: 5px;
+  background-color:white; 
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.pinmodal .card .card-body{
+  padding:5px;
+}
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/

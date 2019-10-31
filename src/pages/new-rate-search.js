@@ -5,15 +5,13 @@ import SideMenu from "../component/sidemenu";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { de } from "date-fns/esm/locale";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import { authHeader } from "../helpers/authHeader";
 
 const animatedComponents = makeAnimated();
 const { compose } = require("recompose");
-const {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  GroundOverlay
-} = require("react-google-maps");
+const { withScriptjs, withGoogleMap, GoogleMap } = require("react-google-maps");
 
 const Map1WithAMakredInfoWindow = compose(
   withScriptjs,
@@ -48,14 +46,52 @@ class NewRateSearch extends Component {
       tempratureEquipment: "",
       isHazMat: "",
       incoTerms: "",
-      typesofMove: "",
+      typesofMove: "d2p",
       POL: "",
       POD: "",
       PUAddress: "",
-      PDAddress: ""
+      PDAddress: "",
+      PODData: [],
+      POLData: []
     };
+    this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
+    this.HandleBindPOLPODData = this.HandleBindPOLPODData.bind(this);
   }
 
+  componentDidMount() {
+    this.HandleBindPOLPODData();
+  }
+
+  HandleBindPOLPODData() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/IncoTermsAPI`,
+      // data: {
+      //   Mode: "O",
+      //   Search: "nhav",
+      //   CountryCode: ""
+      // },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      // var bookData = response.data.Table;
+      // self.setState({ BookingData: bookData });
+    });
+  }
+
+  HandleTypeofMove(e) {
+    this.setState({ typesofMove: e.target.id });
+  }
+  HandlePOLChange = POL => {
+    debugger;
+
+    this.setState({ POL });
+  };
+  HandlePODChange = POD => {
+    this.setState({ POD });
+  };
   ShipmentTypeClick = e => {
     let type = e.target.value;
     this.setState({ shipmentType: type });
@@ -405,7 +441,12 @@ class NewRateSearch extends Component {
               <h3>Type of Move</h3>
               <div className="new-radio-rate-cntr radio-blue">
                 <div>
-                  <input type="radio" name="type-move" id="p2p" />
+                  <input
+                    type="radio"
+                    name="type-move"
+                    id="p2p"
+                    onChange={this.HandleTypeofMove}
+                  />
                   <label htmlFor="p2p">Port2Port</label>
                 </div>
                 <div>
@@ -414,59 +455,102 @@ class NewRateSearch extends Component {
                     name="type-move"
                     id="d2p"
                     defaultChecked
+                    onChange={this.HandleTypeofMove}
                   />
                   <label htmlFor="d2p">Door2Port</label>
                 </div>
                 <div>
-                  <input type="radio" name="type-move" id="d2d" />
+                  <input
+                    type="radio"
+                    name="type-move"
+                    id="d2d"
+                    onChange={this.HandleTypeofMove}
+                  />
                   <label htmlFor="d2d">Door2Door</label>
                 </div>
                 <div>
-                  <input type="radio" name="type-move" id="p2d" />
+                  <input
+                    type="radio"
+                    name="type-move"
+                    id="p2d"
+                    onChange={this.HandleTypeofMove}
+                  />
                   <label htmlFor="p2d">Port2Door</label>
                 </div>
               </div>
             </div>
-            <div className="new-rate-cntr">
-              <h3>Enter Addresses</h3>
-              <div className="row">
-                <div className="col-md-6">
-                  <textarea
-                    className="rate-address"
-                    placeholder="Enter PU Address"
-                  ></textarea>
-                </div>
-                <div className="col-md-6">
-                  <textarea
-                    className="rate-address"
-                    placeholder="Enter Delivery Address"
-                  ></textarea>
+
+            {this.state.typesofMove == "p2p" ? null : this.state.typesofMove ==
+              "d2p" ? (
+              <div className="new-rate-cntr">
+                <h3>Enter Addresses</h3>
+                <div className="row" style={{ paddingLeft: "243px" }}>
+                  <div className="col-md-8">
+                    <textarea
+                      className="rate-address"
+                      placeholder="Enter PU Address"
+                    ></textarea>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="new-rate-cntr">
-              <h3>Countries</h3>
-              <div className="spe-equ">
-                {/* <label>Kind of Special Equipment</label> */}
-                <Select
-                  className="rate-dropdown m-auto"
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  options={optionsSpeEqu}
-                  placeholder="Select Country"
-                />
+            ) : this.state.typesofMove == "d2d" ? (
+              <div className="new-rate-cntr">
+                <h3>Enter Addresses</h3>
+                <div className="row">
+                  <div className="col-md-6">
+                    <textarea
+                      className="rate-address"
+                      placeholder="Enter PU Address"
+                    ></textarea>
+                  </div>
+                  <div className="col-md-6">
+                    <textarea
+                      className="rate-address"
+                      placeholder="Enter Delivery Address"
+                    ></textarea>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : this.state.typesofMove == "p2d" ? (
+              <div className="new-rate-cntr">
+                <h3>Enter Addresses</h3>
+                <div className="row" style={{ paddingLeft: "243px" }}>
+                  <div className="col-md-8">
+                    <textarea
+                      className="rate-address"
+                      placeholder="Enter Delivery Address"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            {this.state.typesofMove != "d2d" ? (
+              <div className="new-rate-cntr">
+                <h3>Countries</h3>
+                <div className="spe-equ">
+                  {/* <label>Kind of Special Equipment</label> */}
+                  <Select
+                    className="rate-dropdown m-auto"
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
+                    options={optionsSpeEqu}
+                    placeholder="Select Country"
+                  />
+                </div>
+              </div>
+            ) : null}
             <div className="new-rate-cntr">
               <h3>Select Location</h3>
-              <div className="row">
-                <div className="col-md-6">
+              <div className="row polpodcls">
+                <div className="col-md-6 ">
                   <Select
                     className="rate-dropdown w-100"
                     closeMenuOnSelect={false}
                     components={animatedComponents}
                     options={optionsPOL}
                     placeholder="Select POL"
+                    onChange={this.HandlePOLChange}
+                    value={this.state.POl}
                   />
                 </div>
                 <div className="col-md-6">
@@ -476,6 +560,8 @@ class NewRateSearch extends Component {
                     components={animatedComponents}
                     options={optionsPOD}
                     placeholder="Select POD"
+                    onChange={this.HandlePODChange}
+                    value={this.state.POD}
                   />
                 </div>
               </div>
