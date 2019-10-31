@@ -887,7 +887,7 @@ class ShipmentPlanner extends Component {
                         if(cell.POLLocation=="")
                         {
                            return(
-                             <div className="container-fluid p-0">no schedule available</div>
+                             <div className="container-fluid p-0 no-sched-avail">no schedule available</div>
                            );
                         }
                         else{

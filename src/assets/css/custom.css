@@ -327,7 +327,6 @@ h2 span {
   padding: 8px 15px;
   font-family: "Medium Font";
   font-size: 14px;
-  margin-right: 25px;
   width: 250px;
 }
 .title-sect input::placeholder {
@@ -2163,7 +2162,24 @@ table tbody tr:last-child {
   color:#fbc915 !important;
 }
 .shareicon{
+  font-size: large !important;
+  margin-right: 25px;
+}
+
+.no-sched-avail{
+  padding: 50px !important;
+  text-align: center;
+  font-size: 24px;
+  font-family: 'Bold Font';
+}
+
+.advsearchicon{
   font-size: xx-large !important;
   margin-right: 25px;
+}
+
+.track-dropdown{
+  margin: 0px !important;
+  width: 100% !important;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
