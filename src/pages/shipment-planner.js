@@ -36,6 +36,7 @@ import {
   Polyline,
   google
 } from "react-google-maps";
+import { object } from "prop-types";
 
 const { compose } = require("recompose");
 
@@ -78,6 +79,27 @@ const MapWithAMakredInfoWindowLine = compose(
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={3}
   >
+    {props.transitpopupData.length > 0 ? (
+      <Polyline
+        path={props.transitpopupData}
+        geodesic={true}
+        style={{zIndex: 2}} 
+        className="overlay"
+        options={{
+          strokeColor: "#39b54a",
+          strokeOpacity: 0.75,
+          strokeWeight: 5,
+          icons: [
+            {
+              // icon: lineSymbol,
+              offset: "100%",
+              repeat: "20px"
+            }
+          ]
+        }}
+      />
+    ) : null}
+
     {props.markers.map(marker => {
       debugger;
 
@@ -94,7 +116,7 @@ const MapWithAMakredInfoWindowLine = compose(
         new window.google.maps.Size(32, 32)
       );
       var lineSymbol = {
-        path: window.google.maps.SymbolPath.CIRCLE,
+        path: window.google.maps.SymbolPath.Line,
         scale: 8,
         strokeColor: "#393"
       };
@@ -114,9 +136,11 @@ const MapWithAMakredInfoWindowLine = compose(
           <Polyline
             path={marker.Rounting}
             geodesic={true}
+            style={{ zIndex: 1 }}
+            className="overlay"
             options={{
-              strokeColor: "#ff2527",
-              strokeOpacity: 0.75,
+              strokeColor: "#ff0022",
+              strokeOpacity: 1.75,
               strokeWeight: 2,
               icons: [
                 {
@@ -147,7 +171,7 @@ const MapWithAMakredInfoWindowLine = compose(
                   </InfoWindow>
                 )}
               </Marker>
-              <Marker
+              {/* <Marker
                 key={2}
                 onClick={onClick}
                 icon={iconMarker}
@@ -165,12 +189,12 @@ const MapWithAMakredInfoWindowLine = compose(
                     </div>
                   </InfoWindow>
                 )}
-              </Marker>
+              </Marker> */}
             </>
           )}
           {OID === 2 && (
             <>
-              <Marker
+              {/* <Marker
                 key={3}
                 onClick={onClick}
                 icon={iconMarker}
@@ -188,7 +212,7 @@ const MapWithAMakredInfoWindowLine = compose(
                     </div>
                   </InfoWindow>
                 )}
-              </Marker>
+              </Marker> */}
               <Marker
                 key={4}
                 onClick={onClick}
@@ -201,9 +225,9 @@ const MapWithAMakredInfoWindowLine = compose(
                 {props.selectedMarker === marker && (
                   <InfoWindow>
                     <div>
-                      <h4>{marker.ConsigneeName}</h4>
+                      <h4>{marker.ShipperName}</h4>
                       <br />
-                      <b>{marker.EndLocation}</b>
+                      <b>{marker.StartLocation}</b>
                     </div>
                   </InfoWindow>
                 )}
@@ -231,25 +255,29 @@ const MapWithAMakredInfoWindowLine = compose(
                   </InfoWindow>
                 )}
               </Marker>
-              <Marker
-                key={6}
-                onClick={onClick}
-                position={{
-                  lat: end[0].lat,
-                  lng: end[0].lng
-                }}
-              >
-                {props.selectedMarker === marker && (
-                  <InfoWindow>
-                    <div>
-                      <h4>{marker.ConsigneeName}</h4>
-                      <br />
-                      <b>{marker.EndLocation}</b>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
+              
             </>
+          )}
+          {OID === 3 && (
+            <Marker
+            key={6}
+            onClick={onClick}
+            //icon={iconMarker}
+            position={{
+              lat: end[0].lat,
+              lng: end[0].lng
+            }}
+          >
+            {props.selectedMarker === marker && (
+              <InfoWindow>
+                <div>
+                  <h4>{marker.ConsigneeName}</h4>
+                  <br />
+                  <b>{marker.EndLocation}</b>
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
           )}
         </div>
       );
@@ -298,7 +326,8 @@ class ShipmentPlanner extends Component {
       MapsDetailsData: [],
       showingMaps: true,
       selectedMarker: false,
-      mappingId: 0
+      mappingId: 0,
+      transitpopupData:[]
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
@@ -307,7 +336,26 @@ class ShipmentPlanner extends Component {
     this.toggleEdit = this.toggleEdit.bind(this);
     this.HandleOnPageLoad = this.HandleOnPageLoad.bind(this);
     this.HandleSubmitDetailsData = this.HandleSubmitDetailsData.bind(this);
+    this.HandleTransitTimeVIew=this.HandleTransitTimeVIew.bind(this);
   }
+
+HandleTransitTimeVIew(rountlatlng){
+debugger;
+let self =this;  
+var rountData=rountlatlng;
+var finalRouteData=[];
+
+var startlatlng =rountData.split(";");
+for (let index = 0; index < startlatlng.length; index++) {
+  var startlatlnglst = new Object();
+  startlatlnglst.lat = Number(startlatlng[index].split(",")[0]);
+  startlatlnglst.lng = Number(startlatlng[index].split(",")[1]);
+  finalRouteData.push(startlatlnglst);
+   
+}
+self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
+
+}
 
   handleClick = (marker, event) => {
     debugger;
@@ -574,6 +622,7 @@ class ShipmentPlanner extends Component {
         self.setState({ deliveryPopup: data });
       }
       var transitData = response.data.Table;
+      console.log(transitData);
       if (transitData !== "undefined" && transitData != null) {
         self.setState({ transitpopup: transitData });
       }
@@ -641,7 +690,8 @@ class ShipmentPlanner extends Component {
       secondAvg,
       thirdAvg,
       carriar,
-      MapsDetailsData
+      MapsDetailsData,
+      transitpopupData
     } = this.state;
 
     let optionItems = this.state.companydrp.map((planet, i) => (
@@ -778,6 +828,7 @@ class ShipmentPlanner extends Component {
                           <MapWithAMakredInfoWindowLine
                             markers={MapsDetailsData}
                             onClick={this.handleClick}
+                            transitpopupData={transitpopupData}
                             selectedMarker={this.state.selectedMarker}
                             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                             containerElement={
@@ -887,7 +938,7 @@ class ShipmentPlanner extends Component {
                         if(cell.POLLocation=="")
                         {
                            return(
-                             <div className="container-fluid p-0">no schedule available</div>
+                             <div className="container-fluid p-0 no-sched-avail">no schedule available</div>
                            );
                         }
                         else{
@@ -1015,7 +1066,7 @@ class ShipmentPlanner extends Component {
                                     </p>
                                   </div>
                                 </div>
-                                <button className="butn cancel-butn">
+                                <button className="butn cancel-butn" onClick={()=>{this.HandleTransitTimeVIew(cell.RouteLatLong)}}>
                                   View
                                 </button>
                               </div>

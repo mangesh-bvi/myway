@@ -10,6 +10,7 @@ import Logo from "./../assets/img/logo.png";
 import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
 import { encryption } from "../helpers/encryption";
+import CountUp from 'react-countup';
 
 var carboneOptions = {
   legend: {
@@ -297,6 +298,32 @@ class GreenCounter extends Component {
                     options={volumeOptions}
                   />
                   <div>Total Tree Planted:-{totalTreePlanted}</div>
+                </div>
+              </div>
+              <div className="card carbonechart">
+                <div>
+                  <div className="volcls">
+                    <label className="grncuntr-lbl">Trees Planted by ATAFreight</label>
+                    <div>
+                    <CountUp start={1} end={totalTreePlanted}>
+                    
+                    </CountUp>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+              <div className="card carbonechart">
+                <div>
+                  <div className="volcls">
+                    <label className="grncuntr-lbl">Total CO2 Offset from Trees Planted</label>
+                    <div>
+                    <CountUp start={1} end={totalTreePlanted}>
+                    
+                    </CountUp>
+                    </div>
+                  </div>
+                  
                 </div>
               </div>
             </div>

@@ -6,7 +6,7 @@ import "../styles/custom.css";
 import "../assets/css/react-table.css";
 import GoogleMapReact from "google-map-react";
 import ShipWhite from "./../assets/img/ship-white.png";
-import { UncontrolledTooltip } from "reactstrap";
+import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import LoginActore from "./../assets/img/login-actore.jfif";
@@ -25,7 +25,12 @@ import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import matchSorter from "match-sorter";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import makeAnimated from "react-select/animated";
+import Select from "react-select";
 
+const animatedComponents = makeAnimated();
 const SourceIcon = () => (
   <div className="map-icon source-icon">
     <img src={ShipWhite} />
@@ -45,13 +50,27 @@ class ShippingDetails extends Component {
       listDis: "none",
       mapDis: "block",
       filterAll: "",
-      filtered: []
+      filtered: [],
+      modalAdvSearch: false,
+      selectMOT: [
+        { key: 0, value: "Select Mode" },
+        { key: 1, value: "Air" },
+        { key: 2, value: "Ocean" }
+      ],
+      selectShipStage: [
+        { key: 0, value: "SELECT STAGE" },
+        { key: 1, value: "NOT BOOKED YET" },
+        { key: 3, value: "NEW SHIPMENTS" },
+        { key: 4, value: "DEPARTED" },
+        { key: 5, value: "ARRIVED" }
+      ]
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.MapButn = this.MapButn.bind(this);
     this.listButn = this.listButn.bind(this);
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
+    this.toggleAdvSearch = this.toggleAdvSearch.bind(this);
   }
 
   componentDidMount() {
@@ -119,7 +138,10 @@ class ShippingDetails extends Component {
 
   MapButn() {
     this.setState({ listDis: "block", mapDis: "none" });
-    this.props.history.push("dashboard");
+    this.props.history.push({
+      pathname: "dashboard",
+      state: { detail: false }
+    });
   }
   listButn() {
     this.setState({ listDis: "none", mapDis: "block" });
@@ -133,8 +155,29 @@ class ShippingDetails extends Component {
     zoom: 11
   };
 
+  toggleAdvSearch() {
+    this.setState(prevState => ({
+      modalAdvSearch: !prevState.modalAdvSearch
+    }));
+  }
+
   render() {
     const { shipmentSummary } = this.state;
+
+    const optionsOrigin = [
+      { value: "AFGHANISTAN", label: "AFGHANISTAN" },
+      { value: "ALGERIA", label: "ALGERIA" },
+      { value: "ANGOLA", label: "ANGOLA" },
+      { value: "ARGENTINA", label: "ARGENTINA" },
+      { value: "AUSTRALIA", label: "AUSTRALIA" },
+      { value: "AUSTRIA", label: "AUSTRIA" },
+      { value: "BAHAMAS", label: "BAHAMAS" },
+      { value: "BAHRAIN", label: "BAHRAIN" },
+      { value: "BANGLADESH", label: "BANGLADESH" },
+      { value: "BELGIUM", label: "BELGIUM" },
+      { value: "BELIZE", label: "BELIZE" },
+    ]
+
     return (
       <div>
         <Headers />
@@ -146,13 +189,17 @@ class ShippingDetails extends Component {
             <div className="title-sect">
               <h2>Shipments</h2>
               <div className="d-flex align-items-center">
-                <i class="fa fa-share-alt shareicon" aria-hidden="true"></i>
                 <input
                   type="search"
                   value={this.state.filterAll}
                   onChange={this.filterAll}
                   placeholder="Search here"
                 />
+                <button
+                      onClick={this.toggleAdvSearch}
+                      className="fa fa-search-plus advsearchicon"
+                    ></button>
+                {/* <i class="fa fa-search-plus advsearchicon" aria-hidden="true"></i> */}
                 <a
                   href="#!"
                   onClick={this.listButn}
@@ -338,6 +385,12 @@ class ShippingDetails extends Component {
                             return row.value;
                           }
                         }
+                      },
+                      {
+                        Header: "Share",
+                        Cell: row => {
+                          return (<i class="fa fa-share-alt shareicon" aria-hidden="true"></i>)
+                        }
                       }
                     ]
                   },
@@ -367,7 +420,7 @@ class ShippingDetails extends Component {
                         keys: ["BL/HBL", "Consignee", "ConsigneeID"],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH
                       });
-                       
+
                       return result;
                     },
                     filterAll: true,
@@ -378,6 +431,256 @@ class ShippingDetails extends Component {
                 getTrProps={this.HandleRowClickEvt}
               />
             </div>
+            <Modal
+                  className="transit-popup"
+                  isOpen={this.state.modalAdvSearch}
+                  toggle={this.toggleAdvSearch}
+                  centered={true}
+                >
+                  <ModalBody className="p-0">
+                    <div className="container-fluid p-0">
+                      <div className="transit-sect">
+                        <div className="row">
+
+                          <div className="login-fields col-md-4">
+                              <label>
+                                Mode Of Transport
+                              </label>
+                              <select
+                              name={"ModeOfTransport"}
+                            >
+                              {this.state.selectMOT.map(team => (
+                                <option key={team.key} value={team.key}>
+                                  {team.value}
+                                </option>
+                              ))}
+                            </select>
+                            </div>
+
+                          <div className="login-fields col-md-4">
+                              <label>
+                                Shipment Stage
+                              </label>
+                              <select
+                              name={"ShipmentStage"}
+                            >
+                              {this.state.selectShipStage.map(team => (
+                                <option key={team.key} value={team.key}>
+                                  {team.value}
+                                </option>
+                              ))}
+                            </select>
+                            </div>
+                          <div className="col-md-4">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div className="login-fields" style={{"width": "100%"}}>
+                            <label style={{"padding": "0"}}>Consignee</label>
+                            <Select
+                            className="rate-dropdown track-dropdown"
+                            closeMenuOnSelect={false}
+                            components={animatedComponents}
+                            isMulti
+                            options={optionsOrigin}
+                            />
+                          </div>
+                          </div>
+                        {/* </div> */}
+                        </div>
+                        <div className="row">
+                        <div className=" login-fields col-md-4">
+                          {/* <label>SELECT</label> */}
+                          {/* <div>
+                            <input type="radio" name="cust-select" id="exist-cust"/>
+                            <label for="exist-cust">ETD</label>
+                          </div>
+                          <div>
+                            <input type="radio" name="cust-select" id="new-cust" />
+                            <label for="new-cust">ATD</label>
+                        </div> */}
+                        <div>
+                            <label>From Time Of Departure</label>
+                            <DatePicker
+                             id="saleDate"
+                             selected={this.state.startDate}
+                             onChange={this.handleChange}
+                        />
+                        </div>
+                        </div>
+                        <div className="login-fields col-md-4">
+                        <div>
+                            <label>To Time Of Departure</label>
+                            <DatePicker
+                             id="saleDate"
+                             selected={this.state.startDate}
+                             onChange={this.handleChange}
+                        />
+                        </div>
+                        </div>
+                        {/* <div class=" login-fields col-md-4"> */}
+                         <div className="col-md-4">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div className="login-fields" style={{"width": "100%"}}>
+                            <label style={{"padding": "0"}}>Shipper</label>
+                            <Select
+                            className="rate-dropdown track-dropdown"
+                            closeMenuOnSelect={false}
+                            components={animatedComponents}
+                            isMulti
+                            options={optionsOrigin}
+                            />
+                          </div>
+                          {/* </div> */}
+                        </div>
+                        {/* </div> */}
+                        </div>
+                        <div className="row">
+                        <div className="login-fields col-md-4">
+                          {/* <label>SELECT PARAMETER</label>
+                          <div>
+                            <input type="radio" name="cust-select" id="exist-cust"/>
+                            <label for="exist-cust">ETA</label>
+                          </div>
+                          <div>
+                            <input type="radio" name="cust-select" id="new-cust" />
+                            <label for="new-cust">ATA</label>
+                        </div> */}
+                        <div>
+                            <label>From Time Of Arrival</label>
+                            <DatePicker
+                             id="saleDate"
+                             selected={this.state.startDate}
+                             onChange={this.handleChange}
+                        />
+                        </div>
+                        </div>
+                        <div className="login-fields col-md-4">
+                        <div>
+                            <label>To Time Of Arrival</label>
+                            <DatePicker
+                             id="saleDate"
+                             selected={this.state.startDate}
+                             onChange={this.handleChange}
+                        />
+                        </div>
+                        </div>
+                        <div className="col-md-4">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div className="login-fields" style={{"width": "100%"}}>
+                            <label style={{"padding": "0"}}>Origin Country</label>
+                            <Select
+                            className="rate-dropdown track-dropdown"
+                            closeMenuOnSelect={false}
+                            components={animatedComponents}
+                            isMulti
+                            options={optionsOrigin}
+                            />
+                          </div>
+                          {/* </div> */}
+                        </div>
+                        </div>
+                        <div className="row">                          
+                        <div className="login-fields col-md-4">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div style={{"width": "100%"}}>
+                            <label style={{"padding": "0"}}>POL</label>
+                            <Select
+                            className="rate-dropdown track-dropdown"
+                            closeMenuOnSelect={false}
+                            components={animatedComponents}
+                            isMulti
+                            options={optionsOrigin}
+                            />
+                          </div>
+                          {/* </div> */}
+                        </div>
+                        <div className="login-fields col-md-4">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div style={{"width": "100%"}}>
+                            <label style={{"padding": "0"}}>POD</label>
+                            <Select
+                            className="rate-dropdown track-dropdown"
+                            closeMenuOnSelect={false}
+                            components={animatedComponents}
+                            isMulti
+                            options={optionsOrigin}
+                            />
+                          </div>
+                          {/* </div> */}
+                        </div>
+                        <div className="login-fields col-md-4">
+                        <div>
+                        <label style={{"padding": "11px"}}></label>
+                        <button
+                        type="button"
+                        className="butn"
+                        >
+                        Submit
+                      </button>
+                      </div>
+                      </div>
+                        </div>
+                      </div>
+
+                      {/* <div className="transit-sect-overflow">
+                        {transitpopup.map((cell, i) => {
+                          debugger;
+                          var imgSrc = "";
+
+                          return (
+                            <div className="transit-sect">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                  <div className="shipment-img mr-3">
+                                    <TransitionImage
+                                      imgType={cell.CModeOfTransport}
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="desti-name">
+                                      {cell.StartLocation}
+                                    </p>
+                                    <p className="desti-route">
+                                      to {cell.EndLocation}
+                                    </p>
+                                  </div>
+                                </div>
+                                <button className="butn cancel-butn">
+                                  View
+                                </button>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Average Days</p>
+                                    <span className="days-count">
+                                      {cell.NTransit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Minimum Days</p>
+                                    <span className="days-count">
+                                      {cell.NMin_Transit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                  <div className="days-cntr">
+                                    <p className="days-title">Maximum Days</p>
+                                    <span className="days-count">
+                                      {cell.NMax_Transit_Time}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div> */}
+                    </div>
+                  </ModalBody>
+                </Modal>
           </div>
         </div>
       </div>

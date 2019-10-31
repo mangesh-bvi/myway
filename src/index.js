@@ -76,7 +76,7 @@ ReactDOM.render(
     <Route exact path="/quote-table" component={QuoteTable} />
     <Route exact path="/booking-table" component={BookingTable} />
     <Route exact path="/view-user" component={ViewUser} />
-    <Route exact path="/AddSalesUser" component={AddSalesUser} />
+    <Route exact path="/add-sales-user" component={AddSalesUser} />
     <Route exact path="/analytics" component={Analytics} />
     <Route exact path="/rate-finalizing" component={RateFinalizing} />
     <Route

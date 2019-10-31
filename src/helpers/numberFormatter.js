@@ -37,4 +37,21 @@ export function formatNumber(number) {
     var stringToDate = new Date(dateString)
     return stringToDate.toLocaleDateString()
   }
+  export function GetMonthName(dateString){
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+    return monthNames[dateString.getMonth()];
+  }
   

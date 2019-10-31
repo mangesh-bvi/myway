@@ -67,25 +67,30 @@ const MapWithAMakredInfoWindow = compose(
                     let Hblno = mdata["HBL#"];
                     let shipmentdetails = "shipment-details?hblno=" + Hblno;
                     var inovceno = mdata["InvoiceNumber/Productid"].split(":");
-                    var finalinvoce=inovceno[i].split("|")[0];
+                    var finalinvoce = inovceno[i].split("|")[0];
                     return (
-                      <>
-                        <div
-                          style={{
-                            borderBottom: "1px solid #F1F2F2",
-                            overflow: "auto"
-                          }}
-                        >
-                          <img src={GreenPlus} className="greenicon" />
-                          <a href={shipmentdetails}>
-                            <p className="mapcontainerno">
-                              {mdata.ContainerNo}
-                            </p>
-                          </a>
-                          <p>{mdata["HBL#"]}</p>
-                          <p>{finalinvoce}</p>
+                      <div className="pinmodal">
+                        <div id="accordion" class="accordion">
+                          <div class="card mb-0">
+                            <div
+                              class="card-header collapsed"
+                              data-toggle="collapse"
+                              href="#collapseOne"
+                            >
+                              <a href={shipmentdetails}>
+                                <p className="mapcontainerno">
+                                  {mdata.ContainerNo}
+                                </p>
+                              </a>
+                            </div>
+                            <div
+                              id="collapseOne"
+                              class="card-body collapse"
+                              data-parent="#accordion"
+                            ></div>
+                          </div>
                         </div>
-                      </>
+                      </div>
                     );
                   })}
                 </div>
@@ -113,7 +118,7 @@ const MapWithAMakredInfoWindow = compose(
                     let Hblno = mdata["HBL#"];
                     let shipmentdetails = "shipment-details?hblno=" + Hblno;
                     var inovceno = mdata["InvoiceNumber/Productid"].split(":");
-                    var finalinvoce=inovceno[i].split("|")[0];
+                    var finalinvoce = inovceno[i].split("|")[0];
                     return (
                       <>
                         <div
@@ -161,9 +166,7 @@ const MapWithAMakredInfoWindow = compose(
                     let Hblno = mdata["HBL#"];
                     let shipmentdetails = "shipment-details?hblno=" + Hblno;
                     var inovceno = mdata["InvoiceNumber/Productid"].split(":");
-                    var finalinvoce=inovceno[i].split("|")[0];
-
-
+                    var finalinvoce = inovceno[i].split("|")[0];
                     return (
                       <>
                         <div
@@ -208,7 +211,8 @@ class Dashboard extends Component {
       QuotesData: [],
       InvoicesData: [],
       BookingData: [],
-      ModalData: []
+      ModalData: [],
+      checkMapview: true
     };
     this.BindMapData = this.BindMapData.bind(this);
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
@@ -223,10 +227,19 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
+    debugger;
+    let self=this;
     this.BindMapData();
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();
+    
+    var checkMapview = this.props.location.state;
+    if(typeof(checkMapview)!="undefined"){
+      var mapviewHow=this.props.location.state.detail;
+      self.setState({ checkMapview: mapviewHow });
+    }
+     
   }
   // Active Shipment Card on ...View More click to rediract Shipment-summary page
   HandleShipmentPage() {
@@ -334,7 +347,7 @@ class Dashboard extends Component {
   BindMapData() {
     let self = this;
     var mdata;
-
+    debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
@@ -458,82 +471,112 @@ class Dashboard extends Component {
           </div>
           <div className="cls-rt">
             <div className="dash-outer">
-              <div className="dash-map">
-                <div className="full-map">
-                  <MapWithAMakredInfoWindow
-                    markers={mapsData}
-                    onClick={this.handleClick}
-                    selectedMarker={selectedMarker}
-                    ModalData={ModalData}
-                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                    containerElement={
-                      <div style={{ height: `100%`, width: "100%" }} />
-                    }
-                    mapElement={<div style={{ height: `100%` }} />}
-                    loadingElement={<div style={{ height: `100%` }} />}
-                  ></MapWithAMakredInfoWindow>
-                </div>
-              </div>
-              <div className="container-fluid p-0">
-                <div className="row dash-sects-cntr">
-                  <div className="col-md-3">
-                    <div className="dash-sects">
-                      <h3>Active Shipments</h3>
-                      <div className="dash-sects-dtls">
-                        <div className="dash-sects-dtls-inner">
-                          {ActiveShipment}
+              {this.state.checkMapview == true ? (
+                <>
+                  <div className="dash-map">
+                    <div className="full-map">
+                      <MapWithAMakredInfoWindow
+                        markers={mapsData}
+                        onClick={this.handleClick}
+                        selectedMarker={selectedMarker}
+                        ModalData={ModalData}
+                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                        containerElement={
+                          <div style={{ height: `100%`, width: "100%" }} />
+                        }
+                        mapElement={<div style={{ height: `100%` }} />}
+                        loadingElement={<div style={{ height: `100%` }} />}
+                      ></MapWithAMakredInfoWindow>
+                    </div>
+                  </div>
+                  <div className="container-fluid p-0">
+                    <div className="row dash-sects-cntr">
+                      <div className="col-md-3">
+                        <div className="dash-sects">
+                          <h3>Active Shipments</h3>
+                          <div className="dash-sects-dtls">
+                            <div className="dash-sects-dtls-inner">
+                              {ActiveShipment}
+                            </div>
+                          </div>
+                          <span
+                            className="viewmore-span"
+                            onClick={this.HandleShipmentPage}
+                          >
+                            ...View More
+                          </span>
                         </div>
                       </div>
-                      <span
-                        className="viewmore-span"
-                        onClick={this.HandleShipmentPage}
-                      >
-                        ...View More
-                      </span>
+                      <div className="col-md-3">
+                        <div className="dash-sects">
+                          <h3>Booking</h3>
+                          <div className="dash-sects-dtls">
+                            {/* <i className="fa fa-refresh fa-spin"></i> */}
+                            <div className="dash-sects-dtls-inner">
+                              {Booking}
+                            </div>
+                          </div>
+                          <span
+                            className="viewmore-span"
+                            onClick={this.HandleBookingTablePage}
+                          >
+                            ...View More
+                          </span>
+                        </div>
+                      </div>
+                      <div className="col-md-3">
+                        <div className="dash-sects">
+                          <h3>Quotes</h3>
+                          <div className="dash-sects-dtls">
+                            {/* <i className="fa fa-refresh fa-spin"></i> */}
+                            <div className="dash-sects-dtls-inner">
+                              {Quotes}
+                            </div>
+                          </div>
+                          <span
+                            className="viewmore-span"
+                            onClick={this.HandleQuotesTablePage}
+                          >
+                            ...View More
+                          </span>
+                        </div>
+                      </div>
+                      <div className="col-md-3">
+                        <div className="dash-sects">
+                          <h3>Invoices</h3>
+                          <div className="dash-sects-dtls">
+                            {/* <i className="fa fa-refresh fa-spin"></i> */}
+                            <div className="dash-sects-dtls-inner">
+                              {Invoices}
+                            </div>
+                          </div>
+                          <span className="viewmore-span">...View More</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="col-md-3">
-                    <div className="dash-sects">
-                      <h3>Booking</h3>
-                      <div className="dash-sects-dtls">
-                        {/* <i className="fa fa-refresh fa-spin"></i> */}
-                        <div className="dash-sects-dtls-inner">{Booking}</div>
-                      </div>
-                      <span
-                        className="viewmore-span"
-                        onClick={this.HandleBookingTablePage}
-                      >
-                        ...View More
-                      </span>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="dash-sects">
-                      <h3>Quotes</h3>
-                      <div className="dash-sects-dtls">
-                        {/* <i className="fa fa-refresh fa-spin"></i> */}
-                        <div className="dash-sects-dtls-inner">{Quotes}</div>
-                      </div>
-                      <span
-                        className="viewmore-span"
-                        onClick={this.HandleQuotesTablePage}
-                      >
-                        ...View More
-                      </span>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="dash-sects">
-                      <h3>Invoices</h3>
-                      <div className="dash-sects-dtls">
-                        {/* <i className="fa fa-refresh fa-spin"></i> */}
-                        <div className="dash-sects-dtls-inner">{Invoices}</div>
-                      </div>
-                      <span className="viewmore-span">...View More</span>
-                    </div>
+                </>
+              ) : (
+                <div
+                  className="dash-map"
+                  style={{ minHeight: "calc(137vh - 332px)" }}
+                >
+                  <div className="full-map">
+                    <MapWithAMakredInfoWindow
+                      markers={mapsData}
+                      onClick={this.handleClick}
+                      selectedMarker={selectedMarker}
+                      ModalData={ModalData}
+                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                      containerElement={
+                        <div style={{ height: `100%`, width: "100%" }} />
+                      }
+                      mapElement={<div style={{ height: `100%` }} />}
+                      loadingElement={<div style={{ height: `100%` }} />}
+                    ></MapWithAMakredInfoWindow>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
