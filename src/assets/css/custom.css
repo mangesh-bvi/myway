@@ -216,7 +216,7 @@ h2 span {
 .remember-forgot {
   margin-top: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 .remember-forgot label {
@@ -225,6 +225,7 @@ h2 span {
   position: relative;
   padding-left: 40px;
   cursor: pointer;
+  margin: 0 15px;
 }
 .remember-forgot a {
   font-family: "Medium Font";
@@ -751,6 +752,22 @@ table tbody tr:last-child {
 .title-border {
   border-bottom: 1px solid #d6d6d6;
 }
+.rate-title-cntr {
+  position: relative;
+}
+.iconSelection {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  font-size: 14px;
+  transform: translateY(-50%);
+  display: none;
+  cursor: pointer;
+}
+.shipmentTypeIconCntr,
+.modeTransIconCntr {
+  display: block !important;
+}
 .planner-cntr {
   padding: 30px 0px 30px 30px;
 }
@@ -1034,9 +1051,31 @@ table tbody tr:last-child {
 /* rate search ends */
 
 /* new rate search starts */
+.side-selection {
+  font-family: "Medium Font";
+  display: inline-block;
+  margin-right: 10px;
+  color: #39b54a;
+  text-transform: capitalize;
+}
+#shipmentType {
+  display: block;
+}
+.remShipmentType,
+.modeTransType {
+  height: 0;
+  opacity: 0;
+  margin-top: 0 !important;
+}
+.shipmentType + .new-rate-cntr,
+.modeTransport + .new-rate-cntr,
+.containerLoad + .new-rate-cntr {
+  display: block;
+}
 .new-rate-cntr {
   padding: 30px 20px;
   border-bottom: 1px solid #d6d6d6;
+  /* display: none; */
 }
 .new-rate-cntr h3 {
   text-align: center;
@@ -1045,6 +1084,7 @@ table tbody tr:last-child {
   display: flex;
   margin-top: 15px;
   justify-content: center;
+  transition: all 0.3s ease-in-out;
 }
 .new-radio-rate-cntr-hide {
   display: none;
@@ -1457,13 +1497,13 @@ table tbody tr:last-child {
   height: 100%;
 }
 .dash-sects-cntr {
-  margin-right: -10px;
-  margin-left: -10px;
+  margin-right: -5px;
+  margin-left: -5px;
 }
 .dash-sects-cntr > div {
   margin-top: 20px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 .dash-sects h3 {
   color: #002d73;
@@ -2133,13 +2173,13 @@ table tbody tr:last-child {
   width: 16px;
   height: 16px;
 }
-.viewmore-span{
+.viewmore-span {
   text-align: center;
-    float: right;
-    color: #002d73;
-    font-size: 12px;
-    padding: 10px;
-    cursor: pointer;
+  float: right;
+  color: #002d73;
+  font-size: 12px;
+  padding: 10px;
+  cursor: pointer;
 }
 /* --------------------------------------------------------------------------- */
 

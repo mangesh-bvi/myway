@@ -59,6 +59,26 @@ class NewRateSearch extends Component {
   ShipmentTypeClick = e => {
     let type = e.target.value;
     this.setState({ shipmentType: type });
+
+    document.getElementById("shipmentType").classList.add("shipmentType");
+  };
+  shipmentTypePlusClick = e => {
+    document
+      .getElementById("shipmentTypeInner")
+      .classList.remove("remShipmentType");
+    document.getElementById("shipmentTypePlusClick").classList.add("d-none");
+    document.getElementById("shipmentTypeName").classList.add("d-none");
+    document
+      .getElementById("shipmentTypeMinusClick")
+      .classList.remove("d-none");
+  };
+  shipmentTypeMinusClick = e => {
+    document
+      .getElementById("shipmentTypeInner")
+      .classList.add("remShipmentType");
+    document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
+    document.getElementById("shipmentTypeName").classList.remove("d-none");
+    document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
   };
   modeofTransportClick = e => {
     let type = e.target.value;
@@ -81,10 +101,48 @@ class NewRateSearch extends Component {
         .getElementById("dvroad")
         .classList.remove("new-radio-rate-cntr-hide");
     }
+
+    // next
+    document.getElementById("modeTransport").classList.add("modeTransport");
+    document
+      .getElementById("shipmentTypeInner")
+      .classList.add("remShipmentType");
+    document
+      .getElementById("shipmentTypeIconCntr")
+      .classList.add("shipmentTypeIconCntr");
+    document.getElementById("shipmentTypeName").classList.remove("d-none");
+    document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
+    document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
+  };
+  modeTransPlusClick = e => {
+    document.getElementById("modeTransInner").classList.remove("modeTransType");
+    document.getElementById("modeTransPlusClick").classList.add("d-none");
+    document.getElementById("modeTransName").classList.add("d-none");
+    document.getElementById("modeTransMinusClick").classList.remove("d-none");
+  };
+  modeTransMinusClick = e => {
+    document.getElementById("modeTransInner").classList.add("modeTransType");
+    document.getElementById("modeTransPlusClick").classList.remove("d-none");
+    document.getElementById("modeTransName").classList.remove("d-none");
+    document.getElementById("modeTransMinusClick").classList.add("d-none");
   };
   ContainerLoadTypeClick = e => {
     let type = e.target.value;
     this.setState({ containerLoadType: type });
+
+    // next
+    document.getElementById("containerLoad").classList.add("containerLoad");
+    document.getElementById("modeTransInner").classList.add("modeTransType");
+    document
+      .getElementById("modeTransIconCntr")
+      .classList.add("modeTransIconCntr");
+    document.getElementById("modeTransName").classList.remove("d-none");
+    document.getElementById("modeTransMinusClick").classList.add("d-none");
+    document.getElementById("modeTransPlusClick").classList.remove("d-none");
+  };
+
+  equipChange = e => {
+    console.log("change");
   };
 
   render() {
@@ -117,14 +175,34 @@ class NewRateSearch extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <div className="new-rate-cntr">
-              <h3>Shipment Type</h3>
-              <div className="new-radio-rate-cntr radio-blue">
+            <div className="new-rate-cntr" id="shipmentType">
+              <div className="rate-title-cntr">
+                <h3>Shipment Type</h3>
+                <div className="iconSelection" id="shipmentTypeIconCntr">
+                  <p className="side-selection" id="shipmentTypeName">
+                    {this.state.shipmentType}
+                  </p>
+                  <i
+                    className="fa fa-plus"
+                    id="shipmentTypePlusClick"
+                    onClick={this.shipmentTypePlusClick}
+                  ></i>
+                  <i
+                    className="fa fa-minus d-none"
+                    id="shipmentTypeMinusClick"
+                    onClick={this.shipmentTypeMinusClick}
+                  ></i>
+                </div>
+              </div>
+              <div
+                className="new-radio-rate-cntr radio-blue"
+                id="shipmentTypeInner"
+              >
                 <div>
                   <input
                     type="radio"
                     name="ship-type"
-                    value="export"
+                    value="Export"
                     onClick={this.ShipmentTypeClick}
                     id="export"
                   />
@@ -134,8 +212,9 @@ class NewRateSearch extends Component {
                   <input
                     type="radio"
                     name="ship-type"
+                    value="Import"
                     id="import"
-                    defaultChecked
+                    onClick={this.ShipmentTypeClick}
                   />
                   <label htmlFor="import">Import</label>
                 </div>
@@ -143,7 +222,7 @@ class NewRateSearch extends Component {
                   <input
                     type="radio"
                     name="ship-type"
-                    value="cross"
+                    value="Cross Trade"
                     onClick={this.ShipmentTypeClick}
                     id="cross"
                   />
@@ -153,7 +232,7 @@ class NewRateSearch extends Component {
                   <input
                     type="radio"
                     name="ship-type"
-                    value="domestic"
+                    value="Domestic"
                     onClick={this.ShipmentTypeClick}
                     id="domestic"
                   />
@@ -161,9 +240,29 @@ class NewRateSearch extends Component {
                 </div>
               </div>
             </div>
-            <div className="new-rate-cntr">
+            <div className="new-rate-cntr" id="modeTransport">
               <h3>Mode of Transport</h3>
-              <div className="new-radio-rate-cntr  radio-green">
+              <div className="rate-title-cntr">
+                <div className="iconSelection" id="modeTransIconCntr">
+                  <p className="side-selection" id="modeTransName">
+                    {this.state.modeoftransport}
+                  </p>
+                  <i
+                    className="fa fa-plus"
+                    id="modeTransPlusClick"
+                    onClick={this.modeTransPlusClick}
+                  ></i>
+                  <i
+                    className="fa fa-minus d-none"
+                    id="modeTransMinusClick"
+                    onClick={this.modeTransMinusClick}
+                  ></i>
+                </div>
+              </div>
+              <div
+                className="new-radio-rate-cntr  radio-green"
+                id="modeTransInner"
+              >
                 <div>
                   <input
                     type="radio"
@@ -181,7 +280,6 @@ class NewRateSearch extends Component {
                     value="air"
                     onClick={this.modeofTransportClick}
                     id="air"
-                    defaultChecked
                   />
                   <label htmlFor="air">Air</label>
                 </div>
@@ -199,7 +297,7 @@ class NewRateSearch extends Component {
               </div>
             </div>
 
-            <div className="new-rate-cntr">
+            <div className="new-rate-cntr" id="containerLoad">
               <h3>Container Load</h3>
               <div
                 id="dvsea"
@@ -212,7 +310,6 @@ class NewRateSearch extends Component {
                     value="fcl"
                     onClick={this.ContainerLoadTypeClick}
                     id="fcl"
-                    defaultChecked
                   />
                   <label htmlFor="fcl">FCL</label>
                 </div>
@@ -237,10 +334,9 @@ class NewRateSearch extends Component {
                     name="cntr-load-air"
                     value="air"
                     onClick={this.ContainerLoadTypeClick}
-                    id="fcl"
-                    defaultChecked
+                    id="Air"
                   />
-                  <label htmlFor="fcl">AIR</label>
+                  <label htmlFor="Air">AIR</label>
                 </div>
               </div>
               <div
@@ -253,10 +349,9 @@ class NewRateSearch extends Component {
                     name="cntr-load-road"
                     value="ftl"
                     onClick={this.ContainerLoadTypeClick}
-                    id="fcl"
-                    defaultChecked
+                    id="ftl"
                   />
-                  <label htmlFor="fcl">FTL</label>
+                  <label htmlFor="ftl">FTL</label>
                 </div>
                 <div>
                   <input
@@ -264,9 +359,9 @@ class NewRateSearch extends Component {
                     value="ltl"
                     onClick={this.ContainerLoadTypeClick}
                     name="cntr-load-road"
-                    id="lcl"
+                    id="ltl"
                   />
-                  <label htmlFor="lcl">LTL</label>
+                  <label htmlFor="ltl">LTL</label>
                 </div>
               </div>
             </div>
@@ -326,6 +421,7 @@ class NewRateSearch extends Component {
                     components={animatedComponents}
                     isMulti
                     options={options}
+                    onChange={this.equipChange}
                   />
                   <div className="remember-forgot">
                     <input
@@ -359,13 +455,20 @@ class NewRateSearch extends Component {
               ) : null}
               <div className="remember-forgot">
                 <input id="haz-mat" type="checkbox" name={"haz-mat"} />
-                <label htmlFor="haz-mat" className="m-auto">
-                  HazMat
-                </label>
+                <label htmlFor="haz-mat">HazMat</label>
                 <input id="haz-mat" type="checkbox" name={"haz-mat"} />
-                <label htmlFor="haz-mat" className="m-auto">
-                  Unstackable
-                </label>
+                <label htmlFor="haz-mat">Unstackable</label>
+                <input id="cust-clear" type="checkbox" name={"haz-mat"} />
+                <label htmlFor="cust-clear">Custom Clearance</label>
+              </div>
+              <div className="spe-equ">
+                <input
+                  type="text"
+                  placeholder="Inco Terms"
+                  className="m-auto w-50"
+                  disabled
+                  value="auto populated data will come"
+                />
               </div>
               {/* <div className="new-radio-rate-cntr radio-brown">
                 <div>
@@ -390,16 +493,6 @@ class NewRateSearch extends Component {
                   <label htmlFor="dc-50">50 DC</label>
                 </div>
               </div> */}
-            </div>
-            <div className="new-rate-cntr">
-              <h3>Inco Terms</h3>
-              <div className="spe-equ">
-                <input
-                  type="text"
-                  placeholder="Inco Terms"
-                  className="m-auto w-50"
-                />
-              </div>
             </div>
             <div className="new-rate-cntr">
               <h3>Type of Move</h3>
@@ -434,20 +527,24 @@ class NewRateSearch extends Component {
                   <textarea
                     className="rate-address"
                     placeholder="Enter PU Address"
+                    disabled
+                    value="Lotus Park, Ram Mandir (East), Mumbai : 400 000"
                   ></textarea>
                 </div>
                 <div className="col-md-6">
                   <textarea
                     className="rate-address"
                     placeholder="Enter Delivery Address"
+                    disabled
+                    value="Lotus Park, Ram Mandir (East), Mumbai : 400 000"
                   ></textarea>
                 </div>
               </div>
             </div>
-            <div className="new-rate-cntr">
+            {/* <div className="new-rate-cntr">
               <h3>Countries</h3>
               <div className="spe-equ">
-                {/* <label>Kind of Special Equipment</label> */}
+                <label>Kind of Special Equipment</label>
                 <Select
                   className="rate-dropdown m-auto"
                   closeMenuOnSelect={false}
@@ -456,7 +553,7 @@ class NewRateSearch extends Component {
                   placeholder="Select Country"
                 />
               </div>
-            </div>
+            </div> */}
             <div className="new-rate-cntr">
               <h3>Select Location</h3>
               <div className="row">
@@ -465,8 +562,21 @@ class NewRateSearch extends Component {
                     className="rate-dropdown w-100"
                     closeMenuOnSelect={false}
                     components={animatedComponents}
+                    options={optionsSpeEqu}
+                    placeholder="Select Country"
+                  />
+                  <Select
+                    className="rate-dropdown w-100 mb-4"
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
                     options={optionsPOL}
                     placeholder="Select POL"
+                  />
+                  <Map1WithAMakredInfoWindow
+                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                    loadingElement={<div style={{ height: `100%` }} />}
+                    containerElement={<div style={{ height: `400px` }} />}
+                    mapElement={<div style={{ height: `100%` }} />}
                   />
                 </div>
                 <div className="col-md-6">
@@ -474,38 +584,26 @@ class NewRateSearch extends Component {
                     className="rate-dropdown w-100"
                     closeMenuOnSelect={false}
                     components={animatedComponents}
+                    options={optionsSpeEqu}
+                    placeholder="Select Country"
+                  />
+                  <Select
+                    className="rate-dropdown w-100 mb-4"
+                    closeMenuOnSelect={false}
+                    components={animatedComponents}
                     options={optionsPOD}
                     placeholder="Select POD"
+                  />
+                  <Map2WithAMakredInfoWindow
+                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                    loadingElement={<div style={{ height: `100%` }} />}
+                    containerElement={<div style={{ height: `400px` }} />}
+                    mapElement={<div style={{ height: `100%` }} />}
                   />
                 </div>
               </div>
             </div>
-
-            <div className="new-rate-cntr">
-              <div className="row">
-                <div className="col-md-6">
-                  <div>
-                    <Map1WithAMakredInfoWindow
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
-                      loadingElement={<div style={{ height: `100%` }} />}
-                      containerElement={<div style={{ height: `400px` }} />}
-                      mapElement={<div style={{ height: `100%` }} />}
-                    />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div>
-                    <Map2WithAMakredInfoWindow
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
-                      loadingElement={<div style={{ height: `100%` }} />}
-                      containerElement={<div style={{ height: `400px` }} />}
-                      mapElement={<div style={{ height: `100%` }} />}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="text-center">
+            <div className="text-center d-none">
               <a href="rate-table" className="butn blue-butn rate-search">
                 Search
               </a>
