@@ -297,7 +297,6 @@ class GreenCounter extends Component {
                     height={50}
                     options={volumeOptions}
                   />
-                  <div>Total Tree Planted:-{totalTreePlanted}</div>
                 </div>
               </div>
               <div className="card carbonechart">

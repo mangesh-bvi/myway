@@ -462,7 +462,7 @@ if (this.state.IsUserExist == true) {
     docData.append("CountryCode",this.state.fields["country"]);
     docData.append("RefreshTime",this.state.fields["refreshtime"]);
     docData.append("IsNew",true);
-    docData.append("IsMobileEnabled",this.state.fields["MobileEnabled"]);
+    docData.append("IsMobileEnabled",this.state.IsMobileEnabled);
     docData.append("ProfileType",2);
     docData.append("ProfileSubType",1);
     docData.append("HasMobileAccess",true);
