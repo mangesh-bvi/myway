@@ -765,7 +765,9 @@ table tbody tr:last-child {
 }
 .shipmentTypeIconCntr,
 .modeTransIconCntr,
-.cntrLoadIconCntr {
+.cntrLoadIconCntr,
+.cbmIconCntr,
+.typeMoveIconCntr {
   display: block !important;
 }
 .planner-cntr {
@@ -1064,7 +1066,9 @@ table tbody tr:last-child {
 .remShipmentType,
 .modeTransType,
 .cntrLoadType,
-.cbmType {
+.cbmType,
+.typeMoveType,
+.addressType {
   height: 0;
   opacity: 0;
   margin-top: 0 !important;
@@ -1072,7 +1076,9 @@ table tbody tr:last-child {
 .shipmentType + .new-rate-cntr,
 .modeTransport + .new-rate-cntr,
 .containerLoad + .new-rate-cntr,
-.cbm + .new-rate-cntr {
+.cbm + .new-rate-cntr,
+.typeMove + .new-rate-cntr,
+.address + .new-rate-cntr {
   display: block;
 }
 .new-rate-cntr {

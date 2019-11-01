@@ -57,10 +57,12 @@ class NewRateSearch extends Component {
       cbmLength: "",
       cbmWidth: "",
       cbmHeight: "",
-      cbmQuantity: "",
+      cbmQuantity: "1",
       cbmVal: "",
       PODData: [],
-      POLData: []
+      POLData: [],
+      puAdd: "",
+      deliAdd: ""
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -99,7 +101,28 @@ class NewRateSearch extends Component {
 
   HandleTypeofMove(e) {
     this.setState({ typesofMove: e.target.id });
+
+    // next
+    document.getElementById("typeMove").classList.add("typeMove");
+    document.getElementById("cbmInner").classList.add("cbmType");
+    document.getElementById("cbmIconCntr").classList.add("cbmIconCntr");
+    document.getElementById("cbmName").classList.remove("d-none");
+    document.getElementById("cbmMinusClick").classList.add("d-none");
+    document.getElementById("cbmPlusClick").classList.remove("d-none");
   }
+  typeMovePlusClick = e => {
+    document.getElementById("typeMoveInner").classList.remove("typeMoveType");
+    document.getElementById("typeMovePlusClick").classList.add("d-none");
+    document.getElementById("typeMoveName").classList.add("d-none");
+    document.getElementById("typeMoveMinusClick").classList.remove("d-none");
+  };
+  typeMoveMinusClick = e => {
+    document.getElementById("typeMoveInner").classList.add("typeMoveType");
+    document.getElementById("typeMovePlusClick").classList.remove("d-none");
+    document.getElementById("typeMoveName").classList.remove("d-none");
+    document.getElementById("typeMoveMinusClick").classList.add("d-none");
+  };
+
   HandlePOLChange = POL => {
     debugger;
 
@@ -221,8 +244,8 @@ class NewRateSearch extends Component {
     if (
       this.state.cbmLength !== "" &&
       this.state.cbmWidth !== "" &&
-      this.state.cmbHeight !== "" &&
-      this.state.cmbQuantity !== ""
+      this.state.cbmHeight !== "" &&
+      this.state.cbmQuantity !== ""
     ) {
       let cbmVal =
         parseFloat(this.state.cbmLength) +
@@ -252,6 +275,41 @@ class NewRateSearch extends Component {
     document.getElementById("cbmPlusClick").classList.remove("d-none");
     document.getElementById("cbmName").classList.remove("d-none");
     document.getElementById("cbmMinusClick").classList.add("d-none");
+  };
+
+  addressChange = e => {
+    debugger;
+    let type = e.target.value;
+    let nme = e.target.name;
+    if (nme === "puAdd") {
+      this.setState({ puAdd: type });
+    } else if (nme === "deliAdd") {
+      this.setState({ deliAdd: type });
+    }
+
+    if (this.state.puAdd !== "" || this.state.deliAdd !== "") {
+      // next
+      document.getElementById("address").classList.add("address");
+      document.getElementById("typeMoveInner").classList.add("typeMoveType");
+      document
+        .getElementById("typeMoveIconCntr")
+        .classList.add("typeMoveIconCntr");
+      document.getElementById("typeMoveName").classList.remove("d-none");
+      document.getElementById("typeMoveMinusClick").classList.add("d-none");
+      document.getElementById("typeMovePlusClick").classList.remove("d-none");
+    }
+  };
+  addressPlusClick = e => {
+    document.getElementById("addressInner").classList.remove("addressType");
+    document.getElementById("addressPlusClick").classList.add("d-none");
+    document.getElementById("addressName").classList.add("d-none");
+    document.getElementById("addressMinusClick").classList.remove("d-none");
+  };
+  addressMinusClick = e => {
+    document.getElementById("addressInner").classList.add("addressType");
+    document.getElementById("addressPlusClick").classList.remove("d-none");
+    document.getElementById("addressName").classList.remove("d-none");
+    document.getElementById("addressMinusClick").classList.add("d-none");
   };
 
   equipChange = e => {
@@ -498,21 +556,21 @@ class NewRateSearch extends Component {
             </div>
             {this.state.containerLoadType != "fcl" ? (
               <div className="new-rate-cntr" id="cbm">
-                <h3>CBM / Dimensions</h3>
                 <div className="rate-title-cntr">
+                  <h3>CBM / Dimensions</h3>
                   <div className="iconSelection" id="cbmIconCntr">
                     <p className="side-selection" id="cbmName">
-                      {this.state.modeoftransport}
+                      {/* {this.state.modeoftransport} */}
                     </p>
                     <i
                       className="fa fa-plus"
                       id="cbmPlusClick"
-                      onClick={this.cntrLoadPlusClick}
+                      onClick={this.cbmPlusClick}
                     ></i>
                     <i
                       className="fa fa-minus d-none"
                       id="cbmMinusClick"
-                      onClick={this.cntrLoadMinusClick}
+                      onClick={this.cbmMinusClick}
                     ></i>
                   </div>
                 </div>
@@ -558,7 +616,7 @@ class NewRateSearch extends Component {
                           placeholder="Quantity"
                           className="w-100"
                           name="qnty"
-                          onBlur={this.cbmChange}
+                          onKeyDown={this.cbmChange}
                         />
                       </div>
                     </div>
@@ -588,8 +646,8 @@ class NewRateSearch extends Component {
               </div>
             ) : null}
 
-            <div className="new-rate-cntr">
-              {this.state.containerLoadType != "lcl" ? (
+            {this.state.containerLoadType == "fcl" ? (
+              <div className="new-rate-cntr">
                 <div>
                   <h3>Equipment Types</h3>
                   <Select
@@ -629,25 +687,25 @@ class NewRateSearch extends Component {
                     />
                   </div>
                 </div>
-              ) : null}
-              <div className="remember-forgot justify-content-center">
-                <input id="haz-mat" type="checkbox" name={"haz-mat"} />
-                <label htmlFor="haz-mat">HazMat</label>
-                <input id="haz-mat" type="checkbox" name={"haz-mat"} />
-                <label htmlFor="haz-mat">Unstackable</label>
-                <input id="cust-clear" type="checkbox" name={"haz-mat"} />
-                <label htmlFor="cust-clear">Custom Clearance</label>
-              </div>
-              <div className="spe-equ">
-                <input
-                  type="text"
-                  placeholder="Inco Terms"
-                  className="m-auto w-50"
-                  disabled
-                  value="auto populated data will come"
-                />
-              </div>
-              {/* <div className="new-radio-rate-cntr radio-brown">
+
+                <div className="remember-forgot justify-content-center">
+                  <input id="haz-mat" type="checkbox" name={"haz-mat"} />
+                  <label htmlFor="haz-mat">HazMat</label>
+                  <input id="haz-mat" type="checkbox" name={"haz-mat"} />
+                  <label htmlFor="haz-mat">Unstackable</label>
+                  <input id="cust-clear" type="checkbox" name={"haz-mat"} />
+                  <label htmlFor="cust-clear">Custom Clearance</label>
+                </div>
+                <div className="spe-equ">
+                  <input
+                    type="text"
+                    placeholder="Inco Terms"
+                    className="m-auto w-50"
+                    disabled
+                    value="auto populated data will come"
+                  />
+                </div>
+                {/* <div className="new-radio-rate-cntr radio-brown">
                 <div>
                   <input type="checkbox" name="dimensions" id="dc-20" />
                   <label htmlFor="dc-20">20 DC</label>
@@ -670,10 +728,31 @@ class NewRateSearch extends Component {
                   <label htmlFor="dc-50">50 DC</label>
                 </div>
               </div> */}
-            </div>
-            <div className="new-rate-cntr">
-              <h3>Type of Move</h3>
-              <div className="new-radio-rate-cntr radio-blue">
+              </div>
+            ) : null}
+            <div className="new-rate-cntr" id="typeMove">
+              <div className="rate-title-cntr">
+                <h3>Type of Move</h3>
+                <div className="iconSelection" id="typeMoveIconCntr">
+                  <p className="side-selection" id="typeMoveName">
+                    {this.state.typesofMove}
+                  </p>
+                  <i
+                    className="fa fa-plus"
+                    id="typeMovePlusClick"
+                    onClick={this.typeMovePlusClick}
+                  ></i>
+                  <i
+                    className="fa fa-minus d-none"
+                    id="typeMoveMinusClick"
+                    onClick={this.typeMoveMinusClick}
+                  ></i>
+                </div>
+              </div>
+              <div
+                className="new-radio-rate-cntr radio-blue"
+                id="typeMoveInner"
+              >
                 <div>
                   <input
                     type="radio"
@@ -688,7 +767,6 @@ class NewRateSearch extends Component {
                     type="radio"
                     name="type-move"
                     id="d2p"
-                    defaultChecked
                     onChange={this.HandleTypeofMove}
                   />
                   <label htmlFor="d2p">Door2Port</label>
@@ -714,50 +792,74 @@ class NewRateSearch extends Component {
               </div>
             </div>
 
-            {this.state.typesofMove == "p2p" ? null : this.state.typesofMove ==
-              "d2p" ? (
-              <div className="new-rate-cntr">
-                <h3 className="mb-3">Enter Addresses</h3>
-                <div className="row" style={{ paddingLeft: "243px" }}>
-                  <div className="col-md-8">
-                    <textarea
-                      className="rate-address"
-                      placeholder="Enter PU Address"
-                    ></textarea>
+            {this.state.typesofMove == "p2p" ? null : (
+              <div className="new-rate-cntr" id="address">
+                <div className="rate-title-cntr">
+                  <h3 className="mb-3">Enter Addresses</h3>
+                  <div className="iconSelection" id="addressIconCntr">
+                    <p className="side-selection" id="addressName">
+                      {this.state.typesofMove}
+                    </p>
+                    <i
+                      className="fa fa-plus"
+                      id="addressPlusClick"
+                      onClick={this.addressPlusClick}
+                    ></i>
+                    <i
+                      className="fa fa-minus d-none"
+                      id="addressMinusClick"
+                      onClick={this.addressMinusClick}
+                    ></i>
                   </div>
                 </div>
-              </div>
-            ) : this.state.typesofMove == "d2d" ? (
-              <div className="new-rate-cntr">
-                <h3>Enter Addresses</h3>
-                <div className="row">
-                  <div className="col-md-6">
-                    <textarea
-                      className="rate-address"
-                      placeholder="Enter PU Address"
-                    ></textarea>
-                  </div>
-                  <div className="col-md-6">
-                    <textarea
-                      className="rate-address"
-                      placeholder="Enter Delivery Address"
-                    ></textarea>
-                  </div>
+                <div className="row justify-content-center" id="addressInner">
+                  {this.state.typesofMove == "p2p" ? null : this.state
+                      .typesofMove == "d2p" ? (
+                    <>
+                      <div className="col-md-6">
+                        <textarea
+                          className="rate-address"
+                          placeholder="Enter PU Address"
+                          onChange={this.addressChange}
+                          name="puAdd"
+                        ></textarea>
+                      </div>
+                    </>
+                  ) : this.state.typesofMove == "d2d" ? (
+                    <>
+                      <div className="col-md-6">
+                        <textarea
+                          className="rate-address"
+                          placeholder="Enter PU Address"
+                          onChange={this.addressChange}
+                          name="puAdd"
+                        ></textarea>
+                      </div>
+                      <div className="col-md-6">
+                        <textarea
+                          className="rate-address"
+                          placeholder="Enter Delivery Address"
+                          onChange={this.addressChange}
+                          name="deliAdd"
+                        ></textarea>
+                      </div>
+                    </>
+                  ) : this.state.typesofMove == "p2d" ? (
+                    <>
+                      <div className="col-md-6">
+                        <textarea
+                          className="rate-address"
+                          placeholder="Enter Delivery Address"
+                          onChange={this.addressChange}
+                          name="deliAdd"
+                        ></textarea>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </div>
-            ) : this.state.typesofMove == "p2d" ? (
-              <div className="new-rate-cntr">
-                <h3>Enter Addresses</h3>
-                <div className="row" style={{ paddingLeft: "243px" }}>
-                  <div className="col-md-8">
-                    <textarea
-                      className="rate-address"
-                      placeholder="Enter Delivery Address"
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-            ) : null}
+            )}
+
             <div className="new-rate-cntr">
               <h3>Select Location</h3>
               <div className="row polpodcls">
