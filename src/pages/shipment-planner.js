@@ -357,6 +357,7 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
       finalList.ShipperName = DetailsData[i].ShipperName;
       finalList.EndLocation = DetailsData[i].EndLocation;
       finalList.ConsigneeName = DetailsData[i].ConsigneeName;
+      
 
       // Start Location Lat lng
       var CStLatLong = DetailsData[i].CStLatLong;

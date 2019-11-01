@@ -572,9 +572,9 @@ class Dashboard extends Component {
     });
     return (
       <div>
-        {loading == true ? (
+        {/* {loading == true ? (
           <img src={LoadingImg} width="50" height="50" />
-        ) : null}
+        ) : null} */}
 
         <Headers />
         <div className="cls-ofl">
