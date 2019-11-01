@@ -631,7 +631,7 @@ if (this.state.IsUserExist == true) {
       fields["ImpExp"] = response.data.Table[0].ImpExp;
       fields["displayShipper"] = response.data.Table[0].DisplayAsShipper;
       fields["displayConsignee"] = response.data.Table[0].DisplayAsConsignee;
-      fields["MobileEnable"] = response.data.Table[0].HasMobileAccess;
+      fields["MobileEnabled"] = response.data.Table[0].HasMobileAccess;
       for (const [index, value] of response.data.Table3.entries()) {
         self.state.Documents +=  value.DocumentID + ","
       }

@@ -34,6 +34,7 @@ var carboneOptions = {
       }
     ]
   }
+  
 };
 
 var volumeOptions = {
@@ -64,10 +65,14 @@ var greencounterOption = {
   legend: {
     display: false
   },
+  tooltips: {
+    enabled: false
+},
   rotation: 0.75 * Math.PI,
   circumference: 1.5 * Math.PI,
   cutoutPercentage: 80,
-  padding: 40
+  padding: 40,
+  
 };
 
 class GreenCounter extends Component {
