@@ -100,7 +100,7 @@ const MapWithAMakredInfoWindowLine = compose(
       />
     ) : null}
 
-    {props.markers.map(marker => {
+    {props.markers.map((marker,i) => {
       debugger;
 
       const onClick = props.onClick.bind(this, marker);
@@ -130,7 +130,7 @@ const MapWithAMakredInfoWindowLine = compose(
       //     line.set("icons", icons);
       //   }, 20);
       // }
-
+       
       return (
         <div>
           <Polyline
@@ -154,7 +154,7 @@ const MapWithAMakredInfoWindowLine = compose(
           {OID === 1 && (
             <>
               <Marker
-                key={1}
+                key={i}
                 onClick={onClick}
                 position={{
                   lat: start[0].lat,
@@ -162,7 +162,7 @@ const MapWithAMakredInfoWindowLine = compose(
                 }}
               >
                 {props.selectedMarker === marker && (
-                  <InfoWindow>
+                  <InfoWindow key={i}>
                     <div>
                       <h4>{marker.ShipperName}</h4>
                       <br />
@@ -171,7 +171,7 @@ const MapWithAMakredInfoWindowLine = compose(
                   </InfoWindow>
                 )}
               </Marker>
-              {/* <Marker
+              <Marker
                 key={2}
                 onClick={onClick}
                 icon={iconMarker}
@@ -183,13 +183,13 @@ const MapWithAMakredInfoWindowLine = compose(
                 {props.selectedMarker === marker && (
                   <InfoWindow>
                     <div>
-                      <h4>{marker.ShipperName}</h4>
+                      <h4>{marker.EndLocation}</h4>
                       <br />
-                      <b>{marker.StartLocation}</b>
+                       <p>Transit time From {marker.StartLocation} To {marker.EndLocation} is: 1 (Max 2, Min 1) days</p>
                     </div>
                   </InfoWindow>
                 )}
-              </Marker> */}
+              </Marker>
             </>
           )}
           {OID === 2 && (
@@ -213,31 +213,13 @@ const MapWithAMakredInfoWindowLine = compose(
                   </InfoWindow>
                 )}
               </Marker> */}
-              <Marker
-                key={4}
-                onClick={onClick}
-                icon={iconMarker}
-                position={{
-                  lat: start[0].lat,
-                  lng: start[0].lng
-                }}
-              >
-                {props.selectedMarker === marker && (
-                  <InfoWindow>
-                    <div>
-                      <h4>{marker.ShipperName}</h4>
-                      <br />
-                      <b>{marker.StartLocation}</b>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
+               
             </>
           )}
           {OID === 3 && (
             <>
               <Marker
-                key={5}
+                key={i}
                 onClick={onClick}
                 icon={iconMarker}
                 position={{
@@ -246,7 +228,7 @@ const MapWithAMakredInfoWindowLine = compose(
                 }}
               >
                 {props.selectedMarker === marker && (
-                  <InfoWindow>
+                  <InfoWindow key={i}>
                     <div>
                       <h4>{marker.ShipperName}</h4>
                       <br />
@@ -255,29 +237,28 @@ const MapWithAMakredInfoWindowLine = compose(
                   </InfoWindow>
                 )}
               </Marker>
-              
             </>
           )}
           {OID === 3 && (
             <Marker
-            key={6}
-            onClick={onClick}
-            //icon={iconMarker}
-            position={{
-              lat: end[0].lat,
-              lng: end[0].lng
-            }}
-          >
-            {props.selectedMarker === marker && (
-              <InfoWindow>
-                <div>
-                  <h4>{marker.ConsigneeName}</h4>
-                  <br />
-                  <b>{marker.EndLocation}</b>
-                </div>
-              </InfoWindow>
-            )}
-          </Marker>
+              key={i + 1}
+              onClick={onClick}
+              //icon={iconMarker}
+              position={{
+                lat: end[0].lat,
+                lng: end[0].lng
+              }}
+            >
+              {props.selectedMarker === marker && (
+                <InfoWindow key={i + 1}>
+                  <div>
+                    <h4>{marker.ConsigneeName}</h4>
+                    <br />
+                    <b>{marker.EndLocation}</b>
+                  </div>
+                </InfoWindow>
+              )}
+            </Marker>
           )}
         </div>
       );
@@ -359,6 +340,7 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
 
   handleClick = (marker, event) => {
     debugger;
+    this.setState({ selectedMarker: "" });
     this.setState({ selectedMarker: marker });
   };
   HandleSubmitDetailsData(submitdata) {
@@ -411,10 +393,11 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
       finalList.Rounting = ComplexData;
       FinalData.push(finalList);
     }
-    console.log(FinalData);
+    
     this.setState({ MapsDetailsData: FinalData, showingMaps: false });
   }
   HandleOnPageLoad() {
+    
     let self = this;
     axios({
       method: "post",

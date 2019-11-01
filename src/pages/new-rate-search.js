@@ -573,6 +573,17 @@ class NewRateSearch extends Component {
               </div>
             </div>
 
+            {/* {this.state.typesofMove == "p2p" ? null : this.state.typesofMove ==
+              "d2p" ? (
+              <>ss</>
+            ) : this.state.typesofMove == "d2d" ? (
+              <>sss</>
+            ) : this.state.typesofMove == "p2d" ? (
+              <>wew</>
+            ) : this.state.typesofMove == "d2p" ? (
+              <></>
+            ) : null} */}
+
             {this.state.typesofMove == "p2p" ? null : this.state.typesofMove ==
               "d2p" ? (
               <div className="new-rate-cntr">
