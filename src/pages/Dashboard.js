@@ -9,6 +9,7 @@ import PlaneWhite from "./../assets/img/plane-white.png";
 import BlueShip from "./../assets/img/ship_blue.png";
 import BluePlane from "./../assets/img/blue_plane.png";
 import BookingBlue from "./../assets/img/booking_blue.png";
+import LoadingImg from "./../assets/img/loading.gif";
 
 // import TruckWhite from "./../assets/img/truck-white.png";
 import appSettings from "../helpers/appSetting";
@@ -65,21 +66,30 @@ const MapWithAMakredInfoWindow = compose(
             icon={blueShip}
           >
             {props.selectedMarker === marker && (
+               
               <InfoWindow>
                 <div>
                   {props.ModalData.map(function(mdata, i) {
                     let Hblno = mdata["HBL#"];
                     let shipmentdetails = "shipment-details?hblno=" + Hblno;
                     var inovceno = mdata["InvoiceNumber/Productid"].split(":");
-                    var finalinvoce = inovceno[i].split("|")[0];
+                    var finalinvocearr=[];
+                    for (let index = 0; index < inovceno.length; index++) {
+                      var finalinvoce = inovceno[index].split("|")[0];  
+                      finalinvocearr.push(finalinvoce);
+                    }
+                    
+                    var C_colid="#" +mdata.ContainerNo;
+                    var C_HblNO="#"+mdata["HBL#"]
+                     
                     return (
                       <div className="pinmodal">
-                        <div id="accordion" class="accordion">
+                        {/* <div id="accordion" class="accordion">
                           <div class="card mb-0">
                             <div
                               class="card-header collapsed"
                               data-toggle="collapse"
-                              href="#collapseOne"
+                              href={C_colid}
                             >
                               <a href={shipmentdetails}>
                                 <p className="mapcontainerno">
@@ -87,11 +97,104 @@ const MapWithAMakredInfoWindow = compose(
                                 </p>
                               </a>
                             </div>
+
                             <div
-                              id="collapseOne"
+                              id={mdata.ContainerNo}
                               class="card-body collapse"
                               data-parent="#accordion"
-                            ></div>
+                            > */}
+                        {/* ---------------------------------HBL NO-------------------------- */}
+                        {/* <div id="accordion-1" class="accordion">
+                                <div class="card mb-0">
+                                  <div
+                                    class="card-header collapsed"
+                                    data-toggle="collapse"
+                                    href={C_HblNO}
+                                  >
+                                    <p className="mapcontainerno">
+                                      {mdata["HBL#"]}
+                                    </p>
+                                  </div>
+                                  <div
+                                    id={mdata.ContainerNo}
+                                    class="card-body collapse"
+                                    data-parent="#accordion-1"
+                                  >
+                                    abc
+                                  </div>
+                                </div>
+                              </div> */}
+                        {/* -------------------------------------End Hbl No --------------------------- */}
+                        {/* </div>
+                          </div>
+                        </div> */}
+                        <div id="accordion">
+                          <div class="card">
+                            <div class="card-header" id="heading-1">
+                              <h5 class="mb-0">
+                                 
+                                <div
+                                  role="button"
+                                  data-toggle="collapse"
+                                  href={C_colid}
+                                  aria-expanded="false"
+                                  aria-controls={mdata.ContainerNo}
+                                >
+                                  <a href={shipmentdetails}>
+                                    <p className="mapcontainerno">
+                                      {mdata.ContainerNo}
+                                    </p>
+                                  </a>
+                                </div>
+                              </h5>
+                            </div>
+                            <div
+                              id={mdata.ContainerNo}
+                              class="collapse"
+                              data-parent="#accordion"
+                              aria-labelledby="heading-1"
+                            >
+                              <div class="card-body">
+                                <div id="accordion-1">
+                                  <div class="card">
+                                    <div class="card-header" id="heading-1-1">
+                                      <h5 class="mb-0">
+                                        <div
+                                          class="collapsed"
+                                          role="button"
+                                          data-toggle="collapse"
+                                          href={C_HblNO}
+                                          aria-expanded="false"
+                                          aria-controls={mdata["HBL#"]}
+                                        >
+                                          <p className="mapcontainerno">
+                                            {mdata["HBL#"]}
+                                          </p>
+                                        </div>
+                                      </h5>
+                                    </div>
+                                    <div
+                                      id={mdata["HBL#"]}
+                                      class="collapse"
+                                      data-parent="#accordion-1"
+                                      aria-labelledby="heading-1-1"
+                                    >
+                                      <div class="card-body">
+                                        {finalinvocearr.map(function(idata, i) {
+                                          return (
+                                            <div>
+                                              <p className="mapinvoice">
+                                                {idata}
+                                              </p>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -216,7 +319,8 @@ class Dashboard extends Component {
       InvoicesData: [],
       BookingData: [],
       ModalData: [],
-      checkMapview: true
+      checkMapview: true,
+      loading:true
     };
     this.BindMapData = this.BindMapData.bind(this);
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
@@ -326,6 +430,7 @@ class Dashboard extends Component {
   handleClick = (marker, event) => {
     debugger;
     let selt = this;
+    selt.setState({ selectedMarker: "" });
     var userID = marker.ID;
     var latitude = marker.LastLocation_Lat;
     var longitude = marker.LastLocation_Lon;
@@ -341,6 +446,7 @@ class Dashboard extends Component {
     }).then(function(response) {
       debugger;
       console.log(response);
+     
       selt.setState({
         selectedMarker: marker,
         ModalData: response.data.Table1
@@ -361,6 +467,7 @@ class Dashboard extends Component {
       headers: authHeader()
     }).then(function(response) {
       mdata = response.data;
+      self.setState({loading:false});
       self.setState({ mapsData: mdata });
     });
   }
@@ -373,7 +480,8 @@ class Dashboard extends Component {
       InvoicesData,
       ModalData,
       BookingData,
-      QuotesData
+      QuotesData,
+      loading
     } = this.state;
     let self = this;
 
@@ -474,6 +582,10 @@ class Dashboard extends Component {
     });
     return (
       <div>
+        {/* {loading == true ? (
+          <img src={LoadingImg} width="50" height="50" />
+        ) : null} */}
+
         <Headers />
         <div className="cls-ofl">
           <div className="cls-flside">

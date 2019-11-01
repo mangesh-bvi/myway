@@ -765,7 +765,9 @@ table tbody tr:last-child {
 }
 .shipmentTypeIconCntr,
 .modeTransIconCntr,
-.cntrLoadIconCntr {
+.cntrLoadIconCntr,
+.cbmIconCntr,
+.typeMoveIconCntr {
   display: block !important;
 }
 .planner-cntr {
@@ -1064,7 +1066,9 @@ table tbody tr:last-child {
 .remShipmentType,
 .modeTransType,
 .cntrLoadType,
-.cbmType {
+.cbmType,
+.typeMoveType,
+.addressType {
   height: 0;
   opacity: 0;
   margin-top: 0 !important;
@@ -1072,7 +1076,9 @@ table tbody tr:last-child {
 .shipmentType + .new-rate-cntr,
 .modeTransport + .new-rate-cntr,
 .containerLoad + .new-rate-cntr,
-.cbm + .new-rate-cntr {
+.cbm + .new-rate-cntr,
+.typeMove + .new-rate-cntr,
+.address + .new-rate-cntr {
   display: block;
 }
 .new-rate-cntr {
@@ -2180,8 +2186,8 @@ table tbody tr:last-child {
 }
 .greenicon {
   display: inline;
-  width: 16px;
-  height: 16px;
+  /* width: 16px;
+  height: 16px; */
 }
 .viewmore-span {
   text-align: center;
@@ -2195,14 +2201,22 @@ table tbody tr:last-child {
 .polpodcls .css-1hb7zxy-IndicatorsContainer {
   display: none;
 }
-.accordion .card-header:after {
-  font-family: "FontAwesome";
+.pinmodal .accordion .card-header:after {
+  font-family: 'FontAwesome';  
   content: "\f068";
-  float: right;
+  color: #a5a5a5;
+  float: left;
+  padding-top:5px;
+  
+
 }
-.accordion .card-header.collapsed:after {
+.pinmodal .accordion .card-header.collapsed:after {
   /* symbol for "collapsed" panels */
-  content: "\f067";
+  content: "\f067"; 
+  color: #39b54a;
+  float: left;
+  padding-top:5px;
+
 }
 .pinmodal .card {
   border: none;
@@ -2214,6 +2228,31 @@ table tbody tr:last-child {
 }
 .pinmodal .card .card-body {
   padding: 5px;
+}
+
+
+.mb-0 > div {
+  display: block;
+  position: relative;
+}
+.mb-0 > div:after {
+  content: "\f067";  
+  font-family: 'FontAwesome';
+  position: absolute;
+  right: 0;
+  color: #39b54a;
+  float: left;
+}
+.mb-0 > div[aria-expanded="true"]:after {
+  content: "\f068";  
+  color: #a5a5a5;
+  float: left;
+}
+.mapinvoice{
+  color: #a5a5a5;
+  font-size: 14px;
+  font-weight: 500; 
+  padding-left: 10px;
 }
 /* --------------------------------------------------------------------------- */
 
