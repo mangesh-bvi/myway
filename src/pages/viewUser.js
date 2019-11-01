@@ -84,7 +84,7 @@ class ViewUser extends Component {
     var userId = row.original["UserId"];
     if (row.original["UserType"] == "Sales User") {
       this.props.history.push({
-        pathname: "AddSalesUser",
+        pathname: "Add-sales-user",
         state: { detail: userId, page: "Edit" }
       });
     }

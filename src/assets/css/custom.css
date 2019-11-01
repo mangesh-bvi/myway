@@ -216,7 +216,7 @@ h2 span {
 .remember-forgot {
   margin-top: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 .remember-forgot label {
@@ -328,7 +328,6 @@ h2 span {
   padding: 8px 15px;
   font-family: "Medium Font";
   font-size: 14px;
-  margin-right: 25px;
   width: 250px;
 }
 .title-sect input::placeholder {
@@ -765,7 +764,8 @@ table tbody tr:last-child {
   cursor: pointer;
 }
 .shipmentTypeIconCntr,
-.modeTransIconCntr {
+.modeTransIconCntr,
+.cntrLoadIconCntr {
   display: block !important;
 }
 .planner-cntr {
@@ -1062,20 +1062,23 @@ table tbody tr:last-child {
   display: block;
 }
 .remShipmentType,
-.modeTransType {
+.modeTransType,
+.cntrLoadType,
+.cbmType {
   height: 0;
   opacity: 0;
   margin-top: 0 !important;
 }
 .shipmentType + .new-rate-cntr,
 .modeTransport + .new-rate-cntr,
-.containerLoad + .new-rate-cntr {
+.containerLoad + .new-rate-cntr,
+.cbm + .new-rate-cntr {
   display: block;
 }
 .new-rate-cntr {
   padding: 30px 20px;
   border-bottom: 1px solid #d6d6d6;
-  /* display: none; */
+  display: none;
 }
 .new-rate-cntr h3 {
   text-align: center;
@@ -1190,6 +1193,13 @@ table tbody tr:last-child {
   border-radius: 5px;
   height: 150px;
   margin-top: 15px;
+}
+.pu-edit {
+  width: 15px;
+  position: absolute;
+  right: 0;
+  top: -10px;
+  cursor: pointer;
 }
 /* new rate search ends */
 
@@ -2170,8 +2180,8 @@ table tbody tr:last-child {
 }
 .greenicon {
   display: inline;
-  width: 16px;
-  height: 16px;
+  /* width: 16px;
+  height: 16px; */
 }
 .viewmore-span {
   text-align: center;
@@ -2182,7 +2192,7 @@ table tbody tr:last-child {
   cursor: pointer;
 }
 
-.polpodcls .css-1hb7zxy-IndicatorsContainer{
+.polpodcls .css-1hb7zxy-IndicatorsContainer {
   display: none;
 }
 .pinmodal .accordion .card-header:after {
@@ -2202,16 +2212,16 @@ table tbody tr:last-child {
   padding-top:5px;
 
 }
-.pinmodal .card{
+.pinmodal .card {
   border: none;
 }
-.pinmodal .card-header{
+.pinmodal .card-header {
   padding: 5px;
-  background-color:white; 
+  background-color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
-.pinmodal .card .card-body{
-  padding:5px;
+.pinmodal .card .card-body {
+  padding: 5px;
 }
 
 
@@ -2257,10 +2267,27 @@ table tbody tr:last-child {
   width: auto !important;
 }
 .rate-active {
-  color:#fbc915 !important;
+  color: #fbc915 !important;
 }
-.shareicon{
+.shareicon {
+  font-size: large !important;
+  margin-right: 25px;
+}
+
+.no-sched-avail {
+  padding: 50px !important;
+  text-align: center;
+  font-size: 24px;
+  font-family: "Bold Font";
+}
+
+.advsearchicon {
   font-size: xx-large !important;
   margin-right: 25px;
+}
+
+.track-dropdown {
+  margin: 0px !important;
+  width: 100% !important;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
