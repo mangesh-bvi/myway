@@ -28,17 +28,21 @@ class AddUser extends React.Component{
         // { key: "4", value: "Russia" },
       ],
       selectIsEnable: [
-        { key: true, value: "True" },
-        { key: false, value: "False" }
+        { key: false, value: "False" },
+        { key: true, value: "True" }       
       ],
       selectUserCreate: [
-        { key: 1, value: "True" },
-        { key: 0, value: "False" }
+        { key: 0, value: "False" },
+        { key: 1, value: "True" }        
       ],  
       selectUserType: [],
       selectIsAdmin: [
-        { key: "Y", value: "Yes" },
-        { key: "N", value: "No" }
+        { key: "N", value: "No" },
+        { key: "Y", value: "Yes" }
+      ],
+      selectEnable: [
+        { key: true, value: "True" },
+        { key: false, value: "False" }          
       ],
       selectImpExp: [],
       selectCompany: [],
@@ -61,6 +65,7 @@ class AddUser extends React.Component{
       errors: {},
       IsEmailExist: false,
       errorMessage: "",
+      errorMessage1: "",
       IsUserExist: false,
       srnos: '',
       username: '',
@@ -417,7 +422,7 @@ handleBlur(field,e)
   this.setState({
     fields
   });
-  let errors = {};
+  let errors = this.state.errors; 
   let formIsValid = true;
   axios({
     method: "post",
@@ -441,13 +446,14 @@ handleBlur(field,e)
         IsEmailExist: true,
         errorMessage: response.data[0].Result
       });
+      formIsValid = false;
+      errors["emailid"] = self.state.errorMessage;
+      self.setState({errors: errors});
       // if(!fields["emailid"]){
         
       // }
     }
-    formIsValid = false;
-    errors["emailid"] = self.state.errorMessage;
-    self.setState({errors: errors});
+    
     return formIsValid
   })
 }
@@ -461,7 +467,7 @@ handleBlurUser(field,e)
   this.setState({
     fields
   });
-  let errors = {};
+  let errors = this.state.errors;
   let formIsValid = true;
   axios({
     method: "post",
@@ -474,19 +480,18 @@ handleBlurUser(field,e)
     debugger;
     self.setState({
       IsUserExist: true,
-      errorMessage: response.data[0].UserName + " already exists"
+      errorMessage1: response.data[0].UserName + " already exists"
     });
     formIsValid = false;
-    errors["username"] = self.state.errorMessage;
+    errors["username"] = self.state.errorMessage1;
     self.setState({errors: errors});
  
   }).catch(error => {
     debugger;
     self.setState({
       IsUserExist: false,
-      errorMessage: ""
+      errorMessage1: ""
     });
-    formIsValid = true;
     errors["username"] = "";
     self.setState({errors: errors});
   })
@@ -686,17 +691,21 @@ else
 handleValidation(){
   debugger;
   let fields = this.state.fields;
-  let errors = {};
+  let errors = this.state.errors;
   let formIsValid = true;
 
   if(!fields["username"]){
     formIsValid = false;
     errors["username"] = "Enter user name";
  }
- if(!fields["password"]){
-  formIsValid = false;
-  errors["password"] = "Enter password";
-}
+
+ if(this.props.location.state == undefined)
+ {
+  if(!fields["password"]){
+    formIsValid = false;
+    errors["password"] = "Enter password";
+  }
+ }
 if(!fields["emailid"]){
   formIsValid = false;
   errors["emailid"] = "Enter email id";
@@ -719,7 +728,16 @@ if (this.state.IsEmailExist == true) {
 }
 if (this.state.IsUserExist == true) {
   formIsValid = false;
-  errors["username"] = this.state.errorMessage;
+  errors["username"] = this.state.errorMessage1;
+}
+if (parseInt(fields["refreshtime"]) < 6 || parseInt(fields["refreshtime"]) > 1440) {
+  formIsValid = false;
+  errors["refreshtime"] = "Minutes Between 6 To 1440"
+}
+if (this.state.selectedFile == null)
+{
+  formIsValid = false;
+  errors["logoFile"] = "Select file";
 }
  this.setState({errors: errors});
  return formIsValid;
@@ -809,7 +827,7 @@ if (this.state.IsUserExist == true) {
       this.state.fields["usertype"] = this.state.selectUserType[0].UserType;
     }
     if (this.state.fields["isenabled"] == undefined || this.state.fields["isenabled"]=="") {
-      this.state.fields["isenabled"] = this.state.selectIsEnable[0].key;
+      this.state.fields["isenabled"] = this.state.selectEnable[0].key;
     }
     if (this.state.fields["isadmin"] == undefined || this.state.fields["isadmin"]=="") {
       this.state.fields["isadmin"] = this.state.selectIsAdmin[0].key;
@@ -866,7 +884,7 @@ if (this.state.IsUserExist == true) {
     docData.append("DisplayAsConsignee",this.state.fields["displayConsignee"]);
     docData.append("UserType",this.state.fields["usertype"]);
     docData.append("ModeOfTransport",ModeOfTransport);
-    docData.append("CanCreateUser",0);
+    docData.append("CanCreateUser",this.state.fields["usercreation"]);
     docData.append("CreatedBy",userid);
     docData.append("EmailID",this.state.fields["emailid"]);
     docData.append("ImpExp",this.state.fields["ImpExp"]);
@@ -1386,6 +1404,7 @@ if (this.state.IsUserExist == true) {
                     onChange={this.handlechange.bind(this, "refreshtime")}
                     placeholder="Enter Dashboard Refresh Time"
                   />
+                  <span style={{color: "red"}}>{this.state.errors["refreshtime"]}</span>
                   </div>
                </div>
                <div className="row">
@@ -1396,7 +1415,7 @@ if (this.state.IsUserExist == true) {
                     name={"isenabled"}
                     value={this.state.fields["isenabled"]}
                   >
-                    {this.state.selectIsEnable.map(team => (
+                    {this.state.selectEnable.map(team => (
                       <option key={team.key} value={team.key}>
                         {team.value}
                       </option>
@@ -1646,6 +1665,7 @@ if (this.state.IsUserExist == true) {
                <div className="row">
                <div className="login-fields col-md-12">
                <input type="file" onChange={this.fileChangedHandler}/>
+               <span style={{color: "red"}}>{this.state.errors["logoFile"]}</span>
                </div>
                </div>
                <div className="text-right">

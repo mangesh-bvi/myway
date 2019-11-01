@@ -11,6 +11,8 @@ import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
 import { encryption } from "../helpers/encryption";
 import CountUp from 'react-countup';
+import Image from "./../assets/img/Tree.png";
+import Image1 from "./../assets/img/Tree-CO2.png";
 
 var carboneOptions = {
   legend: {
@@ -86,7 +88,8 @@ class GreenCounter extends Component {
       volumeselectType: "Year",
       carboneselectType: "Year",
       treecount: "",
-      cotowemission: ""
+      cotowemission: "",
+      totalTreeCO2:''
     };
   }
 
@@ -169,8 +172,9 @@ class GreenCounter extends Component {
         YEAR:year      
       },
       headers: authHeader()
-    }).then(response => {      
-     self.setState({totalTreePlanted:response.data[0].TreePlanted});     
+    }).then(response => {    
+      debugger;  
+     self.setState({totalTreePlanted:response.data[0].TreePlanted, totalTreeCO2:response.data[0].CO2Emmision});     
       
     });
 
@@ -201,7 +205,7 @@ class GreenCounter extends Component {
     });
   }
   render() {
-    let { volume,totalTreePlanted } = this.state;
+    let { volume,totalTreePlanted,totalTreeCO2 } = this.state;
     let vollabel = [];
     let carlabel = [];
     let volumnedata = [];
@@ -302,11 +306,19 @@ class GreenCounter extends Component {
               <div className="card carbonechart">
                 <div>
                   <div className="volcls">
-                    <label className="grncuntr-lbl">Trees Planted by ATAFreight</label>
                     <div>
-                    <CountUp start={1} end={totalTreePlanted}>
-                    
+                    <label className="grncuntr-lbl">Trees Planted by ATAFreight</label>
+                    <img
+                        src={Image}
+                        alt="vizio-icon"
+                        // className="greenchart-img"
+                        className="tree-img"
+                      />
+                    </div>
+                    <div className="tree-dv">
+                    <CountUp start={1} end={totalTreePlanted}>                   
                     </CountUp>
+                   
                     </div>
                   </div>
                   
@@ -316,16 +328,23 @@ class GreenCounter extends Component {
                 <div>
                   <div className="volcls">
                     <label className="grncuntr-lbl">Total CO2 Offset from Trees Planted</label>
-                    <div>
-                    <CountUp start={1} end={totalTreePlanted}>
-                    
+                    <img
+                        src={Image1}
+                        alt="vizio-icon"
+                        // className="greenchart-img"
+                        className="tree-img"
+                      />
+                    </div>
+                    <div className="tree-dv">
+                    <CountUp start={1} end={totalTreeCO2} decimals={2}>                    
                     </CountUp>
+                    <span> (MT)</span>
                     </div>
                   </div>
                   
                 </div>
               </div>
-            </div>
+           
           
           
             <div className="col-md-6">
@@ -356,7 +375,7 @@ class GreenCounter extends Component {
                 <div>
                   <label className="grncuntr-lbl">Green Conuter</label>
                 </div>
-                <div className="row">
+                <div className="row" style={{"margin-left": "107px"}}> 
                   <div className="col-md-8">
                     <div className="dot">
                       {/* <div className="dot1"></div> */}

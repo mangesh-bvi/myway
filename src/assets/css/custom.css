@@ -1995,7 +1995,7 @@ table tbody tr:last-child {
 .grncuntr .card {
   margin-top: 20px;
   border-radius: 1px;
-  width: 480px;
+  width: 690px;
   border: none;
 }
 
@@ -2116,7 +2116,7 @@ table tbody tr:last-child {
   text-align: center;
   text-transform: capitalize;
   width: 50%;
-  margin: 0 85px 0;
+  margin-left: 190px;
 }
 
 .girdevtred {
@@ -2256,5 +2256,19 @@ table tbody tr:last-child {
 .track-dropdown {
   margin: 0px !important;
   width: 100% !important;
+}
+
+.tree-img {
+  width: 123px;
+  float: right;
+  margin: 25px;
+}
+
+.tree-dv {
+  margin-top: 20px;
+  padding-left: 21px;
+  font-size: 40px;
+  color: green;
+  font-family: inherit;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/

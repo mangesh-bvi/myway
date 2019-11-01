@@ -15,6 +15,10 @@ import appSettings from "../helpers/appSetting";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import GreenPlus from "./../assets/img/green-plus.png";
+import Ship from "./../assets/img/ship.png";
+import Truck from "./../assets/img/truck.png";
+import Rail from "./../assets/img/rail.png";
+import Plane from "./../assets/img/plane.png";
 
 import {
   withScriptjs,
@@ -377,12 +381,12 @@ class Dashboard extends Component {
       if (i < 5) {
         return (
           <>
-            <p>
+            {/* <p>
               Shipment ID:
               <span>{addkey.ShipmentID}</span>
-            </p>
+            </p> */}
             <p>
-              HBL No :{" "}
+              {/* HBL No :{" "} */}
               <span
                 onClick={() =>
                   self.HandleRediractPageShipmentDetails(addkey["HBL#"])
@@ -391,9 +395,15 @@ class Dashboard extends Component {
               >
                 {addkey["HBL#"]}
               </span>
+              {/* {(() => {
+                if (addkey.ModeOfTransport == "") {
+                  
+                }
+              <span>{addkey.ModeOfTransport}</span>
+              })()} */}
             </p>
             <p>
-              Status :<span>{addkey.ShipmentStatus}</span>
+              <span>{addkey.ShipmentStatus}</span>
             </p>
             <p>
               Mode of Transport :<span>{addkey.ModeOfTransport}</span>
