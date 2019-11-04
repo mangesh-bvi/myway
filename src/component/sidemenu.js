@@ -34,13 +34,11 @@ class SideMenu extends Component {
     window.localStorage.setItem("defActKey", "0");
     if (urlShipSum === "/rate-search") {
       window.localStorage.setItem("defActKey", "1");
-      this.state.activeRateSearch = "rate-active"
+      this.state.activeRateSearch = "rate-active";
     } else if (urlShipSum === "/spot-rate-table") {
       window.localStorage.setItem("defActKey", "1");
-      this.state.activeSpotList = "rate-active"
-    }
-    else
-    {
+      this.state.activeSpotList = "rate-active";
+    } else {
       window.localStorage.setItem("defActKey", "0");
     }
 
@@ -57,24 +55,24 @@ class SideMenu extends Component {
         <div>
           <ul className="sidemenu-ul">
             <li className="sidemenu-ul-li">
-              <a href="/dashboard">
+              <Link to="/dashboard">
                 <img
                   src={DashboardIcon}
                   alt="green-counter-icon"
                   className="header-greencounter-icon"
                 />
                 Dashboard
-              </a>
+              </Link>
             </li>
             <li className="sidemenu-ul-li">
-              <a href="quote-table">
+              <Link to="/quote-table">
                 <img
                   src={QuotesIcon}
                   alt="green-counter-icon"
                   className="header-greencounter-icon"
                 />
                 Quotes
-              </a>
+              </Link>
             </li>
             <li className="sidemenu-ul-li shipmentli">
               <Accordion
@@ -121,24 +119,24 @@ class SideMenu extends Component {
               </Accordion>
             </li>
             <li className="sidemenu-ul-li">
-              <a href="shipment-planner">
+              <Link to="/shipment-planner">
                 <img
                   src={RatesIcon}
                   alt="green-counter-icon"
                   className="header-greencounter-icon"
                 />
                 Shipment Planner
-              </a>
+              </Link>
             </li>
             <li className="sidemenu-ul-li">
-              <a href="booking-table">
+              <Link to="/booking-table">
                 <img
                   src={GreenCounterIcon}
                   alt="green-counter-icon"
                   className="header-greencounter-icon"
                 />
                 Bookings
-              </a>
+              </Link>
             </li>
             <li className="sidemenu-ul-li shipmentli">
               <Accordion
@@ -163,7 +161,10 @@ class SideMenu extends Component {
                       <ul className="shipment-ul">
                         <li>
                           {/* <label className="shipment-ul-lilbl1">Rate Search</label> */}
-                          <a href="rate-search" className={this.state.activeRateSearch}>
+                          <a
+                            href="rate-search"
+                            className={this.state.activeRateSearch}
+                          >
                             <img
                               src={RatesIcon}
                               alt="green-counter-icon"
@@ -173,7 +174,10 @@ class SideMenu extends Component {
                           </a>
                         </li>
                         <li>
-                          <a href="spot-rate-table" className={this.state.activeSpotList}>
+                          <a
+                            href="spot-rate-table"
+                            className={this.state.activeSpotList}
+                          >
                             <img
                               src={RatesIcon}
                               alt="green-counter-icon"
@@ -181,7 +185,7 @@ class SideMenu extends Component {
                             />
                             Spot Rate Listing
                           </a>
-                        </li>                     
+                        </li>
                       </ul>
                     </Card.Body>
                   </Accordion.Collapse>
@@ -189,34 +193,34 @@ class SideMenu extends Component {
               </Accordion>
             </li>
             <li className="sidemenu-ul-li">
-              <a href="analytics">
+              <Link to="/analytics">
                 <img
                   src={AnalyticsIcon}
                   alt="green-counter-icon"
                   className="header-greencounter-icon"
                 />
                 Analytics
-              </a>
+              </Link>
             </li>
             <li className="sidemenu-ul-li">
-              <a href="green-counter">
+              <Link to="/green-counter">
                 <img
                   src={GreenCounterIcon}
                   alt="green-counter-icon"
                   className="header-greencounter-icon"
                 />
                 Green Counter
-              </a>
+              </Link>
             </li>
             <li className="sidemenu-ul-li">
-              <a href="view-user">
+              <Link to="/add-user">
                 <img
                   src={GreenCounterIcon}
                   alt="green-counter-icon"
                   className="header-greencounter-icon"
                 />
                 Admin
-              </a>
+              </Link>
             </li>
           </ul>
           <ul className="sidemenu-ul2" style={{ marginTop: "84%" }}>
