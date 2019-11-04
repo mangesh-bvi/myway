@@ -54,6 +54,7 @@ class AddSalesUser extends React.Component{
       errors: {},
       IsEmailExist: false,
       errorMessage: "",
+      errorMessage1: "",
       IsUserExist: false,
       srnos: '',
       username: '',
@@ -187,7 +188,7 @@ handleBlur(field,e)
   this.setState({
     fields
   });
-  let errors = {};
+  let errors = this.state.errors;
   let formIsValid = true;
   axios({
     method: "post",
@@ -231,7 +232,7 @@ handleBlurUser(field,e)
   this.setState({
     fields
   });
-  let errors = {};
+  let errors = this.state.errors;
   let formIsValid = true;
   axios({
     method: "post",
@@ -244,19 +245,18 @@ handleBlurUser(field,e)
     debugger;
     self.setState({
       IsUserExist: true,
-      errorMessage: response.data[0].UserName + " already exists"
+      errorMessage1: response.data[0].UserName + " already exists"
     });
     formIsValid = false;
-    errors["username"] = self.state.errorMessage;
+    errors["username"] = self.state.errorMessage1;
     self.setState({errors: errors});
  
   }).catch(error => {
     debugger;
     self.setState({
       IsUserExist: false,
-      errorMessage: ""
+      errorMessage1: ""
     });
-    formIsValid = true;
     errors["username"] = "";
     self.setState({errors: errors});
   })
@@ -358,8 +358,19 @@ if (this.state.IsEmailExist == true) {
 }
 if (this.state.IsUserExist == true) {
   formIsValid = false;
-  errors["username"] = this.state.errorMessage;
+  errors["username"] = this.state.errorMessage1;
 }
+if (parseInt(fields["refreshtime"]) < 6 || parseInt(fields["refreshtime"]) > 1440) {
+  formIsValid = false;
+  errors["refreshtime"] = "Minutes Between 6 To 1440"
+}
+if (this.state.selectedFile == null)
+{
+  formIsValid = false;
+  errors["logoFile"] = "Select file";
+}
+
+
  this.setState({errors: errors});
  return formIsValid;
 }
@@ -725,7 +736,7 @@ if (this.state.IsUserExist == true) {
                 <label>Sales User Type</label>
                
                  <select
-                    onChange={this.HandleChangeSelect.bind(this)}
+                    // onChange={this.HandleChangeSelect.bind(this)}
                     name={"salesUserType"}
                   >
                     {this.state.selectSalesUserType.map(team => (
@@ -838,6 +849,7 @@ if (this.state.IsUserExist == true) {
                     onChange={this.handlechange.bind(this, "refreshtime")}
                     placeholder="Enter Dashboard Refresh Time"
                   />
+                  <span style={{color: "red"}}>{this.state.errors["refreshtime"]}</span>
                   </div>
                </div>
                <div className="row">
@@ -1018,6 +1030,7 @@ if (this.state.IsUserExist == true) {
                <div className="row">
                <div className="login-fields col-md-12">
                <input type="file" onChange={this.fileChangedHandler}/>
+               <span style={{color: "red"}}>{this.state.errors["logoFile"]}</span>
                </div>
                </div>
                <div className="text-right">
