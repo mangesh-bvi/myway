@@ -11,6 +11,7 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 
+var i = 0;
 const animatedComponents = makeAnimated();
 const { compose } = require("recompose");
 const { withScriptjs, withGoogleMap, GoogleMap } = require("react-google-maps");
@@ -452,6 +453,7 @@ class NewRateSearch extends Component {
   };
   specEquipChange = e => {
     debugger;
+    i++;
     let dropVal = e.value;
     let div = document.createElement("div");
     let clas = document.createAttribute("class");
@@ -482,14 +484,14 @@ class NewRateSearch extends Component {
     typeF.value = "radio";
     inputF.setAttributeNode(typeF);
     let nameF = document.createAttribute("name");
-    nameF.value = "fc";
+    nameF.value = "fc" + i;
     inputF.setAttributeNode(nameF);
     let idF = document.createAttribute("id");
-    idF.value = "f";
+    idF.value = "f" + i;
     inputF.setAttributeNode(idF);
     let labelF = document.createElement("label");
     let forF = document.createAttribute("for");
-    forF.value = "f";
+    forF.value = "f" + i;
     labelF.innerHTML = "F";
     labelF.setAttributeNode(forF);
     divF.appendChild(inputF);
@@ -501,14 +503,14 @@ class NewRateSearch extends Component {
     typeC.value = "radio";
     inputC.setAttributeNode(typeC);
     let nameC = document.createAttribute("name");
-    nameC.value = "fc";
+    nameC.value = "fc" + i;
     inputC.setAttributeNode(nameC);
     let idC = document.createAttribute("id");
-    idC.value = "c";
+    idC.value = "c" + i;
     inputC.setAttributeNode(idC);
     let labelC = document.createElement("label");
     let forC = document.createAttribute("for");
-    forC.value = "c";
+    forC.value = "c" + i;
     labelC.innerHTML = "C";
     labelC.setAttributeNode(forC);
     divC.appendChild(inputC);
