@@ -55,7 +55,7 @@ class RateSearch extends Component {
                       id="exist-cust"
                       defaultChecked
                     />
-                    <label htmlFor="exist-cust">Existing Consignee</label>
+                    <label htmlFor="exist-cust">Existing Customer</label>
                   </div>
                   <div>
                     <input
@@ -64,7 +64,7 @@ class RateSearch extends Component {
                       name="cust-select"
                       id="new-cust"
                     />
-                    <label htmlFor="new-cust">New Consignee</label>
+                    <label htmlFor="new-cust">New Customer</label>
                   </div>
                 </div>
               </div>
