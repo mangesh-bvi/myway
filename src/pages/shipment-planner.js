@@ -14,7 +14,8 @@ import SideMenu from "../component/sidemenu";
 import Truck from "./../assets/img/truck.png";
 import Plane from "./../assets/img/plane.png";
 import Ship from "./../assets/img/ship.png";
-
+import GreenCircle from "./../assets/img/green-circle.png";
+import RedCircle from "./../assets/img/red-circle.png";
 import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import Booked from "./../assets/img/booked.png";
@@ -25,8 +26,8 @@ import Delivery from "./../assets/img/delivery.png";
 import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
-import { de } from "date-fns/esm/locale";
-import YellowFlag from "./../assets/img/yellow-flag.png";
+
+import YellowFlag from "./../assets/img/icons8-flag-filled-48.png";
 import {
   withScriptjs,
   withGoogleMap,
@@ -36,10 +37,10 @@ import {
   Polyline,
   google
 } from "react-google-maps";
-import { object } from "prop-types";
 
 const { compose } = require("recompose");
 
+ 
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
@@ -48,11 +49,11 @@ const MapWithAMakredInfoWindow = compose(
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={3}
   >
-    {props.markers.map(marker => {
+    {props.markers.map((marker, i) => {
       const onClick = props.onClick.bind(this, marker);
       return (
         <Marker
-          key={marker.id}
+          key={i}
           onClick={onClick}
           position={{ lat: Number(marker.lat), lng: Number(marker.lng) }}
         >
@@ -83,7 +84,7 @@ const MapWithAMakredInfoWindowLine = compose(
       <Polyline
         path={props.transitpopupData}
         geodesic={true}
-        style={{zIndex: 2}} 
+        style={{ zIndex: 2 }}
         className="overlay"
         options={{
           strokeColor: "#39b54a",
@@ -99,15 +100,34 @@ const MapWithAMakredInfoWindowLine = compose(
         }}
       />
     ) : null}
-
-    {props.markers.map((marker,i) => {
+    <Polyline
+      path={props.routerData}
+      geodesic={true}
+      style={{ zIndex: 1 }}
+      
+      options={{
+        strokeColor: "#ff0022",
+        strokeOpacity: 1.75,
+        strokeWeight: 2,
+        icons: [
+          {
+            //icon: //lineSymbol,
+            offset: "0",
+            repeat: "20px"
+          }
+        ]
+      }}
+    />
+    {props.markers.map((marker, i) => {
       debugger;
+     
 
-      const onClick = props.onClick.bind(this, marker);
-
+      var iCount = props.markers.length;
       var start = marker.StartLatLng;
       var end = marker.EndLatLng;
-      var OID = marker.ORDERID;
+      var cRouteLatLong = marker.CRouteLatLong;
+      const onClick = props.onClick.bind(this, i);
+
       let iconMarker = new window.google.maps.MarkerImage(
         YellowFlag,
         null /* size is determined at runtime */,
@@ -115,54 +135,33 @@ const MapWithAMakredInfoWindowLine = compose(
         null /* anchor is bottom center of the scaled image */,
         new window.google.maps.Size(32, 32)
       );
-      var lineSymbol = {
-        path: window.google.maps.SymbolPath.Line,
-        scale: 8,
-        strokeColor: "#393"
-      };
-      // function animateCircle(line) {
-      //   var count = 0;
-      //   window.setInterval(function() {
-      //     count = (count + 1) % 200;
 
-      //     var icons = line.get("icons");
-      //     icons[0].offset = count / 2 + "%";
-      //     line.set("icons", icons);
-      //   }, 20);
-      // }
-       
       return (
-        <div>
-          <Polyline
-            path={marker.Rounting}
-            geodesic={true}
-            style={{ zIndex: 1 }}
-            className="overlay"
-            options={{
-              strokeColor: "#ff0022",
-              strokeOpacity: 1.75,
-              strokeWeight: 2,
-              icons: [
-                {
-                  // icon: lineSymbol,
-                  offset: "100%",
-                  repeat: "20px"
-                }
-              ]
-            }}
-          />
-          {OID === 1 && (
+        <>
+          {marker.CTransShipPort != "" ? (
+            <Marker
+              key={marker.CTransShipPort}
+              title={marker.CTransShipPort}
+              position={{
+                lat: cRouteLatLong[0].lat,
+                lng: cRouteLatLong[0].lng
+              }}
+            />
+          ) : null}
+          {marker.ORDERID == 1 ? (
             <>
               <Marker
-                key={i}
-                onClick={onClick}
+                key={start[0].lat}
+                title={marker.StartLocation}
+                icon={GreenCircle}
+                onClick={props.onClick.bind(this, start[0].lat)}
                 position={{
                   lat: start[0].lat,
                   lng: start[0].lng
                 }}
               >
-                {props.selectedMarker === marker && (
-                  <InfoWindow key={i}>
+                {props.selectedMarker == start[0].lat && (
+                  <InfoWindow>
                     <div>
                       <h4>{marker.ShipperName}</h4>
                       <br />
@@ -172,95 +171,93 @@ const MapWithAMakredInfoWindowLine = compose(
                 )}
               </Marker>
               <Marker
-                key={2}
-                onClick={onClick}
-                icon={iconMarker}
+                key={end[0].lat}
+                onClick={props.onClick.bind(this, end[0].lat)}
                 position={{
                   lat: end[0].lat,
                   lng: end[0].lng
                 }}
               >
-                {props.selectedMarker === marker && (
+                {props.selectedMarker === end[0].lat && (
                   <InfoWindow>
                     <div>
                       <h4>{marker.EndLocation}</h4>
                       <br />
-                       <p>Transit time From {marker.StartLocation} To {marker.EndLocation} is: 1 (Max 2, Min 1) days</p>
+                      <p>
+                        Transit time From {marker.StartLocation} To{" "}
+                        {marker.EndLocation} is:
+                        <b>
+                          {" "}
+                          {marker.NTransit_Time} (Max {marker.NMax_Transit_Time}
+                          , Min {marker.NMin_Transit_Time}) days
+                        </b>
+                      </p>
                     </div>
                   </InfoWindow>
                 )}
               </Marker>
             </>
-          )}
-          {OID === 2 && (
-            <>
-              {/* <Marker
-                key={3}
-                onClick={onClick}
-                icon={iconMarker}
-                position={{
-                  lat: end[0].lat,
-                  lng: end[0].lng
-                }}
-              >
-                {props.selectedMarker === marker && (
-                  <InfoWindow>
-                    <div>
-                      <h4>{marker.ShipperName}</h4>
-                      <br />
-                      <b>{marker.StartLocation}</b>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker> */}
-               
-            </>
-          )}
-          {OID === 3 && (
-            <>
-              <Marker
-                key={i}
-                onClick={onClick}
-                icon={iconMarker}
-                position={{
-                  lat: start[0].lat,
-                  lng: start[0].lng
-                }}
-              >
-                {props.selectedMarker === marker && (
-                  <InfoWindow key={i}>
-                    <div>
-                      <h4>{marker.ShipperName}</h4>
-                      <br />
-                      <b>{marker.StartLocation}</b>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-            </>
-          )}
-          {OID === 3 && (
+          ) : null}
+          {marker.EndLatLng[0].lat != props.markers[i].StartLocation[0].lat &&
+          marker.EndLatLng[0].lng != props.markers[i].StartLocation[0].lng &&
+          iCount != marker.ORDERID ? (
             <Marker
-              key={i + 1}
-              onClick={onClick}
-              //icon={iconMarker}
+              key={end[0].lat}
+              onClick={props.onClick.bind(this, end[0].lat)}
               position={{
                 lat: end[0].lat,
                 lng: end[0].lng
               }}
             >
-              {props.selectedMarker === marker && (
-                <InfoWindow key={i + 1}>
+              {props.selectedMarker === end[0].lat && (
+                <InfoWindow>
                   <div>
-                    <h4>{marker.ConsigneeName}</h4>
+                    <h4>{marker.EndLocation}</h4>
                     <br />
-                    <b>{marker.EndLocation}</b>
+                    <p>
+                      Transit time From {marker.StartLocation} To{" "}
+                      {marker.EndLocation} is:
+                      <b>
+                        {" "}
+                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
+                        Min {marker.NMin_Transit_Time}) days
+                      </b>
+                    </p>
+                  </div>
+                </InfoWindow>
+              )}
+            </Marker>
+          ) : (
+            <Marker
+              key={end[0].lat}
+              icon={RedCircle}
+              title={marker.EndLocation}
+              onClick={props.onClick.bind(this, end[0].lat)}
+              position={{
+                lat: end[0].lat,
+                lng: end[0].lng
+              }}
+            >
+              {props.selectedMarker === end[0].lat && (
+                <InfoWindow>
+                  <div>
+                    <h4>{marker.EndLocation}</h4>
+                    <br />
+                    <p>
+                      Transit time From {marker.StartLocation} To{" "}
+                      {marker.EndLocation} is:
+                      <b>
+                        {" "}
+                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
+                        Min {marker.NMin_Transit_Time}) days
+                      </b>
+                    </p>
                   </div>
                 </InfoWindow>
               )}
             </Marker>
           )}
-        </div>
+        </>
       );
     })}
   </GoogleMap>
@@ -294,9 +291,9 @@ class ShipmentPlanner extends Component {
       firstmgmt: "",
       secondAvg: "",
       secondmgmt: "",
-      via:"",
+      via: "",
       visualCarrier: "",
-      imageClass:"air",
+      imageClass: "air",
       thirdAvg: "",
       zoom: 4,
       center: {
@@ -308,7 +305,8 @@ class ShipmentPlanner extends Component {
       showingMaps: true,
       selectedMarker: false,
       mappingId: 0,
-      transitpopupData:[]
+      transitpopupData: [],
+      routerMapData: []
     };
 
     this.toggleTransit = this.toggleTransit.bind(this);
@@ -317,26 +315,23 @@ class ShipmentPlanner extends Component {
     this.toggleEdit = this.toggleEdit.bind(this);
     this.HandleOnPageLoad = this.HandleOnPageLoad.bind(this);
     this.HandleSubmitDetailsData = this.HandleSubmitDetailsData.bind(this);
-    this.HandleTransitTimeVIew=this.HandleTransitTimeVIew.bind(this);
+    this.HandleTransitTimeVIew = this.HandleTransitTimeVIew.bind(this);
   }
 
-HandleTransitTimeVIew(rountlatlng){
-debugger;
-let self =this;  
-var rountData=rountlatlng;
-var finalRouteData=[];
+  HandleTransitTimeVIew(rountlatlng) {
+    let self = this;
+    var rountData = rountlatlng;
+    var finalRouteData = [];
 
-var startlatlng =rountData.split(";");
-for (let index = 0; index < startlatlng.length; index++) {
-  var startlatlnglst = new Object();
-  startlatlnglst.lat = Number(startlatlng[index].split(",")[0]);
-  startlatlnglst.lng = Number(startlatlng[index].split(",")[1]);
-  finalRouteData.push(startlatlnglst);
-   
-}
-self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
-
-}
+    var startlatlng = rountData.split(";");
+    for (let index = 0; index < startlatlng.length; index++) {
+      var startlatlnglst = new Object();
+      startlatlnglst.lat = Number(startlatlng[index].split(",")[0]);
+      startlatlnglst.lng = Number(startlatlng[index].split(",")[1]);
+      finalRouteData.push(startlatlnglst);
+    }
+    self.setState({ modalTransit: false, transitpopupData: finalRouteData });
+  }
 
   handleClick = (marker, event) => {
     debugger;
@@ -345,27 +340,42 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
   };
   HandleSubmitDetailsData(submitdata) {
     debugger;
-
+    let self = this;
     var DetailsData = submitdata.data.Table;
 
-    var FinalData = [];
+    var PinModalData = [];
+    var RouteData = [];
+
     for (let i = 0; i < DetailsData.length; i++) {
       var finalList = new Object();
+      var cRoute = new Object();
+      // var orderId = DetailsData[i].ORDERID;
       finalList.ORDERID = DetailsData[i].ORDERID;
       finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
       finalList.StartLocation = DetailsData[i].StartLocation;
       finalList.ShipperName = DetailsData[i].ShipperName;
       finalList.EndLocation = DetailsData[i].EndLocation;
       finalList.ConsigneeName = DetailsData[i].ConsigneeName;
-      
+      finalList.NTransit_Time = DetailsData[i].NTransit_Time;
+      finalList.NMax_Transit_Time = DetailsData[i].NMax_Transit_Time;
+      finalList.NMin_Transit_Time = DetailsData[i].NMin_Transit_Time;
+      finalList.CTransShipPort = DetailsData[i].CTransShipPort;
+      finalList.CType = DetailsData[i].CType;
+      finalList.Line = DetailsData[i].Line;
+      finalList.NEdLocationID = DetailsData[i].NEdLocationID;
+      finalList.NStLocationID = DetailsData[i].NStLocationID;
+      finalList.NTransRouteID = DetailsData[i].NTransRouteID;
+      finalList.SLinerID = DetailsData[i].SLinerID;
+      finalList.TransitType = DetailsData[i].TransitType;
 
-      // Start Location Lat lng
+      //Start Location Lat lng
       var CStLatLong = DetailsData[i].CStLatLong;
       var startlatlng = [];
       var startlatlnglst = new Object();
       startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
       startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
       startlatlng.push(startlatlnglst);
+
       finalList.StartLatLng = startlatlng;
 
       // End Location Lat Lng
@@ -377,10 +387,39 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
       endlatlng.push(endlatlnglst);
       finalList.EndLatLng = endlatlng;
 
+      //CRouteLatLong Lat Lng
+      // Rounting line
+      var cRouteLatLong = DetailsData[i].CRouteLatLong;
+      if (cRouteLatLong.length > 0) {
+        var routeArray = [];
+        var ComplexData = [];
+        routeArray.push(cRouteLatLong.split(";"));
+
+        var routlen = routeArray[0];
+        for (let k = 0; k < routlen.length; k++) {
+          var routelatlng = new Object();
+          var latlngvar = routlen[k];
+          routelatlng.lat = Number(latlngvar.split(",")[0]);
+          routelatlng.lng = Number(latlngvar.split(",")[1]);
+          ComplexData.push(routelatlng);
+        }
+        finalList.CRouteLatLong = ComplexData;
+      } else {
+        finalList.CRouteLatLong = null;
+      }
+
+      // if (orderId == 1) {
+      //   PinModalData.push(finalList);
+      //   PinModalData.push(finalList);
+      // } else {
+      //   PinModalData.push(finalList);
+      // }
+      PinModalData.push(finalList);
+
       // Rounting line
       var RouteLatLong = DetailsData[i].RouteLatLong;
       var RouteArray = [];
-      var ComplexData = [];
+      // var ComplexData = [];
       RouteArray.push(RouteLatLong.split(";"));
 
       var routlen = RouteArray[0];
@@ -389,16 +428,16 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
         var latlngvar = routlen[k];
         routelatlng.lat = Number(latlngvar.split(",")[0]);
         routelatlng.lng = Number(latlngvar.split(",")[1]);
-        ComplexData.push(routelatlng);
+        RouteData.push(routelatlng);
       }
-      finalList.Rounting = ComplexData;
-      FinalData.push(finalList);
     }
-    
-    this.setState({ MapsDetailsData: FinalData, showingMaps: false });
+    self.setState({
+      MapsDetailsData: PinModalData,
+      showingMaps: false,
+      routerMapData: RouteData
+    });
   }
   HandleOnPageLoad() {
-    
     let self = this;
     axios({
       method: "post",
@@ -432,7 +471,7 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
         jData.lng = longData;
         jData.locationName = locName;
         jData.RegCompanyName = compName;
-        debugger;
+
         if (jCheck > 0) {
           if (
             !finalDataForMap[jCheck - 1]["lat"].includes(latData) &&
@@ -457,10 +496,8 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
           jCheck = jCheck + 1;
         }
       }
-      console.log(finalDataForMap);
 
       self.setState({ mapsData: finalDataForMap });
-      console.log(self.state.mapsData);
     });
   }
 
@@ -475,7 +512,6 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
         break;
       }
     }
-    debugger;
 
     axios({
       method: "post",
@@ -552,6 +588,7 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
     var supConsId = this.state.supConsId;
     var sailingDate = document.getElementById("saleDate").value;
     let self = this;
+    self.setState({ transitpopupData: [] });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchShipmentPlannerMapData`,
@@ -563,8 +600,8 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
       },
       headers: authHeader()
     }).then(function(response) {
-     debugger;
-      console.log(response.data);
+      debugger;
+
       // self.setState({ showingMaps: true });
       var totalAvg = 0;
       var totalMin = 0;
@@ -578,13 +615,11 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
           self.setState({
             secondAvg: response.data.Table[index].NTransit_Time
           });
-          var mode=response.data.Table[index].RouteMode.split('-');
-          if(mode[0].toLowerCase()=='sea')
-          {
-            self.setState({ imageClass:"water" });
-          }
-          else{
-            self.setState({ imageClass:"air" });
+          var mode = response.data.Table[index].RouteMode.split("-");
+          if (mode[0].toLowerCase() == "sea") {
+            self.setState({ imageClass: "water" });
+          } else {
+            self.setState({ imageClass: "air" });
           }
           self.setState({ secondmgmt: response.data.Table[index].ManagedBy });
           self.setState({ via: response.data.Table[index].Line });
@@ -599,14 +634,13 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
       var deliveryData = response.data.Table1;
       if (deliveryData != "undefined" && deliveryData != null) {
         self.setState({ deliveryPopup: deliveryData });
-      }
-      else{
-        var data= [ { POLLocation:""}];
-      
+      } else {
+        var data = [{ POLLocation: "" }];
+
         self.setState({ deliveryPopup: data });
       }
       var transitData = response.data.Table;
-      console.log(transitData);
+
       if (transitData !== "undefined" && transitData != null) {
         self.setState({ transitpopup: transitData });
       }
@@ -616,7 +650,7 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
       self.setState({ totalMaxDays: totalMax });
 
       var submitdata = response;
-      console.log(self.state.deliveryPopup);
+
       self.HandleSubmitDetailsData(submitdata);
     });
   };
@@ -642,7 +676,6 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
   }
 
   componentDidMount() {
-    debugger;
     let self = this;
     axios({
       method: "post",
@@ -675,7 +708,8 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
       thirdAvg,
       carriar,
       MapsDetailsData,
-      transitpopupData
+      transitpopupData,
+      routerMapData
     } = this.state;
 
     let optionItems = this.state.companydrp.map((planet, i) => (
@@ -702,11 +736,10 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
     }
 
     function DeliveryPopupCheck(props) {
-      debugger;
       const data = props.noData;
       if (data == "nodata") {
         return "No schedule available";
-      } 
+      }
     }
 
     return (
@@ -744,7 +777,10 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                       </div>
                       <div className="login-fields">
                         <label>Select Mode</label>
-                        <select id="drpMode" onChange={this.transportModeChange}>
+                        <select
+                          id="drpMode"
+                          onChange={this.transportModeChange}
+                        >
                           <option value={0}>Select</option>
                           {this.state.transportModedrp}
                         </select>
@@ -811,6 +847,7 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                         ) : (
                           <MapWithAMakredInfoWindowLine
                             markers={MapsDetailsData}
+                            routerData={routerMapData}
                             onClick={this.handleClick}
                             transitpopupData={transitpopupData}
                             selectedMarker={this.state.selectedMarker}
@@ -842,13 +879,16 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                     >
                       <tbody>
                         <tr>
-                          <td id="ContentPlaceHolder1_td_bg" className={this.state.imageClass}>
+                          <td
+                            id="ContentPlaceHolder1_td_bg"
+                            className={this.state.imageClass}
+                          >
                             <div className="row">
                               <div className="col-xs-12 col-sm-6">
                                 <div className="manage-txt">
                                   Managed by
                                   <span id="ContentPlaceHolder1_lbloriginmangedby">
-                                  &nbsp;{this.state.firstmgmt}
+                                    &nbsp;{this.state.firstmgmt}
                                   </span>
                                 </div>
                               </div>
@@ -878,7 +918,8 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                                 <div className="manage-txt origin-port">
                                   Managed by
                                   <span id="ContentPlaceHolder1_lblMiddleManagedBy">
-                                  &nbsp;{this.state.secondmgmt} via {this.state.via}
+                                    &nbsp;{this.state.secondmgmt} via{" "}
+                                    {this.state.via}
                                   </span>
                                 </div>
                               </div>
@@ -898,7 +939,7 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                                 <div className="manage-txt footer-manage">
                                   Managed by
                                   <span id="ContentPlaceHolder1_lblDeliveryManagedBy">
-                                  &nbsp;{this.state.thirdmgmt}
+                                    &nbsp;{this.state.thirdmgmt}
                                   </span>
                                 </div>
                               </div>
@@ -915,74 +956,71 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                   toggle={this.toggleDelivery}
                   centered={true}
                 >
-                  <ModalBody className="p-0">                              
-                    {
-                      deliveryPopup.map((cell, i) => {
-                        debugger;
-                        if(cell.POLLocation=="")
-                        {
-                           return(
-                             <div className="container-fluid p-0 no-sched-avail">no schedule available</div>
-                           );
-                        }
-                        else{
-                          return (                         
-                            <div className="container-fluid p-0">
-                              <div className="transit-sect">
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="d-flex align-items-center">
-                                    <div className="shipment-img mr-3">
-                                      <TransitionImage imgType={cell.Mode} />
-                                    </div>
-                                    <div>
-                                      <p className="desti-name">
-                                        {cell.POLLocation}
-                                      </p>
-                                      <p className="desti-route">
-                                        to {cell.DestinationPort}
-                                        ,Carrier {cell.Carrier}
-                                      </p>
-                                    </div>
+                  <ModalBody className="p-0">
+                    {deliveryPopup.map((cell, i) => {
+                      if (cell.POLLocation == "") {
+                        return (
+                          <div className="container-fluid p-0 no-sched-avail">
+                            no schedule available
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div className="container-fluid p-0">
+                            <div className="transit-sect">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                  <div className="shipment-img mr-3">
+                                    <TransitionImage imgType={cell.Mode} />
                                   </div>
-                                </div>
-                              </div>
-                              <div className="delivery-inner">
-                                <div className="row">
-                                  <div className="col-md-4 text-center">
-                                    <p className="details-title">
-                                      Departure Date
+                                  <div>
+                                    <p className="desti-name">
+                                      {cell.POLLocation}
                                     </p>
-                                    <p className="details-para">
-                                      <Moment format="DD/MM/YYYY">
-                                        {cell.SailingDate}
-                                      </Moment>
-                                    </p>
-                                  </div>
-                                  <div className="col-md-4 text-center">
-                                    <p className="details-title">ETA</p>
-                                    <p className="details-para">
-                                      <Moment format="DD/MM/YYYY">
-                                        {cell.ETA}
-                                      </Moment>
-                                    </p>
-                                  </div>
-                                  <div className="col-md-4 text-center">
-                                    <p className="details-title">
-                                      Estimated Delivery Date
-                                    </p>
-                                    <p className="details-para">
-                                      <Moment format="DD/MM/YYYY">
-                                        {cell.CargoArrivalDate}
-                                      </Moment>
+                                    <p className="desti-route">
+                                      to {cell.DestinationPort}
+                                      ,Carrier {cell.Carrier}
                                     </p>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          );
-                        }
-                 
-                      })}
+                            <div className="delivery-inner">
+                              <div className="row">
+                                <div className="col-md-4 text-center">
+                                  <p className="details-title">
+                                    Departure Date
+                                  </p>
+                                  <p className="details-para">
+                                    <Moment format="DD/MM/YYYY">
+                                      {cell.SailingDate}
+                                    </Moment>
+                                  </p>
+                                </div>
+                                <div className="col-md-4 text-center">
+                                  <p className="details-title">ETA</p>
+                                  <p className="details-para">
+                                    <Moment format="DD/MM/YYYY">
+                                      {cell.ETA}
+                                    </Moment>
+                                  </p>
+                                </div>
+                                <div className="col-md-4 text-center">
+                                  <p className="details-title">
+                                    Estimated Delivery Date
+                                  </p>
+                                  <p className="details-para">
+                                    <Moment format="DD/MM/YYYY">
+                                      {cell.CargoArrivalDate}
+                                    </Moment>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })}
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -1029,7 +1067,6 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                       </div>
                       <div className="transit-sect-overflow">
                         {transitpopup.map((cell, i) => {
-                          debugger;
                           var imgSrc = "";
 
                           return (
@@ -1050,7 +1087,14 @@ self.setState({ modalTransit: false ,transitpopupData:finalRouteData});
                                     </p>
                                   </div>
                                 </div>
-                                <button className="butn cancel-butn" onClick={()=>{this.HandleTransitTimeVIew(cell.RouteLatLong)}}>
+                                <button
+                                  className="butn cancel-butn"
+                                  onClick={() => {
+                                    this.HandleTransitTimeVIew(
+                                      cell.RouteLatLong
+                                    );
+                                  }}
+                                >
                                   View
                                 </button>
                               </div>

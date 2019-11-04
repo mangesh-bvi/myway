@@ -28,26 +28,14 @@ class Analytics extends Component {
               </li>
               <li>
                 <a
-                  id="products-tab"
+                  id="invoices-tab"
                   data-toggle="tab"
-                  href="#products"
+                  href="#invoices"
                   role="tab"
-                  aria-controls="products"
+                  aria-controls="invoices"
                   aria-selected="false"
                 >
-                  Products
-                </a>
-              </li>
-              <li>
-                <a
-                  id="containers-tab"
-                  data-toggle="tab"
-                  href="#containers"
-                  role="tab"
-                  aria-controls="containers"
-                  aria-selected="false"
-                >
-                  Containers
+                  Invoices
                 </a>
               </li>
             </ul>
@@ -68,22 +56,28 @@ class Analytics extends Component {
                     <label htmlFor="delivered">Delivered</label>
                   </div>
                 </div>
+                <div className="analy-radio new-radio-rate-cntr radio-light-blue">
+                  <div>
+                    <input type="radio" name="ship-way" id="plane" />
+                    <label htmlFor="plane">Plane</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="ship-way" id="ship" />
+                    <label htmlFor="ship">Ship</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="ship-way" id="road" />
+                    <label htmlFor="road">Road</label>
+                  </div>
+                </div>
               </div>
               <div
                 className="tab-pane fade"
-                id="products"
+                id="invoices"
                 role="tabpanel"
-                aria-labelledby="products-tab"
+                aria-labelledby="invoices-tab"
               >
-                87 7
-              </div>
-              <div
-                className="tab-pane fade"
-                id="containers"
-                role="tabpanel"
-                aria-labelledby="containers-tab"
-              >
-                3
+                Invoices
               </div>
             </div>
           </div>

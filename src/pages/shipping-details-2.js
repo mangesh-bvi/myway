@@ -18,6 +18,7 @@ import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
+import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -26,11 +27,11 @@ import {
   withGoogleMap,
   GoogleMap,
   Marker,
-  InfoWindow,
-  Polyline,
-  google
+  InfoWindow
 } from "react-google-maps";
 const { compose } = require("recompose");
+
+var docuemntFileName = "";
 
 const SourceIcon = () => (
   <div className="map-icon source-icon">
@@ -42,9 +43,6 @@ const DestiIcon = () => (
     <img src={ShipWhite} />
   </div>
 );
-
-var docuemntFileName = "";
-
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
@@ -54,66 +52,143 @@ const MapWithAMakredInfoWindow = compose(
     defaultZoom={2}
   >
     {props.markers.map((marker, i) => {
-      // const onClick = props.onClick.bind(this, marker);
+      debugger;
+
+      var iCount = props.markers.length;
       var start = marker.StartLatLng;
       var end = marker.EndLatLng;
-      debugger;
-      var lineSymbol = {
-        path: window.google.maps.SymbolPath.CIRCLE,
-        scale: 8,
-        strokeColor: "#393"
-      };
+      var cRouteLatLong = marker.CRouteLatLong;
+      // const onClick = props.onClick.bind(this, i);
+      let iconMarker = new window.google.maps.MarkerImage(
+        null,
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
+      );
+
       return (
-        <Fragment>
-          <Marker
-            key={i}
-            // onClick={onClick}
-            position={{ lat: start[0].lat, lng: start[0].lng }}
-            icon={lineSymbol}
-          >
-            <InfoWindow>
-              <div>
-                <h4>csadd</h4>
-                <br />
-                <b>dsadsa</b>
-              </div>
-            </InfoWindow>
-          </Marker>
-          <Marker
-            key={i}
-            // onClick={onClick}
-            position={{ lat: end[0].lat, lng: end[0].lng }}
-          >
-            <InfoWindow>
-              <div>
-                <h4>csadd</h4>
-                <br />
-                <b>dsadsa</b>
-              </div>
-            </InfoWindow>
-          </Marker>
-        </Fragment>
+        <>
+          {marker.CTransShipPort !== "" ? (
+            <Marker
+              key={marker.CTransShipPort}
+              title={marker.CTransShipPort}
+              position={{
+                lat: cRouteLatLong[0].lat,
+                lng: cRouteLatLong[0].lng
+              }}
+            />
+          ) : null}
+          {marker.ORDERID === 1 ? (
+            <>
+              <Marker
+                key={start[0].lat}
+                icon={iconMarker}
+                onClick={props.onClick.bind(this, start[0].lat)}
+                position={{
+                  lat: start[0].lat,
+                  lng: start[0].lng
+                }}
+              >
+                {props.selectedMarker === start[0].lat && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.ShipperName}</h4>
+                      <br />
+                      <b>{marker.StartLocation}</b>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+              <Marker
+                key={end[0].lat}
+                onClick={props.onClick.bind(this, end[0].lat)}
+                position={{
+                  lat: end[0].lat,
+                  lng: end[0].lng
+                }}
+              >
+                {props.selectedMarker === end[0].lat && (
+                  <InfoWindow>
+                    <div>
+                      <h4>{marker.EndLocation}</h4>
+                      <br />
+                      <p>
+                        Transit time From {marker.StartLocation} To{" "}
+                        {marker.EndLocation} is:
+                        <b>
+                          {" "}
+                          {marker.NTransit_Time} (Max {marker.NMax_Transit_Time}
+                          , Min {marker.NMin_Transit_Time}) days
+                        </b>
+                      </p>
+                    </div>
+                  </InfoWindow>
+                )}
+              </Marker>
+            </>
+          ) : null}
+          {marker.EndLatLng[0].lat !== props.markers[i].StartLocation[0].lat &&
+          marker.EndLatLng[0].lng !== props.markers[i].StartLocation[0].lng &&
+          iCount !== marker.ORDERID ? (
+            <Marker
+              key={end[0].lat}
+              onClick={props.onClick.bind(this, end[0].lat)}
+              position={{
+                lat: end[0].lat,
+                lng: end[0].lng
+              }}
+            >
+              {props.selectedMarker === end[0].lat && (
+                <InfoWindow>
+                  <div>
+                    <h4>{marker.EndLocation}</h4>
+                    <br />
+                    <p>
+                      Transit time From {marker.StartLocation} To{" "}
+                      {marker.EndLocation} is:
+                      <b>
+                        {" "}
+                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
+                        Min {marker.NMin_Transit_Time}) days
+                      </b>
+                    </p>
+                  </div>
+                </InfoWindow>
+              )}
+            </Marker>
+          ) : (
+            <Marker
+              key={end[0].lat}
+              //icon={iconMarker}
+              onClick={props.onClick.bind(this, end[0].lat)}
+              position={{
+                lat: end[0].lat,
+                lng: end[0].lng
+              }}
+            >
+              {props.selectedMarker === end[0].lat && (
+                <InfoWindow>
+                  <div>
+                    <h4>{marker.EndLocation}</h4>
+                    <br />
+                    <p>
+                      Transit time From {marker.StartLocation} To{" "}
+                      {marker.EndLocation} is:
+                      <b>
+                        {" "}
+                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
+                        Min {marker.NMin_Transit_Time}) days
+                      </b>
+                    </p>
+                  </div>
+                </InfoWindow>
+              )}
+            </Marker>
+          )}
+        </>
       );
     })}
-
-    {/* <Marker key={1} position={{ lat: 19.090405, lng: 72.86875 }}>
-      <InfoWindow>
-        <div>
-          <h4>csadd</h4>
-          <br />
-          <b>dsadsa</b>
-        </div>
-      </InfoWindow>
-    </Marker>
-    <Marker key={2} position={{ lat: 21.143956, lng: 79.093453 }}>
-      <InfoWindow>
-        <div>
-          <h4>csadd</h4>
-          <br />
-          <b>dsadsa</b>
-        </div>
-      </InfoWindow>
-    </Marker> */}
   </GoogleMap>
 ));
 
@@ -154,43 +229,64 @@ class ShippingDetailsTwo extends Component {
   componentDidMount() {
     debugger;
     let self = this;
-    var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split("=")[1];
-    if(url!=""&& url!=null)
-    {
+    var url = window.location.href
+      .slice(window.location.href.indexOf("?") + 1)
+      .split("=")[1];
+    if (url != "" && url != null) {
       self.HandleShipmentDetails(url);
+    } else {
+      if (typeof this.props.location.state != "undefined") {
+        var hblno = this.props.location.state.detail;
+        self.HandleShipmentDetails(hblno);
+        self.setState({ HblNo: hblno });
+      }
     }
-    else{
-      var hblno = this.props.location.state.detail;
-      self.HandleShipmentDetails(hblno);
-    }
-    
-
-    // self.setState({ HblNo: hblno });
-    
   }
 
+  handleClick = (marker, event) => {
+    debugger;
+    this.setState({ selectedMarker: "" });
+    this.setState({ selectedMarker: marker });
+  };
   HandleMapDetailsData(mdetails) {
     debugger;
 
+    let self = this;
     var DetailsData = mdetails.Table;
 
-    var FinalData = [];
+    var PinModalData = [];
+    var RouteData = [];
+
     for (let i = 0; i < DetailsData.length; i++) {
       var finalList = new Object();
+
+      // var orderId = DetailsData[i].ORDERID;
       finalList.ORDERID = DetailsData[i].ORDERID;
       finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
       finalList.StartLocation = DetailsData[i].StartLocation;
       finalList.ShipperName = DetailsData[i].ShipperName;
       finalList.EndLocation = DetailsData[i].EndLocation;
       finalList.ConsigneeName = DetailsData[i].ConsigneeName;
+      finalList.NTransit_Time = DetailsData[i].NTransit_Time;
+      finalList.NMax_Transit_Time = DetailsData[i].NMax_Transit_Time;
+      finalList.NMin_Transit_Time = DetailsData[i].NMin_Transit_Time;
+      finalList.CTransShipPort = DetailsData[i].CTransShipPort;
+      finalList.CType = DetailsData[i].CType;
+      finalList.Line = DetailsData[i].Line;
+      finalList.NEdLocationID = DetailsData[i].NEdLocationID;
+      finalList.NStLocationID = DetailsData[i].NStLocationID;
+      finalList.NTransRouteID = DetailsData[i].NTransRouteID;
+      finalList.SLinerID = DetailsData[i].SLinerID;
+      finalList.TransitType = DetailsData[i].TransitType;
 
-      // Start Location Lat lng
+      //Start Location Lat lng
       var CStLatLong = DetailsData[i].CStLatLong;
       var startlatlng = [];
       var startlatlnglst = new Object();
       startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
       startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
       startlatlng.push(startlatlnglst);
+
       finalList.StartLatLng = startlatlng;
 
       // End Location Lat Lng
@@ -202,10 +298,33 @@ class ShippingDetailsTwo extends Component {
       endlatlng.push(endlatlnglst);
       finalList.EndLatLng = endlatlng;
 
+      //CRouteLatLong Lat Lng
+      // Rounting line
+      var cRouteLatLong = DetailsData[i].CRouteLatLong;
+      if (cRouteLatLong.length > 0) {
+        var routeArray = [];
+        var ComplexData = [];
+        routeArray.push(cRouteLatLong.split(";"));
+
+        var routlen = routeArray[0];
+        for (let k = 0; k < routlen.length; k++) {
+          var routelatlng = new Object();
+          var latlngvar = routlen[k];
+          routelatlng.lat = Number(latlngvar.split(",")[0]);
+          routelatlng.lng = Number(latlngvar.split(",")[1]);
+          ComplexData.push(routelatlng);
+        }
+        finalList.CRouteLatLong = ComplexData;
+      } else {
+        finalList.CRouteLatLong = null;
+      }
+
+      PinModalData.push(finalList);
+
       // Rounting line
       var RouteLatLong = DetailsData[i].RouteLatLong;
       var RouteArray = [];
-      var ComplexData = [];
+      // var ComplexData = [];
       RouteArray.push(RouteLatLong.split(";"));
 
       var routlen = RouteArray[0];
@@ -214,13 +333,11 @@ class ShippingDetailsTwo extends Component {
         var latlngvar = routlen[k];
         routelatlng.lat = Number(latlngvar.split(",")[0]);
         routelatlng.lng = Number(latlngvar.split(",")[1]);
-        ComplexData.push(routelatlng);
+        RouteData.push(routelatlng);
       }
-      finalList.Rounting = ComplexData;
-      FinalData.push(finalList);
     }
-    console.log(FinalData);
-    this.setState({ MapsDetailsData: FinalData });
+
+    self.setState({ MapsDetailsData: PinModalData });
   }
   HandleShipmentDetailsMap(sid, cid) {
     debugger;
@@ -235,11 +352,11 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindShipmentSummaryMap`,
       data: {
-        ShipperID: 1340354108, //shipperId,
-        ConsigneeID: 1340464123, //consigneeId,
+        ShipperID: 1340354108,//shipperId,  //shipperId,
+        ConsigneeID: 1340464123,//consigneeId,  //consigneeId,
         SwitchConsigneeID: 0,
         SwitchShipperID: 0,
-        HBLNo: "BOM 237730"
+        HBLNo: "BOM 237730"//hblno 
       },
       headers: authHeader()
     }).then(function(response) {
@@ -267,7 +384,10 @@ class ShippingDetailsTwo extends Component {
   HandleShipmentDocument() {
     debugger;
     let self = this;
-    var HblNo = this.props.location.state.detail;
+    var HblNo;
+    if (typeof this.props.location.state != "undefined") {
+      HblNo = this.props.location.state.detail;
+    }
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ViewUploadShipmentDocument`,
@@ -290,17 +410,18 @@ class ShippingDetailsTwo extends Component {
   HandleShipmentDetails(hblno) {
     debugger;
     let self = this;
-    var userid = window.localStorage.getItem("userid");
+
     var HblNo = hblno;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        UserId: 874588, // userid,
+        UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         HBLNo: HblNo //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var shipmentdata = response.data;
       self.setState({
         detailsData: shipmentdata.Table[0],
@@ -312,7 +433,6 @@ class ShippingDetailsTwo extends Component {
       var cid = shipmentdata.Table[0].ConsigneeID;
       self.HandleShipmentDetailsMap(sid, cid);
     });
-    // console.log(this.state.ConsigneeID);
   }
   onDocumentChangeHandler = event => {
     this.setState({
@@ -913,19 +1033,9 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-md-4">
                   <div className="ship-detail-maps">
                     <div className="ship-detail-map">
-                      {/* <GoogleMapReact
-                        bootstrapURLKeys={{
-                          key: appSettings.Keys
-                        }}
-                        defaultCenter={this.props.center}
-                        defaultZoom={this.props.zoom}
-                      >
-                        <SourceIcon lat={59.955413} lng={30.337844} />
-                        <DestiIcon lat={59.9} lng={30.3} />
-                      </GoogleMapReact> */}
                       <MapWithAMakredInfoWindow
                         markers={MapsDetailsData}
-                        // onClick={this.handleClick}
+                        onClick={this.handleClick}
                         selectedMarker={this.state.selectedMarker}
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                         containerElement={
