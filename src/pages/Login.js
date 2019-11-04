@@ -223,7 +223,13 @@ function TokenhandleResponse(response) {
       debugger;
       window.localStorage.setItem("token",encryption(data.access_token,"enc"));
       if (window.localStorage.getItem("IsEnabled") == "true") {
-        window.location.href = "./shipment-summary";
+        if (encryption(window.localStorage.getItem("usertype"),"desc") == "Sales User") {
+          window.location.href = "./rate-search";
+        }
+        else
+        {
+          window.location.href = "./Dashboard";
+        }
       } else {
         window.location.href = "./user-agreement";
       }

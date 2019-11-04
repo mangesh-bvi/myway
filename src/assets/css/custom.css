@@ -1622,8 +1622,8 @@ table tbody tr:last-child {
   height: 100%;
 }
 .dash-sects-cntr {
-  margin-right: -5px;
-  margin-left: -5px;
+  margin-right: -10px;
+  margin-left: -12px;
 }
 .dash-sects-cntr > div {
   margin-top: 20px;
@@ -1633,17 +1633,18 @@ table tbody tr:last-child {
 .dash-sects h3 {
   color: #002d73;
   border-bottom: 1px solid #cdcece;
-  padding: 15px 20px;
+  padding: 12px 8px;
+  text-align: center;
 }
 .dash-sects-dtls {
-  padding: 15px 20px;
+  padding: 6px 12px;
 }
 .dash-sects-dtls .fa-spin {
   text-align: center;
   width: 100%;
 }
 .dash-sects-dtls-inner {
-  max-height: 120px;
+  max-height: 271px;
   overflow: auto;
 }
 .dash-sects-dtls-inner::-webkit-scrollbar {
@@ -1670,7 +1671,7 @@ table tbody tr:last-child {
   margin-bottom: 0;
 }
 .dash-sects-dtls p span {
-  color: #000;
+  color: #6d6e71;
   font-family: "Bold Font";
 }
 .three-dots {
@@ -2340,7 +2341,7 @@ table tbody tr:last-child {
   float: right;
   color: #002d73;
   font-size: 12px;
-  padding: 10px;
+  padding: 6px;
   cursor: pointer;
 }
 .polpodcls > div:first-child .rate-dropdown {
@@ -2456,5 +2457,29 @@ table tbody tr:last-child {
   font-size: 40px;
   color: green;
   font-family: inherit;
+}
+
+.modeoftrans-img {
+  width: 30px;
+  float: right;
+}
+
+.horizontal-line {
+  color: blue;
+  margin-top: auto;
+}
+
+.shipment-status {
+  color: #39b54a !important;
+}
+
+.evt-add-btn {
+  float: right;
+  margin-right: 25px;
+}
+
+.dash-map1 {
+  position: relative;
+  min-height: 100vh;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/

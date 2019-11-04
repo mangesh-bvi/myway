@@ -732,7 +732,7 @@ class ShippingDetailsTwo extends Component {
                         <div className="d-flex align-items-center">
                           <span className="clr-green">POL</span>
                           <Progress value="30" />
-                          <span className="clr-red">POD</span>
+                          <span className="clr-green">POD</span>
                         </div>
                         <div className="desti-places">
                           <span>Port of Houston</span>
