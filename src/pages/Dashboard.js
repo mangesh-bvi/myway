@@ -34,23 +34,34 @@ const MapWithAMakredInfoWindow = compose(
     defaultZoom={3}
   >
     {props.markers.map(marker => {
+      debugger;
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
         BlueShip,
-        new window.google.maps.Size(16, 16)
+                null, /* size is determined at runtime */
+                null, /* origin is 0,0 */
+                null, /* anchor is bottom center of the scaled image */
+                new window.google.maps.Size(32, 32)
       );
       let bluePlane = new window.google.maps.MarkerImage(
         BluePlane,
-        new window.google.maps.Size(16, 16)
+        null, /* size is determined at runtime */
+        null, /* origin is 0,0 */
+        null, /* anchor is bottom center of the scaled image */
+        new window.google.maps.Size(32, 32)
       );
       let bookingBlue = new window.google.maps.MarkerImage(
         BookingBlue,
-        new window.google.maps.Size(16, 16)
+        null, /* size is determined at runtime */
+        null, /* origin is 0,0 */
+        null, /* anchor is bottom center of the scaled image */
+        new window.google.maps.Size(32, 32)
       );
 
       if (marker.Pin == "Ocean") {
         return (
           <Marker
+          icon={blueShip}
             key={marker.id}
             onClick={onClick}
             title={marker.Vessel}
@@ -58,7 +69,7 @@ const MapWithAMakredInfoWindow = compose(
               lat: Number(marker.LastLocation_Lat),
               lng: Number(marker.LastLocation_Lon)
             }}
-            icon={blueShip}
+            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -185,6 +196,7 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bluePlane}
+            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -311,6 +323,7 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bookingBlue}
+            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>

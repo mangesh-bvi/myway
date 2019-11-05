@@ -27,7 +27,7 @@ import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 
-import YellowFlag from "./../assets/img/icons8-flag-filled-48.png";
+import YellowFlag from "./../assets/img/yellow-flag.png";
 import {
   withScriptjs,
   withGoogleMap,
@@ -140,6 +140,7 @@ const MapWithAMakredInfoWindowLine = compose(
         <>
           {marker.CTransShipPort != "" ? (
             <Marker
+            icon={iconMarker}
               key={marker.CTransShipPort}
               title={marker.CTransShipPort}
               position={{
@@ -153,7 +154,7 @@ const MapWithAMakredInfoWindowLine = compose(
               <Marker
                 key={start[0].lat}
                 title={marker.StartLocation}
-                icon={GreenCircle}
+                //icon={GreenCircle}
                 onClick={props.onClick.bind(this, start[0].lat)}
                 position={{
                   lat: start[0].lat,
@@ -172,6 +173,7 @@ const MapWithAMakredInfoWindowLine = compose(
               </Marker>
               <Marker
                 key={end[0].lat}
+                icon={iconMarker}
                 onClick={props.onClick.bind(this, end[0].lat)}
                 position={{
                   lat: end[0].lat,
@@ -203,6 +205,7 @@ const MapWithAMakredInfoWindowLine = compose(
           iCount != marker.ORDERID ? (
             <Marker
               key={end[0].lat}
+              icon={iconMarker}
               onClick={props.onClick.bind(this, end[0].lat)}
               position={{
                 lat: end[0].lat,
@@ -230,7 +233,7 @@ const MapWithAMakredInfoWindowLine = compose(
           ) : (
             <Marker
               key={end[0].lat}
-              icon={RedCircle}
+              //icon={RedCircle}
               title={marker.EndLocation}
               onClick={props.onClick.bind(this, end[0].lat)}
               position={{

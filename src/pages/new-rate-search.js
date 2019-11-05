@@ -3,6 +3,7 @@ import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Select from "react-select";
+
 import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
@@ -71,7 +72,14 @@ class NewRateSearch extends Component {
       pol: "",
       podCountry: "",
       pod: "",
-      equipDrop: " "
+      equipDrop: [],
+      incoTerms: [],
+      StandardContainerCode: [],
+      multi: true,
+      selected: [],
+      isSpacialEqt: true,
+      SpacialEqmt: [],
+      spEqtSelect: []
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -85,26 +93,36 @@ class NewRateSearch extends Component {
     }));
   }
 
-  componentDidMount() {
-    this.HandleBindPOLPODData();
-  }
+  componentDidMount() {}
 
   HandleBindPOLPODData() {
     let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/IncoTermsAPI`,
-      // data: {
-      //   Mode: "O",
-      //   Search: "nhav",
-      //   CountryCode: ""
-      // },
+
       headers: authHeader()
     }).then(function(response) {
       debugger;
+      var table1 = response.data.Table1;
+      var table2 = response.data.Table2;
+      var finalArray = [];
 
-      // var bookData = response.data.Table;
-      // self.setState({ BookingData: bookData });
+      var standerEquipment = new Object();
+      standerEquipment.StandardContainerCode = "Special Equipment";
+      standerEquipment.ProfileCodeID = "Special Equipment";
+      standerEquipment.ContainerName = "Special Equipment";
+
+      for (let index = 0; index < table1.length; index++) {
+        finalArray.push(table1[index]);
+      }
+
+      finalArray.push(standerEquipment);
+
+      self.setState({
+        StandardContainerCode: finalArray,
+        SpacialEqmt: table2
+      });
     });
   }
 
@@ -246,6 +264,9 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
+    if (type == "fcl") {
+      this.HandleBindPOLPODData();
+    }
   };
   cntrLoadPlusClick = e => {
     document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
@@ -417,11 +438,93 @@ class NewRateSearch extends Component {
     document.getElementById("equipTypeMinusClick").classList.add("d-none");
   };
 
-  equipChange = e => {
+  equipChange = value => {
     debugger;
 
-    let type = e.value;
-    this.setState({ equQuan: type });
+    if (value !== null) {
+      let iCount = value.length;
+
+      let difference = this.state.selected.filter(x => !value.includes(x));
+      if (difference.length > 0) {
+        this.setState({ selected: value });
+
+        if (difference[0].StandardContainerCode == "Special Equipment") {
+          this.setState({ isSpacialEqt: true });
+          var elmnt1 = document.getElementsByName("spequType");
+          var elemnt1Len = elmnt1.length;
+          for (let index = 0; index < elemnt1Len; index++) {
+            if (elmnt1 != null && elmnt1 != "undefined") {
+              elmnt1[0].remove();
+              this.setState({
+                spEqtSelect: []
+              });
+            }
+          }
+        }
+
+        var elmnt = document.getElementById(
+          difference[0].StandardContainerCode
+        );
+        if (elmnt != null && elmnt != "undefined") {
+          elmnt.remove();
+        }
+      } else {
+        this.setState({ selected: value });
+        let dropVal =
+          iCount == 1
+            ? value[0].StandardContainerCode
+            : value[iCount - 1].StandardContainerCode;
+        if (dropVal == "Special Equipment") {
+          this.setState({ isSpacialEqt: false });
+        }
+        let div = document.createElement("div");
+        let clas = document.createAttribute("class");
+        clas.value = "spec-inner-cntr";
+        div.setAttributeNode(clas);
+
+        let name = document.createAttribute("name");
+        name.value = "equType";
+        div.setAttributeNode(name);
+
+        let ids = document.createAttribute("id");
+        ids.value =
+          iCount == 1
+            ? value[0].StandardContainerCode
+            : value[iCount - 1].StandardContainerCode;
+        div.setAttributeNode(ids);
+
+        let cont = document.createElement("p");
+        cont.innerHTML = dropVal;
+        let inpNum = document.createElement("input");
+        let typ = document.createAttribute("type");
+        typ.value = "number";
+        inpNum.setAttributeNode(typ);
+        inpNum.value = 1;
+        div.appendChild(cont);
+        div.appendChild(inpNum);
+        document.getElementById("equipAppend").appendChild(div);
+      }
+    } else {
+      debugger;
+      var elmnt = document.getElementsByName("equType");
+      if (elmnt != null && elmnt != "undefined") {
+        elmnt[0].remove();
+      }
+      var lastSelectVal = this.state.selected[0];
+      if (lastSelectVal.StandardContainerCode == "Special Equipment") {
+        this.setState({ isSpacialEqt: true });
+      }
+      var elmnt1 = document.getElementsByName("spequType");
+      var elmnt1Len=elmnt1.length;
+      for (let index = 0; index < elmnt1Len; index++) {
+        if (elmnt1 != null && elmnt1 != "undefined") {
+          elmnt1[0].remove();
+          this.setState({ spEqtSelect: [] });
+        }
+      }
+
+      this.setState({ selected: [] });
+    }
 
     if (this.state.equQuan !== "") {
       // next
@@ -434,94 +537,115 @@ class NewRateSearch extends Component {
       document.getElementById("cntrLoadMinusClick").classList.add("d-none");
       document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
     }
-
-    let dropVal = e.value;
-    let div = document.createElement("div");
-    let clas = document.createAttribute("class");
-    clas.value = "spec-inner-cntr";
-    div.setAttributeNode(clas);
-    let cont = document.createElement("p");
-    cont.innerHTML = dropVal;
-    let inpNum = document.createElement("input");
-    let typ = document.createAttribute("type");
-    typ.value = "number";
-    inpNum.setAttributeNode(typ);
-    inpNum.value = 1;
-    div.appendChild(cont);
-    div.appendChild(inpNum);
-    document.getElementById("equipAppend").appendChild(div);
   };
-  specEquipChange = e => {
+  specEquipChange = value1 => {
+    if (value1 != null && value1 != "") {
+      let iCount = value1.length;
+      let difference = this.state.spEqtSelect.filter(x => !value1.includes(x));
+
+      if (difference.length > 0) {
+        this.setState({ spEqtSelect: value1 });
+        var elmnt = document.getElementById(difference[0].SpecialContainerCode);
+        if (elmnt != null && elmnt != "undefined") {
+          elmnt.remove();
+        }
+      } else {
+        this.setState({ spEqtSelect: value1 });
+        i++;
+
+        let dropVal =
+          iCount == 1
+            ? value1[0].SpecialContainerCode
+            : value1[iCount - 1].SpecialContainerCode;
+        let div = document.createElement("div");
+        let clas = document.createAttribute("class");
+        clas.value = "spec-inner-cntr";
+        div.setAttributeNode(clas);
+
+        let ids = document.createAttribute("id");
+        ids.value =
+          iCount == 1
+            ? value1[0].SpecialContainerCode
+            : value1[iCount - 1].SpecialContainerCode;
+        div.setAttributeNode(ids);
+
+        let name = document.createAttribute("name");
+        name.value = "spequType";
+        div.setAttributeNode(name);
+
+        let cont = document.createElement("p");
+        cont.innerHTML = dropVal;
+        let inpNum = document.createElement("input");
+        let typ = document.createAttribute("type");
+        typ.value = "number";
+        inpNum.setAttributeNode(typ);
+        inpNum.value = 1;
+        let inpTemp = document.createElement("input");
+        let typTemp = document.createAttribute("type");
+        typTemp.value = "number";
+        inpTemp.setAttributeNode(typTemp);
+        inpTemp.value = 1;
+        let faren = document.createElement("span");
+        faren.innerHTML = "F";
+
+        let divFC = document.createElement("div");
+        let clasFC = document.createAttribute("class");
+        clasFC.value = "new-radio-rate-cntr fc-radio";
+        divFC.setAttributeNode(clasFC);
+        let divF = document.createElement("div");
+        let inputF = document.createElement("input");
+        let typeF = document.createAttribute("type");
+        typeF.value = "radio";
+        inputF.setAttributeNode(typeF);
+        let nameF = document.createAttribute("name");
+        nameF.value = "fc" + i;
+        inputF.setAttributeNode(nameF);
+        let idF = document.createAttribute("id");
+        idF.value = "f" + i;
+        inputF.setAttributeNode(idF);
+        let labelF = document.createElement("label");
+        let forF = document.createAttribute("for");
+        forF.value = "f" + i;
+        labelF.innerHTML = "F";
+        labelF.setAttributeNode(forF);
+        divF.appendChild(inputF);
+        divF.appendChild(labelF);
+        divFC.appendChild(divF);
+        let divC = document.createElement("div");
+        let inputC = document.createElement("input");
+        let typeC = document.createAttribute("type");
+        typeC.value = "radio";
+        inputC.setAttributeNode(typeC);
+        let nameC = document.createAttribute("name");
+        nameC.value = "fc" + i;
+        inputC.setAttributeNode(nameC);
+        let idC = document.createAttribute("id");
+        idC.value = "c" + i;
+        inputC.setAttributeNode(idC);
+        let labelC = document.createElement("label");
+        let forC = document.createAttribute("for");
+        forC.value = "c" + i;
+        labelC.innerHTML = "C";
+        labelC.setAttributeNode(forC);
+        divC.appendChild(inputC);
+        divC.appendChild(labelC);
+        divFC.appendChild(divC);
+
+        div.appendChild(cont);
+        div.appendChild(inpNum);
+        div.appendChild(inpTemp);
+        div.appendChild(divFC); // faren
+        document.getElementById("specEquipAppend").appendChild(div);
+      }
+    } else {
+      var elmnt = document.getElementsByName("spequType");
+      if (elmnt != null && elmnt != "undefined") {
+        elmnt[0].remove();
+      }
+      this.setState({ spEqtSelect: [] });
+    }
+
     debugger;
-    i++;
-    let dropVal = e.value;
-    let div = document.createElement("div");
-    let clas = document.createAttribute("class");
-    clas.value = "spec-inner-cntr";
-    div.setAttributeNode(clas);
-    let cont = document.createElement("p");
-    cont.innerHTML = dropVal;
-    let inpNum = document.createElement("input");
-    let typ = document.createAttribute("type");
-    typ.value = "number";
-    inpNum.setAttributeNode(typ);
-    inpNum.value = 1;
-    let inpTemp = document.createElement("input");
-    let typTemp = document.createAttribute("type");
-    typTemp.value = "number";
-    inpTemp.setAttributeNode(typTemp);
-    inpTemp.value = 1;
-    let faren = document.createElement("span");
-    faren.innerHTML = "F";
-
-    let divFC = document.createElement("div");
-    let clasFC = document.createAttribute("class");
-    clasFC.value = "new-radio-rate-cntr fc-radio";
-    divFC.setAttributeNode(clasFC);
-    let divF = document.createElement("div");
-    let inputF = document.createElement("input");
-    let typeF = document.createAttribute("type");
-    typeF.value = "radio";
-    inputF.setAttributeNode(typeF);
-    let nameF = document.createAttribute("name");
-    nameF.value = "fc" + i;
-    inputF.setAttributeNode(nameF);
-    let idF = document.createAttribute("id");
-    idF.value = "f" + i;
-    inputF.setAttributeNode(idF);
-    let labelF = document.createElement("label");
-    let forF = document.createAttribute("for");
-    forF.value = "f" + i;
-    labelF.innerHTML = "F";
-    labelF.setAttributeNode(forF);
-    divF.appendChild(inputF);
-    divF.appendChild(labelF);
-    divFC.appendChild(divF);
-    let divC = document.createElement("div");
-    let inputC = document.createElement("input");
-    let typeC = document.createAttribute("type");
-    typeC.value = "radio";
-    inputC.setAttributeNode(typeC);
-    let nameC = document.createAttribute("name");
-    nameC.value = "fc" + i;
-    inputC.setAttributeNode(nameC);
-    let idC = document.createAttribute("id");
-    idC.value = "c" + i;
-    inputC.setAttributeNode(idC);
-    let labelC = document.createElement("label");
-    let forC = document.createAttribute("for");
-    forC.value = "c" + i;
-    labelC.innerHTML = "C";
-    labelC.setAttributeNode(forC);
-    divC.appendChild(inputC);
-    divC.appendChild(labelC);
-    divFC.appendChild(divC);
-
-    div.appendChild(cont);
-    div.appendChild(inpNum);
-    div.appendChild(inpTemp);
-    div.appendChild(divFC); // faren
-    document.getElementById("specEquipAppend").appendChild(div);
   };
 
   addClick() {
@@ -609,6 +733,8 @@ class NewRateSearch extends Component {
   }
 
   render() {
+    let self = this;
+
     const options = [
       { value: "20 DC", label: "20 DC" },
       { value: "30 DC", label: "30 DC" },
@@ -964,11 +1090,13 @@ class NewRateSearch extends Component {
                     <div className="equip-plus-cntr mt-0">
                       <Select
                         className="rate-dropdown"
-                        components={animatedComponents}
-                        // isMulti
-                        options={options}
-                        onChange={this.equipChange}
-                        value={this.state.equipDrop}
+                        getOptionLabel={option => option.StandardContainerCode}
+                        getOptionValue={option => option.StandardContainerCode}
+                        isMulti
+                        options={self.state.StandardContainerCode}
+                        onChange={this.equipChange.bind(this)}
+                        value={self.state.selected}
+                        showNewOptionAtTop={false}
                       />
                       {/* <div className="spe-equ">
                       <input
@@ -997,11 +1125,17 @@ class NewRateSearch extends Component {
                     <div className="spe-equ mt-0">
                       <div className="equip-plus-cntr">
                         <Select
+                          isDisabled={self.state.isSpacialEqt}
                           className="rate-dropdown"
+                          getOptionLabel={option => option.SpecialContainerCode}
+                          isMulti
+                          getOptionValue={option => option.SpecialContainerCode}
                           components={animatedComponents}
-                          options={optionsSpeEqu}
+                          options={self.state.SpacialEqmt}
                           placeholder="Select Kind of Special Equipment"
                           onChange={this.specEquipChange}
+                          value={self.state.spEqtSelect}
+                          showNewOptionAtTop={false}
                         />
                         {/* <div className="spe-equ">
                         <input type="text" placeholder="Quantity" />
