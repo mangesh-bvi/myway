@@ -103,9 +103,9 @@ const MapWithAMakredInfoWindow = compose(
                     return (
                       <div className="pinmodal">
                         <div id="accordion">
-                          <div class="card">
-                            <div class="card-header" id="heading-1">
-                              <h5 class="mb-0">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
                                 <div
                                   role="button"
                                   data-toggle="collapse"
@@ -126,17 +126,17 @@ const MapWithAMakredInfoWindow = compose(
                             </div>
                             <div
                               id={mdata.ContainerNo.replace(/ +/g, "")}
-                              class="collapse"
+                              className="collapse"
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div class="card-body">
+                              <div className="card-body">
                                 <div id="accordion-1">
-                                  <div class="card">
-                                    <div class="card-header" id="heading-1-1">
-                                      <h5 class="mb-0">
+                                  <div className="card">
+                                    <div className="card-header" id="heading-1-1">
+                                      <h5 className="mb-0">
                                         <div
-                                          class="collapsed"
+                                          className="collapsed"
                                           role="button"
                                           data-toggle="collapse"
                                           href={C_HblNO.replace(/ +/g, "")}
@@ -154,11 +154,11 @@ const MapWithAMakredInfoWindow = compose(
                                     </div>
                                     <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
-                                      class="collapse"
+                                      className="collapse"
                                       data-parent="#accordion-1"
                                       aria-labelledby="heading-1-1"
                                     >
-                                      <div class="card-body">
+                                      <div className="card-body">
                                         {finalinvocearr.length > 0
                                           ? finalinvocearr.map(function(
                                               idata,
@@ -230,9 +230,9 @@ const MapWithAMakredInfoWindow = compose(
                     return (
                       <div className="pinmodal">
                         <div id="accordion">
-                          <div class="card">
-                            <div class="card-header" id="heading-1">
-                              <h5 class="mb-0">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
                                 <div
                                   role="button"
                                   data-toggle="collapse"
@@ -253,17 +253,17 @@ const MapWithAMakredInfoWindow = compose(
                             </div>
                             <div
                               id={mdata.ContainerNo.replace(/ +/g, "")}
-                              class="collapse"
+                              className="collapse"
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div class="card-body">
+                              <div className="card-body">
                                 <div id="accordion-1">
-                                  <div class="card">
-                                    <div class="card-header" id="heading-1-1">
-                                      <h5 class="mb-0">
+                                  <div className="card">
+                                    <div className="card-header" id="heading-1-1">
+                                      <h5 className="mb-0">
                                         <div
-                                          class="collapsed"
+                                          className="collapsed"
                                           role="button"
                                           data-toggle="collapse"
                                           href={C_HblNO.replace(/ +/g, "")}
@@ -281,11 +281,11 @@ const MapWithAMakredInfoWindow = compose(
                                     </div>
                                     <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
-                                      class="collapse"
+                                      className="collapse"
                                       data-parent="#accordion-1"
                                       aria-labelledby="heading-1-1"
                                     >
-                                      <div class="card-body">
+                                      <div className="card-body">
                                         {finalinvocearr.length > 0
                                           ? finalinvocearr.map(function(
                                               idata,
@@ -357,9 +357,9 @@ const MapWithAMakredInfoWindow = compose(
                     return (
                       <div className="pinmodal">
                         <div id="accordion">
-                          <div class="card">
-                            <div class="card-header" id="heading-1">
-                              <h5 class="mb-0">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
                                 <div
                                   role="button"
                                   data-toggle="collapse"
@@ -380,17 +380,17 @@ const MapWithAMakredInfoWindow = compose(
                             </div>
                             <div
                               id={mdata.ContainerNo.replace(/ +/g, "")}
-                              class="collapse"
+                              className="collapse"
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div class="card-body">
+                              <div className="card-body">
                                 <div id="accordion-1">
-                                  <div class="card">
-                                    <div class="card-header" id="heading-1-1">
-                                      <h5 class="mb-0">
+                                  <div className="card">
+                                    <div className="card-header" id="heading-1-1">
+                                      <h5 className="mb-0">
                                         <div
-                                          class="collapsed"
+                                          className="collapsed"
                                           role="button"
                                           data-toggle="collapse"
                                           href={C_HblNO.replace(/ +/g, "")}
@@ -408,11 +408,11 @@ const MapWithAMakredInfoWindow = compose(
                                     </div>
                                     <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
-                                      class="collapse"
+                                      className="collapse"
                                       data-parent="#accordion-1"
                                       aria-labelledby="heading-1-1"
                                     >
-                                      <div class="card-body">
+                                      <div className="card-body">
                                         {finalinvocearr.length > 0
                                           ? finalinvocearr.map(function(
                                               idata,

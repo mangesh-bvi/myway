@@ -73,7 +73,7 @@ class NewRateSearch extends Component {
       podCountry: "",
       pod: "",
       equipDrop: [],
-      incoTerms: [],
+     
       StandardContainerCode: [],
       multi: true,
       selected: [],
@@ -85,6 +85,7 @@ class NewRateSearch extends Component {
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
     this.HandleBindPOLPODData = this.HandleBindPOLPODData.bind(this);
+     
   }
 
   togglePuAdd() {
@@ -94,6 +95,59 @@ class NewRateSearch extends Component {
   }
 
   componentDidMount() {}
+
+  getIncoTerms() {
+    debugger;
+    let self=this;
+    var shipmentType =self.state.shipmentType;
+    var typeofMove =self.state.typesofMove ;
+    var HasCustomClear = "No";
+
+    if (shipmentType === "Export" && HasCustomClear === "No") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({incoTerms:"DAP"});
+              
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+       
+        this.setState({incoTerms:"CIF"});
+      }
+    }
+    if (shipmentType === "Export" && HasCustomClear === "Yes") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({incoTerms:"DDP"});
+              
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+       
+        this.setState({incoTerms:"CIF"});
+      }
+    }
+    if (shipmentType === "Import" && HasCustomClear === "No") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({incoTerms:"ExWorks"});
+              
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+       
+        this.setState({incoTerms:"FOB"});
+      }
+    }
+    if (shipmentType === "Import" && HasCustomClear === "Yes") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({incoTerms:"ExWorks"});
+              
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+       
+        this.setState({incoTerms:"FOB"});
+      }
+    }
+  }
 
   HandleBindPOLPODData() {
     let self = this;
@@ -515,7 +569,7 @@ class NewRateSearch extends Component {
         this.setState({ isSpacialEqt: true });
       }
       var elmnt1 = document.getElementsByName("spequType");
-      var elmnt1Len=elmnt1.length;
+      var elmnt1Len = elmnt1.length;
       for (let index = 0; index < elmnt1Len; index++) {
         if (elmnt1 != null && elmnt1 != "undefined") {
           elmnt1[0].remove();
@@ -975,95 +1029,188 @@ class NewRateSearch extends Component {
                 </div>
               </div>
               {this.state.containerLoadType != "fcl" ? (
-                <div className="new-rate-cntr" id="cbm">
-                  <div className="rate-title-cntr">
-                    <h3>CBM / Dimensions</h3>
-                    <div className="iconSelection" id="cbmIconCntr">
-                      <p className="side-selection" id="cbmName">
-                        {/* {this.state.modeoftransport} */}
-                      </p>
-                      <i
-                        className="fa fa-plus"
-                        id="cbmPlusClick"
-                        onClick={this.cbmPlusClick}
-                      ></i>
-                      <i
-                        className="fa fa-minus d-none"
-                        id="cbmMinusClick"
-                        onClick={this.cbmMinusClick}
-                      ></i>
+                <>
+                  <div className="new-rate-cntr" id="cbm">
+                    <div className="rate-title-cntr">
+                      <h3>CBM / Dimensions</h3>
+                      <div className="iconSelection" id="cbmIconCntr">
+                        <p className="side-selection" id="cbmName">
+                          {/* {this.state.modeoftransport} */}
+                        </p>
+                        <i
+                          className="fa fa-plus"
+                          id="cbmPlusClick"
+                          onClick={this.cbmPlusClick}
+                        ></i>
+                        <i
+                          className="fa fa-minus d-none"
+                          id="cbmMinusClick"
+                          onClick={this.cbmMinusClick}
+                        ></i>
+                      </div>
+                    </div>
+                    <div id="cbmInner">
+                      <div className="row">
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Length (cm)"
+                              className="w-100"
+                              name="length"
+                              onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Width (cm)"
+                              className="w-100"
+                              name="width"
+                              onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Height (cm)"
+                              className="w-100"
+                              name="height"
+                              onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Quantity"
+                              className="w-100"
+                              name="qnty"
+                              onKeyDown={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Gross Weight"
+                              className="w-100"
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder={
+                                this.state.modeoftransport != "air"
+                                  ? "CBM"
+                                  : "KG"
+                              }
+                              className="w-100"
+                              value={this.state.cbmVal}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div id="cbmInner">
-                    <div className="row">
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Length (cm)"
-                            className="w-100"
-                            name="length"
-                            onBlur={this.cbmChange}
-                          />
-                        </div>
+                  <div className="new-rate-cntr" id="equipType">
+                    <div className="rate-title-cntr">
+                      <h3>Equipment Types</h3>
+                      <div className="iconSelection" id="equipTypeIconCntr">
+                        <p className="side-selection" id="equipTypeName">
+                          {/* {this.state.modeoftransport} */}
+                        </p>
+                        <i
+                          className="fa fa-plus"
+                          id="equipTypePlusClick"
+                          onClick={this.equipTypePlusClick}
+                        ></i>
+                        <i
+                          className="fa fa-minus d-none"
+                          id="equipTypeMinusClick"
+                          onClick={this.equipTypeMinusClick}
+                        ></i>
                       </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Width (cm)"
-                            className="w-100"
-                            name="width"
-                            onBlur={this.cbmChange}
-                          />
-                        </div>
+                    </div>
+                    <div id="equipTypeInner">
+                      <div className="equip-plus-cntr mt-0">
+                        <Select
+                          className="rate-dropdown"
+                          getOptionLabel={option =>
+                            option.StandardContainerCode
+                          }
+                          getOptionValue={option =>
+                            option.StandardContainerCode
+                          }
+                          isMulti
+                          options={self.state.StandardContainerCode}
+                          onChange={this.equipChange.bind(this)}
+                          value={self.state.selected}
+                          showNewOptionAtTop={false}
+                        />
                       </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Height (cm)"
-                            className="w-100"
-                            name="height"
-                            onBlur={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Quantity"
-                            className="w-100"
-                            name="qnty"
-                            onKeyDown={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Gross Weight"
-                            className="w-100"
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder={
-                              this.state.modeoftransport != "air" ? "CBM" : "KG"
+                      <div id="equipAppend"></div>
+                      {this.createUI()}
+
+                      <div className="spe-equ mt-0">
+                        <div className="equip-plus-cntr">
+                          <Select
+                            isDisabled={self.state.isSpacialEqt}
+                            className="rate-dropdown"
+                            getOptionLabel={option =>
+                              option.SpecialContainerCode
                             }
-                            className="w-100"
-                            value={this.state.cbmVal}
+                            isMulti
+                            getOptionValue={option =>
+                              option.SpecialContainerCode
+                            }
+                            components={animatedComponents}
+                            options={self.state.SpacialEqmt}
+                            placeholder="Select Kind of Special Equipment"
+                            onChange={this.specEquipChange}
+                            value={self.state.spEqtSelect}
+                            showNewOptionAtTop={false}
                           />
                         </div>
                       </div>
+                      <div id="specEquipAppend"></div>
+                      {this.createUISpecial()}
+
+                      <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                        <input id="haz-mat" type="checkbox" name={"haz-mat"} />
+                        <label htmlFor="haz-mat">HazMat</label>
+                        <input id="unstack" type="checkbox" name={"haz-mat"} />
+                        <label htmlFor="unstack">Unstackable</label>
+                        <input
+                          id="cust-clear"
+                          type="checkbox"
+                          name={"haz-mat"}
+                          onChange={this.getIncoTerms.bind(this)}
+                        />
+                        <label htmlFor="cust-clear">Custom Clearance</label>
+                      </div>
+                      <div className="spe-equ justify-content-center">
+                        <label>Inco Terms :</label>
+                        <input
+                          type="text"
+                          placeholder="Inco Terms"
+                          className="w-50"
+                          disabled
+                          name="incoTerms"
+                          value={self.state.incoTerms} 
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                </>
               ) : null}
 
               {this.state.containerLoadType == "fcl" ? (
@@ -1137,14 +1284,6 @@ class NewRateSearch extends Component {
                           value={self.state.spEqtSelect}
                           showNewOptionAtTop={false}
                         />
-                        {/* <div className="spe-equ">
-                        <input type="text" placeholder="Quantity" />
-                        <input type="text" placeholder="Temp" />
-                      </div> */}
-                        {/* <i
-                        className="fa fa-plus equip-plus"
-                        onClick={this.addClickSpecial.bind(this)}
-                      ></i> */}
                       </div>
                     </div>
                     <div id="specEquipAppend"></div>
@@ -1155,7 +1294,7 @@ class NewRateSearch extends Component {
                       <label htmlFor="haz-mat">HazMat</label>
                       <input id="unstack" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="unstack">Unstackable</label>
-                      <input id="cust-clear" type="checkbox" name={"haz-mat"} />
+                      <input id="cust-clear" type="checkbox" name={"haz-mat"} onChange={this.getIncoTerms.bind(this)} />
                       <label htmlFor="cust-clear">Custom Clearance</label>
                     </div>
                     <div className="spe-equ justify-content-center">
@@ -1165,8 +1304,9 @@ class NewRateSearch extends Component {
                         placeholder="Inco Terms"
                         className="w-50"
                         disabled
-                        value="auto populated data will come"
-                      />
+                        name="incoTerms"
+                        value={self.state.incoTerms} 
+                         />
                     </div>
                   </div>
                 </div>

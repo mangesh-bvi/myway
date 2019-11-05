@@ -2425,19 +2425,19 @@ table tbody tr:last-child {
   padding: 5px;
 }
 
-.mb-0 > div {
+.pinmodal .mb-0 > div {
   display: block;
   position: relative;
 }
-/* .mb-0 > div:after {
+.pinmodal .mb-0 > div:after {
   content: "\f067";
   font-family: "FontAwesome";
   position: absolute;
   right: 0;
   color: #39b54a;
   float: left;
-} */
-.mb-0 > div[aria-expanded="true"]:after {
+}
+.pinmodal .mb-0 > div[aria-expanded="true"]:after {
   content: "\f068";
   color: #a5a5a5;
   float: left;
