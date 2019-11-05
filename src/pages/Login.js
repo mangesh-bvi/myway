@@ -2,6 +2,7 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
+import { Button, Modal, ModalBody } from "reactstrap";
 import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import {
@@ -21,11 +22,19 @@ class Login extends React.Component {
       submitted: false,
       showLoginError: false,
       errorText: "",
-      loading: false
+      loading: false,
+      modalSalesLogin: false
     };
 
     this.handlechange = this.handlechange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.toggleSalesLogin = this.toggleSalesLogin.bind(this);
+  }
+
+  toggleSalesLogin() {
+    this.setState(prevState => ({
+      modalSalesLogin: !prevState.modalSalesLogin
+    }));
   }
 
   handlechange(e) {
@@ -34,11 +43,11 @@ class Login extends React.Component {
     });
   }
   handleSubmit(e) {
-    debugger
+    debugger;
     e.preventDefault();
     this.setState({ submitted: true, loading: true });
     const { username, password } = this.state;
-    window.localStorage.setItem("password",encryption(password,"enc"));
+    window.localStorage.setItem("password", encryption(password, "enc"));
     if (username !== "" && password !== "") {
       var ipaddress = window.localStorage.getItem("ipaddress");
       console.log("axios" + new Date());
@@ -52,44 +61,61 @@ class Login extends React.Component {
           PrivateIPAddress: ""
         },
         headers: authHeader("no")
-      }).then(function(response) {
-        debugger;
-        console.log("axios response" + new Date());
-        debugger;
-        var data = response.data;
-        window.localStorage.setItem("st",new Date());
-        console.log(data);
-        window.localStorage.setItem("username",encryption(data.Table[0].UserName,"enc"));
-        window.localStorage.setItem("firstname",encryption(data.Table[0].FirstName,"enc"));
-        window.localStorage.setItem(
-          "lastlogindate",
-          encryption(data.Table[0].LastLoginDate,"enc")
-        );
-        window.localStorage.setItem("lastname",encryption(data.Table[0].LastName,"enc"));
-        window.localStorage.setItem("qrcode", data.Table1[0].QRCode);
-        window.localStorage.setItem(
-          "modeoftransport",
-          data.Table[0].ModeOfTransport
-        );
-        window.localStorage.setItem("userid",encryption(data.Table[0].UserId,"enc") );
-        window.localStorage.setItem("usertype",encryption(data.Table[0].UserType,"enc"));
-        window.localStorage.setItem(
-          "dashboardrefreshtime",
-          data.Table[0].DashboardRefreshTime
-        );
-        window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
-        GenerateToken(username, password);
-        //window.location.href = "./user-agreement";
-      }).catch(error => {
-        debugger;
-        this.setState({loading: false })
-        var temperror=error.response.data
-        var err=temperror.split(':');
-        NotificationManager.error(err[1].replace('}',''));
-        // this.state.usernamee = '';
-        this.setState({username: '', password:''})
-        setTimeout(5000);
-    });
+      })
+        .then(function(response) {
+          debugger;
+          console.log("axios response" + new Date());
+          debugger;
+          var data = response.data;
+          window.localStorage.setItem("st", new Date());
+          console.log(data);
+          window.localStorage.setItem(
+            "username",
+            encryption(data.Table[0].UserName, "enc")
+          );
+          window.localStorage.setItem(
+            "firstname",
+            encryption(data.Table[0].FirstName, "enc")
+          );
+          window.localStorage.setItem(
+            "lastlogindate",
+            encryption(data.Table[0].LastLoginDate, "enc")
+          );
+          window.localStorage.setItem(
+            "lastname",
+            encryption(data.Table[0].LastName, "enc")
+          );
+          window.localStorage.setItem("qrcode", data.Table1[0].QRCode);
+          window.localStorage.setItem(
+            "modeoftransport",
+            data.Table[0].ModeOfTransport
+          );
+          window.localStorage.setItem(
+            "userid",
+            encryption(data.Table[0].UserId, "enc")
+          );
+          window.localStorage.setItem(
+            "usertype",
+            encryption(data.Table[0].UserType, "enc")
+          );
+          window.localStorage.setItem(
+            "dashboardrefreshtime",
+            data.Table[0].DashboardRefreshTime
+          );
+          window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
+          GenerateToken(username, password);
+          //window.location.href = "./user-agreement";
+        })
+        .catch(error => {
+          debugger;
+          this.setState({ loading: false });
+          var temperror = error.response.data;
+          var err = temperror.split(":");
+          NotificationManager.error(err[1].replace("}", ""));
+          // this.state.usernamee = '';
+          this.setState({ username: "", password: "" });
+          setTimeout(5000);
+        });
     } else {
       debugger;
       this.setState({ settoaste: true, loading: true });
@@ -99,7 +125,9 @@ class Login extends React.Component {
       // alert(error);
       //  window.location='./Dashboard'
       NotificationManager.error(error);
-      setTimeout(function(){ window.location.href="./" }, 5000);
+      setTimeout(function() {
+        window.location.href = "./";
+      }, 5000);
     }
   }
 
@@ -158,6 +186,7 @@ class Login extends React.Component {
                 </div>
                 <div className="text-right">
                   <button
+                    onClick={this.toggleSalesLogin}
                     type="submit"
                     className="butn login-butn"
                     //onClick={}
@@ -176,6 +205,43 @@ class Login extends React.Component {
             </div>
           </form>
         </div>
+        <Modal
+          className="delete-popup pol-pod-popup"
+          isOpen={this.state.modalSalesLogin}
+          toggle={this.toggleSalesLogin}
+          centered={true}
+        >
+          <ModalBody>
+            <h3>Sales Popup</h3>
+            <div className="rename-cntr login-fields">
+              <label>Enter Latitude</label>
+              <select>
+                <option>50.33998</option>
+                <option>70.85236</option>
+                <option>100.47823</option>
+                <option>150.02315</option>
+              </select>
+            </div>
+            <div className="rename-cntr login-fields">
+              <label>Enter Longitude</label>
+              <select>
+                <option>50.33998</option>
+                <option>70.85236</option>
+                <option>100.47823</option>
+                <option>150.02315</option>
+              </select>
+            </div>
+            <Button className="butn" onClick={this.toggleSalesLogin}>
+              Done
+            </Button>
+            <Button
+              className="butn cancel-butn"
+              onClick={this.toggleSalesLogin}
+            >
+              Cancel
+            </Button>
+          </ModalBody>
+        </Modal>
         <NotificationContainer />
       </section>
     );
@@ -221,13 +287,17 @@ function TokenhandleResponse(response) {
       //alert('oops!error occured');
     } else {
       debugger;
-      window.localStorage.setItem("token",encryption(data.access_token,"enc"));
+      window.localStorage.setItem(
+        "token",
+        encryption(data.access_token, "enc")
+      );
       if (window.localStorage.getItem("IsEnabled") == "true") {
-        if (encryption(window.localStorage.getItem("usertype"),"desc") == "Sales User") {
+        if (
+          encryption(window.localStorage.getItem("usertype"), "desc") ==
+          "Sales User"
+        ) {
           window.location.href = "./rate-search";
-        }
-        else
-        {
+        } else {
           window.location.href = "./Dashboard";
         }
       } else {

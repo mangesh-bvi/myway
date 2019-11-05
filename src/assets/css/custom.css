@@ -1055,6 +1055,10 @@ table tbody tr:last-child {
   background-color: #999;
   border-color: #999;
 }
+.cust-img {
+  width: 50px;
+  margin-bottom: 10px;
+}
 /* rate search ends */
 
 /* new rate search starts */
@@ -1766,6 +1770,12 @@ table tbody tr:last-child {
   font-family: "Regular Font";
   margin-right: 10px;
 }
+.react-datepicker-wrapper .ana-to {
+  padding: 7px 35px 7px 15px;
+  font-size: 14px;
+  background-size: 16px;
+  background-position: right 15px center;
+}
 /* analytics ends */
 
 /* rate finalizing starts */
@@ -1832,6 +1842,41 @@ table tbody tr:last-child {
   height: 80px;
 }
 /* rate finalizing ends */
+
+/* add user starts */
+.add-user-cntr {
+  padding: 0 30px;
+}
+.add-user-cntr .remember-forgot > div:first-child label {
+  margin-left: 0;
+}
+.add-user-cntr .remember-forgot > div:last-child label {
+  margin-right: 0;
+}
+.dynamic-fields .remember-forgot {
+  justify-content: initial;
+  margin-top: 10px;
+}
+.dynamic-fields > div {
+  margin-bottom: 20px;
+}
+.dynamic-fields > div:last-child {
+  margin-bottom: 0px;
+}
+/* add user ends */
+
+/* sales activity log starts */
+.sales-act-dropdown select {
+  padding: 10px 40px 10px 20px;
+  background-position: right 15px center;
+  background-size: 10px;
+  margin-right: 20px;
+}
+.sales-act-dropdown {
+  margin: 0;
+  margin-right: 20px;
+}
+/* sales activity log ends */
 
 /* chetan css ends */
 
@@ -1953,6 +1998,7 @@ table tbody tr:last-child {
 .sidemenu-ul {
   padding: 0;
   list-style: none;
+  margin-bottom: 50px;
 }
 .header-greencounter-icon {
   height: 30px;
@@ -2383,14 +2429,14 @@ table tbody tr:last-child {
   display: block;
   position: relative;
 }
-.mb-0 > div:after {
+/* .mb-0 > div:after {
   content: "\f067";
   font-family: "FontAwesome";
   position: absolute;
   right: 0;
   color: #39b54a;
   float: left;
-}
+} */
 .mb-0 > div[aria-expanded="true"]:after {
   content: "\f068";
   color: #a5a5a5;
@@ -2419,6 +2465,12 @@ table tbody tr:last-child {
   left: 100%;
   margin-left: 20px;
   width: auto !important;
+  background-color: #fff;
+  border: 0;
+  margin-top: 12px;
+}
+.dynamic-remove img {
+  width: 22px;
 }
 .rate-active {
   color: #fbc915 !important;

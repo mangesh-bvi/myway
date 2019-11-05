@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "../styles/custom.css";
 import Headers from "../component/header";
+import ExistCust from "./../assets/img/exist-cust.png";
+import NewCust from "./../assets/img/new-cust.png";
 import SideMenu from "../component/sidemenu";
 
 class RateSearch extends Component {
@@ -55,7 +57,13 @@ class RateSearch extends Component {
                       id="exist-cust"
                       defaultChecked
                     />
-                    <label htmlFor="exist-cust">Existing Customer</label>
+                    <label
+                      className="d-flex flex-column align-items-center"
+                      htmlFor="exist-cust"
+                    >
+                      <img className="cust-img" src={ExistCust} />
+                      Existing Customer
+                    </label>
                   </div>
                   <div>
                     <input
@@ -64,7 +72,13 @@ class RateSearch extends Component {
                       name="cust-select"
                       id="new-cust"
                     />
-                    <label htmlFor="new-cust">New Customer</label>
+                    <label
+                      className="d-flex flex-column align-items-center"
+                      htmlFor="new-cust"
+                    >
+                      <img className="cust-img" src={NewCust} />
+                      New Customer
+                    </label>
                   </div>
                 </div>
               </div>

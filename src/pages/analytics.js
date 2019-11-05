@@ -8,6 +8,8 @@ import TruckWhite from "./../assets/img/truck-white.svg";
 import ShipBlue from "./../assets/img/ship-blue.svg";
 import ShipWhite from "./../assets/img/ship-white.svg";
 import SideMenu from "../component/sidemenu";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 var volumeOptions = {
   title: {
@@ -66,23 +68,86 @@ var volumeOptions = {
 };
 
 var greencounterOption = {
+  title: {
+    display: true,
+    text: "Total: $455k",
+    fontSize: 16,
+    fontFamily: "Bold Font",
+    fontColor: "#000",
+    padding: 20
+  },
   legend: {
     display: false
   },
   tooltips: {
     enabled: false
   },
-  rotation: 0.75 * Math.PI,
-  circumference: 1.5 * Math.PI,
-  cutoutPercentage: 80,
-  padding: 40
+  rotation: 0.5 * Math.PI,
+  cutoutPercentage: 0
 };
 
 class Analytics extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      startDate: new Date(),
+      endDate: new Date(),
+      toggleShipShip: false,
+      toggleRoadShip: false,
+      toggleShipInv: false,
+      toggleRoadInv: false
+    };
   }
+
+  handleChangeStart = e => {
+    this.setState({
+      startDate: e
+    });
+  };
+  handleChangeEnd = e => {
+    this.setState({
+      endDate: e
+    });
+  };
+
+  toggleBtnsShip = e => {
+    console.log(e.target.id);
+    if (e.target.id === "ship-ship") {
+      this.setState({
+        toggleShipShip: true,
+        toggleRoadShip: false
+      });
+    } else if (e.target.id === "road-ship") {
+      this.setState({
+        toggleRoadShip: true,
+        toggleShipShip: false
+      });
+    } else if (e.target.id === "plane-ship") {
+      this.setState({
+        toggleRoadShip: false,
+        toggleShipShip: false
+      });
+    }
+  };
+  toggleBtnsInv = e => {
+    console.log(e.target.id);
+    if (e.target.id === "ship-inv") {
+      this.setState({
+        toggleShipInv: true,
+        toggleRoadInv: false
+      });
+    } else if (e.target.id === "road-inv") {
+      this.setState({
+        toggleRoadInv: true,
+        toggleShipInv: false
+      });
+    } else if (e.target.id === "plane-inv") {
+      this.setState({
+        toggleRoadInv: false,
+        toggleShipInv: false
+      });
+    }
+  };
 
   render() {
     var buyerData = {
@@ -126,10 +191,10 @@ class Analytics extends Component {
       labels: ["Green", "Red"],
       datasets: [
         {
-          data: [70, 30],
-          backgroundColor: ["#63CD16", "#EF1617"],
-          hoverBackgroundColor: ["#63CD16", "#EF1617"],
-          borderWidth: 0
+          data: [40, 10, 50],
+          backgroundColor: ["#4a99e7", "#50ad84", "#3357ac"]
+          // hoverBackgroundColor: ["#63CD16", "#EF1617"]
+          // borderWidth: 0
         }
       ],
       text: "23%"
@@ -180,18 +245,27 @@ class Analytics extends Component {
                 <div className="ana-radio-cntr">
                   <div className="analy-radio new-radio-rate-cntr radio-light-blue">
                     <div>
-                      <input type="radio" name="ship-type" id="active" />
-                      <label htmlFor="active">Active</label>
+                      <input type="radio" name="ship-type" id="active-ship" />
+                      <label htmlFor="active-ship">Active</label>
                     </div>
                     <div>
-                      <input type="radio" name="ship-type" id="delivered" />
-                      <label htmlFor="delivered">Delivered</label>
+                      <input
+                        type="radio"
+                        name="ship-type"
+                        id="delivered-ship"
+                      />
+                      <label htmlFor="delivered-ship">Delivered</label>
                     </div>
                   </div>
                   <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                     <div>
-                      <input type="radio" name="ship-way" id="plane" />
-                      <label htmlFor="plane">
+                      <input
+                        type="radio"
+                        name="ship-way"
+                        id="plane-ship"
+                        onClick={this.toggleBtnsShip}
+                      />
+                      <label htmlFor="plane-ship">
                         <img
                           className="ana-icon-blue"
                           src={PlaneBlue}
@@ -205,8 +279,13 @@ class Analytics extends Component {
                       </label>
                     </div>
                     <div>
-                      <input type="radio" name="ship-way" id="ship" />
-                      <label htmlFor="ship">
+                      <input
+                        type="radio"
+                        name="ship-way"
+                        id="ship-ship"
+                        onClick={this.toggleBtnsShip}
+                      />
+                      <label htmlFor="ship-ship">
                         <img
                           className="ana-icon-blue"
                           src={ShipBlue}
@@ -220,8 +299,13 @@ class Analytics extends Component {
                       </label>
                     </div>
                     <div>
-                      <input type="radio" name="ship-way" id="road" />
-                      <label htmlFor="road">
+                      <input
+                        type="radio"
+                        name="ship-way"
+                        id="road-ship"
+                        onClick={this.toggleBtnsShip}
+                      />
+                      <label htmlFor="road-ship">
                         <img
                           className="ana-icon-blue"
                           src={TruckBlue}
@@ -235,6 +319,30 @@ class Analytics extends Component {
                       </label>
                     </div>
                   </div>
+                  {this.state.toggleShipShip && (
+                    <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div>
+                        <input type="radio" name="sea-opt" id="fcl-ship" />
+                        <label htmlFor="fcl-ship">FCL</label>
+                      </div>
+                      <div>
+                        <input type="radio" name="sea-opt" id="lcl-ship" />
+                        <label htmlFor="lcl-ship">LCL</label>
+                      </div>
+                    </div>
+                  )}
+                  {this.state.toggleRoadShip && (
+                    <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div>
+                        <input type="radio" name="road-opt" id="ftl-ship" />
+                        <label htmlFor="ftl-ship">FTL</label>
+                      </div>
+                      <div>
+                        <input type="radio" name="road-opt" id="ltl-ship" />
+                        <label htmlFor="ltl-ship">LTL</label>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
@@ -245,15 +353,24 @@ class Analytics extends Component {
                       <option>Yearly</option>
                     </select>
                   </div>
+                  {/* <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>Supplier </span>
+                    <select>
+                      <option>Supplier Name</option>
+                      <option>Supplier Name</option>
+                      <option>Supplier Name</option>
+                    </select>
+                  </div> */}
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Segregated&nbsp;by </span>
                     <select>
-                      <option>Main Transit Mode</option>
-                      <option>Main Transit Mode</option>
-                      <option>Main Transit Mode</option>
-                      <option>Main Transit Mode</option>
+                      <option>Volume Chart</option>
+                      <option>Count Chart</option>
+                      <option>Value Chart</option>
                     </select>
                   </div>
+                </div>
+                <div className="ana-radio-cntr">
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Dated&nbsp;by </span>
                     <select>
@@ -261,6 +378,22 @@ class Analytics extends Component {
                       <option>Booking Date</option>
                       <option>Dispatched Date</option>
                     </select>
+                  </div>
+                  <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>From </span>
+                    <DatePicker
+                      className="ana-to"
+                      selected={this.state.startDate}
+                      onChange={this.handleChangeStart}
+                    />
+                  </div>
+                  <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>To </span>
+                    <DatePicker
+                      className="ana-to"
+                      selected={this.state.endDate}
+                      onChange={this.handleChangeEnd}
+                    />
                   </div>
                   {/* <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Values </span>
@@ -296,7 +429,148 @@ class Analytics extends Component {
                 role="tabpanel"
                 aria-labelledby="invoices-tab"
               >
-                Invoices
+                <div className="ana-radio-cntr">
+                  <div className="analy-radio new-radio-rate-cntr radio-light-blue">
+                    <div>
+                      <input type="radio" name="ship-type" id="active-inv" />
+                      <label htmlFor="active-inv">Active</label>
+                    </div>
+                    <div>
+                      <input type="radio" name="ship-type" id="delivered-inv" />
+                      <label htmlFor="delivered-inv">Delivered</label>
+                    </div>
+                  </div>
+                  <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                    <div>
+                      <input
+                        type="radio"
+                        name="ship-way"
+                        id="plane-inv"
+                        onClick={this.toggleBtnsInv}
+                      />
+                      <label htmlFor="plane-inv">
+                        <img
+                          className="ana-icon-blue"
+                          src={PlaneBlue}
+                          alt="plane icon"
+                        />
+                        <img
+                          className="ana-icon-white"
+                          src={PlaneWhite}
+                          alt="plane icon"
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="ship-way"
+                        id="ship-inv"
+                        onClick={this.toggleBtnsInv}
+                      />
+                      <label htmlFor="ship-inv">
+                        <img
+                          className="ana-icon-blue"
+                          src={ShipBlue}
+                          alt="ship icon"
+                        />
+                        <img
+                          className="ana-icon-white"
+                          src={ShipWhite}
+                          alt="ship icon"
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="ship-way"
+                        id="road-inv"
+                        onClick={this.toggleBtnsInv}
+                      />
+                      <label htmlFor="road-inv">
+                        <img
+                          className="ana-icon-blue"
+                          src={TruckBlue}
+                          alt="truck icon"
+                        />
+                        <img
+                          className="ana-icon-white"
+                          src={TruckWhite}
+                          alt="truck icon"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  {this.state.toggleShipInv && (
+                    <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div>
+                        <input type="radio" name="sea-opt" id="fcl-inv" />
+                        <label htmlFor="fcl-inv">FCL</label>
+                      </div>
+                      <div>
+                        <input type="radio" name="sea-opt" id="lcl-inv" />
+                        <label htmlFor="lcl-inv">LCL</label>
+                      </div>
+                    </div>
+                  )}
+                  {this.state.toggleRoadInv && (
+                    <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div>
+                        <input type="radio" name="road-opt" id="ftl-inv" />
+                        <label htmlFor="ftl-inv">FTL</label>
+                      </div>
+                      <div>
+                        <input type="radio" name="road-opt" id="ltl-inv" />
+                        <label htmlFor="ltl-inv">LTL</label>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="ana-radio-cntr">
+                  <div className="login-fields mb-0">
+                    <select>
+                      <option>Daily</option>
+                      <option>Weekly</option>
+                      <option>Monthly</option>
+                      <option>Yearly</option>
+                    </select>
+                  </div>
+                  <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>Supplier </span>
+                    <select>
+                      <option>Supplier Name</option>
+                      <option>Supplier Name</option>
+                      <option>Supplier Name</option>
+                    </select>
+                  </div>
+                  <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>From </span>
+                    <DatePicker
+                      className="ana-to"
+                      selected={this.state.startDate}
+                      onChange={this.handleChangeStart}
+                    />
+                  </div>
+                  <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>To </span>
+                    <DatePicker
+                      className="ana-to"
+                      selected={this.state.endDate}
+                      onChange={this.handleChangeEnd}
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12">
+                    <Bar
+                      data={buyerData}
+                      width={100}
+                      height={50}
+                      options={volumeOptions}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
