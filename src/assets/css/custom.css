@@ -2111,7 +2111,7 @@ table tbody tr:last-child {
 .grncuntr .card {
   margin-top: 20px;
   border-radius: 1px;
-  width: 690px;
+  /* width: 690px; */
   border: none;
 }
 
@@ -2132,7 +2132,7 @@ table tbody tr:last-child {
 }
 .grncuntr-lbl {
   font-weight: 500;
-  padding: 20px;
+  padding: 8px;
   font-size: 20px;
 }
 .grncuntr svg {
@@ -2167,7 +2167,7 @@ table tbody tr:last-child {
 }
 
 .dot {
-  height: 289px;
+  height: 180px;
   width: 93%;
   border-radius: 100%;
   display: inline-block;
@@ -2191,16 +2191,16 @@ table tbody tr:last-child {
 
 .greenchart-img {
   position: absolute;
-  height: 25px;
+  height: 18px;
   width: auto;
   left: 0;
   right: 0;
   margin: auto;
   top: 0;
-  bottom: 65px;
+  bottom: 40px;
 }
 .greenchartlbl {
-  font-size: 18px;
+  font-size: 13px;
   color: #666;
   font-weight: bolder;
   text-align: center;
@@ -2209,7 +2209,7 @@ table tbody tr:last-child {
   left: 0;
   right: 0;
   line-height: 20px;
-  bottom: 20px;
+  bottom: 15px;
   text-transform: uppercase;
 }
 .counterval {
@@ -2221,8 +2221,8 @@ table tbody tr:last-child {
   right: 0;
   line-height: 20px;
   text-transform: uppercase;
-  bottom: 96px;
-  font-size: 28px;
+  bottom: 65px;
+  font-size: 18px;
   color: #ed0124;
 }
 .greenchartlbl1 {
@@ -2232,7 +2232,7 @@ table tbody tr:last-child {
   text-align: center;
   text-transform: capitalize;
   width: 50%;
-  margin-left: 190px;
+  margin-left: 155px;
 }
 
 .girdevtred {
@@ -2409,14 +2409,15 @@ table tbody tr:last-child {
 }
 
 .tree-img {
-  width: 123px;
+  width: 100px;
   float: right;
-  margin: 25px;
+  margin: 15px;
+  height: 90px;
 }
 
 .tree-dv {
-  margin-top: 20px;
-  padding-left: 21px;
+  margin-top: 10px;
+  padding-left: 11px;
   font-size: 40px;
   color: green;
   font-family: inherit;

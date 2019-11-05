@@ -10,6 +10,7 @@ import DashboardIcon from "./../assets/img/dashboard.png";
 import QuotesIcon from "./../assets/img/quotes.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
+import { encryption } from "../helpers/encryption";
 
 class SideMenu extends Component {
   constructor(props) {
@@ -118,7 +119,9 @@ class SideMenu extends Component {
                 </Card>
               </Accordion>
             </li>
-            <li className="sidemenu-ul-li">
+            {(() => {
+              if (encryption(window.localStorage.getItem("usertype"),"desc") == "Customer") {
+                return <li className="sidemenu-ul-li">
               <Link to="/shipment-planner">
                 <img
                   src={RatesIcon}
@@ -128,6 +131,8 @@ class SideMenu extends Component {
                 Shipment Planner
               </Link>
             </li>
+              }    
+            })()}
             <li className="sidemenu-ul-li">
               <Link to="/booking-table">
                 <img
@@ -202,7 +207,9 @@ class SideMenu extends Component {
                 Analytics
               </Link>
             </li>
-            <li className="sidemenu-ul-li">
+            {(() => {
+            if (encryption(window.localStorage.getItem("usertype"),"desc") == "Customer") {
+            return <li className="sidemenu-ul-li">
               <Link to="/green-counter">
                 <img
                   src={GreenCounterIcon}
@@ -212,6 +219,8 @@ class SideMenu extends Component {
                 Green Counter
               </Link>
             </li>
+             }    
+            })()}
             <li className="sidemenu-ul-li">
               <Link to="/add-user">
                 <img

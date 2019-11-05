@@ -91,12 +91,7 @@ class Header extends Component {
                     className="header-bell-icon"
                   />
                 </li>
-                <li style={{ padding: "10px 15px" }}>
-                  {/* <img
-                    src={PhoneIcon}
-                    alt="mobile-icon"
-                    className="header-phone-icon"
-                  // /> */}
+                {/* <li style={{ padding: "10px 15px" }}>
                   <div className="dropdown">
                     <img
                       className="header-phone-icon dropdown-toggle"
@@ -110,7 +105,7 @@ class Header extends Component {
                       <QRCode />
                     </div>
                   </div>
-                </li>
+                </li> */}
                 <li style={{ padding: "10px 15px" }}>
                   <img
                     src={ChatIcon}
@@ -192,6 +187,18 @@ class Header extends Component {
                                   className="profilesetting-icon"
                                 />
                                 Profile Setting
+                              </a>
+                            </li>
+                            <li className="profile-setting-li">
+                              <a href="">
+                              <img
+                                className="header-phone-icon dropdown-toggle"
+                                data-toggle="dropdown"
+                                id="qrCode"
+                                src={PhoneIcon}
+                                alt="mobile-icon"
+                              />
+                                Mobile App
                               </a>
                             </li>
                             <li
