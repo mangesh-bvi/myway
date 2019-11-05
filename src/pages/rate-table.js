@@ -391,11 +391,23 @@ class RateTable extends Component {
               <ModalBody>
                 <div className="rename-cntr login-fields">
                   <label>Enter Latitude</label>
-                  <input type="text" placeholder="Latitude" />
+                  {/* <input type="text" placeholder="Latitude" /> */}
+                  <select>
+                    <option>50.33998</option>
+                    <option>70.85236</option>
+                    <option>100.47823</option>
+                    <option>150.02315</option>
+                  </select>
                 </div>
                 <div className="rename-cntr login-fields">
                   <label>Enter Longitude</label>
-                  <input type="text" placeholder="Longitude" />
+                  {/* <input type="text" placeholder="Longitude" /> */}
+                  <select>
+                    <option>50.33998</option>
+                    <option>70.85236</option>
+                    <option>100.47823</option>
+                    <option>150.02315</option>
+                  </select>
                 </div>
                 <Button className="butn" onClick={this.toggleEdit}>
                   Done

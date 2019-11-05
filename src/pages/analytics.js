@@ -64,61 +64,18 @@ var volumeOptions = {
     ]
   }
 };
-var pieOptions = {
-  cutoutPercentage: 0
-  // title: {
-  //   display: true,
-  //   text: "Total Freight Spend",
-  //   fontSize: 16,
-  //   fontFamily: "Bold Font",
-  //   fontColor: "#000",
-  //   padding: 20
-  // },
-  // legend: {
-  //   display: true,
-  //   position: "bottom",
-  //   labels: {
-  //     boxWidth: 7,
-  //     fontFamily: "Medium Font",
-  //     fontSize: 14,
-  //     fontColor: "#000",
-  //     usePointStyle: true,
-  //     padding: 20
-  //   }
-  // },
-  // scales: {
-  //   yAxes: [
-  //     {
-  //       ticks: {
-  //         fontColor: "#999",
-  //         fontSize: 14,
-  //         callback: function(value) {
-  //           return value + "k";
-  //         }
-  //       },
-  //       scaleLabel: {
-  //         display: true,
-  //         labelString: "USD",
-  //         fontFamily: "Medium Font",
-  //         fontSize: 14,
-  //         fontColor: "#777"
-  //       },
-  //       stacked: true
-  //     }
-  //   ],
-  //   xAxes: [
-  //     {
-  //       ticks: {
-  //         fontColor: "#999",
-  //         fontSize: 14
-  //       },
-  //       stacked: true,
-  //       gridLines: {
-  //         display: false
-  //       }
-  //     }
-  //   ]
-  // }
+
+var greencounterOption = {
+  legend: {
+    display: false
+  },
+  tooltips: {
+    enabled: false
+  },
+  rotation: 0.75 * Math.PI,
+  circumference: 1.5 * Math.PI,
+  cutoutPercentage: 80,
+  padding: 40
 };
 
 class Analytics extends Component {
@@ -165,34 +122,17 @@ class Analytics extends Component {
         }
       ]
     };
-    var pieData = {
-      // labels: ["Red", "Yellow", "Blue"],
-      // datasets: [
-      //   {
-      //     data: [10, 20, 30]
-      //   }
-      // ]
-      // datasets: [
-      //   {
-      //     fillColor: "rgba(172,194,132,0.4)",
-      //     strokeColor: "#ACC26D",
-      //     pointColor: "#fff",
-      //     pointStrokeColor: "#9DB86D",
-      //     label: "Ocean",
-      //     data: [0, 0, 50, 35, 20, 0, 10, 5, 5, 80, 0, 0],
-      //     backgroundColor: "#4a99e7"
-      //   },
-      //   {
-      //     label: "Truck",
-      //     data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0],
-      //     backgroundColor: "#50ad84"
-      //   },
-      //   {
-      //     label: "Air",
-      //     data: [2, 15, 15, 10, 8, 40, 20, 10, 18, 40, 40, 17],
-      //     backgroundColor: "#3357ac"
-      //   }
-      // ]
+    let greenCounterdata = {
+      labels: ["Green", "Red"],
+      datasets: [
+        {
+          data: [70, 30],
+          backgroundColor: ["#63CD16", "#EF1617"],
+          hoverBackgroundColor: ["#63CD16", "#EF1617"],
+          borderWidth: 0
+        }
+      ],
+      text: "23%"
     };
 
     return (
@@ -342,10 +282,10 @@ class Analytics extends Component {
                   </div>
                   <div className="col-md-3">
                     <Doughnut
-                      data={pieData}
-                      options={pieOptions}
-                      width={100}
-                      height={50}
+                      data={greenCounterdata}
+                      width={700}
+                      height={600}
+                      options={greencounterOption}
                     />
                   </div>
                 </div>
