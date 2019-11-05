@@ -73,7 +73,16 @@ class RateFinalizingStill extends Component {
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
-              <h2>Rate Query Details</h2>
+            {(() => {
+            if(this.props.location.state.detail[1] == "Quotes")
+            {
+            return <h2>Quotes Details</h2>
+            }
+            else
+            {
+            return <h2>Booking Details</h2>
+            }})()}
+              {/* <h2>Rate Query Details</h2> */}
             </div>
             <div className="row">
               <div className="col-md-4">

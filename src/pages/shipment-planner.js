@@ -40,7 +40,6 @@ import {
 
 const { compose } = require("recompose");
 
- 
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
@@ -104,7 +103,6 @@ const MapWithAMakredInfoWindowLine = compose(
       path={props.routerData}
       geodesic={true}
       style={{ zIndex: 1 }}
-      
       options={{
         strokeColor: "#ff0022",
         strokeOpacity: 1.75,
@@ -120,7 +118,6 @@ const MapWithAMakredInfoWindowLine = compose(
     />
     {props.markers.map((marker, i) => {
       debugger;
-     
 
       var iCount = props.markers.length;
       var start = marker.StartLatLng;

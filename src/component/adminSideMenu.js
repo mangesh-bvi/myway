@@ -22,10 +22,9 @@ class AdminSideMenu extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <ul className="sidemenu-ul">
-            <li className="sidemenu-ul-li">
+      <div className="d-flex flex-column justify-content-between h-100">
+        <ul className="sidemenu-ul">
+          <li className="sidemenu-ul-li">
             <a href="view-user">
               <img
                 src={DashboardIcon}
@@ -33,9 +32,9 @@ class AdminSideMenu extends Component {
                 className="header-greencounter-icon"
               />{" "}
               View User
-              </a>
-            </li>
-            <li className="sidemenu-ul-li">
+            </a>
+          </li>
+          <li className="sidemenu-ul-li">
             <a href="add-user">
               <img
                 src={QuotesIcon}
@@ -43,9 +42,9 @@ class AdminSideMenu extends Component {
                 className="header-greencounter-icon"
               />{" "}
               Add User
-              </a>
-            </li>
-            <li className="sidemenu-ul-li">
+            </a>
+          </li>
+          <li className="sidemenu-ul-li">
             <a href="add-sales-user">
               <img
                 src={QuotesIcon}
@@ -53,9 +52,29 @@ class AdminSideMenu extends Component {
                 className="header-greencounter-icon"
               />{" "}
               Add Sales User
-              </a>
-            </li>
-            {/* <li className="sidemenu-ul-li">
+            </a>
+          </li>
+          <li className="sidemenu-ul-li">
+            <a href="event-management">
+              <img
+                src={QuotesIcon}
+                alt="green-counter-icon"
+                className="header-greencounter-icon"
+              />{" "}
+              Event Management
+            </a>
+          </li>
+          <li className="sidemenu-ul-li">
+            <a href="activity-log">
+              <img
+                src={QuotesIcon}
+                alt="green-counter-icon"
+                className="header-greencounter-icon"
+              />{" "}
+              Activity Log
+            </a>
+          </li>
+          {/* <li className="sidemenu-ul-li">
               <img
                 src={GreenCounterIcon}
                 alt="green-counter-icon"
@@ -99,11 +118,8 @@ class AdminSideMenu extends Component {
                 Event Management
               </a>
             </li> */}
-          </ul>
-          <ul className="sidemenu-ul2" style={{ marginTop: "84%" }}>
-            
-          </ul>
-        </div>
+        </ul>
+        <ul className="sidemenu-ul2 m-0"></ul>
       </div>
     );
   }

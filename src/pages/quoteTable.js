@@ -68,18 +68,19 @@ class QuoteTable extends Component {
     });
   }
 
-  HandleChangeShipmentDetails(HblNo) {
+  HandleChangeShipmentDetails(QuoteNo) {
+    var data = [QuoteNo,"Quotes"]
     this.props.history.push({
-      pathname: "shipment-details",
-      state: { detail: HblNo }
+      pathname: "rate-finalizing-still",
+      state: { detail: data }
     });
   }
 
   HandleRowClickEvt = (rowInfo, column) => {
     return {
       onClick: e => {
-        var hblNo = column.original["HBL#"];
-        this.HandleChangeShipmentDetails(hblNo);
+        var QuoteNo = column.original["Quote#"];
+        this.HandleChangeShipmentDetails(QuoteNo);
       }
     };
   };
@@ -131,13 +132,13 @@ class QuoteTable extends Component {
                     Cell: row => {
                       return (
                         <div className="action-cntr">
-                          <a href="/rate-finalizing-still">
+                          {/* <a href="/rate-finalizing-still">
                             <img
                               className="actionicon"
                               src={Eye}
                               alt="view-icon"
                             />
-                          </a>
+                          </a> */}
                           <a href="/rate-finalizing">
                             <img
                               className="actionicon"
@@ -152,7 +153,7 @@ class QuoteTable extends Component {
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}
-                // getTrProps={this.HandleRowClickEvt}
+                getTrProps={this.HandleRowClickEvt}
               />
             </div>
           </div>

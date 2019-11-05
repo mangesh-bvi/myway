@@ -40,6 +40,10 @@ import AddSalesUser from "./pages/AddSalesUser";
 import Analytics from "./pages/analytics";
 import RateFinalizing from "./pages/rateFinalizing";
 import RateFinalizingStill from "./pages/rateFinalizingStill";
+import EventManagement from "./pages/Event-Management";
+import AddEventManagement from "./pages/AddEventManagement";
+import ActivityLog from "./pages/activity-log";
+import SalesActivityLog from "./pages/salesActivityLog";
 
 // import Exmaple from './pages/Example';
 
@@ -84,6 +88,10 @@ ReactDOM.render(
       path="/rate-finalizing-still"
       component={RateFinalizingStill}
     />
+    <Route exact path="/event-management" component={EventManagement} />
+    <Route exact path="/add-event-management" component={AddEventManagement} />
+    <Route exact path="/activity-log" component={ActivityLog} />
+    <Route exact path="/sales-activity-log" component={SalesActivityLog} />
     {/* <Route exact path="/example" component={Exmaple} /> */}
 
     {/* <Route  path="/" component={Login} />   */}

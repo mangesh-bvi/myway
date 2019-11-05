@@ -303,7 +303,7 @@ class GreenCounter extends Component {
                   <Bar
                     data={volumeChartData}
                     width={100}
-                    height={50}
+                    height={35}
                     options={volumeOptions}
                   />
                 </div>
@@ -311,7 +311,6 @@ class GreenCounter extends Component {
               <div className="card carbonechart">
                 <div>
                   <div className="volcls">
-                    <div>
                     <label className="grncuntr-lbl">Trees Planted by ATAFreight</label>
                     <img
                         src={Image}
@@ -319,7 +318,6 @@ class GreenCounter extends Component {
                         // className="greenchart-img"
                         className="tree-img"
                       />
-                    </div>
                     <div className="tree-dv">
                     <CountUp start={1} end={totalTreePlanted}>                   
                     </CountUp>
@@ -339,12 +337,13 @@ class GreenCounter extends Component {
                         // className="greenchart-img"
                         className="tree-img"
                       />
-                    </div>
                     <div className="tree-dv">
-                    <CountUp start={1} end={totalTreeCO2} decimals={2}>                    
-                    </CountUp>
-                    <span> (MT)</span>
+                      <CountUp start={1} end={totalTreeCO2} decimals={2}>                    
+                      </CountUp>
+                      <span> (MT)</span>
                     </div>
+                    </div>
+                    
                   </div>
                   
                 </div>
@@ -371,7 +370,7 @@ class GreenCounter extends Component {
                   <Line
                     data={carboneCharData}
                     width={100}
-                    height={50}
+                    height={35}
                     options={carboneOptions}
                   />
                 </div>
@@ -381,7 +380,7 @@ class GreenCounter extends Component {
                   <label className="grncuntr-lbl">Green Conuter</label>
                 </div>
                 <div className="row" style={{"margin-left": "107px"}}> 
-                  <div className="col-md-8">
+                  <div className="col-md-7">
                     <div className="dot">
                       {/* <div className="dot1"></div> */}
 
