@@ -197,7 +197,9 @@ class ShippingDetailsTwo extends Component {
     super(props);
 
     this.state = {
+      packageDetails: [],
       modalDel: false,
+      modalPackage: false,
       modalDocu: false,
       modalEdit: false,
       detailsData: {},
@@ -221,6 +223,7 @@ class ShippingDetailsTwo extends Component {
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.togglePackage = this.togglePackage.bind(this);
     // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
@@ -352,11 +355,11 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindShipmentSummaryMap`,
       data: {
-        ShipperID: 1340354108,//shipperId,  //shipperId,
-        ConsigneeID: 1340464123,//consigneeId,  //consigneeId,
+        ShipperID: 1340354108, //shipperId,  //shipperId,
+        ConsigneeID: 1340464123, //consigneeId,  //consigneeId,
         SwitchConsigneeID: 0,
         SwitchShipperID: 0,
-        HBLNo: "BOM 237730"//hblno 
+        HBLNo: "BOM 237730" //hblno
       },
       headers: authHeader()
     }).then(function(response) {
@@ -416,8 +419,10 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
-        HBLNo: HblNo //HblNo
+        // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
+        // HBLNo: HblNo //HblNo
+        UserId: 874588,
+        HBLNo: "AQTYPSE193723" //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
@@ -427,7 +432,8 @@ class ShippingDetailsTwo extends Component {
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
-        bookedStatus: shipmentdata.Table4
+        bookedStatus: shipmentdata.Table4,
+        packageDetails: shipmentdata.Table7
       });
       var sid = shipmentdata.Table[0].ShipperId;
       var cid = shipmentdata.Table[0].ConsigneeID;
@@ -491,6 +497,12 @@ class ShippingDetailsTwo extends Component {
       modalDel: !prevState.modalDel
     }));
   }
+  togglePackage() {
+    debugger;
+    this.setState(prevState => ({
+      modalPackage: !prevState.modalPackage
+    }));
+  }
   toggleDocu() {
     this.setState(prevState => ({
       modalDocu: !prevState.modalDocu
@@ -513,7 +525,8 @@ class ShippingDetailsTwo extends Component {
       ShowCard,
       documentData,
       bookedStatus,
-      MapsDetailsData
+      MapsDetailsData,
+      packageDetails
     } = this.state;
     let bookingIsActive = "";
     let bookDate = "";
@@ -950,6 +963,136 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         </div>
                       </div>
+                      <div className="sect-padd">
+                        <p className="details-heading">Package Details</p>
+                        {packageDetails.map(function(packData, i) {
+                          return (
+                            <>
+                              <div className="row">
+                                <div className="col-md-3 details-border">
+                                  <p className="details-title">Package Type</p>
+                                  <p className="details-para">
+                                    {packData.PackageType}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="collapse-sect">
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Case Number</p>
+                                    <p className="details-para">
+                                      {packData.CaseNumber}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Units</p>
+                                    <p className="details-para">
+                                      {packData.UnitType}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Package Count
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.PackageCount}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Length</p>
+                                    <p className="details-para">
+                                      {packData.Length}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Width</p>
+                                    <p className="details-para">
+                                      {packData.Width}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Height</p>
+                                    <p className="details-para">
+                                      {packData.Height}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Net Weight</p>
+                                    <p className="details-para">
+                                      {packData.NetWeight} Kgs.
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Gross Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.GrossWeight} Kgs.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Volume</p>
+                                    <p className="details-para">
+                                      {packData.Volume}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Volume Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.VolumeWeight} Kgs.
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Total Net Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.TotalNetWeight} Kgs.
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Total Gross Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.TotalGrossWeight} Kgs.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-12">
+                                  <a
+                                    href="#!"
+                                    className="butn view-btn less-btn mr-2"
+                                  >
+                                    Show Less
+                                  </a>
+                                  {/* <button
+                                    onClick={() => this.togglePackage}
+                                    className="butn view-btn"
+                                  >
+                                    View Items
+                                  </button> */}
+                                </div>
+                              </div>
+                            </>
+                          );
+                        })}
+                        <button
+                          onClick={this.togglePackage}
+                          className="butn view-btn"
+                        >
+                          View Items
+                        </button>
+                      </div>
                     </div>
                     <div
                       className="tab-pane fade"
@@ -1129,6 +1272,71 @@ class ShippingDetailsTwo extends Component {
                     </div>
                   </div>
                 </div>
+                <Modal
+                  className="delete-popup package-popup"
+                  isOpen={this.state.modalPackage}
+                  toggle={this.togglePackage}
+                >
+                  <ModalBody>
+                    <ReactTable
+                      data={packageDetails}
+                      // noDataText="<i className='fa fa-refresh fa-spin'></i>"
+                      noDataText=""
+                      columns={[
+                        {
+                          columns: [
+                            {
+                              Header: "Package Type",
+                              accessor: "PackageType",
+                              sortable: true
+                            },
+                            {
+                              Header: "PO Number",
+                              accessor: "InvoiceNumber"
+                            },
+                            {
+                              Header: "Product Id",
+                              accessor: "CargoPackID"
+                            },
+                            {
+                              Header: "Description",
+                              accessor: "Description"
+                            },
+                            {
+                              Header: "Quantity Ordered",
+                              accessor: "POD"
+                            },
+                            {
+                              Header: "Quantity Shipped",
+                              accessor: "POD"
+                            },
+                            {
+                              Header: "UOM (Unit of Measurement)",
+                              accessor: "UnitType"
+                            },
+                            {
+                              Header: "Net Weight",
+                              accessor: "NetWeight"
+                            },
+                            {
+                              Header: "Gross Weight",
+                              accessor: "GrossWeight"
+                            }
+                          ]
+                        }
+                      ]}
+                      className="-striped -highlight"
+                      defaultPageSize={10}
+                      minRows={0}
+                    />
+                    <Button
+                      className="butn cancel-butn"
+                      onClick={this.togglePackage}
+                    >
+                      Close
+                    </Button>
+                  </ModalBody>
+                </Modal>
                 <Modal
                   className="delete-popup"
                   isOpen={this.state.modalDel}
