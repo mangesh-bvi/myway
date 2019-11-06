@@ -13,14 +13,32 @@ import "react-notifications/lib/notifications.css";
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import CheckboxTree from 'react-checkbox-tree';
 // import { connect } from 'react-redux'
-const nodes = [{
-  value: 'mars',
-  label: 'Mars',
-  children: [
-      { value: 'phobos', label: 'Phobos' ,children:[{value: 'phobos-chileden', label: 'phobos-chileden'}]},
-      { value: 'deimos', label: 'Deimos' },
-  ],
-}];
+const nodes = [
+  {
+    value: "mars",
+    label: "Mars",
+    children: [
+      {
+        value: "phobos",
+        label: "Phobos",
+        children: [{ value: "phobos-chileden", label: "phobos-chileden" }]
+      },
+      { value: "deimos", label: "Deimos" }
+    ]
+  },
+  {
+    value: "mars1",
+    label: "Mars1",
+    children: [
+      {
+        value: "phobos",
+        label: "Phobos1",
+        children: [{ value: "phobos-chileden", label: "phobos-chileden-1" }]
+      },
+      { value: "deimos", label: "Deimos1" }
+    ]
+  }
+];
 
 
 class Login extends React.Component {
@@ -191,10 +209,10 @@ class Login extends React.Component {
                   </div>
                 </div>
                 <div className="remember-forgot">
-                  <div>
+                  {/* <div>
                     <input id="remember" type="checkbox" name={"remember me"} />
                     <label htmlFor="remember">Remember Me</label>
-                  </div>
+                  </div> */}
                   <a href="./forgotPassword">Forgot Password?</a>
                 </div>
                 <div className="text-right">

@@ -7,6 +7,7 @@ import Headers from "../component/header";
 import ExistCust from "./../assets/img/exist-cust.png";
 import NewCust from "./../assets/img/new-cust.png";
 import SideMenu from "../component/sidemenu";
+import Autocomplete from "react-autocomplete";
 
 class RateSearch extends Component {
   constructor(props) {
@@ -15,38 +16,88 @@ class RateSearch extends Component {
     this.state = {
       IsSearchRate: false,
       customerData: [],
-      customerName: ""
+      customerName: "",
+      menuStyle: {
+         
+        textAlign:"left",
+        borderRadius: "3px",
+        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.1)",
+        background: "rgba(255, 255, 255, 0.9)",
+        padding: "2px 0 0 10px",
+        fontSize: "90%",
+        position: "fixed",
+        overflow: "auto",
+        zIndex: "1",
+        maxWidth: "300px",
+        maxHeight: "50%" // TODO: don't cheat, let it flow to the bottom
+      },
+      fields: {}
     };
-    this.HandleCustomerList = this.HandleCustomerList.bind(this);
+   
   }
 
   componentDidMount() {
-    debugger;
-    this.HandleCustomerList();
+    // document.getElementById("SearchRate").classList.add("disableRates");
+    
+    document.getElementById("SearchRate").classList.add("disableRates");
   }
-  HandleCustomerList(e) {
-    let self = this;
-    var customer_Name = e.target.value;
+
+   
+  HandleChangeCon(field, e) {
     debugger;
-    if (customer_Name.length >= 3) {
+    let self = this;
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+    var customertxtlen=e.target.value;
+   
       axios({
         method: "post",
         url: `${appSettings.APIURL}/CustomerList`,
         data: {
-          CustomerName: customer_Name != "" ? customer_Name : "",
+          CustomerName: e.target.value,
           CustomerType: "Existing"
         },
         headers: authHeader()
       }).then(function(response) {
         debugger;
-        var data = [];
-        data = response.data.Table;
-        if (data != null && data != "") {
-          self.setState({ customerData: data });
+        if (field == "CustomerList") {
+          self.setState({
+            customerData: response.data.Table,
+            fields
+          });
+        } else {
+          self.setState({
+            customerData: response.data.Table,
+            fields
+          });
         }
       });
-    }
+    
+    
   }
+  HandleChangeSelect(field, e) {
+    debugger
+    let fields = this.state.fields;
+    if (e.target.value == "Select") {
+      fields[field] = "";
+    } else {
+      fields[field] = e.target.value;
+    }
+    this.setState({
+      fields
+    });
+    this.BindShipmentStage();
+  }
+  handleSelectCon(field, value) {
+    debugger;
+    let fields = this.state.fields;
+    fields[field] = value;
+    this.setState({
+      fields
+    });
+    document.getElementById("SearchRate").classList.remove("disableRates");
+  }
+  
   EnableRates = e => {
     debugger;
     this.HandleCustomerList(e);
@@ -66,12 +117,8 @@ class RateSearch extends Component {
     document.getElementById("searchtxt").style.display = "block";
   }
 
-  componentDidMount() {
-    // document.getElementById("SearchRate").classList.add("disableRates");
-    document.getElementById("SearchRate").classList.add("disableRates");
-  }
   render() {
-    const { IsSearchRate } = this.state;
+     
     return (
       <div>
         <Headers />
@@ -84,7 +131,7 @@ class RateSearch extends Component {
               <h2>Rate Search For?</h2>
               <div>
                 <div className="rate-radio-cntr">
-                  <div>
+                  <div >
                     <input
                       type="radio"
                       onClick={this.ShowSearchText}
@@ -118,13 +165,33 @@ class RateSearch extends Component {
                 </div>
               </div>
               <div className="login-fields mt-5 mb-0">
-                <input
+                {/* <input
                   id="searchtxt"
                   type="text"
                   onChange={this.EnableRates}
                   placeholder="Search Account/Consignee"
                   name="search-rate"
-                />
+                /> */}
+                <div className="autocom">
+                  <Autocomplete
+                    getItemValue={item => item.Company_Name}
+                    items={this.state.customerData}
+                    renderItem={(item, isHighlighted) => (
+                      <div
+                        style={{
+                          background: isHighlighted ? "lightgray" : "white"
+                        }}
+                      >
+                        {item.Company_Name}
+                      </div>
+                    )}
+                    value={this.state.fields["Company_Name"]}
+                    onChange={this.HandleChangeCon.bind(this, "Company_Name")}
+                    menuStyle={this.state.menuStyle}
+                    onSelect={this.handleSelectCon.bind(this, "Company_Name")}
+                    isMulti={true}
+                  />
+                </div>
               </div>
               <a
                 href="new-rate-search"
