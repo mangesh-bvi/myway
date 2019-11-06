@@ -222,6 +222,7 @@ function TokenhandleResponse(response) {
     } else {
       debugger;
       window.localStorage.setItem("token",encryption(data.access_token,"enc"));
+    
       if (window.localStorage.getItem("IsEnabled") == "true") {
         if (encryption(window.localStorage.getItem("usertype"),"desc") == "Sales User") {
           window.location.href = "./rate-search";

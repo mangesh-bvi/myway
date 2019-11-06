@@ -3,6 +3,7 @@ import { authHeader } from "../helpers/authHeader";
 import Logo from "./../assets/img/logo.png";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
+import axios from "axios";
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -83,11 +84,12 @@ function ChangePasswordCheck(email) {
       EmailID: email
     })
   };
-  return fetch(`${appSettings.APIURL}/forgotpassword`, requestOptions)
+  return fetch(`${appSettings.APIURL}forgotpassword`, requestOptions)
     .then(handleResponse)
     .catch(error => {
       console.log(error);
     });
+    
 }
 
 function handleResponse(response) {
