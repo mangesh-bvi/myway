@@ -443,7 +443,6 @@ const MapWithAMakredInfoWindow = compose(
     defaultZoom={3}
   >
     {props.markers.map(marker => {
-      debugger;
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
         BlueShip,
@@ -867,11 +866,14 @@ class Dashboard extends Component {
       InvoicesData: [],
       BookingData: [],
       ModalData: [],
+      ModalTotalMapData: [],
+      SelectPin:[],
       checkMapview: true,
       loading: true,
       IsWidgets: false
     };
     this.BindMapData = this.BindMapData.bind(this);
+    this.HandleShipmentPin = this.HandleShipmentPin.bind(this);
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
     this.HandleQuotesData = this.HandleQuotesData.bind(this);
     this.HandleRediractPageShipmentDetails = this.HandleRediractPageShipmentDetails.bind(
@@ -886,7 +888,7 @@ class Dashboard extends Component {
   componentDidMount() {
     debugger;
     let self = this;
-    this.BindMapData();
+    this.BindMapData("All");
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();
@@ -1002,10 +1004,21 @@ class Dashboard extends Component {
     });
   };
 
-  BindMapData() {
+  HandleShipmentPin(BindingID)
+  {
+    this.BindMapData(BindingID);
+  }
+
+  BindMapData(BindingID) {
+
+    debugger;
     let self = this;
     var mdata;
+    var arraModalMapData = [];
     debugger;
+    
+    if(self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1)
+    {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
@@ -1014,10 +1027,48 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      alert("Complete")
       mdata = response.data;
+      if(BindingID != "All")
+      {
+        mdata = mdata.filter(map => map.Pin == BindingID)
+      }
       self.setState({ loading: false });
       self.setState({ mapsData: mdata });
+      self.ModalTotalMapData = mdata;
+      var arrarSelectPin = ["Ocean","Air","Booking-Ocean","Delay-Ocean"];
+
+      self.SelectPin = arrarSelectPin ;
     });
+  }
+  else{
+    if(BindingID != "All")
+    {
+      var index = self.SelectPin.indexOf(BindingID);
+      const div = document.getElementById(BindingID);
+      if (index > -1) {
+        self.SelectPin.splice(index, 1);
+       
+        div.classList.remove("header-btn");
+      }
+      else
+      {
+        div.classList.add("header-btn");
+        self.SelectPin.push(BindingID)
+      }
+
+      
+        for(var rray in self.SelectPin)
+        {
+          arraModalMapData = arraModalMapData.concat(self.ModalTotalMapData.filter(e => e.Pin == self.SelectPin[rray]));
+        }
+      
+
+      //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
+    }
+    self.setState({ loading: false });
+    self.setState({ mapsData: arraModalMapData });
+  }
   }
 
   render() {
@@ -1041,6 +1092,8 @@ class Dashboard extends Component {
     }
     const {
       mapsData,
+      ModalTotalMapData,
+      SelectPin,
       selectedMarker,
       ActiveShipmentData,
       InvoicesData,
@@ -1224,6 +1277,7 @@ class Dashboard extends Component {
                         loadingElement={<div style={{ height: `100%` }} />}
                       ></MapWithAMakredInfoWindow>
                     </div>
+                    
                   </div>
                     <div className="row dash-sects-cntr">
                       <div className="col-md-3">
@@ -1312,10 +1366,51 @@ class Dashboard extends Component {
                   </div>
                 </div>
               )}
+
+<input
+      id="Ocean"  class="header-btn"
+      type="button"
+     value="Ocean-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Ocean")
+      }
+    />
+    <input
+      id="Air" class="header-btn"
+      type="button"
+     value="Air-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Air")
+      }
+    />
+    <input
+      id="Delay-Ocean"  class="header-btn"
+      type="button"
+     value="Delay-Ocean-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Delay-Ocean")
+      }
+    />
+    <input
+      id="Booking-Ocean"  class="header-btn"
+      type="button"
+     value="CurrentBooking-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Booking-Ocean")
+      }
+    />
             </div>
           </div>
         </div>
+       
+     
+    
       </div>
+     
     );
   }
 }

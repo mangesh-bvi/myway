@@ -745,6 +745,16 @@ table tbody tr:last-child {
   width: calc(100% - 150px);
   margin-left: auto;
 }
+.package-popup {
+  max-width: 100%;
+  margin: 0;
+}
+.package-popup .modal-content {
+  border-radius: 0;
+}
+.package-popup .modal-body {
+  padding: 20px;
+}
 /* shipping details 2 ends */
 
 /* shipment planner starts */
