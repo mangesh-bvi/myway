@@ -43,6 +43,7 @@ import RateFinalizingStill from "./pages/rateFinalizingStill";
 import EventManagement from "./pages/Event-Management";
 import AddEventManagement from "./pages/AddEventManagement";
 import ActivityLog from "./pages/activity-log";
+import SalesActivityLog from "./pages/salesActivityLog";
 
 // import Exmaple from './pages/Example';
 
@@ -90,6 +91,7 @@ ReactDOM.render(
     <Route exact path="/event-management" component={EventManagement} />
     <Route exact path="/add-event-management" component={AddEventManagement} />
     <Route exact path="/activity-log" component={ActivityLog} />
+    <Route exact path="/sales-activity-log" component={SalesActivityLog} />
     {/* <Route exact path="/example" component={Exmaple} /> */}
 
     {/* <Route  path="/" component={Login} />   */}

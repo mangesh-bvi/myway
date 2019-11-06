@@ -5,6 +5,8 @@ import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import {authHeader} from "../helpers/authHeader";
+import FileUpload from "./../assets/img/file.png";
+import Delete from "./../assets/img/red-delete-icon.png";
 import { is } from "@babel/types";
 import { encryption } from "../helpers/encryption";
 import {
@@ -76,7 +78,7 @@ class AddUser extends React.Component{
       selectedFile: null,
       disabled: true,
       IsMobileEnabled: false,
-      
+      selectedFileName: ""
     }
     
     this.handlechange = this.handlechange.bind(this);
@@ -121,7 +123,7 @@ class AddUser extends React.Component{
                     })()}
                   {(() => {
                       if ((this.state.editRegCompany[i].CompType).includes('C,S') || (this.state.editRegCompany[i].CompType).includes('S,C')) {
-                        return <div className="remember-forgot col-md-1">
+                        return <div className="remember-forgot">
                         <div>
                           <input id={"Consignee" + (index+1)} type="checkbox" name={"Consignee" + (index+1)} defaultChecked={true} onChange={this.toggleChangeCon1.bind(this,index, "C")}/>
                             <label htmlFor={"Consignee" + (index+1)}>Consignee</label>
@@ -133,7 +135,7 @@ class AddUser extends React.Component{
                         
                       </div>
                      } else if ((this.state.editRegCompany[i].CompType).includes('S')) {
-                      return <div className="remember-forgot col-md-1">
+                      return <div className="remember-forgot">
                    <div>
                      <input id={"Consignee" + (index+1)} type="checkbox" name={"Consignee" + (index+1)}  onChange={this.toggleChangeCon1.bind(this, index, "C")}/>
                        <label htmlFor={"Consignee" + (index+1)}>Consignee</label>
@@ -145,7 +147,7 @@ class AddUser extends React.Component{
                    
                  </div>
                 } else if ((this.state.editRegCompany[i].CompType).includes('C')) {
-                  return <div className="remember-forgot col-md-1">
+                  return <div className="remember-forgot">
                    <div>
                      <input id={"Consignee" + (index+1)} type="checkbox" name="Consignee" defaultChecked={true} onChange={this.toggleChangeCon1.bind(this,index, "C")}/>
                        <label htmlFor={"Consignee" + (index+1)}>Consignee</label>
@@ -159,7 +161,7 @@ class AddUser extends React.Component{
                }
                else
                {
-                return <div className="remember-forgot col-md-1">
+                return <div className="remember-forgot">
                 <div>
                   <input id={"Consignee" + (index+1)} type="checkbox" name="Consignee"  onChange={this.toggleChangeCon1.bind(this,index, "C")}/>
                     <label htmlFor={"Consignee" + (index+1)}>Consignee</label>
@@ -198,7 +200,7 @@ class AddUser extends React.Component{
                     ))}
          </select>
          {/* <input type='button' value='remove' id={"remove" + (index+1)} className='dynamic-remove' onClick={this.removeClick.bind(this, index)}/> */}
-         <div className="remember-forgot col-md-1">
+         <div className="remember-forgot">
             <div>
                 <input id={"Consignee"} type="checkbox" name={"Consignee"} onChange={this.toggleChangeCon.bind(this,"C")}/>
                 <label htmlFor={"Consignee"}>Consignee</label>
@@ -224,7 +226,7 @@ class AddUser extends React.Component{
           </option>
         ))}
       </select>
-      <div className="remember-forgot col-md-1">
+      <div className="remember-forgot">
        <div>
          <input id="Consignee" type="checkbox" name="Consignee" disabled={this.state.disabled} onChange={this.toggleChangeCon.bind(this, "C")}/>
            <label htmlFor="Consignee">Consignee</label>
@@ -250,8 +252,10 @@ class AddUser extends React.Component{
                       </option>
                     ))}
          </select>
-         <input type='button' value='remove' id={"remove" + (index+1)} className='dynamic-remove' onClick={this.removeClick.bind(this, index)}/>
-         <div className="remember-forgot col-md-1">
+         <button id={"remove" + (index+1)} className='dynamic-remove' onClick={this.removeClick.bind(this, index)}>
+           <img src={Delete} alt="delete icon" />
+         </button>
+         <div className="remember-forgot">
             <div>
                 <input id={"Consignee" + (index+1)} type="checkbox" name={"Consignee" + (index+1)} onChange={this.toggleChangeCon1.bind(this,index,"C")}/>
                 <label htmlFor={"Consignee" + (index+1)}>Consignee</label>
@@ -1277,7 +1281,7 @@ if (this.state.selectedFile == null)
   
   fileChangedHandler = event => {
     debugger;
-    this.setState({ selectedFile: event.target.files[0] })
+    this.setState({ selectedFile: event.target.files[0], selectedFileName: event.target.files[0].name })
   }
 
     render() {
@@ -1291,17 +1295,19 @@ if (this.state.selectedFile == null)
           </div>
           <div className="cls-rt">
           <div>
-          {(() => {if(this.props.location.state != undefined)
-          {
-            return <h2>Edit User</h2>
-          }
-          else
-          {
-            return <h2>Add User</h2>
-          }})()}
+          <div class="title-sect title-border">
+            {(() => {if(this.props.location.state != undefined)
+            {
+              return <h2>Edit User</h2>
+            }
+            else
+            {
+              return <h2>Add User</h2>
+            }})()}
+          </div>
           
-          <div className="login-input-cntr">
-            <div className="row">
+          <div className="container add-user-cntr"> {/* login-input-cntr */}
+            <div className="row mt-3">
                 <div className="login-fields col-md-4">
                   <label>User Name</label>
                   <input
@@ -1464,7 +1470,7 @@ if (this.state.selectedFile == null)
                     ))}
                   </select>
                </div>
-                <div className="login-fields col-md-2">
+                <div className="login-fields col-md-4">
                   <label>Imp. Exp.</label>
                   <select
                     onChange={this.HandleChangeSelect.bind(this, "ImpExp")}
@@ -1494,7 +1500,7 @@ if (this.state.selectedFile == null)
                     ))}
                   </select>
                </div>
-               <div className="login-fields col-md-2">
+               <div className="login-fields col-md-4">
                   <label>Display As Consignee</label>
                   <select
                     onChange={this.HandleChangeSelect.bind(this,"displayConsignee")}
@@ -1508,9 +1514,9 @@ if (this.state.selectedFile == null)
                     ))}
                   </select>
                </div>
-               <div className="login-fields col-md-4">
+               <div className="login-fields col-md">
                  <label>Mode Of Transport</label>
-                 <div className="remember-forgot col-md-1">
+                 <div className="remember-forgot mt-0">
          
                  { 
                 this.state.chkModeOfTrans.map((chkModeOfTrans, index) =>
@@ -1527,9 +1533,9 @@ if (this.state.selectedFile == null)
                 
                 </div>
                </div>
-               <div className="login-fields col-md-4">
+               <div className="login-fields col-md">
                  <label>Is Mobile Enabled?</label>
-                 <div className="remember-forgot col-md-1">
+                 <div className="remember-forgot">
                    <div>
                      <input id="MobileEnable" type="checkbox" name="MobileEnable" defaultChecked={this.state.fields["MobileEnabled"]} onChange={this.toggleMobileChange.bind(this,"MobileEnable")}/>
                      <label htmlFor="MobileEnable"></label>
@@ -1538,7 +1544,7 @@ if (this.state.selectedFile == null)
                </div>
                </div>
                <div className="row">
-                <div className="login-fields dynamic-fields col-md-4">
+                <div className="login-fields dynamic-fields col-md-6">
                   <label>Company Name</label>
                   {/* {(() => {
                     if (this.props.location.state == undefined) {
@@ -1602,10 +1608,10 @@ if (this.state.selectedFile == null)
                   </div>
                   
                </div>
-               <input type='button' value='add more' onClick={this.addClick.bind(this)}/>
+               <input type='button' className="butn mt-0 mb-4" value='Add Company' onClick={this.addClick.bind(this)}/>
                <div className="row">
                <div className="login-fields col-md-12">
-                 <label>Hide Document('S)</label>
+                 <label className="mb-0">Hide Document('S)</label>
                  <div className="row">
          
                  {
@@ -1614,7 +1620,7 @@ if (this.state.selectedFile == null)
                 <div className="remember-forgot col-md-4" key={hideDocument.DocumentID}>
                   <input id={hideDocument.DocumentID} type="checkbox" name={hideDocument.DocumentName} value={hideDocument.DocumentID} 
                    defaultChecked={hideDocument.IsSelected} onClick = {this.toggleChangeHideDoc.bind(this,  index)} />
-                  <label htmlFor={hideDocument.DocumentID}>{hideDocument.DocumentName}</label> 
+                  <label className="m-0" htmlFor={hideDocument.DocumentID}>{hideDocument.DocumentName}</label> 
                 </div>
                
             
@@ -1625,9 +1631,9 @@ if (this.state.selectedFile == null)
                </div>
                </div>
                <div className="row">
-               <div className="login-fields col-md-4">
-                 <label>Miscelleneous</label>
-                 <div className="remember-forgot col-md-1">
+               <div className="login-fields col-md-12">
+                 <label className="mb-0">Miscelleneous</label>
+                 <div className="remember-forgot justify-content-start">
          
                  {
                    
@@ -1646,14 +1652,14 @@ if (this.state.selectedFile == null)
                </div>
                <div className="row">
                <div className="login-fields col-md-12">
-                 <label>Access Rights</label>                
+                 <label className="mb-0">Access Rights</label>                
                  <div className="row">
                  {
                 this.state.accessrights.map((accessrights, index) =>
                 <div className="remember-forgot col-md-3" key={accessrights.id}>
                     <input id={accessrights.id} type="checkbox" value={accessrights.Value} onChange={this.toggleChangeAccRight.bind(this, index)}
                     defaultChecked={accessrights.IsSelected}/>
-                       <label htmlFor={accessrights.id}>{accessrights.Value}</label> 
+                       <label className="m-0" htmlFor={accessrights.id}>{accessrights.Value}</label> 
                              
                 </div>
                 )
@@ -1663,17 +1669,32 @@ if (this.state.selectedFile == null)
                </div>
                </div>
                <div className="row">
-               <div className="login-fields col-md-12">
-               <input type="file" onChange={this.fileChangedHandler}/>
+               <div className="login-fields mb-0 col-md-12">
+               {/* <input type="file" onChange={this.fileChangedHandler}/> */}
+               <input
+                            id="file-upload"
+                            className="file-upload d-none"
+                            type="file"
+                            onChange={this.fileChangedHandler}
+                          />
+                          <label htmlFor="file-upload">
+                            <div className="file-icon">
+                              <img src={FileUpload} alt="file-upload" />
+                            </div>
+                            Add File
+                          </label>
+                          <p className="file-name w-100 text-center mt-1">
+                        {this.state.selectedFileName}
+                      </p>
                <span style={{color: "red"}}>{this.state.errors["logoFile"]}</span>
                </div>
                </div>
-               <div className="text-right">
+               <div className="text-right pb-4">
                {(() => {if(this.props.location.state != undefined)
                 {
                   return <button
                   type="button"
-                  className="butn"
+                  className="butn mb-2"
                   onClick={this.handleUpdate}
                 >
                   Update
@@ -1683,7 +1704,7 @@ if (this.state.selectedFile == null)
                 {
                   return <button
                   type="button"
-                  className="butn"
+                  className="butn mb-2"
                   onClick={this.handleSubmit}
                   
                 >
