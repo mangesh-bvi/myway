@@ -215,9 +215,10 @@ h2 span {
 }
 .remember-forgot {
   margin-top: 20px;
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
   align-items: center;
+  text-align: right;
 }
 .remember-forgot label {
   font-family: "Medium Font";
@@ -2450,6 +2451,9 @@ table tbody tr:last-child {
 }
 .salesuserPopup .butn{
   margin-top: 0;
+}
+.autocom >div{
+  display: block !important;
 }
 /* --------------------------------------------------------------------------- */
 

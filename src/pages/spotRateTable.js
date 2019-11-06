@@ -46,6 +46,8 @@ class SpotRateTable extends Component {
     this.HandleListSpotRateGrid();
   }
 
+
+  
   HandleListSpotRateGrid() {
     let self = this;
     var userid = window.localStorage.getItem("userid");
