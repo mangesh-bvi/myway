@@ -7,6 +7,7 @@ import Moment from "react-moment";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
+import { Capitalize } from "../helpers/Capitalize";
 import "react-datepicker/dist/react-datepicker.css";
 // import {GoogleMapReact,Polyline} from "google-map-react";
 import Headers from "../component/header";
@@ -437,6 +438,8 @@ class ShipmentPlanner extends Component {
       routerMapData: RouteData
     });
   }
+  
+
   HandleOnPageLoad() {
     let self = this;
     axios({
@@ -523,8 +526,9 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       let optionItems = response.data.map(comp => (
-        <option value={comp.MappingID}>{comp.MappedCompName}</option>
+        <option value={comp.MappingID}>{Capitalize(comp.MappedCompName)}</option>
       ));
       self.setState({ consigneedrp: optionItems });
     });
@@ -544,7 +548,7 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
+        <option value={comp.CModeOfTransport}>{Capitalize(comp.CModeOfTransport)}</option>
       ));
       self.setState({ transportModedrp: optionItems });
     });
@@ -566,7 +570,7 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.TransitModeID}>{comp.TransitMode}</option>
+        <option value={comp.TransitModeID}>{Capitalize(comp.TransitMode)}</option>
       ));
       self.setState({ linerdrp: optionItems });
     });
@@ -675,6 +679,7 @@ class ShipmentPlanner extends Component {
   }
 
   componentDidMount() {
+    debugger;
     let self = this;
     axios({
       method: "post",
@@ -719,7 +724,7 @@ class ShipmentPlanner extends Component {
         key={i}
         value={planet.MyCompID}
       >
-        {planet.MyCompName}
+        {Capitalize(planet.MyCompName)}
       </option>
     ));
 
@@ -765,7 +770,7 @@ class ShipmentPlanner extends Component {
                         </select>
                       </div>
                       <div className="login-fields">
-                        <label>Select Consignee Company</label>
+                        <label>Select Company</label>
                         <select
                           onChange={this.consigneeChange}
                           id="drpConsigneeCompany"
@@ -787,7 +792,7 @@ class ShipmentPlanner extends Component {
                       <div className="login-fields">
                         <label>Select Liner</label>
                         <select id="drpLiner" onChange={this.fetchLinerChange}>
-                          <option value={0}>select</option>
+                          <option value={0}>Select</option>
                           {this.state.linerdrp}
                         </select>
                       </div>
