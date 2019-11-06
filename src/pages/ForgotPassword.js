@@ -3,6 +3,11 @@ import { authHeader } from "../helpers/authHeader";
 import Logo from "./../assets/img/logo.png";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -15,7 +20,6 @@ class ForgotPassword extends React.Component {
   }
 
   HandleCancel(){
-
     this.props.history.push("/");
   }
   handlechange(e) {
@@ -29,7 +33,7 @@ class ForgotPassword extends React.Component {
     if (email !== "") {
       ChangePasswordCheck(email);
     } else {
-      alert("Please enter password");
+      NotificationManager.error('Please enter Email Id');      
     }
   }
   render() {
@@ -71,6 +75,7 @@ class ForgotPassword extends React.Component {
             </div>
           </div>
         </div>
+        <NotificationContainer />
       </section>
     );
   }
@@ -86,12 +91,19 @@ function ChangePasswordCheck(email) {
   return fetch(`${appSettings.APIURL}/forgotpassword`, requestOptions)
     .then(handleResponse)
     .catch(error => {
-      console.log(error);
     });
 }
 
 function handleResponse(response) {
+  
   return response.text().then(text => {
+    
+    if(text.includes('No Record Found') === true)
+    {
+      NotificationManager.error('Please enter valid Email Id');      
+      return false;
+    }
+
     const data = text && JSON.parse(text);
     if (!response.ok) {
     } else {
