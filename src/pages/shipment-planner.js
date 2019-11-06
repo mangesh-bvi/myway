@@ -512,7 +512,6 @@ class ShipmentPlanner extends Component {
         break;
       }
     }
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,

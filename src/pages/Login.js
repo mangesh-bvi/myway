@@ -2,7 +2,7 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
-import { Button, Modal, ModalBody } from "reactstrap";
+import { Button, Modal, ModalBody,ModalHeader,ModalFooter} from "reactstrap";
 import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import {
@@ -10,8 +10,18 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import { delay } from "q";
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
+import CheckboxTree from 'react-checkbox-tree';
 // import { connect } from 'react-redux'
+const nodes = [{
+  value: 'mars',
+  label: 'Mars',
+  children: [
+      { value: 'phobos', label: 'Phobos' ,children:[{value: 'phobos-chileden', label: 'phobos-chileden'}]},
+      { value: 'deimos', label: 'Deimos' },
+  ],
+}];
+
 
 class Login extends React.Component {
   constructor(props) {
@@ -23,7 +33,10 @@ class Login extends React.Component {
       showLoginError: false,
       errorText: "",
       loading: false,
-      modalSalesLogin: false
+      modalSalesLogin: false,
+      salesUserData:[],
+      checked: [],
+      expanded: [],
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -32,9 +45,9 @@ class Login extends React.Component {
   }
 
   toggleSalesLogin() {
-    this.setState(prevState => ({
-      modalSalesLogin: !prevState.modalSalesLogin
-    }));
+    this.setState({
+      modalSalesLogin: !this.state.modalSalesLogin
+    });
   }
 
   handlechange(e) {
@@ -205,43 +218,39 @@ class Login extends React.Component {
             </div>
           </form>
         </div>
-        <Modal
-          className="delete-popup pol-pod-popup"
-          isOpen={this.state.modalSalesLogin}
-          toggle={this.toggleSalesLogin}
-          centered={true}
-        >
-          <ModalBody>
-            <h3>Sales Popup</h3>
-            <div className="rename-cntr login-fields">
-              <label>Enter Latitude</label>
-              <select>
-                <option>50.33998</option>
-                <option>70.85236</option>
-                <option>100.47823</option>
-                <option>150.02315</option>
-              </select>
-            </div>
-            <div className="rename-cntr login-fields">
-              <label>Enter Longitude</label>
-              <select>
-                <option>50.33998</option>
-                <option>70.85236</option>
-                <option>100.47823</option>
-                <option>150.02315</option>
-              </select>
-            </div>
-            <Button className="butn" onClick={this.toggleSalesLogin}>
-              Done
-            </Button>
-            <Button
-              className="butn cancel-butn"
-              onClick={this.toggleSalesLogin}
-            >
-              Cancel
-            </Button>
-          </ModalBody>
-        </Modal>
+        <div className="salesuserPopup">
+          <Modal
+            className="delete-popup pol-pod-popup"
+            isOpen={this.state.modalSalesLogin}
+            centered={true}
+          >
+            <ModalHeader>Sales customers</ModalHeader>
+            <ModalBody>
+              <div>
+                <CheckboxTree
+                  nodes={nodes}
+                  checked={this.state.checked}
+                  expanded={this.state.expanded}
+                  onCheck={checked => this.setState({ checked })}
+                  onExpand={expanded => this.setState({ expanded })}
+                />
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <div className="salesuserPopup">
+                <Button className="butn" onClick={this.toggleSalesLogin}>
+                  Proceed
+                </Button>
+                <Button
+                  className="butn cancel-butn"
+                  onClick={this.toggleSalesLogin}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </ModalFooter>
+          </Modal>
+        </div>
         <NotificationContainer />
       </section>
     );
@@ -296,7 +305,9 @@ function TokenhandleResponse(response) {
           encryption(window.localStorage.getItem("usertype"), "desc") ==
           "Sales User"
         ) {
-          window.location.href = "./rate-search";
+          this.toggleSalesLogin();
+
+          // window.location.href = "./rate-search";
         } else {
           window.location.href = "./Dashboard";
         }

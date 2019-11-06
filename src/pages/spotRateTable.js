@@ -29,7 +29,7 @@ class SpotRateTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
-      shipmentSummary: []
+      spotRateGrid: []
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -42,16 +42,16 @@ class SpotRateTable extends Component {
   }
 
   componentDidMount() {
-    this.HandleListShipmentSummey();
+    this.HandleListSpotRateGrid();
   }
 
-  HandleListShipmentSummey() {
+  HandleListSpotRateGrid() {
     let self = this;
     var userid = window.localStorage.getItem("userid");
 
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/shipmentsummaryAPI`,
+      url: `${appSettings.APIURL}/SpotRateGridAPI`,
       data: {
         UserId: userid,
         PageNo: 1
@@ -60,16 +60,11 @@ class SpotRateTable extends Component {
     }).then(function(response) {
       var data = [];
       data = response.data.Table1;
-      self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
+      self.setState({ spotRateGrid: data }); ///problem not working setstat undefined
     });
   }
 
-  HandleChangeShipmentDetails(HblNo) {
-    this.props.history.push({
-      pathname: "shipment-details",
-      state: { detail: HblNo }
-    });
-  }
+   
 
   HandleRowClickEvt = (rowInfo, column) => {
     return {

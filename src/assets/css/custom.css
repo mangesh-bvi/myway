@@ -2448,6 +2448,9 @@ table tbody tr:last-child {
   font-weight: 500;
   padding-left: 10px;
 }
+.salesuserPopup .butn{
+  margin-top: 0;
+}
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/

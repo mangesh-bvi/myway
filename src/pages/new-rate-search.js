@@ -73,7 +73,7 @@ class NewRateSearch extends Component {
       podCountry: "",
       pod: "",
       equipDrop: [],
-     
+      country:[],
       StandardContainerCode: [],
       multi: true,
       selected: [],
@@ -85,7 +85,7 @@ class NewRateSearch extends Component {
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
     this.HandleBindPOLPODData = this.HandleBindPOLPODData.bind(this);
-     
+    this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
   }
 
   togglePuAdd() {
@@ -94,57 +94,66 @@ class NewRateSearch extends Component {
     }));
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.HandleCounterListBind();
+  }
 
-  getIncoTerms() {
+  //this Method for Bind Country Dropdown
+  HandleCounterListBind() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RateSearchCountryList`,
+      headers: authHeader()
+    }).then(function(response) {
+      var countryData = response.data.Table;
+      if (countryData.length > 0) {
+        self.setState({ country: countryData });
+      }
+    });
+  }
+  //this Method For Get Inco Team base on condition.
+  HandleGetIncoTerms() {
     debugger;
-    let self=this;
-    var shipmentType =self.state.shipmentType;
-    var typeofMove =self.state.typesofMove ;
+    let self = this;
+    var shipmentType = self.state.shipmentType;
+    var typeofMove = self.state.typesofMove;
     var HasCustomClear = "No";
 
     if (shipmentType === "Export" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"DAP"});
-              
+        this.setState({ incoTerms: "DAP" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"CIF"});
+        this.setState({ incoTerms: "CIF" });
       }
     }
     if (shipmentType === "Export" && HasCustomClear === "Yes") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"DDP"});
-              
+        this.setState({ incoTerms: "DDP" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"CIF"});
+        this.setState({ incoTerms: "CIF" });
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"ExWorks"});
-              
+        this.setState({ incoTerms: "ExWorks" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"FOB"});
+        this.setState({ incoTerms: "FOB" });
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "Yes") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"ExWorks"});
-              
+        this.setState({ incoTerms: "ExWorks" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"FOB"});
+        this.setState({ incoTerms: "FOB" });
       }
     }
   }
@@ -789,13 +798,7 @@ class NewRateSearch extends Component {
   render() {
     let self = this;
 
-    const options = [
-      { value: "20 DC", label: "20 DC" },
-      { value: "30 DC", label: "30 DC" },
-      { value: "40 DC", label: "40 DC" },
-      { value: "50 DC", label: "50 DC" },
-      { value: "Special Equipment", label: "Special Equipment" }
-    ];
+    
     const optionsSpeEqu = [
       { value: "Refer Type", label: "Refer Type" },
       { value: "abc", label: "abc" },
@@ -1121,95 +1124,7 @@ class NewRateSearch extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className="new-rate-cntr" id="equipType">
-                    <div className="rate-title-cntr">
-                      <h3>Equipment Types</h3>
-                      <div className="iconSelection" id="equipTypeIconCntr">
-                        <p className="side-selection" id="equipTypeName">
-                          {/* {this.state.modeoftransport} */}
-                        </p>
-                        <i
-                          className="fa fa-plus"
-                          id="equipTypePlusClick"
-                          onClick={this.equipTypePlusClick}
-                        ></i>
-                        <i
-                          className="fa fa-minus d-none"
-                          id="equipTypeMinusClick"
-                          onClick={this.equipTypeMinusClick}
-                        ></i>
-                      </div>
-                    </div>
-                    <div id="equipTypeInner">
-                      <div className="equip-plus-cntr mt-0">
-                        <Select
-                          className="rate-dropdown"
-                          getOptionLabel={option =>
-                            option.StandardContainerCode
-                          }
-                          getOptionValue={option =>
-                            option.StandardContainerCode
-                          }
-                          isMulti
-                          options={self.state.StandardContainerCode}
-                          onChange={this.equipChange.bind(this)}
-                          value={self.state.selected}
-                          showNewOptionAtTop={false}
-                        />
-                      </div>
-                      <div id="equipAppend"></div>
-                      {this.createUI()}
-
-                      <div className="spe-equ mt-0">
-                        <div className="equip-plus-cntr">
-                          <Select
-                            isDisabled={self.state.isSpacialEqt}
-                            className="rate-dropdown"
-                            getOptionLabel={option =>
-                              option.SpecialContainerCode
-                            }
-                            isMulti
-                            getOptionValue={option =>
-                              option.SpecialContainerCode
-                            }
-                            components={animatedComponents}
-                            options={self.state.SpacialEqmt}
-                            placeholder="Select Kind of Special Equipment"
-                            onChange={this.specEquipChange}
-                            value={self.state.spEqtSelect}
-                            showNewOptionAtTop={false}
-                          />
-                        </div>
-                      </div>
-                      <div id="specEquipAppend"></div>
-                      {this.createUISpecial()}
-
-                      <div className="remember-forgot flex-column rate-checkbox justify-content-center">
-                        <input id="haz-mat" type="checkbox" name={"haz-mat"} />
-                        <label htmlFor="haz-mat">HazMat</label>
-                        <input id="unstack" type="checkbox" name={"haz-mat"} />
-                        <label htmlFor="unstack">Unstackable</label>
-                        <input
-                          id="cust-clear"
-                          type="checkbox"
-                          name={"haz-mat"}
-                          onChange={this.getIncoTerms.bind(this)}
-                        />
-                        <label htmlFor="cust-clear">Custom Clearance</label>
-                      </div>
-                      <div className="spe-equ justify-content-center">
-                        <label>Inco Terms :</label>
-                        <input
-                          type="text"
-                          placeholder="Inco Terms"
-                          className="w-50"
-                          disabled
-                          name="incoTerms"
-                          value={self.state.incoTerms} 
-                        />
-                      </div>
-                    </div>
-                  </div>
+                   
                 </>
               ) : null}
 
@@ -1294,7 +1209,12 @@ class NewRateSearch extends Component {
                       <label htmlFor="haz-mat">HazMat</label>
                       <input id="unstack" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="unstack">Unstackable</label>
-                      <input id="cust-clear" type="checkbox" name={"haz-mat"} onChange={this.getIncoTerms.bind(this)} />
+                      <input
+                        id="cust-clear"
+                        type="checkbox"
+                        name={"haz-mat"}
+                        onChange={this.HandleGetIncoTerms.bind(this)}
+                      />
                       <label htmlFor="cust-clear">Custom Clearance</label>
                     </div>
                     <div className="spe-equ justify-content-center">
@@ -1305,8 +1225,8 @@ class NewRateSearch extends Component {
                         className="w-50"
                         disabled
                         name="incoTerms"
-                        value={self.state.incoTerms} 
-                         />
+                        value={self.state.incoTerms}
+                      />
                     </div>
                   </div>
                 </div>
@@ -1465,8 +1385,10 @@ class NewRateSearch extends Component {
                     <Select
                       className="rate-dropdown"
                       closeMenuOnSelect={false}
+                      getOptionLabel={option=>option.CountryName}
+                      getOptionValue={option=>option.SUCountry}
                       components={animatedComponents}
-                      options={optionsSpeEqu}
+                      options={self.state.country}
                       placeholder="Select Country"
                       onChange={this.locationChange}
                       name="polCountry"
@@ -1476,10 +1398,10 @@ class NewRateSearch extends Component {
                       className="rate-dropdown mb-4"
                       closeMenuOnSelect={false}
                       components={animatedComponents}
-                      options={optionsPOL}
-                      placeholder="Select POL"
+                      options={optionsPOD}
+                      placeholder="Select POD"
+                      // value={this.state.pod}
                       onChange={this.locationChange}
-                      // value={this.state.pol}
                       name="pol"
                     />
                     <Map1WithAMakredInfoWindow
@@ -1499,12 +1421,15 @@ class NewRateSearch extends Component {
                   </div>
                   <div className="col-md-6">
                     <Select
-                      className="rate-dropdown"
+                      className="rate-dropdown mb-4"
                       closeMenuOnSelect={false}
+                      getOptionLabel={option=>option.CountryName}
+                      getOptionValue={option=>option.SUCountry}
                       components={animatedComponents}
-                      options={optionsSpeEqu}
-                      placeholder="Select Country"
+                      options={self.state.country}
+                      placeholder="Select POL"
                       onChange={this.locationChange}
+                      // value={this.state.pol}
                       name="podCountry"
                     />
                     <Select
