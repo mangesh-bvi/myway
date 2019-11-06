@@ -2538,4 +2538,25 @@ table tbody tr:last-child {
   position: relative;
   min-height: 100vh;
 }
+
+.advsearch-popup {
+  margin: 10px auto;
+  max-width: 90%;
+}
+
+.advsearch-sect {
+  padding: 20px 40px;
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.advsearch-sect .butn {
+  font-size: 15px;
+  min-width: 136px;
+  margin: 0;
+  padding: 10px;
+}
+
+.auto-cmp + div {
+  display: block !important;
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
