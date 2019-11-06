@@ -31,7 +31,7 @@ class SpotRateTable extends Component {
       modalDel: false,
       spotRateGrid: []
     };
-    this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
+    this.HandleListSpotRateGrid = this.HandleListSpotRateGrid.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
   }
 
