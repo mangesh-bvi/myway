@@ -1,11 +1,7 @@
  
 export function encryption(plainText,type="enc")
-<<<<<<< HEAD
-{  
-=======
 {
   
->>>>>>> 0dfe441557d0d0d8be7b6fe655e594015d9dde24
     var CryptoJS = require("crypto-js");
     if(type==="enc")
     {

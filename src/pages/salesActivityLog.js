@@ -102,8 +102,8 @@ class SalesActivityLog extends Component {
       method: "post",
       url: `${appSettings.APIURL}/SalesActivityLogGrid`,
       data: {
-      // UserID: 2679,
-       UserID:userid,
+       UserID: 2679,
+      // UserID:userid,
         PageNo: 0,
         PageSize: 10,
         MyWayUserID: 0
