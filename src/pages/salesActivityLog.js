@@ -21,20 +21,7 @@ class SalesActivityLog extends Component {
       gridData: [],
       mapDis: "block",
       filterAll: "",
-      filtered: [],
-      modalAdvSearch: false,
-      selectMOT: [
-        { key: 0, value: "Select Mode" },
-        { key: 1, value: "Air" },
-        { key: 2, value: "Ocean" }
-      ],
-      selectShipStage: [
-        { key: 0, value: "SELECT STAGE" },
-        { key: 1, value: "NOT BOOKED YET" },
-        { key: 3, value: "NEW SHIPMENTS" },
-        { key: 4, value: "DEPARTED" },
-        { key: 5, value: "ARRIVED" }
-      ]
+      filtered: []
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.HandleListSalesActivityLog = this.HandleListSalesActivityLog.bind(
@@ -42,7 +29,6 @@ class SalesActivityLog extends Component {
     );
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
-    this.toggleAdvSearch = this.toggleAdvSearch.bind(this);
   }
 
   componentDidMount() {
@@ -83,12 +69,6 @@ class SalesActivityLog extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      //   var air = response.data.Table[0].Count;
-      //   var ocean = response.data.Table[1].Count;
-      //   var inland = response.data.Table[2].Count;
-      //   window.localStorage.setItem("aircount", air);
-      //   window.localStorage.setItem("oceancount", ocean);
-      //   window.localStorage.setItem("inlandcount", inland);
       var actData = [];
       actData = response.data;
       self.setState({ actLog: actData }); ///problem not working setstat undefined
@@ -131,12 +111,6 @@ class SalesActivityLog extends Component {
       }
     };
   };
-
-  toggleAdvSearch() {
-    this.setState(prevState => ({
-      modalAdvSearch: !prevState.modalAdvSearch
-    }));
-  }
 
   render() {
     const { gridData } = this.state;
@@ -268,31 +242,4 @@ class SalesActivityLog extends Component {
   }
 }
 
-function formatDate(date) {
-  var monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-  var day = date.getDate();
-  var monthIndex = date.getMonth();
-  var year = date.getFullYear();
-
-  return day + " /" + monthIndex + "/" + year;
-}
-
-function formatNumber(number) {
-  return Math.floor(number)
-    .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-}
 export default SalesActivityLog;
