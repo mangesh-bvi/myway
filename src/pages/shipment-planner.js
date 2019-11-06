@@ -28,7 +28,7 @@ import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 
-import YellowFlag from "./../assets/img/icons8-flag-filled-48.png";
+import YellowFlag from "./../assets/img/yellow-flag.png";
 import {
   withScriptjs,
   withGoogleMap,
@@ -41,7 +41,6 @@ import {
 
 const { compose } = require("recompose");
 
- 
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
@@ -105,7 +104,6 @@ const MapWithAMakredInfoWindowLine = compose(
       path={props.routerData}
       geodesic={true}
       style={{ zIndex: 1 }}
-      
       options={{
         strokeColor: "#ff0022",
         strokeOpacity: 1.75,
@@ -121,7 +119,6 @@ const MapWithAMakredInfoWindowLine = compose(
     />
     {props.markers.map((marker, i) => {
       debugger;
-     
 
       var iCount = props.markers.length;
       var start = marker.StartLatLng;
@@ -141,6 +138,7 @@ const MapWithAMakredInfoWindowLine = compose(
         <>
           {marker.CTransShipPort != "" ? (
             <Marker
+            icon={iconMarker}
               key={marker.CTransShipPort}
               title={marker.CTransShipPort}
               position={{
@@ -154,7 +152,7 @@ const MapWithAMakredInfoWindowLine = compose(
               <Marker
                 key={start[0].lat}
                 title={marker.StartLocation}
-                icon={GreenCircle}
+                //icon={GreenCircle}
                 onClick={props.onClick.bind(this, start[0].lat)}
                 position={{
                   lat: start[0].lat,
@@ -173,6 +171,7 @@ const MapWithAMakredInfoWindowLine = compose(
               </Marker>
               <Marker
                 key={end[0].lat}
+                icon={iconMarker}
                 onClick={props.onClick.bind(this, end[0].lat)}
                 position={{
                   lat: end[0].lat,
@@ -204,6 +203,7 @@ const MapWithAMakredInfoWindowLine = compose(
           iCount != marker.ORDERID ? (
             <Marker
               key={end[0].lat}
+              icon={iconMarker}
               onClick={props.onClick.bind(this, end[0].lat)}
               position={{
                 lat: end[0].lat,
@@ -231,7 +231,7 @@ const MapWithAMakredInfoWindowLine = compose(
           ) : (
             <Marker
               key={end[0].lat}
-              icon={RedCircle}
+              //icon={RedCircle}
               title={marker.EndLocation}
               onClick={props.onClick.bind(this, end[0].lat)}
               position={{

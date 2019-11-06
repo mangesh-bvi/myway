@@ -20,7 +20,6 @@ import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
-import HTMLEllipsis from 'react-lines-ellipsis/lib/html'
 
 import {
   withScriptjs,
@@ -40,23 +39,34 @@ const MapWithAMakredInfoWindow = compose(
     defaultZoom={3}
   >
     {props.markers.map(marker => {
+      debugger;
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
         BlueShip,
-        new window.google.maps.Size(16, 16)
+                null, /* size is determined at runtime */
+                null, /* origin is 0,0 */
+                null, /* anchor is bottom center of the scaled image */
+                new window.google.maps.Size(32, 32)
       );
       let bluePlane = new window.google.maps.MarkerImage(
         BluePlane,
-        new window.google.maps.Size(16, 16)
+        null, /* size is determined at runtime */
+        null, /* origin is 0,0 */
+        null, /* anchor is bottom center of the scaled image */
+        new window.google.maps.Size(32, 32)
       );
       let bookingBlue = new window.google.maps.MarkerImage(
         BookingBlue,
-        new window.google.maps.Size(16, 16)
+        null, /* size is determined at runtime */
+        null, /* origin is 0,0 */
+        null, /* anchor is bottom center of the scaled image */
+        new window.google.maps.Size(32, 32)
       );
 
       if (marker.Pin == "Ocean") {
         return (
           <Marker
+          icon={blueShip}
             key={marker.id}
             onClick={onClick}
             title={marker.Vessel}
@@ -64,7 +74,7 @@ const MapWithAMakredInfoWindow = compose(
               lat: Number(marker.LastLocation_Lat),
               lng: Number(marker.LastLocation_Lon)
             }}
-            icon={blueShip}
+            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -93,9 +103,9 @@ const MapWithAMakredInfoWindow = compose(
                     return (
                       <div className="pinmodal">
                         <div id="accordion">
-                          <div class="card">
-                            <div class="card-header" id="heading-1">
-                              <h5 class="mb-0">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
                                 <div
                                   role="button"
                                   data-toggle="collapse"
@@ -116,17 +126,17 @@ const MapWithAMakredInfoWindow = compose(
                             </div>
                             <div
                               id={mdata.ContainerNo.replace(/ +/g, "")}
-                              class="collapse"
+                              className="collapse"
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div class="card-body">
+                              <div className="card-body">
                                 <div id="accordion-1">
-                                  <div class="card">
-                                    <div class="card-header" id="heading-1-1">
-                                      <h5 class="mb-0">
+                                  <div className="card">
+                                    <div className="card-header" id="heading-1-1">
+                                      <h5 className="mb-0">
                                         <div
-                                          class="collapsed"
+                                          className="collapsed"
                                           role="button"
                                           data-toggle="collapse"
                                           href={C_HblNO.replace(/ +/g, "")}
@@ -144,11 +154,11 @@ const MapWithAMakredInfoWindow = compose(
                                     </div>
                                     <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
-                                      class="collapse"
+                                      className="collapse"
                                       data-parent="#accordion-1"
                                       aria-labelledby="heading-1-1"
                                     >
-                                      <div class="card-body">
+                                      <div className="card-body">
                                         {finalinvocearr.length > 0
                                           ? finalinvocearr.map(function(
                                               idata,
@@ -191,6 +201,7 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bluePlane}
+            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -219,9 +230,9 @@ const MapWithAMakredInfoWindow = compose(
                     return (
                       <div className="pinmodal">
                         <div id="accordion">
-                          <div class="card">
-                            <div class="card-header" id="heading-1">
-                              <h5 class="mb-0">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
                                 <div
                                   role="button"
                                   data-toggle="collapse"
@@ -242,17 +253,17 @@ const MapWithAMakredInfoWindow = compose(
                             </div>
                             <div
                               id={mdata.ContainerNo.replace(/ +/g, "")}
-                              class="collapse"
+                              className="collapse"
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div class="card-body">
+                              <div className="card-body">
                                 <div id="accordion-1">
-                                  <div class="card">
-                                    <div class="card-header" id="heading-1-1">
-                                      <h5 class="mb-0">
+                                  <div className="card">
+                                    <div className="card-header" id="heading-1-1">
+                                      <h5 className="mb-0">
                                         <div
-                                          class="collapsed"
+                                          className="collapsed"
                                           role="button"
                                           data-toggle="collapse"
                                           href={C_HblNO.replace(/ +/g, "")}
@@ -270,11 +281,11 @@ const MapWithAMakredInfoWindow = compose(
                                     </div>
                                     <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
-                                      class="collapse"
+                                      className="collapse"
                                       data-parent="#accordion-1"
                                       aria-labelledby="heading-1-1"
                                     >
-                                      <div class="card-body">
+                                      <div className="card-body">
                                         {finalinvocearr.length > 0
                                           ? finalinvocearr.map(function(
                                               idata,
@@ -317,6 +328,7 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bookingBlue}
+            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -345,9 +357,9 @@ const MapWithAMakredInfoWindow = compose(
                     return (
                       <div className="pinmodal">
                         <div id="accordion">
-                          <div class="card">
-                            <div class="card-header" id="heading-1">
-                              <h5 class="mb-0">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
                                 <div
                                   role="button"
                                   data-toggle="collapse"
@@ -368,17 +380,17 @@ const MapWithAMakredInfoWindow = compose(
                             </div>
                             <div
                               id={mdata.ContainerNo.replace(/ +/g, "")}
-                              class="collapse"
+                              className="collapse"
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div class="card-body">
+                              <div className="card-body">
                                 <div id="accordion-1">
-                                  <div class="card">
-                                    <div class="card-header" id="heading-1-1">
-                                      <h5 class="mb-0">
+                                  <div className="card">
+                                    <div className="card-header" id="heading-1-1">
+                                      <h5 className="mb-0">
                                         <div
-                                          class="collapsed"
+                                          className="collapsed"
                                           role="button"
                                           data-toggle="collapse"
                                           href={C_HblNO.replace(/ +/g, "")}
@@ -396,11 +408,11 @@ const MapWithAMakredInfoWindow = compose(
                                     </div>
                                     <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
-                                      class="collapse"
+                                      className="collapse"
                                       data-parent="#accordion-1"
                                       aria-labelledby="heading-1-1"
                                     >
-                                      <div class="card-body">
+                                      <div className="card-body">
                                         {finalinvocearr.length > 0
                                           ? finalinvocearr.map(function(
                                               idata,
@@ -452,8 +464,8 @@ class Dashboard extends Component {
       BookingData: [],
       ModalData: [],
       checkMapview: true,
-      loading:true,
-      IsWidgets:false
+      loading: true,
+      IsWidgets: false
     };
     this.BindMapData = this.BindMapData.bind(this);
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
@@ -614,10 +626,13 @@ class Dashboard extends Component {
     // else{divStyle = {
     //   "display": "none"
     // }}
-    let className = 'dash-map1'
-    if (encryption(window.localStorage.getItem("usertype"),"desc") == "Sales User") {
+    let className = "dash-map1";
+    if (
+      encryption(window.localStorage.getItem("usertype"), "desc") ==
+      "Sales User"
+    ) {
       this.state.IsWidgets = true;
-      className = 'dash-map'
+      className = "dash-map";
       // this.setState({IsWidgets: this.state.IsWidgets});
     }
     const {
@@ -631,7 +646,7 @@ class Dashboard extends Component {
       loading
     } = this.state;
     let self = this;
-    
+
     const ActiveShipment = ActiveShipmentData.map(function(addkey, i) {
       if (i < 4) {
         return (
@@ -653,32 +668,39 @@ class Dashboard extends Component {
               </span>
               {(() => {
                 if (addkey.ModeOfTransport == "Ocean") {
-                  return (                    
-                      <img src={Ship} className="modeoftrans-img" title="Ocean"/>
-                  );
-                }
-                else if (addkey.ModeOfTransport == "Air") {
                   return (
-                      <img src={Plane} className="modeoftrans-img" title="Air"/>
+                    <img src={Ship} className="modeoftrans-img" title="Ocean" />
                   );
-                }
-                else if (addkey.ModeOfTransport == "Inland") {
+                } else if (addkey.ModeOfTransport == "Air") {
                   return (
-                      <img src={Truck} className="modeoftrans-img" title="Inland"/>
+                    <img src={Plane} className="modeoftrans-img" title="Air" />
                   );
-                }
-                else if (addkey.ModeOfTransport == "Railway") {
+                } else if (addkey.ModeOfTransport == "Inland") {
                   return (
-                      <img src={Rail} className="modeoftrans-img" title="Railway"/>
+                    <img
+                      src={Truck}
+                      className="modeoftrans-img"
+                      title="Inland"
+                    />
+                  );
+                } else if (addkey.ModeOfTransport == "Railway") {
+                  return (
+                    <img
+                      src={Rail}
+                      className="modeoftrans-img"
+                      title="Railway"
+                    />
                   );
                 }
-              // <span>{addkey.ModeOfTransport}</span>
+                // <span>{addkey.ModeOfTransport}</span>
               })()}
             </p>
             <p>
-              <span className="shipment-status" title="Status">{addkey.ShipmentStatus}</span>
+              <span className="shipment-status" title="Status">
+                {addkey.ShipmentStatus}
+              </span>
             </p>
-            <hr className="horizontal-line"/>
+            <hr className="horizontal-line" />
             {/* <p>
               Mode of Transport :<span>{addkey.ModeOfTransport}</span>
             </p> */}
@@ -692,7 +714,9 @@ class Dashboard extends Component {
           <>
             <p>
               <span>{book.BookingNo}</span>
-              <span style={{"float":"right"}}>{(new Date(book.ETD)).toLocaleDateString('en-US')}</span>
+              <span style={{ float: "right" }}>
+                {new Date(book.ETD).toLocaleDateString("en-US")}
+              </span>
             </p>
             <p>
               POL : <span>{book.POL}</span>
@@ -711,11 +735,11 @@ class Dashboard extends Component {
             />
               <text>sad sanas dsaahsa said saabh aihbd asa hsa siau</text> */}
             </p>
-            
+
             <p>
               POD : <span>{book.POD}</span>
             </p>
-            <hr className="horizontal-line"/>
+            <hr className="horizontal-line" />
           </>
         );
       }
@@ -730,12 +754,18 @@ class Dashboard extends Component {
             </p>
             <p>
               <span title="Shipment Type">{quotes.type}</span>
-              <span className="shipment-status" title="Status" style={{"float": "right"}}>{quotes.CurrentStatus}</span>
+              <span
+                className="shipment-status"
+                title="Status"
+                style={{ float: "right" }}
+              >
+                {quotes.CurrentStatus}
+              </span>
             </p>
             <p>
               <span title="Expected Date">{quotes.ExpiryDate}</span>
             </p>
-            <hr className="horizontal-line"/>
+            <hr className="horizontal-line" />
           </>
         );
       } else {
@@ -753,7 +783,7 @@ class Dashboard extends Component {
             <p>
               <span title="Customer Name">{invoice.BillToName}</span>
             </p>
-            <hr className="horizontal-line"/>
+            <hr className="horizontal-line" />
           </>
         );
       } else {
@@ -791,7 +821,12 @@ class Dashboard extends Component {
                       ></MapWithAMakredInfoWindow>
                     </div>
                   </div>
-                  <div className="container-fluid p-0" style={{display: this.state.IsWidgets != false?'block':'none'}}>
+                  <div
+                    className="container-fluid p-0"
+                    style={{
+                      display: this.state.IsWidgets != false ? "block" : "none"
+                    }}
+                  >
                     <div className="row dash-sects-cntr">
                       <div className="col-md-3">
                         <div className="dash-sects">

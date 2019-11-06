@@ -54,6 +54,24 @@ class BookingTable extends Component {
     });
   }
 
+  HandleChangeShipmentDetails(BookingNo) {
+    var data = [BookingNo,"Booking"]
+    this.props.history.push({
+      pathname: "rate-finalizing-still",
+      state: { detail: data }
+    });
+  }
+
+  HandleRowClickEvt = (rowInfo, column) => {
+    debugger;
+    // return {
+    //   onClick: e => {
+        var BookingNo = column.original["BookingNo"];
+        this.HandleChangeShipmentDetails(BookingNo);
+    //   }
+    // };
+  };
+
   render() {
     const { bookingData } = this.state;
     return (
@@ -102,13 +120,14 @@ class BookingTable extends Component {
                     Cell: row => {
                       return (
                         <div className="action-cntr">
-                          <a href="/rate-finalizing-still">
+                          {/* <a> */}
                             <img
                               className="actionicon"
                               src={Eye}
                               alt="view-icon"
+                              onClick={e => this.HandleRowClickEvt(e, row)}
                             />
-                          </a>
+                          {/* </a> */}
                           <a href="/rate-finalizing">
                             <img
                               className="actionicon"
