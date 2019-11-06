@@ -49,16 +49,20 @@ class SpotRateTable extends Component {
 
   
   HandleListSpotRateGrid() {
+    debugger;
     let self = this;
     var userid = window.localStorage.getItem("userid");
-
+    var date = new Date();
+     var fromDate = "01/01/" + date.getFullYear();
+     var currentDate=(date.getMonth()+1)+'/'+date.getDate()+'/'+date.getFullYear();
+     
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SpotRateGridAPI`,
       data: {
-        UserId: 431, //userid,
-        Fromdate: "01/01/2019",
-        ToDate: "10/25/2019"
+        UserId:userid,//431, 
+        Fromdate:fromDate, //"01/01/2019",
+        ToDate: currentDate//"10/25/2019"
       },
       headers: authHeader()
     }).then(function(response) {
@@ -71,7 +75,15 @@ class SpotRateTable extends Component {
       else{
         self.setState({ pageNo: 1 });
       }
-    });
+    }).catch()
+    {
+      var actData = [];
+      actData.push({
+        
+        OriginPort_Name: "No Data Found"
+      });
+      self.setState({ spotRateGrid: actData });
+    };
   }
 
   HandleRowClickEvt = (rowInfo, column) => {
@@ -114,7 +126,6 @@ class SpotRateTable extends Component {
                       },
 
                       {
-                        
                         Header: "Shipment Type",
                         accessor: "Mode"
                       },
@@ -132,20 +143,33 @@ class SpotRateTable extends Component {
                         accessor: "ExpiryDate"
                       },
                       {
-                         
                         Header: "Status",
                         accessor: "Status"
                       },
                       {
-                        Cell: () => {
-                          return (
-                            <div
-                              onClick={this.toggleDel}
-                              className="tab-icon-view"
-                            >
-                              <img src={Eye} alt="eye icon" />
-                            </div>
-                          );
+                        Cell: (row) => {
+                         var noData=row.original["OriginPort_Name"];
+                          debugger;
+                          if(noData!="No Data Found")
+                          {
+                            return (
+                              <div
+                                // onClick={this.toggleDel}
+                                className="tab-icon-view"
+                              >
+                                <img src={Eye} alt="eye icon" />
+                              </div>
+                            );
+                          }
+                          else{
+                            return (
+                              <div
+                                // onClick={this.toggleDel}
+                                className="tab-icon-view"
+                              ></div>
+                            );
+                          }
+                          
                         },
                         Header: "Actions"
                       }
@@ -154,6 +178,7 @@ class SpotRateTable extends Component {
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={this.state.pageNo}
+                minRows={1}
                 // getTrProps={this.HandleRowClickEvt}
               />
             </div>

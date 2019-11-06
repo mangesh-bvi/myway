@@ -163,6 +163,7 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
+    //nodes=JSON.parse({"value":352200103,"label":"ATA MUMBAI","children":[{"value":1337604146,"label":"Satish Gage","children":[{"value":0,"label":0}]},{"value":1337604158,"label":"Sanjana Bagwe","children":[{"value":1,"label":1}]}]})
     localStorage.clear();
     const publicIp = require("public-ip");
     (async () => {
@@ -208,7 +209,7 @@ class Login extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="remember-forgot">
+                <div className="remember-forgot-1">
                   {/* <div>
                     <input id="remember" type="checkbox" name={"remember me"} />
                     <label htmlFor="remember">Remember Me</label>

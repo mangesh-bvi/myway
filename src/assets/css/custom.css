@@ -215,10 +215,9 @@ h2 span {
 }
 .remember-forgot {
   margin-top: 20px;
-  /* display: flex; */
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  text-align: right;
 }
 .remember-forgot label {
   font-family: "Medium Font";
@@ -1084,7 +1083,6 @@ table tbody tr:last-child {
   height: 0;
   opacity: 0;
   margin-top: 0 !important;
-  pointer-events: none;
 }
 .shipmentType + .new-rate-cntr,
 .modeTransport + .new-rate-cntr,
@@ -1300,7 +1298,7 @@ table tbody tr:last-child {
   border-bottom-left-radius: 0;
 }
 .fc-radio input:checked + label {
-  background-color: #39b54a;
+  color: #39b54a;
 }
 
 /* extra */
@@ -2450,11 +2448,28 @@ table tbody tr:last-child {
   font-weight: 500;
   padding-left: 10px;
 }
-.salesuserPopup .butn {
+.salesuserPopup .butn{
   margin-top: 0;
 }
 .autocom >div{
-  display: block !important;
+display: block !important;
+}
+.remember-forgot-1{
+  margin-top: 20px;
+  /* display: flex; */
+  justify-content: space-between;
+  align-items: center;
+  text-align: right;
+}
+.remember-forgot-1 a {
+  font-family: "Medium Font";
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease-in-out;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+}
+.remember-forgot-1 a:hover {
+  text-decoration-color: inherit;
 }
 /* --------------------------------------------------------------------------- */
 

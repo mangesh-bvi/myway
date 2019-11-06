@@ -109,8 +109,8 @@ class RateSearch extends Component {
   };
 
   HideSearchText() {
-    document.getElementById("searchtxt").style.display = "none";
-    document.getElementById("SearchRate").classList.remove("disableRates");
+    // document.getElementById("searchtxt").style.display = "none";
+    // document.getElementById("SearchRate").classList.remove("disableRates");
   }
   ShowSearchText() {
     document.getElementById("SearchRate").classList.add("disableRates");
@@ -131,11 +131,11 @@ class RateSearch extends Component {
               <h2>Rate Search For?</h2>
               <div>
                 <div className="rate-radio-cntr">
-                  <div >
+                  <div>
                     <input
                       type="radio"
                       onClick={this.ShowSearchText}
-                      name="customerName"
+                      name="cust-select"
                       id="exist-cust"
                       defaultChecked
                     />
@@ -174,6 +174,7 @@ class RateSearch extends Component {
                 /> */}
                 <div className="autocom">
                   <Autocomplete
+                    id="searchtxt"
                     getItemValue={item => item.Company_Name}
                     items={this.state.customerData}
                     renderItem={(item, isHighlighted) => (
