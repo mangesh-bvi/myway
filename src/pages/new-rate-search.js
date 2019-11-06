@@ -73,7 +73,7 @@ class NewRateSearch extends Component {
       podCountry: "",
       pod: "",
       equipDrop: [],
-     
+      country: [],
       StandardContainerCode: [],
       multi: true,
       selected: [],
@@ -85,7 +85,7 @@ class NewRateSearch extends Component {
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
     this.HandleBindPOLPODData = this.HandleBindPOLPODData.bind(this);
-     
+    this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
   }
 
   togglePuAdd() {
@@ -94,57 +94,66 @@ class NewRateSearch extends Component {
     }));
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.HandleCounterListBind();
+  }
 
-  getIncoTerms() {
+  //this Method for Bind Country Dropdown
+  HandleCounterListBind() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RateSearchCountryList`,
+      headers: authHeader()
+    }).then(function(response) {
+      var countryData = response.data.Table;
+      if (countryData.length > 0) {
+        self.setState({ country: countryData });
+      }
+    });
+  }
+  //this Method For Get Inco Team base on condition.
+  HandleGetIncoTerms() {
     debugger;
-    let self=this;
-    var shipmentType =self.state.shipmentType;
-    var typeofMove =self.state.typesofMove ;
+    let self = this;
+    var shipmentType = self.state.shipmentType;
+    var typeofMove = self.state.typesofMove;
     var HasCustomClear = "No";
 
     if (shipmentType === "Export" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"DAP"});
-              
+        this.setState({ incoTerms: "DAP" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"CIF"});
+        this.setState({ incoTerms: "CIF" });
       }
     }
     if (shipmentType === "Export" && HasCustomClear === "Yes") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"DDP"});
-              
+        this.setState({ incoTerms: "DDP" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"CIF"});
+        this.setState({ incoTerms: "CIF" });
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"ExWorks"});
-              
+        this.setState({ incoTerms: "ExWorks" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"FOB"});
+        this.setState({ incoTerms: "FOB" });
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "Yes") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({incoTerms:"ExWorks"});
-              
+        this.setState({ incoTerms: "ExWorks" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-       
-        this.setState({incoTerms:"FOB"});
+        this.setState({ incoTerms: "FOB" });
       }
     }
   }
@@ -406,13 +415,31 @@ class NewRateSearch extends Component {
     ) {
       // next
       document.getElementById("location").classList.add("location");
-      document.getElementById("addressInner").classList.add("addressType");
-      document
-        .getElementById("addressIconCntr")
-        .classList.add("addressIconCntr");
-      document.getElementById("addressName").classList.remove("d-none");
-      document.getElementById("addressMinusClick").classList.add("d-none");
-      document.getElementById("addressPlusClick").classList.remove("d-none");
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMoveInner").classList.add("typeMoveType");
+      else document.getElementById("addressInner").classList.add("addressType");
+
+      if (document.getElementById("addressInner") == null)
+        document
+          .getElementById("typeMoveIconCntr")
+          .classList.add("typeMoveIconCntr");
+      else
+        document
+          .getElementById("addressIconCntr")
+          .classList.add("addressIconCntr");
+
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMoveName").classList.remove("d-none");
+      else document.getElementById("addressName").classList.remove("d-none");
+
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMoveMinusClick").classList.add("d-none");
+      else document.getElementById("addressMinusClick").classList.add("d-none");
+
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMovePlusClick").classList.remove("d-none");
+      else
+        document.getElementById("addressPlusClick").classList.remove("d-none");
     }
   };
   locationPlusClick = e => {
@@ -492,7 +519,7 @@ class NewRateSearch extends Component {
     document.getElementById("equipTypeMinusClick").classList.add("d-none");
   };
 
-  equipChange = value => {
+  equipChange = (value, option) => {
     debugger;
 
     if (value !== null) {
@@ -579,6 +606,9 @@ class NewRateSearch extends Component {
 
       this.setState({ selected: [] });
     }
+
+    let type = option.value;
+    this.setState({ equQuan: type });
 
     if (this.state.equQuan !== "") {
       // next
@@ -720,6 +750,7 @@ class NewRateSearch extends Component {
       { value: "40 DC", label: "40 DC" },
       { value: "50 DC", label: "50 DC" }
     ];
+
     return this.state.values.map((el, index) => {
       return (
         <div className="equip-plus-cntr">
@@ -789,13 +820,6 @@ class NewRateSearch extends Component {
   render() {
     let self = this;
 
-    const options = [
-      { value: "20 DC", label: "20 DC" },
-      { value: "30 DC", label: "30 DC" },
-      { value: "40 DC", label: "40 DC" },
-      { value: "50 DC", label: "50 DC" },
-      { value: "Special Equipment", label: "Special Equipment" }
-    ];
     const optionsSpeEqu = [
       { value: "Refer Type", label: "Refer Type" },
       { value: "abc", label: "abc" },
@@ -811,6 +835,20 @@ class NewRateSearch extends Component {
       { value: "69.6987", label: "69.6987" },
       { value: "60.0369", label: "60.0369" }
     ];
+    let unStack = "";
+    if (
+      this.state.containerLoadType === "ltl" ||
+      this.state.containerLoadType === "lcl" ||
+      this.state.containerLoadType === "air"
+    ) {
+      unStack = (
+        <>
+          <input id="unstack" type="checkbox" name={"haz-mat"} />
+          <label htmlFor="unstack">Unstackable</label>
+        </>
+      );
+    }
+
     return (
       <div>
         <Headers />
@@ -818,8 +856,8 @@ class NewRateSearch extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt" style={{ backgroundColor: "#f1f2f2" }}>
-            <div class="rate-bg">
+          <div className="cls-rt">
+            <div class="">
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">
                   <h3>Shipment Type</h3>
@@ -1119,81 +1157,17 @@ class NewRateSearch extends Component {
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="new-rate-cntr" id="equipType">
-                    <div className="rate-title-cntr">
-                      <h3>Equipment Types</h3>
-                      <div className="iconSelection" id="equipTypeIconCntr">
-                        <p className="side-selection" id="equipTypeName">
-                          {/* {this.state.modeoftransport} */}
-                        </p>
-                        <i
-                          className="fa fa-plus"
-                          id="equipTypePlusClick"
-                          onClick={this.equipTypePlusClick}
-                        ></i>
-                        <i
-                          className="fa fa-minus d-none"
-                          id="equipTypeMinusClick"
-                          onClick={this.equipTypeMinusClick}
-                        ></i>
-                      </div>
-                    </div>
-                    <div id="equipTypeInner">
-                      <div className="equip-plus-cntr mt-0">
-                        <Select
-                          className="rate-dropdown"
-                          getOptionLabel={option =>
-                            option.StandardContainerCode
-                          }
-                          getOptionValue={option =>
-                            option.StandardContainerCode
-                          }
-                          isMulti
-                          options={self.state.StandardContainerCode}
-                          onChange={this.equipChange.bind(this)}
-                          value={self.state.selected}
-                          showNewOptionAtTop={false}
-                        />
-                      </div>
-                      <div id="equipAppend"></div>
-                      {this.createUI()}
-
-                      <div className="spe-equ mt-0">
-                        <div className="equip-plus-cntr">
-                          <Select
-                            isDisabled={self.state.isSpacialEqt}
-                            className="rate-dropdown"
-                            getOptionLabel={option =>
-                              option.SpecialContainerCode
-                            }
-                            isMulti
-                            getOptionValue={option =>
-                              option.SpecialContainerCode
-                            }
-                            components={animatedComponents}
-                            options={self.state.SpacialEqmt}
-                            placeholder="Select Kind of Special Equipment"
-                            onChange={this.specEquipChange}
-                            value={self.state.spEqtSelect}
-                            showNewOptionAtTop={false}
-                          />
-                        </div>
-                      </div>
-                      <div id="specEquipAppend"></div>
-                      {this.createUISpecial()}
-
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                         <label htmlFor="haz-mat">HazMat</label>
-                        <input id="unstack" type="checkbox" name={"haz-mat"} />
-                        <label htmlFor="unstack">Unstackable</label>
+                        {/* <input id="unstack" type="checkbox" name={"haz-mat"} />
+                        <label htmlFor="unstack">Unstackable</label> */}
+                        {unStack}
                         <input
                           id="cust-clear"
                           type="checkbox"
                           name={"haz-mat"}
-                          onChange={this.getIncoTerms.bind(this)}
+                          onChange={this.HandleGetIncoTerms.bind(this)}
                         />
                         <label htmlFor="cust-clear">Custom Clearance</label>
                       </div>
@@ -1205,7 +1179,7 @@ class NewRateSearch extends Component {
                           className="w-50"
                           disabled
                           name="incoTerms"
-                          value={self.state.incoTerms} 
+                          value={self.state.incoTerms}
                         />
                       </div>
                     </div>
@@ -1292,9 +1266,15 @@ class NewRateSearch extends Component {
                     <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                       <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="haz-mat">HazMat</label>
-                      <input id="unstack" type="checkbox" name={"haz-mat"} />
-                      <label htmlFor="unstack">Unstackable</label>
-                      <input id="cust-clear" type="checkbox" name={"haz-mat"} onChange={this.getIncoTerms.bind(this)} />
+                      {/* <input id="unstack" type="checkbox" name={"haz-mat"} />
+                      <label htmlFor="unstack">Unstackable</label> */}
+                      {this.unStack}
+                      <input
+                        id="cust-clear"
+                        type="checkbox"
+                        name={"haz-mat"}
+                        onChange={this.HandleGetIncoTerms.bind(this)}
+                      />
                       <label htmlFor="cust-clear">Custom Clearance</label>
                     </div>
                     <div className="spe-equ justify-content-center">
@@ -1305,8 +1285,8 @@ class NewRateSearch extends Component {
                         className="w-50"
                         disabled
                         name="incoTerms"
-                        value={self.state.incoTerms} 
-                         />
+                        value={self.state.incoTerms}
+                      />
                     </div>
                   </div>
                 </div>
@@ -1398,6 +1378,9 @@ class NewRateSearch extends Component {
                         .typesofMove == "d2p" ? (
                       <>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter PU Address"
@@ -1409,6 +1392,9 @@ class NewRateSearch extends Component {
                     ) : this.state.typesofMove == "d2d" ? (
                       <>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter PU Address"
@@ -1417,6 +1403,9 @@ class NewRateSearch extends Component {
                           ></textarea>
                         </div>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter Delivery Address"
@@ -1428,6 +1417,9 @@ class NewRateSearch extends Component {
                     ) : this.state.typesofMove == "p2d" ? (
                       <>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter Delivery Address"
@@ -1463,23 +1455,25 @@ class NewRateSearch extends Component {
                 <div className="row polpodcls" id="locationInner">
                   <div className="col-md-6 ">
                     <Select
-                      className="rate-dropdown"
+                      className="rate-dropdown w-100 mb-4"
                       closeMenuOnSelect={false}
+                      getOptionLabel={option => option.CountryName}
+                      getOptionValue={option => option.SUCountry}
                       components={animatedComponents}
-                      options={optionsSpeEqu}
+                      options={self.state.country}
                       placeholder="Select Country"
                       onChange={this.locationChange}
                       name="polCountry"
                       id="yooo"
                     />
                     <Select
-                      className="rate-dropdown mb-4"
+                      className="rate-dropdown w-100 mb-4"
                       closeMenuOnSelect={false}
                       components={animatedComponents}
-                      options={optionsPOL}
-                      placeholder="Select POL"
+                      options={optionsPOD}
+                      placeholder="Select POD"
+                      // value={this.state.pod}
                       onChange={this.locationChange}
-                      // value={this.state.pol}
                       name="pol"
                     />
                     <Map1WithAMakredInfoWindow
@@ -1499,16 +1493,19 @@ class NewRateSearch extends Component {
                   </div>
                   <div className="col-md-6">
                     <Select
-                      className="rate-dropdown"
+                      className="rate-dropdown w-100 mb-4"
                       closeMenuOnSelect={false}
+                      getOptionLabel={option => option.CountryName}
+                      getOptionValue={option => option.SUCountry}
                       components={animatedComponents}
-                      options={optionsSpeEqu}
-                      placeholder="Select Country"
+                      options={self.state.country}
+                      placeholder="Select POL"
                       onChange={this.locationChange}
+                      // value={this.state.pol}
                       name="podCountry"
                     />
                     <Select
-                      className="rate-dropdown mb-4"
+                      className="rate-dropdown w-100 mb-4"
                       closeMenuOnSelect={false}
                       components={animatedComponents}
                       options={optionsPOD}

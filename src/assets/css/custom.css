@@ -215,9 +215,10 @@ h2 span {
 }
 .remember-forgot {
   margin-top: 20px;
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
   align-items: center;
+  text-align: right;
 }
 .remember-forgot label {
   font-family: "Medium Font";
@@ -1083,6 +1084,7 @@ table tbody tr:last-child {
   height: 0;
   opacity: 0;
   margin-top: 0 !important;
+  pointer-events: none;
 }
 .shipmentType + .new-rate-cntr,
 .modeTransport + .new-rate-cntr,
@@ -1298,7 +1300,7 @@ table tbody tr:last-child {
   border-bottom-left-radius: 0;
 }
 .fc-radio input:checked + label {
-  color: #39b54a;
+  background-color: #39b54a;
 }
 
 /* extra */
@@ -2448,6 +2450,12 @@ table tbody tr:last-child {
   font-weight: 500;
   padding-left: 10px;
 }
+.salesuserPopup .butn {
+  margin-top: 0;
+}
+.autocom >div{
+  display: block !important;
+}
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
@@ -2534,5 +2542,26 @@ table tbody tr:last-child {
 .dash-map1 {
   position: relative;
   min-height: 100vh;
+}
+
+.advsearch-popup {
+  margin: 10px auto;
+  max-width: 90%;
+}
+
+.advsearch-sect {
+  padding: 20px 40px;
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.advsearch-sect .butn {
+  font-size: 15px;
+  min-width: 136px;
+  margin: 0;
+  padding: 10px;
+}
+
+.auto-cmp + div {
+  display: block !important;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/

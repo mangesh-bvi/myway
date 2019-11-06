@@ -4,6 +4,7 @@ import SideMenu from "../component/sidemenu";
 import FileUpload from "./../assets/img/file.png";
 import ReactTable from "react-table";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
+import { Collapse } from "react-bootstrap";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -12,7 +13,8 @@ class RateFinalizingStill extends Component {
     this.state = {
       modalProfit: false,
       modalRequest: false,
-      selectedFileName: ""
+      selectedFileName: "",
+      showContent: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -63,7 +65,13 @@ class RateFinalizingStill extends Component {
         finalPayment: "$3456.00"
       }
     ];
-
+    let className = 'butn m-0'
+    if (this.state.showContent == true) {
+      className = 'butn cancel-butn m-0'
+    }
+    else{
+      className = 'butn m-0'
+    }
     return (
       <React.Fragment>
         <Headers />
@@ -85,7 +93,7 @@ class RateFinalizingStill extends Component {
               {/* <h2>Rate Query Details</h2> */}
             </div>
             <div className="row">
-              <div className="col-md-4">
+              {/* <div className="col-md-4">
                 <div className="rate-table-left rate-final-left">
                   <div>
                     <h3>Locals</h3>
@@ -160,8 +168,8 @@ class RateFinalizingStill extends Component {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="col-md-8">
+              </div> */}
+              <div className="col-md-12">
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
                     <div className="title-border py-3">
@@ -265,14 +273,13 @@ class RateFinalizingStill extends Component {
                         }}
                       />
                     </div>
-                    <div className="text-right">
-                      <button className="butn m-0" id="toggler">
-                        View More
-                      </button>
-                    </div>
                   </div>
-                  <UncontrolledCollapse toggler="#toggler">
-                    <div className="rate-final-contr">
+                  <div className="rate-final-contr">
+                  <Collapse in={this.state.showContent}>  
+                  <div>       
+                    <div className="title-border py-3">
+                      <h3>Rate Query</h3>
+                    </div>           
                       <div className="row">
                         <div className="col-md-4">
                           <p className="details-title">Shipment Type</p>
@@ -329,9 +336,20 @@ class RateFinalizingStill extends Component {
                             Lotus Park, Goregaon (E), Mumbai : 400099
                           </p>
                         </div>
-                      </div>
-                    </div>
-                  </UncontrolledCollapse>
+                      </div>             
+                  </div>
+                  </Collapse>
+                  <div className="text-right">
+                    <button className={className} id="toggler" onClick={() => this.setState({ showContent: !this.state.showContent })}>
+                      {
+                        this.state.showContent ? (            
+                        <span>VIEW LESS</span>
+                      ) : (
+                        <span>VIEW MORE</span>
+                      )}
+                    </button>
+                  </div>
+                  </div>
 
                   <div className="rate-final-contr">
                     <div className="title-border py-3">
