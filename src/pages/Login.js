@@ -307,7 +307,7 @@ function TokenhandleResponse(response) {
         ) {
           this.toggleSalesLogin();
 
-          // window.location.href = "./rate-search";
+           window.location.href = "./rate-search";
         } else {
           window.location.href = "./Dashboard";
         }

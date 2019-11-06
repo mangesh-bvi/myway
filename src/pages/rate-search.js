@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { authHeader } from "../helpers/authHeader";
+import appSettings from "../helpers/appSetting";
+import axios from "axios";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import ExistCust from "./../assets/img/exist-cust.png";
@@ -10,11 +13,43 @@ class RateSearch extends Component {
     super(props);
 
     this.state = {
-      IsSearchRate: false
+      IsSearchRate: false,
+      customerData: [],
+      customerName: ""
     };
+    this.HandleCustomerList = this.HandleCustomerList.bind(this);
+  }
+
+  componentDidMount() {
+    debugger;
+    this.HandleCustomerList();
+  }
+  HandleCustomerList(e) {
+    let self = this;
+    var customer_Name = e.target.value;
+    debugger;
+    if (customer_Name.length >= 3) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerList`,
+        data: {
+          CustomerName: customer_Name != "" ? customer_Name : "",
+          CustomerType: "Existing"
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        var data = [];
+        data = response.data.Table;
+        if (data != null && data != "") {
+          self.setState({ customerData: data });
+        }
+      });
+    }
   }
   EnableRates = e => {
     debugger;
+    this.HandleCustomerList(e);
     if (e.target.value == "") {
       document.getElementById("SearchRate").classList.add("disableRates");
     } else {
@@ -53,7 +88,7 @@ class RateSearch extends Component {
                     <input
                       type="radio"
                       onClick={this.ShowSearchText}
-                      name="cust-select"
+                      name="customerName"
                       id="exist-cust"
                       defaultChecked
                     />
