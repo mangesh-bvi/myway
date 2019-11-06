@@ -4,9 +4,6 @@ import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
 import "../assets/css/react-table.css";
-import GoogleMapReact from "google-map-react";
-import ShipWhite from "./../assets/img/ship-white.png";
-import { Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import { encryption } from "../helpers/encryption";
@@ -14,22 +11,7 @@ import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import matchSorter from "match-sorter";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import makeAnimated from "react-select/animated";
-import Select from "react-select";
-
-const animatedComponents = makeAnimated();
-const SourceIcon = () => (
-  <div className="map-icon source-icon">
-    <img src={ShipWhite} />
-  </div>
-);
-const DestiIcon = () => (
-  <div className="map-icon desti-icon">
-    <img src={ShipWhite} />
-  </div>
-);
 
 class SalesActivityLog extends Component {
   constructor(props) {
@@ -184,21 +166,8 @@ class SalesActivityLog extends Component {
             <div className="title-sect">
               <h2>Activity Log</h2>
               <div className="d-flex align-items-center">
-                {/* <input
-                  type="search"
-                  value={this.state.filterAll}
-                  onChange={this.filterAll}
-                  placeholder="Search here"
-                /> */}
-                {/* <button
-                  onClick={this.toggleAdvSearch}
-                  className="fa fa-search-plus advsearchicon"
-                ></button> */}
                 <div className="login-fields sales-act-dropdown">
                   <select>
-                    {/* {this.state.actLog.map() = e => {
-                        <option value={e.UserId}>{e.UserName}</option>
-                    }} */}
                     {this.state.actLog.map(team => (
                       <option key={team.UserId} value={team.UserName}>
                         {team.UserName}
@@ -292,186 +261,6 @@ class SalesActivityLog extends Component {
                 getTrProps={this.HandleRowClickEvt}
               />
             </div>
-            <Modal
-              className="transit-popup"
-              isOpen={this.state.modalAdvSearch}
-              toggle={this.toggleAdvSearch}
-              centered={true}
-            >
-              <ModalBody className="p-0">
-                <div className="container-fluid p-0">
-                  <div className="transit-sect">
-                    <div className="row">
-                      <div className="login-fields col-md-4">
-                        <label>Mode Of Transport</label>
-                        <select name={"ModeOfTransport"}>
-                          {this.state.selectMOT.map(team => (
-                            <option key={team.key} value={team.key}>
-                              {team.value}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="login-fields col-md-4">
-                        <label>Shipment Stage</label>
-                        <select name={"ShipmentStage"}>
-                          {this.state.selectShipStage.map(team => (
-                            <option key={team.key} value={team.key}>
-                              {team.value}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-md-4">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>Consignee</label>
-                          <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                          />
-                        </div>
-                      </div>
-                      {/* </div> */}
-                    </div>
-                    <div className="row">
-                      <div className=" login-fields col-md-4">
-                        {/* <label>SELECT</label> */}
-                        {/* <div>
-                            <input type="radio" name="cust-select" id="exist-cust"/>
-                            <label for="exist-cust">ETD</label>
-                          </div>
-                          <div>
-                            <input type="radio" name="cust-select" id="new-cust" />
-                            <label for="new-cust">ATD</label>
-                        </div> */}
-                        <div>
-                          <label>From Time Of Departure</label>
-                          <DatePicker
-                            id="saleDate"
-                            selected={this.state.startDate}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="login-fields col-md-4">
-                        <div>
-                          <label>To Time Of Departure</label>
-                          <DatePicker
-                            id="saleDate"
-                            selected={this.state.startDate}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                      </div>
-                      {/* <div class=" login-fields col-md-4"> */}
-                      <div className="col-md-4">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>Shipper</label>
-                          <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                          />
-                        </div>
-                        {/* </div> */}
-                      </div>
-                      {/* </div> */}
-                    </div>
-                    <div className="row">
-                      <div className="login-fields col-md-4">
-                        {/* <label>SELECT PARAMETER</label>
-                          <div>
-                            <input type="radio" name="cust-select" id="exist-cust"/>
-                            <label for="exist-cust">ETA</label>
-                          </div>
-                          <div>
-                            <input type="radio" name="cust-select" id="new-cust" />
-                            <label for="new-cust">ATA</label>
-                        </div> */}
-                        <div>
-                          <label>From Time Of Arrival</label>
-                          <DatePicker
-                            id="saleDate"
-                            selected={this.state.startDate}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="login-fields col-md-4">
-                        <div>
-                          <label>To Time Of Arrival</label>
-                          <DatePicker
-                            id="saleDate"
-                            selected={this.state.startDate}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md-4">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>Origin Country</label>
-                          <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                          />
-                        </div>
-                        {/* </div> */}
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="login-fields col-md-4">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>POL</label>
-                          <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                          />
-                        </div>
-                        {/* </div> */}
-                      </div>
-                      <div className="login-fields col-md-4">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>POD</label>
-                          <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                          />
-                        </div>
-                        {/* </div> */}
-                      </div>
-                      <div className="login-fields col-md-4">
-                        <div>
-                          <label style={{ padding: "11px" }}></label>
-                          <button type="button" className="butn">
-                            Submit
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ModalBody>
-            </Modal>
           </div>
         </div>
       </div>
