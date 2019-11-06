@@ -7,6 +7,7 @@ import Moment from "react-moment";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
+import { Capitalize } from "../helpers/Capitalize";
 import "react-datepicker/dist/react-datepicker.css";
 // import {GoogleMapReact,Polyline} from "google-map-react";
 import Headers from "../component/header";
@@ -27,7 +28,7 @@ import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 
-import YellowFlag from "./../assets/img/icons8-flag-filled-48.png";
+import YellowFlag from "./../assets/img/yellow-flag.png";
 import {
   withScriptjs,
   withGoogleMap,
@@ -40,7 +41,6 @@ import {
 
 const { compose } = require("recompose");
 
- 
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
@@ -104,7 +104,6 @@ const MapWithAMakredInfoWindowLine = compose(
       path={props.routerData}
       geodesic={true}
       style={{ zIndex: 1 }}
-      
       options={{
         strokeColor: "#ff0022",
         strokeOpacity: 1.75,
@@ -120,7 +119,6 @@ const MapWithAMakredInfoWindowLine = compose(
     />
     {props.markers.map((marker, i) => {
       debugger;
-     
 
       var iCount = props.markers.length;
       var start = marker.StartLatLng;
@@ -140,6 +138,7 @@ const MapWithAMakredInfoWindowLine = compose(
         <>
           {marker.CTransShipPort != "" ? (
             <Marker
+            icon={iconMarker}
               key={marker.CTransShipPort}
               title={marker.CTransShipPort}
               position={{
@@ -153,7 +152,7 @@ const MapWithAMakredInfoWindowLine = compose(
               <Marker
                 key={start[0].lat}
                 title={marker.StartLocation}
-                icon={GreenCircle}
+                //icon={GreenCircle}
                 onClick={props.onClick.bind(this, start[0].lat)}
                 position={{
                   lat: start[0].lat,
@@ -172,6 +171,7 @@ const MapWithAMakredInfoWindowLine = compose(
               </Marker>
               <Marker
                 key={end[0].lat}
+                icon={iconMarker}
                 onClick={props.onClick.bind(this, end[0].lat)}
                 position={{
                   lat: end[0].lat,
@@ -203,6 +203,7 @@ const MapWithAMakredInfoWindowLine = compose(
           iCount != marker.ORDERID ? (
             <Marker
               key={end[0].lat}
+              icon={iconMarker}
               onClick={props.onClick.bind(this, end[0].lat)}
               position={{
                 lat: end[0].lat,
@@ -230,7 +231,7 @@ const MapWithAMakredInfoWindowLine = compose(
           ) : (
             <Marker
               key={end[0].lat}
-              icon={RedCircle}
+              //icon={RedCircle}
               title={marker.EndLocation}
               onClick={props.onClick.bind(this, end[0].lat)}
               position={{
@@ -437,6 +438,8 @@ class ShipmentPlanner extends Component {
       routerMapData: RouteData
     });
   }
+  
+
   HandleOnPageLoad() {
     let self = this;
     axios({
@@ -512,7 +515,6 @@ class ShipmentPlanner extends Component {
         break;
       }
     }
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchConsigneeCompany`,
@@ -524,8 +526,9 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       let optionItems = response.data.map(comp => (
-        <option value={comp.MappingID}>{comp.MappedCompName}</option>
+        <option value={comp.MappingID}>{Capitalize(comp.MappedCompName)}</option>
       ));
       self.setState({ consigneedrp: optionItems });
     });
@@ -545,7 +548,7 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
+        <option value={comp.CModeOfTransport}>{Capitalize(comp.CModeOfTransport)}</option>
       ));
       self.setState({ transportModedrp: optionItems });
     });
@@ -567,7 +570,7 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.TransitModeID}>{comp.TransitMode}</option>
+        <option value={comp.TransitModeID}>{Capitalize(comp.TransitMode)}</option>
       ));
       self.setState({ linerdrp: optionItems });
     });
@@ -676,6 +679,7 @@ class ShipmentPlanner extends Component {
   }
 
   componentDidMount() {
+    debugger;
     let self = this;
     axios({
       method: "post",
@@ -720,7 +724,7 @@ class ShipmentPlanner extends Component {
         key={i}
         value={planet.MyCompID}
       >
-        {planet.MyCompName}
+        {Capitalize(planet.MyCompName)}
       </option>
     ));
 
@@ -766,7 +770,7 @@ class ShipmentPlanner extends Component {
                         </select>
                       </div>
                       <div className="login-fields">
-                        <label>Select Consignee Company</label>
+                        <label>Select Company</label>
                         <select
                           onChange={this.consigneeChange}
                           id="drpConsigneeCompany"
@@ -788,7 +792,7 @@ class ShipmentPlanner extends Component {
                       <div className="login-fields">
                         <label>Select Liner</label>
                         <select id="drpLiner" onChange={this.fetchLinerChange}>
-                          <option value={0}>select</option>
+                          <option value={0}>Select</option>
                           {this.state.linerdrp}
                         </select>
                       </div>

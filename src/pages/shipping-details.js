@@ -114,9 +114,12 @@ class ShippingDetails extends Component {
     const { value } = e.target;
     const filterAll = value;
     const filtered = [{ id: 'all', value: filterAll }];
-    // NOTE: this completely clears any COLUMN filters
+     
     this.setState({ filterAll, filtered });
   }
+
+
+  
   HandleListShipmentSummey() {
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -574,11 +577,7 @@ class ShippingDetails extends Component {
                     ]
                   },
                   {
-                    // NOTE - this is a "filter all" DUMMY column
-                    // you can't HIDE it because then it wont FILTER
-                    // but it has a size of ZERO with no RESIZE and the
-                    // FILTER component is NULL (it adds a little to the front)
-                    // You culd possibly move it to the end
+                     
                     show: false,
                     Header: "All",
                     id: 'all',
@@ -592,9 +591,7 @@ class ShippingDetails extends Component {
                       }
                     },
                     filterMethod: (filter, rows) => {
-                      // using match-sorter
-                      // it will take the content entered into the "filter"
-                      // and search for it in EITHER the firstName or lastName
+                      
                       const result = matchSorter(rows, filter.value, {
                         keys: ["BL/HBL", "Consignee", "ConsigneeID"],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH

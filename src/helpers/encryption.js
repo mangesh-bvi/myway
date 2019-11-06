@@ -1,6 +1,7 @@
  
 export function encryption(plainText,type="enc")
 {
+    debugger;   
     var CryptoJS = require("crypto-js");
     if(type==="enc")
     {
@@ -8,10 +9,18 @@ export function encryption(plainText,type="enc")
     return ciphertext.toString();
     }
     else{
-        var bytes  = CryptoJS.AES.decrypt(plainText.toString(), 'bvi1secret');
-        var decrypt = bytes.toString(CryptoJS.enc.Utf8);
-       return decrypt;
+        if(plainText != null)
+        {
+             var bytes  = CryptoJS.AES.decrypt(plainText.toString(), 'bvi1secret');
+            var decrypt = bytes.toString(CryptoJS.enc.Utf8);
+             return decrypt;
+        }
+        else
+        {
+            window.location.href = "./login";
+        }
     }
     
 }
+
 

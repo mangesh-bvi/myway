@@ -3,6 +3,7 @@ import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Select from "react-select";
+
 import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
@@ -71,12 +72,20 @@ class NewRateSearch extends Component {
       pol: "",
       podCountry: "",
       pod: "",
-      equipDrop: " "
+      equipDrop: [],
+      country:[],
+      StandardContainerCode: [],
+      multi: true,
+      selected: [],
+      isSpacialEqt: true,
+      SpacialEqmt: [],
+      spEqtSelect: []
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
     this.HandleBindPOLPODData = this.HandleBindPOLPODData.bind(this);
+    this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
   }
 
   togglePuAdd() {
@@ -86,7 +95,67 @@ class NewRateSearch extends Component {
   }
 
   componentDidMount() {
-    this.HandleBindPOLPODData();
+    this.HandleCounterListBind();
+  }
+
+  //this Method for Bind Country Dropdown
+  HandleCounterListBind() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RateSearchCountryList`,
+      headers: authHeader()
+    }).then(function(response) {
+      var countryData = response.data.Table;
+      if (countryData.length > 0) {
+        self.setState({ country: countryData });
+      }
+    });
+  }
+  //this Method For Get Inco Team base on condition.
+  HandleGetIncoTerms() {
+    debugger;
+    let self = this;
+    var shipmentType = self.state.shipmentType;
+    var typeofMove = self.state.typesofMove;
+    var HasCustomClear = "No";
+
+    if (shipmentType === "Export" && HasCustomClear === "No") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({ incoTerms: "DAP" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        this.setState({ incoTerms: "CIF" });
+      }
+    }
+    if (shipmentType === "Export" && HasCustomClear === "Yes") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({ incoTerms: "DDP" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        this.setState({ incoTerms: "CIF" });
+      }
+    }
+    if (shipmentType === "Import" && HasCustomClear === "No") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({ incoTerms: "ExWorks" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        this.setState({ incoTerms: "FOB" });
+      }
+    }
+    if (shipmentType === "Import" && HasCustomClear === "Yes") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        this.setState({ incoTerms: "ExWorks" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        this.setState({ incoTerms: "FOB" });
+      }
+    }
   }
 
   HandleBindPOLPODData() {
@@ -94,17 +163,29 @@ class NewRateSearch extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/IncoTermsAPI`,
-      // data: {
-      //   Mode: "O",
-      //   Search: "nhav",
-      //   CountryCode: ""
-      // },
+
       headers: authHeader()
     }).then(function(response) {
       debugger;
+      var table1 = response.data.Table1;
+      var table2 = response.data.Table2;
+      var finalArray = [];
 
-      // var bookData = response.data.Table;
-      // self.setState({ BookingData: bookData });
+      var standerEquipment = new Object();
+      standerEquipment.StandardContainerCode = "Special Equipment";
+      standerEquipment.ProfileCodeID = "Special Equipment";
+      standerEquipment.ContainerName = "Special Equipment";
+
+      for (let index = 0; index < table1.length; index++) {
+        finalArray.push(table1[index]);
+      }
+
+      finalArray.push(standerEquipment);
+
+      self.setState({
+        StandardContainerCode: finalArray,
+        SpacialEqmt: table2
+      });
     });
   }
 
@@ -246,6 +327,9 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
+    if (type == "fcl") {
+      this.HandleBindPOLPODData();
+    }
   };
   cntrLoadPlusClick = e => {
     document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
@@ -417,11 +501,93 @@ class NewRateSearch extends Component {
     document.getElementById("equipTypeMinusClick").classList.add("d-none");
   };
 
-  equipChange = e => {
+  equipChange = value => {
     debugger;
 
-    let type = e.value;
-    this.setState({ equQuan: type });
+    if (value !== null) {
+      let iCount = value.length;
+
+      let difference = this.state.selected.filter(x => !value.includes(x));
+      if (difference.length > 0) {
+        this.setState({ selected: value });
+
+        if (difference[0].StandardContainerCode == "Special Equipment") {
+          this.setState({ isSpacialEqt: true });
+          var elmnt1 = document.getElementsByName("spequType");
+          var elemnt1Len = elmnt1.length;
+          for (let index = 0; index < elemnt1Len; index++) {
+            if (elmnt1 != null && elmnt1 != "undefined") {
+              elmnt1[0].remove();
+              this.setState({
+                spEqtSelect: []
+              });
+            }
+          }
+        }
+
+        var elmnt = document.getElementById(
+          difference[0].StandardContainerCode
+        );
+        if (elmnt != null && elmnt != "undefined") {
+          elmnt.remove();
+        }
+      } else {
+        this.setState({ selected: value });
+        let dropVal =
+          iCount == 1
+            ? value[0].StandardContainerCode
+            : value[iCount - 1].StandardContainerCode;
+        if (dropVal == "Special Equipment") {
+          this.setState({ isSpacialEqt: false });
+        }
+        let div = document.createElement("div");
+        let clas = document.createAttribute("class");
+        clas.value = "spec-inner-cntr";
+        div.setAttributeNode(clas);
+
+        let name = document.createAttribute("name");
+        name.value = "equType";
+        div.setAttributeNode(name);
+
+        let ids = document.createAttribute("id");
+        ids.value =
+          iCount == 1
+            ? value[0].StandardContainerCode
+            : value[iCount - 1].StandardContainerCode;
+        div.setAttributeNode(ids);
+
+        let cont = document.createElement("p");
+        cont.innerHTML = dropVal;
+        let inpNum = document.createElement("input");
+        let typ = document.createAttribute("type");
+        typ.value = "number";
+        inpNum.setAttributeNode(typ);
+        inpNum.value = 1;
+        div.appendChild(cont);
+        div.appendChild(inpNum);
+        document.getElementById("equipAppend").appendChild(div);
+      }
+    } else {
+      debugger;
+      var elmnt = document.getElementsByName("equType");
+      if (elmnt != null && elmnt != "undefined") {
+        elmnt[0].remove();
+      }
+      var lastSelectVal = this.state.selected[0];
+      if (lastSelectVal.StandardContainerCode == "Special Equipment") {
+        this.setState({ isSpacialEqt: true });
+      }
+      var elmnt1 = document.getElementsByName("spequType");
+      var elmnt1Len = elmnt1.length;
+      for (let index = 0; index < elmnt1Len; index++) {
+        if (elmnt1 != null && elmnt1 != "undefined") {
+          elmnt1[0].remove();
+          this.setState({ spEqtSelect: [] });
+        }
+      }
+
+      this.setState({ selected: [] });
+    }
 
     if (this.state.equQuan !== "") {
       // next
@@ -434,94 +600,115 @@ class NewRateSearch extends Component {
       document.getElementById("cntrLoadMinusClick").classList.add("d-none");
       document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
     }
-
-    let dropVal = e.value;
-    let div = document.createElement("div");
-    let clas = document.createAttribute("class");
-    clas.value = "spec-inner-cntr";
-    div.setAttributeNode(clas);
-    let cont = document.createElement("p");
-    cont.innerHTML = dropVal;
-    let inpNum = document.createElement("input");
-    let typ = document.createAttribute("type");
-    typ.value = "number";
-    inpNum.setAttributeNode(typ);
-    inpNum.value = 1;
-    div.appendChild(cont);
-    div.appendChild(inpNum);
-    document.getElementById("equipAppend").appendChild(div);
   };
-  specEquipChange = e => {
+  specEquipChange = value1 => {
+    if (value1 != null && value1 != "") {
+      let iCount = value1.length;
+      let difference = this.state.spEqtSelect.filter(x => !value1.includes(x));
+
+      if (difference.length > 0) {
+        this.setState({ spEqtSelect: value1 });
+        var elmnt = document.getElementById(difference[0].SpecialContainerCode);
+        if (elmnt != null && elmnt != "undefined") {
+          elmnt.remove();
+        }
+      } else {
+        this.setState({ spEqtSelect: value1 });
+        i++;
+
+        let dropVal =
+          iCount == 1
+            ? value1[0].SpecialContainerCode
+            : value1[iCount - 1].SpecialContainerCode;
+        let div = document.createElement("div");
+        let clas = document.createAttribute("class");
+        clas.value = "spec-inner-cntr";
+        div.setAttributeNode(clas);
+
+        let ids = document.createAttribute("id");
+        ids.value =
+          iCount == 1
+            ? value1[0].SpecialContainerCode
+            : value1[iCount - 1].SpecialContainerCode;
+        div.setAttributeNode(ids);
+
+        let name = document.createAttribute("name");
+        name.value = "spequType";
+        div.setAttributeNode(name);
+
+        let cont = document.createElement("p");
+        cont.innerHTML = dropVal;
+        let inpNum = document.createElement("input");
+        let typ = document.createAttribute("type");
+        typ.value = "number";
+        inpNum.setAttributeNode(typ);
+        inpNum.value = 1;
+        let inpTemp = document.createElement("input");
+        let typTemp = document.createAttribute("type");
+        typTemp.value = "number";
+        inpTemp.setAttributeNode(typTemp);
+        inpTemp.value = 1;
+        let faren = document.createElement("span");
+        faren.innerHTML = "F";
+
+        let divFC = document.createElement("div");
+        let clasFC = document.createAttribute("class");
+        clasFC.value = "new-radio-rate-cntr fc-radio";
+        divFC.setAttributeNode(clasFC);
+        let divF = document.createElement("div");
+        let inputF = document.createElement("input");
+        let typeF = document.createAttribute("type");
+        typeF.value = "radio";
+        inputF.setAttributeNode(typeF);
+        let nameF = document.createAttribute("name");
+        nameF.value = "fc" + i;
+        inputF.setAttributeNode(nameF);
+        let idF = document.createAttribute("id");
+        idF.value = "f" + i;
+        inputF.setAttributeNode(idF);
+        let labelF = document.createElement("label");
+        let forF = document.createAttribute("for");
+        forF.value = "f" + i;
+        labelF.innerHTML = "F";
+        labelF.setAttributeNode(forF);
+        divF.appendChild(inputF);
+        divF.appendChild(labelF);
+        divFC.appendChild(divF);
+        let divC = document.createElement("div");
+        let inputC = document.createElement("input");
+        let typeC = document.createAttribute("type");
+        typeC.value = "radio";
+        inputC.setAttributeNode(typeC);
+        let nameC = document.createAttribute("name");
+        nameC.value = "fc" + i;
+        inputC.setAttributeNode(nameC);
+        let idC = document.createAttribute("id");
+        idC.value = "c" + i;
+        inputC.setAttributeNode(idC);
+        let labelC = document.createElement("label");
+        let forC = document.createAttribute("for");
+        forC.value = "c" + i;
+        labelC.innerHTML = "C";
+        labelC.setAttributeNode(forC);
+        divC.appendChild(inputC);
+        divC.appendChild(labelC);
+        divFC.appendChild(divC);
+
+        div.appendChild(cont);
+        div.appendChild(inpNum);
+        div.appendChild(inpTemp);
+        div.appendChild(divFC); // faren
+        document.getElementById("specEquipAppend").appendChild(div);
+      }
+    } else {
+      var elmnt = document.getElementsByName("spequType");
+      if (elmnt != null && elmnt != "undefined") {
+        elmnt[0].remove();
+      }
+      this.setState({ spEqtSelect: [] });
+    }
+
     debugger;
-    i++;
-    let dropVal = e.value;
-    let div = document.createElement("div");
-    let clas = document.createAttribute("class");
-    clas.value = "spec-inner-cntr";
-    div.setAttributeNode(clas);
-    let cont = document.createElement("p");
-    cont.innerHTML = dropVal;
-    let inpNum = document.createElement("input");
-    let typ = document.createAttribute("type");
-    typ.value = "number";
-    inpNum.setAttributeNode(typ);
-    inpNum.value = 1;
-    let inpTemp = document.createElement("input");
-    let typTemp = document.createAttribute("type");
-    typTemp.value = "number";
-    inpTemp.setAttributeNode(typTemp);
-    inpTemp.value = 1;
-    let faren = document.createElement("span");
-    faren.innerHTML = "F";
-
-    let divFC = document.createElement("div");
-    let clasFC = document.createAttribute("class");
-    clasFC.value = "new-radio-rate-cntr fc-radio";
-    divFC.setAttributeNode(clasFC);
-    let divF = document.createElement("div");
-    let inputF = document.createElement("input");
-    let typeF = document.createAttribute("type");
-    typeF.value = "radio";
-    inputF.setAttributeNode(typeF);
-    let nameF = document.createAttribute("name");
-    nameF.value = "fc" + i;
-    inputF.setAttributeNode(nameF);
-    let idF = document.createAttribute("id");
-    idF.value = "f" + i;
-    inputF.setAttributeNode(idF);
-    let labelF = document.createElement("label");
-    let forF = document.createAttribute("for");
-    forF.value = "f" + i;
-    labelF.innerHTML = "F";
-    labelF.setAttributeNode(forF);
-    divF.appendChild(inputF);
-    divF.appendChild(labelF);
-    divFC.appendChild(divF);
-    let divC = document.createElement("div");
-    let inputC = document.createElement("input");
-    let typeC = document.createAttribute("type");
-    typeC.value = "radio";
-    inputC.setAttributeNode(typeC);
-    let nameC = document.createAttribute("name");
-    nameC.value = "fc" + i;
-    inputC.setAttributeNode(nameC);
-    let idC = document.createAttribute("id");
-    idC.value = "c" + i;
-    inputC.setAttributeNode(idC);
-    let labelC = document.createElement("label");
-    let forC = document.createAttribute("for");
-    forC.value = "c" + i;
-    labelC.innerHTML = "C";
-    labelC.setAttributeNode(forC);
-    divC.appendChild(inputC);
-    divC.appendChild(labelC);
-    divFC.appendChild(divC);
-
-    div.appendChild(cont);
-    div.appendChild(inpNum);
-    div.appendChild(inpTemp);
-    div.appendChild(divFC); // faren
-    document.getElementById("specEquipAppend").appendChild(div);
   };
 
   addClick() {
@@ -609,13 +796,9 @@ class NewRateSearch extends Component {
   }
 
   render() {
-    const options = [
-      { value: "20 DC", label: "20 DC" },
-      { value: "30 DC", label: "30 DC" },
-      { value: "40 DC", label: "40 DC" },
-      { value: "50 DC", label: "50 DC" },
-      { value: "Special Equipment", label: "Special Equipment" }
-    ];
+    let self = this;
+
+    
     const optionsSpeEqu = [
       { value: "Refer Type", label: "Refer Type" },
       { value: "abc", label: "abc" },
@@ -849,95 +1032,100 @@ class NewRateSearch extends Component {
                 </div>
               </div>
               {this.state.containerLoadType != "fcl" ? (
-                <div className="new-rate-cntr" id="cbm">
-                  <div className="rate-title-cntr">
-                    <h3>CBM / Dimensions</h3>
-                    <div className="iconSelection" id="cbmIconCntr">
-                      <p className="side-selection" id="cbmName">
-                        {/* {this.state.modeoftransport} */}
-                      </p>
-                      <i
-                        className="fa fa-plus"
-                        id="cbmPlusClick"
-                        onClick={this.cbmPlusClick}
-                      ></i>
-                      <i
-                        className="fa fa-minus d-none"
-                        id="cbmMinusClick"
-                        onClick={this.cbmMinusClick}
-                      ></i>
-                    </div>
-                  </div>
-                  <div id="cbmInner">
-                    <div className="row">
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Length (cm)"
-                            className="w-100"
-                            name="length"
-                            onBlur={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Width (cm)"
-                            className="w-100"
-                            name="width"
-                            onBlur={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Height (cm)"
-                            className="w-100"
-                            name="height"
-                            onBlur={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Quantity"
-                            className="w-100"
-                            name="qnty"
-                            onKeyDown={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder="Gross Weight"
-                            className="w-100"
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            placeholder={
-                              this.state.modeoftransport != "air" ? "CBM" : "KG"
-                            }
-                            className="w-100"
-                            value={this.state.cbmVal}
-                          />
-                        </div>
+                <>
+                  <div className="new-rate-cntr" id="cbm">
+                    <div className="rate-title-cntr">
+                      <h3>CBM / Dimensions</h3>
+                      <div className="iconSelection" id="cbmIconCntr">
+                        <p className="side-selection" id="cbmName">
+                          {/* {this.state.modeoftransport} */}
+                        </p>
+                        <i
+                          className="fa fa-plus"
+                          id="cbmPlusClick"
+                          onClick={this.cbmPlusClick}
+                        ></i>
+                        <i
+                          className="fa fa-minus d-none"
+                          id="cbmMinusClick"
+                          onClick={this.cbmMinusClick}
+                        ></i>
                       </div>
                     </div>
+                    <div id="cbmInner">
+                      <div className="row">
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Length (cm)"
+                              className="w-100"
+                              name="length"
+                              onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Width (cm)"
+                              className="w-100"
+                              name="width"
+                              onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Height (cm)"
+                              className="w-100"
+                              name="height"
+                              onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Quantity"
+                              className="w-100"
+                              name="qnty"
+                              onKeyDown={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder="Gross Weight"
+                              className="w-100"
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              placeholder={
+                                this.state.modeoftransport != "air"
+                                  ? "CBM"
+                                  : "KG"
+                              }
+                              className="w-100"
+                              value={this.state.cbmVal}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                   
+                </>
               ) : null}
 
               {this.state.containerLoadType == "fcl" ? (
@@ -964,11 +1152,13 @@ class NewRateSearch extends Component {
                     <div className="equip-plus-cntr mt-0">
                       <Select
                         className="rate-dropdown"
-                        components={animatedComponents}
-                        // isMulti
-                        options={options}
-                        onChange={this.equipChange}
-                        value={this.state.equipDrop}
+                        getOptionLabel={option => option.StandardContainerCode}
+                        getOptionValue={option => option.StandardContainerCode}
+                        isMulti
+                        options={self.state.StandardContainerCode}
+                        onChange={this.equipChange.bind(this)}
+                        value={self.state.selected}
+                        showNewOptionAtTop={false}
                       />
                       {/* <div className="spe-equ">
                       <input
@@ -997,20 +1187,18 @@ class NewRateSearch extends Component {
                     <div className="spe-equ mt-0">
                       <div className="equip-plus-cntr">
                         <Select
+                          isDisabled={self.state.isSpacialEqt}
                           className="rate-dropdown"
+                          getOptionLabel={option => option.SpecialContainerCode}
+                          isMulti
+                          getOptionValue={option => option.SpecialContainerCode}
                           components={animatedComponents}
-                          options={optionsSpeEqu}
+                          options={self.state.SpacialEqmt}
                           placeholder="Select Kind of Special Equipment"
                           onChange={this.specEquipChange}
+                          value={self.state.spEqtSelect}
+                          showNewOptionAtTop={false}
                         />
-                        {/* <div className="spe-equ">
-                        <input type="text" placeholder="Quantity" />
-                        <input type="text" placeholder="Temp" />
-                      </div> */}
-                        {/* <i
-                        className="fa fa-plus equip-plus"
-                        onClick={this.addClickSpecial.bind(this)}
-                      ></i> */}
                       </div>
                     </div>
                     <div id="specEquipAppend"></div>
@@ -1021,7 +1209,12 @@ class NewRateSearch extends Component {
                       <label htmlFor="haz-mat">HazMat</label>
                       <input id="unstack" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="unstack">Unstackable</label>
-                      <input id="cust-clear" type="checkbox" name={"haz-mat"} />
+                      <input
+                        id="cust-clear"
+                        type="checkbox"
+                        name={"haz-mat"}
+                        onChange={this.HandleGetIncoTerms.bind(this)}
+                      />
                       <label htmlFor="cust-clear">Custom Clearance</label>
                     </div>
                     <div className="spe-equ justify-content-center">
@@ -1031,7 +1224,8 @@ class NewRateSearch extends Component {
                         placeholder="Inco Terms"
                         className="w-50"
                         disabled
-                        value="auto populated data will come"
+                        name="incoTerms"
+                        value={self.state.incoTerms}
                       />
                     </div>
                   </div>
@@ -1191,8 +1385,10 @@ class NewRateSearch extends Component {
                     <Select
                       className="rate-dropdown"
                       closeMenuOnSelect={false}
+                      getOptionLabel={option=>option.CountryName}
+                      getOptionValue={option=>option.SUCountry}
                       components={animatedComponents}
-                      options={optionsSpeEqu}
+                      options={self.state.country}
                       placeholder="Select Country"
                       onChange={this.locationChange}
                       name="polCountry"
@@ -1202,10 +1398,10 @@ class NewRateSearch extends Component {
                       className="rate-dropdown mb-4"
                       closeMenuOnSelect={false}
                       components={animatedComponents}
-                      options={optionsPOL}
-                      placeholder="Select POL"
+                      options={optionsPOD}
+                      placeholder="Select POD"
+                      // value={this.state.pod}
                       onChange={this.locationChange}
-                      // value={this.state.pol}
                       name="pol"
                     />
                     <Map1WithAMakredInfoWindow
@@ -1225,12 +1421,15 @@ class NewRateSearch extends Component {
                   </div>
                   <div className="col-md-6">
                     <Select
-                      className="rate-dropdown"
+                      className="rate-dropdown mb-4"
                       closeMenuOnSelect={false}
+                      getOptionLabel={option=>option.CountryName}
+                      getOptionValue={option=>option.SUCountry}
                       components={animatedComponents}
-                      options={optionsSpeEqu}
-                      placeholder="Select Country"
+                      options={self.state.country}
+                      placeholder="Select POL"
                       onChange={this.locationChange}
+                      // value={this.state.pol}
                       name="podCountry"
                     />
                     <Select
