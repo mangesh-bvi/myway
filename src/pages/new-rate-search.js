@@ -84,8 +84,9 @@ class NewRateSearch extends Component {
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
-    this.HandleBindPOLPODData = this.HandleBindPOLPODData.bind(this);
+    this.HandleBindIncoTeamData = this.HandleBindIncoTeamData.bind(this);
     this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
+    this.HandlePOLPODListBind=this.HandlePOLPODListBind.bind(this);
   }
 
   togglePuAdd() {
@@ -98,6 +99,23 @@ class NewRateSearch extends Component {
     this.HandleCounterListBind();
   }
 
+//this Method For POD And POD Data Bind
+HandlePOLPODListBind(type)
+{
+debugger;
+   
+  var shipmentType=type=="sea"?"O":type=="air"?"A":type=="road"?"I":"";
+  axios({
+    method: "post",
+    url: `${appSettings.APIURL}/ShipmentStages`,
+    data: {
+      Mode: shipmentType
+    },
+    headers: authHeader()
+  }).then(function(response) {
+    debugger;
+  });
+}  
   //this Method for Bind Country Dropdown
   HandleCounterListBind() {
     let self = this;
@@ -158,7 +176,7 @@ class NewRateSearch extends Component {
     }
   }
 
-  HandleBindPOLPODData() {
+  HandleBindIncoTeamData() {
     let self = this;
     axios({
       method: "post",
@@ -236,14 +254,8 @@ class NewRateSearch extends Component {
     document.getElementById("typeMoveMinusClick").classList.add("d-none");
   };
 
-  HandlePOLChange = POL => {
-    debugger;
-
-    this.setState({ POL });
-  };
-  HandlePODChange = POD => {
-    this.setState({ POD });
-  };
+   
+   
   ShipmentTypeClick = e => {
     let type = e.target.value;
     this.setState({ shipmentType: type });
@@ -270,7 +282,8 @@ class NewRateSearch extends Component {
   };
   modeofTransportClick = e => {
     let type = e.target.value;
-    debugger;
+    
+    
     this.setState({ modeoftransport: type });
     document.getElementById("dvroad").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvair").classList.add("new-radio-rate-cntr-hide");
@@ -301,6 +314,8 @@ class NewRateSearch extends Component {
     document.getElementById("shipmentTypeName").classList.remove("d-none");
     document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
     document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
+
+    this.HandlePOLPODListBind(type);
   };
   modeTransPlusClick = e => {
     document.getElementById("modeTransInner").classList.remove("modeTransType");
@@ -328,7 +343,7 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
     if (type == "fcl") {
-      this.HandleBindPOLPODData();
+      this.HandleBindIncoTeamData();
     }
   };
   cntrLoadPlusClick = e => {
@@ -1456,7 +1471,6 @@ class NewRateSearch extends Component {
                   <div className="col-md-6 ">
                     <Select
                       className="rate-dropdown w-100 mb-4"
-                      closeMenuOnSelect={false}
                       getOptionLabel={option => option.CountryName}
                       getOptionValue={option => option.SUCountry}
                       components={animatedComponents}
@@ -1468,7 +1482,6 @@ class NewRateSearch extends Component {
                     />
                     <Select
                       className="rate-dropdown w-100 mb-4"
-                      closeMenuOnSelect={false}
                       components={animatedComponents}
                       options={optionsPOD}
                       placeholder="Select POD"

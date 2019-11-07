@@ -60,7 +60,7 @@ class SpotRateTable extends Component {
       method: "post",
       url: `${appSettings.APIURL}/SpotRateGridAPI`,
       data: {
-        UserId:userid,//431, 
+        UserId:431, 
         Fromdate:fromDate, //"01/01/2019",
         ToDate: currentDate//"10/25/2019"
       },
@@ -171,7 +171,8 @@ class SpotRateTable extends Component {
                           }
                           
                         },
-                        Header: "Actions"
+                        Header: "Actions",
+                        sortable:false
                       }
                     ]
                   }

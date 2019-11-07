@@ -17,9 +17,9 @@ class RateSearch extends Component {
       IsSearchRate: false,
       customerData: [],
       customerName: "",
+      customerType: true,
       menuStyle: {
-         
-        textAlign:"left",
+        textAlign: "left",
         borderRadius: "3px",
         boxShadow: "0 2px 12px rgba(0, 0, 0, 0.1)",
         background: "rgba(255, 255, 255, 0.9)",
@@ -33,50 +33,51 @@ class RateSearch extends Component {
       },
       fields: {}
     };
-   
+    this.HandleRadioBtn = this.HandleRadioBtn.bind(this);
   }
 
   componentDidMount() {
     // document.getElementById("SearchRate").classList.add("disableRates");
-    
+
     document.getElementById("SearchRate").classList.add("disableRates");
   }
 
-   
   HandleChangeCon(field, e) {
     debugger;
     let self = this;
+    var customertxtlen = e.target.value;
+    if (customertxtlen == "") {
+      document.getElementById("SearchRate").classList.add("disableRates");
+    }
+
     let fields = this.state.fields;
     fields[field] = e.target.value;
-    var customertxtlen=e.target.value;
-   
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/CustomerList`,
-        data: {
-          CustomerName: e.target.value,
-          CustomerType: "Existing"
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        debugger;
-        if (field == "CustomerList") {
-          self.setState({
-            customerData: response.data.Table,
-            fields
-          });
-        } else {
-          self.setState({
-            customerData: response.data.Table,
-            fields
-          });
-        }
-      });
-    
-    
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerList`,
+      data: {
+        CustomerName: e.target.value,
+        CustomerType: "Existing"
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      if (field == "CustomerList") {
+        self.setState({
+          customerData: response.data.Table,
+          fields
+        });
+      } else {
+        self.setState({
+          customerData: response.data.Table,
+          fields
+        });
+      }
+    });
   }
   HandleChangeSelect(field, e) {
-    debugger
+    debugger;
     let fields = this.state.fields;
     if (e.target.value == "Select") {
       fields[field] = "";
@@ -86,7 +87,6 @@ class RateSearch extends Component {
     this.setState({
       fields
     });
-    this.BindShipmentStage();
   }
   handleSelectCon(field, value) {
     debugger;
@@ -97,7 +97,7 @@ class RateSearch extends Component {
     });
     document.getElementById("SearchRate").classList.remove("disableRates");
   }
-  
+
   EnableRates = e => {
     debugger;
     this.HandleCustomerList(e);
@@ -107,18 +107,28 @@ class RateSearch extends Component {
       document.getElementById("SearchRate").classList.remove("disableRates");
     }
   };
+  HandleRadioBtn(e) {
+    debugger;
+    var cType = e.target.value;
+    if (cType == "Existing Customer") {
+      document.getElementById("SearchRate").classList.add("disableRates");
+      this.setState({ customerType: true, fields: {} });
+    } else {
+      document.getElementById("SearchRate").classList.remove("disableRates");
+      this.setState({ customerType: false });
+    }
+  }
 
   HideSearchText() {
     // document.getElementById("searchtxt").style.display = "none";
     // document.getElementById("SearchRate").classList.remove("disableRates");
   }
   ShowSearchText() {
-    document.getElementById("SearchRate").classList.add("disableRates");
-    document.getElementById("searchtxt").style.display = "block";
+    // document.getElementById("SearchRate").classList.add("disableRates");
+    // document.getElementById("searchtxt").style.display = "block";
   }
 
   render() {
-     
     return (
       <div>
         <Headers />
@@ -134,9 +144,10 @@ class RateSearch extends Component {
                   <div>
                     <input
                       type="radio"
-                      onClick={this.ShowSearchText}
+                      onClick={this.HandleRadioBtn}
                       name="cust-select"
                       id="exist-cust"
+                      value="Existing Customer"
                       defaultChecked
                     />
                     <label
@@ -150,9 +161,10 @@ class RateSearch extends Component {
                   <div>
                     <input
                       type="radio"
-                      onClick={this.HideSearchText}
+                      onClick={this.HandleRadioBtn}
                       name="cust-select"
                       id="new-cust"
+                      value="New Customer"
                     />
                     <label
                       className="d-flex flex-column align-items-center"
@@ -173,25 +185,28 @@ class RateSearch extends Component {
                   name="search-rate"
                 /> */}
                 <div className="autocom">
-                  <Autocomplete
-                    id="searchtxt"
-                    getItemValue={item => item.Company_Name}
-                    items={this.state.customerData}
-                    renderItem={(item, isHighlighted) => (
-                      <div
-                        style={{
-                          background: isHighlighted ? "lightgray" : "white"
-                        }}
-                      >
-                        {item.Company_Name}
-                      </div>
-                    )}
-                    value={this.state.fields["Company_Name"]}
-                    onChange={this.HandleChangeCon.bind(this, "Company_Name")}
-                    menuStyle={this.state.menuStyle}
-                    onSelect={this.handleSelectCon.bind(this, "Company_Name")}
-                    isMulti={true}
-                  />
+                  {this.state.customerType == true ? (
+                    <Autocomplete
+                      id="searchtxt"
+                      getItemValue={item => item.Company_Name}
+                      items={this.state.customerData}
+                      renderItem={(item, isHighlighted) => (
+                        <div
+                          style={{
+                            background: isHighlighted ? "lightgray" : "white"
+                          }}
+                        >
+                          {item.Company_Name}
+                        </div>
+                      )}
+                      value={this.state.fields["Company_Name"]}
+                      onChange={this.HandleChangeCon.bind(this, "Company_Name")}
+                      menuStyle={this.state.menuStyle}
+                      onSelect={this.handleSelectCon.bind(this, "Company_Name")}
+                       
+                      inputProps={{ placeholder: "Search Account/Consignee" }}
+                    />
+                  ) : null}
                 </div>
               </div>
               <a

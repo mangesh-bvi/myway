@@ -1027,7 +1027,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      alert("Complete")
+      
       mdata = response.data;
       if(BindingID != "All")
       {
