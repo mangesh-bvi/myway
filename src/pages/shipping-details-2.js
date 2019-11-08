@@ -614,7 +614,7 @@ class ShippingDetailsTwo extends Component {
                   <div className="title-sect">
                     <h2>Details View</h2>
                     <button onClick={this.toggleDocu} className="butn mt-0">
-                          Add Watchlist
+                      Add Watchlist
                     </button>
                   </div>
                   <ul className="nav cust-tabs" role="tablist">
@@ -979,6 +979,7 @@ class ShippingDetailsTwo extends Component {
                               href="#!"
                               id="toggler"
                               className="butn view-btn less-btn"
+                              onClick={this.toggleContainer}
                             >
                               Show Less
                             </a>

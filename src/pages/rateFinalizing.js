@@ -468,12 +468,34 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
           <Modal
-            className=""
+            className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequest}
             toggle={this.toggleRequest}
             centered={true}
           >
-            <ModalBody>Popup will come</ModalBody>
+            <ModalBody>
+              <h3 className="mb-4">Request Changes</h3>
+              <div className="rename-cntr login-fields">
+                <label>Discount</label>
+                <input type="text" placeholder="Enter Discount" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Free Time</label>
+                <input type="text" placeholder="Enter Time" maxLength="2" />
+              </div>
+              <div className="rename-cntr login-fields mb-0">
+                <label>Comments</label>
+                <textarea
+                  className="txt-add"
+                  placeholder="Enter Comments"
+                ></textarea>
+              </div>
+              <div className="text-center">
+                <Button className="butn" onClick={this.toggleRequest}>
+                  Request
+                </Button>
+              </div>
+            </ModalBody>
           </Modal>
         </div>
       </React.Fragment>
