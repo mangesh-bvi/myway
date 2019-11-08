@@ -613,9 +613,9 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-md-8 p-0">
                   <div className="title-sect">
                     <h2>Details View</h2>
-                    {/* <button onClick={this.toggleDocu} className="butn mt-0">
+                    <button onClick={this.toggleDocu} className="butn mt-0">
                           Add Watchlist
-                    </button> */}
+                    </button>
                   </div>
                   <ul className="nav cust-tabs" role="tablist">
                     <li>

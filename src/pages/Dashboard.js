@@ -1357,13 +1357,14 @@ class Dashboard extends Component {
                               {ActiveShipment}
                             </div>
                           </div>
-                        </div>
+                        
                         <span
                           className="viewmore-span"
                           onClick={this.HandleShipmentPage}
                         >
                           ...View More
                         </span>
+                        </div>
                       </div>
                     <div className="col-md-3">
                       <div className="dash-sects">

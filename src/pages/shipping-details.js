@@ -429,10 +429,18 @@ class ShippingDetails extends Component {
                   onChange={this.filterAll}
                   placeholder="Search here"
                 />
-                <button
+                {/* <button
                   onClick={this.toggleAdvSearch}
                   className="fa fa-search-plus advsearchicon"
-                ></button>
+                ></button> */}
+                <a
+                  href="#!"
+                  onClick={this.toggleAdvSearch}
+                  //style={{ display: this.state.mapDis }}
+                  className="butnAdv"
+                >
+                  +
+                </a>
                 {/* <i class="fa fa-search-plus advsearchicon" aria-hidden="true"></i> */}
                 <a
                   href="#!"
@@ -985,14 +993,6 @@ class ShippingDetails extends Component {
                         Submit
                       </button>
                       </div>
-                      </div>
-                      <div className="login-fields col-md-5">
-                        <div>
-                          <label style={{ padding: "11px" }}></label>
-                          <button type="button" className="butn">
-                            Submit
-                          </button>
-                        </div>
                       </div>
                     </div>
                  

@@ -2626,4 +2626,26 @@ table tbody tr:last-child {
 .auto-cmp + div {
   display: block !important;
 }
+
+.butnAdv {
+  background-color: cadetblue;
+  color: #fff;
+  border: 1px solid cadetblue;
+  font-family: "Bold Font";
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 40px;
+  padding: 4px;
+  /* border-radius: 50px; */
+  margin-right: 20px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+
+.butnAdv:hover {
+  background-color: white;
+  color: cadetblue;
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
