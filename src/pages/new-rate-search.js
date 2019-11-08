@@ -1424,85 +1424,60 @@ class NewRateSearch extends Component {
                 </div>
               </div>
 
-              {this.state.typesofMove == "p2p" ? null : (
-                <div className="new-rate-cntr" id="address">
-                  <div className="rate-title-cntr">
-                    <h3>Enter Addresses</h3>
-                    <div className="iconSelection" id="addressIconCntr">
-                      <p className="side-selection" id="addressName">
-                        {/* {this.state.typesofMove} */}
-                      </p>
-                      <i
-                        className="fa fa-plus"
-                        id="addressPlusClick"
-                        onClick={this.addressPlusClick}
-                      ></i>
-                      <i
-                        className="fa fa-minus d-none"
-                        id="addressMinusClick"
-                        onClick={this.addressMinusClick}
-                      ></i>
-                    </div>
-                  </div>
-                  <div className="row justify-content-center" id="addressInner">
-                    {this.state.typesofMove == "p2p" ? null : this.state
-                        .typesofMove == "d2p" ? (
-                      <>
-                        <div className="col-md-6">
-                          <div className="spe-equ">
-                            <input className="w-100" type="text" />
-                          </div>
-                          <textarea
-                            className="rate-address"
-                            placeholder="Enter PU Address"
-                            onChange={this.addressChange}
-                            name="puAdd"
-                          ></textarea>
-                        </div>
-                      </>
-                    ) : this.state.typesofMove == "d2d" ? (
-                      <>
-                        <div className="col-md-6">
-                          <div className="spe-equ">
-                            <input className="w-100" type="text" />
-                          </div>
-                          <textarea
-                            className="rate-address"
-                            placeholder="Enter PU Address"
-                            onChange={this.addressChange}
-                            name="puAdd"
-                          ></textarea>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="spe-equ">
-                            <input className="w-100" type="text" />
-                          </div>
-                          <textarea
-                            className="rate-address"
-                            placeholder="Enter Delivery Address"
-                            onChange={this.addressChange}
-                            name="deliAdd"
-                          ></textarea>
-                        </div>
-                      </>
-                    ) : this.state.typesofMove == "p2d" ? (
-                      <>
-                        <div className="col-md-6">
-                          <div className="spe-equ">
-                            <input className="w-100" type="text" />
-                          </div>
-                          <textarea
-                            className="rate-address"
-                            placeholder="Enter Delivery Address"
-                            onChange={this.addressChange}
-                            name="deliAdd"
-                          ></textarea>
-                        </div>
-                      </>
-                    ) : null}
+              <div className="new-rate-cntr" id="address">
+                <div className="rate-title-cntr">
+                  <h3>Enter Addresses</h3>
+                  <div className="iconSelection" id="addressIconCntr">
+                    <p className="side-selection" id="addressName">
+                      {/* {this.state.typesofMove} */}
+                    </p>
+                    <i
+                      className="fa fa-plus"
+                      id="addressPlusClick"
+                      onClick={this.addressPlusClick}
+                    ></i>
+                    <i
+                      className="fa fa-minus d-none"
+                      id="addressMinusClick"
+                      onClick={this.addressMinusClick}
+                    ></i>
                   </div>
                 </div>
-              )}
+                <div className="row justify-content-center" id="addressInner">
+                  <div className="col-md-6">
+                    <div className="spe-equ">
+                      <input className="w-100" type="text" />
+                    </div>
+                    <textarea
+                      className="rate-address"
+                      placeholder={
+                        this.state.typesofMove == "p2p" ||
+                        this.state.typesofMove == "p2d"
+                          ? "Enter POL"
+                          : "Enter PU Address"
+                      }
+                      onChange={this.addressChange}
+                      name="puAdd"
+                    ></textarea>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="spe-equ">
+                      <input className="w-100" type="text" />
+                    </div>
+                    <textarea
+                      className="rate-address"
+                      placeholder={
+                        this.state.typesofMove == "p2p" ||
+                        this.state.typesofMove == "d2p"
+                          ? "Enter POD"
+                          : "Enter Delivery Address"
+                      }
+                      onChange={this.addressChange}
+                      name="deliAdd"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
 
               <div className="new-rate-cntr" id="location">
                 <div className="rate-title-cntr">
