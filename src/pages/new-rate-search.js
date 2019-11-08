@@ -1545,7 +1545,7 @@ class NewRateSearch extends Component {
                       onChange={this.locationChange}
                       name="pol"
                     /> */}
-                    {/* <Map1WithAMakredInfoWindow
+                    <Map1WithAMakredInfoWindow
                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
                       loadingElement={<div style={{ height: `100%` }} />}
                       containerElement={
@@ -1558,7 +1558,7 @@ class NewRateSearch extends Component {
                         />
                       }
                       mapElement={<div style={{ height: `100%` }} />}
-                    /> */}
+                    />
                     {/* <GoogleMapReactPage
                       google={this.props.google}
                       center={{ lat: 18.5204, lng: 73.8567 }}

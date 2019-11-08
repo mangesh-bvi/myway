@@ -29,8 +29,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import makeAnimated from "react-select/animated";
 import Select from "react-select";
-import Autosuggest from "react-autosuggest";
-import Autocomplete from "react-autocomplete";
+import Autocomplete from 'react-autocomplete';
 
 const animatedComponents = makeAnimated();
 const SourceIcon = () => (
@@ -80,11 +79,14 @@ class ShippingDetails extends Component {
         maxHeight: "50%" // TODO: don't cheat, let it flow to the bottom
       },
       optionsOrigin: [],
-      FrDepDate: new Date(),
-      ToDepDate: new Date(),
-      FrArrDate: new Date(),
-      ToArrDate: new Date(),
-      originCountry: []
+      FrDepDate: null,
+      ToDepDate: null,
+      FrArrDate: null,
+      ToArrDate: null,
+      originCountry: [],
+      destCountry: [],
+      ConsigneeID:0,
+      ShipperID:0
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.MapButn = this.MapButn.bind(this);
@@ -230,11 +232,21 @@ class ShippingDetails extends Component {
     // });
   }
 
-  handleSelectCon(field, value) {
-    let fields = this.state.fields;
+  handleSelectCon(e,field,value,id)
+  {
+    let fields = this.state.fields; 
     fields[field] = value;
+    if (field == "Consignee") {
+      this.state.ConsigneeID = id.Company_ID
+    }
+    else{
+      this.state.ShipperID = id.Company_ID
+    }
+    
     this.setState({
-      fields
+      fields,
+      ConsigneeID:this.state.ConsigneeID,
+      ShipperID:this.state.ShipperID
     });
   }
 
@@ -336,10 +348,65 @@ class ShippingDetails extends Component {
     }
   }
 
-  handleChangeCountry(e) {
-    // this.setState({
-    //   originCountry: this.state.originCountry.push(e[0].value)
-    // })
+  handleChangeCountry(text,e)
+  {
+    // this.state.originCountry.push(e)
+    if (text == "OriginCountry") {
+      this.setState({
+        originCountry: e
+      })
+    }
+    else
+    {
+      this.setState({
+        destCountry: e
+      })     
+    }
+    
+  }
+
+  handleSubmit = () => {
+    debugger;
+    let self = this;
+    var FromETDDate = document.getElementById("FrDepDate").value;
+    var ToETDDate = document.getElementById("ToDepDate").value;
+    var FromETADate = document.getElementById("FrArrDate").value;
+    var ToETADate = document.getElementById("ToArrDate").value;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TrackShipmentSearch`,
+      data: {
+        StageID:parseInt(this.state.fields["ShipmentStage"]),
+        ModeofTransport:this.state.fields["ModeOfTransport"],
+        UserID:874588,
+        FromETADate:FromETADate,
+        ToETADate:ToETADate,
+        FromETDDate:FromETDDate,
+        ToETDDate:ToETDDate,
+        OriginCntry :this.state.originCountry[0].label,
+        DestCntry:this.state.destCountry[0].label,
+        POL:this.state.fields["POL"]==undefined?"":this.state.fields["POL"],
+        POD:this.state.fields["POD"]==undefined?"":this.state.fields["POD"],
+        ShipperID:this.state.ShipperID,
+        ConsigneeID:this.state.ConsigneeID      
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      self.setState({ shipmentSummary: [] });
+      for(let i = 0; i<response.data.Table.length; i++)
+      {
+      self.state.shipmentSummary.push({"BL/HBL":response.data.Table[0]['BL#/HBL#'], 
+      "Consignee":response.data.Table[i]['Consignee'], "ConsigneeID":response.data.Table[i]['ConsigneeID'],
+      "ETA":response.data.Table[i]['ETA'],"ETD":response.data.Table[i]['ETD'],"Event":"N/A",
+      "HBL#":response.data.Table[i]['HBL#'],"ModeOfTransport":response.data.Table[i]['ModeOfTransport'],
+      "POD":response.data.Table[i]['POD'], "POL":response.data.Table[i]['POL'], "SR_No":i+1,
+      "Shipper":response.data.Table[i]['Shipper'],"ShipperID":response.data.Table[i]['ShipperID'],
+      "Status":response.data.Table[i]['Current_Status']})
+      }
+      self.setState({ shipmentSummary:self.state.shipmentSummary });
+    })
+
   }
 
   render() {
@@ -636,24 +703,28 @@ class ShippingDetails extends Component {
                         </select>
                       </div>
 
-                      <div className="login-fields col-md-3">
-                        <label>Shipment Stage</label>
-                        <select name={"ShipmentStage"}>
-                          <option value="Select">Select Stage</option>
-                          {this.state.selectShipStage.map(team => (
-                            <option key={team.StageId} value={team.StageId}>
-                              {team.StageName}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-md-5">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label className="auto-cmp" style={{ padding: "0" }}>
-                            Consignee
-                          </label>
-                          {/* <Select
+                          <div className="login-fields col-md-3">
+                              <label>
+                                Shipment Stage
+                              </label>
+                              <select
+                              onChange={this.HandleChangeSelect.bind(this, "ShipmentStage")}
+                              name={"ShipmentStage"}
+                              value={this.state.fields["ShipmentStage"]}
+                            >
+                              <option value="Select">Select Stage</option>
+                              {this.state.selectShipStage.map(team => (
+                                <option key={team.StageId} value={team.StageId}>
+                                  {team.StageName}
+                                </option>
+                              ))}
+                            </select>
+                            </div>
+                          <div className="col-md-5">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div className="login-fields" style={{"width": "100%"}}>
+                            <label className="auto-cmp" style={{"padding": "0"}}>Consignee</label>
+                            {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
@@ -669,35 +740,25 @@ class ShippingDetails extends Component {
                             inputProps={inputProps}
                           /> */}
                           <Autocomplete
-                            getItemValue={item => item.Company_Name}
-                            items={this.state.Consignee}
-                            renderItem={(item, isHighlighted) => (
-                              <div
-                                style={{
-                                  background: isHighlighted
-                                    ? "lightgray"
-                                    : "white"
-                                }}
-                              >
-                                {item.Company_Name}
-                              </div>
-                            )}
-                            value={this.state.fields["Consignee"]}
-                            onChange={this.HandleChangeCon.bind(
-                              this,
-                              "Consignee"
-                            )}
-                            menuStyle={this.state.menuStyle}
-                            onSelect={this.handleSelectCon.bind(
-                              this,
-                              "Consignee"
-                            )}
-                            isMulti={true}
-                          />
+                          getItemValue={(item) => item.Company_Name}
+                          items={this.state.Consignee}
+                          renderItem={(item, isHighlighted) =>
+                            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }} value={item.Company_ID}>
+                              {item.Company_Name}
+                            </div>
+                          }
+                          onChange={this.HandleChangeCon.bind(this, "Consignee")}
+                          menuStyle={this.state.menuStyle}
+                          onSelect={this.handleSelectCon.bind(this,(item) => item.Company_ID, "Consignee")}
+                          value={this.state.fields["Consignee"]}
+                        />
+                          </div>
+                          </div>
+                        {/* </div> */}
                         </div>
-                      </div>
+                      
                       {/* </div> */}
-                    </div>
+                   
                     <div className="row">
                       <div className=" login-fields col-md-3">
                         {/* <label>SELECT</label> */}
@@ -758,30 +819,18 @@ class ShippingDetails extends Component {
                             inputProps={inputShip}
                           /> */}
                           <Autocomplete
-                            getItemValue={item => item.Company_Name}
-                            items={this.state.Shipper}
-                            renderItem={(item, isHighlighted) => (
-                              <div
-                                style={{
-                                  background: isHighlighted
-                                    ? "lightgray"
-                                    : "white"
-                                }}
-                              >
-                                {item.Company_Name}
-                              </div>
-                            )}
-                            value={this.state.fields["Shipper"]}
-                            onChange={this.HandleChangeCon.bind(
-                              this,
-                              "Shipper"
-                            )}
-                            menuStyle={this.state.menuStyle}
-                            onSelect={this.handleSelectCon.bind(
-                              this,
-                              "Shipper"
-                            )}
-                            isMulti
+                          getItemValue={(item) => item.Company_Name}
+                          items={this.state.Shipper}
+                          renderItem={(item, isHighlighted) =>
+                            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                              {item.Company_Name}
+                            </div>
+                          }
+                          value={this.state.fields["Shipper"]}
+                          onChange={this.HandleChangeCon.bind(this, "Shipper")}
+                          menuStyle={this.state.menuStyle}
+                          onSelect={this.handleSelectCon.bind(this,(item) => item.Company_ID, "Shipper")}
+                          isMulti
                           />
                         </div>
                         {/* </div> */}
@@ -827,16 +876,20 @@ class ShippingDetails extends Component {
                           <label style={{ padding: "0" }}>Origin Country</label>
                           <Select
                             className="rate-dropdown track-dropdown"
+                            id = "originCountry"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
+                            // getOptionLabel={option => option.optionsOrigin}
+                            // getOptionValue={option => option.optionsOrigin}
                             isMulti
                             options={this.state.optionsOrigin}
-                            onChange={this.handleChangeCountry.bind(this)}
-                            value={this.state.originCountry}
-                          />
+                            onChange = {this.handleChangeCountry.bind(this,"OriginCountry")}
+                            value = {this.state.originCountry}
+                            />
+                          </div>
+                          {/* </div> */}
                         </div>
                         {/* </div> */}
-                      </div>
                       <div className="col-md-3">
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
@@ -845,15 +898,21 @@ class ShippingDetails extends Component {
                           </label>
                           <Select
                             className="rate-dropdown track-dropdown"
+                            id = "destinCountry"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
                             isMulti
                             options={this.state.optionsOrigin}
-                          />
+                            onChange = {this.handleChangeCountry.bind(this,"DestinationCountry")}
+                            value = {this.state.destCountry}
+                            />
+                          </div>
+                          {/* </div> */}
+                        </div>
                         </div>
                         {/* </div> */}
-                      </div>
-                    </div>
+                      
+                 
                     <div className="row">
                       <div className="login-fields col-md-3">
                         {/* <div class="rate-radio-cntr"> */}
@@ -914,7 +973,18 @@ class ShippingDetails extends Component {
                             isMulti
                           />
                         </div>
-                        {/* </div> */}
+                        </div>
+                        <div className="login-fields col-md-5">
+                        <div>
+                        <label style={{"padding": "11px"}}></label>
+                        <button
+                        type="button"
+                        className="butn"
+                        onClick={this.handleSubmit}
+                        >
+                        Submit
+                      </button>
+                      </div>
                       </div>
                       <div className="login-fields col-md-5">
                         <div>
@@ -925,7 +995,7 @@ class ShippingDetails extends Component {
                         </div>
                       </div>
                     </div>
-                  </div>
+                 
 
                   {/* <div className="transit-sect-overflow">
                         {transitpopup.map((cell, i) => {
@@ -984,12 +1054,14 @@ class ShippingDetails extends Component {
                           );
                         })}
                       </div> */}
-                </div>
+            </div>
+            </div>
               </ModalBody>
             </Modal>
-          </div>
-        </div>
-      </div>
+          
+         </div>
+         </div>
+         </div>
     );
   }
 }
