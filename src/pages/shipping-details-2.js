@@ -223,7 +223,8 @@ class ShippingDetailsTwo extends Component {
       ConsigneeID: 0,
       ShipperID: 0,
       HblNo: "",
-      MapsDetailsData: []
+      MapsDetailsData: [],
+      showContent: false
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -600,6 +601,12 @@ class ShippingDetailsTwo extends Component {
       }
     }
 
+    let className = "butn view-btn less-btn";
+    if (this.state.showContent == true) {
+      className = "butn cancel-butn m-0";
+    } else {
+      className = "butn view-btn less-btn";
+    }
     return (
       <div>
         <Headers />
@@ -978,11 +985,34 @@ class ShippingDetailsTwo extends Component {
                             <a
                               href="#!"
                               id="toggler"
-                              className="butn view-btn less-btn"
-                              onClick={this.toggleContainer}
+                              className={className}
+                              onClick={() =>
+                                this.setState({
+                                  showContent: !this.state.showContent
+                                })
+                              }
                             >
-                              Show Less
+                              {this.state.showContent ? (
+                                <span>VIEW LESS</span>
+                              ) : (
+                                <span>VIEW MORE</span>
+                              )}
                             </a>
+                            {/* <button
+                              className={className}
+                              id="toggler"
+                              onClick={() =>
+                                this.setState({
+                                  showContent: !this.state.showContent
+                                })
+                              }
+                            >
+                              {this.state.showContent ? (
+                                <span>VIEW LESS</span>
+                              ) : (
+                                <span>VIEW MORE</span>
+                              )}
+                            </button> */}
                           </div>
                         </div>
                       </div>
