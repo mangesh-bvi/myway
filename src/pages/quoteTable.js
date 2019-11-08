@@ -12,6 +12,7 @@ import SideMenu from "../component/sidemenu";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import DownArrow from "./../assets/img/down-arrow.png";
 import Copy from "./../assets/img/copy.png";
+import Book from "./../assets/img/calendar.svg";
 import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
@@ -31,15 +32,23 @@ class QuoteTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
+      modalBook: false,
       quotesData: []
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
+    this.toggleBook = this.toggleBook.bind(this);
   }
 
   toggleDel() {
     this.setState(prevState => ({
       modalDel: !prevState.modalDel
+    }));
+  }
+  toggleBook(e) {
+    e.stopPropagation();
+    this.setState(prevState => ({
+      modalBook: !prevState.modalBook
     }));
   }
 
@@ -69,7 +78,7 @@ class QuoteTable extends Component {
   }
 
   HandleChangeShipmentDetails(QuoteNo) {
-    var data = [QuoteNo,"Quotes"]
+    var data = [QuoteNo, "Quotes"];
     this.props.history.push({
       pathname: "rate-finalizing-still",
       state: { detail: data }
@@ -98,10 +107,11 @@ class QuoteTable extends Component {
             <div className="title-sect">
               <h2>Quote Table</h2>
             </div>
-            <div className="ag-fresh">
+            <div className="ag-fresh redirect-row">
               <ReactTable
                 data={quotesData}
                 filterable
+                minRows={1}
                 columns={[
                   {
                     Header: "Quote No",
@@ -116,7 +126,7 @@ class QuoteTable extends Component {
                     accessor: "Contact"
                   },
                   {
-                    Header: "type",
+                    Header: "Type",
                     accessor: "type"
                   },
                   {
@@ -128,7 +138,8 @@ class QuoteTable extends Component {
                     accessor: "Notes"
                   },
                   {
-                    Header: "Actions",
+                    Header: "Action",
+                    sortable: false,
                     Cell: row => {
                       return (
                         <div className="action-cntr">
@@ -139,6 +150,16 @@ class QuoteTable extends Component {
                               alt="view-icon"
                             />
                           </a> */}
+                          <span
+                            title="Create Booking"
+                            onClick={this.toggleBook}
+                          >
+                            <img
+                              className="actionicon"
+                              src={Book}
+                              alt="booking-icon"
+                            />
+                          </span>
                           <a href="/rate-finalizing">
                             <img
                               className="actionicon"
@@ -171,6 +192,54 @@ class QuoteTable extends Component {
               <Button className="butn cancel-butn" onClick={this.toggleDel}>
                 No
               </Button>
+            </ModalBody>
+          </Modal>
+          <Modal
+            className="delete-popup pol-pod-popup"
+            isOpen={this.state.modalBook}
+            toggle={this.toggleBook}
+            centered={true}
+          >
+            <ModalBody>
+              <h3 className="mb-4">Create Booking</h3>
+              <div className="rename-cntr login-fields">
+                <label>Quotation Price</label>
+                <input type="text" value="5000" disabled />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Consignee Details</label>
+                <select>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                </select>
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Notification Person</label>
+                <select>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                </select>
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Cargo Details</label>
+                <select>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                </select>
+              </div>
+              <a
+                href="/booking-table"
+                className="butn"
+                onClick={this.toggleBook}
+              >
+                Create Booking
+              </a>
             </ModalBody>
           </Modal>
         </div>

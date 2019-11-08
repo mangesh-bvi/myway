@@ -50,7 +50,7 @@ class NewRateSearch extends Component {
       tempratureEquipment: "",
       isHazMat: "",
       incoTerms: "",
-      typesofMove: "d2p",
+      typesofMove: "",
       POL: "",
       POD: "",
       PUAddress: "",
@@ -73,7 +73,7 @@ class NewRateSearch extends Component {
       podCountry: "",
       pod: "",
       equipDrop: [],
-      country:[],
+      country: [],
       StandardContainerCode: [],
       multi: true,
       selected: [],
@@ -84,8 +84,13 @@ class NewRateSearch extends Component {
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
-    this.HandleBindPOLPODData = this.HandleBindPOLPODData.bind(this);
+    this.HandleBindIncoTeamData = this.HandleBindIncoTeamData.bind(this);
     this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
+    this.HandlePOLPODListBind = this.HandlePOLPODListBind.bind(this);
+  }
+
+  componentDidMount() {
+    this.HandleCounterListBind();
   }
 
   togglePuAdd() {
@@ -94,10 +99,43 @@ class NewRateSearch extends Component {
     }));
   }
 
-  componentDidMount() {
-    this.HandleCounterListBind();
+  HandleSpecialEqtCheck(e) {
+    debugger;
+    let self = this;
+    if (e.target.checked) {
+      self.setState({ isSpacialEqt: false });
+    } else {
+      var elmnt1 = document.getElementsByName("spequType");
+      var elmnt1Len = elmnt1.length;
+      for (let index = 0; index < elmnt1Len; index++) {
+        if (elmnt1 != null && elmnt1 != "undefined") {
+          elmnt1[0].remove();
+          this.setState({
+            spEqtSelect: []
+          });
+        }
+      }
+      self.setState({ isSpacialEqt: true, spEqtSelect: [] });
+    }
   }
 
+  //this Method For POD And POD Data Bind
+  HandlePOLPODListBind(type) {
+    debugger;
+
+    var shipmentType =
+      type == "sea" ? "O" : type == "air" ? "A" : type == "road" ? "I" : "";
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ShipmentStages`,
+      data: {
+        Mode: shipmentType
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
+  }
   //this Method for Bind Country Dropdown
   HandleCounterListBind() {
     let self = this;
@@ -158,7 +196,7 @@ class NewRateSearch extends Component {
     }
   }
 
-  HandleBindPOLPODData() {
+  HandleBindIncoTeamData() {
     let self = this;
     axios({
       method: "post",
@@ -169,21 +207,21 @@ class NewRateSearch extends Component {
       debugger;
       var table1 = response.data.Table1;
       var table2 = response.data.Table2;
-      var finalArray = [];
+      // var finalArray = [];
 
-      var standerEquipment = new Object();
-      standerEquipment.StandardContainerCode = "Special Equipment";
-      standerEquipment.ProfileCodeID = "Special Equipment";
-      standerEquipment.ContainerName = "Special Equipment";
+      // var standerEquipment = new Object();
+      // standerEquipment.StandardContainerCode = "Special Equipment";
+      // standerEquipment.ProfileCodeID = "Special Equipment";
+      // standerEquipment.ContainerName = "Special Equipment";
 
-      for (let index = 0; index < table1.length; index++) {
-        finalArray.push(table1[index]);
-      }
+      // for (let index = 0; index < table1.length; index++) {
+      //   finalArray.push(table1[index]);
+      // }
 
-      finalArray.push(standerEquipment);
+      // finalArray.push(standerEquipment);
 
       self.setState({
-        StandardContainerCode: finalArray,
+        StandardContainerCode: table1,
         SpacialEqmt: table2
       });
     });
@@ -191,7 +229,7 @@ class NewRateSearch extends Component {
 
   HandleTypeofMove(e) {
     this.setState({ typesofMove: e.target.id });
-
+    this.HandleGetIncoTerms();
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null)
@@ -236,14 +274,6 @@ class NewRateSearch extends Component {
     document.getElementById("typeMoveMinusClick").classList.add("d-none");
   };
 
-  HandlePOLChange = POL => {
-    debugger;
-
-    this.setState({ POL });
-  };
-  HandlePODChange = POD => {
-    this.setState({ POD });
-  };
   ShipmentTypeClick = e => {
     let type = e.target.value;
     this.setState({ shipmentType: type });
@@ -270,21 +300,21 @@ class NewRateSearch extends Component {
   };
   modeofTransportClick = e => {
     let type = e.target.value;
-    debugger;
+
     this.setState({ modeoftransport: type });
     document.getElementById("dvroad").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvair").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvsea").classList.add("new-radio-rate-cntr-hide");
-    if (type == "air") {
+    if (type == "AIR") {
       document
         .getElementById("dvair")
         .classList.remove("new-radio-rate-cntr-hide");
-    } else if (type == "sea") {
-      this.setState({ containerLoadType: "fcl" });
+    } else if (type == "SEA") {
+      this.setState({ containerLoadType: "FCL" });
       document
         .getElementById("dvsea")
         .classList.remove("new-radio-rate-cntr-hide");
-    } else if (type == "road") {
+    } else if (type == "ROAD") {
       document
         .getElementById("dvroad")
         .classList.remove("new-radio-rate-cntr-hide");
@@ -301,6 +331,8 @@ class NewRateSearch extends Component {
     document.getElementById("shipmentTypeName").classList.remove("d-none");
     document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
     document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
+
+    this.HandlePOLPODListBind(type);
   };
   modeTransPlusClick = e => {
     document.getElementById("modeTransInner").classList.remove("modeTransType");
@@ -327,8 +359,8 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
-    if (type == "fcl") {
-      this.HandleBindPOLPODData();
+    if (type == "FCL") {
+      this.HandleBindIncoTeamData();
     }
   };
   cntrLoadPlusClick = e => {
@@ -415,13 +447,31 @@ class NewRateSearch extends Component {
     ) {
       // next
       document.getElementById("location").classList.add("location");
-      document.getElementById("addressInner").classList.add("addressType");
-      document
-        .getElementById("addressIconCntr")
-        .classList.add("addressIconCntr");
-      document.getElementById("addressName").classList.remove("d-none");
-      document.getElementById("addressMinusClick").classList.add("d-none");
-      document.getElementById("addressPlusClick").classList.remove("d-none");
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMoveInner").classList.add("typeMoveType");
+      else document.getElementById("addressInner").classList.add("addressType");
+
+      if (document.getElementById("addressInner") == null)
+        document
+          .getElementById("typeMoveIconCntr")
+          .classList.add("typeMoveIconCntr");
+      else
+        document
+          .getElementById("addressIconCntr")
+          .classList.add("addressIconCntr");
+
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMoveName").classList.remove("d-none");
+      else document.getElementById("addressName").classList.remove("d-none");
+
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMoveMinusClick").classList.add("d-none");
+      else document.getElementById("addressMinusClick").classList.add("d-none");
+
+      if (document.getElementById("addressInner") == null)
+        document.getElementById("typeMovePlusClick").classList.remove("d-none");
+      else
+        document.getElementById("addressPlusClick").classList.remove("d-none");
     }
   };
   locationPlusClick = e => {
@@ -501,7 +551,7 @@ class NewRateSearch extends Component {
     document.getElementById("equipTypeMinusClick").classList.add("d-none");
   };
 
-  equipChange = value => {
+  equipChange = (value, option) => {
     debugger;
 
     if (value !== null) {
@@ -589,6 +639,9 @@ class NewRateSearch extends Component {
       this.setState({ selected: [] });
     }
 
+    let type = option.value;
+    this.setState({ equQuan: type });
+
     if (this.state.equQuan !== "") {
       // next
       document.getElementById("equipType").classList.add("equipType");
@@ -638,11 +691,17 @@ class NewRateSearch extends Component {
 
         let cont = document.createElement("p");
         cont.innerHTML = dropVal;
+
+        let quan = document.createElement("span");
+        quan.innerHTML = "Quan :";
         let inpNum = document.createElement("input");
         let typ = document.createAttribute("type");
         typ.value = "number";
         inpNum.setAttributeNode(typ);
         inpNum.value = 1;
+
+        let temp = document.createElement("span");
+        temp.innerHTML = "Temp :";
         let inpTemp = document.createElement("input");
         let typTemp = document.createAttribute("type");
         typTemp.value = "number";
@@ -695,7 +754,9 @@ class NewRateSearch extends Component {
         divFC.appendChild(divC);
 
         div.appendChild(cont);
+        div.appendChild(quan);
         div.appendChild(inpNum);
+        div.appendChild(temp);
         div.appendChild(inpTemp);
         div.appendChild(divFC); // faren
         document.getElementById("specEquipAppend").appendChild(div);
@@ -729,6 +790,7 @@ class NewRateSearch extends Component {
       { value: "40 DC", label: "40 DC" },
       { value: "50 DC", label: "50 DC" }
     ];
+
     return this.state.values.map((el, index) => {
       return (
         <div className="equip-plus-cntr">
@@ -798,7 +860,6 @@ class NewRateSearch extends Component {
   render() {
     let self = this;
 
-    
     const optionsSpeEqu = [
       { value: "Refer Type", label: "Refer Type" },
       { value: "abc", label: "abc" },
@@ -814,6 +875,20 @@ class NewRateSearch extends Component {
       { value: "69.6987", label: "69.6987" },
       { value: "60.0369", label: "60.0369" }
     ];
+    let unStack = "";
+    if (
+      this.state.containerLoadType === "ltl" ||
+      this.state.containerLoadType === "lcl" ||
+      this.state.containerLoadType === "air"
+    ) {
+      unStack = (
+        <>
+          <input id="unstack" type="checkbox" name={"haz-mat"} />
+          <label htmlFor="unstack">Unstackable</label>
+        </>
+      );
+    }
+
     return (
       <div>
         <Headers />
@@ -821,8 +896,8 @@ class NewRateSearch extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt" style={{ backgroundColor: "#f1f2f2" }}>
-            <div class="rate-bg">
+          <div className="cls-rt">
+            <div>
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">
                   <h3>Shipment Type</h3>
@@ -915,7 +990,7 @@ class NewRateSearch extends Component {
                     <input
                       type="radio"
                       name="mode-transport"
-                      value="sea"
+                      value="SEA"
                       onClick={this.modeofTransportClick}
                       id="sea"
                     />
@@ -925,7 +1000,7 @@ class NewRateSearch extends Component {
                     <input
                       type="radio"
                       name="mode-transport"
-                      value="air"
+                      value="AIR"
                       onClick={this.modeofTransportClick}
                       id="air"
                     />
@@ -936,7 +1011,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="mode-transport"
                       name="mode-transport"
-                      value="road"
+                      value="ROAD"
                       onClick={this.modeofTransportClick}
                       id="road"
                     />
@@ -972,7 +1047,7 @@ class NewRateSearch extends Component {
                       <input
                         type="radio"
                         name="cntr-load"
-                        value="fcl"
+                        value="FCL"
                         onClick={this.ContainerLoadTypeClick}
                         id="fcl"
                       />
@@ -981,7 +1056,7 @@ class NewRateSearch extends Component {
                     <div>
                       <input
                         type="radio"
-                        value="lcl"
+                        value="LCL"
                         onClick={this.ContainerLoadTypeClick}
                         name="cntr-load"
                         id="lcl"
@@ -997,7 +1072,7 @@ class NewRateSearch extends Component {
                       <input
                         type="radio"
                         name="cntr-load-air"
-                        value="air"
+                        value="AIR"
                         onClick={this.ContainerLoadTypeClick}
                         id="Air"
                       />
@@ -1012,7 +1087,7 @@ class NewRateSearch extends Component {
                       <input
                         type="radio"
                         name="cntr-load-road"
-                        value="ftl"
+                        value="FTL"
                         onClick={this.ContainerLoadTypeClick}
                         id="ftl"
                       />
@@ -1021,7 +1096,7 @@ class NewRateSearch extends Component {
                     <div>
                       <input
                         type="radio"
-                        value="ltl"
+                        value="LTL"
                         onClick={this.ContainerLoadTypeClick}
                         name="cntr-load-road"
                         id="ltl"
@@ -1031,7 +1106,7 @@ class NewRateSearch extends Component {
                   </div>
                 </div>
               </div>
-              {this.state.containerLoadType != "fcl" ? (
+              {this.state.containerLoadType != "FCL" ? (
                 <>
                   <div className="new-rate-cntr" id="cbm">
                     <div className="rate-title-cntr">
@@ -1112,7 +1187,7 @@ class NewRateSearch extends Component {
                             <input
                               type="text"
                               placeholder={
-                                this.state.modeoftransport != "air"
+                                this.state.modeoftransport != "AIR"
                                   ? "CBM"
                                   : "KG"
                               }
@@ -1122,13 +1197,37 @@ class NewRateSearch extends Component {
                           </div>
                         </div>
                       </div>
+                      <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                        <input id="haz-mat" type="checkbox" name={"haz-mat"} />
+                        <label htmlFor="haz-mat">HazMat</label>
+                        {/* <input id="unstack" type="checkbox" name={"haz-mat"} />
+                        <label htmlFor="unstack">Unstackable</label> */}
+                        {unStack}
+                        <input
+                          id="cust-clear"
+                          type="checkbox"
+                          name={"haz-mat"}
+                          onChange={this.HandleGetIncoTerms.bind(this)}
+                        />
+                        <label htmlFor="cust-clear">Custom Clearance</label>
+                      </div>
+                      <div className="spe-equ justify-content-center">
+                        <label>Inco Terms :</label>
+                        <input
+                          type="text"
+                          placeholder="Inco Terms"
+                          className="w-50"
+                          disabled
+                          name="incoTerms"
+                          value={self.state.incoTerms}
+                        />
+                      </div>
                     </div>
                   </div>
-                   
                 </>
               ) : null}
 
-              {this.state.containerLoadType == "fcl" ? (
+              {this.state.containerLoadType == "FCL" ? (
                 <div className="new-rate-cntr" id="equipType">
                   <div className="rate-title-cntr">
                     <h3>Equipment Types</h3>
@@ -1160,6 +1259,7 @@ class NewRateSearch extends Component {
                         value={self.state.selected}
                         showNewOptionAtTop={false}
                       />
+
                       {/* <div className="spe-equ">
                       <input
                         type="text"
@@ -1172,7 +1272,17 @@ class NewRateSearch extends Component {
                       onClick={this.addClick.bind(this)}
                     ></i> */}
                     </div>
+
                     <div id="equipAppend"></div>
+                    <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                      <input
+                        id="Special-equType"
+                        type="checkbox"
+                        name={"Special-equType"}
+                        onChange={this.HandleSpecialEqtCheck.bind(this)}
+                      />
+                      <label htmlFor="Special-equType">Special Equipment</label>
+                    </div>
                     {this.createUI()}
                     {/* <div className="remember-forgot">
                     <input
@@ -1207,8 +1317,9 @@ class NewRateSearch extends Component {
                     <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                       <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="haz-mat">HazMat</label>
-                      <input id="unstack" type="checkbox" name={"haz-mat"} />
-                      <label htmlFor="unstack">Unstackable</label>
+                      {/* <input id="unstack" type="checkbox" name={"haz-mat"} />
+                      <label htmlFor="unstack">Unstackable</label> */}
+                      {this.unStack}
                       <input
                         id="cust-clear"
                         type="checkbox"
@@ -1318,6 +1429,9 @@ class NewRateSearch extends Component {
                         .typesofMove == "d2p" ? (
                       <>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter PU Address"
@@ -1329,6 +1443,9 @@ class NewRateSearch extends Component {
                     ) : this.state.typesofMove == "d2d" ? (
                       <>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter PU Address"
@@ -1337,6 +1454,9 @@ class NewRateSearch extends Component {
                           ></textarea>
                         </div>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter Delivery Address"
@@ -1348,6 +1468,9 @@ class NewRateSearch extends Component {
                     ) : this.state.typesofMove == "p2d" ? (
                       <>
                         <div className="col-md-6">
+                          <div className="spe-equ">
+                            <input className="w-100" type="text" />
+                          </div>
                           <textarea
                             className="rate-address"
                             placeholder="Enter Delivery Address"
@@ -1382,11 +1505,10 @@ class NewRateSearch extends Component {
                 </div>
                 <div className="row polpodcls" id="locationInner">
                   <div className="col-md-6 ">
-                    <Select
-                      className="rate-dropdown"
-                      closeMenuOnSelect={false}
-                      getOptionLabel={option=>option.CountryName}
-                      getOptionValue={option=>option.SUCountry}
+                    {/* <Select
+                      className="rate-dropdown w-100 mb-4"
+                      getOptionLabel={option => option.CountryName}
+                      getOptionValue={option => option.SUCountry}
                       components={animatedComponents}
                       options={self.state.country}
                       placeholder="Select Country"
@@ -1395,15 +1517,14 @@ class NewRateSearch extends Component {
                       id="yooo"
                     />
                     <Select
-                      className="rate-dropdown mb-4"
-                      closeMenuOnSelect={false}
+                      className="rate-dropdown w-100 mb-4"
                       components={animatedComponents}
                       options={optionsPOD}
                       placeholder="Select POD"
                       // value={this.state.pod}
                       onChange={this.locationChange}
                       name="pol"
-                    />
+                    /> */}
                     <Map1WithAMakredInfoWindow
                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
                       loadingElement={<div style={{ height: `100%` }} />}
@@ -1418,13 +1539,19 @@ class NewRateSearch extends Component {
                       }
                       mapElement={<div style={{ height: `100%` }} />}
                     />
+                    {/* <GoogleMapReactPage
+                      google={this.props.google}
+                      center={{ lat: 18.5204, lng: 73.8567 }}
+                      height="300px"
+                      zoom={15}
+                    /> */}
                   </div>
                   <div className="col-md-6">
-                    <Select
-                      className="rate-dropdown mb-4"
+                    {/* <Select
+                      className="rate-dropdown w-100 mb-4"
                       closeMenuOnSelect={false}
-                      getOptionLabel={option=>option.CountryName}
-                      getOptionValue={option=>option.SUCountry}
+                      getOptionLabel={option => option.CountryName}
+                      getOptionValue={option => option.SUCountry}
                       components={animatedComponents}
                       options={self.state.country}
                       placeholder="Select POL"
@@ -1433,7 +1560,7 @@ class NewRateSearch extends Component {
                       name="podCountry"
                     />
                     <Select
-                      className="rate-dropdown mb-4"
+                      className="rate-dropdown w-100 mb-4"
                       closeMenuOnSelect={false}
                       components={animatedComponents}
                       options={optionsPOD}
@@ -1441,7 +1568,7 @@ class NewRateSearch extends Component {
                       // value={this.state.pod}
                       onChange={this.locationChange}
                       name="pod"
-                    />
+                    /> */}
                     <Map2WithAMakredInfoWindow
                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
                       loadingElement={<div style={{ height: `100%` }} />}

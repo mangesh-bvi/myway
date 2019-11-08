@@ -29,7 +29,8 @@ class SpotRateTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
-      spotRateGrid: []
+      spotRateGrid: [],
+      pageNo: 10
     };
     this.HandleListSpotRateGrid = this.HandleListSpotRateGrid.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -46,25 +47,43 @@ class SpotRateTable extends Component {
   }
 
   HandleListSpotRateGrid() {
+    debugger;
     let self = this;
     var userid = window.localStorage.getItem("userid");
+    var date = new Date();
+    var fromDate = "01/01/" + date.getFullYear();
+    var currentDate =
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SpotRateGridAPI`,
       data: {
-        UserId: userid,
-        PageNo: 1
+        UserId: 431,
+        Fromdate: fromDate, //"01/01/2019",
+        ToDate: currentDate //"10/25/2019"
       },
       headers: authHeader()
-    }).then(function(response) {
-      var data = [];
-      data = response.data.Table1;
-      self.setState({ spotRateGrid: data }); ///problem not working setstat undefined
-    });
+    })
+      .then(function(response) {
+        debugger;
+        var data = [];
+        data = response.data.Table;
+        if (data != null && data != "") {
+          self.setState({ spotRateGrid: data });
+        } else {
+          self.setState({ pageNo: 1 });
+        }
+      })
+      .catch();
+    {
+      var actData = [];
+      actData.push({
+        OriginPort_Name: "No Data Found"
+      });
+      self.setState({ spotRateGrid: actData });
+    }
   }
-
-   
 
   HandleRowClickEvt = (rowInfo, column) => {
     return {
@@ -76,7 +95,7 @@ class SpotRateTable extends Component {
   };
 
   render() {
-    const { shipmentSummary } = this.state;
+    const { spotRateGrid } = this.state;
     return (
       <div>
         <Headers />
@@ -90,137 +109,73 @@ class SpotRateTable extends Component {
             </div>
             <div className="ag-fresh">
               <ReactTable
-                data={shipmentSummary}
+                data={spotRateGrid}
+                noDataText="No Data Found"
                 filterable
                 columns={[
                   {
                     columns: [
                       {
-                        Header: "Consignee Name",
-                        accessor: "Consignee"
+                        Header: "Rate Query ID",
+                        accessor: "RateQueryId"
                       },
                       {
-                        Cell: row => {
-                          if (row.value == "Air") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Plane} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Ocean") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Ship} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Inland") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Truck} />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Railway") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Rail} />
-                              </div>
-                            );
-                          }
-                        },
+                        Header: "Shipper Name",
+                        accessor: "ShipperName"
+                      },
+
+                      {
                         Header: "Shipment Type",
-                        accessor: "ModeOfTransport"
+                        accessor: "Mode"
                       },
                       {
                         Header: "POL",
-                        accessor: "POL"
+                        accessor: "OriginPort_Name"
                       },
 
                       {
                         Header: "POD",
-                        accessor: "POD"
+                        accessor: "DestinationPort_Name"
                       },
                       {
                         Header: "Expiry Date",
-                        accessor: "ETA"
+                        accessor: "ExpiryDate"
                       },
                       {
-                        Cell: row => {
-                          if (row.value == "Planning in Progress") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Departed") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Delivered}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Transshipped") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Transit}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Arrived") {
-                            return (
-                              <div>
-                                <img
-                                  style={{ width: "35px", textAlign: "center" }}
-                                  src={Arrived}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.value == "Delivered") {
-                            return (
-                              <div className="shipment-img">
-                                <img src={Delivered} />
-                              </div>
-                            );
-                          }
-
-                          if (row.value == "DO Issued") {
-                            return <div>{row.value}</div>;
-                          }
-                        },
                         Header: "Status",
                         accessor: "Status"
                       },
                       {
-                        Cell: () => {
-                          return (
-                            <div
-                              onClick={this.toggleDel}
-                              className="tab-icon-view"
-                            >
-                              <img src={Eye} alt="eye icon" />
-                            </div>
-                          );
+                        Cell: row => {
+                          var noData = row.original["OriginPort_Name"];
+                          debugger;
+                          if (noData != "No Data Found") {
+                            return (
+                              <div
+                                // onClick={this.toggleDel}
+                                className="tab-icon-view"
+                              >
+                                <img src={Eye} alt="eye icon" />
+                              </div>
+                            );
+                          } else {
+                            return (
+                              <div
+                                // onClick={this.toggleDel}
+                                className="tab-icon-view"
+                              ></div>
+                            );
+                          }
                         },
-                        Header: "Actions"
+                        Header: "Action",
+                        sortable: false
                       }
                     ]
                   }
                 ]}
                 className="-striped -highlight"
-                defaultPageSize={10}
+                defaultPageSize={this.state.pageNo}
+                minRows={1}
                 // getTrProps={this.HandleRowClickEvt}
               />
             </div>

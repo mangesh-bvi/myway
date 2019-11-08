@@ -55,28 +55,28 @@ class ShippingDetails extends Component {
       modalAdvSearch: false,
       selectMOT: [
         { key: 0, value: "Select Mode" },
-        { key: 'A', value: "Air" },
-        { key: 'O', value: "Ocean" },
-        { key: 'I', value: "Inland" }
+        { key: "A", value: "Air" },
+        { key: "O", value: "Ocean" },
+        { key: "I", value: "Inland" }
       ],
       selectShipStage: [],
       fields: {},
-      value: '',
+      value: "",
       Consignee: [],
       Shipper: [],
       POL: [],
       POD: [],
-      menuStyle:{
-        borderRadius: '3px',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
-        background: 'rgba(255, 255, 255, 0.9)',
-        padding: '2px 0',
-        fontSize: '90%',
-        position: 'fixed',
-        overflow: 'auto',
-        zIndex: '1',
-        maxWidth: '300px',
-        maxHeight: '50%', // TODO: don't cheat, let it flow to the bottom
+      menuStyle: {
+        borderRadius: "3px",
+        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.1)",
+        background: "rgba(255, 255, 255, 0.9)",
+        padding: "2px 0",
+        fontSize: "90%",
+        position: "fixed",
+        overflow: "auto",
+        zIndex: "1",
+        maxWidth: "300px",
+        maxHeight: "50%" // TODO: don't cheat, let it flow to the bottom
       },
       optionsOrigin: [],
       FrDepDate: null,
@@ -106,22 +106,21 @@ class ShippingDetails extends Component {
     debugger;
     if (filtered.length > 1 && this.state.filterAll.length) {
       // NOTE: this removes any FILTER ALL filter
-      const filterAll = '';
-      this.setState({ filtered: filtered.filter((item) => item.id != 'all'), filterAll })
-    }
-    else
-      this.setState({ filtered });
+      const filterAll = "";
+      this.setState({
+        filtered: filtered.filter(item => item.id != "all"),
+        filterAll
+      });
+    } else this.setState({ filtered });
   }
   filterAll(e) {
     const { value } = e.target;
     const filterAll = value;
-    const filtered = [{ id: 'all', value: filterAll }];
-     
+    const filtered = [{ id: "all", value: filterAll }];
+
     this.setState({ filterAll, filtered });
   }
 
-
-  
   HandleListShipmentSummey() {
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -189,14 +188,12 @@ class ShippingDetails extends Component {
     }));
   }
 
-  HandleChangeSelect(field,e) {
-    let fields = this.state.fields; 
+  HandleChangeSelect(field, e) {
+    let fields = this.state.fields;
     if (e.target.value == "Select") {
-      fields[field] = ""
-    }
-    else
-    {
-    fields[field] = e.target.value;
+      fields[field] = "";
+    } else {
+      fields[field] = e.target.value;
     }
     this.setState({
       fields
@@ -204,34 +201,32 @@ class ShippingDetails extends Component {
     this.BindShipmentStage();
   }
 
-  HandleChangeCon(field,e)
-  {
+  HandleChangeCon(field, e) {
     let self = this;
-    let fields = this.state.fields; 
-    fields[field] =e.target.value;
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/CustomerList`,
       data: {
-        CustomerName:e.target.value, 
-        CustomerType:'Existing'
+        CustomerName: e.target.value,
+        CustomerType: "Existing"
       },
       headers: authHeader()
     }).then(function(response) {
       debugger;
       if (field == "Consignee") {
         self.setState({
-          Consignee:response.data.Table,
+          Consignee: response.data.Table,
           fields
-        })
-      }
-      else{
+        });
+      } else {
         self.setState({
-          Shipper:response.data.Table,
+          Shipper: response.data.Table,
           fields
-        })
+        });
       }
-    })
+    });
     // this.setState({
     //   value: this.state.value
     // });
@@ -255,8 +250,7 @@ class ShippingDetails extends Component {
     });
   }
 
-  HandleCountryDropDown()
-  {
+  HandleCountryDropDown() {
     let self = this;
     axios({
       method: "post",
@@ -265,64 +259,62 @@ class ShippingDetails extends Component {
     }).then(function(response) {
       debugger;
       for (let i = 0; i < response.data.Table.length; i++) {
-        self.state.optionsOrigin.push({value:response.data.Table[i].SUCountry, 
-        label:response.data.Table[i].CountryName})
+        self.state.optionsOrigin.push({
+          value: response.data.Table[i].SUCountry,
+          label: response.data.Table[i].CountryName
+        });
       }
 
       self.setState({
-        optionsOrigin:self.state.optionsOrigin,
-      })
-    })
+        optionsOrigin: self.state.optionsOrigin
+      });
+    });
   }
 
-  HandleChangePOLPOD(field,e)
-  {
+  HandleChangePOLPOD(field, e) {
     let self = this;
-    let fields = this.state.fields; 
-    fields[field] =e.target.value;
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
     self.setState({
       POL: []
-    })
+    });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/PolPodByCountry`,
       data: {
-            Mode:this.state.fields["ModeOfTransport"],
-            Search:e.target.value,
-            CountryCode:"IN"
+        Mode: this.state.fields["ModeOfTransport"],
+        Search: e.target.value,
+        CountryCode: "IN"
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;   
+      debugger;
       if (field == "POL") {
         self.setState({
-          POL:response.data.Table,
-        })
-      }
-      else{
+          POL: response.data.Table
+        });
+      } else {
         self.setState({
-          POD:response.data.Table,
-        })
+          POD: response.data.Table
+        });
       }
-    })
-    this.setState({
-      fields
-    })
-  }
-
-  handleSelectPOLPOD(field, value)
-  {
-    let fields = this.state.fields; 
-    fields[field] =value;
+    });
     this.setState({
       fields
     });
   }
 
-  BindShipmentStage()
-  {
+  handleSelectPOLPOD(field, value) {
+    let fields = this.state.fields;
+    fields[field] = value;
+    this.setState({
+      fields
+    });
+  }
+
+  BindShipmentStage() {
     let self = this;
-    var Mode = this.state.fields["ModeOfTransport"]
+    var Mode = this.state.fields["ModeOfTransport"];
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentStages`,
@@ -332,33 +324,29 @@ class ShippingDetails extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      self.setState({selectShipStage:response.data.Table})
-    })
+      self.setState({ selectShipStage: response.data.Table });
+    });
   }
 
-  handleChange(field,e) {
+  handleChange(field, e) {
     if (field == "FromDeparture") {
       this.setState({
         FrDepDate: e
       });
-    }   
-    else if(field == "ToDeparture")
-    {
+    } else if (field == "ToDeparture") {
       this.setState({
         ToDepDate: e
       });
-    }
-    else if (field == "FromArrival") {
+    } else if (field == "FromArrival") {
       this.setState({
         FrArrDate: e
       });
-    }
-    else{
+    } else {
       this.setState({
         ToArrDate: e
       });
     }
-  };
+  }
 
   handleChangeCountry(text,e)
   {
@@ -442,9 +430,9 @@ class ShippingDetails extends Component {
                   placeholder="Search here"
                 />
                 <button
-                      onClick={this.toggleAdvSearch}
-                      className="fa fa-search-plus advsearchicon"
-                    ></button>
+                  onClick={this.toggleAdvSearch}
+                  className="fa fa-search-plus advsearchicon"
+                ></button>
                 {/* <i class="fa fa-search-plus advsearchicon" aria-hidden="true"></i> */}
                 <a
                   href="#!"
@@ -478,7 +466,10 @@ class ShippingDetails extends Component {
                 </GoogleMapReact>
               </div>
             </div>
-            <div style={{ display: this.state.mapDis }} className="ag-fresh">
+            <div
+              style={{ display: this.state.mapDis }}
+              className="ag-fresh redirect-row"
+            >
               <ReactTable
                 data={shipmentSummary}
                 // noDataText="<i className='fa fa-refresh fa-spin'></i>"
@@ -500,25 +491,31 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           if (row.value == "Air") {
                             return (
-                              <div className="shipment-img">
-                                <img src={Plane} />
-                              </div>
+                              <>
+                                <div
+                                  title="Plane"
+                                  id="transit"
+                                  className="shipment-img"
+                                >
+                                  <img src={Plane} />
+                                </div>
+                              </>
                             );
                           } else if (row.value == "Ocean") {
                             return (
-                              <div className="shipment-img">
+                              <div title="Ship" className="shipment-img">
                                 <img src={Ship} />
                               </div>
                             );
                           } else if (row.value == "Inland") {
                             return (
-                              <div className="shipment-img">
+                              <div title="Truck" className="shipment-img">
                                 <img src={Truck} />
                               </div>
                             );
                           } else if (row.value == "Railway") {
                             return (
-                              <div className="shipment-img">
+                              <div title="Rail" className="shipment-img">
                                 <img src={Rail} />
                               </div>
                             );
@@ -552,36 +549,36 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           if (row.value == "Planning in Progress") {
                             return (
-                              <div className="status-img">
+                              <div title="In Progress" className="status-img">
                                 <img src={Delivered} />
                               </div>
                             );
                           } else if (row.value == "Departed") {
                             return (
-                              <div className="status-img">
+                              <div title="Departed" className="status-img">
                                 <img src={Delivered} />
                               </div>
                             );
                           } else if (row.value == "Transshipped") {
                             return (
-                              <div className="status-img">
+                              <div title="Transshipped" className="status-img">
                                 <img src={Transit} />
                               </div>
                             );
                           } else if (row.value == "Arrived") {
                             return (
-                              <div className="status-img">
+                              <div title="Arrived" className="status-img">
                                 <img src={Arrived} />
                               </div>
                             );
                           } else if (row.value == "Delivered") {
                             return (
-                              <div className="status-img">
+                              <div title="Delivered" className="status-img">
                                 <img src={Delivered} />
                               </div>
                             );
                           } else if (row.value == "DO Issued") {
-                            return <div>{row.value}</div>;
+                            return <div title="Issued">{row.value}</div>;
                           } else {
                             return row.value;
                           }
@@ -636,27 +633,30 @@ class ShippingDetails extends Component {
                         Header: "",
                         width: 40,
                         Cell: row => {
-                          return (<i class="fa fa-share-alt shareicon" aria-hidden="true"></i>)
+                          return (
+                            <i
+                              class="fa fa-share-alt shareicon"
+                              aria-hidden="true"
+                            ></i>
+                          );
                         }
                       }
                     ]
                   },
                   {
-                     
                     show: false,
                     Header: "All",
-                    id: 'all',
+                    id: "all",
                     width: 0,
                     resizable: false,
                     sortable: false,
-                    Filter: () => { },
+                    Filter: () => {},
                     getProps: () => {
                       return {
                         // style: { padding: "0px"}
-                      }
+                      };
                     },
                     filterMethod: (filter, rows) => {
-                      
                       const result = matchSorter(rows, filter.value, {
                         keys: ["BL/HBL", "Consignee", "ConsigneeID"],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH
@@ -664,7 +664,7 @@ class ShippingDetails extends Component {
 
                       return result;
                     },
-                    filterAll: true,
+                    filterAll: true
                   }
                 ]}
                 className="-striped -highlight"
@@ -673,35 +673,35 @@ class ShippingDetails extends Component {
               />
             </div>
             <Modal
-                  className="advsearch-popup"
-                  isOpen={this.state.modalAdvSearch}
-                  toggle={this.toggleAdvSearch}
-                  centered={true}
-                >
-                  <ModalBody className="p-0">
-                    <div className="container-fluid p-0">
-                      <div className="advsearch-sect">
-                      <div className="title-border py-3">
+              className="advsearch-popup"
+              isOpen={this.state.modalAdvSearch}
+              toggle={this.toggleAdvSearch}
+              centered={true}
+            >
+              <ModalBody className="p-0">
+                <div className="container-fluid p-0">
+                  <div className="advsearch-sect">
+                    <div className="title-border py-3">
                       <h3>Advanced Search</h3>
-                       </div>
-                        <div className="row" style={{marginTop: "8px"}}>
-
-                          <div className="login-fields col-md-3">
-                              <label>
-                                Mode Of Transport
-                              </label>
-                              <select
-                              onChange={this.HandleChangeSelect.bind(this, "ModeOfTransport")}
-                              name={"ModeOfTransport"}
-                              value={this.state.fields["ModeOfTransport"]}
-                            >
-                              {this.state.selectMOT.map(team => (
-                                <option key={team.key} value={team.key}>
-                                  {team.value}
-                                </option>
-                              ))}
-                            </select>
-                            </div>
+                    </div>
+                    <div className="row" style={{ marginTop: "8px" }}>
+                      <div className="login-fields col-md-3">
+                        <label>Mode Of Transport</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "ModeOfTransport"
+                          )}
+                          name={"ModeOfTransport"}
+                          value={this.state.fields["ModeOfTransport"]}
+                        >
+                          {this.state.selectMOT.map(team => (
+                            <option key={team.key} value={team.key}>
+                              {team.value}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
                           <div className="login-fields col-md-3">
                               <label>
@@ -731,7 +731,7 @@ class ShippingDetails extends Component {
                             isMulti
                             options={optionsOrigin}
                             /> */}
-                            {/* <Autosuggest
+                          {/* <Autosuggest
                             suggestions={suggestions1}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested1}
                             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -756,10 +756,13 @@ class ShippingDetails extends Component {
                           </div>
                         {/* </div> */}
                         </div>
-                        <div className="row">
-                        <div className=" login-fields col-md-3">
-                          {/* <label>SELECT</label> */}
-                          {/* <div>
+                      
+                      {/* </div> */}
+                   
+                    <div className="row">
+                      <div className=" login-fields col-md-3">
+                        {/* <label>SELECT</label> */}
+                        {/* <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
                             <label for="exist-cust">ETD</label>
                           </div>
@@ -768,30 +771,38 @@ class ShippingDetails extends Component {
                             <label for="new-cust">ATD</label>
                         </div> */}
                         <div>
-                            <label>From Time Of Departure</label>
-                            <DatePicker
-                             id="FrDepDate"
-                             selected={this.state.FrDepDate}
-                             onChange={this.handleChange.bind(this,'FromDeparture')}
-                        />
+                          <label>From Time Of Departure</label>
+                          <DatePicker
+                            id="FrDepDate"
+                            selected={this.state.FrDepDate}
+                            onChange={this.handleChange.bind(
+                              this,
+                              "FromDeparture"
+                            )}
+                          />
                         </div>
-                        </div>
-                        <div className="login-fields col-md-3">
+                      </div>
+                      <div className="login-fields col-md-3">
                         <div>
-                            <label>To Time Of Departure</label>
-                            <DatePicker
-                             id="ToDepDate"
-                             selected={this.state.ToDepDate}
-                             onChange={this.handleChange.bind(this,'ToDeparture')}
-                        />
+                          <label>To Time Of Departure</label>
+                          <DatePicker
+                            id="ToDepDate"
+                            selected={this.state.ToDepDate}
+                            onChange={this.handleChange.bind(
+                              this,
+                              "ToDeparture"
+                            )}
+                          />
                         </div>
-                        </div>
-                        {/* <div class=" login-fields col-md-4"> */}
-                         <div className="col-md-5">
-                          {/* <div class="rate-radio-cntr"> */}
-                          <div className="login-fields" style={{"width": "100%"}}>
-                            <label className="auto-cmp" style={{"padding": "0"}}>Shipper</label>
-                            {/* <Select
+                      </div>
+                      {/* <div class=" login-fields col-md-4"> */}
+                      <div className="col-md-5">
+                        {/* <div class="rate-radio-cntr"> */}
+                        <div className="login-fields" style={{ width: "100%" }}>
+                          <label className="auto-cmp" style={{ padding: "0" }}>
+                            Shipper
+                          </label>
+                          {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
@@ -799,7 +810,7 @@ class ShippingDetails extends Component {
                             options={optionsOrigin}
                             /> */}
 
-                            {/* <Autosuggest
+                          {/* <Autosuggest
                             suggestions={suggestions}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -821,14 +832,14 @@ class ShippingDetails extends Component {
                           onSelect={this.handleSelectCon.bind(this,(item) => item.Company_ID, "Shipper")}
                           isMulti
                           />
-                          </div>
-                          {/* </div> */}
                         </div>
                         {/* </div> */}
-                        </div>
-                        <div className="row">
-                        <div className="login-fields col-md-3">
-                          {/* <label>SELECT PARAMETER</label>
+                      </div>
+                      {/* </div> */}
+                    </div>
+                    <div className="row">
+                      <div className="login-fields col-md-3">
+                        {/* <label>SELECT PARAMETER</label>
                           <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
                             <label for="exist-cust">ETA</label>
@@ -838,29 +849,32 @@ class ShippingDetails extends Component {
                             <label for="new-cust">ATA</label>
                         </div> */}
                         <div>
-                            <label>From Time Of Arrival</label>
-                            <DatePicker
-                             id="FrArrDate"
-                             selected={this.state.FrArrDate}
-                             onChange={this.handleChange.bind(this,"FromArrival")}
-                        />
+                          <label>From Time Of Arrival</label>
+                          <DatePicker
+                            id="FrArrDate"
+                            selected={this.state.FrArrDate}
+                            onChange={this.handleChange.bind(
+                              this,
+                              "FromArrival"
+                            )}
+                          />
                         </div>
-                        </div>
-                        <div className="login-fields col-md-3">
+                      </div>
+                      <div className="login-fields col-md-3">
                         <div>
-                            <label>To Time Of Arrival</label>
-                            <DatePicker
-                             id="ToArrDate"
-                             selected={this.state.ToArrDate}
-                             onChange={this.handleChange.bind(this,"ToArrival")}
-                        />
+                          <label>To Time Of Arrival</label>
+                          <DatePicker
+                            id="ToArrDate"
+                            selected={this.state.ToArrDate}
+                            onChange={this.handleChange.bind(this, "ToArrival")}
+                          />
                         </div>
-                        </div>
-                        <div className="col-md-3">
-                          {/* <div class="rate-radio-cntr"> */}
-                          <div className="login-fields" style={{"width": "100%"}}>
-                            <label style={{"padding": "0"}}>Origin Country</label>
-                            <Select
+                      </div>
+                      <div className="col-md-3">
+                        {/* <div class="rate-radio-cntr"> */}
+                        <div className="login-fields" style={{ width: "100%" }}>
+                          <label style={{ padding: "0" }}>Origin Country</label>
+                          <Select
                             className="rate-dropdown track-dropdown"
                             id = "originCountry"
                             closeMenuOnSelect={false}
@@ -875,11 +889,14 @@ class ShippingDetails extends Component {
                           </div>
                           {/* </div> */}
                         </div>
-                        <div className="col-md-3">
-                          {/* <div class="rate-radio-cntr"> */}
-                          <div className="login-fields" style={{"width": "100%"}}>
-                            <label style={{"padding": "0"}}>Destination Country</label>
-                            <Select
+                        {/* </div> */}
+                      <div className="col-md-3">
+                        {/* <div class="rate-radio-cntr"> */}
+                        <div className="login-fields" style={{ width: "100%" }}>
+                          <label style={{ padding: "0" }}>
+                            Destination Country
+                          </label>
+                          <Select
                             className="rate-dropdown track-dropdown"
                             id = "destinCountry"
                             closeMenuOnSelect={false}
@@ -893,55 +910,69 @@ class ShippingDetails extends Component {
                           {/* </div> */}
                         </div>
                         </div>
-                        <div className="row">                          
-                        <div className="login-fields col-md-3">
-                          {/* <div class="rate-radio-cntr"> */}
-                          <div style={{"width": "100%"}}>
-                            <label style={{"padding": "0"}}>POL</label>
-                            <Autocomplete
-                            getItemValue={(item) => item.NameWoDiacritics}
+                        {/* </div> */}
+                      
+                 
+                    <div className="row">
+                      <div className="login-fields col-md-3">
+                        {/* <div class="rate-radio-cntr"> */}
+                        <div style={{ width: "100%" }}>
+                          <label style={{ padding: "0" }}>POL</label>
+                          <Autocomplete
+                            getItemValue={item => item.NameWoDiacritics}
                             items={this.state.POL}
-                            renderItem={(item, isHighlighted) =>
-                              <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                            renderItem={(item, isHighlighted) => (
+                              <div
+                                style={{
+                                  background: isHighlighted
+                                    ? "lightgray"
+                                    : "white"
+                                }}
+                              >
                                 {item.NameWoDiacritics}
                               </div>
-                            }
+                            )}
                             value={this.state.fields["POL"]}
                             onChange={this.HandleChangePOLPOD.bind(this, "POL")}
                             menuStyle={this.state.menuStyle}
                             onSelect={this.handleSelectPOLPOD.bind(this, "POL")}
                             isMulti={true}
                           />
-                          </div>
-                          {/* </div> */}
                         </div>
-                        <div className="login-fields col-md-3">
-                          {/* <div class="rate-radio-cntr"> */}
-                          <div style={{"width": "100%"}}>
-                            <label style={{"padding": "0"}}>POD</label>
-                            {/* <Select
+                        {/* </div> */}
+                      </div>
+                      <div className="login-fields col-md-3">
+                        {/* <div class="rate-radio-cntr"> */}
+                        <div style={{ width: "100%" }}>
+                          <label style={{ padding: "0" }}>POD</label>
+                          {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
                             isMulti
                             options={this.state.optionsOrigin}
                             /> */}
-                            <Autocomplete
-                            getItemValue={(item) => item.NameWoDiacritics}
+                          <Autocomplete
+                            getItemValue={item => item.NameWoDiacritics}
                             items={this.state.POD}
-                            renderItem={(item, isHighlighted) =>
-                              <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                            renderItem={(item, isHighlighted) => (
+                              <div
+                                style={{
+                                  background: isHighlighted
+                                    ? "lightgray"
+                                    : "white"
+                                }}
+                              >
                                 {item.NameWoDiacritics}
                               </div>
-                            }
+                            )}
                             value={this.state.fields["POD"]}
                             onChange={this.HandleChangePOLPOD.bind(this, "POD")}
                             menuStyle={this.state.menuStyle}
                             onSelect={this.handleSelectPOLPOD.bind(this, "POD")}
                             isMulti
                           />
-                          </div>
-                          {/* </div> */}
+                        </div>
                         </div>
                         <div className="login-fields col-md-5">
                         <div>
@@ -955,10 +986,18 @@ class ShippingDetails extends Component {
                       </button>
                       </div>
                       </div>
+                      <div className="login-fields col-md-5">
+                        <div>
+                          <label style={{ padding: "11px" }}></label>
+                          <button type="button" className="butn">
+                            Submit
+                          </button>
                         </div>
                       </div>
+                    </div>
+                 
 
-                      {/* <div className="transit-sect-overflow">
+                  {/* <div className="transit-sect-overflow">
                         {transitpopup.map((cell, i) => {
                           debugger;
                           var imgSrc = "";
@@ -1015,12 +1054,14 @@ class ShippingDetails extends Component {
                           );
                         })}
                       </div> */}
-                    </div>
-                  </ModalBody>
-                </Modal>
-          </div>
-        </div>
-      </div>
+            </div>
+            </div>
+              </ModalBody>
+            </Modal>
+          
+         </div>
+         </div>
+         </div>
     );
   }
 }

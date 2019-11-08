@@ -71,7 +71,16 @@ const MapWithAMakredInfoWindow = compose(
     })}
   </GoogleMap>
 ));
+function animateCircle(line) {
+  var count = 0;
+  window.setInterval(function() {
+    count = (count + 1) % 200;
 
+    var icons = line.get("icons");
+    icons[0].offset = count / 2 + "%";
+    line.set("icons", icons);
+  }, 20);
+}
 const MapWithAMakredInfoWindowLine = compose(
   withScriptjs,
   withGoogleMap
@@ -80,6 +89,24 @@ const MapWithAMakredInfoWindowLine = compose(
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={3}
   >
+    <Polyline
+    
+      path={props.routerData}
+      geodesic={true}
+      style={{ zIndex: 1 }}
+      options={{
+        strokeColor: "#ff0022",
+        strokeOpacity: 1.75,
+        strokeWeight: 2,
+        icons: [
+          {
+            //icon: //lineSymbol,
+            offset: "0",
+            repeat: "20px"
+          }
+        ]
+      }}
+    />
     {props.transitpopupData.length > 0 ? (
       <Polyline
         path={props.transitpopupData}
@@ -100,25 +127,13 @@ const MapWithAMakredInfoWindowLine = compose(
         }}
       />
     ) : null}
-    <Polyline
-      path={props.routerData}
-      geodesic={true}
-      style={{ zIndex: 1 }}
-      options={{
-        strokeColor: "#ff0022",
-        strokeOpacity: 1.75,
-        strokeWeight: 2,
-        icons: [
-          {
-            //icon: //lineSymbol,
-            offset: "0",
-            repeat: "20px"
-          }
-        ]
-      }}
-    />
+    
     {props.markers.map((marker, i) => {
       debugger;
+      
+       
+
+      
 
       var iCount = props.markers.length;
       var start = marker.StartLatLng;
@@ -136,9 +151,10 @@ const MapWithAMakredInfoWindowLine = compose(
 
       return (
         <>
+         
           {marker.CTransShipPort != "" ? (
             <Marker
-            icon={iconMarker}
+              icon={iconMarker}
               key={marker.CTransShipPort}
               title={marker.CTransShipPort}
               position={{
@@ -438,7 +454,6 @@ class ShipmentPlanner extends Component {
       routerMapData: RouteData
     });
   }
-  
 
   HandleOnPageLoad() {
     let self = this;
@@ -528,7 +543,7 @@ class ShipmentPlanner extends Component {
     }).then(function(response) {
       debugger;
       let optionItems = response.data.map(comp => (
-        <option value={comp.MappingID}>{Capitalize(comp.MappedCompName)}</option>
+        <option value={comp.MappingID}>{comp.MappedCompName}</option>
       ));
       self.setState({ consigneedrp: optionItems });
     });
@@ -547,8 +562,9 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       let optionItems = response.data.map(comp => (
-        <option value={comp.CModeOfTransport}>{Capitalize(comp.CModeOfTransport)}</option>
+        <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
       ));
       self.setState({ transportModedrp: optionItems });
     });
@@ -570,7 +586,7 @@ class ShipmentPlanner extends Component {
       headers: authHeader()
     }).then(function(response) {
       let optionItems = response.data.map(comp => (
-        <option value={comp.TransitModeID}>{Capitalize(comp.TransitMode)}</option>
+        <option value={comp.TransitModeID}>{comp.TransitMode}</option>
       ));
       self.setState({ linerdrp: optionItems });
     });
@@ -715,7 +731,7 @@ class ShipmentPlanner extends Component {
       transitpopupData,
       routerMapData
     } = this.state;
-
+     
     let optionItems = this.state.companydrp.map((planet, i) => (
       <option
         onChange={this.companyChange}
@@ -724,7 +740,7 @@ class ShipmentPlanner extends Component {
         key={i}
         value={planet.MyCompID}
       >
-        {Capitalize(planet.MyCompName)}
+        {planet.Column1}
       </option>
     ));
 
@@ -745,7 +761,11 @@ class ShipmentPlanner extends Component {
         return "No schedule available";
       }
     }
+     
 
+    
+   
+     
     return (
       <div>
         <Headers />
@@ -862,6 +882,7 @@ class ShipmentPlanner extends Component {
                             mapElement={<div style={{ height: `100%` }} />}
                             loadingElement={<div style={{ height: `100%` }} />}
                           ></MapWithAMakredInfoWindowLine>
+                          // <div id="map"></div>
                         )}
                       </div>
                     </div>
@@ -1165,5 +1186,78 @@ class ShipmentPlanner extends Component {
     );
   }
 }
+{/* <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&callback=initMap"></script>;
+ 
 
+
+function initMap() {
+  var map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 20.291, lng: 153.027},
+    zoom: 6,
+    mapTypeId: 'terrain'
+  });
+  
+  
+  var lineSymbol = {
+    path: google.maps.SymbolPath.CIRCLE,
+    scale: 8,
+    strokeColor: '#393'
+  };
+
+  // Create the polyline and add the symbol to it via the 'icons' property.
+  var line = new google.maps.Polyline({
+    path: [{lat:49.24859,lng:8.887826},{lat:50.03769,lng:8.562438},{lat:50.03769,lng:8.562438},{lat:19.090405,lng:72.86875},{lat:19.090405,lng:72.86875},{lat:19.111308,lng:72.849945},{lat:19.055328,lng:72.840234},{lat:19.036511,lng:72.849459},{lat:19.028708,lng:72.860141},{lat:18.94469,lng:72.835864},{lat:18.963517,lng:72.838292},{lat:18.971783,lng:72.833437},{lat:19.006216,lng:72.834408},{lat:19.060835,lng:72.872279},{lat:19.109931,lng:72.928115},{lat:19.131034,lng:72.929087},{lat:19.184236,lng:72.968415},{lat:19.207622,lng:73.015026},{lat:19.184695,lng:73.028621},{lat:19.225961,lng:73.095624},{lat:19.242464,lng:73.15583},{lat:19.271799,lng:73.173309},{lat:19.311211,lng:73.215065},{lat:19.353361,lng:73.213608},{lat:19.449075,lng:73.309743},{lat:19.470133,lng:73.300033},{lat:19.49302,lng:73.333534},{lat:19.511785,lng:73.326737},{lat:19.569896,lng:73.359268},{lat:19.581332,lng:73.395682},{lat:19.604203,lng:73.400538},{lat:19.634845,lng:73.432583},{lat:19.628443,lng:73.44812},{lat:19.702054,lng:73.500557},{lat:19.691998,lng:73.58504},{lat:19.73085,lng:73.639905},{lat:19.806241,lng:73.673892},{lat:19.812686,lng:73.774428},{lat:19.884499,lng:73.836487},{lat:19.971629,lng:73.849144},{lat:20.629313,lng:75.320236},{lat:21.015727,lng:75.537338},{lat:21.041596,lng:75.80987},{lat:20.739389,lng:77.004423},{lat:20.877561,lng:77.743492},{lat:20.748028,lng:78.602659},{lat:20.894824,lng:78.999909},{lat:21.058955,lng:79.050849},{lat:21.143956,lng:79.093453}],
+    icons: [{
+      icon: lineSymbol,
+      offset: '100%'
+    }],
+    map: map
+  });
+
+  animateCircle(line);
+  
+  setMarkers(map);
+  
+   var beachMarker = new google.maps.Marker({
+    position: {lat:49.24859, lng: 8.887826},
+    map: map,
+  
+  });
+  
+  var beachMarker1 = new google.maps.Marker({
+    position: {lat: 21.143956, lng: 79.093453},
+    map: map,
+  });
+}
+ 
+ 
+
+function setMarkers(map) {
+   
+  var image = {
+    url: YellowFlag,
+    // This marker is 20 pixels wide by 32 pixels high.
+    size: new google.maps.Size(20, 32),
+    // The origin for this image is (0, 0).
+    origin: new google.maps.Point(0, 0),
+    // The anchor for this image is the base of the flagpole at (0, 32).
+    anchor: new google.maps.Point(0, 32)
+  };
+   
+  var shape = {
+    coords: [1, 1, 1, 20, 18, 20, 18, 1],
+    type: 'poly'
+  };
+  for (var i = 0; i < beaches.length; i++) {
+    var beach = beaches[i];
+    var marker = new google.maps.Marker({
+      position: {lat: beach[1], lng: beach[2]},
+      map: map,
+      icon: image,
+      shape: shape,
+      title: beach[0],
+      zIndex: beach[3]
+    });
+  }
+} */}
 export default ShipmentPlanner;

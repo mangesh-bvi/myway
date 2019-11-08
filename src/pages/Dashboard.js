@@ -453,6 +453,8 @@ class Dashboard extends Component {
       InvoicesData: [],
       BookingData: [],
       ModalData: [],
+      ModalTotalMapData: [],
+      SelectPin: [],
       checkMapview: true,
       loading: true,
       IsWidgets: false,
@@ -466,6 +468,7 @@ class Dashboard extends Component {
 			// },
     };
     this.BindMapData = this.BindMapData.bind(this);
+    this.HandleShipmentPin = this.HandleShipmentPin.bind(this);
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
     this.HandleQuotesData = this.HandleQuotesData.bind(this);
     this.HandleRediractPageShipmentDetails = this.HandleRediractPageShipmentDetails.bind(
@@ -519,7 +522,7 @@ class Dashboard extends Component {
   componentDidMount() {
     debugger;
     let self = this;
-    this.BindMapData();
+    this.BindMapData("All");
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();
@@ -635,22 +638,61 @@ class Dashboard extends Component {
     });
   };
 
-  BindMapData() {
+  HandleShipmentPin(BindingID) {
+    this.BindMapData(BindingID);
+  }
+
+  BindMapData(BindingID) {
+    debugger;
     let self = this;
     var mdata;
+    var arraModalMapData = [];
     debugger;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
-      data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc")
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      mdata = response.data;
+
+    if (self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
+        data: {
+          UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        mdata = response.data;
+        if (BindingID != "All") {
+          mdata = mdata.filter(map => map.Pin == BindingID);
+        }
+        self.setState({ loading: false });
+        self.setState({ mapsData: mdata });
+        self.ModalTotalMapData = mdata;
+        var arrarSelectPin = ["Ocean", "Air", "Booking-Ocean", "Delay-Ocean"];
+
+        self.SelectPin = arrarSelectPin;
+      });
+    } else {
+      if (BindingID != "All") {
+        var index = self.SelectPin.indexOf(BindingID);
+        const div = document.getElementById(BindingID);
+        if (index > -1) {
+          self.SelectPin.splice(index, 1);
+
+          div.classList.add("cancel-btn");
+        } else {
+          div.classList.remove("cancel-btn");
+          self.SelectPin.push(BindingID);
+        }
+
+        for (var rray in self.SelectPin) {
+          arraModalMapData = arraModalMapData.concat(
+            self.ModalTotalMapData.filter(e => e.Pin == self.SelectPin[rray])
+          );
+        }
+
+        //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
+      }
       self.setState({ loading: false });
-      self.setState({ mapsData: mdata });
-    });
+      self.setState({ mapsData: arraModalMapData });
+    }
   }
 
   render() {
@@ -1114,6 +1156,8 @@ class Dashboard extends Component {
     }
     const {
       mapsData,
+      ModalTotalMapData,
+      SelectPin,
       selectedMarker,
       ActiveShipmentData,
       InvoicesData,
@@ -1313,62 +1357,57 @@ class Dashboard extends Component {
                               {ActiveShipment}
                             </div>
                           </div>
-                          <span
-                            className="viewmore-span"
-                            onClick={this.HandleShipmentPage}
-                          >
-                            ...View More
-                          </span>
                         </div>
+                        <span
+                          className="viewmore-span"
+                          onClick={this.HandleShipmentPage}
+                        >
+                          ...View More
+                        </span>
                       </div>
-                      <div className="col-md-3">
-                        <div className="dash-sects">
-                          <h3>Booking</h3>
-                          <div className="dash-sects-dtls">
-                            {/* <i className="fa fa-refresh fa-spin"></i> */}
-                            <div className="dash-sects-dtls-inner">
-                              {Booking}
-                            </div>
-                          </div>
-                          <span
-                            className="viewmore-span"
-                            onClick={this.HandleBookingTablePage}
-                          >
-                            ...View More
-                          </span>
+                    <div className="col-md-3">
+                      <div className="dash-sects">
+                        <h3>Booking</h3>
+                        <div className="dash-sects-dtls">
+                          {/* <i className="fa fa-refresh fa-spin"></i> */}
+                          <div className="dash-sects-dtls-inner">{Booking}</div>
                         </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="dash-sects">
-                          <h3>Quotes</h3>
-                          <div className="dash-sects-dtls">
-                            {/* <i className="fa fa-refresh fa-spin"></i> */}
-                            <div className="dash-sects-dtls-inner">
-                              {Quotes}
-                            </div>
-                          </div>
-                          <span
-                            className="viewmore-span"
-                            onClick={this.HandleQuotesTablePage}
-                          >
-                            ...View More
-                          </span>
-                        </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="dash-sects">
-                          <h3>Invoices</h3>
-                          <div className="dash-sects-dtls">
-                            {/* <i className="fa fa-refresh fa-spin"></i> */}
-                            <div className="dash-sects-dtls-inner">
-                              {Invoices}
-                            </div>
-                          </div>
-                          <span className="viewmore-span">...View More</span>
-                        </div>
+                        <span
+                          className="viewmore-span"
+                          onClick={this.HandleBookingTablePage}
+                        >
+                          ...View More
+                        </span>
                       </div>
                     </div>
-                  
+                    <div className="col-md-3">
+                      <div className="dash-sects">
+                        <h3>Quotes</h3>
+                        <div className="dash-sects-dtls">
+                          {/* <i className="fa fa-refresh fa-spin"></i> */}
+                          <div className="dash-sects-dtls-inner">{Quotes}</div>
+                        </div>
+                        <span
+                          className="viewmore-span"
+                          onClick={this.HandleQuotesTablePage}
+                        >
+                          ...View More
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="dash-sects">
+                        <h3>Invoices</h3>
+                        <div className="dash-sects-dtls">
+                          {/* <i className="fa fa-refresh fa-spin"></i> */}
+                          <div className="dash-sects-dtls-inner">
+                            {Invoices}
+                          </div>
+                        </div>
+                        <span className="viewmore-span">...View More</span>
+                      </div>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <div
@@ -1391,6 +1430,39 @@ class Dashboard extends Component {
                   </div>
                 </div>
               )}
+
+              <input
+                id="Ocean"
+                class="header-btn"
+                type="button"
+                value="Ocean-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Ocean")}
+              />
+              <input
+                id="Air"
+                class="header-btn"
+                type="button"
+                value="Air-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Air")}
+              />
+              <input
+                id="Delay-Ocean"
+                class="header-btn"
+                type="button"
+                value="Delay-Ocean-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Delay-Ocean")}
+              />
+              <input
+                id="Booking-Ocean"
+                class="header-btn"
+                type="button"
+                value="CurrentBooking-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Booking-Ocean")}
+              />
             </div>
           </div>
         </div>
