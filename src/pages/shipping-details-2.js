@@ -499,7 +499,8 @@ class ShippingDetailsTwo extends Component {
   }
   togglePackage() {
     debugger;
-    this.setState(prevState => ({
+    let self=this;
+    self.setState(prevState => ({
       modalPackage: !prevState.modalPackage
     }));
   }
@@ -518,6 +519,7 @@ class ShippingDetailsTwo extends Component {
   }
 
   render() {
+    let self = this;
     const {
       detailsData,
       addressData,
@@ -1075,23 +1077,23 @@ class ShippingDetailsTwo extends Component {
                                   >
                                     Show Less
                                   </a>
-                                  {/* <button
-                                    onClick={() => this.togglePackage}
+                                  <button
+                                    onClick={()=>self.togglePackage()}
                                     className="butn view-btn"
                                   >
                                     View Items
-                                  </button> */}
+                                  </button>
                                 </div>
                               </div>
                             </>
                           );
                         })}
-                        <button
+                        {/* <button
                           onClick={this.togglePackage}
                           className="butn view-btn"
                         >
                           View Items
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                     <div
@@ -1129,6 +1131,7 @@ class ShippingDetailsTwo extends Component {
                                         <img
                                           className="actionicon"
                                           src={Eye}
+                                           
                                           alt="view-icon"
                                           onClick={e =>
                                             this.HandleDocumentView(e, row)

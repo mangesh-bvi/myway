@@ -11,6 +11,7 @@ import { de } from "date-fns/esm/locale";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import GoogleMapReactPage from "./GoogleMapReact";
 
 var i = 0;
 const animatedComponents = makeAnimated();
@@ -50,7 +51,7 @@ class NewRateSearch extends Component {
       tempratureEquipment: "",
       isHazMat: "",
       incoTerms: "",
-      typesofMove: "d2p",
+      typesofMove: "",
       POL: "",
       POD: "",
       PUAddress: "",
@@ -86,7 +87,11 @@ class NewRateSearch extends Component {
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
     this.HandleBindIncoTeamData = this.HandleBindIncoTeamData.bind(this);
     this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
-    this.HandlePOLPODListBind=this.HandlePOLPODListBind.bind(this);
+    this.HandlePOLPODListBind = this.HandlePOLPODListBind.bind(this);
+  }
+
+  componentDidMount() {
+    this.HandleCounterListBind();
   }
 
   togglePuAdd() {
@@ -95,27 +100,43 @@ class NewRateSearch extends Component {
     }));
   }
 
-  componentDidMount() {
-    this.HandleCounterListBind();
+  HandleSpecialEqtCheck(e) {
+    debugger;
+    let self = this;
+    if (e.target.checked) {
+      self.setState({ isSpacialEqt: false });
+    } else {
+      var elmnt1 = document.getElementsByName("spequType");
+      var elmnt1Len = elmnt1.length;
+      for (let index = 0; index < elmnt1Len; index++) {
+        if (elmnt1 != null && elmnt1 != "undefined") {
+          elmnt1[0].remove();
+          this.setState({
+            spEqtSelect: []
+          });
+        }
+      }
+      self.setState({ isSpacialEqt: true, spEqtSelect: [] });
+    }
   }
 
-//this Method For POD And POD Data Bind
-HandlePOLPODListBind(type)
-{
-debugger;
-   
-  var shipmentType=type=="sea"?"O":type=="air"?"A":type=="road"?"I":"";
-  axios({
-    method: "post",
-    url: `${appSettings.APIURL}/ShipmentStages`,
-    data: {
-      Mode: shipmentType
-    },
-    headers: authHeader()
-  }).then(function(response) {
+  //this Method For POD And POD Data Bind
+  HandlePOLPODListBind(type) {
     debugger;
-  });
-}  
+
+    var shipmentType =
+      type == "sea" ? "O" : type == "air" ? "A" : type == "road" ? "I" : "";
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ShipmentStages`,
+      data: {
+        Mode: shipmentType
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
+  }
   //this Method for Bind Country Dropdown
   HandleCounterListBind() {
     let self = this;
@@ -187,21 +208,21 @@ debugger;
       debugger;
       var table1 = response.data.Table1;
       var table2 = response.data.Table2;
-      var finalArray = [];
+      // var finalArray = [];
 
-      var standerEquipment = new Object();
-      standerEquipment.StandardContainerCode = "Special Equipment";
-      standerEquipment.ProfileCodeID = "Special Equipment";
-      standerEquipment.ContainerName = "Special Equipment";
+      // var standerEquipment = new Object();
+      // standerEquipment.StandardContainerCode = "Special Equipment";
+      // standerEquipment.ProfileCodeID = "Special Equipment";
+      // standerEquipment.ContainerName = "Special Equipment";
 
-      for (let index = 0; index < table1.length; index++) {
-        finalArray.push(table1[index]);
-      }
+      // for (let index = 0; index < table1.length; index++) {
+      //   finalArray.push(table1[index]);
+      // }
 
-      finalArray.push(standerEquipment);
+      // finalArray.push(standerEquipment);
 
       self.setState({
-        StandardContainerCode: finalArray,
+        StandardContainerCode: table1,
         SpacialEqmt: table2
       });
     });
@@ -209,7 +230,7 @@ debugger;
 
   HandleTypeofMove(e) {
     this.setState({ typesofMove: e.target.id });
-
+    this.HandleGetIncoTerms();
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null)
@@ -254,8 +275,6 @@ debugger;
     document.getElementById("typeMoveMinusClick").classList.add("d-none");
   };
 
-   
-   
   ShipmentTypeClick = e => {
     let type = e.target.value;
     this.setState({ shipmentType: type });
@@ -282,22 +301,21 @@ debugger;
   };
   modeofTransportClick = e => {
     let type = e.target.value;
-    
-    
+
     this.setState({ modeoftransport: type });
     document.getElementById("dvroad").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvair").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvsea").classList.add("new-radio-rate-cntr-hide");
-    if (type == "air") {
+    if (type == "AIR") {
       document
         .getElementById("dvair")
         .classList.remove("new-radio-rate-cntr-hide");
-    } else if (type == "sea") {
-      this.setState({ containerLoadType: "fcl" });
+    } else if (type == "SEA") {
+      this.setState({ containerLoadType: "FCL" });
       document
         .getElementById("dvsea")
         .classList.remove("new-radio-rate-cntr-hide");
-    } else if (type == "road") {
+    } else if (type == "ROAD") {
       document
         .getElementById("dvroad")
         .classList.remove("new-radio-rate-cntr-hide");
@@ -342,7 +360,7 @@ debugger;
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
-    if (type == "fcl") {
+    if (type == "FCL") {
       this.HandleBindIncoTeamData();
     }
   };
@@ -872,7 +890,7 @@ debugger;
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <div class="">
+            <div>
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">
                   <h3>Shipment Type</h3>
@@ -965,7 +983,7 @@ debugger;
                     <input
                       type="radio"
                       name="mode-transport"
-                      value="sea"
+                      value="SEA"
                       onClick={this.modeofTransportClick}
                       id="sea"
                     />
@@ -975,7 +993,7 @@ debugger;
                     <input
                       type="radio"
                       name="mode-transport"
-                      value="air"
+                      value="AIR"
                       onClick={this.modeofTransportClick}
                       id="air"
                     />
@@ -986,7 +1004,7 @@ debugger;
                       type="radio"
                       name="mode-transport"
                       name="mode-transport"
-                      value="road"
+                      value="ROAD"
                       onClick={this.modeofTransportClick}
                       id="road"
                     />
@@ -1022,7 +1040,7 @@ debugger;
                       <input
                         type="radio"
                         name="cntr-load"
-                        value="fcl"
+                        value="FCL"
                         onClick={this.ContainerLoadTypeClick}
                         id="fcl"
                       />
@@ -1031,7 +1049,7 @@ debugger;
                     <div>
                       <input
                         type="radio"
-                        value="lcl"
+                        value="LCL"
                         onClick={this.ContainerLoadTypeClick}
                         name="cntr-load"
                         id="lcl"
@@ -1047,7 +1065,7 @@ debugger;
                       <input
                         type="radio"
                         name="cntr-load-air"
-                        value="air"
+                        value="AIR"
                         onClick={this.ContainerLoadTypeClick}
                         id="Air"
                       />
@@ -1062,7 +1080,7 @@ debugger;
                       <input
                         type="radio"
                         name="cntr-load-road"
-                        value="ftl"
+                        value="FTL"
                         onClick={this.ContainerLoadTypeClick}
                         id="ftl"
                       />
@@ -1071,7 +1089,7 @@ debugger;
                     <div>
                       <input
                         type="radio"
-                        value="ltl"
+                        value="LTL"
                         onClick={this.ContainerLoadTypeClick}
                         name="cntr-load-road"
                         id="ltl"
@@ -1081,7 +1099,7 @@ debugger;
                   </div>
                 </div>
               </div>
-              {this.state.containerLoadType != "fcl" ? (
+              {this.state.containerLoadType != "FCL" ? (
                 <>
                   <div className="new-rate-cntr" id="cbm">
                     <div className="rate-title-cntr">
@@ -1162,7 +1180,7 @@ debugger;
                             <input
                               type="text"
                               placeholder={
-                                this.state.modeoftransport != "air"
+                                this.state.modeoftransport != "AIR"
                                   ? "CBM"
                                   : "KG"
                               }
@@ -1202,7 +1220,7 @@ debugger;
                 </>
               ) : null}
 
-              {this.state.containerLoadType == "fcl" ? (
+              {this.state.containerLoadType == "FCL" ? (
                 <div className="new-rate-cntr" id="equipType">
                   <div className="rate-title-cntr">
                     <h3>Equipment Types</h3>
@@ -1234,6 +1252,7 @@ debugger;
                         value={self.state.selected}
                         showNewOptionAtTop={false}
                       />
+
                       {/* <div className="spe-equ">
                       <input
                         type="text"
@@ -1246,7 +1265,17 @@ debugger;
                       onClick={this.addClick.bind(this)}
                     ></i> */}
                     </div>
+
                     <div id="equipAppend"></div>
+                    <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                      <input
+                        id="Special-equType"
+                        type="checkbox"
+                        name={"Special-equType"}
+                        onChange={this.HandleSpecialEqtCheck.bind(this)}
+                      />
+                      <label htmlFor="Special-equType">Special Equipment</label>
+                    </div>
                     {this.createUI()}
                     {/* <div className="remember-forgot">
                     <input
@@ -1469,7 +1498,7 @@ debugger;
                 </div>
                 <div className="row polpodcls" id="locationInner">
                   <div className="col-md-6 ">
-                    <Select
+                    {/* <Select
                       className="rate-dropdown w-100 mb-4"
                       getOptionLabel={option => option.CountryName}
                       getOptionValue={option => option.SUCountry}
@@ -1488,8 +1517,8 @@ debugger;
                       // value={this.state.pod}
                       onChange={this.locationChange}
                       name="pol"
-                    />
-                    <Map1WithAMakredInfoWindow
+                    /> */}
+                    {/* <Map1WithAMakredInfoWindow
                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
                       loadingElement={<div style={{ height: `100%` }} />}
                       containerElement={
@@ -1502,10 +1531,16 @@ debugger;
                         />
                       }
                       mapElement={<div style={{ height: `100%` }} />}
-                    />
+                    /> */}
+                    {/* <GoogleMapReactPage
+                      google={this.props.google}
+                      center={{ lat: 18.5204, lng: 73.8567 }}
+                      height="300px"
+                      zoom={15}
+                    /> */}
                   </div>
                   <div className="col-md-6">
-                    <Select
+                    {/* <Select
                       className="rate-dropdown w-100 mb-4"
                       closeMenuOnSelect={false}
                       getOptionLabel={option => option.CountryName}
@@ -1526,7 +1561,7 @@ debugger;
                       // value={this.state.pod}
                       onChange={this.locationChange}
                       name="pod"
-                    />
+                    /> */}
                     <Map2WithAMakredInfoWindow
                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
                       loadingElement={<div style={{ height: `100%` }} />}

@@ -1,4 +1,4 @@
-export function Capitalize(str ){
+export function Capitalize(str){
     str = str.toLowerCase();
    // return str.charAt(0).toUpperCase() + str.slice(1);
     str = str.split(" ");

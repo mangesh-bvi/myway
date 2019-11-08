@@ -2481,6 +2481,30 @@ display: block !important;
 .remember-forgot-1 a:hover {
   text-decoration-color: inherit;
 }
+ .login-fields-1{
+   margin-bottom: 0;
+ }
+ .login-fields-1 input,
+.login-fields-1 select {
+  width: 100%;
+  border: 0;
+  /* font-size: 18px; */
+  letter-spacing: 0.5px;
+  background-color: #ededed;
+  padding: 15px 25px;
+  font-family: "Medium Font";
+}
+.login-fields-1 select {
+  background: #ededed url("./../img/down-arrow.png") no-repeat right 25px center;
+  padding-right: 50px;
+}
+.login-fields-1 input::placeholder {
+  font-family: "Italic Font";
+  color: #77787b;
+}
+.login-fields {
+  margin-bottom: 25px;
+}
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
