@@ -10,51 +10,54 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import CheckboxTree from "react-checkbox-tree";
+// import FontAwesomeIcon from 'font-awesome';
+
 // import { connect } from 'react-redux'
-const nodes = [
-  // {
-  //   value: "mars",
-  //   label: "Mars",
-  //   children: [
-  //     {
-  //       value: "phobos",
-  //       label: "Phobos",
-  //       children: [{ value: "phobos-chileden", label: "phobos-chileden" }]
-  //     },
-  //     { value: "deimos", label: "Deimos" }
-  //   ]
-  // },
-  // {
-  //   value: "mars1",
-  //   label: "Mars1",
-  //   children: [
-  //     {
-  //       value: "phobos",
-  //       label: "Phobos1",
-  //       children: [{ value: "phobos-chileden", label: "phobos-chileden-1" }]
-  //     },
-  //     { value: "deimos", label: "Deimos1" }
-  //   ]
-  // }
-  {
-    value: 352200103,
-    label: "ATA MUMBAI",
-    children: [
-      {
-        value: 1337604146,
-        label: "Satish Gage",
-        children: [{ value: 0, label: 0 }]
-      },
-      {
-        value: 1337604158,
-        label: "Sanjana Bagwe",
-        children: [{ value: 1, label: 1 }]
-      }
-    ]
-  }
-];
+// const nodes = [
+//   {
+//     value: "mars",
+//     label: "Mars",
+//     children: [
+//       {
+//         value: "phobos",
+//         label: "Phobos",
+//         children: [{ value: "phobos-chileden", label: "phobos-chileden" }]
+//       },
+//       { value: "deimos", label: "Deimos" }
+//     ]
+//   },
+//   {
+//     value: "mars1",
+//     label: "Mars1",
+//     children: [
+//       {
+//         value: "phobos",
+//         label: "Phobos1",
+//         children: [{ value: "phobos-chileden", label: "phobos-chileden-1" }]
+//       },
+//       { value: "deimos", label: "Deimos1" }
+//     ]
+//   }
+//   {
+//     value: 352200103,
+//     label: "ATA MUMBAI",
+//     children: [
+//       {
+//         value: 1337604146,
+//         label: "Satish Gage",
+//         children: [{ value: 0, label: 0 }]
+//       },
+//       {
+//         value: 1337604158,
+//         label: "Sanjana Bagwe",
+//         children: [{ value: 1, label: 1 }]
+//       }
+//     ]
+//   }
+// ];
 
 class Login extends React.Component {
   constructor(props) {
@@ -69,7 +72,8 @@ class Login extends React.Component {
       modalSalesLogin: false,
       salesUserData: [],
       checked: [],
-      expanded: []
+      expanded: [],
+      nodes:[]
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -84,7 +88,9 @@ class Login extends React.Component {
   HandleDisplaySalesPersonData(sData) {
     debugger;
     //get Companies
+    let self=this;
     var mydata=sData;
+    var finalNode=[];
     const distinctOffice = [];
     const distinctContactDisName = [];
     const distinctAssociateComp = [];
@@ -173,8 +179,10 @@ class Login extends React.Component {
       }
       salesPersonDataByComp.children = salesPersondata;
       debugger;
+      finalNode.push(salesPersonDataByComp);
+
     }
-    debugger;
+    self.setState({nodes:finalNode});
   }
   toggleSalesLogin() {
     let self = this;
@@ -394,11 +402,23 @@ class Login extends React.Component {
             <ModalBody>
               <div>
                 <CheckboxTree
-                  nodes={nodes}
+                  nodes={self.state.nodes}
                   checked={this.state.checked}
                   expanded={this.state.expanded}
                   onCheck={checked => this.setState({ checked })}
                   onExpand={expanded => this.setState({ expanded })}
+                //   icons={{
+                //     check: <FontAwesomeIcon className="rct-icon rct-icon-check" icon="check-square" />,
+                //     uncheck: <FontAwesomeIcon className="rct-icon rct-icon-uncheck" icon={['far', 'square']} />,
+                //     halfCheck: <FontAwesomeIcon className="rct-icon rct-icon-half-check" icon="check-square" />,
+                //     expandClose: <FontAwesomeIcon className="rct-icon rct-icon-expand-close" icon="chevron-right" />,
+                //     expandOpen: <FontAwesomeIcon className="rct-icon rct-icon-expand-open" icon="chevron-down" />,
+                //     expandAll: <FontAwesomeIcon className="rct-icon rct-icon-expand-all" icon="plus-square" />,
+                //     collapseAll: <FontAwesomeIcon className="rct-icon rct-icon-collapse-all" icon="minus-square" />,
+                //     parentClose: <FontAwesomeIcon className="rct-icon rct-icon-parent-close" icon="folder" />,
+                //     parentOpen: <FontAwesomeIcon className="rct-icon rct-icon-parent-open" icon="folder-open" />,
+                //     leaf: <FontAwesomeIcon className="rct-icon rct-icon-leaf-close" icon="file" />
+                // }}
                 />
               </div>
             </ModalBody>
