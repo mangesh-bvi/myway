@@ -228,6 +228,7 @@ class NewRateSearch extends Component {
   }
 
   HandleTypeofMove(e) {
+    debugger
     this.setState({ typesofMove: e.target.id });
     this.HandleGetIncoTerms();
     // next
