@@ -1171,6 +1171,11 @@ table tbody tr:last-child {
 .rate-dropdown:focus {
   outline: none;
 }
+#equipAppend,
+#specEquipAppend {
+  display: flex;
+  justify-content: center;
+}
 .rate-dropdown .css-1rhbuit-multiValue {
   font-family: "Bold Font";
   letter-spacing: 0.5px;
@@ -1179,6 +1184,7 @@ table tbody tr:last-child {
   font-size: 14px;
   background-color: #333;
   color: #fff;
+  display: none;
 }
 .rate-dropdown .css-12jo7m5 {
   color: #fff;
@@ -1272,29 +1278,49 @@ table tbody tr:last-child {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 15px 0;
-  font-family: "Medium Font";
+  margin: 15px 5px 0 5px;
+  font-family: "Bold Font";
+  letter-spacing: 0.5px;
+  /* border-radius: 50px; */
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #333;
+  color: #fff;
+  background: url("../img/dummy.png") no-repeat center center;
 }
 .spec-inner-cntr input {
-  width: 50px;
+  width: 35px;
   margin-left: 5px;
   padding-left: 5px;
 }
-.spec-inner-cntr span {
-  margin-left: 15px;
+.spec-inner-cntr b {
+  font-size: 10px;
+  margin: 0 7px;
 }
-.spec-inner-cntr p {
+.spec-inner-cntr i {
+  margin-left: 10px;
+  color: #bfb7b7;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.spec-inner-cntr i:hover {
+  color: #fff;
+}
+#equipAppend .spec-inner-cntr input {
+  margin-left: 0;
+}
+/* .spec-inner-cntr p {
   min-width: 200px;
-}
-/* .spec-inner-cntr span {
-  margin-left: 5px;
 } */
-#equipAppend .spec-inner-cntr:last-child {
+/* #equipAppend .spec-inner-cntr:last-child {
   margin-bottom: 0;
-}
+} */
 .fc-radio {
   margin-top: 0;
   margin-left: 5px;
+}
+.temp-mar {
+  margin-left: 10px;
 }
 .fc-radio label {
   min-width: auto !important;
@@ -1302,6 +1328,7 @@ table tbody tr:last-child {
   padding: 2px 10px;
   font-size: 12px;
   background-color: #fff;
+  color: #000;
 }
 .fc-radio > div:first-child label {
   border-top-right-radius: 0;
@@ -1313,6 +1340,7 @@ table tbody tr:last-child {
 }
 .fc-radio input:checked + label {
   background-color: #39b54a;
+  color: #fff;
 }
 
 /* extra */

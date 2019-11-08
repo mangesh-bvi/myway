@@ -608,13 +608,21 @@ class NewRateSearch extends Component {
 
         let cont = document.createElement("p");
         cont.innerHTML = dropVal;
+        let into = document.createElement("b");
+        into.innerHTML = "X";
         let inpNum = document.createElement("input");
         let typ = document.createAttribute("type");
         typ.value = "number";
         inpNum.setAttributeNode(typ);
         inpNum.value = 1;
+        let cross = document.createElement("i");
+        let crsCls = document.createAttribute("class");
+        crsCls.value = "fa fa-times";
+        cross.setAttributeNode(crsCls);
         div.appendChild(cont);
+        div.appendChild(into);
         div.appendChild(inpNum);
+        div.appendChild(cross);
         document.getElementById("equipAppend").appendChild(div);
       }
     } else {
@@ -691,9 +699,11 @@ class NewRateSearch extends Component {
 
         let cont = document.createElement("p");
         cont.innerHTML = dropVal;
+        let into = document.createElement("b");
+        into.innerHTML = "X";
 
-        let quan = document.createElement("span");
-        quan.innerHTML = "Quan :";
+        // let quan = document.createElement("span");
+        // quan.innerHTML = "Quan :";
         let inpNum = document.createElement("input");
         let typ = document.createAttribute("type");
         typ.value = "number";
@@ -701,6 +711,9 @@ class NewRateSearch extends Component {
         inpNum.value = 1;
 
         let temp = document.createElement("span");
+        let tempClas = document.createAttribute("class");
+        tempClas.value = "temp-mar";
+        temp.setAttributeNode(tempClas);
         temp.innerHTML = "Temp :";
         let inpTemp = document.createElement("input");
         let typTemp = document.createAttribute("type");
@@ -753,12 +766,19 @@ class NewRateSearch extends Component {
         divC.appendChild(labelC);
         divFC.appendChild(divC);
 
+        let cross = document.createElement("i");
+        let crsCls = document.createAttribute("class");
+        crsCls.value = "fa fa-times";
+        cross.setAttributeNode(crsCls);
+
         div.appendChild(cont);
-        div.appendChild(quan);
+        div.appendChild(into);
+        // div.appendChild(quan);
         div.appendChild(inpNum);
         div.appendChild(temp);
         div.appendChild(inpTemp);
         div.appendChild(divFC); // faren
+        div.appendChild(cross);
         document.getElementById("specEquipAppend").appendChild(div);
       }
     } else {
