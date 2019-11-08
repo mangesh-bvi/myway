@@ -111,6 +111,7 @@ class QuoteTable extends Component {
               <ReactTable
                 data={quotesData}
                 filterable
+                minRows={1}
                 columns={[
                   {
                     Header: "Quote No",
