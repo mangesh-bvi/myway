@@ -11,7 +11,6 @@ import { de } from "date-fns/esm/locale";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
- 
 
 var i = 0;
 const animatedComponents = makeAnimated();
@@ -692,11 +691,17 @@ class NewRateSearch extends Component {
 
         let cont = document.createElement("p");
         cont.innerHTML = dropVal;
+
+        let quan = document.createElement("span");
+        quan.innerHTML = "Quan :";
         let inpNum = document.createElement("input");
         let typ = document.createAttribute("type");
         typ.value = "number";
         inpNum.setAttributeNode(typ);
         inpNum.value = 1;
+
+        let temp = document.createElement("span");
+        temp.innerHTML = "Temp :";
         let inpTemp = document.createElement("input");
         let typTemp = document.createAttribute("type");
         typTemp.value = "number";
@@ -749,7 +754,9 @@ class NewRateSearch extends Component {
         divFC.appendChild(divC);
 
         div.appendChild(cont);
+        div.appendChild(quan);
         div.appendChild(inpNum);
+        div.appendChild(temp);
         div.appendChild(inpTemp);
         div.appendChild(divFC); // faren
         document.getElementById("specEquipAppend").appendChild(div);

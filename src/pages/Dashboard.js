@@ -1048,9 +1048,9 @@ class Dashboard extends Component {
         if (index > -1) {
           self.SelectPin.splice(index, 1);
 
-          div.classList.remove("header-btn");
+          div.classList.add("cancel-btn");
         } else {
-          div.classList.add("header-btn");
+          div.classList.remove("cancel-btn");
           self.SelectPin.push(BindingID);
         }
 

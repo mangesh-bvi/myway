@@ -1093,6 +1093,7 @@ table tbody tr:last-child {
   height: 0;
   opacity: 0;
   margin-top: 0 !important;
+  pointer-events: none;
 }
 .shipmentType + .new-rate-cntr,
 .modeTransport + .new-rate-cntr,
@@ -1276,15 +1277,18 @@ table tbody tr:last-child {
 }
 .spec-inner-cntr input {
   width: 50px;
-  margin-left: 15px;
+  margin-left: 5px;
   padding-left: 5px;
+}
+.spec-inner-cntr span {
+  margin-left: 15px;
 }
 .spec-inner-cntr p {
   min-width: 200px;
 }
-.spec-inner-cntr span {
+/* .spec-inner-cntr span {
   margin-left: 5px;
-}
+} */
 #equipAppend .spec-inner-cntr:last-child {
   margin-bottom: 0;
 }
@@ -1308,7 +1312,7 @@ table tbody tr:last-child {
   border-bottom-left-radius: 0;
 }
 .fc-radio input:checked + label {
-  color: #39b54a;
+  background-color: #39b54a;
 }
 
 /* extra */
@@ -1652,6 +1656,7 @@ table tbody tr:last-child {
 }
 .dash-sects-dtls {
   padding: 6px 12px;
+  padding-right: 0;
 }
 .dash-sects-dtls .fa-spin {
   text-align: center;
@@ -1660,6 +1665,7 @@ table tbody tr:last-child {
 .dash-sects-dtls-inner {
   max-height: 271px;
   overflow: auto;
+  padding-right: 12px;
 }
 .dash-sects-dtls-inner::-webkit-scrollbar {
   width: 5px;
@@ -1920,7 +1926,14 @@ table tbody tr:last-child {
   color: #29aae3;
   background-color: #fff;
 }
-
+.cancel-btn {
+  background-color: #9dafbd;
+  border-color: #9dafbd;
+}
+.cancel-btn:hover {
+  background-color: #9dafbd;
+  color: #fff;
+}
 .header-ul {
   list-style: none;
   display: flex;
@@ -2458,13 +2471,13 @@ table tbody tr:last-child {
   font-weight: 500;
   padding-left: 10px;
 }
-.salesuserPopup .butn{
+.salesuserPopup .butn {
   margin-top: 0;
 }
-.autocom >div{
-display: block !important;
+.autocom > div {
+  display: block !important;
 }
-.remember-forgot-1{
+.remember-forgot-1 {
   margin-top: 20px;
   /* display: flex; */
   justify-content: space-between;
@@ -2481,10 +2494,10 @@ display: block !important;
 .remember-forgot-1 a:hover {
   text-decoration-color: inherit;
 }
- .login-fields-1{
-   margin-bottom: 0;
- }
- .login-fields-1 input,
+.login-fields-1 {
+  margin-bottom: 0;
+}
+.login-fields-1 input,
 .login-fields-1 select {
   width: 100%;
   border: 0;

@@ -5,6 +5,7 @@ import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import {authHeader} from "../helpers/authHeader";
+import FileUpload from "./../assets/img/file.png";
 import { is } from "@babel/types";
 import { encryption } from "../helpers/encryption";
 import {
@@ -65,6 +66,7 @@ class AddSalesUser extends React.Component{
       selectedFile: null,
       disabled: true,
       IsMobileEnabled: false,
+      selectedFileName: "",
       selectSalesUserType: [
         { key: "SM", value: "Sales Manager" },
         { key: "BM", value: "Branch Manager" },
@@ -707,7 +709,7 @@ if (this.state.selectedFile == null)
   
   fileChangedHandler = event => {
     debugger;
-    this.setState({ selectedFile: event.target.files[0] })
+    this.setState({ selectedFile: event.target.files[0], selectedFileName: event.target.files[0].name })
   }
 
     render() {
@@ -721,6 +723,7 @@ if (this.state.selectedFile == null)
           </div>
           <div className="cls-rt">
           <div>
+          <div class="title-sect title-border">
           {(() => {if(this.props.location.state != undefined)
           {
             return <h2>Edit Sales User</h2>
@@ -729,9 +732,10 @@ if (this.state.selectedFile == null)
           {
             return <h2>Add Sales User</h2>
           }})()}
+          </div>
           
-          <div className="login-input-cntr">
-            <div className="row">
+          <div className="container add-user-cntr"> {/* login-input-cntr */}
+            <div className="row mt-3">
               <div className="login-fields col-md-4">
                 <label>Sales User Type</label>
                
@@ -925,7 +929,7 @@ if (this.state.selectedFile == null)
                     ))}
                   </select>
                </div>
-               <div className="login-fields col-md-2">
+               <div className="login-fields col-md-4">
                   <label>Display As Consignee</label>
                   <select
                     onChange={this.HandleChangeSelect.bind(this,"displayConsignee")}
@@ -939,9 +943,9 @@ if (this.state.selectedFile == null)
                     ))}
                   </select>
                </div>
-               <div className="login-fields col-md-4">
+               <div className="login-fields col-md">
                  <label>Mode Of Transport</label>
-                 <div className="remember-forgot col-md-1">
+                 <div className="remember-forgot mt-0">
          
                  { 
                 this.state.chkModeOfTrans.map((chkModeOfTrans, index) =>
@@ -958,9 +962,9 @@ if (this.state.selectedFile == null)
                 
                 </div>
                </div>
-               <div className="login-fields col-md-4">
+               <div className="login-fields col-md">
                  <label>Is Mobile Enabled?</label>
-                 <div className="remember-forgot col-md-1">
+                 <div className="remember-forgot">
                    <div>
                      <input id="MobileEnable" type="checkbox" name="MobileEnable" defaultChecked={this.state.fields["MobileEnabled"]} onChange={this.toggleMobileChange.bind(this,"MobileEnable")}/>
                      <label htmlFor="MobileEnable"></label>
@@ -970,7 +974,7 @@ if (this.state.selectedFile == null)
                </div>
                <div className="row">
                <div className="login-fields col-md-12">
-                 <label>Hide Document('S)</label>
+                 <label className="mb-0">Hide Document('S)</label>
                  <div className="row">
          
                  {
@@ -979,7 +983,7 @@ if (this.state.selectedFile == null)
                 <div className="remember-forgot col-md-4" key={hideDocument.DocumentID}>
                   <input id={hideDocument.DocumentID} type="checkbox" name={hideDocument.DocumentName} value={hideDocument.DocumentID} 
                    defaultChecked={hideDocument.IsSelected} onClick = {this.toggleChangeHideDoc.bind(this,  index)} />
-                  <label htmlFor={hideDocument.DocumentID}>{hideDocument.DocumentName}</label> 
+                  <label className="m-0" htmlFor={hideDocument.DocumentID}>{hideDocument.DocumentName}</label> 
                 </div>
                
             
@@ -990,9 +994,9 @@ if (this.state.selectedFile == null)
                </div>
                </div>
                <div className="row">
-               <div className="login-fields col-md-4">
-                 <label>Miscelleneous</label>
-                 <div className="remember-forgot col-md-1">
+               <div className="login-fields col-md-12">
+                 <label className="mb-0">Miscelleneous</label>
+                 <div className="remember-forgot justify-content-start">
          
                  {
                    
@@ -1011,14 +1015,14 @@ if (this.state.selectedFile == null)
                </div>
                <div className="row">
                <div className="login-fields col-md-12">
-                 <label>Access Rights</label>                
+                 <label className="mb-0">Access Rights</label>                
                  <div className="row">
                  {
                 this.state.accessrights.map((accessrights, index) =>
                 <div className="remember-forgot col-md-3" key={accessrights.id}>
                     <input id={accessrights.id} type="checkbox" value={accessrights.Value} onChange={this.toggleChangeAccRight.bind(this, index)}
                     defaultChecked={accessrights.IsSelected}/>
-                       <label htmlFor={accessrights.id}>{accessrights.Value}</label> 
+                       <label className="m-0" htmlFor={accessrights.id}>{accessrights.Value}</label> 
                              
                 </div>
                 )
@@ -1028,17 +1032,32 @@ if (this.state.selectedFile == null)
                </div>
                </div>
                <div className="row">
-               <div className="login-fields col-md-12">
-               <input type="file" onChange={this.fileChangedHandler}/>
+               <div className="login-fields mb-0 col-md-12">
+               {/* <input type="file" onChange={this.fileChangedHandler}/> */}
+               <input
+                            id="file-upload"
+                            className="file-upload d-none"
+                            type="file"
+                            onChange={this.fileChangedHandler}
+                          />
+                          <label htmlFor="file-upload">
+                            <div className="file-icon">
+                              <img src={FileUpload} alt="file-upload" />
+                            </div>
+                            Add File
+                          </label>
+                          <p className="file-name w-100 text-center mt-1">
+                        {this.state.selectedFileName}
+                      </p>
                <span style={{color: "red"}}>{this.state.errors["logoFile"]}</span>
                </div>
                </div>
-               <div className="text-right">
+               <div className="text-right pb-4">
                {(() => {if(this.props.location.state != undefined)
                 {
                   return <button
                   type="button"
-                  className="butn"
+                  className="butn mb-2"
                   onClick={this.handleUpdate}
                 >
                   Update
@@ -1048,7 +1067,7 @@ if (this.state.selectedFile == null)
                 {
                   return <button
                   type="button"
-                  className="butn"
+                  className="butn mb-2"
                   onClick={this.handleSubmit}
                   
                 >
