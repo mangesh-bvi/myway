@@ -446,30 +446,30 @@ const MapWithAMakredInfoWindow = compose(
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
         BlueShip,
-                null, /* size is determined at runtime */
-                null, /* origin is 0,0 */
-                null, /* anchor is bottom center of the scaled image */
-                new window.google.maps.Size(32, 32)
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
       );
       let bluePlane = new window.google.maps.MarkerImage(
         BluePlane,
-        null, /* size is determined at runtime */
-        null, /* origin is 0,0 */
-        null, /* anchor is bottom center of the scaled image */
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
         new window.google.maps.Size(32, 32)
       );
       let bookingBlue = new window.google.maps.MarkerImage(
         BookingBlue,
-        null, /* size is determined at runtime */
-        null, /* origin is 0,0 */
-        null, /* anchor is bottom center of the scaled image */
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
         new window.google.maps.Size(32, 32)
       );
 
       if (marker.Pin == "Ocean") {
         return (
           <Marker
-          icon={blueShip}
+            icon={blueShip}
             key={marker.id}
             onClick={onClick}
             title={marker.Vessel}
@@ -477,7 +477,6 @@ const MapWithAMakredInfoWindow = compose(
               lat: Number(marker.LastLocation_Lat),
               lng: Number(marker.LastLocation_Lon)
             }}
-            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -536,7 +535,10 @@ const MapWithAMakredInfoWindow = compose(
                               <div className="card-body">
                                 <div id="accordion-1">
                                   <div className="card">
-                                    <div className="card-header" id="heading-1-1">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
                                       <h5 className="mb-0">
                                         <div
                                           className="collapsed"
@@ -604,7 +606,6 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bluePlane}
-            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -663,7 +664,10 @@ const MapWithAMakredInfoWindow = compose(
                               <div className="card-body">
                                 <div id="accordion-1">
                                   <div className="card">
-                                    <div className="card-header" id="heading-1-1">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
                                       <h5 className="mb-0">
                                         <div
                                           className="collapsed"
@@ -731,7 +735,6 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bookingBlue}
-            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -790,7 +793,10 @@ const MapWithAMakredInfoWindow = compose(
                               <div className="card-body">
                                 <div id="accordion-1">
                                   <div className="card">
-                                    <div className="card-header" id="heading-1-1">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
                                       <h5 className="mb-0">
                                         <div
                                           className="collapsed"
@@ -867,7 +873,7 @@ class Dashboard extends Component {
       BookingData: [],
       ModalData: [],
       ModalTotalMapData: [],
-      SelectPin:[],
+      SelectPin: [],
       checkMapview: true,
       loading: true,
       IsWidgets: false
@@ -1004,71 +1010,61 @@ class Dashboard extends Component {
     });
   };
 
-  HandleShipmentPin(BindingID)
-  {
+  HandleShipmentPin(BindingID) {
     this.BindMapData(BindingID);
   }
 
   BindMapData(BindingID) {
-
     debugger;
     let self = this;
     var mdata;
     var arraModalMapData = [];
     debugger;
-    
-    if(self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1)
-    {
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
-      data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc")
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      
-      mdata = response.data;
-      if(BindingID != "All")
-      {
-        mdata = mdata.filter(map => map.Pin == BindingID)
+
+    if (self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
+        data: {
+          UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        mdata = response.data;
+        if (BindingID != "All") {
+          mdata = mdata.filter(map => map.Pin == BindingID);
+        }
+        self.setState({ loading: false });
+        self.setState({ mapsData: mdata });
+        self.ModalTotalMapData = mdata;
+        var arrarSelectPin = ["Ocean", "Air", "Booking-Ocean", "Delay-Ocean"];
+
+        self.SelectPin = arrarSelectPin;
+      });
+    } else {
+      if (BindingID != "All") {
+        var index = self.SelectPin.indexOf(BindingID);
+        const div = document.getElementById(BindingID);
+        if (index > -1) {
+          self.SelectPin.splice(index, 1);
+
+          div.classList.add("cancel-btn");
+        } else {
+          div.classList.remove("cancel-btn");
+          self.SelectPin.push(BindingID);
+        }
+
+        for (var rray in self.SelectPin) {
+          arraModalMapData = arraModalMapData.concat(
+            self.ModalTotalMapData.filter(e => e.Pin == self.SelectPin[rray])
+          );
+        }
+
+        //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
       }
       self.setState({ loading: false });
-      self.setState({ mapsData: mdata });
-      self.ModalTotalMapData = mdata;
-      var arrarSelectPin = ["Ocean","Air","Booking-Ocean","Delay-Ocean"];
-
-      self.SelectPin = arrarSelectPin ;
-    });
-  }
-  else{
-    if(BindingID != "All")
-    {
-      var index = self.SelectPin.indexOf(BindingID);
-      const div = document.getElementById(BindingID);
-      if (index > -1) {
-        self.SelectPin.splice(index, 1);
-       
-        div.classList.remove("header-btn");
-      }
-      else
-      {
-        div.classList.add("header-btn");
-        self.SelectPin.push(BindingID)
-      }
-
-      
-        for(var rray in self.SelectPin)
-        {
-          arraModalMapData = arraModalMapData.concat(self.ModalTotalMapData.filter(e => e.Pin == self.SelectPin[rray]));
-        }
-      
-
-      //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
+      self.setState({ mapsData: arraModalMapData });
     }
-    self.setState({ loading: false });
-    self.setState({ mapsData: arraModalMapData });
-  }
   }
 
   render() {
@@ -1277,73 +1273,67 @@ class Dashboard extends Component {
                         loadingElement={<div style={{ height: `100%` }} />}
                       ></MapWithAMakredInfoWindow>
                     </div>
-                    
                   </div>
-                    <div className="row dash-sects-cntr">
-                      <div className="col-md-3">
-                        <div className="dash-sects">
-                          <h3>Active Shipments</h3>
-                          <div className="dash-sects-dtls">
-                            <div className="dash-sects-dtls-inner">
-                              {ActiveShipment}
-                            </div>
+                  <div className="row dash-sects-cntr">
+                    <div className="col-md-3">
+                      <div className="dash-sects">
+                        <h3>Active Shipments</h3>
+                        <div className="dash-sects-dtls">
+                          <div className="dash-sects-dtls-inner">
+                            {ActiveShipment}
                           </div>
-                          <span
-                            className="viewmore-span"
-                            onClick={this.HandleShipmentPage}
-                          >
-                            ...View More
-                          </span>
                         </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="dash-sects">
-                          <h3>Booking</h3>
-                          <div className="dash-sects-dtls">
-                            {/* <i className="fa fa-refresh fa-spin"></i> */}
-                            <div className="dash-sects-dtls-inner">
-                              {Booking}
-                            </div>
-                          </div>
-                          <span
-                            className="viewmore-span"
-                            onClick={this.HandleBookingTablePage}
-                          >
-                            ...View More
-                          </span>
-                        </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="dash-sects">
-                          <h3>Quotes</h3>
-                          <div className="dash-sects-dtls">
-                            {/* <i className="fa fa-refresh fa-spin"></i> */}
-                            <div className="dash-sects-dtls-inner">
-                              {Quotes}
-                            </div>
-                          </div>
-                          <span
-                            className="viewmore-span"
-                            onClick={this.HandleQuotesTablePage}
-                          >
-                            ...View More
-                          </span>
-                        </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="dash-sects">
-                          <h3>Invoices</h3>
-                          <div className="dash-sects-dtls">
-                            {/* <i className="fa fa-refresh fa-spin"></i> */}
-                            <div className="dash-sects-dtls-inner">
-                              {Invoices}
-                            </div>
-                          </div>
-                          <span className="viewmore-span">...View More</span>
-                        </div>
+                        <span
+                          className="viewmore-span"
+                          onClick={this.HandleShipmentPage}
+                        >
+                          ...View More
+                        </span>
                       </div>
                     </div>
-                  
+                    <div className="col-md-3">
+                      <div className="dash-sects">
+                        <h3>Booking</h3>
+                        <div className="dash-sects-dtls">
+                          {/* <i className="fa fa-refresh fa-spin"></i> */}
+                          <div className="dash-sects-dtls-inner">{Booking}</div>
+                        </div>
+                        <span
+                          className="viewmore-span"
+                          onClick={this.HandleBookingTablePage}
+                        >
+                          ...View More
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="dash-sects">
+                        <h3>Quotes</h3>
+                        <div className="dash-sects-dtls">
+                          {/* <i className="fa fa-refresh fa-spin"></i> */}
+                          <div className="dash-sects-dtls-inner">{Quotes}</div>
+                        </div>
+                        <span
+                          className="viewmore-span"
+                          onClick={this.HandleQuotesTablePage}
+                        >
+                          ...View More
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="dash-sects">
+                        <h3>Invoices</h3>
+                        <div className="dash-sects-dtls">
+                          {/* <i className="fa fa-refresh fa-spin"></i> */}
+                          <div className="dash-sects-dtls-inner">
+                            {Invoices}
+                          </div>
+                        </div>
+                        <span className="viewmore-span">...View More</span>
+                      </div>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <div
@@ -1367,50 +1357,42 @@ class Dashboard extends Component {
                 </div>
               )}
 
-<input
-      id="Ocean"  class="header-btn"
-      type="button"
-     value="Ocean-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Ocean")
-      }
-    />
-    <input
-      id="Air" class="header-btn"
-      type="button"
-     value="Air-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Air")
-      }
-    />
-    <input
-      id="Delay-Ocean"  class="header-btn"
-      type="button"
-     value="Delay-Ocean-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Delay-Ocean")
-      }
-    />
-    <input
-      id="Booking-Ocean"  class="header-btn"
-      type="button"
-     value="CurrentBooking-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Booking-Ocean")
-      }
-    />
+              <input
+                id="Ocean"
+                class="header-btn"
+                type="button"
+                value="Ocean-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Ocean")}
+              />
+              <input
+                id="Air"
+                class="header-btn"
+                type="button"
+                value="Air-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Air")}
+              />
+              <input
+                id="Delay-Ocean"
+                class="header-btn"
+                type="button"
+                value="Delay-Ocean-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Delay-Ocean")}
+              />
+              <input
+                id="Booking-Ocean"
+                class="header-btn"
+                type="button"
+                value="CurrentBooking-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Booking-Ocean")}
+              />
             </div>
           </div>
         </div>
-       
-     
-    
       </div>
-     
     );
   }
 }

@@ -1,6 +1,12 @@
 import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
-import { Progress, Button, Modal, ModalBody } from "reactstrap";
+import {
+  UncontrolledCollapse,
+  Progress,
+  Button,
+  Modal,
+  ModalBody
+} from "reactstrap";
 import GoogleMapReact from "google-map-react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -499,7 +505,8 @@ class ShippingDetailsTwo extends Component {
   }
   togglePackage() {
     debugger;
-    this.setState(prevState => ({
+    let self = this;
+    self.setState(prevState => ({
       modalPackage: !prevState.modalPackage
     }));
   }
@@ -517,7 +524,13 @@ class ShippingDetailsTwo extends Component {
     this.setState({ ShowCard: !this.state.ShowCard });
   }
 
+  onEntered() {
+    // this.setState({ status: "Opened" });
+    console.log(1);
+  }
+
   render() {
+    let self = this;
     const {
       detailsData,
       addressData,
@@ -918,46 +931,52 @@ class ShippingDetailsTwo extends Component {
                             <p className="details-title">Seal NO.2</p>
                           </div>
                         </div>
-                        <div className="collapse-sect">
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Unit</p>
-                              <p className="details-para">Metric</p>
+                        <UncontrolledCollapse toggler="#toggler">
+                          <div className="collapse-sect">
+                            <div className="row">
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Unit</p>
+                                <p className="details-para">Metric</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Height</p>
+                                <p className="details-para">85.2</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Width</p>
+                                <p className="details-para">93.6</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Length</p>
+                                <p className="details-para">232.8</p>
+                              </div>
                             </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Height</p>
-                              <p className="details-para">85.2</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Width</p>
-                              <p className="details-para">93.6</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Length</p>
-                              <p className="details-para">232.8</p>
+                            <div className="row">
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Gross Weight</p>
+                                <p className="details-para">0 Kgs</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Net Weight</p>
+                                <p className="details-para">0 Kgs</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Volume Weight</p>
+                                <p className="details-para">0.00 Kgs</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Description</p>
+                              </div>
                             </div>
                           </div>
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Gross Weight</p>
-                              <p className="details-para">0 Kgs</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Net Weight</p>
-                              <p className="details-para">0 Kgs</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Volume Weight</p>
-                              <p className="details-para">0.00 Kgs</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Description</p>
-                            </div>
-                          </div>
-                        </div>
+                        </UncontrolledCollapse>
                         <div className="row">
                           <div className="col-md-12">
-                            <a href="#!" className="butn view-btn less-btn">
+                            <a
+                              href="#!"
+                              id="toggler"
+                              className="butn view-btn less-btn"
+                            >
                               Show Less
                             </a>
                           </div>
@@ -1075,23 +1094,17 @@ class ShippingDetailsTwo extends Component {
                                   >
                                     Show Less
                                   </a>
-                                  {/* <button
-                                    onClick={() => this.togglePackage}
+                                  <button
+                                    onClick={() => self.togglePackage()}
                                     className="butn view-btn"
                                   >
                                     View Items
-                                  </button> */}
+                                  </button>
                                 </div>
                               </div>
                             </>
                           );
                         })}
-                        <button
-                          onClick={this.togglePackage}
-                          className="butn view-btn"
-                        >
-                          View Items
-                        </button>
                       </div>
                     </div>
                     <div
@@ -1123,6 +1136,7 @@ class ShippingDetailsTwo extends Component {
                                 },
                                 {
                                   Header: "Action",
+                                  sortable: false,
                                   Cell: row => {
                                     return (
                                       <div>

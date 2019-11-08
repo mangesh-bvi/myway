@@ -55,7 +55,7 @@ class BookingTable extends Component {
   }
 
   HandleChangeShipmentDetails(BookingNo) {
-    var data = [BookingNo,"Booking"]
+    var data = [BookingNo, "Booking"];
     this.props.history.push({
       pathname: "rate-finalizing-still",
       state: { detail: data }
@@ -66,8 +66,8 @@ class BookingTable extends Component {
     debugger;
     // return {
     //   onClick: e => {
-        var BookingNo = column.original["BookingNo"];
-        this.HandleChangeShipmentDetails(BookingNo);
+    var BookingNo = column.original["BookingNo"];
+    this.HandleChangeShipmentDetails(BookingNo);
     //   }
     // };
   };
@@ -116,17 +116,18 @@ class BookingTable extends Component {
                     accessor: "Commodity"
                   },
                   {
-                    Header: "Actions",
+                    Header: "Action",
+                    sortable: false,
                     Cell: row => {
                       return (
                         <div className="action-cntr">
                           {/* <a> */}
-                            <img
-                              className="actionicon"
-                              src={Eye}
-                              alt="view-icon"
-                              onClick={e => this.HandleRowClickEvt(e, row)}
-                            />
+                          <img
+                            className="actionicon"
+                            src={Eye}
+                            alt="view-icon"
+                            onClick={e => this.HandleRowClickEvt(e, row)}
+                          />
                           {/* </a> */}
                           <a href="/rate-finalizing">
                             <img

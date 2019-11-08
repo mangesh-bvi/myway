@@ -87,8 +87,7 @@ class ViewUser extends Component {
         pathname: "Add-sales-user",
         state: { detail: userId, page: "Edit" }
       });
-    }
-    else{
+    } else {
       this.props.history.push({
         pathname: "Add-user",
         state: { detail: userId, page: "Edit" }
@@ -188,6 +187,7 @@ class ViewUser extends Component {
                       },
                       {
                         Header: "Action",
+                        sortable: false,
                         Cell: row => {
                           return (
                             <div>

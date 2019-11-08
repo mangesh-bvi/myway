@@ -31,6 +31,9 @@
 .ReactTable .rt-tbody .rt-tr-group {
   border-bottom: 2px solid #f1f2f2 !important;
 }
+.redirect-row .ReactTable .rt-tbody .rt-tr-group {
+  cursor: pointer;
+}
 .ReactTable .rt-tbody .rt-tr-group:last-child {
   border-bottom: 0 !important;
 }

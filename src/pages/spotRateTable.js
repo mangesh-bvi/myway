@@ -46,44 +46,43 @@ class SpotRateTable extends Component {
     this.HandleListSpotRateGrid();
   }
 
-
-  
   HandleListSpotRateGrid() {
     debugger;
     let self = this;
     var userid = window.localStorage.getItem("userid");
     var date = new Date();
-     var fromDate = "01/01/" + date.getFullYear();
-     var currentDate=(date.getMonth()+1)+'/'+date.getDate()+'/'+date.getFullYear();
-     
+    var fromDate = "01/01/" + date.getFullYear();
+    var currentDate =
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SpotRateGridAPI`,
       data: {
-        UserId:431, 
-        Fromdate:fromDate, //"01/01/2019",
-        ToDate: currentDate//"10/25/2019"
+        UserId: 431,
+        Fromdate: fromDate, //"01/01/2019",
+        ToDate: currentDate //"10/25/2019"
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var data = [];
-      data = response.data.Table;
-      if (data != null && data != "") {
-        self.setState({ spotRateGrid: data });
-      }
-      else{
-        self.setState({ pageNo: 1 });
-      }
-    }).catch()
+    })
+      .then(function(response) {
+        debugger;
+        var data = [];
+        data = response.data.Table;
+        if (data != null && data != "") {
+          self.setState({ spotRateGrid: data });
+        } else {
+          self.setState({ pageNo: 1 });
+        }
+      })
+      .catch();
     {
       var actData = [];
       actData.push({
-        
         OriginPort_Name: "No Data Found"
       });
       self.setState({ spotRateGrid: actData });
-    };
+    }
   }
 
   HandleRowClickEvt = (rowInfo, column) => {
@@ -147,11 +146,10 @@ class SpotRateTable extends Component {
                         accessor: "Status"
                       },
                       {
-                        Cell: (row) => {
-                         var noData=row.original["OriginPort_Name"];
+                        Cell: row => {
+                          var noData = row.original["OriginPort_Name"];
                           debugger;
-                          if(noData!="No Data Found")
-                          {
+                          if (noData != "No Data Found") {
                             return (
                               <div
                                 // onClick={this.toggleDel}
@@ -160,8 +158,7 @@ class SpotRateTable extends Component {
                                 <img src={Eye} alt="eye icon" />
                               </div>
                             );
-                          }
-                          else{
+                          } else {
                             return (
                               <div
                                 // onClick={this.toggleDel}
@@ -169,10 +166,9 @@ class SpotRateTable extends Component {
                               ></div>
                             );
                           }
-                          
                         },
-                        Header: "Actions",
-                        sortable:false
+                        Header: "Action",
+                        sortable: false
                       }
                     ]
                   }
