@@ -1277,15 +1277,18 @@ table tbody tr:last-child {
 }
 .spec-inner-cntr input {
   width: 50px;
-  margin-left: 15px;
+  margin-left: 5px;
   padding-left: 5px;
+}
+.spec-inner-cntr span {
+  margin-left: 15px;
 }
 .spec-inner-cntr p {
   min-width: 200px;
 }
-.spec-inner-cntr span {
+/* .spec-inner-cntr span {
   margin-left: 5px;
-}
+} */
 #equipAppend .spec-inner-cntr:last-child {
   margin-bottom: 0;
 }
@@ -1309,7 +1312,7 @@ table tbody tr:last-child {
   border-bottom-left-radius: 0;
 }
 .fc-radio input:checked + label {
-  color: #39b54a;
+  background-color: #39b54a;
 }
 
 /* extra */
@@ -2491,10 +2494,10 @@ table tbody tr:last-child {
 .remember-forgot-1 a:hover {
   text-decoration-color: inherit;
 }
- .login-fields-1{
-   margin-bottom: 0;
- }
- .login-fields-1 input,
+.login-fields-1 {
+  margin-bottom: 0;
+}
+.login-fields-1 input,
 .login-fields-1 select {
   width: 100%;
   border: 0;
