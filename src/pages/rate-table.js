@@ -60,7 +60,8 @@ class RateTable extends Component {
       modalQuant: false,
       value: 50,
       RateDetails: [],
-      values: []
+      values: [],
+      RateSubDetails: []
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -118,7 +119,13 @@ class RateTable extends Component {
     }).then(function(response) {
       console.log(response);
       var ratetable = response.data.Table;
-      self.setState({ RateDetails: ratetable });
+      var ratetable1 = response.data.Table1;
+      if (ratetable != null) {
+        self.setState({ RateDetails: ratetable });
+      }
+      if (ratetable1 != null) {
+        self.setState({ RateSubDetails: ratetable1 });
+      }
     });
   }
 
@@ -343,63 +350,86 @@ class RateTable extends Component {
                       {
                         columns: [
                           {
-                            Cell: row => {
-                              i++;
-                              return (
-                                <React.Fragment>
-                                  <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                    <div className="remember-forgot d-block m-0">
-                                      <input
-                                        id={"maersk-logo" + i}
-                                        type="checkbox"
-                                        name={"rate-tab-check"}
-                                      />
-                                      <label
-                                        htmlFor={"maersk-logo" + i}
-                                      ></label>
-                                    </div>
-                                  </div>
-                                  <div className="rate-tab-img">
-                                    <img src={maersk} alt="maersk icon" />
-                                  </div>
-                                </React.Fragment>
-                              );
-                            },
+                            // Cell: row => {
+                            //   i++;
+                            //   return (
+                            //     <React.Fragment>
+                            //       <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                            //         <div className="remember-forgot d-block m-0">
+                            //           <input
+                            //             id={"maersk-logo" + i}
+                            //             type="checkbox"
+                            //             name={"rate-tab-check"}
+                            //           />
+                            //           <label
+                            //             htmlFor={"maersk-logo" + i}
+                            //           ></label>
+                            //         </div>
+                            //       </div>
+                            //       <div className="rate-tab-img">
+                            //         <img src={maersk} alt="maersk icon" />
+                            //       </div>
+                            //     </React.Fragment>
+                            //   );
+                            // },
+                            accessor: "lineName",
                             minWidth: 200
                           },
                           {
-                            accessor: "validUntil",
+                            Cell: row => {
+                              debugger;
+                              return (
+                                <>
+                                  {new Date(
+                                    row.original.expiryDate
+                                  ).toLocaleDateString("en-US")}
+                                </>
+                              );
+                            },
+                            accessor: "expiryDate",
                             minWidth: 175
                           },
                           {
-                            accessor: "tt",
-                            minWidth: 80
+                            accessor: "transitTime",
+                            minWidth: 120
                           },
                           {
-                            accessor: "price",
-                            minWidth: 80
+                            Cell: row => {
+                              debugger;
+                              return (
+                                <>
+                                  {row.original.baseFreightFee != "" ||
+                                  row.original.baseFreightFee != null
+                                    ? row.original.baseFreightFee + " USD"
+                                    : null}
+                                </>
+                              );
+                            },
+                            accessor: "baseFreightFee",
+                            minWidth: 120
                           }
                         ]
                       }
                     ]}
-                    data={data1}
+                    data={this.state.RateDetails}
                     defaultPageSize={10}
                     className="-striped -highlight"
                     SubComponent={row => {
                       return (
                         <div style={{ padding: "20px 0" }}>
                           <ReactTable
-                            data={data2}
+                            minRows={1}
+                            data={this.state.RateSubDetails}
                             columns={[
                               {
                                 columns: [
                                   {
                                     Header: "Charge Code",
-                                    accessor: "chargeCode"
+                                    accessor: "ChargeCode"
                                   },
                                   {
                                     Header: "Charge Name",
-                                    accessor: "chargeName"
+                                    accessor: "ChargeItem"
                                   },
                                   {
                                     Header: "Units",
@@ -407,16 +437,26 @@ class RateTable extends Component {
                                   },
                                   {
                                     Header: "Unit Price",
-                                    accessor: "unitPrice"
+                                    accessor: "Rate"
                                   },
                                   {
+                                    Cell: row => {
+                                      debugger;
+                                      return (
+                                        <>
+                                          {row.original.TotalAmount != "" ||
+                                          row.original.TotalAmount != null
+                                            ? row.original.TotalAmount + " USD"
+                                            : null}
+                                        </>
+                                      );
+                                    },
                                     Header: "Final Payment",
-                                    accessor: "finalPayment"
+                                    accessor: "TotalAmount"
                                   }
                                 ]
                               }
                             ]}
-                            defaultPageSize={3}
                             showPagination={false}
                           />
                         </div>
