@@ -1635,6 +1635,21 @@ table tbody tr:last-child {
   margin-top: 20px;
   text-align: right;
 }
+.pol-mar > div {
+  padding: 20px 0;
+  border-bottom: 1px solid #d6d6d6;
+  position: relative;
+}
+.pol-mar > div:first-child {
+  padding-top: 0;
+}
+.pol-mar > div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.pol-mar .equip-plus {
+  right: -25px;
+}
 /* rate table ends */
 
 /* spot rate starts */
