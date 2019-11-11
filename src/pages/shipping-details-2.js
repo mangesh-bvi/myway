@@ -606,9 +606,9 @@ class ShippingDetailsTwo extends Component {
 
     let className = "butn view-btn less-btn";
     if (this.state.showContent == true) {
-      className = "butn cancel-butn m-0";
-    } else {
       className = "butn view-btn less-btn";
+    } else {
+      className = "butn view-btn";
     }
     return (
       <div>

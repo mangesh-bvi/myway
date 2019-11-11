@@ -987,7 +987,7 @@ class Dashboard extends Component {
                           <i class="fa fa-bars" aria-hidden="true"></i>
                         </div>
                         <div
-                          className="map-icon-cntr"
+                          className="map-icon-cntr rem-icon"
                           id="Ocean"
                           onClick={() => self.HandleShipmentPin("Ocean")}
                         >
@@ -1002,7 +1002,7 @@ class Dashboard extends Component {
                           <img src={ShipWhite} alt="ship icon" />
                         </div>
                         <div
-                          className="map-icon-cntr"
+                          className="map-icon-cntr rem-icon"
                           id="Air"
                           onClick={() => self.HandleShipmentPin("Air")}
                         >
@@ -1017,7 +1017,7 @@ class Dashboard extends Component {
                           <img src={PlaneWhite} alt="plane icon" />
                         </div>
                         <div
-                          className="map-icon-cntr"
+                          className="map-icon-cntr rem-icon"
                           id="Delay-Ocean"
                           onClick={() => self.HandleShipmentPin("Delay-Ocean")}
                         >
@@ -1032,7 +1032,7 @@ class Dashboard extends Component {
                           <img src={PlaneWhite} alt="plane icon" />
                         </div>
                         <div
-                          className="map-icon-cntr"
+                          className="map-icon-cntr rem-icon"
                           id="Booking-Ocean"
                           onClick={() =>
                             self.HandleShipmentPin("Booking-Ocean")
