@@ -478,6 +478,7 @@ class Dashboard extends Component {
     this.HandleBookingTablePage = this.HandleBookingTablePage.bind(this);
     this.HandleQuotesTablePage = this.HandleQuotesTablePage.bind(this);
     this.HandleBookingCardApi = this.HandleBookingCardApi.bind(this);
+    this.HandleWatchListData = this.HandleWatchListData.bind(this);
   }
 
   onPlaceSelected = ( place ) => {
@@ -499,7 +500,7 @@ class Dashboard extends Component {
           }
           else
           {
-            this.state.zoom = 6
+            this.state.zoom = 4
           }
           this.setState({zoom:this.state.zoom})
     // Set these values in the state.
@@ -526,6 +527,7 @@ class Dashboard extends Component {
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();
+    this.HandleWatchListData();
 
     var checkMapview = this.props.location.state;
     if (typeof checkMapview != "undefined") {
@@ -577,22 +579,38 @@ class Dashboard extends Component {
   }
   HandleActiveShipmentData() {
     let selt = this;
+    var userid = encryption(window.localStorage.getItem("userid"),"desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ActiveShipementData`,
       data: {
-        UserID: 874588
+        UserID: userid
       },
       headers: authHeader()
     }).then(function(response) {
       debugger;
-
-      var activeshipment = response.data.Table;
       var invoicesData = response.data.Table1;
-
       selt.setState({
-        ActiveShipmentData: activeshipment,
         InvoicesData: invoicesData
+      });
+    });
+  }
+
+  HandleWatchListData() {
+    let selt = this;
+    var userid = encryption(window.localStorage.getItem("userid"),"desc");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/FetchWatchListDashBoard`,
+      data: {
+        UserID: userid
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var activeshipment = response.data.Table;
+      selt.setState({
+        ActiveShipmentData: activeshipment
       });
     });
   }
@@ -1188,15 +1206,15 @@ class Dashboard extends Component {
                 {addkey["HBL#"]}
               </span>
               {(() => {
-                if (addkey.ModeOfTransport == "Ocean") {
+                if (addkey.ShipemntType == "Ocean") {
                   return (
                     <img src={Ship} className="modeoftrans-img" title="Ocean" />
                   );
-                } else if (addkey.ModeOfTransport == "Air") {
+                } else if (addkey.ShipemntType == "Air") {
                   return (
                     <img src={Plane} className="modeoftrans-img" title="Air" />
                   );
-                } else if (addkey.ModeOfTransport == "Inland") {
+                } else if (addkey.ShipemntType == "Inland") {
                   return (
                     <img
                       src={Truck}
@@ -1204,7 +1222,7 @@ class Dashboard extends Component {
                       title="Inland"
                     />
                   );
-                } else if (addkey.ModeOfTransport == "Railway") {
+                } else if (addkey.ShipemntType == "Railway") {
                   return (
                     <img
                       src={Rail}
@@ -1218,7 +1236,7 @@ class Dashboard extends Component {
             </p>
             <p>
               <span className="shipment-status" title="Status">
-                {addkey.ShipmentStatus}
+                {addkey.Status}
               </span>
             </p>
             <hr className="horizontal-line" />

@@ -64,12 +64,12 @@ class BookingTable extends Component {
 
   HandleRowClickEvt = (rowInfo, column) => {
     debugger;
-    // return {
-    //   onClick: e => {
+    return {
+      onClick: e => {
     var BookingNo = column.original["BookingNo"];
     this.HandleChangeShipmentDetails(BookingNo);
-    //   }
-    // };
+      }
+    };
   };
 
   render() {
@@ -122,12 +122,12 @@ class BookingTable extends Component {
                       return (
                         <div className="action-cntr">
                           {/* <a> */}
-                          <img
+                          {/* <img
                             className="actionicon"
                             src={Eye}
                             alt="view-icon"
                             onClick={e => this.HandleRowClickEvt(e, row)}
-                          />
+                          /> */}
                           {/* </a> */}
                           <a href="/rate-finalizing">
                             <img
@@ -143,7 +143,7 @@ class BookingTable extends Component {
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}
-                // getTrProps={this.HandleRowClickEvt}
+                getTrProps={this.HandleRowClickEvt}
               />
             </div>
           </div>
