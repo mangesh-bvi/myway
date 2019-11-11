@@ -132,6 +132,7 @@ class EventManagement extends Component {
                 ]}
                 data={this.state.viewData}
                 defaultPageSize={10}
+                minRows={1}
                 className="-striped -highlight"
               />
               <p className="bottom-profit">

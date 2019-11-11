@@ -73,26 +73,31 @@ class Dashboard extends Component {
     this.HandleBookingTablePage = this.HandleBookingTablePage.bind(this);
     this.HandleQuotesTablePage = this.HandleQuotesTablePage.bind(this);
     this.HandleBookingCardApi = this.HandleBookingCardApi.bind(this);
+    this.HandleWatchListData = this.HandleWatchListData.bind(this);
   }
 
   onPlaceSelected = place => {
     debugger;
     console.log("plc", place);
     const address = place.formatted_address,
-      addressArray = place.address_components,
-      // city = this.getCity( addressArray ),
-      // area = this.getArea( addressArray ),
-      // state = this.getState( addressArray ),
-      latValue = place.geometry.location.lat(),
-      lngValue = place.geometry.location.lng();
-    if (addressArray.length > 4) {
-      this.state.zoom = 15;
-    } else if (addressArray.length > 2 && addressArray.length <= 4) {
-      this.state.zoom = 10;
-    } else {
-      this.state.zoom = 6;
+    addressArray =  place.address_components,
+    // city = this.getCity( addressArray ),
+    // area = this.getArea( addressArray ),
+    // state = this.getState( addressArray ),
+    latValue = place.geometry.location.lat(),
+    lngValue = place.geometry.location.lng();
+    if (addressArray.length>4) {
+        this.state.zoom = 15           
     }
-    this.setState({ zoom: this.state.zoom });
+    else if (addressArray.length>2 && addressArray.length<=4)
+    {
+        this.state.zoom = 10
+    }
+    else
+    {
+        this.state.zoom = 4
+    }
+    this.setState({zoom:this.state.zoom})
     // Set these values in the state.
     this.setState({
       // address: ( address ) ? address : '',
@@ -117,6 +122,7 @@ class Dashboard extends Component {
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();
+    this.HandleWatchListData();
 
     var checkMapview = this.props.location.state;
     if (typeof checkMapview != "undefined") {
@@ -168,22 +174,38 @@ class Dashboard extends Component {
   }
   HandleActiveShipmentData() {
     let selt = this;
+    var userid = encryption(window.localStorage.getItem("userid"),"desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ActiveShipementData`,
       data: {
-        UserID: 874588
+        UserID: userid
       },
       headers: authHeader()
     }).then(function(response) {
       debugger;
-
-      var activeshipment = response.data.Table;
       var invoicesData = response.data.Table1;
-
       selt.setState({
-        ActiveShipmentData: activeshipment,
         InvoicesData: invoicesData
+      });
+    });
+  }
+
+  HandleWatchListData() {
+    let selt = this;
+    var userid = encryption(window.localStorage.getItem("userid"),"desc");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/FetchWatchListDashBoard`,
+      data: {
+        UserID: userid
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var activeshipment = response.data.Table;
+      selt.setState({
+        ActiveShipmentData: activeshipment
       });
     });
   }
@@ -239,39 +261,46 @@ class Dashboard extends Component {
     var mdata;
     var arraModalMapData = [];
     debugger;
+    
+    if(self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1)
+    {
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      //alert("Complete")
+      mdata = response.data;
+      if(BindingID != "All")
+      {
+        mdata = mdata.filter(map => map.Pin == BindingID)
+      }
+      self.setState({ loading: false });
+      self.setState({ mapsData: mdata });
+      self.ModalTotalMapData = mdata;
+      var arrarSelectPin = ["Ocean","Air","Booking-Ocean","Delay-Ocean"];
 
-    if (self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1) {
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
-        data: {
-          UserID: encryption(window.localStorage.getItem("userid"), "desc")
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        mdata = response.data;
-        if (BindingID != "All") {
-          mdata = mdata.filter(map => map.Pin == BindingID);
-        }
-        self.setState({ loading: false });
-        self.setState({ mapsData: mdata });
-        self.ModalTotalMapData = mdata;
-        var arrarSelectPin = ["Ocean", "Air", "Booking-Ocean", "Delay-Ocean"];
+      self.SelectPin = arrarSelectPin ;
 
-        self.SelectPin = arrarSelectPin;
-      });
-    } else {
-      if (BindingID != "All") {
-        var index = self.SelectPin.indexOf(BindingID);
-        const div = document.getElementById(BindingID);
-        if (index > -1) {
-          self.SelectPin.splice(index, 1);
-
-          div.classList.add("cancel-btn");
-        } else {
-          div.classList.remove("cancel-btn");
-          self.SelectPin.push(BindingID);
-        }
+      document.getElementById("shipmentfilterdiv").style.display = "block";
+    });
+  }
+  else{
+    if(BindingID != "All")
+    {
+      var index = self.SelectPin.indexOf(BindingID);
+      const div = document.getElementById(BindingID);
+      if (index > -1) {
+        self.SelectPin.splice(index, 1);
+       
+        div.classList.add("cancel-btn");
+      } else {
+        div.classList.remove("cancel-btn");
+        self.SelectPin.push(BindingID);
+      }
 
         for (var rray in self.SelectPin) {
           arraModalMapData = arraModalMapData.concat(
@@ -826,15 +855,15 @@ class Dashboard extends Component {
                 {addkey["HBL#"]}
               </span>
               {(() => {
-                if (addkey.ModeOfTransport == "Ocean") {
+                if (addkey.ShipemntType == "Ocean") {
                   return (
                     <img src={Ship} className="modeoftrans-img" title="Ocean" />
                   );
-                } else if (addkey.ModeOfTransport == "Air") {
+                } else if (addkey.ShipemntType == "Air") {
                   return (
                     <img src={Plane} className="modeoftrans-img" title="Air" />
                   );
-                } else if (addkey.ModeOfTransport == "Inland") {
+                } else if (addkey.ShipemntType == "Inland") {
                   return (
                     <img
                       src={Truck}
@@ -842,7 +871,7 @@ class Dashboard extends Component {
                       title="Inland"
                     />
                   );
-                } else if (addkey.ModeOfTransport == "Railway") {
+                } else if (addkey.ShipemntType == "Railway") {
                   return (
                     <img
                       src={Rail}
@@ -856,7 +885,7 @@ class Dashboard extends Component {
             </p>
             <p>
               <span className="shipment-status" title="Status">
-                {addkey.ShipmentStatus}
+                {addkey.Status}
               </span>
             </p>
             <hr className="horizontal-line" />
@@ -956,11 +985,52 @@ class Dashboard extends Component {
         ) : null} */}
 
         <Headers />
+       
         <div className="cls-ofl">
           <div className="cls-flside">
             <SideMenu />
           </div>
           <div className="cls-rt">
+
+          <div id="shipmentfilterdiv" style={{display:"none"}}>
+<input
+      id="Ocean"  class="header-btn"  
+      type="button"
+     value="Ocean-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Ocean")
+      }
+    />
+    <input
+      id="Air" class="header-btn"
+      type="button"
+     value="Air-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Air")
+      }
+    />
+    <input
+      id="Delay-Ocean"  class="header-btn"
+      type="button"
+     value="Delay-Ocean-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Delay-Ocean")
+      }
+    />
+    <input
+      id="Booking-Ocean"  class="header-btn"
+      type="button"
+     value="CurrentBooking-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Booking-Ocean")
+      }
+    />
+    </div>
+
             <div className="dash-outer" style={{}}>
               {this.state.checkMapview == true ? (
                 <>
@@ -1140,6 +1210,7 @@ class Dashboard extends Component {
                   </div>
                 </div>
               )}
+
             </div>
           </div>
         </div>

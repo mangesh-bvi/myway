@@ -224,6 +224,7 @@ class ShippingDetailsTwo extends Component {
       ShipperID: 0,
       HblNo: "",
       MapsDetailsData: [],
+      ShipmentExistsInWatchList: 0,
       showContent: false,
       packageViewMore: []
     };
@@ -430,7 +431,7 @@ class ShippingDetailsTwo extends Component {
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
         UserId: 874588,
-        HBLNo: "AQTYPSE193723" //HblNo
+        HBLNo: hblno //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
@@ -442,6 +443,7 @@ class ShippingDetailsTwo extends Component {
         containerData: shipmentdata.Table2,
         bookedStatus: shipmentdata.Table4,
         packageDetails: shipmentdata.Table7,
+        ShipmentExistsInWatchList: shipmentdata.Table6[0].ShipmentExistsInWatchList,
         packageViewMore: shipmentdata.Table8
       });
       var sid = shipmentdata.Table[0].ShipperId;
@@ -532,6 +534,42 @@ class ShippingDetailsTwo extends Component {
     console.log(1);
   }
 
+  handleAddToWatchList = () => {
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/AddToWatchListAPI`,
+      data: {
+        UserId:874588,
+        HBLNO:this.props.location.state.detail             
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result)
+      self.setState({ShipmentExistsInWatchList: 1})
+    })
+  }
+
+  handleRemoveWatchList = () => {
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RemoveFromWatchListAPI`,
+      data: {
+        UserId:874588,
+        HBLNO:this.props.location.state.detail             
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result)
+      self.setState({ShipmentExistsInWatchList: 0})
+    })
+  }
+
   render() {
     let self = this;
     const {
@@ -603,6 +641,26 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       }
     }
+    let Watchlist = "";
+    if(this.state.ShipmentExistsInWatchList == 0)
+    { 
+      Watchlist = (
+      <>
+      <button onClick={this.handleAddToWatchList} className="butn mt-0">
+      Add Watchlist
+      </button>
+      </>
+      )
+    }
+    else{
+      Watchlist = (
+      <>
+      <button onClick={this.handleRemoveWatchList} className="butn mt-0">
+      Remove Watchlist
+      </button>
+      </>
+      )
+    }
 
     let className = "butn view-btn less-btn";
     if (this.state.showContent == true) {
@@ -623,9 +681,9 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-md-7 p-0">
                   <div className="title-sect">
                     <h2>Details View</h2>
-                    <button onClick={this.toggleDocu} className="butn mt-0">
-                      Add Watchlist
-                    </button>
+    
+                    {Watchlist}
+                    
                   </div>
                   <ul className="nav cust-tabs" role="tablist">
                     <li>

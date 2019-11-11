@@ -13,11 +13,18 @@ import ProfileSettingIcon from "./../assets/img/profilesetting.png";
 import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import { authHeader } from "../helpers/authHeader";
+import { Progress, Button, Modal, ModalBody } from "reactstrap";
+import ModalHeader from "react-bootstrap/ModalHeader";
 
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = { tooltipOpen: false, lastlogin: "", searchButn: true };
+    this.state = { tooltipOpen: false, laslastlogintlogin: "", searchButn: true, notificationData :[] ,modalDocu: false,};
+    this.BindNotifiation = this.BindNotifiation.bind(this);
+    this.toggleDocu = this.toggleDocu.bind(this);
   }
 
   componentDidMount() {
@@ -48,7 +55,57 @@ class Header extends Component {
     if (window.location.pathname === "/rate-search") {
       this.setState({ searchButn: false });
     }
+
+    window.addEventListener('load', this.BindNotifiation);
+
   }
+  toggleDocu() {
+    this.setState(prevState => ({
+      modalDocu: !prevState.modalDocu
+    }));
+  }
+  
+
+BindNotifiation()
+{
+  debugger;
+  let self = this;
+
+  axios({
+    method: "post",
+    url: `${appSettings.APIURL}/UserNotification`,
+    data: {
+      UserID: encryption(window.localStorage.getItem("userid"), "desc")
+    },
+    headers: authHeader()
+  }).then(function(response) {
+    debugger;
+
+           // self.state.Notificationcount = response.data.Table.length;
+           var today = new Date();   
+           today.setDate(today.getDate() - 8 );
+
+           if(response != null)
+           {
+             if(response.data != null)
+             {
+               if(response.data.Table != null)
+               {
+                 if(response.data.Table.length > 0)
+                 {
+                  self.setState({ notificationData : response.data.Table.filter(item =>
+                    item.ActivityDate > today.toJSON())
+                  });
+                 
+                  document.getElementById("Notificationcount").innerHTML  = self.state.notificationData.length;
+                 }
+               }
+             }
+           }  
+  });
+
+}
+
   toggle() {
     this.setState({
       tooltipOpen: !this.state.tooltipOpen
@@ -67,7 +124,66 @@ class Header extends Component {
   onSetting() {
     // document.getElementById("dvsetting").className.remove("cls-hide");
   }
+
+  SendMessage = () => {
+    var drpshipment = document.getElementById("drpshipment");
+    var txtShipmentNo = document.getElementById("txtShipmentNo");
+    var txtshipmentcomment = document.getElementById("txtshipmentcomment");
+
+    if (drpshipment.value.trim() == "0") {
+      alert("Please select shipment type");
+      drpshipment.focus();
+      return false;
+    }
+    if (txtShipmentNo.value.trim() == "") {
+      alert("Please enter shipment no.");
+      txtShipmentNo.focus();
+      return false;
+    }
+    if (txtshipmentcomment.value.trim() == "") {
+      alert("Please enter shipment comment.");
+      txtshipmentcomment.focus();
+      return false;
+    }
+
+    var today = new Date();   
+
+//alert(txtshipmentcomment.value.trim() + " on " + today.toShortFormat());
+    // let self = this;
+
+    // axios({
+    //   method: "post",
+    //   url: `${appSettings.APIURL}/SendCommonMessage`,
+    //   data: {
+    //     UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+    //     ReferenceNo: txtShipmentNo.value.trim(),
+    //     TypeOfMessage: drpshipment.value.trim(),
+    //     Message : txtshipmentcomment.value.trim()
+    //   },
+    //   headers: authHeader()
+    // }).then(function(response) {
+
+
+    // });
+    // this.toggleDocu();
+
+  }
+
   render() {
+
+    let optionNotificationItems = this.state.notificationData.map((item, i) => (
+      <div>
+        <hr size="2" />
+        <p >Shipment: <a class="font-weight-bold"> {item.Product}</a></p>
+        <p >RefNo: <a class="font-weight-bold">{item.RefNo} </a></p>
+        <p>Status : <a class="font-weight-bold"> {item.ProductStatus} 
+       {/* - { new Date( item.ActivityDate).toLocaleDateString()}  */}
+       </a></p>
+       
+      </div>
+     
+    ));
+ 
     return (
       <div>
         <div className="cls-header-1">
@@ -85,12 +201,23 @@ class Header extends Component {
                   </li>
                 )}
                 <li>
-                  <img
-                    src={BellIcon}
-                    alt="bell-icon"
-                    className="header-bell-icon"
-                  />
+                  
+
+                  <div className="dropdown">
+                    <img
+                      src={BellIcon}
+                      alt="bell-icon"
+                      className="header-bell-icon"
+                      data-toggle="dropdown"
+                    />
+                   <a id="Notificationcount">0</a>
+                    <div className="dropdown-menu">
+                      {optionNotificationItems}
+                {/*<p>yuguhyuyg</p>*/}
+                    </div>
+                  </div>
                 </li>
+                
                 {/* <li style={{ padding: "10px 15px" }}>
                   <div className="dropdown">
                     <img
@@ -107,13 +234,57 @@ class Header extends Component {
                   </div>
                 </li> */}
                 <li style={{ padding: "10px 15px" }}>
+                 
+                  
                   <img
                     src={ChatIcon}
                     alt="chat-icon"
-                    className="header-chat-icon"
+                    className="header-chat-icon"  onClick={this.toggleDocu}
                   />
+                       
+                <Modal
+                  className="delete-popup pol-pod-popup"
+                  isOpen={this.state.modalDocu}
+                  toggle={this.toggleDocu}
+                  centered={true}
+                  backdrop="static"
 
-                  <label>Live Chat</label>
+                >
+                  <ModalHeader>Send Message</ModalHeader>
+                  <ModalBody>
+                    <div className="rename-cntr login-fields">
+                     
+                     <select id="drpshipment">
+                       <option value="0">Select</option>
+                       <option value="Shipment">Shipment</option>
+                     </select>
+                    </div>
+                    <div className="rename-cntr login-fields">
+                      
+                      <input
+                        id="txtShipmentNo"
+                        type="text"
+                        placeholder="Enter Shipment No."
+                      />
+                    </div>
+                    <div className="rename-cntr login-fields">
+                      
+                    <textarea id="txtshipmentcomment" name="comment" rows = "5" cols = "50" style={{resize:"none"}} placeholder="Enter Comment..."></textarea>
+                    </div>
+                   
+                    <Button
+                      className="butn"
+                      onClick={() => {
+                        this.SendMessage();
+                      }}
+                    >
+                      Send
+                    </Button>
+                    <Button className="butn"  onClick={() => {
+                        this.toggleDocu();
+                      }}>Close</Button>
+                  </ModalBody>
+                </Modal>
                 </li>
 
                 <li id="activelog-open">

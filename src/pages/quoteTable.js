@@ -175,6 +175,7 @@ class QuoteTable extends Component {
                 className="-striped -highlight"
                 defaultPageSize={5}
                 getTrProps={this.HandleRowClickEvt}
+                minRows={1}
               />
             </div>
           </div>
