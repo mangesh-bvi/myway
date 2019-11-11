@@ -1077,7 +1077,7 @@ table tbody tr:last-child {
   display: inline-block;
   margin-right: 10px;
   color: #39b54a;
-  text-transform: capitalize;
+  text-transform: uppercase;
 }
 #shipmentType {
   display: block;
@@ -1175,6 +1175,7 @@ table tbody tr:last-child {
 #specEquipAppend {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .rate-dropdown .css-1rhbuit-multiValue {
   font-family: "Bold Font";
@@ -1284,11 +1285,17 @@ table tbody tr:last-child {
   font-family: "Bold Font";
   letter-spacing: 0.5px;
   /* border-radius: 50px; */
-  padding: 5px 10px;
+  padding: 20px 11px;
+  /* padding: 5px 10px; */
   font-size: 14px;
   background-color: #333;
   color: #fff;
   background: url("../img/dummy.png") no-repeat center center;
+  background-size: cover;
+  position: relative;
+}
+#specEquipAppend .spec-inner-cntr {
+  padding: 71px 14px;
 }
 .spec-inner-cntr input {
   width: 35px;
@@ -1299,14 +1306,16 @@ table tbody tr:last-child {
   font-size: 10px;
   margin: 0 7px;
 }
+#specEquipAppend .spec-inner-cntr i {
+  top: 20px;
+}
 .spec-inner-cntr i {
-  margin-left: 10px;
   color: #bfb7b7;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-}
-.spec-inner-cntr i:hover {
-  color: #fff;
+  position: absolute;
+  top: 0;
+  right: 3px;
 }
 #equipAppend .spec-inner-cntr input {
   margin-left: 0;
@@ -1626,6 +1635,21 @@ table tbody tr:last-child {
   margin-top: 20px;
   text-align: right;
 }
+.pol-mar > div {
+  padding: 20px 0;
+  border-bottom: 1px solid #d6d6d6;
+  position: relative;
+}
+.pol-mar > div:first-child {
+  padding-top: 0;
+}
+.pol-mar > div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.pol-mar .equip-plus {
+  right: -25px;
+}
 /* rate table ends */
 
 /* spot rate starts */
@@ -1670,8 +1694,8 @@ table tbody tr:last-child {
   height: 100%;
 }
 .dash-sects-cntr {
-  margin-right: -10px;
-  margin-left: -12px;
+  margin-right: -5px;
+  margin-left: -5px;
 }
 .dash-sects-cntr > div {
   margin-top: 20px;
@@ -1739,6 +1763,45 @@ table tbody tr:last-child {
 .dash-map {
   position: relative;
   min-height: calc(100vh - 332px);
+}
+.map-icon-cntr {
+  width: 45px;
+  background: #0142aa;
+  padding: 10px;
+  border-radius: 50%;
+  line-height: 1;
+  display: inline-block;
+  text-align: center;
+  position: absolute;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.map-icon-cntr .fa-bars {
+  color: #fff;
+}
+.map-filter {
+  position: absolute;
+  right: 10px;
+  top: 60px;
+}
+.map-filter .map-icon-cntr:first-child {
+  position: relative;
+  z-index: 1;
+}
+.map-filter .map-icon-cntr:nth-child(5) {
+  left: -50px;
+}
+.map-filter .map-icon-cntr:nth-child(4) {
+  left: -100px;
+}
+.map-filter .map-icon-cntr:nth-child(3) {
+  left: -150px;
+}
+.map-filter .map-icon-cntr:nth-child(2) {
+  left: -200px;
+}
+.rem-icon {
+  left: 0 !important;
 }
 /* dashboard ends */
 
@@ -1900,6 +1963,10 @@ table tbody tr:last-child {
 .txt-add::placeholder {
   font-family: "Italic Font";
   color: #77787b;
+}
+.crncy-field {
+  width: 20px !important;
+  margin-left: 15px;
 }
 /* rate finalizing ends */
 

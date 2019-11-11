@@ -11,6 +11,7 @@ import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
+import Select from "react-select";
 import {
   withScriptjs,
   withGoogleMap,
@@ -56,11 +57,15 @@ class RateTable extends Component {
 
     this.state = {
       modalEdit: false,
+      modalQuant: false,
       value: 50,
-      RateDetails: []
+      RateDetails: [],
+      values: [],
+      RateSubDetails: []
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.toggleQuant = this.toggleQuant.bind(this);
     this.HandleRateDetails = this.HandleRateDetails.bind(this);
   }
 
@@ -79,6 +84,11 @@ class RateTable extends Component {
   toggleEdit() {
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
+    }));
+  }
+  toggleQuant() {
+    this.setState(prevState => ({
+      modalQuant: !prevState.modalQuant
     }));
   }
 
@@ -109,11 +119,51 @@ class RateTable extends Component {
     }).then(function(response) {
       console.log(response);
       var ratetable = response.data.Table;
-      self.setState({ RateDetails: ratetable });
+      var ratetable1 = response.data.Table1;
+      if (ratetable != null) {
+        self.setState({ RateDetails: ratetable });
+      }
+      if (ratetable1 != null) {
+        self.setState({ RateSubDetails: ratetable1 });
+      }
     });
   }
 
+  addClick() {
+    this.setState(prevState => ({
+      values: [...prevState.values, ""]
+    }));
+  }
+
+  createUI() {
+    return this.state.values.map((el, index) => {
+      return (
+        <div>
+          <div className="rename-cntr login-fields position-relative">
+            <input type="text" />
+            <i
+              className="fa fa-minus equip-plus"
+              id={"remove" + (index + 1)}
+              onClick={this.removeClick.bind(this, index)}
+            ></i>
+          </div>
+          <div className="rename-cntr login-fields">
+            <textarea className="txt-add" placeholder="Enter POL"></textarea>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  removeClick(i) {
+    debugger;
+    let values = [...this.state.values];
+    values.splice(i, 1);
+    this.setState({ values });
+  }
+
   render() {
+    let self = this;
     var data1 = [
       { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
       { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" },
@@ -284,7 +334,11 @@ class RateTable extends Component {
                         ></PODMaps>
                       </div>
                     </div>
-                    <a href="#!" className="butn white-butn w-100 mt-0">
+                    <a
+                      href="#!"
+                      onClick={this.toggleQuant}
+                      className="butn white-butn w-100 mt-0"
+                    >
                       Quantity
                     </a>
                   </div>
@@ -296,63 +350,86 @@ class RateTable extends Component {
                       {
                         columns: [
                           {
-                            Cell: row => {
-                              i++;
-                              return (
-                                <React.Fragment>
-                                  <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                    <div className="remember-forgot d-block m-0">
-                                      <input
-                                        id={"maersk-logo" + i}
-                                        type="checkbox"
-                                        name={"rate-tab-check"}
-                                      />
-                                      <label
-                                        htmlFor={"maersk-logo" + i}
-                                      ></label>
-                                    </div>
-                                  </div>
-                                  <div className="rate-tab-img">
-                                    <img src={maersk} alt="maersk icon" />
-                                  </div>
-                                </React.Fragment>
-                              );
-                            },
+                            // Cell: row => {
+                            //   i++;
+                            //   return (
+                            //     <React.Fragment>
+                            //       <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                            //         <div className="remember-forgot d-block m-0">
+                            //           <input
+                            //             id={"maersk-logo" + i}
+                            //             type="checkbox"
+                            //             name={"rate-tab-check"}
+                            //           />
+                            //           <label
+                            //             htmlFor={"maersk-logo" + i}
+                            //           ></label>
+                            //         </div>
+                            //       </div>
+                            //       <div className="rate-tab-img">
+                            //         <img src={maersk} alt="maersk icon" />
+                            //       </div>
+                            //     </React.Fragment>
+                            //   );
+                            // },
+                            accessor: "lineName",
                             minWidth: 200
                           },
                           {
-                            accessor: "validUntil",
+                            Cell: row => {
+                              debugger;
+                              return (
+                                <>
+                                  {new Date(
+                                    row.original.expiryDate
+                                  ).toLocaleDateString("en-US")}
+                                </>
+                              );
+                            },
+                            accessor: "expiryDate",
                             minWidth: 175
                           },
                           {
-                            accessor: "tt",
-                            minWidth: 80
+                            accessor: "transitTime",
+                            minWidth: 120
                           },
                           {
-                            accessor: "price",
-                            minWidth: 80
+                            Cell: row => {
+                              debugger;
+                              return (
+                                <>
+                                  {row.original.baseFreightFee != "" ||
+                                  row.original.baseFreightFee != null
+                                    ? row.original.baseFreightFee + " USD"
+                                    : null}
+                                </>
+                              );
+                            },
+                            accessor: "baseFreightFee",
+                            minWidth: 120
                           }
                         ]
                       }
                     ]}
-                    data={data1}
+                    data={this.state.RateDetails}
                     defaultPageSize={10}
                     className="-striped -highlight"
                     SubComponent={row => {
                       return (
                         <div style={{ padding: "20px 0" }}>
                           <ReactTable
-                            data={data2}
+                            minRows={1}
+                            data={this.state.RateSubDetails}
                             columns={[
                               {
                                 columns: [
                                   {
                                     Header: "Charge Code",
-                                    accessor: "chargeCode"
+                                    accessor: "ChargeCode"
                                   },
                                   {
                                     Header: "Charge Name",
-                                    accessor: "chargeName"
+                                    accessor: "ChargeItem"
                                   },
                                   {
                                     Header: "Units",
@@ -360,16 +437,26 @@ class RateTable extends Component {
                                   },
                                   {
                                     Header: "Unit Price",
-                                    accessor: "unitPrice"
+                                    accessor: "Rate"
                                   },
                                   {
+                                    Cell: row => {
+                                      debugger;
+                                      return (
+                                        <>
+                                          {row.original.TotalAmount != "" ||
+                                          row.original.TotalAmount != null
+                                            ? row.original.TotalAmount + " USD"
+                                            : null}
+                                        </>
+                                      );
+                                    },
                                     Header: "Final Payment",
-                                    accessor: "finalPayment"
+                                    accessor: "TotalAmount"
                                   }
                                 ]
                               }
                             ]}
-                            defaultPageSize={3}
                             showPagination={false}
                           />
                         </div>
@@ -384,30 +471,83 @@ class RateTable extends Component {
             </div>
             <Modal
               className="delete-popup pol-pod-popup"
+              isOpen={this.state.modalQuant}
+              toggle={this.toggleQuant}
+              centered={true}
+            >
+              <ModalBody>
+                <h3 className="mb-4">Equipment Types</h3>
+                <div className="equip-plus-cntr w-100 mt-0">
+                  <Select
+                    className="rate-dropdown"
+                    // getOptionLabel={option => option.StandardContainerCode}
+                    // getOptionValue={option => option.StandardContainerCode}
+                    isMulti
+                    // options={self.state.StandardContainerCode}
+                    // onChange={this.equipChange.bind(this)}
+                    // value={self.state.selected}
+                    // showNewOptionAtTop={false}
+                  />
+                </div>
+                <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                  <input
+                    id="Special-equType"
+                    type="checkbox"
+                    className="d-none"
+                    name={"Special-equType"}
+                    // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                  />
+                  <label htmlFor="Special-equType">Special Equipment</label>
+                </div>
+                <div className="spe-equ mt-0">
+                  <div className="equip-plus-cntr w-100">
+                    <Select
+                      // isDisabled={self.state.isSpacialEqt}
+                      className="rate-dropdown"
+                      // getOptionLabel={option => option.SpecialContainerCode}
+                      isMulti
+                      // getOptionValue={option => option.SpecialContainerCode}
+                      // components={animatedComponents}
+                      // options={self.state.SpacialEqmt}
+                      placeholder="Select Kind of Special Equipment"
+                      // onChange={this.specEquipChange}
+                      // value={self.state.spEqtSelect}
+                      showNewOptionAtTop={false}
+                    />
+                  </div>
+                </div>
+                <Button className="butn" onClick={this.toggleQuant}>
+                  Done
+                </Button>
+                <Button className="butn cancel-butn" onClick={this.toggleQuant}>
+                  Cancel
+                </Button>
+              </ModalBody>
+            </Modal>
+            <Modal
+              className="delete-popup pol-pod-popup"
               isOpen={this.state.modalEdit}
               toggle={this.toggleEdit}
               centered={true}
             >
               <ModalBody>
-                <div className="rename-cntr login-fields">
-                  <label>Enter Latitude</label>
-                  {/* <input type="text" placeholder="Latitude" /> */}
-                  <select>
-                    <option>50.33998</option>
-                    <option>70.85236</option>
-                    <option>100.47823</option>
-                    <option>150.02315</option>
-                  </select>
-                </div>
-                <div className="rename-cntr login-fields">
-                  <label>Enter Longitude</label>
-                  {/* <input type="text" placeholder="Longitude" /> */}
-                  <select>
-                    <option>50.33998</option>
-                    <option>70.85236</option>
-                    <option>100.47823</option>
-                    <option>150.02315</option>
-                  </select>
+                <div className="pol-mar">
+                  <div>
+                    <div className="rename-cntr login-fields position-relative">
+                      <input type="text" />
+                      <i
+                        className="fa fa-plus equip-plus"
+                        onClick={this.addClick.bind(this)}
+                      ></i>
+                    </div>
+                    <div className="rename-cntr login-fields">
+                      <textarea
+                        className="txt-add"
+                        placeholder="Enter POL"
+                      ></textarea>
+                    </div>
+                  </div>
+                  {this.createUI()}
                 </div>
                 <Button className="butn" onClick={this.toggleEdit}>
                   Done

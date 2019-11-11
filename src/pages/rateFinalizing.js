@@ -529,7 +529,19 @@ class RateFinalizing extends Component {
               <h3 className="mb-4">Request Changes</h3>
               <div className="rename-cntr login-fields">
                 <label>Discount</label>
-                <input type="text" placeholder="Enter Discount" />
+                <div className="d-flex">
+                  <input
+                    type="text"
+                    className="w-50"
+                    placeholder="Enter Discount"
+                  />
+                  <input
+                    type="text"
+                    value="INR"
+                    disabled
+                    className="crncy-field"
+                  />
+                </div>
               </div>
               <div className="rename-cntr login-fields">
                 <label>Free Time</label>

@@ -228,6 +228,7 @@ class NewRateSearch extends Component {
   }
 
   HandleTypeofMove(e) {
+    debugger
     this.setState({ typesofMove: e.target.id });
     this.HandleGetIncoTerms();
     // next
@@ -508,6 +509,33 @@ class NewRateSearch extends Component {
       document.getElementById("typeMoveMinusClick").classList.add("d-none");
       document.getElementById("typeMovePlusClick").classList.remove("d-none");
     }
+
+    // next
+    document.getElementById("location").classList.add("location");
+    // if (document.getElementById("addressInner") == null)
+    //   document.getElementById("typeMoveInner").classList.add("typeMoveType");
+    // else document.getElementById("addressInner").classList.add("addressType");
+
+    // if (document.getElementById("addressInner") == null)
+    //   document
+    //     .getElementById("typeMoveIconCntr")
+    //     .classList.add("typeMoveIconCntr");
+    // else
+    //   document
+    //     .getElementById("addressIconCntr")
+    //     .classList.add("addressIconCntr");
+
+    if (document.getElementById("addressInner") == null)
+      document.getElementById("typeMoveName").classList.remove("d-none");
+    else document.getElementById("addressName").classList.remove("d-none");
+
+    if (document.getElementById("addressInner") == null)
+      document.getElementById("typeMoveMinusClick").classList.add("d-none");
+    else document.getElementById("addressMinusClick").classList.add("d-none");
+
+    if (document.getElementById("addressInner") == null)
+      document.getElementById("typeMovePlusClick").classList.remove("d-none");
+    else document.getElementById("addressPlusClick").classList.remove("d-none");
   };
   addressPlusClick = e => {
     document.getElementById("addressInner").classList.remove("addressType");
@@ -1481,7 +1509,7 @@ class NewRateSearch extends Component {
 
               <div className="new-rate-cntr" id="location">
                 <div className="rate-title-cntr">
-                  <h3>Select Location</h3>
+                  <h3 className="mb-3">Select Location</h3>
                   <div className="iconSelection" id="locationIconCntr">
                     <p className="side-selection" id="locationName">
                       {/* {this.state.typesofMove} */}
