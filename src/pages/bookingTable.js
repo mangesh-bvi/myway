@@ -66,8 +66,8 @@ class BookingTable extends Component {
     debugger;
     return {
       onClick: e => {
-    var BookingNo = column.original["BookingNo"];
-    this.HandleChangeShipmentDetails(BookingNo);
+        var BookingNo = column.original["BookingNo"];
+        this.HandleChangeShipmentDetails(BookingNo);
       }
     };
   };
@@ -144,7 +144,7 @@ class BookingTable extends Component {
                 className="-striped -highlight"
                 defaultPageSize={5}
                 minRows={1}
-                // getTrProps={this.HandleRowClickEvt}
+                getTrProps={this.HandleRowClickEvt}
               />
             </div>
           </div>

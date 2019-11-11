@@ -1885,6 +1885,15 @@ table tbody tr:last-child {
   background-size: 16px;
   background-position: right 15px center;
 }
+.ana-viw {
+  display: flex;
+}
+.ana-viw > div {
+  margin-right: 20px;
+}
+.ana-viw > div:last-child {
+  margin-right: 0px;
+}
 /* analytics ends */
 
 /* rate finalizing starts */
@@ -1967,6 +1976,15 @@ table tbody tr:last-child {
 .crncy-field {
   width: 20px !important;
   margin-left: 15px;
+}
+.no-butn {
+  pointer-events: none;
+}
+.rate-edit-icon {
+  width: 18px;
+}
+.still-maersk {
+  width: 50px;
 }
 /* rate finalizing ends */
 
