@@ -146,26 +146,49 @@ BindNotifiation()
       return false;
     }
 
+    var month_names =["Jan","Feb","Mar",
+    "Apr","May","Jun",
+    "Jul","Aug","Sep",
+    "Oct","Nov","Dec"];
+
     var today = new Date();   
 
-//alert(txtshipmentcomment.value.trim() + " on " + today.toShortFormat());
-    // let self = this;
+    var day = today.getDate();
+    var month_index = today.getMonth();
+    var year = today.getFullYear();
 
-    // axios({
-    //   method: "post",
-    //   url: `${appSettings.APIURL}/SendCommonMessage`,
-    //   data: {
-    //     UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-    //     ReferenceNo: txtShipmentNo.value.trim(),
-    //     TypeOfMessage: drpshipment.value.trim(),
-    //     Message : txtshipmentcomment.value.trim()
-    //   },
-    //   headers: authHeader()
-    // }).then(function(response) {
+//alert(txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year);
+    let self = this;
 
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SendCommonMessage`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        ReferenceNo: txtShipmentNo.value.trim(),
+        TypeOfMessage: drpshipment.value.trim(),
+        Message : txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year
+      },
+      headers: authHeader()
+    }).then(function(response) {
+debugger;
+      if(response != null)
+      {
+        if(response.data != null)
+        {
+          if(response.data.length > 0)
+          {
+            if(response.data[0] != null)
+            {
+              var message = response.data[0].Result;
+              alert(response.data[0].Result);
+            }
+          }
+        }
+      }
 
-    // });
-    // this.toggleDocu();
+    });
+    this.toggleDocu();
 
   }
 
