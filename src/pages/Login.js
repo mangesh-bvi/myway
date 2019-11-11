@@ -2,7 +2,7 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
-import { Button, Modal, ModalBody,ModalHeader,ModalFooter} from "reactstrap";
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from "reactstrap";
 import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import {
@@ -10,36 +10,54 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import 'react-checkbox-tree/lib/react-checkbox-tree.css';
-import CheckboxTree from 'react-checkbox-tree';
-// import { connect } from 'react-redux'
-const nodes = [
-  {
-    value: "mars",
-    label: "Mars",
-    children: [
-      {
-        value: "phobos",
-        label: "Phobos",
-        children: [{ value: "phobos-chileden", label: "phobos-chileden" }]
-      },
-      { value: "deimos", label: "Deimos" }
-    ]
-  },
-  {
-    value: "mars1",
-    label: "Mars1",
-    children: [
-      {
-        value: "phobos",
-        label: "Phobos1",
-        children: [{ value: "phobos-chileden", label: "phobos-chileden-1" }]
-      },
-      { value: "deimos", label: "Deimos1" }
-    ]
-  }
-];
 
+import "react-checkbox-tree/lib/react-checkbox-tree.css";
+import CheckboxTree from "react-checkbox-tree";
+// import FontAwesomeIcon from 'font-awesome';
+
+// import { connect } from 'react-redux'
+// const nodes = [
+//   {
+//     value: "mars",
+//     label: "Mars",
+//     children: [
+//       {
+//         value: "phobos",
+//         label: "Phobos",
+//         children: [{ value: "phobos-chileden", label: "phobos-chileden" }]
+//       },
+//       { value: "deimos", label: "Deimos" }
+//     ]
+//   },
+//   {
+//     value: "mars1",
+//     label: "Mars1",
+//     children: [
+//       {
+//         value: "phobos",
+//         label: "Phobos1",
+//         children: [{ value: "phobos-chileden", label: "phobos-chileden-1" }]
+//       },
+//       { value: "deimos", label: "Deimos1" }
+//     ]
+//   }
+//   {
+//     value: 352200103,
+//     label: "ATA MUMBAI",
+//     children: [
+//       {
+//         value: 1337604146,
+//         label: "Satish Gage",
+//         children: [{ value: 0, label: 0 }]
+//       },
+//       {
+//         value: 1337604158,
+//         label: "Sanjana Bagwe",
+//         children: [{ value: 1, label: 1 }]
+//       }
+//     ]
+//   }
+// ];
 
 class Login extends React.Component {
   constructor(props) {
@@ -52,20 +70,126 @@ class Login extends React.Component {
       errorText: "",
       loading: false,
       modalSalesLogin: false,
-      salesUserData:[],
+      salesUserData: [],
       checked: [],
       expanded: [],
+      nodes:[]
     };
 
     this.handlechange = this.handlechange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleSalesLogin = this.toggleSalesLogin.bind(this);
+    this.toggleSalesLoginPage = this.toggleSalesLoginPage.bind(this);
+    this.HandleDisplaySalesPersonData = this.HandleDisplaySalesPersonData.bind(
+      this
+    );
   }
 
+  HandleDisplaySalesPersonData(sData) {
+    debugger;
+    //get Companies
+    let self=this;
+    var mydata=sData;
+    var finalNode=[];
+    const distinctOffice = [];
+    const distinctContactDisName = [];
+    const distinctAssociateComp = [];
+
+    const Compmaps = new Map();
+    const ContactDismap = new Map();
+    const distinctAssociateCompmap = new Map();
+
+    for (const item of mydata) {
+      var officeName = item.OfficeShortName;
+      var OfficeID = item.OfficeID;
+      if (!Compmaps.has(officeName)) {
+        Compmaps.set(officeName, true); // set any value to Map
+        distinctOffice.push({
+          OfficeShortName: officeName,
+          OfficeID: OfficeID
+        });
+      }
+
+      //Contact display
+      var contactDName = item.ContactDisplayName;
+      var ContactID = item.ContactID;
+      if (!ContactDismap.has(contactDName)) {
+        ContactDismap.set(contactDName, true); // set any value to Map
+        distinctContactDisName.push({
+          officeName: officeName,
+          value: ContactID,
+          label: contactDName,
+          child: [{ value: 1, label: 2 }, { value: 1, label: 2 }]
+        });
+      }
+
+      //Contact Company data
+      //officeName
+      //Company_Name
+      //Company_ID
+      var Company_Name = item.Company_Name;
+      var Company_ID = item.Company_ID;
+      var Company_Name = item.Company_Name;
+      var ContactDisplayName = item.ContactDisplayName;
+      if (
+        !distinctAssociateCompmap.has(officeName) &&
+        !distinctAssociateCompmap.has(Company_Name) &&
+        !distinctAssociateCompmap.has(Company_ID)
+      ) {
+        distinctAssociateCompmap.set(contactDName, true); // set any value to Map
+        distinctAssociateComp.push({
+          officeName: officeName,
+          Company_Name: Company_Name,
+          Company_ID: Company_ID,
+          ContactDisplayName: ContactDisplayName
+        });
+      }
+    }
+
+    debugger;
+    //alert('distinctOffice:-' + distinctOffice.length);
+    //alert('distinctContactDisName:-' + distinctContactDisName.length);
+    //alert('distinctAssociateComp:-' + distinctAssociateComp.length);
+    var iCompanies = distinctOffice.length;
+    var iContacts = distinctContactDisName.length;
+
+    ////Company
+    for (var i = 0; i < iCompanies; i++) {
+      var salesPersonDataByComp = {};
+      salesPersonDataByComp.value = distinctOffice[i]["OfficeID"];
+      salesPersonDataByComp.label = distinctOffice[i]["OfficeShortName"];
+      salesPersonDataByComp.children = [];
+
+      var salesPersondata = [];
+
+      for (var j = 0; j < iContacts; j++) {
+        var salesPersonName = {};
+        var salesPersonChildData = [];
+        var associateCompData = {};
+
+        salesPersonName.value = distinctContactDisName[j]["value"];
+        salesPersonName.label = distinctContactDisName[j]["label"];
+
+        associateCompData.value = j;
+        associateCompData.label = j;
+        salesPersonChildData.push(associateCompData);
+
+        salesPersonName.children = salesPersonChildData;
+        salesPersondata.push(salesPersonName);
+      }
+      salesPersonDataByComp.children = salesPersondata;
+      debugger;
+      finalNode.push(salesPersonDataByComp);
+
+    }
+    self.setState({nodes:finalNode});
+  }
   toggleSalesLogin() {
-    this.setState({
-      modalSalesLogin: !this.state.modalSalesLogin
-    });
+    let self = this;
+    self.setState({ modalSalesLogin: false, loading: false });
+  }
+  toggleSalesLoginPage() {
+    window.location.href = "./rate-search";
   }
 
   handlechange(e) {
@@ -75,6 +199,7 @@ class Login extends React.Component {
   }
   handleSubmit(e) {
     debugger;
+    let self = this;
     e.preventDefault();
     this.setState({ submitted: true, loading: true });
     const { username, password } = this.state;
@@ -135,6 +260,20 @@ class Login extends React.Component {
           );
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
+          debugger;
+          var userType = response.data.Table;
+          var userTypeName = userType[0].UserType;
+
+          var ProfileTypen = userType[0].ProfileType;
+          if (userTypeName === "Sales User" && ProfileTypen) {
+            var sData=response.data.Table3;
+            self.HandleDisplaySalesPersonData(sData);
+            self.setState({
+              modalSalesLogin: !self.state.modalSalesLogin
+            });
+             
+          }
+
           //window.location.href = "./user-agreement";
         })
         .catch(error => {
@@ -163,6 +302,7 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
+     
     localStorage.clear();
     const publicIp = require("public-ip");
     (async () => {
@@ -171,6 +311,7 @@ class Login extends React.Component {
     })();
   }
   render() {
+    let self = this;
     //  const { username, password } = this.state;
     const { loading } = this.state;
     return (
@@ -208,7 +349,7 @@ class Login extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="remember-forgot">
+                <div className="remember-forgot-1">
                   {/* <div>
                     <input id="remember" type="checkbox" name={"remember me"} />
                     <label htmlFor="remember">Remember Me</label>
@@ -216,21 +357,36 @@ class Login extends React.Component {
                   <a href="./forgotPassword">Forgot Password?</a>
                 </div>
                 <div className="text-right">
-                  <button
-                    onClick={this.toggleSalesLogin}
-                    type="submit"
-                    className="butn login-butn"
-                    //onClick={}
-                    disabled={loading}
-                  >
-                    {loading && (
-                      <i
-                        style={{ marginRight: 15 }}
-                        className="fa fa-refresh fa-spin"
-                      ></i>
-                    )}
-                    {loading ? "Please Wait ..." : "Login"}
-                  </button>
+                  {self.state.modalSalesLogin != true ? (
+                    <button
+                      onClick={this.handleSubmit}
+                      type="submit"
+                      className="butn login-butn"
+                      //onClick={}
+                      disabled={
+                        self.state.modalSalesLogin != true ? loading : null
+                      }
+                    >
+                      {self.state.modalSalesLogin != true
+                        ? loading && (
+                            <i
+                              style={{ marginRight: 15 }}
+                              className="fa fa-refresh fa-spin"
+                            ></i>
+                          )
+                        : null}
+                      {loading ? "Please Wait ..." : "Login"}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={this.handleSubmit}
+                      type="submit"
+                      className="butn login-butn"
+                      //onClick={}
+                    >
+                      Login
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -246,17 +402,18 @@ class Login extends React.Component {
             <ModalBody>
               <div>
                 <CheckboxTree
-                  nodes={nodes}
+                  nodes={self.state.nodes}
                   checked={this.state.checked}
                   expanded={this.state.expanded}
                   onCheck={checked => this.setState({ checked })}
                   onExpand={expanded => this.setState({ expanded })}
+                
                 />
               </div>
             </ModalBody>
             <ModalFooter>
               <div className="salesuserPopup">
-                <Button className="butn" onClick={this.toggleSalesLogin}>
+                <Button className="butn" onClick={this.toggleSalesLoginPage}>
                   Proceed
                 </Button>
                 <Button
@@ -323,9 +480,6 @@ function TokenhandleResponse(response) {
           encryption(window.localStorage.getItem("usertype"), "desc") ==
           "Sales User"
         ) {
-          this.toggleSalesLogin();
-
-           window.location.href = "./rate-search";
         } else {
           window.location.href = "./Dashboard";
         }

@@ -3,6 +3,9 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import {authHeader} from "../helpers/authHeader";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -24,11 +27,60 @@ class RateFinalizing extends Component {
       modalProfit: !prevState.modalProfit
     }));
   }
-  toggleNewConsignee() {
-    this.setState(prevState => ({
-      modalNewConsignee: !prevState.modalNewConsignee
-    }));
-  }
+  // toggleNewConsignee() {
+
+  //   if(window.confirm('Are you sure to save this record?'))
+  //   {
+  //     this.handleQuoteSubmit();
+
+  //   }
+  //   this.setState(prevState => ({
+  //     modalNewConsignee: !prevState.modalNewConsignee
+  //   }));
+  // }
+
+  // handleQuoteSubmit()
+  // {
+  //   debugger;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/FCLSalesQuoteInsertion`,
+  //     data: {ShipmentType : 'Export',
+  //     Inco_terms : 'CIF',
+  //     TypesOfMove : 2,
+  //     PickUpAddress :'Sakinaka Mumbai',
+  //     DestinationAddress : '',
+  //     HazMat  : 1,
+  //     ChargeableWt : 29000,
+  //      Containerdetails:[{
+  //     ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+  //   }],
+  //   PickUpAddressDetails:{
+  //       Street:'Sakinaka Mumbai',Country:'INDIA',State:'Maharashtra',City:'Mumbai',ZipCode:4135100
+    
+  //       },
+  //       DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:0}
+  //   ,
+  //   MyWayUserID:874588,
+  //   CompanyID:1457295703,
+  //   BaseCurrency:'USD',
+  //   MywayProfit:1000,
+  //   MywayDiscount:100,
+  //   FCLSQBaseFreight:[{RateID:8539206,Freight:1200,FreightCurr:'USD',RateType:'RateQuery',Exrate :500  }],
+  //   FCLSQLocalCharges:[{LocalChargeID :7547003,Description :'TEST',Amount:1000,Currency :'USD',Minimum :900,Tax :100,ChargeItem :'At Actual',RateID :8539206,Exrate :100 }],
+  //   FCLSQSurCharges:[{SurchargeID :0,RateID :0,ChargeCode :'',Tax:0,Amount:0,Currency:'',ChargeItem:'',Exrate :0 }]
+    
+  //   },
+  //   headers: authHeader()
+  //   }).then(function(response){
+  //      debugger;
+  //      window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+  //   }).catch(error => {
+  //     debugger;
+  //     console.log(error.response)
+  //   })
+  // }
+
   toggleRequest() {
     this.setState(prevState => ({
       modalRequest: !prevState.modalRequest
@@ -374,7 +426,7 @@ class RateFinalizing extends Component {
                         onClick={this.toggleNewConsignee}
                         className="butn more-padd"
                       >
-                        Add New Consignee
+                        Add New Customer
                       </button>
                     </div>
                     <div className="row">
@@ -468,12 +520,46 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
           <Modal
-            className=""
+            className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequest}
             toggle={this.toggleRequest}
             centered={true}
           >
-            <ModalBody>Popup will come</ModalBody>
+            <ModalBody>
+              <h3 className="mb-4">Request Changes</h3>
+              <div className="rename-cntr login-fields">
+                <label>Discount</label>
+                <div className="d-flex">
+                  <input
+                    type="text"
+                    className="w-50"
+                    placeholder="Enter Discount"
+                  />
+                  <input
+                    type="text"
+                    value="INR"
+                    disabled
+                    className="crncy-field"
+                  />
+                </div>
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Free Time</label>
+                <input type="text" placeholder="Enter Time" maxLength="2" />
+              </div>
+              <div className="rename-cntr login-fields mb-0">
+                <label>Comments</label>
+                <textarea
+                  className="txt-add"
+                  placeholder="Enter Comments"
+                ></textarea>
+              </div>
+              <div className="text-center">
+                <Button className="butn" onClick={this.toggleRequest}>
+                  Request
+                </Button>
+              </div>
+            </ModalBody>
           </Modal>
         </div>
       </React.Fragment>

@@ -12,137 +12,138 @@ import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 
 class EventManagement extends Component {
-    constructor(props) {
-        super(props);
-    
-        this.state = {
-          modalEdit: false,
-          value: 50,
-          viewData: []
-        };
+  constructor(props) {
+    super(props);
 
-        this.handleAdd = this.handleAdd.bind(this);
-      }
+    this.state = {
+      modalEdit: false,
+      value: 50,
+      viewData: []
+    };
 
-    componentDidMount() {
-        let self = this;
-        axios({
-          method: "post",
-          url: `${appSettings.APIURL}/BindEventManagementData`,
-          data: {
-            UserID: encryption(window.localStorage.getItem("userid"), "desc")
-          },
-          headers: authHeader()
-        }).then(function(response) {
-          debugger;
-          self.setState({ viewData: response.data });
-        });
-    }
+    this.handleAdd = this.handleAdd.bind(this);
+  }
 
-    HandleDocumentView(evt, row) {
-        debugger;
-        var data = row.original;
-        this.props.history.push({
-            pathname: "Add-Event-Management",
-            state: { detail: data, page: "Edit" }
-          });
-    }
+  componentDidMount() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BindEventManagementData`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      self.setState({ viewData: response.data });
+    });
+  }
 
-    handleAdd(){
-      this.props.history.push({
-        pathname: "add-Event-Management",
-        state: { detail: false }
-      });
-    }
+  HandleDocumentView(evt, row) {
+    debugger;
+    var data = row.original;
+    this.props.history.push({
+      pathname: "Add-Event-Management",
+      state: { detail: data, page: "Edit" }
+    });
+  }
 
-    render() {
+  handleAdd() {
+    this.props.history.push({
+      pathname: "add-Event-Management",
+      state: { detail: false }
+    });
+  }
 
-        return (
+  render() {
+    return (
+      <div>
+        <Headers />
+        <div className="cls-ofl">
+          <div className="cls-flside">
+            <AdminSideMenu />
+          </div>
           <div>
-            <Headers />
-            <div className="cls-ofl">
-              <div className="cls-flside">
-                <AdminSideMenu />
-              </div>
-              <div>
-                <button
-                  type="button"
-                  className="butn evt-add-btn"
-                  onClick={this.handleAdd} >
-                      Add
-                </button>
-              </div>
-              <div className="cls-rt no-bg min-hei-auto">
-                <div className="view-user-table">
-                  <ReactTable
-                    noDataText=""
-                    columns={[
+            <button
+              type="button"
+              className="butn evt-add-btn"
+              onClick={this.handleAdd}
+            >
+              Add
+            </button>
+          </div>
+          <div className="cls-rt no-bg min-hei-auto">
+            <div className="view-user-table">
+              <ReactTable
+                noDataText=""
+                columns={[
+                  {
+                    columns: [
                       {
-                        columns: [
-                          {
-                            Header: "Container No",
-                            accessor: "ContainerNo"
-                          },
-                          {
-                            Header: "Vessel Name",
-                            accessor: "VesselName"
-                          },
-                          {
-                            Header: "Carrier",
-                            accessor: "Carrier",
-                          },
-                          {
-                            Header: "ETA",
-                            accessor: "ETA"
-                          },
-                          {
-                            Header: "ETD",
-                            accessor: "ETD"
-                          },
-                          {
-                            Header: "ATD",
-                            accessor: "ATD"
-                          },
-                          {
-                            Header: "Eventmanagement Status",
-                            accessor: "EventmanagementDayStatus"
-                          },
-                          {
-                            Header: "PTTP",
-                            accessor: "AvgTransitDays_PTTP"
-                          },
-                          {
-                            Header: "Action",
-                            Cell: row => {
-                              return (
-                                <div>
-                                  <img
-                                    className="actionicon"
-                                    src={Pencil}
-                                    alt="view-icon"
-                                    onClick={e => this.HandleDocumentView(e, row)}
-                                  />
-                                </div>
-                              );
-                            }
-                          }
-                        ]
+                        Header: "Container No",
+                        accessor: "ContainerNo"
+                      },
+                      {
+                        Header: "Vessel Name",
+                        accessor: "VesselName"
+                      },
+                      {
+                        Header: "Carrier",
+                        accessor: "Carrier"
+                      },
+                      {
+                        Header: "ETA",
+                        accessor: "ETA"
+                      },
+                      {
+                        Header: "ETD",
+                        accessor: "ETD"
+                      },
+                      {
+                        Header: "ATD",
+                        accessor: "ATD"
+                      },
+                      {
+                        Header: "Eventmanagement Status",
+                        accessor: "EventmanagementDayStatus"
+                      },
+                      {
+                        Header: "PTTP",
+                        accessor: "AvgTransitDays_PTTP"
+                      },
+                      {
+                        Header: "Action",
+                        sortable: false,
+                        Cell: row => {
+                          return (
+                            <div>
+                              <img
+                                className="actionicon"
+                                src={Pencil}
+                                alt="view-icon"
+                                onClick={e => this.HandleDocumentView(e, row)}
+                              />
+                            </div>
+                          );
+                        }
                       }
-                    ]}
-                    data={this.state.viewData}
-                    defaultPageSize={10}
-                    className="-striped -highlight"
-                    minRows={1}
-                  />
-                  <p className="bottom-profit">
-                    Profit -------$ Customer Segment A Profit Margin %15
-                  </p>
-                </div>
-              </div>
+                    ]
+                  }
+                ]}
+                data={this.state.viewData}
+                defaultPageSize={10}
+                minRows={1}
+                className="-striped -highlight"
+              />
+              <p className="bottom-profit">
+                Profit -------$ Customer Segment A Profit Margin %15
+              </p>
             </div>
           </div>
-        );
-      }
+        </div>
+      </div>
+    );
+  }
 }
 
 export default EventManagement;

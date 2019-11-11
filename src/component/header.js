@@ -362,13 +362,13 @@ BindNotifiation()
                             </li>
                             <li className="profile-setting-li">
                               <a href="">
-                              <img
-                                className="header-phone-icon dropdown-toggle"
-                                data-toggle="dropdown"
-                                id="qrCode"
-                                src={PhoneIcon}
-                                alt="mobile-icon"
-                              />
+                                <img
+                                  className="header-phone-icon dropdown-toggle"
+                                  data-toggle="dropdown"
+                                  id="qrCode"
+                                  src={PhoneIcon}
+                                  alt="mobile-icon"
+                                />
                                 Mobile App
                               </a>
                             </li>

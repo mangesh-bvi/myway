@@ -1,6 +1,12 @@
 import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
-import { Progress, Button, Modal, ModalBody } from "reactstrap";
+import {
+  UncontrolledCollapse,
+  Progress,
+  Button,
+  Modal,
+  ModalBody
+} from "reactstrap";
 import GoogleMapReact from "google-map-react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -197,7 +203,9 @@ class ShippingDetailsTwo extends Component {
     super(props);
 
     this.state = {
+      packageDetails: [],
       modalDel: false,
+      modalPackage: false,
       modalDocu: false,
       modalEdit: false,
       detailsData: {},
@@ -215,12 +223,16 @@ class ShippingDetailsTwo extends Component {
       ConsigneeID: 0,
       ShipperID: 0,
       HblNo: "",
-      MapsDetailsData: []
+      MapsDetailsData: [],
+      ShipmentExistsInWatchList: 0,
+      showContent: false,
+      packageViewMore: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.togglePackage = this.togglePackage.bind(this);
     // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
@@ -352,11 +364,11 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindShipmentSummaryMap`,
       data: {
-        ShipperID: 1340354108,//shipperId,  //shipperId,
-        ConsigneeID: 1340464123,//consigneeId,  //consigneeId,
+        ShipperID: 1340354108, //shipperId,  //shipperId,
+        ConsigneeID: 1340464123, //consigneeId,  //consigneeId,
         SwitchConsigneeID: 0,
         SwitchShipperID: 0,
-        HBLNo: "BOM 237730"//hblno 
+        HBLNo: "BOM 237730" //hblno
       },
       headers: authHeader()
     }).then(function(response) {
@@ -416,8 +428,10 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
-        HBLNo: HblNo //HblNo
+        // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
+        // HBLNo: HblNo //HblNo
+        UserId: 874588,
+        HBLNo: hblno //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
@@ -427,7 +441,10 @@ class ShippingDetailsTwo extends Component {
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
-        bookedStatus: shipmentdata.Table4
+        bookedStatus: shipmentdata.Table4,
+        packageDetails: shipmentdata.Table7,
+        ShipmentExistsInWatchList: shipmentdata.Table6[0].ShipmentExistsInWatchList,
+        packageViewMore: shipmentdata.Table8
       });
       var sid = shipmentdata.Table[0].ShipperId;
       var cid = shipmentdata.Table[0].ConsigneeID;
@@ -491,6 +508,13 @@ class ShippingDetailsTwo extends Component {
       modalDel: !prevState.modalDel
     }));
   }
+  togglePackage() {
+    debugger;
+    let self = this;
+    self.setState(prevState => ({
+      modalPackage: !prevState.modalPackage
+    }));
+  }
   toggleDocu() {
     this.setState(prevState => ({
       modalDocu: !prevState.modalDocu
@@ -505,7 +529,49 @@ class ShippingDetailsTwo extends Component {
     this.setState({ ShowCard: !this.state.ShowCard });
   }
 
+  onEntered() {
+    // this.setState({ status: "Opened" });
+    console.log(1);
+  }
+
+  handleAddToWatchList = () => {
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/AddToWatchListAPI`,
+      data: {
+        UserId:874588,
+        HBLNO:this.props.location.state.detail             
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result)
+      self.setState({ShipmentExistsInWatchList: 1})
+    })
+  }
+
+  handleRemoveWatchList = () => {
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RemoveFromWatchListAPI`,
+      data: {
+        UserId:874588,
+        HBLNO:this.props.location.state.detail             
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result)
+      self.setState({ShipmentExistsInWatchList: 0})
+    })
+  }
+
   render() {
+    let self = this;
     const {
       detailsData,
       addressData,
@@ -513,7 +579,9 @@ class ShippingDetailsTwo extends Component {
       ShowCard,
       documentData,
       bookedStatus,
-      MapsDetailsData
+      MapsDetailsData,
+      packageDetails,
+      packageViewMore
     } = this.state;
     let bookingIsActive = "";
     let bookDate = "";
@@ -573,7 +641,33 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       }
     }
+    let Watchlist = "";
+    if(this.state.ShipmentExistsInWatchList == 0)
+    { 
+      Watchlist = (
+      <>
+      <button onClick={this.handleAddToWatchList} className="butn mt-0">
+      Add Watchlist
+      </button>
+      </>
+      )
+    }
+    else{
+      Watchlist = (
+      <>
+      <button onClick={this.handleRemoveWatchList} className="butn mt-0">
+      Remove Watchlist
+      </button>
+      </>
+      )
+    }
 
+    let className = "butn view-btn less-btn";
+    if (this.state.showContent == true) {
+      className = "butn cancel-butn m-0";
+    } else {
+      className = "butn view-btn less-btn";
+    }
     return (
       <div>
         <Headers />
@@ -584,9 +678,12 @@ class ShippingDetailsTwo extends Component {
           <div className="cls-rt">
             <div className="container-fluid">
               <div className="row">
-                <div className="col-md-8 p-0">
+                <div className="col-md-7 p-0">
                   <div className="title-sect">
                     <h2>Details View</h2>
+    
+                    {Watchlist}
+                    
                   </div>
                   <ul className="nav cust-tabs" role="tablist">
                     <li>
@@ -835,9 +932,7 @@ class ShippingDetailsTwo extends Component {
                                     </p>
                                   </div>
                                   <div className="col-md-3 details-border">
-                                    <p className="details-title">
-                                      Voyage Identification
-                                    </p>
+                                    <p className="details-title">Voyage Id</p>
                                     <p className="details-para">
                                       {routedata["Voyage Identification"]}
                                     </p>
@@ -905,50 +1000,204 @@ class ShippingDetailsTwo extends Component {
                             <p className="details-title">Seal NO.2</p>
                           </div>
                         </div>
-                        <div className="collapse-sect">
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Unit</p>
-                              <p className="details-para">Metric</p>
+                        <UncontrolledCollapse toggler="#toggler">
+                          <div className="collapse-sect">
+                            <div className="row">
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Unit</p>
+                                <p className="details-para">Metric</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Height</p>
+                                <p className="details-para">85.2</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Width</p>
+                                <p className="details-para">93.6</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Length</p>
+                                <p className="details-para">232.8</p>
+                              </div>
                             </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Height</p>
-                              <p className="details-para">85.2</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Width</p>
-                              <p className="details-para">93.6</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Length</p>
-                              <p className="details-para">232.8</p>
+                            <div className="row">
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Gross Weight</p>
+                                <p className="details-para">0 Kgs</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Net Weight</p>
+                                <p className="details-para">0 Kgs</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Volume Weight</p>
+                                <p className="details-para">0.00 Kgs</p>
+                              </div>
+                              <div className="col-md-3 details-border">
+                                <p className="details-title">Description</p>
+                              </div>
                             </div>
                           </div>
-                          <div className="row">
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Gross Weight</p>
-                              <p className="details-para">0 Kgs</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Net Weight</p>
-                              <p className="details-para">0 Kgs</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Volume Weight</p>
-                              <p className="details-para">0.00 Kgs</p>
-                            </div>
-                            <div className="col-md-3 details-border">
-                              <p className="details-title">Description</p>
-                            </div>
-                          </div>
-                        </div>
+                        </UncontrolledCollapse>
                         <div className="row">
                           <div className="col-md-12">
-                            <a href="#!" className="butn view-btn less-btn">
-                              Show Less
+                            <a
+                              href="#!"
+                              id="toggler"
+                              className={className}
+                              onClick={() =>
+                                this.setState({
+                                  showContent: !this.state.showContent
+                                })
+                              }
+                            >
+                              {this.state.showContent ? (
+                                <span>VIEW LESS</span>
+                              ) : (
+                                <span>VIEW MORE</span>
+                              )}
                             </a>
+                            {/* <button
+                              className={className}
+                              id="toggler"
+                              onClick={() =>
+                                this.setState({
+                                  showContent: !this.state.showContent
+                                })
+                              }
+                            >
+                              {this.state.showContent ? (
+                                <span>VIEW LESS</span>
+                              ) : (
+                                <span>VIEW MORE</span>
+                              )}
+                            </button> */}
                           </div>
                         </div>
+                      </div>
+                      <div className="sect-padd">
+                        <p className="details-heading">Package Details</p>
+                        {packageDetails.map(function(packData, i) {
+                          return (
+                            <>
+                              <div className="row">
+                                <div className="col-md-3 details-border">
+                                  <p className="details-title">Package Type</p>
+                                  <p className="details-para">
+                                    {packData.PackageType}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="collapse-sect">
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Case Number</p>
+                                    <p className="details-para">
+                                      {packData.CaseNumber}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Units</p>
+                                    <p className="details-para">
+                                      {packData.UnitType}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Package Count
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.PackageCount}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Length</p>
+                                    <p className="details-para">
+                                      {packData.Length}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Width</p>
+                                    <p className="details-para">
+                                      {packData.Width}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Height</p>
+                                    <p className="details-para">
+                                      {packData.Height}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Net Weight</p>
+                                    <p className="details-para">
+                                      {packData.NetWeight} Kgs.
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Gross Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.GrossWeight} Kgs.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Volume</p>
+                                    <p className="details-para">
+                                      {packData.Volume}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Volume Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.VolumeWeight} Kgs.
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Total Net Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.TotalNetWeight} Kgs.
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Total Gross Weight
+                                    </p>
+                                    <p className="details-para">
+                                      {packData.TotalGrossWeight} Kgs.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-12">
+                                  <a
+                                    href="#!"
+                                    className="butn view-btn less-btn mr-2"
+                                  >
+                                    Show Less
+                                  </a>
+                                  <button
+                                    onClick={() => self.togglePackage()}
+                                    className="butn view-btn"
+                                  >
+                                    View Items
+                                  </button>
+                                </div>
+                              </div>
+                            </>
+                          );
+                        })}
                       </div>
                     </div>
                     <div
@@ -966,6 +1215,7 @@ class ShippingDetailsTwo extends Component {
                         <ReactTable
                           data={documentData}
                           showPagination={false}
+                          noDataText=""
                           columns={[
                             {
                               columns: [
@@ -980,6 +1230,7 @@ class ShippingDetailsTwo extends Component {
                                 },
                                 {
                                   Header: "Action",
+                                  sortable: false,
                                   Cell: row => {
                                     return (
                                       <div>
@@ -1030,7 +1281,7 @@ class ShippingDetailsTwo extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-5">
                   <div className="ship-detail-maps">
                     <div className="ship-detail-map">
                       <MapWithAMakredInfoWindow
@@ -1129,6 +1380,71 @@ class ShippingDetailsTwo extends Component {
                     </div>
                   </div>
                 </div>
+                <Modal
+                  className="delete-popup package-popup"
+                  isOpen={this.state.modalPackage}
+                  toggle={this.togglePackage}
+                >
+                  <ModalBody>
+                    <ReactTable
+                      data={packageViewMore}
+                      // noDataText="<i className='fa fa-refresh fa-spin'></i>"
+                      noDataText=""
+                      columns={[
+                        {
+                          columns: [
+                            {
+                              Header: "Package Type",
+                              accessor: "Packagetype",
+                              sortable: true
+                            },
+                            {
+                              Header: "PO Number",
+                              accessor: "Ponumber"
+                            },
+                            {
+                              Header: "Product Id",
+                              accessor: "Productid"
+                            },
+                            {
+                              Header: "Description",
+                              accessor: "Description"
+                            },
+                            {
+                              Header: "Quantity Ordered",
+                              accessor: "Qtyordered"
+                            },
+                            {
+                              Header: "Quantity Shipped",
+                              accessor: "Qtyshipped"
+                            },
+                            {
+                              Header: "UOM (Unit of Measurement)",
+                              accessor: "Uomeasurement"
+                            },
+                            {
+                              Header: "Net Weight",
+                              accessor: "Netwt"
+                            },
+                            {
+                              Header: "Gross Weight",
+                              accessor: "Grosswt"
+                            }
+                          ]
+                        }
+                      ]}
+                      className="-striped -highlight"
+                      defaultPageSize={10}
+                      minRows={0}
+                    />
+                    <Button
+                      className="butn cancel-butn"
+                      onClick={this.togglePackage}
+                    >
+                      Close
+                    </Button>
+                  </ModalBody>
+                </Modal>
                 <Modal
                   className="delete-popup"
                   isOpen={this.state.modalDel}

@@ -60,8 +60,18 @@ class MyOrder extends Component {
       self.setState({
         myOrderList: orderData
       });
-    });
-  }
+    }).catch()
+    {
+      var actData = [];
+      actData.push({
+        
+        Ponumber: "No Data Found"
+      });
+      self.setState({ myOrderList: actData });
+    };
+
+    };
+  
 
   MapButn() {
     this.setState({ listDis: "block", mapDis: "none" });
@@ -93,9 +103,14 @@ class MyOrder extends Component {
             <div className="title-sect">
               <h2>My Order</h2>
             </div>
-            <div className="row title-sect">
-              <select className="myorderdropdown">{optionItems}</select>
-              <select className="myorderdropdown">{optionItems1}</select>
+            <div className="row title-sect" style={{ marginLeft: 0 }}>
+              <div className="login-fields-1">
+                <select className="myorderdropdown">{optionItems}</select>
+              </div>
+              <div className="login-fields-1">
+                <select className="myorderdropdown">{optionItems1}</select>
+              </div>
+
               <div className="d-flex align-items-center">
                 <input
                   type="search"
@@ -117,6 +132,7 @@ class MyOrder extends Component {
             <div className="view-user-table">
               <ReactTable
                 data={this.state.myOrderList}
+                minRows={1}
                 columns={[
                   {
                     columns: [

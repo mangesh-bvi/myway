@@ -215,10 +215,9 @@ h2 span {
 }
 .remember-forgot {
   margin-top: 20px;
-  /* display: flex; */
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  text-align: right;
 }
 .remember-forgot label {
   font-family: "Medium Font";
@@ -746,6 +745,16 @@ table tbody tr:last-child {
   width: calc(100% - 150px);
   margin-left: auto;
 }
+.package-popup {
+  max-width: 100%;
+  margin: 0;
+}
+.package-popup .modal-content {
+  border-radius: 0;
+}
+.package-popup .modal-body {
+  padding: 20px;
+}
 /* shipping details 2 ends */
 
 /* shipment planner starts */
@@ -1068,7 +1077,7 @@ table tbody tr:last-child {
   display: inline-block;
   margin-right: 10px;
   color: #39b54a;
-  text-transform: capitalize;
+  text-transform: uppercase;
 }
 #shipmentType {
   display: block;
@@ -1162,6 +1171,12 @@ table tbody tr:last-child {
 .rate-dropdown:focus {
   outline: none;
 }
+#equipAppend,
+#specEquipAppend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
 .rate-dropdown .css-1rhbuit-multiValue {
   font-family: "Bold Font";
   letter-spacing: 0.5px;
@@ -1170,6 +1185,9 @@ table tbody tr:last-child {
   font-size: 14px;
   background-color: #333;
   color: #fff;
+}
+#equipTypeInner .rate-dropdown .css-1rhbuit-multiValue {
+  display: none;
 }
 .rate-dropdown .css-12jo7m5 {
   color: #fff;
@@ -1263,26 +1281,57 @@ table tbody tr:last-child {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 15px 0;
-  font-family: "Medium Font";
+  margin: 15px 5px 0 5px;
+  font-family: "Bold Font";
+  letter-spacing: 0.5px;
+  /* border-radius: 50px; */
+  padding: 20px 11px;
+  /* padding: 5px 10px; */
+  font-size: 14px;
+  background-color: #333;
+  color: #fff;
+  background: url("../img/dummy.png") no-repeat center center;
+  background-size: cover;
+  position: relative;
+}
+#specEquipAppend .spec-inner-cntr {
+  padding: 71px 14px;
 }
 .spec-inner-cntr input {
-  width: 50px;
-  margin-left: 15px;
+  width: 35px;
+  margin-left: 5px;
   padding-left: 5px;
 }
-.spec-inner-cntr p {
+.spec-inner-cntr b {
+  font-size: 10px;
+  margin: 0 7px;
+}
+#specEquipAppend .spec-inner-cntr i {
+  top: 20px;
+}
+.spec-inner-cntr i {
+  color: #bfb7b7;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: absolute;
+  top: 0;
+  right: 3px;
+}
+#equipAppend .spec-inner-cntr input {
+  margin-left: 0;
+}
+/* .spec-inner-cntr p {
   min-width: 200px;
-}
-.spec-inner-cntr span {
-  margin-left: 5px;
-}
-#equipAppend .spec-inner-cntr:last-child {
+} */
+/* #equipAppend .spec-inner-cntr:last-child {
   margin-bottom: 0;
-}
+} */
 .fc-radio {
   margin-top: 0;
   margin-left: 5px;
+}
+.temp-mar {
+  margin-left: 10px;
 }
 .fc-radio label {
   min-width: auto !important;
@@ -1290,6 +1339,7 @@ table tbody tr:last-child {
   padding: 2px 10px;
   font-size: 12px;
   background-color: #fff;
+  color: #000;
 }
 .fc-radio > div:first-child label {
   border-top-right-radius: 0;
@@ -1301,6 +1351,7 @@ table tbody tr:last-child {
 }
 .fc-radio input:checked + label {
   background-color: #39b54a;
+  color: #fff;
 }
 
 /* extra */
@@ -1584,6 +1635,21 @@ table tbody tr:last-child {
   margin-top: 20px;
   text-align: right;
 }
+.pol-mar > div {
+  padding: 20px 0;
+  border-bottom: 1px solid #d6d6d6;
+  position: relative;
+}
+.pol-mar > div:first-child {
+  padding-top: 0;
+}
+.pol-mar > div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.pol-mar .equip-plus {
+  right: -25px;
+}
 /* rate table ends */
 
 /* spot rate starts */
@@ -1628,8 +1694,8 @@ table tbody tr:last-child {
   height: 100%;
 }
 .dash-sects-cntr {
-  margin-right: -10px;
-  margin-left: -12px;
+  margin-right: -5px;
+  margin-left: -5px;
 }
 .dash-sects-cntr > div {
   margin-top: 20px;
@@ -1644,6 +1710,7 @@ table tbody tr:last-child {
 }
 .dash-sects-dtls {
   padding: 6px 12px;
+  padding-right: 0;
 }
 .dash-sects-dtls .fa-spin {
   text-align: center;
@@ -1652,6 +1719,7 @@ table tbody tr:last-child {
 .dash-sects-dtls-inner {
   max-height: 271px;
   overflow: auto;
+  padding-right: 12px;
 }
 .dash-sects-dtls-inner::-webkit-scrollbar {
   width: 5px;
@@ -1695,6 +1763,45 @@ table tbody tr:last-child {
 .dash-map {
   position: relative;
   min-height: calc(100vh - 332px);
+}
+.map-icon-cntr {
+  width: 45px;
+  background: #0142aa;
+  padding: 10px;
+  border-radius: 50%;
+  line-height: 1;
+  display: inline-block;
+  text-align: center;
+  position: absolute;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.map-icon-cntr .fa-bars {
+  color: #fff;
+}
+.map-filter {
+  position: absolute;
+  right: 10px;
+  top: 60px;
+}
+.map-filter .map-icon-cntr:first-child {
+  position: relative;
+  z-index: 1;
+}
+.map-filter .map-icon-cntr:nth-child(5) {
+  left: -50px;
+}
+.map-filter .map-icon-cntr:nth-child(4) {
+  left: -100px;
+}
+.map-filter .map-icon-cntr:nth-child(3) {
+  left: -150px;
+}
+.map-filter .map-icon-cntr:nth-child(2) {
+  left: -200px;
+}
+.rem-icon {
+  left: 0 !important;
 }
 /* dashboard ends */
 
@@ -1843,6 +1950,24 @@ table tbody tr:last-child {
   margin: 0;
   height: 80px;
 }
+.txt-add {
+  width: 100%;
+  border: 0;
+  letter-spacing: 0.5px;
+  background-color: #ededed;
+  padding: 10px 20px;
+  font-family: "Medium Font";
+  resize: none;
+  height: 100px;
+}
+.txt-add::placeholder {
+  font-family: "Italic Font";
+  color: #77787b;
+}
+.crncy-field {
+  width: 20px !important;
+  margin-left: 15px;
+}
 /* rate finalizing ends */
 
 /* add user starts */
@@ -1912,7 +2037,14 @@ table tbody tr:last-child {
   color: #29aae3;
   background-color: #fff;
 }
-
+.cancel-btn {
+  background-color: #9dafbd;
+  border-color: #9dafbd;
+}
+.cancel-btn:hover {
+  background-color: #9dafbd;
+  color: #fff;
+}
 .header-ul {
   list-style: none;
   display: flex;
@@ -2453,8 +2585,49 @@ table tbody tr:last-child {
 .salesuserPopup .butn {
   margin-top: 0;
 }
-.autocom >div{
+.autocom > div {
   display: block !important;
+}
+.remember-forgot-1 {
+  margin-top: 20px;
+  /* display: flex; */
+  justify-content: space-between;
+  align-items: center;
+  text-align: right;
+}
+.remember-forgot-1 a {
+  font-family: "Medium Font";
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease-in-out;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+}
+.remember-forgot-1 a:hover {
+  text-decoration-color: inherit;
+}
+.login-fields-1 {
+  margin-bottom: 0;
+}
+.login-fields-1 input,
+.login-fields-1 select {
+  width: 100%;
+  border: 0;
+  /* font-size: 18px; */
+  letter-spacing: 0.5px;
+  background-color: #ededed;
+  padding: 15px 25px;
+  font-family: "Medium Font";
+}
+.login-fields-1 select {
+  background: #ededed url("./../img/down-arrow.png") no-repeat right 25px center;
+  padding-right: 50px;
+}
+.login-fields-1 input::placeholder {
+  font-family: "Italic Font";
+  color: #77787b;
+}
+.login-fields {
+  margin-bottom: 25px;
 }
 /* --------------------------------------------------------------------------- */
 
@@ -2563,5 +2736,27 @@ table tbody tr:last-child {
 
 .auto-cmp + div {
   display: block !important;
+}
+
+.butnAdv {
+  background-color: cadetblue;
+  color: #fff;
+  border: 1px solid cadetblue;
+  font-family: "Bold Font";
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 40px;
+  padding: 4px;
+  /* border-radius: 50px; */
+  margin-right: 20px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+
+.butnAdv:hover {
+  background-color: white;
+  color: cadetblue;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/

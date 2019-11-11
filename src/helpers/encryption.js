@@ -1,7 +1,6 @@
  
 export function encryption(plainText,type="enc")
-{
-  
+{  
     var CryptoJS = require("crypto-js");
     if(type==="enc")
     {
