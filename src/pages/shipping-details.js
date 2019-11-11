@@ -605,6 +605,7 @@ class ShippingDetails extends Component {
                 className="-striped -highlight"
                 defaultPageSize={10}
                 getTrProps={this.HandleRowClickEvt}
+                minRows={1}
               />
             </div>
             <Modal

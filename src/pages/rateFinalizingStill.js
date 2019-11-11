@@ -5,6 +5,9 @@ import FileUpload from "./../assets/img/file.png";
 import ReactTable from "react-table";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import { Collapse } from "react-bootstrap";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import { authHeader } from "../helpers/authHeader";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -36,6 +39,22 @@ class RateFinalizingStill extends Component {
       selectedFileName: event.target.files[0].name
     });
   };
+
+  HandleShipmentDetails(bookingNo) {
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
+      data: {
+        "BookingNo":bookingNo
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var shipmentdata = response.data;
+   
+    });
+  
+  }
 
   render() {
     var data1 = [
@@ -72,6 +91,11 @@ class RateFinalizingStill extends Component {
     else{
       className = 'butn m-0'
     }
+    if (typeof this.props.location.state != "undefined") {
+      var bookingNo = this.props.location.state.detail[0];
+      this.HandleShipmentDetails(bookingNo);
+    }
+ 
     return (
       <React.Fragment>
         <Headers />
@@ -82,6 +106,7 @@ class RateFinalizingStill extends Component {
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
             {(() => {
+              debugger;
             if(this.props.location.state.detail[1] == "Quotes")
             {
             return <h2>Quotes Details</h2>

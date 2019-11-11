@@ -138,6 +138,7 @@ class ActivityLog extends Component {
                     data={this.state.viewData}
                     defaultPageSize={10}
                     className="-striped -highlight"
+                    minRows={1}
                   />
                   <p className="bottom-profit">
                     Profit -------$ Customer Segment A Profit Margin %15

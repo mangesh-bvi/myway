@@ -1027,7 +1027,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      alert("Complete")
+      //alert("Complete")
       mdata = response.data;
       if(BindingID != "All")
       {
@@ -1039,6 +1039,8 @@ class Dashboard extends Component {
       var arrarSelectPin = ["Ocean","Air","Booking-Ocean","Delay-Ocean"];
 
       self.SelectPin = arrarSelectPin ;
+
+      document.getElementById("shipmentfilterdiv").style.display = "block";
     });
   }
   else{
@@ -1069,6 +1071,9 @@ class Dashboard extends Component {
     self.setState({ loading: false });
     self.setState({ mapsData: arraModalMapData });
   }
+
+ 
+
   }
 
   render() {
@@ -1254,11 +1259,52 @@ class Dashboard extends Component {
         ) : null} */}
 
         <Headers />
+       
         <div className="cls-ofl">
           <div className="cls-flside">
             <SideMenu />
           </div>
           <div className="cls-rt">
+
+          <div id="shipmentfilterdiv" style={{display:"none"}}>
+<input
+      id="Ocean"  class="header-btn"  
+      type="button"
+     value="Ocean-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Ocean")
+      }
+    />
+    <input
+      id="Air" class="header-btn"
+      type="button"
+     value="Air-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Air")
+      }
+    />
+    <input
+      id="Delay-Ocean"  class="header-btn"
+      type="button"
+     value="Delay-Ocean-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Delay-Ocean")
+      }
+    />
+    <input
+      id="Booking-Ocean"  class="header-btn"
+      type="button"
+     value="CurrentBooking-Shipment"
+      name="search-rate"
+      onClick={() =>
+        self.HandleShipmentPin("Booking-Ocean")
+      }
+    />
+    </div>
+
             <div className="dash-outer" style={{}}>
               {this.state.checkMapview == true ? (
                 <>
@@ -1367,42 +1413,6 @@ class Dashboard extends Component {
                 </div>
               )}
 
-<input
-      id="Ocean"  class="header-btn"
-      type="button"
-     value="Ocean-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Ocean")
-      }
-    />
-    <input
-      id="Air" class="header-btn"
-      type="button"
-     value="Air-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Air")
-      }
-    />
-    <input
-      id="Delay-Ocean"  class="header-btn"
-      type="button"
-     value="Delay-Ocean-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Delay-Ocean")
-      }
-    />
-    <input
-      id="Booking-Ocean"  class="header-btn"
-      type="button"
-     value="CurrentBooking-Shipment"
-      name="search-rate"
-      onClick={() =>
-        self.HandleShipmentPin("Booking-Ocean")
-      }
-    />
             </div>
           </div>
         </div>

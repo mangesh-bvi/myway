@@ -166,6 +166,7 @@ class ViewUser extends Component {
             <div className="view-user-table">
               <ReactTable
                 noDataText=""
+                minRows={1}
                 columns={[
                   {
                     columns: [

@@ -142,6 +142,7 @@ class BookingTable extends Component {
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}
+                minRows={1}
                 // getTrProps={this.HandleRowClickEvt}
               />
             </div>
