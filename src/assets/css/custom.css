@@ -2571,6 +2571,20 @@ table tbody tr:last-child {
 .login-fields {
   margin-bottom: 25px;
 }
+
+.mapIframe{
+
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.cmd-select{
+  font-family: "Regular Font";
+    letter-spacing: 0.5px;
+    border: 1px solid #959595;
+    padding: 5px 10px;
+}
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
