@@ -63,17 +63,18 @@ class EventManagement extends Component {
           <div className="cls-flside">
             <AdminSideMenu />
           </div>
-          <div>
-            <button
-              type="button"
-              className="butn evt-add-btn"
-              onClick={this.handleAdd}
-            >
-              Add
-            </button>
-          </div>
           <div className="cls-rt no-bg min-hei-auto">
             <div className="view-user-table">
+              <div className="title-sect">
+                <h2>Event Management</h2>
+                <button
+                  type="button"
+                  className="butn evt-add-btn"
+                  onClick={this.handleAdd}
+                >
+                  Add
+                </button>
+              </div>
               <ReactTable
                 noDataText=""
                 columns={[
@@ -132,6 +133,7 @@ class EventManagement extends Component {
                 ]}
                 data={this.state.viewData}
                 defaultPageSize={10}
+                minRows={1}
                 className="-striped -highlight"
               />
               <p className="bottom-profit">

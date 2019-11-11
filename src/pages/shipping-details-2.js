@@ -224,7 +224,9 @@ class ShippingDetailsTwo extends Component {
       ShipperID: 0,
       HblNo: "",
       MapsDetailsData: [],
-      showContent: false
+      ShipmentExistsInWatchList: 0,
+      showContent: false,
+      packageViewMore: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -429,7 +431,7 @@ class ShippingDetailsTwo extends Component {
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
         UserId: 874588,
-        HBLNo: "AQTYPSE193723" //HblNo
+        HBLNo: hblno //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
@@ -440,7 +442,9 @@ class ShippingDetailsTwo extends Component {
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
         bookedStatus: shipmentdata.Table4,
-        packageDetails: shipmentdata.Table7
+        packageDetails: shipmentdata.Table7,
+        ShipmentExistsInWatchList: shipmentdata.Table6[0].ShipmentExistsInWatchList,
+        packageViewMore: shipmentdata.Table8
       });
       var sid = shipmentdata.Table[0].ShipperId;
       var cid = shipmentdata.Table[0].ConsigneeID;
@@ -530,6 +534,42 @@ class ShippingDetailsTwo extends Component {
     console.log(1);
   }
 
+  handleAddToWatchList = () => {
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/AddToWatchListAPI`,
+      data: {
+        UserId:874588,
+        HBLNO:this.props.location.state.detail             
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result)
+      self.setState({ShipmentExistsInWatchList: 1})
+    })
+  }
+
+  handleRemoveWatchList = () => {
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RemoveFromWatchListAPI`,
+      data: {
+        UserId:874588,
+        HBLNO:this.props.location.state.detail             
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result)
+      self.setState({ShipmentExistsInWatchList: 0})
+    })
+  }
+
   render() {
     let self = this;
     const {
@@ -540,7 +580,8 @@ class ShippingDetailsTwo extends Component {
       documentData,
       bookedStatus,
       MapsDetailsData,
-      packageDetails
+      packageDetails,
+      packageViewMore
     } = this.state;
     let bookingIsActive = "";
     let bookDate = "";
@@ -600,12 +641,32 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       }
     }
+    let Watchlist = "";
+    if(this.state.ShipmentExistsInWatchList == 0)
+    { 
+      Watchlist = (
+      <>
+      <button onClick={this.handleAddToWatchList} className="butn mt-0">
+      Add Watchlist
+      </button>
+      </>
+      )
+    }
+    else{
+      Watchlist = (
+      <>
+      <button onClick={this.handleRemoveWatchList} className="butn mt-0">
+      Remove Watchlist
+      </button>
+      </>
+      )
+    }
 
     let className = "butn view-btn less-btn";
     if (this.state.showContent == true) {
-      className = "butn cancel-butn m-0";
-    } else {
       className = "butn view-btn less-btn";
+    } else {
+      className = "butn view-btn";
     }
     return (
       <div>
@@ -617,12 +678,12 @@ class ShippingDetailsTwo extends Component {
           <div className="cls-rt">
             <div className="container-fluid">
               <div className="row">
-                <div className="col-md-8 p-0">
+                <div className="col-md-7 p-0">
                   <div className="title-sect">
                     <h2>Details View</h2>
-                    <button onClick={this.toggleDocu} className="butn mt-0">
-                      Add Watchlist
-                    </button>
+    
+                    {Watchlist}
+                    
                   </div>
                   <ul className="nav cust-tabs" role="tablist">
                     <li>
@@ -871,9 +932,7 @@ class ShippingDetailsTwo extends Component {
                                     </p>
                                   </div>
                                   <div className="col-md-3 details-border">
-                                    <p className="details-title">
-                                      Voyage Identification
-                                    </p>
+                                    <p className="details-title">Voyage Id</p>
                                     <p className="details-para">
                                       {routedata["Voyage Identification"]}
                                     </p>
@@ -1156,6 +1215,7 @@ class ShippingDetailsTwo extends Component {
                         <ReactTable
                           data={documentData}
                           showPagination={false}
+                          noDataText=""
                           columns={[
                             {
                               columns: [
@@ -1221,7 +1281,7 @@ class ShippingDetailsTwo extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-5">
                   <div className="ship-detail-maps">
                     <div className="ship-detail-map">
                       <MapWithAMakredInfoWindow
@@ -1327,7 +1387,7 @@ class ShippingDetailsTwo extends Component {
                 >
                   <ModalBody>
                     <ReactTable
-                      data={packageDetails}
+                      data={packageViewMore}
                       // noDataText="<i className='fa fa-refresh fa-spin'></i>"
                       noDataText=""
                       columns={[
@@ -1335,16 +1395,16 @@ class ShippingDetailsTwo extends Component {
                           columns: [
                             {
                               Header: "Package Type",
-                              accessor: "PackageType",
+                              accessor: "Packagetype",
                               sortable: true
                             },
                             {
                               Header: "PO Number",
-                              accessor: "InvoiceNumber"
+                              accessor: "Ponumber"
                             },
                             {
                               Header: "Product Id",
-                              accessor: "CargoPackID"
+                              accessor: "Productid"
                             },
                             {
                               Header: "Description",
@@ -1352,23 +1412,23 @@ class ShippingDetailsTwo extends Component {
                             },
                             {
                               Header: "Quantity Ordered",
-                              accessor: "POD"
+                              accessor: "Qtyordered"
                             },
                             {
                               Header: "Quantity Shipped",
-                              accessor: "POD"
+                              accessor: "Qtyshipped"
                             },
                             {
                               Header: "UOM (Unit of Measurement)",
-                              accessor: "UnitType"
+                              accessor: "Uomeasurement"
                             },
                             {
                               Header: "Net Weight",
-                              accessor: "NetWeight"
+                              accessor: "Netwt"
                             },
                             {
                               Header: "Gross Weight",
-                              accessor: "GrossWeight"
+                              accessor: "Grosswt"
                             }
                           ]
                         }

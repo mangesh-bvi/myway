@@ -196,7 +196,8 @@ class ShippingDetails extends Component {
       fields[field] = e.target.value;
     }
     this.setState({
-      fields
+      fields,
+      selectShipStage:[]
     });
     this.BindShipmentStage();
   }
@@ -372,19 +373,22 @@ class ShippingDetails extends Component {
     var ToETDDate = document.getElementById("ToDepDate").value;
     var FromETADate = document.getElementById("FrArrDate").value;
     var ToETADate = document.getElementById("ToArrDate").value;
+    var userid = encryption(window.localStorage.getItem("userid"),"desc");
+    if(this.handleValidation())
+    {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/TrackShipmentSearch`,
       data: {
-        StageID:parseInt(this.state.fields["ShipmentStage"]),
-        ModeofTransport:this.state.fields["ModeOfTransport"],
-        UserID:874588,
+        StageID:this.state.fields["ShipmentStage"]==undefined?"":parseInt(this.state.fields["ShipmentStage"]),
+        ModeofTransport:this.state.fields["ModeOfTransport"]==undefined?"":this.state.fields["ModeOfTransport"],
+        UserID:userid,
         FromETADate:FromETADate,
         ToETADate:ToETADate,
         FromETDDate:FromETDDate,
         ToETDDate:ToETDDate,
-        OriginCntry :this.state.originCountry[0].label,
-        DestCntry:this.state.destCountry[0].label,
+        OriginCntry :this.state.fields["OriginCountry"]==undefined?"":this.state.fields["OriginCountry"],
+        DestCntry:this.state.fields["DestinationCountry"]==undefined?"":this.state.fields["DestinationCountry"],
         POL:this.state.fields["POL"]==undefined?"":this.state.fields["POL"],
         POD:this.state.fields["POD"]==undefined?"":this.state.fields["POD"],
         ShipperID:this.state.ShipperID,
@@ -404,11 +408,29 @@ class ShippingDetails extends Component {
       "Shipper":response.data.Table[i]['Shipper'],"ShipperID":response.data.Table[i]['ShipperID'],
       "Status":response.data.Table[i]['Current_Status']})
       }
-      self.setState({ shipmentSummary:self.state.shipmentSummary });
+      // self.setState({  });
+      self.setState(prevState => ({
+        modalAdvSearch: !prevState.modalAdvSearch,
+        shipmentSummary:self.state.shipmentSummary
+      }));
     })
+    }
 
   }
 
+  handleValidation(){
+    debugger;
+    let fields = this.state.fields;
+    let errors = this.state.errors;
+    let formIsValid = true;
+
+    if(!fields["ShipmentStage"] && !fields["ModeOfTransport"]){
+      formIsValid = false;
+      alert("Please enter Fields");
+   }
+   return formIsValid;
+  } 
+  
   render() {
     const { shipmentSummary } = this.state;
 
@@ -678,6 +700,7 @@ class ShippingDetails extends Component {
                 className="-striped -highlight"
                 defaultPageSize={10}
                 getTrProps={this.HandleRowClickEvt}
+                minRows={1}
               />
             </div>
             <Modal
@@ -882,7 +905,7 @@ class ShippingDetails extends Component {
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
                           <label style={{ padding: "0" }}>Origin Country</label>
-                          <Select
+                          {/* <Select
                             className="rate-dropdown track-dropdown"
                             id = "originCountry"
                             closeMenuOnSelect={false}
@@ -893,7 +916,19 @@ class ShippingDetails extends Component {
                             options={this.state.optionsOrigin}
                             onChange = {this.handleChangeCountry.bind(this,"OriginCountry")}
                             value = {this.state.originCountry}
-                            />
+                            /> */}
+                            <select
+                            onChange={this.handleChangeCountry.bind(this,"OriginCountry")}
+                            name={"originCountry"}
+                            value={this.state.fields["OriginCountry"]}
+                          >
+                            <option value="Select">Select Country</option>
+                            {this.state.optionsOrigin.map(team => (
+                              <option key={team.value} value={team.label}>
+                                {team.label}
+                              </option>
+                            ))}
+                          </select>
                           </div>
                           {/* </div> */}
                         </div>
@@ -904,7 +939,7 @@ class ShippingDetails extends Component {
                           <label style={{ padding: "0" }}>
                             Destination Country
                           </label>
-                          <Select
+                          {/* <Select
                             className="rate-dropdown track-dropdown"
                             id = "destinCountry"
                             closeMenuOnSelect={false}
@@ -913,7 +948,19 @@ class ShippingDetails extends Component {
                             options={this.state.optionsOrigin}
                             onChange = {this.handleChangeCountry.bind(this,"DestinationCountry")}
                             value = {this.state.destCountry}
-                            />
+                            /> */}
+                            <select
+                            onChange={this.handleChangeCountry.bind(this,"DestinationCountry")}
+                            name={"destinCountry"}
+                            value={this.state.fields["DestinationCountry"]}
+                            >
+                            <option value="Select">Select Country</option>
+                            {this.state.optionsOrigin.map(team => (
+                              <option key={team.value} value={team.label}>
+                                {team.label}
+                              </option>
+                            ))}
+                            </select>
                           </div>
                           {/* </div> */}
                         </div>

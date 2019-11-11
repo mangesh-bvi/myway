@@ -5,6 +5,9 @@ import FileUpload from "./../assets/img/file.png";
 import ReactTable from "react-table";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import { Collapse } from "react-bootstrap";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import { authHeader } from "../helpers/authHeader";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -14,13 +17,21 @@ class RateFinalizingStill extends Component {
       modalProfit: false,
       modalRequest: false,
       selectedFileName: "",
-      showContent: false
+      showContent: false,
+      modalBook: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
+    this.toggleBook = this.toggleBook.bind(this);
   }
 
+  toggleBook(e) {
+    e.stopPropagation();
+    this.setState(prevState => ({
+      modalBook: !prevState.modalBook
+    }));
+  }
   toggleProfit() {
     this.setState(prevState => ({
       modalProfit: !prevState.modalProfit
@@ -36,6 +47,20 @@ class RateFinalizingStill extends Component {
       selectedFileName: event.target.files[0].name
     });
   };
+
+  HandleShipmentDetails(bookingNo) {
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
+      data: {
+        BookingNo: bookingNo
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var shipmentdata = response.data;
+    });
+  }
 
   render() {
     var data1 = [
@@ -65,13 +90,18 @@ class RateFinalizingStill extends Component {
         finalPayment: "$3456.00"
       }
     ];
-    let className = 'butn m-0'
+    let className = "butn m-0";
     if (this.state.showContent == true) {
-      className = 'butn cancel-butn m-0'
+      className = "butn cancel-butn m-0";
+    } else {
+      className = "butn m-0";
     }
-    else{
-      className = 'butn m-0'
+    if (typeof this.props.location.state != "undefined") {
+      var bookingNo = this.props.location.state.detail[0];
+      this.HandleShipmentDetails(bookingNo);
     }
+    var i = 0;
+
     return (
       <React.Fragment>
         <Headers />
@@ -81,15 +111,14 @@ class RateFinalizingStill extends Component {
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
-            {(() => {
-            if(this.props.location.state.detail[1] == "Quotes")
-            {
-            return <h2>Quotes Details</h2>
-            }
-            else
-            {
-            return <h2>Booking Details</h2>
-            }})()}
+              {(() => {
+                debugger;
+                if (this.props.location.state.detail[1] == "Quotes") {
+                  return <h2>Quotes Details</h2>;
+                } else {
+                  return <h2>Booking Details</h2>;
+                }
+              })()}
               {/* <h2>Rate Query Details</h2> */}
             </div>
             <div className="row">
@@ -172,8 +201,9 @@ class RateFinalizingStill extends Component {
               <div className="col-md-12">
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
+                      <button className="butn m-0">Accept</button>
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
@@ -182,12 +212,29 @@ class RateFinalizingStill extends Component {
                             columns: [
                               {
                                 Cell: row => {
+                                  i++;
                                   return (
                                     <React.Fragment>
-                                      <p className="details-title">
-                                        Supplier Name
-                                      </p>
-                                      <p className="details-para">Maersk</p>
+                                      <div className="d-flex align-items-center">
+                                        <div className="cont-costs still-maersk rate-tab-check p-0">
+                                          <div className="remember-forgot d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <p className="details-title">
+                                            Supplier Name
+                                          </p>
+                                          <p className="details-para">Maersk</p>
+                                        </div>
+                                      </div>
                                     </React.Fragment>
                                   );
                                 }
@@ -275,90 +322,97 @@ class RateFinalizingStill extends Component {
                     </div>
                   </div>
                   <div className="rate-final-contr">
-                  <Collapse in={this.state.showContent}>  
-                  <div>       
-                    <div className="title-border py-3">
-                      <h3>Rate Query</h3>
-                    </div>           
-                      <div className="row">
-                        <div className="col-md-4">
-                          <p className="details-title">Shipment Type</p>
-                          <p className="details-para">Import</p>
+                    <Collapse in={this.state.showContent}>
+                      <div>
+                        <div className="title-border py-3">
+                          <h3>Rate Query</h3>
                         </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Mode of Transport</p>
-                          <p className="details-para">Air</p>
+                        <div className="row">
+                          <div className="col-md-4">
+                            <p className="details-title">Shipment Type</p>
+                            <p className="details-para">Import</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Mode of Transport</p>
+                            <p className="details-para">Air</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Container Load</p>
+                            <p className="details-para">FCL</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Equipment Types</p>
+                            <p className="details-para">20 DC</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Special Equipment</p>
+                            <p className="details-para">
+                              Refer Type (20 degrees)
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">
+                              HazMat &amp; Unstackable
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Inco Terms</p>
+                            <p className="details-para">Populated Data</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Type of Move</p>
+                            <p className="details-para">Port2Port</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">POL</p>
+                            <p className="details-para">Mumbai</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">POD</p>
+                            <p className="details-para">Vadodra</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">PU Address</p>
+                            <p className="details-para">
+                              Lotus Park, Goregaon (E), Mumbai : 400099
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Delivery Address</p>
+                            <p className="details-para">
+                              Lotus Park, Goregaon (E), Mumbai : 400099
+                            </p>
+                          </div>
                         </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Container Load</p>
-                          <p className="details-para">FCL</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Equipment Types</p>
-                          <p className="details-para">20 DC</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Special Equipment</p>
-                          <p className="details-para">
-                            Refer Type (20 degrees)
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">
-                            HazMat &amp; Unstackable
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Inco Terms</p>
-                          <p className="details-para">Populated Data</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Type of Move</p>
-                          <p className="details-para">Port2Port</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">POL</p>
-                          <p className="details-para">Mumbai</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">POD</p>
-                          <p className="details-para">Vadodra</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">PU Address</p>
-                          <p className="details-para">
-                            Lotus Park, Goregaon (E), Mumbai : 400099
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Delivery Address</p>
-                          <p className="details-para">
-                            Lotus Park, Goregaon (E), Mumbai : 400099
-                          </p>
-                        </div>
-                      </div>             
-                  </div>
-                  </Collapse>
-                  <div className="text-right">
-                    <button className={className} id="toggler" onClick={() => this.setState({ showContent: !this.state.showContent })}>
-                      {
-                        this.state.showContent ? (            
-                        <span>VIEW LESS</span>
-                      ) : (
-                        <span>VIEW MORE</span>
-                      )}
-                    </button>
-                  </div>
+                      </div>
+                    </Collapse>
+                    <div className="text-right">
+                      <button
+                        className={className}
+                        id="toggler"
+                        onClick={() =>
+                          this.setState({
+                            showContent: !this.state.showContent
+                          })
+                        }
+                      >
+                        {this.state.showContent ? (
+                          <span>VIEW LESS</span>
+                        ) : (
+                          <span>VIEW MORE</span>
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   <div className="rate-final-contr">
                     <div className="title-border py-3">
-                      <h3>Contact Details</h3>
+                      <h3>Customer Details</h3>
                     </div>
                     <div className="">
                       <div className="row">
                         <div className="col-md-4">
-                          <p className="details-title">Account/Consignee</p>
+                          <p className="details-title">Account/Customer</p>
                           <p className="details-para">abcd</p>
                         </div>
                         <div className="col-md-4">
@@ -413,6 +467,14 @@ class RateFinalizingStill extends Component {
                         {this.state.selectedFileName}
                       </p>
                     </div>
+                    <center>
+                      <button
+                        onClick={this.toggleBook}
+                        className="butn more-padd mt-4"
+                      >
+                        Create Booking
+                      </button>
+                    </center>
                   </div>
                 </div>
               </div>
@@ -438,6 +500,82 @@ class RateFinalizingStill extends Component {
               </div>
             </ModalBody>
           </Modal>
+          <Modal
+            className="delete-popup pol-pod-popup"
+            isOpen={this.state.modalBook}
+            toggle={this.toggleBook}
+            centered={true}
+          >
+            <ModalBody>
+              <h3 className="mb-4">Create Booking</h3>
+              <div className="rename-cntr login-fields">
+                <label>Quotation Price</label>
+                <input type="text" value="5000" disabled />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Consignee Details</label>
+                <select>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                </select>
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Notification Person</label>
+                <select>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                </select>
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Cargo Details</label>
+                <input type="text" placeholder="Enter Cargo Details" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Length</label>
+                <input type="text" placeholder="Enter Length" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Width</label>
+                <input type="text" placeholder="Enter Width" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Height</label>
+                <input type="text" placeholder="Enter Height" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Weight</label>
+                <input type="text" placeholder="Enter Weight" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Gross Weight</label>
+                <input type="text" placeholder="Enter Gross Weight" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>CBM</label>
+                <input type="text" placeholder="Enter CBM" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Cargo Size</label>
+                <input type="text" placeholder="Enter Cargo Size" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Cargo Weight</label>
+                <input type="text" placeholder="Enter Cargo Weight" />
+              </div>
+              <a
+                href="/booking-table"
+                className="butn"
+                onClick={this.toggleBook}
+              >
+                Create Booking
+              </a>
+            </ModalBody>
+          </Modal>
+
           <Modal
             className=""
             isOpen={this.state.modalRequest}
