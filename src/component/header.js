@@ -22,7 +22,7 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = { tooltipOpen: false, laslastlogintlogin: "", searchButn: true, notificationData :[] ,modalDocu: false,};
+    this.state = { tooltipOpen: false, laslastlogintlogin: "", searchButn: true, notificationData :[] ,modalDocu: false,  DropdownCommonMessage: [], popupHBLNO:""};
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
   }
@@ -58,17 +58,39 @@ class Header extends Component {
 
     window.addEventListener('load', this.BindNotifiation);
 
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BindDropdownCommonMessage`,
+      
+      headers: authHeader()
+    }).then(function(response) {
+      self.setState({ DropdownCommonMessage: response.data });
+    });
+
+    
   }
   toggleDocu() {
     this.setState(prevState => ({
       modalDocu: !prevState.modalDocu
     }));
+
+
+    var sPath = window.location.pathname;
+    var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
+    //alert(sPage);
+  
+    if(sPage == "shipment-details")
+    {
+      this.setState({ popupHBLNO: document.getElementById("popupHBLNO").value });
+      //alert(document.getElementById("popupHBLNO").value)
+    }
+    
   }
   
 
 BindNotifiation()
 {
-  debugger;
   let self = this;
 
   axios({
@@ -79,8 +101,6 @@ BindNotifiation()
     },
     headers: authHeader()
   }).then(function(response) {
-    debugger;
-
            // self.state.Notificationcount = response.data.Table.length;
            var today = new Date();   
            today.setDate(today.getDate() - 8 );
@@ -171,7 +191,6 @@ BindNotifiation()
       },
       headers: authHeader()
     }).then(function(response) {
-debugger;
       if(response != null)
       {
         if(response.data != null)
@@ -187,11 +206,23 @@ debugger;
         }
       }
 
+      var sPath = window.location.pathname;
+    var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
+    //alert(sPage);
+  
+    if(sPage == "shipment-details")
+    {
+      document.getElementById("activity-tab").click();
+    }
+
     });
     this.toggleDocu();
 
+    
+
   }
 
+ 
   render() {
 
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
@@ -206,6 +237,26 @@ debugger;
       </div>
      
     ));
+
+    let optionItems = this.state.DropdownCommonMessage.map((planet, i) => (
+      
+      (i ==  0) ? 
+      (<option
+        value={planet.ID}
+        selected = "selected"
+      >
+        {planet.Value}
+      </option>)
+     :
+     (<option
+      value={planet.ID}
+    >
+      {planet.Value}
+    </option>)
+
+    ));
+
+    let popupHBLNO = this.state.popupHBLNO;
  
     return (
       <div>
@@ -271,7 +322,6 @@ debugger;
                   toggle={this.toggleDocu}
                   centered={true}
                   backdrop="static"
-
                 >
                   <ModalHeader>Send Message</ModalHeader>
                   <ModalBody>
@@ -279,7 +329,8 @@ debugger;
                      
                      <select id="drpshipment">
                        <option value="0">Select</option>
-                       <option value="Shipment">Shipment</option>
+                       {/* <option value="Shipment">Shipment</option> */}
+                       {optionItems}
                      </select>
                     </div>
                     <div className="rename-cntr login-fields">
@@ -288,6 +339,7 @@ debugger;
                         id="txtShipmentNo"
                         type="text"
                         placeholder="Enter Shipment No."
+                        value={popupHBLNO}
                       />
                     </div>
                     <div className="rename-cntr login-fields">
