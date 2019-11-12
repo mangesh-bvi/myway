@@ -57,7 +57,7 @@ class BookingTable extends Component {
   HandleChangeShipmentDetails(BookingNo) {
     var data = [BookingNo, "Booking"];
     this.props.history.push({
-      pathname: "rate-finalizing-still",
+      pathname: "rate-finalizing-still-booking",
       state: { detail: data }
     });
   }
