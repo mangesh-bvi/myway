@@ -103,9 +103,8 @@ class Analytics extends Component {
       toggleShipInv: false,
       toggleRoadInv: false,
       graflabels:[],
-      grafAirData:[],
-      grafOceanData:[],
-      grafTruckData:[]
+      graphdataset:[],
+      setSupplierdrop:[]
     };
 
 
@@ -165,41 +164,67 @@ class Analytics extends Component {
     debugger;
     let self = this;
     
-    var FromDate = "";
-    var ToDate = "";
-    var ActiveFlag = "";
-    var Mode = "";
-    var period = "";
-//alert(event.target.id)
-  //  document.getElementById("delivered-inv").click();
-  //  document.getElementById("plane-inv").click();
+    var FromDate = "2019-01-01";
+    var ToDate = "2019-06-30";
+    var ActiveFlag = "D";
+    var Mode = "A,O";
+    var period =  document.getElementById('drp-period-invoice').value;
 
-    // var ActiveFlagele = document.getElementsByName('ship-type-invoice');         
-    // for(var i = 0; i < ActiveFlagele.length; i++) { 
-    //     if(ActiveFlagele[i].checked) 
-    //     ActiveFlag = ActiveFlagele[i].value; 
-    // } 
+    if(event.target.id == "invoices-view-btn")
+    {
+      var ActiveFlagele = document.getElementsByName('ship-type-invoice');         
+      for(var i = 0; i < ActiveFlagele.length; i++) { 
+         if(ActiveFlagele[i].checked) 
+         ActiveFlag = ActiveFlagele[i].value; 
+      } 
 
-    // var Modeele = document.getElementsByName('ship-way-invoice');         
-    // for(var i = 0; i < Modeele.length; i++) { 
-    //     if(Modeele[i].checked) 
-    //     Mode = Modeele[i].value; 
-    // } 
-//alert(Mode)
-    var drpperiodinvoice = document.getElementById('drp-period-invoice').value;
+     var Modeele = document.getElementsByName('ship-way-invoice');     
+      if(Modeele.length > 0)
+      {    
+        for(var i = 0; i < Modeele.length; i++) { 
+        if(Modeele[i].checked) 
+        Mode = Modeele[i].value; 
+        } 
+      }
+    }
+    else
+    {
+      document.getElementById("delivered-inv").click();
+    } 
 
-var  axiosdata = {
-  UserId:encryption(window.localStorage.getItem("userid"), "desc"),
-  FromDate:"2019-01-01",
-  ToDate:"2019-06-30",
-  ActiveFlag: 'D',
-  Mode: 'A,O,T',
-  period:"M"  
-}
+      var  axiosdata = {
+        UserId:encryption(window.localStorage.getItem("userid"), "desc"),
+        FromDate:FromDate,
+        ToDate:ToDate,
+        ActiveFlag: ActiveFlag,
+        Mode: Mode,
+        period: period,
+        ShipperID:1340354108
+      }
 
-this.setgrafval(axiosdata)
+      this.setgrafval(axiosdata)
   
   }
+
+    setSupplierdrop()
+    {
+      
+      // axios({
+      //   method: "post",
+      //   url: `${appSettings.APIURL}/InvoiceAnalyticsAPI`,
+      //   data: axiosdata,
+      //   headers: authHeader()
+      // }).then(function(response) {
+
+
+
+      // }).catch(error => {
+      //   debugger;
+      //   var temperror = error.response.data;
+      //   var err = temperror.split(":");
+      //   alert(err[1].replace("}", ""))
+      // })
+    }
 
   setgrafval(axiosdata)
   {
@@ -212,6 +237,9 @@ this.setgrafval(axiosdata)
       headers: authHeader()
     }).then(function(response) {
       debugger;
+
+      self.setState({graphdataset: []})
+      
       var arraylabel = [];
       var arrayAirdata = [];
       var arrayOceandata = [];
@@ -228,15 +256,12 @@ this.setgrafval(axiosdata)
         self.setState({graflabels: arraylabel})
       }
 
-      // var arrayAir = response.data.Table.filter(item => item.ModeOfTransport == "Air", item => item.InvoiceCurrency == "USD")
-      // var arrayOcean = response.data.Table.filter(item => item.ModeOfTransport == "Ocean", item => item.InvoiceCurrency == "USD")
-      // var arrayTruck = response.data.Table.filter(item => item.ModeOfTransport == "Truck", item => item.InvoiceCurrency == "USD")
 
-      var arrayAir = response.data.Table.filter(item => item.ModeOfTransport == "Air").filter(item => item.InvoiceCurrency == "USD")
-      var arrayOcean = response.data.Table.filter(item => item.ModeOfTransport == "Ocean").filter(item => item.InvoiceCurrency == "USD")
-      var arrayTruck = response.data.Table.filter(item => item.ModeOfTransport == "Truck").filter(item => item.InvoiceCurrency == "USD")
+      var graphdataset = []
 
-
+      var arrayAir = response.data.Table.filter(item => item.ModeOfTransport == "Air")
+      var arrayOcean = response.data.Table.filter(item => item.ModeOfTransport == "Ocean")
+      var arrayTruck = response.data.Table.filter(item => item.ModeOfTransport == "Truck")
 
         if(arrayAir != null)
         {
@@ -244,9 +269,13 @@ this.setgrafval(axiosdata)
           {
             for(var i = 0; i < arrayAir.length; i++)
             {
-              arrayAirdata.push(arrayAir[i].InvoiceAmount)
+              arrayAirdata.push(arrayAir[i].InvoiceUSDAmount)
             }
-            self.setState({grafAirData: arrayAirdata})
+            graphdataset.push({
+              label: "Air",
+              data: arrayAirdata,
+              backgroundColor: "#3357ac"
+            });
           }
         }
 
@@ -256,10 +285,19 @@ this.setgrafval(axiosdata)
           {
             for(var i = 0; i < arrayOcean.length; i++)
             {
-              arrayOceandata.push(arrayOcean[i].InvoiceAmount)
+              arrayOceandata.push(arrayOcean[i].InvoiceUSDAmount)
             }
-            self.setState({grafOceanData: arrayOceandata})
+            graphdataset.push({
+              fillColor: "rgba(172,194,132,0.4)",
+              strokeColor: "#ACC26D",
+              pointColor: "#fff",
+              pointStrokeColor: "#9DB86D",
+              label: "Ocean",
+              data: arrayOceandata,
+              backgroundColor: "#4a99e7"
+            });
           }
+          
         }
 
         if(arrayTruck != null)
@@ -268,16 +306,25 @@ this.setgrafval(axiosdata)
           {
             for(var i = 0; i < arrayTruck.length; i++)
             {
-              arrayTruckdata.push(arrayTruck[i].InvoiceAmount)
+              arrayTruckdata.push(arrayTruck[i].InvoiceUSDAmount)
             }
-            self.setState({grafTruckData: arrayTruckdata})
+            graphdataset.push({
+              label: "Truck",
+              data: arrayTruckdata,
+              backgroundColor: "#50ad84"
+            });
           }
+         
         }
+
+      self.setState({graphdataset: graphdataset})
+
     }).catch(error => {
       debugger;
       var temperror = error.response.data;
       var err = temperror.split(":");
       alert(err[1].replace("}", ""))
+      self.setState({graphdataset: []})
     })
   }
 
@@ -285,27 +332,7 @@ this.setgrafval(axiosdata)
   render() {
     var buyerData = {
       labels: this.state.graflabels,
-      datasets: [
-        {
-          fillColor: "rgba(172,194,132,0.4)",
-          strokeColor: "#ACC26D",
-          pointColor: "#fff",
-          pointStrokeColor: "#9DB86D",
-          label: "Ocean",
-          data: this.state.grafOceanData,
-          backgroundColor: "#4a99e7"
-        },
-        {
-          label: "Truck",
-          data: this.state.grafTruckData,
-          backgroundColor: "#50ad84"
-        },
-        {
-          label: "Air",
-          data: this.state.grafAirData,
-          backgroundColor: "#3357ac"
-        }
-      ]
+      datasets: this.state.graphdataset
     };
     let greenCounterdata = {
       labels: ["Green", "Red"],
@@ -673,8 +700,7 @@ this.setgrafval(axiosdata)
                     <span>Supplier </span>
                     <select id="drp-supplie-invoice">
                       <option>Supplier Name</option>
-                      <option>Supplier Name</option>
-                      <option>Supplier Name</option>
+                      
                     </select>
                   </div>
                   <div className="login-fields mb-0 d-flex align-items-center">

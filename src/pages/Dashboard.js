@@ -714,7 +714,10 @@ class Dashboard extends Component {
 
         self.SelectPin = arrarSelectPin;
 
-        document.getElementById("shipmentfilterdiv").style.display = "block";
+        var element = !!document.getElementById("shipmentfilterdiv"); 
+        if (element) { 
+          document.getElementById("shipmentfilterdiv").style.display = "block";
+        }
       });
     } else {
       if (BindingID != "All") {
