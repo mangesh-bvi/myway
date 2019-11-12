@@ -2261,7 +2261,7 @@ table tbody tr:last-child {
   cursor: pointer;
 }
 .shipmentli {
-  padding: 0;
+  padding: 1px;
 }
 .shipmentli .card {
   border: 0;
