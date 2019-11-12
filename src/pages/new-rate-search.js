@@ -12,6 +12,7 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-google-autocomplete";
+import { element } from "prop-types";
 
 var i = 0;
 const animatedComponents = makeAnimated();
@@ -121,6 +122,7 @@ class NewRateSearch extends Component {
       DeliveryCity: "",
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
+      companyId: 0,
 
       Containerdetails: [],
       PortOfDischargeCode: "",
@@ -130,11 +132,12 @@ class NewRateSearch extends Component {
       multiCBM: [
         {
           type: "",
-          length: "",
-          width: "",
-          Quantity: "",
-          Gross_Weight: "",
-          total: ""
+          cmblength: 0,
+          width: 0,
+          Quantity: 0,
+          height:0,
+          Gross_Weight: 0,
+          total: 0
         }
       ],
       cmbTypeRadio: "ALL",
@@ -183,6 +186,7 @@ class NewRateSearch extends Component {
       mapPositionPOD: {},
       fullAddressPOL: "",
       fullAddressPOD: "",
+      totalQuantity:0,
       users: []
     };
 
@@ -195,17 +199,20 @@ class NewRateSearch extends Component {
   }
 
   componentDidMount() {
+    debugger;
+    var compId = this.props.history.location.state;
+    if (compId !== null) {
+      this.setState({ companyId: compId.companyId });
+    }
     this.HandleCounterListBind();
   }
 
   cmbTypeRadioChange(e) {
-    debugger;
     var value = e.target.value;
     this.setState({ cmbTypeRadio: value });
   }
 
   MultiCreateCBM() {
-    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row" key={i}>
         <div className="col-md">
@@ -223,10 +230,10 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder="Length (cm)"
+              placeholder={el.cmblength===0?"Length (cm)":"Length (cm)"} 
               className="w-100"
-              name="length"
-              value={el.length || ""}
+              name="cmblength"
+              value={el.cmblength || null}
               onBlur={this.cbmChange}
             />
           </div>
@@ -236,10 +243,10 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder="Width (cm)"
+              placeholder={el.width===0?"Width (cm)":"Width (cm)"} 
               className="w-100"
               name="width"
-              value={el.width || ""}
+              value={el.width || null}
               onBlur={this.cbmChange}
             />
           </div>
@@ -266,7 +273,7 @@ class NewRateSearch extends Component {
               className="w-100"
               name="Quantity"
               value={el.Quantity || ""}
-              onKeyDown={this.cbmChange}
+              onKeyUp={this.cbmChange}
             />
           </div>
         </div>
@@ -289,7 +296,7 @@ class NewRateSearch extends Component {
               name="total"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
               placeholder={this.state.modeoftransport != "AIR" ? "CBM" : "KG"}
-              value={el.total || ""}
+              value={this.state.totalQuantity || ""}
               className="w-100"
             />
           </div>
@@ -313,9 +320,15 @@ class NewRateSearch extends Component {
   newMultiCBMHandleChange(i, e) {
     debugger;
     const { name, value } = e.target;
+    
     let multiCBM = [...this.state.multiCBM];
     multiCBM[i] = { ...multiCBM[i], [name]: value };
     this.setState({ multiCBM });
+    var decVolumeWeight = (parseInt( multiCBM[i].Quantity) * (parseFloat(multiCBM[i].cmblength)*parseFloat( multiCBM[i].width)*parseFloat( multiCBM[i].height))) / 6000;
+    // this.setState({})
+     
+    
+  
   }
   addClickMultiCBM() {
     debugger;
@@ -1512,37 +1525,41 @@ class NewRateSearch extends Component {
                   className="new-radio-rate-cntr  radio-green"
                   id="modeTransInner"
                 >
-                  <div>
-                    <input
-                      type="radio"
-                      name="mode-transport"
-                      value="SEA"
-                      onClick={this.modeofTransportClick}
-                      id="sea"
-                    />
-                    <label htmlFor="sea">Sea</label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="mode-transport"
-                      value="AIR"
-                      onClick={this.modeofTransportClick}
-                      id="air"
-                    />
-                    <label htmlFor="air">Air</label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="mode-transport"
-                      name="mode-transport"
-                      value="ROAD"
-                      onClick={this.modeofTransportClick}
-                      id="road"
-                    />
-                    <label htmlFor="road">Road</label>
-                  </div>
+                  {this.state.shipmentType !== "Domestic" ? (
+                    <>
+                      <div>
+                        <input
+                          type="radio"
+                          name="mode-transport"
+                          value="SEA"
+                          onClick={this.modeofTransportClick}
+                          id="sea"
+                        />
+                        <label htmlFor="sea">Sea</label>
+                      </div>
+                      <div>
+                        <input
+                          type="radio"
+                          name="mode-transport"
+                          value="AIR"
+                          onClick={this.modeofTransportClick}
+                          id="air"
+                        />
+                        <label htmlFor="air">Air</label>
+                      </div>
+                      <div>
+                        <input
+                          type="radio"
+                          name="mode-transport"
+                          name="mode-transport"
+                          value="ROAD"
+                          onClick={this.modeofTransportClick}
+                          id="road"
+                        />
+                        <label htmlFor="road">Road</label>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </div>
               <div className="new-rate-cntr" id="containerLoad">
@@ -1693,20 +1710,24 @@ class NewRateSearch extends Component {
                       </div>
                     </div>
                     <div id="cbmInner">
-                      <div className="row">
+                      <div className="">
                         {this.state.cmbTypeRadio === "ALL" ? (
-                          <>
-                            {this.MultiCreateCBM()}
-                            <div className="col-md">
-                              <div className="spe-equ">
-                                <i
-                                  onClick={this.addClickMultiCBM.bind(this)}
-                                  class="fa fa-plus fa-2x"
-                                  aria-hidden="true"
-                                ></i>
-                              </div>
+                          <>{this.MultiCreateCBM()}
+                          <div className="col-md">
+                            <div className="spe-equ">
+                              {/* <input
+                                type="text"
+                                placeholder={
+                                  this.state.modeoftransport != "AIR"
+                                    ? "CBM"
+                                    : "KG"
+                                }
+                                className="w-100"
+                                value={this.state.cbmVal}
+                              /> */}
+                             <span onClick={this.addClickMultiCBM.bind(this)}> <i className="fa fa-plus"></i></span>
                             </div>
-                          </>
+                          </div></>
                         ) : (
                           <div className="col-md">
                             <div className="spe-equ">
@@ -1720,6 +1741,7 @@ class NewRateSearch extends Component {
                                 className="w-100"
                                 value={this.state.cbmVal}
                               />
+                              <i className="fa fa-plus"></i>
                             </div>
                           </div>
                         )}
