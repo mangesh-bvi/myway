@@ -31,6 +31,21 @@ class SideMenu extends Component {
       window.localStorage.setItem("defShipActKey", "0");
     }
 
+    var urlQuote = window.location.pathname;
+    window.localStorage.setItem("quoteKey", "0");
+    if (urlQuote === "/quote-table") {
+      window.localStorage.setItem("quoteKey", "1");
+    } else {
+      window.localStorage.setItem("quoteKey", "0");
+    }
+    var bookQuote = window.location.pathname;
+    window.localStorage.setItem("bookingKey", "0");
+    if (bookQuote === "/booking-table") {
+      window.localStorage.setItem("bookingKey", "1");
+    } else {
+      window.localStorage.setItem("bookingKey", "0");
+    }
+
     var urlShipSum = window.location.pathname;
     window.localStorage.setItem("defActKey", "0");
     if (urlShipSum === "/rate-search") {
@@ -64,15 +79,63 @@ class SideMenu extends Component {
               Dashboard
             </Link>
           </li>
-          <li className="sidemenu-ul-li">
-            <Link to="/quote-table">
+          <li className="sidemenu-ul-li shipmentli">
+            {/* <Link to="/quote-table">
               <img
                 src={QuotesIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />
               Quotes
-            </Link>
+            </Link> */}
+            <Accordion
+              defaultActiveKey={window.localStorage.getItem("quoteKey")}
+            >
+              <Card>
+                <Card.Header>
+                  <Link to="/quote-table" style={{ display: "block" }}>
+                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                      <img
+                        src={QuotesIcon}
+                        alt="green-counter-icon"
+                        className="header-greencounter-icon"
+                      />
+                      Quotes
+                    </Accordion.Toggle>
+                  </Link>
+                </Card.Header>
+                <Accordion.Collapse eventKey="1">
+                  <Card.Body>
+                    <ul className="shipment-ul">
+                      <li>
+                        <label className="shipment-ul-lilbl1">Open</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("aircount")}
+                        </label>
+                      </li>
+                      <li>
+                        <label className="shipment-ul-lilbl1">Accepted</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("oceancount")}
+                        </label>
+                      </li>
+                      <li>
+                        <label className="shipment-ul-lilbl1">Expired</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("inlandcount")}
+                        </label>
+                      </li>
+                      <li>
+                        <label className="shipment-ul-lilbl1">Rejected</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("inlandcount")}
+                        </label>
+                      </li>
+                    </ul>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
           </li>
           <li className="sidemenu-ul-li shipmentli">
             <Accordion
@@ -137,15 +200,64 @@ class SideMenu extends Component {
               );
             }
           })()}
-          <li className="sidemenu-ul-li">
-            <Link to="/booking-table">
+          <li className="sidemenu-ul-li shipmentli">
+            {/* <Link to="/booking-table">
               <img
                 src={GreenCounterIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />
               Bookings
-            </Link>
+            </Link> */}
+
+            <Accordion
+              defaultActiveKey={window.localStorage.getItem("bookingKey")}
+            >
+              <Card>
+                <Card.Header>
+                  <Link to="/booking-table" style={{ display: "block" }}>
+                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                      <img
+                        src={GreenCounterIcon}
+                        alt="green-counter-icon"
+                        className="header-greencounter-icon"
+                      />
+                      Bookings
+                    </Accordion.Toggle>
+                  </Link>
+                </Card.Header>
+                <Accordion.Collapse eventKey="1">
+                  <Card.Body>
+                    <ul className="shipment-ul">
+                      <li>
+                        <label className="shipment-ul-lilbl1">Open</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("aircount")}
+                        </label>
+                      </li>
+                      <li>
+                        <label className="shipment-ul-lilbl1">Accepted</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("oceancount")}
+                        </label>
+                      </li>
+                      <li>
+                        <label className="shipment-ul-lilbl1">Expired</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("inlandcount")}
+                        </label>
+                      </li>
+                      <li>
+                        <label className="shipment-ul-lilbl1">Rejected</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("inlandcount")}
+                        </label>
+                      </li>
+                    </ul>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
           </li>
           <li className="sidemenu-ul-li shipmentli">
             <Accordion

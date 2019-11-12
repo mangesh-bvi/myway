@@ -31,45 +31,40 @@ import {
 import Autocomplete from "react-google-autocomplete";
 
 const { compose } = require("recompose");
- 
+
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
 )(props => (
-  <GoogleMap
-   
-    defaultCenter={props.mapPosition}
-    defaultZoom={props.zoom}
-  >
+  <GoogleMap defaultCenter={props.mapPosition} defaultZoom={props.zoom}>
     {props.markers.map(marker => {
-       
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
         BlueShip,
-                null, /* size is determined at runtime */
-                null, /* origin is 0,0 */
-                null, /* anchor is bottom center of the scaled image */
-                new window.google.maps.Size(32, 32)
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
       );
       let bluePlane = new window.google.maps.MarkerImage(
         BluePlane,
-        null, /* size is determined at runtime */
-        null, /* origin is 0,0 */
-        null, /* anchor is bottom center of the scaled image */
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
         new window.google.maps.Size(32, 32)
       );
       let bookingBlue = new window.google.maps.MarkerImage(
         BookingBlue,
-        null, /* size is determined at runtime */
-        null, /* origin is 0,0 */
-        null, /* anchor is bottom center of the scaled image */
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
         new window.google.maps.Size(32, 32)
       );
 
       if (marker.Pin == "Ocean") {
         return (
           <Marker
-          icon={blueShip}
+            icon={blueShip}
             key={marker.id}
             onClick={onClick}
             title={marker.Vessel}
@@ -81,7 +76,6 @@ const MapWithAMakredInfoWindow = compose(
             //   lat: this.state.mapPosition.lat,
             //   lng: this.state.mapPosition.lng
             // }}
-            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -140,7 +134,10 @@ const MapWithAMakredInfoWindow = compose(
                               <div className="card-body">
                                 <div id="accordion-1">
                                   <div className="card">
-                                    <div className="card-header" id="heading-1-1">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
                                       <h5 className="mb-0">
                                         <div
                                           className="collapsed"
@@ -208,7 +205,6 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bluePlane}
-            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -267,7 +263,10 @@ const MapWithAMakredInfoWindow = compose(
                               <div className="card-body">
                                 <div id="accordion-1">
                                   <div className="card">
-                                    <div className="card-header" id="heading-1-1">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
                                       <h5 className="mb-0">
                                         <div
                                           className="collapsed"
@@ -335,7 +334,6 @@ const MapWithAMakredInfoWindow = compose(
               lng: Number(marker.LastLocation_Lon)
             }}
             icon={bookingBlue}
-            
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -394,7 +392,10 @@ const MapWithAMakredInfoWindow = compose(
                               <div className="card-body">
                                 <div id="accordion-1">
                                   <div className="card">
-                                    <div className="card-header" id="heading-1-1">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
                                       <h5 className="mb-0">
                                         <div
                                           className="collapsed"
@@ -452,25 +453,22 @@ const MapWithAMakredInfoWindow = compose(
         );
       }
     })}
-<div>
-
-
-  <Autocomplete
-      style={{
-      width: 'auto',
-      height: '40px',
-      paddingLeft: '16px',
-      marginTop: '2px',
-      marginBottom: '500px',
-      position: "absolute",
-      top: "60px",
-      left: "10px"
-      }}
-     
-      onPlaceSelected={ props.onPlaceSelected }
-      types={['(regions)']}
-  />
-  </div>
+    <div>
+      <Autocomplete
+        style={{
+          width: "auto",
+          height: "40px",
+          paddingLeft: "16px",
+          marginTop: "2px",
+          marginBottom: "500px",
+          position: "absolute",
+          top: "60px",
+          left: "10px"
+        }}
+        onPlaceSelected={props.onPlaceSelected}
+        types={["(regions)"]}
+      />
+    </div>
   </GoogleMap>
 ));
 class Dashboard extends Component {
@@ -495,10 +493,9 @@ class Dashboard extends Component {
       loading: true,
       IsWidgets: false,
       mapPosition: {
-				lat: 32.24165126,
-				lng: 77.78319374
-      },
-       
+        lat: 32.24165126,
+        lng: 77.78319374
+      }
     };
     this.BindMapData = this.BindMapData.bind(this);
     this.HandleShipmentPin = this.HandleShipmentPin.bind(this);
@@ -518,24 +515,20 @@ class Dashboard extends Component {
     debugger;
     console.log("plc", place);
     const address = place.formatted_address,
-    addressArray =  place.address_components,
-    // city = this.getCity( addressArray ),
-    // area = this.getArea( addressArray ),
-    // state = this.getState( addressArray ),
-    latValue = place.geometry.location.lat(),
-    lngValue = place.geometry.location.lng();
-    if (addressArray.length>4) {
-        this.state.zoom = 15           
+      addressArray = place.address_components,
+      // city = this.getCity( addressArray ),
+      // area = this.getArea( addressArray ),
+      // state = this.getState( addressArray ),
+      latValue = place.geometry.location.lat(),
+      lngValue = place.geometry.location.lng();
+    if (addressArray.length > 4) {
+      this.state.zoom = 15;
+    } else if (addressArray.length > 2 && addressArray.length <= 4) {
+      this.state.zoom = 10;
+    } else {
+      this.state.zoom = 4;
     }
-    else if (addressArray.length>2 && addressArray.length<=4)
-    {
-        this.state.zoom = 10
-    }
-    else
-    {
-        this.state.zoom = 4
-    }
-    this.setState({zoom:this.state.zoom})
+    this.setState({ zoom: this.state.zoom });
     // Set these values in the state.
     this.setState({
       // address: ( address ) ? address : '',
@@ -612,7 +605,7 @@ class Dashboard extends Component {
   }
   HandleActiveShipmentData() {
     let selt = this;
-    var userid = encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ActiveShipementData`,
@@ -631,7 +624,7 @@ class Dashboard extends Component {
 
   HandleWatchListData() {
     let selt = this;
-    var userid = encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchWatchListDashBoard`,
@@ -699,46 +692,45 @@ class Dashboard extends Component {
     var mdata;
     var arraModalMapData = [];
     debugger;
-    
-    if(self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1)
-    {
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
-      data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc")
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      //alert("Complete")
-      mdata = response.data;
-      if(BindingID != "All")
-      {
-        mdata = mdata.filter(map => map.Pin == BindingID)
-      }
-      self.setState({ loading: false });
-      self.setState({ mapsData: mdata });
-      self.ModalTotalMapData = mdata;
-      var arrarSelectPin = ["Ocean","Air","Booking-Ocean","Delay-Ocean"];
 
-      self.SelectPin = arrarSelectPin ;
+    if (self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
+        data: {
+          UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        //alert("Complete")
+        mdata = response.data;
+        if (BindingID != "All") {
+          mdata = mdata.filter(map => map.Pin == BindingID);
+        }
+        self.setState({ loading: false });
+        self.setState({ mapsData: mdata });
+        self.ModalTotalMapData = mdata;
+        var arrarSelectPin = ["Ocean", "Air", "Booking-Ocean", "Delay-Ocean"];
 
-      document.getElementById("shipmentfilterdiv").style.display = "block";
-    });
-  }
-  else{
-    if(BindingID != "All")
-    {
-      var index = self.SelectPin.indexOf(BindingID);
-      const div = document.getElementById(BindingID);
-      if (index > -1) {
-        self.SelectPin.splice(index, 1);
-       
-        div.classList.add("cancel-btn");
-      } else {
-        div.classList.remove("cancel-btn");
-        self.SelectPin.push(BindingID);
-      }
+        self.SelectPin = arrarSelectPin;
+
+        var element = !!document.getElementById("shipmentfilterdiv"); 
+        if (element) { 
+          document.getElementById("shipmentfilterdiv").style.display = "block";
+        }
+      });
+    } else {
+      if (BindingID != "All") {
+        var index = self.SelectPin.indexOf(BindingID);
+        const div = document.getElementById(BindingID);
+        if (index > -1) {
+          self.SelectPin.splice(index, 1);
+
+          div.classList.add("cancel-btn");
+        } else {
+          div.classList.remove("cancel-btn");
+          self.SelectPin.push(BindingID);
+        }
 
         for (var rray in self.SelectPin) {
           arraModalMapData = arraModalMapData.concat(
@@ -779,7 +771,6 @@ class Dashboard extends Component {
   }
 
   render() {
-    
     // const divStyle ={}
     // if (encryption(window.localStorage.getItem("usertype"),"desc") == "Sales User") {
     //   divStyle = {
@@ -1189,7 +1180,7 @@ class Dashboard extends Component {
                 </div>
               )}
 
-              <input
+              {/* <input
                 id="Ocean"
                 className="header-btn"
                 type="button"
@@ -1220,7 +1211,7 @@ class Dashboard extends Component {
                 value="CurrentBooking-Shipment"
                 name="search-rate"
                 onClick={() => self.HandleShipmentPin("Booking-Ocean")}
-              />
+              /> */}
             </div>
           </div>
         </div>

@@ -10,6 +10,10 @@ import ShipWhite from "./../assets/img/ship-white.svg";
 import SideMenu from "../component/sidemenu";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { encryption } from "../helpers/encryption";
+import { authHeader } from "../helpers/authHeader";
+import appSettings from "../helpers/appSetting";
+import axios from "axios";
 
 var volumeOptions = {
   title: {
@@ -88,15 +92,22 @@ var greencounterOption = {
 
 class Analytics extends Component {
   constructor(props) {
+    var someDate = new Date();
+
     super(props);
     this.state = {
-      startDate: new Date(),
+      startDate: someDate.setMonth(someDate.getMonth() - 6),
       endDate: new Date(),
       toggleShipShip: false,
       toggleRoadShip: false,
       toggleShipInv: false,
-      toggleRoadInv: false
+      toggleRoadInv: false,
+      graflabels:[],
+      graphdataset:[],
+      setSupplierdrop:[]
     };
+
+
   }
 
   handleChangeStart = e => {
@@ -149,43 +160,179 @@ class Analytics extends Component {
     }
   };
 
+  handleAnalyticsInvoice(event) {
+    debugger;
+    let self = this;
+    
+    var FromDate = "2019-01-01";
+    var ToDate = "2019-06-30";
+    var ActiveFlag = "D";
+    var Mode = "A,O";
+    var period =  document.getElementById('drp-period-invoice').value;
+
+    if(event.target.id == "invoices-view-btn")
+    {
+      var ActiveFlagele = document.getElementsByName('ship-type-invoice');         
+      for(var i = 0; i < ActiveFlagele.length; i++) { 
+         if(ActiveFlagele[i].checked) 
+         ActiveFlag = ActiveFlagele[i].value; 
+      } 
+
+     var Modeele = document.getElementsByName('ship-way-invoice');     
+      if(Modeele.length > 0)
+      {    
+        for(var i = 0; i < Modeele.length; i++) { 
+        if(Modeele[i].checked) 
+        Mode = Modeele[i].value; 
+        } 
+      }
+    }
+    else
+    {
+      document.getElementById("delivered-inv").click();
+    } 
+
+      var  axiosdata = {
+        UserId:encryption(window.localStorage.getItem("userid"), "desc"),
+        FromDate:FromDate,
+        ToDate:ToDate,
+        ActiveFlag: ActiveFlag,
+        Mode: Mode,
+        period: period,
+        ShipperID:1340354108
+      }
+
+      this.setgrafval(axiosdata)
+  
+  }
+
+    setSupplierdrop()
+    {
+      
+      // axios({
+      //   method: "post",
+      //   url: `${appSettings.APIURL}/InvoiceAnalyticsAPI`,
+      //   data: axiosdata,
+      //   headers: authHeader()
+      // }).then(function(response) {
+
+
+
+      // }).catch(error => {
+      //   debugger;
+      //   var temperror = error.response.data;
+      //   var err = temperror.split(":");
+      //   alert(err[1].replace("}", ""))
+      // })
+    }
+
+  setgrafval(axiosdata)
+  {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/InvoiceAnalyticsAPI`,
+      data: axiosdata,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      self.setState({graphdataset: []})
+      
+      var arraylabel = [];
+      var arrayAirdata = [];
+      var arrayOceandata = [];
+      var arrayTruckdata = [];
+
+      for(var i = 0; i < response.data.Table.length; i++)
+      {
+        var index = arraylabel.indexOf(response.data.Table[i].ShipmentPeriod);
+        if (index > -1) {}
+        else
+        {
+          arraylabel.push(response.data.Table[i].ShipmentPeriod)
+        }
+        self.setState({graflabels: arraylabel})
+      }
+
+
+      var graphdataset = []
+
+      var arrayAir = response.data.Table.filter(item => item.ModeOfTransport == "Air")
+      var arrayOcean = response.data.Table.filter(item => item.ModeOfTransport == "Ocean")
+      var arrayTruck = response.data.Table.filter(item => item.ModeOfTransport == "Truck")
+
+        if(arrayAir != null)
+        {
+          if(arrayAir.length > 0)
+          {
+            for(var i = 0; i < arrayAir.length; i++)
+            {
+              arrayAirdata.push(arrayAir[i].InvoiceUSDAmount)
+            }
+            graphdataset.push({
+              label: "Air",
+              data: arrayAirdata,
+              backgroundColor: "#3357ac"
+            });
+          }
+        }
+
+        if(arrayOcean != null)
+        {
+          if(arrayOcean.length > 0)
+          {
+            for(var i = 0; i < arrayOcean.length; i++)
+            {
+              arrayOceandata.push(arrayOcean[i].InvoiceUSDAmount)
+            }
+            graphdataset.push({
+              fillColor: "rgba(172,194,132,0.4)",
+              strokeColor: "#ACC26D",
+              pointColor: "#fff",
+              pointStrokeColor: "#9DB86D",
+              label: "Ocean",
+              data: arrayOceandata,
+              backgroundColor: "#4a99e7"
+            });
+          }
+          
+        }
+
+        if(arrayTruck != null)
+        {
+          if(arrayTruck.length > 0)
+          {
+            for(var i = 0; i < arrayTruck.length; i++)
+            {
+              arrayTruckdata.push(arrayTruck[i].InvoiceUSDAmount)
+            }
+            graphdataset.push({
+              label: "Truck",
+              data: arrayTruckdata,
+              backgroundColor: "#50ad84"
+            });
+          }
+         
+        }
+
+      self.setState({graphdataset: graphdataset})
+
+    }).catch(error => {
+      debugger;
+      var temperror = error.response.data;
+      var err = temperror.split(":");
+      alert(err[1].replace("}", ""))
+      self.setState({graphdataset: []})
+    })
+  }
+
+
   render() {
     var buyerData = {
-      labels: [
-        "Apr, 2017",
-        "May, 2017",
-        "Jun, 2017",
-        "Jul, 2017",
-        "Aug, 2017",
-        "Sep, 2017",
-        "Oct, 2017",
-        "Nov, 2017",
-        "Dec, 2017",
-        "Jan, 2018",
-        "Feb, 2018",
-        "Mar, 2018"
-      ],
-      datasets: [
-        {
-          fillColor: "rgba(172,194,132,0.4)",
-          strokeColor: "#ACC26D",
-          pointColor: "#fff",
-          pointStrokeColor: "#9DB86D",
-          label: "Ocean",
-          data: [0, 0, 50, 35, 20, 0, 10, 5, 5, 80, 0, 0],
-          backgroundColor: "#4a99e7"
-        },
-        {
-          label: "Truck",
-          data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0],
-          backgroundColor: "#50ad84"
-        },
-        {
-          label: "Air",
-          data: [2, 15, 15, 10, 8, 40, 20, 10, 18, 40, 40, 17],
-          backgroundColor: "#3357ac"
-        }
-      ]
+      labels: this.state.graflabels,
+      datasets: this.state.graphdataset
     };
     let greenCounterdata = {
       labels: ["Green", "Red"],
@@ -230,6 +377,7 @@ class Analytics extends Component {
                   role="tab"
                   aria-controls="invoices"
                   aria-selected="false"
+                  onClick={this.handleAnalyticsInvoice.bind(this)}
                 >
                   Invoices
                 </a>
@@ -246,7 +394,7 @@ class Analytics extends Component {
                   <div className="ana-viw">
                     <div className="analy-radio new-radio-rate-cntr radio-light-blue">
                       <div>
-                        <input type="radio" name="ship-type" id="active-ship" />
+                        <input type="radio" name="ship-type" id="active-ship" checked />
                         <label htmlFor="active-ship">Active</label>
                       </div>
                       <div>
@@ -435,14 +583,15 @@ class Analytics extends Component {
                   <div className="ana-viw">
                     <div className="analy-radio new-radio-rate-cntr radio-light-blue">
                       <div>
-                        <input type="radio" name="ship-type" id="active-inv" />
+                        <input type="radio" name="ship-type-invoice"  id="active-inv" value="A" />
                         <label htmlFor="active-inv">Active</label>
                       </div>
                       <div>
                         <input
                           type="radio"
-                          name="ship-type"
+                          name="ship-type-invoice"
                           id="delivered-inv"
+                          value="D"
                         />
                         <label htmlFor="delivered-inv">Delivered</label>
                       </div>
@@ -451,9 +600,10 @@ class Analytics extends Component {
                       <div>
                         <input
                           type="radio"
-                          name="ship-way"
+                          name="ship-way-invoice"
                           id="plane-inv"
                           onClick={this.toggleBtnsInv}
+                          value="A"
                         />
                         <label htmlFor="plane-inv">
                           <img
@@ -471,9 +621,10 @@ class Analytics extends Component {
                       <div>
                         <input
                           type="radio"
-                          name="ship-way"
+                          name="ship-way-invoice"
                           id="ship-inv"
                           onClick={this.toggleBtnsInv}
+                          value="O"
                         />
                         <label htmlFor="ship-inv">
                           <img
@@ -491,9 +642,10 @@ class Analytics extends Component {
                       <div>
                         <input
                           type="radio"
-                          name="ship-way"
+                          name="ship-way-invoice"
                           id="road-inv"
                           onClick={this.toggleBtnsInv}
+                          value="T"
                         />
                         <label htmlFor="road-inv">
                           <img
@@ -512,11 +664,11 @@ class Analytics extends Component {
                     {this.state.toggleShipInv && (
                       <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="sea-opt" id="fcl-inv" />
+                          <input type="radio" name="sea-opt-invoice" id="fcl-inv" />
                           <label htmlFor="fcl-inv">FCL</label>
                         </div>
                         <div>
-                          <input type="radio" name="sea-opt" id="lcl-inv" />
+                          <input type="radio" name="sea-opt-invoice" id="lcl-inv" />
                           <label htmlFor="lcl-inv">LCL</label>
                         </div>
                       </div>
@@ -524,37 +676,37 @@ class Analytics extends Component {
                     {this.state.toggleRoadInv && (
                       <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="road-opt" id="ftl-inv" />
+                          <input type="radio" name="road-opt-invoice" id="ftl-inv" />
                           <label htmlFor="ftl-inv">FTL</label>
                         </div>
                         <div>
-                          <input type="radio" name="road-opt" id="ltl-inv" />
+                          <input type="radio" name="road-opt-invoice" id="ltl-inv" />
                           <label htmlFor="ltl-inv">LTL</label>
                         </div>
                       </div>
                     )}
                   </div>
-                  <button className="butn mt-0">view</button>
+                  <button className="butn mt-0" onClick={this.handleAnalyticsInvoice.bind(this)} id="invoices-view-btn">view</button>
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
-                    <select>
-                      <option>Weekly</option>
-                      <option>Monthly</option>
-                      <option>Yearly</option>
+                    <select id="drp-period-invoice">
+                      <option value="W">Weekly</option>
+                      <option selected  value="M">Monthly</option>
+                      <option  value="Y">Yearly</option>
                     </select>
                   </div>
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Supplier </span>
-                    <select>
+                    <select id="drp-supplie-invoice">
                       <option>Supplier Name</option>
-                      <option>Supplier Name</option>
-                      <option>Supplier Name</option>
+                      
                     </select>
                   </div>
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>From </span>
                     <DatePicker
+                      id="datpicker-from-invoice"
                       className="ana-to"
                       selected={this.state.startDate}
                       onChange={this.handleChangeStart}
@@ -563,6 +715,7 @@ class Analytics extends Component {
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>To </span>
                     <DatePicker
+                      id="datpicker-to-invoice"
                       className="ana-to"
                       selected={this.state.endDate}
                       onChange={this.handleChangeEnd}

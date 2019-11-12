@@ -212,7 +212,6 @@ class RateSearch extends Component {
                       onChange={this.HandleChangeCon.bind(this, "Company_Name")}
                       menuStyle={this.state.menuStyle}
                       onSelect={this.handleSelectCon.bind(this, "Company_Name")}
-                       
                       inputProps={{ placeholder: "Search Account/Consignee" }}
                     />
                   ) : null}
