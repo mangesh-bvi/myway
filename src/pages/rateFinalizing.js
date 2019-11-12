@@ -151,17 +151,17 @@ class RateFinalizing extends Component {
             <div className="row">
               <div className="col-md-4">
                 <div className="rate-table-left rate-final-left">
-                  <div className="title-sect">
-                    <input
-                      type="search"
-                      // value={this.state.filterAll}
-                      // onChange={this.filterAll}
-                      placeholder="Search here"
-                      className="w-100"
-                    />
-                  </div>
                   <div>
                     <h3>Locals</h3>
+                    <div className="title-sect p-0 pt-2">
+                      <input
+                        type="search"
+                        // value={this.state.filterAll}
+                        // onChange={this.filterAll}
+                        placeholder="Search here"
+                        className="w-100"
+                      />
+                    </div>
                     <div className="cont-costs">
                       <div className="remember-forgot d-block m-0">
                         <div>
@@ -194,6 +194,15 @@ class RateFinalizing extends Component {
                   </div>
                   <div>
                     <h3>Surcharges</h3>
+                    <div className="title-sect p-0 pt-2">
+                      <input
+                        type="search"
+                        // value={this.state.filterAll}
+                        // onChange={this.filterAll}
+                        placeholder="Search here"
+                        className="w-100"
+                      />
+                    </div>
                     <div className="cont-costs">
                       <div className="remember-forgot d-block m-0">
                         <div>

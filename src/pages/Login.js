@@ -404,7 +404,6 @@ class Login extends React.Component {
                   expanded={this.state.expanded}
                   onCheck={checked => this.setState({ checked })}
                   onExpand={expanded => this.setState({ expanded })}
-                  onlyLeafCheckboxes={true}
                 />
               </div>
             </ModalBody>
