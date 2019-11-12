@@ -956,41 +956,6 @@ class Dashboard extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <div id="shipmentfilterdiv" style={{ display: "none" }}>
-              <input
-                id="Ocean"
-                class="header-btn"
-                type="button"
-                value="Ocean-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Ocean")}
-              />
-              <input
-                id="Air"
-                class="header-btn"
-                type="button"
-                value="Air-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Air")}
-              />
-              <input
-                id="Delay-Ocean"
-                class="header-btn"
-                type="button"
-                value="Delay-Ocean-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Delay-Ocean")}
-              />
-              <input
-                id="Booking-Ocean"
-                class="header-btn"
-                type="button"
-                value="CurrentBooking-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Booking-Ocean")}
-              />
-            </div>
-
             <div className="dash-outer" style={{}}>
               {this.state.checkMapview == true ? (
                 <>

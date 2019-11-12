@@ -73,7 +73,7 @@ class Login extends React.Component {
       salesUserData: [],
       checked: [],
       expanded: [],
-      nodes:[]
+      nodes: []
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -88,9 +88,9 @@ class Login extends React.Component {
   HandleDisplaySalesPersonData(sData) {
     debugger;
     //get Companies
-    let self=this;
-    var mydata=sData;
-    var finalNode=[];
+    let self = this;
+    var mydata = sData;
+    var finalNode = [];
     const distinctOffice = [];
     const distinctContactDisName = [];
     const distinctAssociateComp = [];
@@ -180,9 +180,8 @@ class Login extends React.Component {
       salesPersonDataByComp.children = salesPersondata;
       debugger;
       finalNode.push(salesPersonDataByComp);
-
     }
-    self.setState({nodes:finalNode});
+    self.setState({ nodes: finalNode, checked: finalNode });
   }
   toggleSalesLogin() {
     let self = this;
@@ -266,12 +265,11 @@ class Login extends React.Component {
 
           var ProfileTypen = userType[0].ProfileType;
           if (userTypeName === "Sales User" && ProfileTypen) {
-            var sData=response.data.Table3;
+            var sData = response.data.Table3;
             self.HandleDisplaySalesPersonData(sData);
             self.setState({
               modalSalesLogin: !self.state.modalSalesLogin
             });
-             
           }
 
           //window.location.href = "./user-agreement";
@@ -302,7 +300,6 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-     
     localStorage.clear();
     const publicIp = require("public-ip");
     (async () => {
@@ -392,9 +389,9 @@ class Login extends React.Component {
             </div>
           </form>
         </div>
-        <div className="salesuserPopup">
+        <div className="">
           <Modal
-            className="delete-popup pol-pod-popup"
+            className="delete-popup salesuserPopup"
             isOpen={this.state.modalSalesLogin}
             centered={true}
           >
@@ -407,7 +404,6 @@ class Login extends React.Component {
                   expanded={this.state.expanded}
                   onCheck={checked => this.setState({ checked })}
                   onExpand={expanded => this.setState({ expanded })}
-                
                 />
               </div>
             </ModalBody>
