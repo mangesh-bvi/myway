@@ -32,6 +32,445 @@ import Autocomplete from "react-google-autocomplete";
 
 const { compose } = require("recompose");
 
+const MapWithAMakredInfoWindow = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap defaultCenter={props.mapPosition} defaultZoom={props.zoom}>
+    {props.markers.map(marker => {
+      const onClick = props.onClick.bind(this, marker);
+      let blueShip = new window.google.maps.MarkerImage(
+        BlueShip,
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
+      );
+      let bluePlane = new window.google.maps.MarkerImage(
+        BluePlane,
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
+      );
+      let bookingBlue = new window.google.maps.MarkerImage(
+        BookingBlue,
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
+      );
+
+      if (marker.Pin == "Ocean") {
+        return (
+          <Marker
+            icon={blueShip}
+            key={marker.id}
+            onClick={onClick}
+            title={marker.Vessel}
+            position={{
+              lat: Number(marker.LastLocation_Lat),
+              lng: Number(marker.LastLocation_Lon)
+            }}
+            // position={{
+            //   lat: this.state.mapPosition.lat,
+            //   lng: this.state.mapPosition.lng
+            // }}
+          >
+            {props.selectedMarker === marker && (
+              <InfoWindow>
+                <div>
+                  {props.ModalData.map(function(mdata, i) {
+                    let Hblno = mdata["HBL#"];
+                    let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno;
+                    var finalinvoce;
+                    var finalinvocearr = [];
+                    var C_colid = "#" + mdata.ContainerNo;
+                    var C_HblNO = "#" + mdata["HBL#"];
+
+                    if (
+                      (mdata["InvoiceNumber/Productid"] != "") &
+                      (mdata["InvoiceNumber/Productid"] != null)
+                    ) {
+                      inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                      if (inovceno.length > 0) {
+                        for (let index = 0; index < inovceno.length; index++) {
+                          finalinvoce = inovceno[index].split("|")[0];
+                          finalinvocearr.push(finalinvoce);
+                        }
+                      }
+                    }
+                    return (
+                      <div className="pinmodal">
+                        <div id="accordion">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
+                                <div
+                                  role="button"
+                                  data-toggle="collapse"
+                                  href={C_colid.replace(/ +/g, "")}
+                                  aria-expanded="false"
+                                  aria-controls={mdata.ContainerNo.replace(
+                                    / +/g,
+                                    ""
+                                  )}
+                                >
+                                  <a href={shipmentdetails}>
+                                    <p className="mapcontainerno">
+                                      {mdata.ContainerNo}
+                                    </p>
+                                  </a>
+                                </div>
+                              </h5>
+                            </div>
+                            <div
+                              id={mdata.ContainerNo.replace(/ +/g, "")}
+                              className="collapse"
+                              data-parent="#accordion"
+                              aria-labelledby="heading-1"
+                            >
+                              <div className="card-body">
+                                <div id="accordion-1">
+                                  <div className="card">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
+                                      <h5 className="mb-0">
+                                        <div
+                                          className="collapsed"
+                                          role="button"
+                                          data-toggle="collapse"
+                                          href={C_HblNO.replace(/ +/g, "")}
+                                          aria-expanded="false"
+                                          aria-controls={mdata["HBL#"].replace(
+                                            / +/g,
+                                            ""
+                                          )}
+                                        >
+                                          <p className="mapcontainerno">
+                                            {mdata["HBL#"]}
+                                          </p>
+                                        </div>
+                                      </h5>
+                                    </div>
+                                    <div
+                                      id={mdata["HBL#"].replace(/ +/g, "")}
+                                      className="collapse"
+                                      data-parent="#accordion-1"
+                                      aria-labelledby="heading-1-1"
+                                    >
+                                      <div className="card-body">
+                                        {finalinvocearr.length > 0
+                                          ? finalinvocearr.map(function(
+                                              idata,
+                                              i
+                                            ) {
+                                              return (
+                                                <div>
+                                                  <p className="mapinvoice">
+                                                    {idata}
+                                                  </p>
+                                                </div>
+                                              );
+                                            })
+                                          : null}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        );
+      }
+      if (marker.Pin == "Air") {
+        return (
+          <Marker
+            key={marker.id}
+            onClick={onClick}
+            title={marker.Vessel}
+            position={{
+              lat: Number(marker.LastLocation_Lat),
+              lng: Number(marker.LastLocation_Lon)
+            }}
+            icon={bluePlane}
+          >
+            {props.selectedMarker === marker && (
+              <InfoWindow>
+                <div>
+                  {props.ModalData.map(function(mdata, i) {
+                    let Hblno = mdata["HBL#"];
+                    let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno;
+                    var finalinvoce;
+                    var finalinvocearr = [];
+                    var C_colid = "#" + mdata.ContainerNo;
+                    var C_HblNO = "#" + mdata["HBL#"];
+
+                    if (
+                      (mdata["InvoiceNumber/Productid"] != "") &
+                      (mdata["InvoiceNumber/Productid"] != null)
+                    ) {
+                      inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                      if (inovceno.length > 0) {
+                        for (let index = 0; index < inovceno.length; index++) {
+                          finalinvoce = inovceno[index].split("|")[0];
+                          finalinvocearr.push(finalinvoce);
+                        }
+                      }
+                    }
+                    return (
+                      <div className="pinmodal">
+                        <div id="accordion">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
+                                <div
+                                  role="button"
+                                  data-toggle="collapse"
+                                  href={C_colid.replace(/ +/g, "")}
+                                  aria-expanded="false"
+                                  aria-controls={mdata.ContainerNo.replace(
+                                    / +/g,
+                                    ""
+                                  )}
+                                >
+                                  <a href={shipmentdetails}>
+                                    <p className="mapcontainerno">
+                                      {mdata.ContainerNo}
+                                    </p>
+                                  </a>
+                                </div>
+                              </h5>
+                            </div>
+                            <div
+                              id={mdata.ContainerNo.replace(/ +/g, "")}
+                              className="collapse"
+                              data-parent="#accordion"
+                              aria-labelledby="heading-1"
+                            >
+                              <div className="card-body">
+                                <div id="accordion-1">
+                                  <div className="card">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
+                                      <h5 className="mb-0">
+                                        <div
+                                          className="collapsed"
+                                          role="button"
+                                          data-toggle="collapse"
+                                          href={C_HblNO.replace(/ +/g, "")}
+                                          aria-expanded="false"
+                                          aria-controls={mdata["HBL#"].replace(
+                                            / +/g,
+                                            ""
+                                          )}
+                                        >
+                                          <p className="mapcontainerno">
+                                            {mdata["HBL#"]}
+                                          </p>
+                                        </div>
+                                      </h5>
+                                    </div>
+                                    <div
+                                      id={mdata["HBL#"].replace(/ +/g, "")}
+                                      className="collapse"
+                                      data-parent="#accordion-1"
+                                      aria-labelledby="heading-1-1"
+                                    >
+                                      <div className="card-body">
+                                        {finalinvocearr.length > 0
+                                          ? finalinvocearr.map(function(
+                                              idata,
+                                              i
+                                            ) {
+                                              return (
+                                                <div>
+                                                  <p className="mapinvoice">
+                                                    {idata}
+                                                  </p>
+                                                </div>
+                                              );
+                                            })
+                                          : null}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        );
+      }
+      if (marker.Pin == "Booking") {
+        return (
+          <Marker
+            key={marker.id}
+            onClick={onClick}
+            title={marker.Vessel}
+            position={{
+              lat: Number(marker.LastLocation_Lat),
+              lng: Number(marker.LastLocation_Lon)
+            }}
+            icon={bookingBlue}
+          >
+            {props.selectedMarker === marker && (
+              <InfoWindow>
+                <div>
+                  {props.ModalData.map(function(mdata, i) {
+                    let Hblno = mdata["HBL#"];
+                    let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno;
+                    var finalinvoce;
+                    var finalinvocearr = [];
+                    var C_colid = "#" + mdata.ContainerNo;
+                    var C_HblNO = "#" + mdata["HBL#"];
+
+                    if (
+                      (mdata["InvoiceNumber/Productid"] != "") &
+                      (mdata["InvoiceNumber/Productid"] != null)
+                    ) {
+                      inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                      if (inovceno.length > 0) {
+                        for (let index = 0; index < inovceno.length; index++) {
+                          finalinvoce = inovceno[index].split("|")[0];
+                          finalinvocearr.push(finalinvoce);
+                        }
+                      }
+                    }
+                    return (
+                      <div className="pinmodal">
+                        <div id="accordion">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
+                                <div
+                                  role="button"
+                                  data-toggle="collapse"
+                                  href={C_colid.replace(/ +/g, "")}
+                                  aria-expanded="false"
+                                  aria-controls={mdata.ContainerNo.replace(
+                                    / +/g,
+                                    ""
+                                  )}
+                                >
+                                  <a href={shipmentdetails}>
+                                    <p className="mapcontainerno">
+                                      {mdata.ContainerNo}
+                                    </p>
+                                  </a>
+                                </div>
+                              </h5>
+                            </div>
+                            <div
+                              id={mdata.ContainerNo.replace(/ +/g, "")}
+                              className="collapse"
+                              data-parent="#accordion"
+                              aria-labelledby="heading-1"
+                            >
+                              <div className="card-body">
+                                <div id="accordion-1">
+                                  <div className="card">
+                                    <div
+                                      className="card-header"
+                                      id="heading-1-1"
+                                    >
+                                      <h5 className="mb-0">
+                                        <div
+                                          className="collapsed"
+                                          role="button"
+                                          data-toggle="collapse"
+                                          href={C_HblNO.replace(/ +/g, "")}
+                                          aria-expanded="false"
+                                          aria-controls={mdata["HBL#"].replace(
+                                            / +/g,
+                                            ""
+                                          )}
+                                        >
+                                          <p className="mapcontainerno">
+                                            {mdata["HBL#"]}
+                                          </p>
+                                        </div>
+                                      </h5>
+                                    </div>
+                                    <div
+                                      id={mdata["HBL#"].replace(/ +/g, "")}
+                                      className="collapse"
+                                      data-parent="#accordion-1"
+                                      aria-labelledby="heading-1-1"
+                                    >
+                                      <div className="card-body">
+                                        {finalinvocearr.length > 0
+                                          ? finalinvocearr.map(function(
+                                              idata,
+                                              i
+                                            ) {
+                                              return (
+                                                <div>
+                                                  <p className="mapinvoice">
+                                                    {idata}
+                                                  </p>
+                                                </div>
+                                              );
+                                            })
+                                          : null}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        );
+      }
+    })}
+    <div>
+      <Autocomplete
+        style={{
+          width: "auto",
+          height: "40px",
+          paddingLeft: "16px",
+          marginTop: "2px",
+          marginBottom: "500px",
+          position: "absolute",
+          top: "60px",
+          left: "10px"
+        }}
+        onPlaceSelected={props.onPlaceSelected}
+        types={["(regions)"]}
+      />
+    </div>
+  </GoogleMap>
+));
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -57,10 +496,6 @@ class Dashboard extends Component {
         lat: 32.24165126,
         lng: 77.78319374
       }
-      // mapPosition: {
-      // 	lat: 18.5204,
-      // 	lng: 73.8567
-      // },
     };
     this.BindMapData = this.BindMapData.bind(this);
     this.HandleShipmentPin = this.HandleShipmentPin.bind(this);
@@ -333,468 +768,6 @@ class Dashboard extends Component {
   }
 
   render() {
-    const MapWithAMakredInfoWindow = compose(
-      withScriptjs,
-      withGoogleMap
-    )(props => (
-      <GoogleMap
-        google={this.props.google}
-        defaultCenter={{
-          lat: this.state.mapPosition.lat,
-          lng: this.state.mapPosition.lng
-        }}
-        defaultZoom={this.state.zoom}
-      >
-        {props.markers.map(marker => {
-          debugger;
-          const onClick = props.onClick.bind(this, marker);
-          let blueShip = new window.google.maps.MarkerImage(
-            BlueShip,
-            null /* size is determined at runtime */,
-            null /* origin is 0,0 */,
-            null /* anchor is bottom center of the scaled image */,
-            new window.google.maps.Size(32, 32)
-          );
-          let bluePlane = new window.google.maps.MarkerImage(
-            BluePlane,
-            null /* size is determined at runtime */,
-            null /* origin is 0,0 */,
-            null /* anchor is bottom center of the scaled image */,
-            new window.google.maps.Size(32, 32)
-          );
-          let bookingBlue = new window.google.maps.MarkerImage(
-            BookingBlue,
-            null /* size is determined at runtime */,
-            null /* origin is 0,0 */,
-            null /* anchor is bottom center of the scaled image */,
-            new window.google.maps.Size(32, 32)
-          );
-
-          if (marker.Pin == "Ocean") {
-            return (
-              <Marker
-                icon={blueShip}
-                key={marker.id}
-                onClick={onClick}
-                title={marker.Vessel}
-                position={{
-                  lat: Number(marker.LastLocation_Lat),
-                  lng: Number(marker.LastLocation_Lon)
-                }}
-                // position={{
-                //   lat: this.state.mapPosition.lat,
-                //   lng: this.state.mapPosition.lng
-                // }}
-              >
-                {props.selectedMarker === marker && (
-                  <InfoWindow>
-                    <div>
-                      {props.ModalData.map(function(mdata, i) {
-                        let Hblno = mdata["HBL#"];
-                        let shipmentdetails = "shipment-details?hblno=" + Hblno;
-                        var inovceno;
-                        var finalinvoce;
-                        var finalinvocearr = [];
-                        var C_colid = "#" + mdata.ContainerNo;
-                        var C_HblNO = "#" + mdata["HBL#"];
-
-                        if (
-                          (mdata["InvoiceNumber/Productid"] != "") &
-                          (mdata["InvoiceNumber/Productid"] != null)
-                        ) {
-                          inovceno = mdata["InvoiceNumber/Productid"].split(
-                            ":"
-                          );
-                          if (inovceno.length > 0) {
-                            for (
-                              let index = 0;
-                              index < inovceno.length;
-                              index++
-                            ) {
-                              finalinvoce = inovceno[index].split("|")[0];
-                              finalinvocearr.push(finalinvoce);
-                            }
-                          }
-                        }
-                        return (
-                          <div className="pinmodal">
-                            <div id="accordion">
-                              <div className="card">
-                                <div className="card-header" id="heading-1">
-                                  <h5 className="mb-0">
-                                    <div
-                                      role="button"
-                                      data-toggle="collapse"
-                                      href={C_colid.replace(/ +/g, "")}
-                                      aria-expanded="false"
-                                      aria-controls={mdata.ContainerNo.replace(
-                                        / +/g,
-                                        ""
-                                      )}
-                                    >
-                                      <a href={shipmentdetails}>
-                                        <p className="mapcontainerno">
-                                          {mdata.ContainerNo}
-                                        </p>
-                                      </a>
-                                    </div>
-                                  </h5>
-                                </div>
-                                <div
-                                  id={mdata.ContainerNo.replace(/ +/g, "")}
-                                  className="collapse"
-                                  data-parent="#accordion"
-                                  aria-labelledby="heading-1"
-                                >
-                                  <div className="card-body">
-                                    <div id="accordion-1">
-                                      <div className="card">
-                                        <div
-                                          className="card-header"
-                                          id="heading-1-1"
-                                        >
-                                          <h5 className="mb-0">
-                                            <div
-                                              className="collapsed"
-                                              role="button"
-                                              data-toggle="collapse"
-                                              href={C_HblNO.replace(/ +/g, "")}
-                                              aria-expanded="false"
-                                              aria-controls={mdata[
-                                                "HBL#"
-                                              ].replace(/ +/g, "")}
-                                            >
-                                              <p className="mapcontainerno">
-                                                {mdata["HBL#"]}
-                                              </p>
-                                            </div>
-                                          </h5>
-                                        </div>
-                                        <div
-                                          id={mdata["HBL#"].replace(/ +/g, "")}
-                                          className="collapse"
-                                          data-parent="#accordion-1"
-                                          aria-labelledby="heading-1-1"
-                                        >
-                                          <div className="card-body">
-                                            {finalinvocearr.length > 0
-                                              ? finalinvocearr.map(function(
-                                                  idata,
-                                                  i
-                                                ) {
-                                                  return (
-                                                    <div>
-                                                      <p className="mapinvoice">
-                                                        {idata}
-                                                      </p>
-                                                    </div>
-                                                  );
-                                                })
-                                              : null}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-            );
-          }
-          if (marker.Pin == "Air") {
-            return (
-              <Marker
-                key={marker.id}
-                onClick={onClick}
-                title={marker.Vessel}
-                position={{
-                  lat: Number(marker.LastLocation_Lat),
-                  lng: Number(marker.LastLocation_Lon)
-                }}
-                icon={bluePlane}
-              >
-                {props.selectedMarker === marker && (
-                  <InfoWindow>
-                    <div>
-                      {props.ModalData.map(function(mdata, i) {
-                        let Hblno = mdata["HBL#"];
-                        let shipmentdetails = "shipment-details?hblno=" + Hblno;
-                        var inovceno;
-                        var finalinvoce;
-                        var finalinvocearr = [];
-                        var C_colid = "#" + mdata.ContainerNo;
-                        var C_HblNO = "#" + mdata["HBL#"];
-
-                        if (
-                          (mdata["InvoiceNumber/Productid"] != "") &
-                          (mdata["InvoiceNumber/Productid"] != null)
-                        ) {
-                          inovceno = mdata["InvoiceNumber/Productid"].split(
-                            ":"
-                          );
-                          if (inovceno.length > 0) {
-                            for (
-                              let index = 0;
-                              index < inovceno.length;
-                              index++
-                            ) {
-                              finalinvoce = inovceno[index].split("|")[0];
-                              finalinvocearr.push(finalinvoce);
-                            }
-                          }
-                        }
-                        return (
-                          <div className="pinmodal">
-                            <div id="accordion">
-                              <div className="card">
-                                <div className="card-header" id="heading-1">
-                                  <h5 className="mb-0">
-                                    <div
-                                      role="button"
-                                      data-toggle="collapse"
-                                      href={C_colid.replace(/ +/g, "")}
-                                      aria-expanded="false"
-                                      aria-controls={mdata.ContainerNo.replace(
-                                        / +/g,
-                                        ""
-                                      )}
-                                    >
-                                      <a href={shipmentdetails}>
-                                        <p className="mapcontainerno">
-                                          {mdata.ContainerNo}
-                                        </p>
-                                      </a>
-                                    </div>
-                                  </h5>
-                                </div>
-                                <div
-                                  id={mdata.ContainerNo.replace(/ +/g, "")}
-                                  className="collapse"
-                                  data-parent="#accordion"
-                                  aria-labelledby="heading-1"
-                                >
-                                  <div className="card-body">
-                                    <div id="accordion-1">
-                                      <div className="card">
-                                        <div
-                                          className="card-header"
-                                          id="heading-1-1"
-                                        >
-                                          <h5 className="mb-0">
-                                            <div
-                                              className="collapsed"
-                                              role="button"
-                                              data-toggle="collapse"
-                                              href={C_HblNO.replace(/ +/g, "")}
-                                              aria-expanded="false"
-                                              aria-controls={mdata[
-                                                "HBL#"
-                                              ].replace(/ +/g, "")}
-                                            >
-                                              <p className="mapcontainerno">
-                                                {mdata["HBL#"]}
-                                              </p>
-                                            </div>
-                                          </h5>
-                                        </div>
-                                        <div
-                                          id={mdata["HBL#"].replace(/ +/g, "")}
-                                          className="collapse"
-                                          data-parent="#accordion-1"
-                                          aria-labelledby="heading-1-1"
-                                        >
-                                          <div className="card-body">
-                                            {finalinvocearr.length > 0
-                                              ? finalinvocearr.map(function(
-                                                  idata,
-                                                  i
-                                                ) {
-                                                  return (
-                                                    <div>
-                                                      <p className="mapinvoice">
-                                                        {idata}
-                                                      </p>
-                                                    </div>
-                                                  );
-                                                })
-                                              : null}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-            );
-          }
-          if (marker.Pin == "Booking") {
-            return (
-              <Marker
-                key={marker.id}
-                onClick={onClick}
-                title={marker.Vessel}
-                position={{
-                  lat: Number(marker.LastLocation_Lat),
-                  lng: Number(marker.LastLocation_Lon)
-                }}
-                icon={bookingBlue}
-              >
-                {props.selectedMarker === marker && (
-                  <InfoWindow>
-                    <div>
-                      {props.ModalData.map(function(mdata, i) {
-                        let Hblno = mdata["HBL#"];
-                        let shipmentdetails = "shipment-details?hblno=" + Hblno;
-                        var inovceno;
-                        var finalinvoce;
-                        var finalinvocearr = [];
-                        var C_colid = "#" + mdata.ContainerNo;
-                        var C_HblNO = "#" + mdata["HBL#"];
-
-                        if (
-                          (mdata["InvoiceNumber/Productid"] != "") &
-                          (mdata["InvoiceNumber/Productid"] != null)
-                        ) {
-                          inovceno = mdata["InvoiceNumber/Productid"].split(
-                            ":"
-                          );
-                          if (inovceno.length > 0) {
-                            for (
-                              let index = 0;
-                              index < inovceno.length;
-                              index++
-                            ) {
-                              finalinvoce = inovceno[index].split("|")[0];
-                              finalinvocearr.push(finalinvoce);
-                            }
-                          }
-                        }
-                        return (
-                          <div className="pinmodal">
-                            <div id="accordion">
-                              <div className="card">
-                                <div className="card-header" id="heading-1">
-                                  <h5 className="mb-0">
-                                    <div
-                                      role="button"
-                                      data-toggle="collapse"
-                                      href={C_colid.replace(/ +/g, "")}
-                                      aria-expanded="false"
-                                      aria-controls={mdata.ContainerNo.replace(
-                                        / +/g,
-                                        ""
-                                      )}
-                                    >
-                                      <a href={shipmentdetails}>
-                                        <p className="mapcontainerno">
-                                          {mdata.ContainerNo}
-                                        </p>
-                                      </a>
-                                    </div>
-                                  </h5>
-                                </div>
-                                <div
-                                  id={mdata.ContainerNo.replace(/ +/g, "")}
-                                  className="collapse"
-                                  data-parent="#accordion"
-                                  aria-labelledby="heading-1"
-                                >
-                                  <div className="card-body">
-                                    <div id="accordion-1">
-                                      <div className="card">
-                                        <div
-                                          className="card-header"
-                                          id="heading-1-1"
-                                        >
-                                          <h5 className="mb-0">
-                                            <div
-                                              className="collapsed"
-                                              role="button"
-                                              data-toggle="collapse"
-                                              href={C_HblNO.replace(/ +/g, "")}
-                                              aria-expanded="false"
-                                              aria-controls={mdata[
-                                                "HBL#"
-                                              ].replace(/ +/g, "")}
-                                            >
-                                              <p className="mapcontainerno">
-                                                {mdata["HBL#"]}
-                                              </p>
-                                            </div>
-                                          </h5>
-                                        </div>
-                                        <div
-                                          id={mdata["HBL#"].replace(/ +/g, "")}
-                                          className="collapse"
-                                          data-parent="#accordion-1"
-                                          aria-labelledby="heading-1-1"
-                                        >
-                                          <div className="card-body">
-                                            {finalinvocearr.length > 0
-                                              ? finalinvocearr.map(function(
-                                                  idata,
-                                                  i
-                                                ) {
-                                                  return (
-                                                    <div>
-                                                      <p className="mapinvoice">
-                                                        {idata}
-                                                      </p>
-                                                    </div>
-                                                  );
-                                                })
-                                              : null}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-            );
-          }
-        })}
-        <div>
-          <Autocomplete
-            style={{
-              width: "auto",
-              height: "40px",
-              paddingLeft: "16px",
-              marginTop: "2px",
-              marginBottom: "500px",
-              position: "absolute",
-              top: "60px",
-              left: "10px"
-            }}
-            onPlaceSelected={this.onPlaceSelected}
-            types={["(regions)"]}
-          />
-        </div>
-      </GoogleMap>
-    ));
     // const divStyle ={}
     // if (encryption(window.localStorage.getItem("usertype"),"desc") == "Sales User") {
     //   divStyle = {
@@ -1028,6 +1001,9 @@ class Dashboard extends Component {
                         onClick={this.handleClick}
                         selectedMarker={selectedMarker}
                         ModalData={ModalData}
+                        onPlaceSelected={this.onPlaceSelected}
+                        mapPosition={this.state.mapPosition}
+                        zoom={this.state.zoom}
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                         containerElement={
                           <div style={{ height: `100%`, width: "100%" }} />
@@ -1187,6 +1163,9 @@ class Dashboard extends Component {
                       onClick={this.handleClick}
                       selectedMarker={selectedMarker}
                       ModalData={ModalData}
+                      onPlaceSelected={this.onPlaceSelected}
+                      mapPosition={this.state.mapPosition}
+                      zoom={this.state.zoom}
                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                       containerElement={
                         <div style={{ height: `100%`, width: "100%" }} />
@@ -1197,6 +1176,39 @@ class Dashboard extends Component {
                   </div>
                 </div>
               )}
+
+              {/* <input
+                id="Ocean"
+                className="header-btn"
+                type="button"
+                value="Ocean-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Ocean")}
+              />
+              <input
+                id="Air"
+                className="header-btn"
+                type="button"
+                value="Air-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Air")}
+              />
+              <input
+                id="Delay-Ocean"
+                className="header-btn"
+                type="button"
+                value="Delay-Ocean-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Delay-Ocean")}
+              />
+              <input
+                id="Booking-Ocean"
+                className="header-btn"
+                type="button"
+                value="CurrentBooking-Shipment"
+                name="search-rate"
+                onClick={() => self.HandleShipmentPin("Booking-Ocean")}
+              /> */}
             </div>
           </div>
         </div>
