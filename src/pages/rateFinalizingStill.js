@@ -512,6 +512,30 @@ class RateFinalizingStill extends Component {
                 <label>Quotation Price</label>
                 <input type="text" value="5000" disabled />
               </div>
+              <div className="rate-radio-cntr justify-content-center mb-3">
+                <div>
+                  <input
+                    className="d-none"
+                    type="radio"
+                    name="cons-ship"
+                    id="consignee"
+                  />
+                  <label className="m-0" htmlFor="consignee">
+                    Consignee
+                  </label>
+                </div>
+                <div>
+                  <input
+                    className="d-none"
+                    type="radio"
+                    name="cons-ship"
+                    id="shipper"
+                  />
+                  <label className="m-0" htmlFor="shipper">
+                    Shipper
+                  </label>
+                </div>
+              </div>
               <div className="rename-cntr login-fields">
                 <label>Consignee Details</label>
                 <select>
@@ -522,7 +546,7 @@ class RateFinalizingStill extends Component {
                 </select>
               </div>
               <div className="rename-cntr login-fields">
-                <label>Notification Person</label>
+                <label>Notify Party</label>
                 <select>
                   <option>Name</option>
                   <option>Name</option>
@@ -565,6 +589,19 @@ class RateFinalizingStill extends Component {
               <div className="rename-cntr login-fields">
                 <label>Cargo Weight</label>
                 <input type="text" placeholder="Enter Cargo Weight" />
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Buyer Name</label>
+                <select>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                  <option>Name</option>
+                </select>
+              </div>
+              <div className="rename-cntr login-fields">
+                <label>Address</label>
+                <textarea className="txt-add"></textarea>
               </div>
               <a
                 href="/booking-table"

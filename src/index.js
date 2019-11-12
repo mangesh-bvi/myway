@@ -46,6 +46,7 @@ import ActivityLog from "./pages/activity-log";
 import SalesActivityLog from "./pages/salesActivityLog";
 import MyOrder from "./pages/MyOrder";
 
+
 // import Exmaple from './pages/Example';
 
 // import Signin from './pages/Signin';
@@ -94,6 +95,7 @@ ReactDOM.render(
     <Route exact path="/activity-log" component={ActivityLog} />
     <Route exact path="/sales-activity-log" component={SalesActivityLog} />
     <Route exact path="/myorder" component={MyOrder} />
+    
 
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
