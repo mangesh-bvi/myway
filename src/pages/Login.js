@@ -182,7 +182,7 @@ class Login extends React.Component {
       finalNode.push(salesPersonDataByComp);
 
     }
-    self.setState({nodes:finalNode});
+    self.setState({ nodes: finalNode, checked: finalNode });
   }
   toggleSalesLogin() {
     let self = this;
@@ -403,11 +403,11 @@ class Login extends React.Component {
               <div>
                 <CheckboxTree
                   nodes={self.state.nodes}
-                  checked={this.state.checked}
+                  checked={self.state.checked}
                   expanded={this.state.expanded}
                   onCheck={checked => this.setState({ checked })}
                   onExpand={expanded => this.setState({ expanded })}
-                
+                  onlyLeafCheckboxes={true}
                 />
               </div>
             </ModalBody>

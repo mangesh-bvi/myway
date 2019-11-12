@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
@@ -18,6 +19,7 @@ class RateSearch extends Component {
       customerData: [],
       customerName: "",
       customerType: true,
+      companyId:0,
       menuStyle: {
         textAlign: "left",
         borderRadius: "3px",
@@ -42,6 +44,12 @@ class RateSearch extends Component {
     document.getElementById("SearchRate").classList.add("disableRates");
   }
 
+  HandelPageredireact() {
+    this.props.history.push({
+      pathname: "new-rate-search",
+      state: { companyId: this.state.companyId }
+    });
+  }
   HandleChangeCon(field, e) {
     debugger;
     let self = this;
@@ -88,12 +96,13 @@ class RateSearch extends Component {
       fields
     });
   }
-  handleSelectCon(field, value) {
+  handleSelectCon(field, value,e) {
     debugger;
     let fields = this.state.fields;
     fields[field] = value;
+    var compId=e.Company_ID;
     this.setState({
-      fields
+      fields,companyId:compId
     });
     document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -209,13 +218,15 @@ class RateSearch extends Component {
                   ) : null}
                 </div>
               </div>
-              <a
-                href="new-rate-search"
+              <button
+         
                 id="SearchRate"
                 className="butn blue-butn"
+                onClick={this.HandelPageredireact.bind(this)}
               >
                 Search Rates
-              </a>
+              </button>
+              {/* <Link id="SearchRate" className="butn blue-butn" to="new-rate-search" params={ {companyId: this.state.companyId }}>Search Rates</Link> */}
             </div>
           </div>
         </div>
