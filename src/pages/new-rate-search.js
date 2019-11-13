@@ -117,7 +117,7 @@ class NewRateSearch extends Component {
       shipmentType: "",
       modeoftransport: "",
       containerLoadType: "",
-      typesofMove: "",
+      typesofMove: '',
       PickupCity: "",
       DeliveryCity: "",
       OriginGeoCordinates: "",
@@ -131,16 +131,25 @@ class NewRateSearch extends Component {
       //-----
       multiCBM: [
         {
-          type: "",
-          cmblength: 0,
-          width: 0,
-          Quantity: 0,
-          height:0,
-          Gross_Weight: 0,
-          total: 0
+          PackagingType: "",
+          Quantity: "",
+          Length: "",
+          Width: "",
+          Height: "",
+          Weight: "",
+          Gross_Weight: "",
+          total: ""
         }
       ],
-      cmbTypeRadio: "ALL",
+      users: [],
+      referType: [],
+      flattack_openTop: [],
+      spacEqmtType: [],
+      spacEqmtTypeSelect: false,
+      specialEqtSelect: false,
+      refertypeSelect: false,
+      isTypeofMove: "",
+      cmbTypeRadio: "",
       specialEquipment: false,
       equipmentType: "",
       isSpecialEquipment: "0",
@@ -176,7 +185,6 @@ class NewRateSearch extends Component {
       isSpacialEqt: true,
       SpacialEqmt: [],
       spEqtSelect: [],
-      searchText: "",
       searchTextPOD: "",
       zoomPOL: 0,
       zoomPOD: 0,
@@ -186,16 +194,16 @@ class NewRateSearch extends Component {
       mapPositionPOD: {},
       fullAddressPOL: "",
       fullAddressPOD: "",
-      totalQuantity:0,
-      users: []
+      totalQuantity: 0,
+      isCustomClear: "No"
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
     this.HandleBindIncoTeamData = this.HandleBindIncoTeamData.bind(this);
     this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
-    this.HandlePOLPODListBind = this.HandlePOLPODListBind.bind(this);
-    this.EqtValues = this.EqtValues.bind(this);
+    this.HandleShipmentStages = this.HandleShipmentStages.bind(this);
+    this.HandlePOLPODAutosearch = this.HandlePOLPODAutosearch.bind();
   }
 
   componentDidMount() {
@@ -205,6 +213,7 @@ class NewRateSearch extends Component {
       this.setState({ companyId: compId.companyId });
     }
     this.HandleCounterListBind();
+    this.HandlePOLPODAutosearch();
   }
 
   cmbTypeRadioChange(e) {
@@ -212,16 +221,46 @@ class NewRateSearch extends Component {
     this.setState({ cmbTypeRadio: value });
   }
 
-  MultiCreateCBM() {
+  //// POL POD Autosearch Data
+
+  HandlePOLPODAutosearch() {
+    var type = "SEA";
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PolPodByCountry`,
+      data: {
+        Mode:
+          type === "SEA"
+            ? "O"
+            : type === "AIR"
+            ? "A"
+            : type === "ROAD"
+            ? "I"
+            : ""
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
+  }
+
+  //// start dynamic element for LCL-AIR-LTL
+
+  CreateMultiCBM() {
+    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row" key={i}>
         <div className="col-md">
           <div className="spe-equ">
             <select
+              name="PackagingType"
               className="w-100 cmd-select"
-              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
             >
-              <option>select</option>
+              <option>Select</option>
+              <option>Pallets</option>
+              <option>Bags</option>
+              <option>Cases</option>
             </select>
           </div>
         </div>
@@ -229,12 +268,301 @@ class NewRateSearch extends Component {
           <div className="spe-equ">
             <input
               type="text"
-              onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.cmblength===0?"Length (cm)":"Length (cm)"} 
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="Quantity"
               className="w-100"
-              name="cmblength"
-              value={el.cmblength || null}
-              onBlur={this.cbmChange}
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"Length (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"Width (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="Height (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "Gross Weight" :" Gross Weight"}
+              name="Gross_Weight"
+              value={el.Gross_Weight||""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM[i] = {
+      ...multiCBM[i],
+      [name]: parseFloat(value)
+    };
+
+    this.setState({ multiCBM });
+    var decVolumeWeight =
+      (multiCBM[i].Quantity *
+        (multiCBM[i].length * multiCBM[i].width * multiCBM[i].height)) /
+      6000;
+    multiCBM[i] = {
+      ...multiCBM[i],
+      ["total"]: parseFloat(decVolumeWeight)
+    };
+
+    this.setState({ multiCBM });
+  }
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackagingType: "",
+          Quantity: "",
+          Length: "",
+          Width: "",
+          Height: "",
+          Weight: "",
+          Gross_Weight: "",
+          Total: ""
+        }
+      ]
+    }));
+  }
+  removeMultiCBM(i) {
+    debugger;
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  ////End dynamic element
+
+  //// start  spacEqmtType dyamanic element
+
+  addSpacEqmtType(optionVal) {
+    debugger;
+    this.setState(prevState => ({
+      spacEqmtType: [
+        ...prevState.spacEqmtType,
+        {
+          TypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0
+        }
+      ]
+    }));
+  }
+
+  createUIspacEqmtType() {
+    debugger;
+    return this.state.spacEqmtType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <label name="TypeName">{el.TypeName}</label>
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="qu"
+              placeholder="Quantity"
+              onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+            />
+          </div>
+          <i
+            className="fa fa-minus equip-plus"
+            onClick={this.removeClickSpacEqmtType.bind(this, i)}
+          ></i>
+        </div>
+      );
+    });
+  }
+
+  HandleChangeSpacEqmtType(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType[i] = {
+      ...spacEqmtType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ spacEqmtType });
+  }
+
+  removeClickSpacEqmtType(i) {
+    debugger;
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType.splice(i, 1);
+    this.setState({ spacEqmtType });
+  }
+
+  //// end spacEqmtType dyamanic element
+
+  //// start refer type  dynamic element
+  addClickSpecial(optionVal) {
+    debugger;
+    this.setState(prevState => ({
+      referType: [
+        ...prevState.referType,
+        {
+          referTypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0,
+          temperature: 0
+        }
+      ]
+    }));
+  }
+
+  createUISpecial() {
+    debugger;
+    return this.state.referType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <label name="referTypeName">{el.referTypeName}</label>
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="qu"
+              placeholder="Quantity"
+              onChange={this.UISpecialChange.bind(this, i)}
+            />
+            <input
+              type="text"
+              placeholder="Temp"
+              onChange={this.UISpecialChange.bind(this, i)}
+            />
+          </div>
+          <i
+            className="fa fa-minus equip-plus"
+            onClick={this.removeClickSpecial.bind(this, i)}
+          ></i>
+        </div>
+      );
+    });
+  }
+
+  UISpecialChange(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let referType = [...this.state.referType];
+    referType[i] = {
+      ...referType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ referType });
+  }
+  removeClickSpecial(i) {
+    debugger;
+    let referType = [...this.state.referType];
+    referType.splice(i, 1);
+    this.setState({ referType });
+  }
+
+  //// refer type end to dynamic element
+
+  //// start flattack type and openTop type dynamic elememnt
+
+  MultiCreateCBM() {
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            {/* <select
+              className="w-100 cmd-select"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+            >
+              <option>select</option>
+            </select> */}
+            <label name="SpecialContainerCode">{el.SpecialContainerCode}</label>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="Quantity"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
             />
           </div>
         </div>
@@ -243,11 +571,24 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.width===0?"Width (cm)":"Width (cm)"} 
+              placeholder={"Length (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"Width (cm)"}
               className="w-100"
               name="width"
-              value={el.width || null}
-              onBlur={this.cbmChange}
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -260,31 +601,19 @@ class NewRateSearch extends Component {
               className="w-100"
               name="height"
               value={el.height || ""}
-              onBlur={this.cbmChange}
+              //onBlur={this.cbmChange}
             />
           </div>
         </div>
+
         <div className="col-md">
           <div className="spe-equ">
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder="Quantity"
-              className="w-100"
-              name="Quantity"
-              value={el.Quantity || ""}
-              onKeyUp={this.cbmChange}
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder="Gross Weight"
+              placeholder={el.Gross_Weight === 0 ? "Gross Weight" : null}
               name="Gross_Weight"
-              value={el.Gross_Weight || ""}
+              value={el.Gross_Weight}
               className="w-100"
             />
           </div>
@@ -295,24 +624,22 @@ class NewRateSearch extends Component {
               type="text"
               name="total"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={this.state.modeoftransport != "AIR" ? "CBM" : "KG"}
-              value={this.state.totalQuantity || ""}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
               className="w-100"
             />
           </div>
         </div>
 
-        {this.state.multiCBM.length !== 1 ? (
-          <div className="col-md">
-            <div className="spe-equ">
-              <i
-                class="fa fa-minus fa-2x"
-                aria-hidden="true"
-                onClick={this.removeClickMultiCBM.bind(this)}
-              ></i>
-            </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus"
+              aria-hidden="true"
+              onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
           </div>
-        ) : null}
+        </div>
       </div>
     ));
   }
@@ -320,25 +647,37 @@ class NewRateSearch extends Component {
   newMultiCBMHandleChange(i, e) {
     debugger;
     const { name, value } = e.target;
-    
-    let multiCBM = [...this.state.multiCBM];
-    multiCBM[i] = { ...multiCBM[i], [name]: value };
-    this.setState({ multiCBM });
-    var decVolumeWeight = (parseInt( multiCBM[i].Quantity) * (parseFloat(multiCBM[i].cmblength)*parseFloat( multiCBM[i].width)*parseFloat( multiCBM[i].height))) / 6000;
-    // this.setState({})
-     
-    
-  
+
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop[i] = {
+      ...flattack_openTop[i],
+      [name]: parseFloat(value)
+    };
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].width *
+          flattack_openTop[i].height)) /
+      6000;
+    flattack_openTop[i] = {
+      ...flattack_openTop[i],
+      ["total"]: parseFloat(decVolumeWeight)
+    };
+
+    this.setState({ flattack_openTop });
   }
-  addClickMultiCBM() {
+  addClickMultiCBM(optionsVal) {
     debugger;
     this.setState(prevState => ({
-      multiCBM: [
-        ...prevState.multiCBM,
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
         {
-          type: "",
+          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
           length: "",
           width: "",
+          height: "",
           Quantity: "",
           Gross_Weight: "",
           total: ""
@@ -348,13 +687,15 @@ class NewRateSearch extends Component {
   }
   removeClickMultiCBM(i) {
     debugger;
-    let multiCBM = [...this.state.multiCBM];
-    multiCBM.splice(i, 1);
-    this.setState({ multiCBM });
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
   }
 
+  ////end for flattack and openTop dynamic create elements
+
+  ////this for Equipment Type Dynamice Create Element
   NewcreateUI() {
-    debugger;
     return this.state.users.map((el, i) => (
       <div className="equip-plus-cntr" key={i}>
         <label>{el.StandardContainerCode}</label>
@@ -370,7 +711,7 @@ class NewRateSearch extends Component {
         </div>
 
         <span onClick={this.newremoveClick.bind(this, i)}>
-          <i class="fa fa-trash" aria-hidden="true"></i>
+          <i className="fa fa-trash" aria-hidden="true"></i>
         </span>
       </div>
     ));
@@ -466,17 +807,13 @@ class NewRateSearch extends Component {
 
     this.setState({ users, selected });
   }
-
+  //// end For Equipment to create element
   togglePuAdd() {
     this.setState(prevState => ({
       modalPuAdd: !prevState.modalPuAdd
     }));
   }
 
-  onsearchText(e) {
-    debugger;
-    this.setState({ searchText: e.target.value });
-  }
   getCity = addressArray => {
     let city = "";
     for (let i = 0; i < addressArray.length; i++) {
@@ -560,28 +897,8 @@ class NewRateSearch extends Component {
     this.addressChange("", address);
   };
 
-  // HandleSpecialEqtCheck(e) {
-  //   debugger;
-  //   let self = this;
-  //   if (e.target.checked) {
-  //     self.setState({ isSpacialEqt: false });
-  //   } else {
-  //     var elmnt1 = document.getElementsByName("spequType");
-  //     var elmnt1Len = elmnt1.length;
-  //     for (let index = 0; index < elmnt1Len; index++) {
-  //       if (elmnt1 != null && elmnt1 != "undefined") {
-  //         elmnt1[0].remove();
-  //         this.setState({
-  //           spEqtSelect: []
-  //         });
-  //       }
-  //     }
-  //     self.setState({ isSpacialEqt: true, spEqtSelect: [] });
-  //   }
-  // }
-
-  //this Method For POD And POD Data Bind
-  HandlePOLPODListBind(type) {
+  //this Method For ShipmentStages Data Bind
+  HandleShipmentStages(type) {
     debugger;
 
     axios({
@@ -643,9 +960,17 @@ class NewRateSearch extends Component {
   }
 
   HandleTypeofMove(e) {
-    debugger;
-    this.setState({ typesofMove: e.target.id });
+     debugger;
+    //  let self =this;
+    this.setState({ typesofMove: 'ads'});
+
+    // var typeofmoveVal = e.target.id;
+    // if (typeofmoveVal === "p2p") {
+      
+    // }
+
     this.HandleGetIncoTerms();
+
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null)
@@ -670,10 +995,11 @@ class NewRateSearch extends Component {
     else document.getElementById("cbmMinusClick").classList.add("d-none");
 
     // document.getElementById("cbmMinusClick").classList.add("d-none");
-
-    if (document.getElementById("cbmInner") == null)
-      document.getElementById("equipTypePlusClick").classList.remove("d-none");
-    else document.getElementById("cbmPlusClick").classList.remove("d-none");
+    // -------------------------------------Comment By Deepak Savani--------------------------
+    // if (document.getElementById("cbmInner") == null)
+    //   document.getElementById("equipTypePlusClick").classList.remove("d-none");
+    // else document.getElementById("cbmPlusClick").classList.remove("d-none");
+    // ----------------------------------------------------------------------------------------
 
     // document.getElementById("cbmPlusClick").classList.remove("d-none");
   }
@@ -682,9 +1008,10 @@ class NewRateSearch extends Component {
   HandleGetIncoTerms() {
     debugger;
     let self = this;
+
     var shipmentType = self.state.shipmentType;
     var typeofMove = self.state.typesofMove;
-    var HasCustomClear = "No";
+    var HasCustomClear = self.state.isCustomClear;
 
     if (shipmentType === "Export" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
@@ -794,7 +1121,7 @@ class NewRateSearch extends Component {
     document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
     document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
 
-    this.HandlePOLPODListBind(type);
+    this.HandleShipmentStages(type);
   };
   modeTransPlusClick = e => {
     document.getElementById("modeTransInner").classList.remove("modeTransType");
@@ -1046,9 +1373,6 @@ class NewRateSearch extends Component {
     document.getElementById("equipTypeName").classList.remove("d-none");
     document.getElementById("equipTypeMinusClick").classList.add("d-none");
   };
-  EqtValues() {
-    alert(1);
-  }
 
   equipChange = (value, option) => {
     debugger;
@@ -1121,7 +1445,6 @@ class NewRateSearch extends Component {
             : value[iCount - 1].StandardContainerCode;
         inpNum.setAttributeNode(nameEqt);
 
-        inpNum.setAttribute("onChange", "EqtValues();");
         inpNum.setAttributeNode(typ);
         inpNum.value = 1;
 
@@ -1181,144 +1504,213 @@ class NewRateSearch extends Component {
       document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
     }
   };
-  specEquipChange = value1 => {
-    if (value1 != null && value1 != "") {
-      let iCount = value1.length;
-      let difference = this.state.spEqtSelect.filter(x => !value1.includes(x));
 
-      if (difference.length > 0) {
-        this.setState({ spEqtSelect: value1 });
-        var elmnt = document.getElementById(difference[0].SpecialContainerCode);
-        if (elmnt != null && elmnt != "undefined") {
-          elmnt.remove();
-        }
-      } else {
-        this.setState({ spEqtSelect: value1 });
-        i++;
+  specEquipChange = (value, option) => {
+    debugger;
 
-        let dropVal =
-          iCount == 1
-            ? value1[0].SpecialContainerCode
-            : value1[iCount - 1].SpecialContainerCode;
-        let div = document.createElement("div");
-        let clas = document.createAttribute("class");
-        clas.value = "spec-inner-cntr";
-        div.setAttributeNode(clas);
+    // let difference = this.state.referType.filter(x => !value.includes(x));
+    // let difference1 = this.state.flattack_openTop.filter(
+    //   x => !value.includes(x)
+    // );
 
-        let ids = document.createAttribute("id");
-        ids.value =
-          iCount == 1
-            ? value1[0].SpecialContainerCode
-            : value1[iCount - 1].SpecialContainerCode;
-        div.setAttributeNode(ids);
+    // // let difference2 = this.state.spacEqmtType.filter(x => !value.includes(x));
+    // let difference2 = this.state.spacEqmtType.filter(
+    //   vendor => vendor.TypeName === value[0].SpecialContainerCode
+    // );
 
-        let name = document.createAttribute("name");
-        name.value = "spequType";
-        div.setAttributeNode(name);
-
-        let cont = document.createElement("p");
-        cont.innerHTML = dropVal;
-        let into = document.createElement("b");
-        into.innerHTML = "X";
-
-        // let quan = document.createElement("span");
-        // quan.innerHTML = "Quan :";
-        let inpNum = document.createElement("input");
-        let typ = document.createAttribute("type");
-        typ.value = "number";
-        inpNum.setAttributeNode(typ);
-        inpNum.value = 1;
-
-        let temp = document.createElement("span");
-        let tempClas = document.createAttribute("class");
-        tempClas.value = "temp-mar";
-        temp.setAttributeNode(tempClas);
-        temp.innerHTML = "Temp :";
-        let inpTemp = document.createElement("input");
-        let typTemp = document.createAttribute("type");
-        typTemp.value = "number";
-        inpTemp.setAttributeNode(typTemp);
-        inpTemp.value = 1;
-        let faren = document.createElement("span");
-        faren.innerHTML = "F";
-
-        let divFC = document.createElement("div");
-        let clasFC = document.createAttribute("class");
-        clasFC.value = "new-radio-rate-cntr fc-radio";
-        divFC.setAttributeNode(clasFC);
-        let divF = document.createElement("div");
-        let inputF = document.createElement("input");
-        let typeF = document.createAttribute("type");
-        typeF.value = "radio";
-        inputF.setAttributeNode(typeF);
-        let nameF = document.createAttribute("name");
-        nameF.value = "fc" + i;
-        inputF.setAttributeNode(nameF);
-        let idF = document.createAttribute("id");
-        idF.value = "f" + i;
-        inputF.setAttributeNode(idF);
-        let labelF = document.createElement("label");
-        let forF = document.createAttribute("for");
-        forF.value = "f" + i;
-        labelF.innerHTML = "F";
-        labelF.setAttributeNode(forF);
-        divF.appendChild(inputF);
-        divF.appendChild(labelF);
-        divFC.appendChild(divF);
-        let divC = document.createElement("div");
-        let inputC = document.createElement("input");
-        let typeC = document.createAttribute("type");
-        typeC.value = "radio";
-        inputC.setAttributeNode(typeC);
-        let nameC = document.createAttribute("name");
-        nameC.value = "fc" + i;
-        inputC.setAttributeNode(nameC);
-        let idC = document.createAttribute("id");
-        idC.value = "c" + i;
-        inputC.setAttributeNode(idC);
-        let labelC = document.createElement("label");
-        let forC = document.createAttribute("for");
-        forC.value = "c" + i;
-        labelC.innerHTML = "C";
-        labelC.setAttributeNode(forC);
-        divC.appendChild(inputC);
-        divC.appendChild(labelC);
-        divFC.appendChild(divC);
-
-        let cross = document.createElement("i");
-        let crsCls = document.createAttribute("class");
-        crsCls.value = "fa fa-times";
-        cross.setAttributeNode(crsCls);
-
-        div.appendChild(cont);
-        div.appendChild(into);
-        // div.appendChild(quan);
-        div.appendChild(inpNum);
-        div.appendChild(temp);
-        div.appendChild(inpTemp);
-        div.appendChild(divFC); // faren
-        div.appendChild(cross);
-        document.getElementById("specEquipAppend").appendChild(div);
+    var difference = false;
+    for (var i = 0; i < this.state.referType.length; i++) {
+      if (
+        this.state.referType[i].referTypeName === value[0].SpecialContainerCode
+      ) {
+        difference = true;
+        break;
       }
-    } else {
-      var elmnt = document.getElementsByName("spequType");
-      if (elmnt != null && elmnt != "undefined") {
-        elmnt[0].remove();
-      }
-      this.setState({ spEqtSelect: [] });
     }
 
-    debugger;
+    var difference1 = false;
+    for (var i = 0; i < this.state.flattack_openTop.length; i++) {
+      if (
+        this.state.flattack_openTop[i].SpecialContainerCode ===
+        value[0].SpecialContainerCode
+      ) {
+        difference1 = true;
+        break;
+      }
+    }
+
+    var difference2 = false;
+    for (var i = 0; i < this.state.spacEqmtType.length; i++) {
+      if (
+        this.state.spacEqmtType[i].TypeName === value[0].SpecialContainerCode
+      ) {
+        difference2 = true;
+        break;
+      }
+    }
+
+    if (option.option.IsVolumeRequired === 1) {
+      if (difference1 === false) {
+        this.setState({
+          specialEqtSelect: true
+        });
+        this.addClickMultiCBM(value);
+      }
+    }
+    if (option.option.IsTemperatureRequired === 1) {
+      if (difference === false) {
+        this.setState({
+          refertypeSelect: true
+        });
+        this.addClickSpecial(value);
+      }
+    }
+
+    if (
+      option.option.IsTemperatureRequired === 0 &&
+      option.option.IsVolumeRequired === 0
+    ) {
+      if (difference2 === false) {
+        debugger;
+        this.setState({
+          spacEqmtTypeSelect: true
+        });
+        this.addSpacEqmtType(value);
+      }
+    }
+
+    // if (value1 != null && value1 != "") {
+    //   let iCount = value1.length;
+    //   let difference = this.state.spEqtSelect.filter(x => !value1.includes(x));
+
+    //   if (difference.length > 0) {
+    //     this.setState({ spEqtSelect: value1 });
+    //     var elmnt = document.getElementById(difference[0].SpecialContainerCode);
+    //     if (elmnt != null && elmnt != "undefined") {
+    //       elmnt.remove();
+    //     }
+    //   } else {
+    //     this.setState({ spEqtSelect: value1 });
+    //     i++;
+
+    //     let dropVal =
+    //       iCount == 1
+    //         ? value1[0].SpecialContainerCode
+    //         : value1[iCount - 1].SpecialContainerCode;
+    //     let div = document.createElement("div");
+    //     let clas = document.createAttribute("class");
+    //     clas.value = "spec-inner-cntr";
+    //     div.setAttributeNode(clas);
+
+    //     let ids = document.createAttribute("id");
+    //     ids.value =
+    //       iCount == 1
+    //         ? value1[0].SpecialContainerCode
+    //         : value1[iCount - 1].SpecialContainerCode;
+    //     div.setAttributeNode(ids);
+
+    //     let name = document.createAttribute("name");
+    //     name.value = "spequType";
+    //     div.setAttributeNode(name);
+
+    //     let cont = document.createElement("p");
+    //     cont.innerHTML = dropVal;
+    //     let into = document.createElement("b");
+    //     into.innerHTML = "X";
+
+    //     // let quan = document.createElement("span");
+    //     // quan.innerHTML = "Quan :";
+    //     let inpNum = document.createElement("input");
+    //     let typ = document.createAttribute("type");
+    //     typ.value = "number";
+    //     inpNum.setAttributeNode(typ);
+    //     inpNum.value = 1;
+
+    //     let temp = document.createElement("span");
+    //     let tempClas = document.createAttribute("class");
+    //     tempClas.value = "temp-mar";
+    //     temp.setAttributeNode(tempClas);
+    //     temp.innerHTML = "Temp :";
+    //     let inpTemp = document.createElement("input");
+    //     let typTemp = document.createAttribute("type");
+    //     typTemp.value = "number";
+    //     inpTemp.setAttributeNode(typTemp);
+    //     inpTemp.value = 1;
+    //     let faren = document.createElement("span");
+    //     faren.innerHTML = "F";
+
+    //     let divFC = document.createElement("div");
+    //     let clasFC = document.createAttribute("class");
+    //     clasFC.value = "new-radio-rate-cntr fc-radio";
+    //     divFC.setAttributeNode(clasFC);
+    //     let divF = document.createElement("div");
+    //     let inputF = document.createElement("input");
+    //     let typeF = document.createAttribute("type");
+    //     typeF.value = "radio";
+    //     inputF.setAttributeNode(typeF);
+    //     let nameF = document.createAttribute("name");
+    //     nameF.value = "fc" + i;
+    //     inputF.setAttributeNode(nameF);
+    //     let idF = document.createAttribute("id");
+    //     idF.value = "f" + i;
+    //     inputF.setAttributeNode(idF);
+    //     let labelF = document.createElement("label");
+    //     let forF = document.createAttribute("for");
+    //     forF.value = "f" + i;
+    //     labelF.innerHTML = "F";
+    //     labelF.setAttributeNode(forF);
+    //     divF.appendChild(inputF);
+    //     divF.appendChild(labelF);
+    //     divFC.appendChild(divF);
+    //     let divC = document.createElement("div");
+    //     let inputC = document.createElement("input");
+    //     let typeC = document.createAttribute("type");
+    //     typeC.value = "radio";
+    //     inputC.setAttributeNode(typeC);
+    //     let nameC = document.createAttribute("name");
+    //     nameC.value = "fc" + i;
+    //     inputC.setAttributeNode(nameC);
+    //     let idC = document.createAttribute("id");
+    //     idC.value = "c" + i;
+    //     inputC.setAttributeNode(idC);
+    //     let labelC = document.createElement("label");
+    //     let forC = document.createAttribute("for");
+    //     forC.value = "c" + i;
+    //     labelC.innerHTML = "C";
+    //     labelC.setAttributeNode(forC);
+    //     divC.appendChild(inputC);
+    //     divC.appendChild(labelC);
+    //     divFC.appendChild(divC);
+
+    //     let cross = document.createElement("i");
+    //     let crsCls = document.createAttribute("class");
+    //     crsCls.value = "fa fa-times";
+    //     cross.setAttributeNode(crsCls);
+
+    //     div.appendChild(cont);
+    //     div.appendChild(into);
+    //     // div.appendChild(quan);
+    //     div.appendChild(inpNum);
+    //     div.appendChild(temp);
+    //     div.appendChild(inpTemp);
+    //     div.appendChild(divFC); // faren
+    //     div.appendChild(cross);
+    //     document.getElementById("specEquipAppend").appendChild(div);
+    //   }
+    // } else {
+    //   var elmnt = document.getElementsByName("spequType");
+    //   if (elmnt != null && elmnt != "undefined") {
+    //     elmnt[0].remove();
+    //   }
+    //   this.setState({ spEqtSelect: [] });
+    // }
+
+    // debugger;
   };
 
   addClick() {
     this.setState(prevState => ({
       values: [...prevState.values, ""]
-    }));
-  }
-  addClickSpecial() {
-    this.setState(prevState => ({
-      values1: [...prevState.values1, ""]
     }));
   }
 
@@ -1353,35 +1745,6 @@ class NewRateSearch extends Component {
       );
     });
   }
-  createUISpecial() {
-    const optionsSpeEqu = [
-      { value: "Refer Type", label: "Refer Type" },
-      { value: "abc", label: "abc" },
-      { value: "def", label: "def" }
-    ];
-    return this.state.values1.map((el, index) => {
-      return (
-        <div className="equip-plus-cntr">
-          <Select
-            className="rate-dropdown"
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            options={optionsSpeEqu}
-            placeholder="Select Kind of Special Equipment"
-          />
-          <div className="spe-equ">
-            <input type="text" placeholder="Quantity" />
-            <input type="text" placeholder="Temp" />
-          </div>
-          <i
-            className="fa fa-minus equip-plus"
-            id={"remove" + (index + 1)}
-            onClick={this.removeClickSpecial.bind(this, index)}
-          ></i>
-        </div>
-      );
-    });
-  }
 
   removeClick(i) {
     debugger;
@@ -1389,12 +1752,12 @@ class NewRateSearch extends Component {
     values.splice(i, 1);
     this.setState({ values });
   }
-  removeClickSpecial(i) {
-    debugger;
-    let values1 = [...this.state.values1];
-    values1.splice(i, 1);
-    this.setState({ values1 });
-  }
+  // removeClickSpecial(i) {
+  //   debugger;
+  //   let values1 = [...this.state.values1];
+  //   values1.splice(i, 1);
+  //   this.setState({ values1 });
+  // }
 
   render() {
     let self = this;
@@ -1682,7 +2045,6 @@ class NewRateSearch extends Component {
                             name="cmbTypeRadio"
                             id="exist-cust"
                             value="ALL"
-                            defaultChecked
                             onChange={this.cmbTypeRadioChange.bind(this)}
                           />
                           <label
@@ -1712,40 +2074,8 @@ class NewRateSearch extends Component {
                     <div id="cbmInner">
                       <div className="">
                         {this.state.cmbTypeRadio === "ALL" ? (
-                          <>{this.MultiCreateCBM()}
-                          <div className="col-md">
-                            <div className="spe-equ">
-                              {/* <input
-                                type="text"
-                                placeholder={
-                                  this.state.modeoftransport != "AIR"
-                                    ? "CBM"
-                                    : "KG"
-                                }
-                                className="w-100"
-                                value={this.state.cbmVal}
-                              /> */}
-                             <span onClick={this.addClickMultiCBM.bind(this)}> <i className="fa fa-plus"></i></span>
-                            </div>
-                          </div></>
-                        ) : (
-                          <div className="col-md">
-                            <div className="spe-equ">
-                              <input
-                                type="text"
-                                placeholder={
-                                  this.state.modeoftransport != "AIR"
-                                    ? "CBM"
-                                    : "KG"
-                                }
-                                className="w-100"
-                                value={this.state.cbmVal}
-                              />
-                              <i className="fa fa-plus"></i>
-                            </div>
-                          </div>
-                        )}
-                        {/* {this.state.cmbTypeRadio === "CBM" ? (
+                          <>{this.CreateMultiCBM()}</>
+                        ) : this.state.cmbTypeRadio === "CBM" ? (
                           <div className="col-md">
                             <div className="spe-equ">
                               <input
@@ -1760,7 +2090,7 @@ class NewRateSearch extends Component {
                               />
                             </div>
                           </div>
-                        ) : null} */}
+                        ) : null}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input id="haz-mat" type="checkbox" name={"haz-mat"} />
@@ -1894,9 +2224,29 @@ class NewRateSearch extends Component {
                         ) : null}
                       </div>
                     </div>
-                    <div id="specEquipAppend"></div>
-                    {this.createUISpecial()}
+                    <div id="cbmInner">
+                      {self.state.specialEquipment === true &&
+                      self.state.specialEqtSelect === true ? (
+                        self.state.flattack_openTop.length > 0 ? (
+                          <>{this.MultiCreateCBM()}</>
+                        ) : null
+                      ) : null}
 
+                      <div id="specEquipAppend"></div>
+                      {self.state.specialEquipment === true &&
+                      self.state.refertypeSelect === true ? (
+                        self.state.referType.length > 0 ? (
+                          <>{this.createUISpecial()}</>
+                        ) : null
+                      ) : null}
+
+                      {self.state.specialEquipment === true &&
+                      self.state.spacEqmtTypeSelect === true ? (
+                        self.state.spacEqmtType.length > 0 ? (
+                          <>{this.createUIspacEqmtType()}</>
+                        ) : null
+                      ) : null}
+                    </div>
                     <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                       <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="haz-mat">HazMat</label>
@@ -1953,6 +2303,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="p2p"
+                      value={"p2p"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="p2p">Port2Port</label>
@@ -1962,6 +2313,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="d2p"
+                      value={"d2p"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="d2p">Door2Port</label>
@@ -1971,6 +2323,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="d2d"
+                      value={"d2d"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="d2d">Door2Door</label>
@@ -1980,6 +2333,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="p2d"
+                      value={"p2d"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="p2d">Port2Door</label>
