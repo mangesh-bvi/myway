@@ -57,7 +57,7 @@ class BookingTable extends Component {
   HandleChangeShipmentDetails(BookingNo) {
     var data = [BookingNo, "Booking"];
     this.props.history.push({
-      pathname: "rate-finalizing-still",
+      pathname: "rate-finalizing-still-booking",
       state: { detail: data }
     });
   }
@@ -66,8 +66,8 @@ class BookingTable extends Component {
     debugger;
     return {
       onClick: e => {
-    var BookingNo = column.original["BookingNo"];
-    this.HandleChangeShipmentDetails(BookingNo);
+        var BookingNo = column.original["BookingNo"];
+        this.HandleChangeShipmentDetails(BookingNo);
       }
     };
   };
@@ -143,6 +143,7 @@ class BookingTable extends Component {
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}
+                minRows={1}
                 getTrProps={this.HandleRowClickEvt}
               />
             </div>

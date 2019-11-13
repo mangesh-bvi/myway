@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
+import Edit from "./../assets/img/pencil.png";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
-import {authHeader} from "../helpers/authHeader";
+import { authHeader } from "../helpers/authHeader";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -14,7 +15,10 @@ class RateFinalizing extends Component {
     this.state = {
       modalProfit: false,
       modalRequest: false,
-      modalNewConsignee: false
+      modalNewConsignee: false,
+      commoditySelect: "select",
+      cargoSelect: "select",
+      rateQuery: true
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -28,58 +32,74 @@ class RateFinalizing extends Component {
     }));
   }
   toggleNewConsignee() {
+    // if(window.confirm('Are you sure to save this record?'))
+    // {
+    //   this.handleQuoteSubmit();
 
-    if(window.confirm('Are you sure to save this record?'))
-    {
-      this.handleQuoteSubmit();
-
-    }
+    // }
     this.setState(prevState => ({
       modalNewConsignee: !prevState.modalNewConsignee
     }));
   }
 
-  handleQuoteSubmit()
-  {
-    debugger;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/FCLSalesQuoteInsertion`,
-      data: {ShipmentType : 'Export',
-      Inco_terms : 'CIF',
-      TypesOfMove : 2,
-      PickUpAddress :'Sakinaka Mumbai',
-      DestinationAddress : '',
-      HazMat  : 1,
-      ChargeableWt : 29000,
-       Containerdetails:[{
-      ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
-    }],
-    PickUpAddressDetails:{
-        Street:'Sakinaka Mumbai',Country:'INDIA',State:'Maharashtra',City:'Mumbai',ZipCode:4135100
-    
-        },
-        DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:0}
-    ,
-    MyWayUserID:874588,
-    CompanyID:1457295703,
-    BaseCurrency:'USD',
-    MywayProfit:1000,
-    MywayDiscount:100,
-    FCLSQBaseFreight:[{RateID:8539206,Freight:1200,FreightCurr:'USD',RateType:'RateQuery',Exrate :500  }],
-    FCLSQLocalCharges:[{LocalChargeID :7547003,Description :'TEST',Amount:1000,Currency :'USD',Minimum :900,Tax :100,ChargeItem :'At Actual',RateID :8539206,Exrate :100 }],
-    FCLSQSurCharges:[{SurchargeID :0,RateID :0,ChargeCode :'',Tax:0,Amount:0,Currency:'',ChargeItem:'',Exrate :0 }]
-    
-    },
-    headers: authHeader()
-    }).then(function(response){
-       debugger;
-       window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
-    }).catch(error => {
-      debugger;
-      console.log(error.response)
-    })
+  commoditySelect(e) {
+    this.setState({
+      commoditySelect: e.target.value
+    });
   }
+  cargoSelect(e) {
+    this.setState({
+      cargoSelect: e.target.value
+    });
+  }
+
+  rateQuery() {
+    this.setState({
+      rateQuery: !this.state.rateQuery
+    });
+  }
+
+  // handleQuoteSubmit()
+  // {
+  //   debugger;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/FCLSalesQuoteInsertion`,
+  //     data: {ShipmentType : 'Export',
+  //     Inco_terms : 'CIF',
+  //     TypesOfMove : 2,
+  //     PickUpAddress :'Sakinaka Mumbai',
+  //     DestinationAddress : '',
+  //     HazMat  : 1,
+  //     ChargeableWt : 29000,
+  //      Containerdetails:[{
+  //     ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+  //   }],
+  //   PickUpAddressDetails:{
+  //       Street:'Sakinaka Mumbai',Country:'INDIA',State:'Maharashtra',City:'Mumbai',ZipCode:4135100
+
+  //       },
+  //       DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:0}
+  //   ,
+  //   MyWayUserID:874588,
+  //   CompanyID:1457295703,
+  //   BaseCurrency:'USD',
+  //   MywayProfit:1000,
+  //   MywayDiscount:100,
+  //   FCLSQBaseFreight:[{RateID:8539206,Freight:1200,FreightCurr:'USD',RateType:'RateQuery',Exrate :500  }],
+  //   FCLSQLocalCharges:[{LocalChargeID :7547003,Description :'TEST',Amount:1000,Currency :'USD',Minimum :900,Tax :100,ChargeItem :'At Actual',RateID :8539206,Exrate :100 }],
+  //   FCLSQSurCharges:[{SurchargeID :0,RateID :0,ChargeCode :'',Tax:0,Amount:0,Currency:'',ChargeItem:'',Exrate :0 }]
+
+  //   },
+  //   headers: authHeader()
+  //   }).then(function(response){
+  //      debugger;
+  //      window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+  //   }).catch(error => {
+  //     debugger;
+  //     console.log(error.response)
+  //   })
+  // }
 
   toggleRequest() {
     this.setState(prevState => ({
@@ -125,13 +145,23 @@ class RateFinalizing extends Component {
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
-              <h2>Rate Query Details</h2>
+              {/* <h2>Rate Query Details</h2> */}
+              <h2>Create Sales Quote</h2>
             </div>
             <div className="row">
               <div className="col-md-4">
                 <div className="rate-table-left rate-final-left">
                   <div>
                     <h3>Locals</h3>
+                    <div className="title-sect p-0 pt-2">
+                      <input
+                        type="search"
+                        // value={this.state.filterAll}
+                        // onChange={this.filterAll}
+                        placeholder="Search here"
+                        className="w-100"
+                      />
+                    </div>
                     <div className="cont-costs">
                       <div className="remember-forgot d-block m-0">
                         <div>
@@ -163,7 +193,16 @@ class RateFinalizing extends Component {
                     </div>
                   </div>
                   <div>
-                    <h3>Subcharges</h3>
+                    <h3>Surcharges</h3>
+                    <div className="title-sect p-0 pt-2">
+                      <input
+                        type="search"
+                        // value={this.state.filterAll}
+                        // onChange={this.filterAll}
+                        placeholder="Search here"
+                        className="w-100"
+                      />
+                    </div>
                     <div className="cont-costs">
                       <div className="remember-forgot d-block m-0">
                         <div>
@@ -308,105 +347,113 @@ class RateFinalizing extends Component {
                         }}
                       />
                     </div>
+                    <UncontrolledCollapse toggler="#toggler">
+                      <div className="rate-final-contr p-0">
+                        <div className="d-flex justify-content-between align-items-center title-border py-3">
+                          <h3>Rate Query</h3>
+                          <a href="rate-table" className="rate-edit-icon">
+                            <img src={Edit} alt="edit icon" />
+                          </a>
+                        </div>
+                        <div className="row">
+                          <div className="col-md-4">
+                            <p className="details-title">Shipment Type</p>
+                            <p className="details-para">Import</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Mode of Transport</p>
+                            <p className="details-para">Air</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Container Load</p>
+                            <p className="details-para">FCL</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Equipment Types</p>
+                            <p className="details-para">20 DC</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Special Equipment</p>
+                            <p className="details-para">
+                              Refer Type (20 degrees)
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">
+                              HazMat &amp; Unstackable
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Inco Terms</p>
+                            <p className="details-para">Populated Data</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Type of Move</p>
+                            <p className="details-para">Port2Port</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">POL</p>
+                            <p className="details-para">Mumbai</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">POD</p>
+                            <p className="details-para">Vadodra</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">PU Address</p>
+                            <p className="details-para">
+                              Lotus Park, Goregaon (E), Mumbai : 400099
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Delivery Address</p>
+                            <p className="details-para">
+                              Lotus Park, Goregaon (E), Mumbai : 400099
+                            </p>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-md-6 d-flex align-items-center">
+                            <button
+                              onClick={this.toggleProfit}
+                              className="butn more-padd m-0"
+                            >
+                              Add Profit
+                            </button>
+                          </div>
+                          <div className="col-md-6 text-right">
+                            <button
+                              onClick={this.toggleRequest}
+                              className="butn more-padd m-0"
+                            >
+                              Request Change
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </UncontrolledCollapse>
+
                     <div className="text-right">
-                      <button className="butn m-0" id="toggler">
-                        View More
+                      <button
+                        onClick={this.rateQuery.bind(this)}
+                        className={
+                          this.state.rateQuery ? "butn m-0" : "butn cancel-butn"
+                        }
+                        id="toggler"
+                      >
+                        {this.state.rateQuery ? "View More" : "View Less"}
                       </button>
                     </div>
                   </div>
-                  <UncontrolledCollapse toggler="#toggler">
-                    <div className="rate-final-contr">
-                      <div className="row">
-                        <div className="col-md-4">
-                          <p className="details-title">Shipment Type</p>
-                          <p className="details-para">Import</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Mode of Transport</p>
-                          <p className="details-para">Air</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Container Load</p>
-                          <p className="details-para">FCL</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Equipment Types</p>
-                          <p className="details-para">20 DC</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Special Equipment</p>
-                          <p className="details-para">
-                            Refer Type (20 degrees)
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">
-                            HazMat &amp; Unstackable
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Inco Terms</p>
-                          <p className="details-para">Populated Data</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Type of Move</p>
-                          <p className="details-para">Port2Port</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">POL</p>
-                          <p className="details-para">Mumbai</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">POD</p>
-                          <p className="details-para">Vadodra</p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">PU Address</p>
-                          <p className="details-para">
-                            Lotus Park, Goregaon (E), Mumbai : 400099
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Delivery Address</p>
-                          <p className="details-para">
-                            Lotus Park, Goregaon (E), Mumbai : 400099
-                          </p>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-md-6 d-flex align-items-center">
-                          <button
-                            onClick={this.toggleProfit}
-                            className="butn more-padd m-0"
-                          >
-                            Add Profit
-                          </button>
-                        </div>
-                        <div className="col-md-6 text-right">
-                          <button
-                            onClick={this.toggleRequest}
-                            className="butn more-padd m-0"
-                          >
-                            Request Change
-                          </button>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <a href="rate-table" className="butn">
-                          Edit
-                        </a>
-                      </div>
-                    </div>
-                  </UncontrolledCollapse>
 
                   <div className="rate-final-contr">
                     <div className="title-border py-3">
-                      <h3>Contact Details</h3>
+                      <h3>Customer Details</h3>
                     </div>
                     <div className="">
                       <div className="row">
                         <div className="col-md-4">
-                          <p className="details-title">Account/Consignee</p>
+                          <p className="details-title">Account/Customer</p>
                           <p className="details-para">abcd</p>
                         </div>
                         <div className="col-md-4">
@@ -426,25 +473,38 @@ class RateFinalizing extends Component {
                         onClick={this.toggleNewConsignee}
                         className="butn more-padd"
                       >
-                        Add New Customer
+                        Create Customer
                       </button>
                     </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select>
-                          <option>Select</option>
+                        <select onChange={this.commoditySelect.bind(this)}>
+                          <option value="select">Select</option>
+                          <option value="new">New</option>
                         </select>
                       </div>
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Cargo Details</p>
-                        <select>
-                          <option>Select</option>
+                        <select onChange={this.cargoSelect.bind(this)}>
+                          <option value="select">Select</option>
+                          <option value="new">New</option>
                         </select>
                       </div>
                     </div>
                     <div className="text-right">
-                      <a href="quote-table" className="butn">
+                      <a href="#!" className="butn mr-3">
+                        Preview
+                      </a>
+                      <a
+                        href="quote-table"
+                        className={
+                          this.state.commoditySelect == "select" ||
+                          this.state.cargoSelect == "select"
+                            ? "butn cancel-butn no-butn"
+                            : "butn"
+                        }
+                      >
                         Send
                       </a>
                     </div>

@@ -226,13 +226,15 @@ class ShippingDetailsTwo extends Component {
       MapsDetailsData: [],
       ShipmentExistsInWatchList: 0,
       showContent: false,
-      packageViewMore: []
+      packageViewMore: [],
+      MessagesActivityDetails:[]
     };
 
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     this.togglePackage = this.togglePackage.bind(this);
+    //this.handleActivityList = this.handleActivityList.bind(this);
     // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
@@ -250,6 +252,7 @@ class ShippingDetailsTwo extends Component {
       if (typeof this.props.location.state != "undefined") {
         var hblno = this.props.location.state.detail;
         self.HandleShipmentDetails(hblno);
+        //self.handleActivityList();
         self.setState({ HblNo: hblno });
       }
     }
@@ -552,6 +555,35 @@ class ShippingDetailsTwo extends Component {
     })
   }
 
+  handleActivityList() {
+    debugger;
+    let self = this;
+    var HblNo;
+    if (typeof this.props.location.state != "undefined") {
+      HblNo = this.props.location.state.detail;
+    }
+    var userid = encryption(window.localStorage.getItem("userid"), "desc")
+   //alert(HblNo)
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/MessagesActivityDetails`,
+      data: {
+        UserId:encryption(window.localStorage.getItem("userid"), "desc"),
+        HBLNO:HblNo            
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      //alert("Sucess")
+      self.setState({MessagesActivityDetails: response.data})
+    }).catch(error => {
+      debugger;
+      var temperror = error.response.data;
+      var err = temperror.split(":");
+      alert(err[1].replace("}", ""))
+    })
+  }
+
   handleRemoveWatchList = () => {
     debugger;
     let self = this;
@@ -662,11 +694,29 @@ class ShippingDetailsTwo extends Component {
       )
     }
 
+    let MsgActivityTab = "";
+    if(this.state.MessagesActivityDetails != null)
+    {
+      if(this.state.MessagesActivityDetails.length > 0)
+      {
+        MsgActivityTab = (
+          <div class="d-flex flex-column-reverse">
+            {this.state.MessagesActivityDetails.map(team => (
+            <div class="p-2">
+              <b>{team.Message}</b><div class="d-flex justify-content-end"> ({team.MessageCreationTime})</div>
+              <hr/>
+            </div>
+          ))}
+          </div>
+        )
+      }
+    }
+
     let className = "butn view-btn less-btn";
     if (this.state.showContent == true) {
-      className = "butn cancel-butn m-0";
-    } else {
       className = "butn view-btn less-btn";
+    } else {
+      className = "butn view-btn";
     }
     return (
       <div>
@@ -720,6 +770,7 @@ class ShippingDetailsTwo extends Component {
                         role="tab"
                         aria-controls="activity"
                         aria-selected="false"
+                        onClick={this.handleActivityList.bind(this)}
                       >
                         Activity
                       </a>
@@ -755,6 +806,7 @@ class ShippingDetailsTwo extends Component {
                             <p className="details-title">HBL#</p>
                             <a href="#!" className="details-para">
                               {detailsData.HBLNO}
+                              <input type="hidden" value={detailsData.HBLNO} id="popupHBLNO" />
                             </a>
                           </div>
                           <div className="col-md-3 details-border">
@@ -1277,7 +1329,7 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="activity-tab"
                     >
-                      3
+                      {MsgActivityTab}
                     </div>
                   </div>
                 </div>

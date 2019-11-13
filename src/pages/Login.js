@@ -71,9 +71,9 @@ class Login extends React.Component {
       loading: false,
       modalSalesLogin: false,
       salesUserData: [],
-      checked: [],
+      checked: ["/"],
       expanded: [],
-      nodes:[]
+      nodes: []
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -88,9 +88,12 @@ class Login extends React.Component {
   HandleDisplaySalesPersonData(sData) {
     debugger;
     //get Companies
-    let self=this;
-    var mydata=sData;
-    var finalNode=[];
+    let self = this;
+    var mydata = sData; //JSON.parse(data);
+    //alert(mydata.length);
+
+    //get Companies
+    const finalNode=[];
     const distinctOffice = [];
     const distinctContactDisName = [];
     const distinctAssociateComp = [];
@@ -111,6 +114,7 @@ class Login extends React.Component {
       }
 
       //Contact display
+      //debugger;
       var contactDName = item.ContactDisplayName;
       var ContactID = item.ContactID;
       if (!ContactDismap.has(contactDName)) {
@@ -131,65 +135,113 @@ class Login extends React.Component {
       var Company_ID = item.Company_ID;
       var Company_Name = item.Company_Name;
       var ContactDisplayName = item.ContactDisplayName;
+      var ContactID = item.ContactID;
+      var nOfficeID = item.OfficeID;
       if (
         !distinctAssociateCompmap.has(officeName) &&
         !distinctAssociateCompmap.has(Company_Name) &&
         !distinctAssociateCompmap.has(Company_ID)
       ) {
+        //debugger;
         distinctAssociateCompmap.set(contactDName, true); // set any value to Map
         distinctAssociateComp.push({
           officeName: officeName,
           Company_Name: Company_Name,
           Company_ID: Company_ID,
-          ContactDisplayName: ContactDisplayName
+          ContactDisplayName: ContactDisplayName,
+          ContactID: ContactID,
+          OfficeID: nOfficeID
         });
       }
     }
 
-    debugger;
+    //debugger;
     //alert('distinctOffice:-' + distinctOffice.length);
     //alert('distinctContactDisName:-' + distinctContactDisName.length);
     //alert('distinctAssociateComp:-' + distinctAssociateComp.length);
     var iCompanies = distinctOffice.length;
     var iContacts = distinctContactDisName.length;
 
+    var iAssocCompany = distinctAssociateComp.length;
+
     ////Company
     for (var i = 0; i < iCompanies; i++) {
+      var selectedoffId = distinctOffice[i]["OfficeID"];
+
       var salesPersonDataByComp = {};
       salesPersonDataByComp.value = distinctOffice[i]["OfficeID"];
       salesPersonDataByComp.label = distinctOffice[i]["OfficeShortName"];
       salesPersonDataByComp.children = [];
 
       var salesPersondata = [];
-
-      for (var j = 0; j < iContacts; j++) {
+      //debugger;
+      for (var j = 0; j < distinctContactDisName.length; j++) {
         var salesPersonName = {};
         var salesPersonChildData = [];
-        var associateCompData = {};
 
+        var iSelectedSalesPersonId = distinctContactDisName[j]["value"];
         salesPersonName.value = distinctContactDisName[j]["value"];
         salesPersonName.label = distinctContactDisName[j]["label"];
 
-        associateCompData.value = j;
-        associateCompData.label = j;
-        salesPersonChildData.push(associateCompData);
+        //debugger;
+        ///////For loop for the Sales Person's ///////Company
+        for (var k = 0; k < iAssocCompany; k++) {
+          var associateCompData = {};
 
+          //debugger;
+          var ofID = distinctAssociateComp[k]["OfficeID"];
+          //var cnID = distinctAssociateComp[k]["ContactID"];
+          //var cotName = distinctAssociateComp[k]["ContactDisplayName"];
+          var cnID = distinctAssociateComp[k]["ContactID"];
+
+          //Check same or not
+          if (ofID === selectedoffId && iSelectedSalesPersonId == cnID) {
+            //Inside
+
+            var cvId = distinctAssociateComp[k]["Company_ID"];
+            var cnName = distinctAssociateComp[k]["Company_Name"];
+
+            associateCompData.value = cvId;
+            associateCompData.label = cnName;
+            salesPersonChildData.push(associateCompData);
+          }
+        }
+
+        //associateCompData.value = j;
+        //associateCompData.label = j;
+        //salesPersonChildData.push(associateCompData);
+        //debugger;
         salesPersonName.children = salesPersonChildData;
         salesPersondata.push(salesPersonName);
       }
       salesPersonDataByComp.children = salesPersondata;
-      debugger;
+      
       finalNode.push(salesPersonDataByComp);
-
     }
-    self.setState({nodes:finalNode});
+    self.setState({ nodes: finalNode, checked: ["352200103"] });
   }
   toggleSalesLogin() {
     let self = this;
     self.setState({ modalSalesLogin: false, loading: false });
   }
   toggleSalesLoginPage() {
-    window.location.href = "./rate-search";
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        CompanyID: [1456412466, 1424312173, 1420702123]
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        window.location.href = "./rate-search";
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   handlechange(e) {
@@ -266,12 +318,11 @@ class Login extends React.Component {
 
           var ProfileTypen = userType[0].ProfileType;
           if (userTypeName === "Sales User" && ProfileTypen) {
-            var sData=response.data.Table3;
+            var sData = response.data.Table3;
             self.HandleDisplaySalesPersonData(sData);
             self.setState({
               modalSalesLogin: !self.state.modalSalesLogin
             });
-             
           }
 
           //window.location.href = "./user-agreement";
@@ -302,7 +353,6 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-     
     localStorage.clear();
     const publicIp = require("public-ip");
     (async () => {
@@ -392,9 +442,9 @@ class Login extends React.Component {
             </div>
           </form>
         </div>
-        <div className="salesuserPopup">
+        <div className="">
           <Modal
-            className="delete-popup pol-pod-popup"
+            className="delete-popup salesuserPopup"
             isOpen={this.state.modalSalesLogin}
             centered={true}
           >
@@ -403,11 +453,10 @@ class Login extends React.Component {
               <div>
                 <CheckboxTree
                   nodes={self.state.nodes}
-                  checked={this.state.checked}
+                  checked={self.state.checked}
                   expanded={this.state.expanded}
                   onCheck={checked => this.setState({ checked })}
                   onExpand={expanded => this.setState({ expanded })}
-                
                 />
               </div>
             </ModalBody>

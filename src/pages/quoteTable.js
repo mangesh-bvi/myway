@@ -12,6 +12,7 @@ import SideMenu from "../component/sidemenu";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import DownArrow from "./../assets/img/down-arrow.png";
 import Copy from "./../assets/img/copy.png";
+import Edit from "./../assets/img/pencil.png";
 import Book from "./../assets/img/calendar.svg";
 import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
@@ -150,16 +151,18 @@ class QuoteTable extends Component {
                               alt="view-icon"
                             />
                           </a> */}
-                          <span
+                          {/* <span
                             title="Create Booking"
                             onClick={this.toggleBook}
-                          >
+                          > */}
+                          <a title="Create Booking" href="/rate-finalizing">
                             <img
                               className="actionicon"
-                              src={Book}
+                              src={Edit}
                               alt="booking-icon"
                             />
-                          </span>
+                          </a>
+                          {/* </span> */}
                           <a href="/rate-finalizing">
                             <img
                               className="actionicon"
@@ -175,6 +178,7 @@ class QuoteTable extends Component {
                 className="-striped -highlight"
                 defaultPageSize={5}
                 getTrProps={this.HandleRowClickEvt}
+                minRows={1}
               />
             </div>
           </div>

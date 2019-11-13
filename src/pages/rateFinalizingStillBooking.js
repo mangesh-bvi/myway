@@ -9,7 +9,7 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 
-class RateFinalizingStill extends Component {
+class RateFinalizingStillBooking extends Component {
   constructor(props) {
     super(props);
 
@@ -64,8 +64,7 @@ class RateFinalizingStill extends Component {
 
   render() {
     var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
+      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" }
     ];
     var data2 = [
       {
@@ -111,15 +110,7 @@ class RateFinalizingStill extends Component {
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
-              {(() => {
-                debugger;
-                if (this.props.location.state.detail[1] == "Quotes") {
-                  return <h2>Quotes Details</h2>;
-                } else {
-                  return <h2>Booking Details</h2>;
-                }
-              })()}
-              {/* <h2>Rate Query Details</h2> */}
+              <h2>Booking Details</h2>
             </div>
             <div className="row">
               {/* <div className="col-md-4">
@@ -203,7 +194,6 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
-                      <button className="butn m-0">Accept</button>
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
@@ -257,8 +247,8 @@ class RateFinalizingStill extends Component {
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
-                                      <p className="details-title">Valid</p>
-                                      <p className="details-para">TT</p>
+                                      <p className="details-title">TT</p>
+                                      <p className="details-para">23</p>
                                     </React.Fragment>
                                   );
                                 }
@@ -627,4 +617,4 @@ class RateFinalizingStill extends Component {
   }
 }
 
-export default RateFinalizingStill;
+export default RateFinalizingStillBooking;

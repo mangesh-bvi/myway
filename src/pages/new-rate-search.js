@@ -11,29 +11,100 @@ import { de } from "date-fns/esm/locale";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import Autocomplete from "react-google-autocomplete";
+import { element } from "prop-types";
 
 var i = 0;
 const animatedComponents = makeAnimated();
 const { compose } = require("recompose");
-const { withScriptjs, withGoogleMap, GoogleMap } = require("react-google-maps");
+const {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+  InfoWindow
+} = require("react-google-maps");
+
+const Map1WithAMakredInfoWindowSearchBooks = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap>
+    <Autocomplete
+      placeholder="Enter POL"
+      name=""
+      style={{
+        height: "36px",
+        paddingLeft: "16px",
+        marginTop: "2px",
+        position: "absolute",
+        top: "18px",
+        left: "15px",
+        width: "94%",
+        border: "1px solid #959595"
+      }}
+      onPlaceSelected={props.onPlaceSelected}
+      types={["(regions)"]}
+    />
+  </GoogleMap>
+));
+
+const GoogleMapPODSearchBox = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap>
+    <Autocomplete
+      placeholder="Enter POD"
+      style={{
+        height: "36px",
+        paddingLeft: "16px",
+        marginTop: "2px",
+        position: "absolute",
+        top: "18px",
+        left: "15px",
+        width: "94%",
+        border: "1px solid #959595"
+      }}
+      onPlaceSelected={props.onPlaceSelected}
+      types={["(regions)"]}
+    />
+  </GoogleMap>
+));
 
 const Map1WithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
 )(props => (
   <GoogleMap
-    defaultZoom={2}
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
-  ></GoogleMap>
+    center={
+      props.mapPositionPOL
+        ? props.mapPositionPOL
+        : { lat: parseFloat(32.24165126), lng: parseFloat(77.78319374) }
+    }
+    defaultZoom={9}
+    zoom={props.zomePOL}
+  >
+    <Marker key={1} position={props.mapPositionPOL}></Marker>
+  </GoogleMap>
 ));
 const Map2WithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
 )(props => (
   <GoogleMap
-    defaultZoom={2}
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
-  ></GoogleMap>
+    center={
+      props.mapPositionPOD
+        ? props.mapPositionPOD
+        : { lat: parseFloat(32.24165126), lng: parseFloat(77.78319374) }
+    }
+    defaultZoom={9}
+    zoom={props.zomePOL}
+  >
+    <Marker position={props.mapPositionPOD} />
+  </GoogleMap>
 ));
 
 class NewRateSearch extends Component {
@@ -41,16 +112,50 @@ class NewRateSearch extends Component {
     super(props);
 
     this.state = {
+      //For API Paramater:-
+
       shipmentType: "",
       modeoftransport: "",
       containerLoadType: "",
+      typesofMove: '',
+      PickupCity: "",
+      DeliveryCity: "",
+      OriginGeoCordinates: "",
+      DestGeoCordinate: "",
+      companyId: 0,
+
+      Containerdetails: [],
+      PortOfDischargeCode: "",
+      PortOfLoadingCode: "",
+      Currency: "",
+      //-----
+      multiCBM: [
+        {
+          PackagingType: "",
+          Quantity: "",
+          Length: "",
+          Width: "",
+          Height: "",
+          Weight: "",
+          Gross_Weight: "",
+          total: ""
+        }
+      ],
+      users: [],
+      referType: [],
+      flattack_openTop: [],
+      spacEqmtType: [],
+      spacEqmtTypeSelect: false,
+      specialEqtSelect: false,
+      refertypeSelect: false,
+      isTypeofMove: "",
+      cmbTypeRadio: "",
+      specialEquipment: false,
       equipmentType: "",
       isSpecialEquipment: "0",
-      specialEquipment: "",
       tempratureEquipment: "",
       isHazMat: "",
       incoTerms: "",
-      typesofMove: "",
       POL: "",
       POD: "",
       PUAddress: "",
@@ -79,57 +184,729 @@ class NewRateSearch extends Component {
       selected: [],
       isSpacialEqt: true,
       SpacialEqmt: [],
-      spEqtSelect: []
+      spEqtSelect: [],
+      searchTextPOD: "",
+      zoomPOL: 0,
+      zoomPOD: 0,
+      markerPositionPOL: {},
+      mapPositionPOL: {},
+      markerPositionPOD: {},
+      mapPositionPOD: {},
+      fullAddressPOL: "",
+      fullAddressPOD: "",
+      totalQuantity: 0,
+      isCustomClear: "No"
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
     this.HandleTypeofMove = this.HandleTypeofMove.bind(this);
     this.HandleBindIncoTeamData = this.HandleBindIncoTeamData.bind(this);
     this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
-    this.HandlePOLPODListBind = this.HandlePOLPODListBind.bind(this);
+    this.HandleShipmentStages = this.HandleShipmentStages.bind(this);
+    this.HandlePOLPODAutosearch = this.HandlePOLPODAutosearch.bind();
   }
 
   componentDidMount() {
+    debugger;
+    var compId = this.props.history.location.state;
+    if (compId !== null) {
+      this.setState({ companyId: compId.companyId });
+    }
     this.HandleCounterListBind();
+    this.HandlePOLPODAutosearch();
   }
 
+  cmbTypeRadioChange(e) {
+    var value = e.target.value;
+    this.setState({ cmbTypeRadio: value });
+  }
+
+  //// POL POD Autosearch Data
+
+  HandlePOLPODAutosearch() {
+    var type = "SEA";
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PolPodByCountry`,
+      data: {
+        Mode:
+          type === "SEA"
+            ? "O"
+            : type === "AIR"
+            ? "A"
+            : type === "ROAD"
+            ? "I"
+            : ""
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
+  }
+
+  //// start dynamic element for LCL-AIR-LTL
+
+  CreateMultiCBM() {
+    debugger;
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              name="PackagingType"
+              className="w-100 cmd-select"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+            >
+              <option>Select</option>
+              <option>Pallets</option>
+              <option>Bags</option>
+              <option>Cases</option>
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="Quantity"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"Length (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"Width (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="Height (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "Gross Weight" :" Gross Weight"}
+              name="Gross_Weight"
+              value={el.Gross_Weight||""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM[i] = {
+      ...multiCBM[i],
+      [name]: parseFloat(value)
+    };
+
+    this.setState({ multiCBM });
+    var decVolumeWeight =
+      (multiCBM[i].Quantity *
+        (multiCBM[i].length * multiCBM[i].width * multiCBM[i].height)) /
+      6000;
+    multiCBM[i] = {
+      ...multiCBM[i],
+      ["total"]: parseFloat(decVolumeWeight)
+    };
+
+    this.setState({ multiCBM });
+  }
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackagingType: "",
+          Quantity: "",
+          Length: "",
+          Width: "",
+          Height: "",
+          Weight: "",
+          Gross_Weight: "",
+          Total: ""
+        }
+      ]
+    }));
+  }
+  removeMultiCBM(i) {
+    debugger;
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  ////End dynamic element
+
+  //// start  spacEqmtType dyamanic element
+
+  addSpacEqmtType(optionVal) {
+    debugger;
+    this.setState(prevState => ({
+      spacEqmtType: [
+        ...prevState.spacEqmtType,
+        {
+          TypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0
+        }
+      ]
+    }));
+  }
+
+  createUIspacEqmtType() {
+    debugger;
+    return this.state.spacEqmtType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <label name="TypeName">{el.TypeName}</label>
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="qu"
+              placeholder="Quantity"
+              onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+            />
+          </div>
+          <i
+            className="fa fa-minus equip-plus"
+            onClick={this.removeClickSpacEqmtType.bind(this, i)}
+          ></i>
+        </div>
+      );
+    });
+  }
+
+  HandleChangeSpacEqmtType(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType[i] = {
+      ...spacEqmtType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ spacEqmtType });
+  }
+
+  removeClickSpacEqmtType(i) {
+    debugger;
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType.splice(i, 1);
+    this.setState({ spacEqmtType });
+  }
+
+  //// end spacEqmtType dyamanic element
+
+  //// start refer type  dynamic element
+  addClickSpecial(optionVal) {
+    debugger;
+    this.setState(prevState => ({
+      referType: [
+        ...prevState.referType,
+        {
+          referTypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0,
+          temperature: 0
+        }
+      ]
+    }));
+  }
+
+  createUISpecial() {
+    debugger;
+    return this.state.referType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <label name="referTypeName">{el.referTypeName}</label>
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="qu"
+              placeholder="Quantity"
+              onChange={this.UISpecialChange.bind(this, i)}
+            />
+            <input
+              type="text"
+              placeholder="Temp"
+              onChange={this.UISpecialChange.bind(this, i)}
+            />
+          </div>
+          <i
+            className="fa fa-minus equip-plus"
+            onClick={this.removeClickSpecial.bind(this, i)}
+          ></i>
+        </div>
+      );
+    });
+  }
+
+  UISpecialChange(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let referType = [...this.state.referType];
+    referType[i] = {
+      ...referType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ referType });
+  }
+  removeClickSpecial(i) {
+    debugger;
+    let referType = [...this.state.referType];
+    referType.splice(i, 1);
+    this.setState({ referType });
+  }
+
+  //// refer type end to dynamic element
+
+  //// start flattack type and openTop type dynamic elememnt
+
+  MultiCreateCBM() {
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            {/* <select
+              className="w-100 cmd-select"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+            >
+              <option>select</option>
+            </select> */}
+            <label name="SpecialContainerCode">{el.SpecialContainerCode}</label>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="Quantity"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"Length (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"Width (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="Height (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "Gross Weight" : null}
+              name="Gross_Weight"
+              value={el.Gross_Weight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus"
+              aria-hidden="true"
+              onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div>
+      </div>
+    ));
+  }
+
+  newMultiCBMHandleChange(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop[i] = {
+      ...flattack_openTop[i],
+      [name]: parseFloat(value)
+    };
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].width *
+          flattack_openTop[i].height)) /
+      6000;
+    flattack_openTop[i] = {
+      ...flattack_openTop[i],
+      ["total"]: parseFloat(decVolumeWeight)
+    };
+
+    this.setState({ flattack_openTop });
+  }
+  addClickMultiCBM(optionsVal) {
+    debugger;
+    this.setState(prevState => ({
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
+        {
+          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          length: "",
+          width: "",
+          height: "",
+          Quantity: "",
+          Gross_Weight: "",
+          total: ""
+        }
+      ]
+    }));
+  }
+  removeClickMultiCBM(i) {
+    debugger;
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
+  }
+
+  ////end for flattack and openTop dynamic create elements
+
+  ////this for Equipment Type Dynamice Create Element
+  NewcreateUI() {
+    return this.state.users.map((el, i) => (
+      <div className="equip-plus-cntr" key={i}>
+        <label>{el.StandardContainerCode}</label>
+        <div className="spe-equ">
+          <input
+            type="number"
+            min="1"
+            placeholder="QTY"
+            name="ContainerQuantity"
+            value={el.ContainerQuantity || ""}
+            onChange={this.newhandleChange.bind(this, i)}
+          />
+        </div>
+
+        <span onClick={this.newremoveClick.bind(this, i)}>
+          <i className="fa fa-trash" aria-hidden="true"></i>
+        </span>
+      </div>
+    ));
+  }
+
+  newaddClick(e, option) {
+    debugger;
+
+    if (e.length > 0) {
+      if (this.state.users.length == 0) {
+        if (option.option.ContainerName === "Special Equipment") {
+          this.setState({ specialEquipment: true, isSpacialEqt: false });
+        } else {
+          this.setState({ selected: e });
+          this.setState(prevState => ({
+            users: [
+              ...prevState.users,
+              {
+                ContainerName: option.option.ContainerName,
+                ProfileCodeID: option.option.ProfileCodeID,
+                StandardContainerCode: option.option.StandardContainerCode,
+                ContainerQuantity: 0
+              }
+            ]
+          }));
+        }
+      } else {
+        let difference = this.state.selected.filter(x => !e.includes(x));
+        if (difference.length === 0) {
+          if (option.option.ContainerName === "Special Equipment") {
+            this.setState({
+              specialEquipment: true,
+              isSpacialEqt: false
+            });
+          } else {
+            this.setState({ selected: e });
+            this.setState(prevState => ({
+              users: [
+                ...prevState.users,
+                {
+                  ContainerName: option.option.ContainerName,
+                  ProfileCodeID: option.option.ProfileCodeID,
+                  StandardContainerCode: option.option.StandardContainerCode,
+                  ContainerQuantity: 0
+                }
+              ]
+            }));
+          }
+        } else {
+        }
+      }
+    } else {
+      this.setState({
+        specialEquipment: false,
+        isSpacialEqt: true,
+        selected: [],
+        users: []
+      });
+    }
+
+    if (this.state.selected !== null) {
+      // next
+      document.getElementById("equipType").classList.add("equipType");
+      document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document
+        .getElementById("cntrLoadIconCntr")
+        .classList.add("cntrLoadIconCntr");
+      document.getElementById("cntrLoadName").classList.remove("d-none");
+      document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+      document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    }
+  }
+
+  newhandleChange(i, e) {
+    debugger;
+    const { name, value } = e.target;
+    let users = [...this.state.users];
+    users[i] = { ...users[i], [name]: value };
+    this.setState({ users });
+  }
+
+  newremoveClick(i) {
+    debugger;
+
+    let users = [...this.state.users];
+    if (users[i].ContainerName === "Special Equipment") {
+      this.setState({ specialEquipment: false, isSpacialEqt: true });
+    }
+    users.splice(i, 1);
+
+    let selected = [...this.state.selected];
+    selected.splice(i, 1);
+
+    this.setState({ users, selected });
+  }
+  //// end For Equipment to create element
   togglePuAdd() {
     this.setState(prevState => ({
       modalPuAdd: !prevState.modalPuAdd
     }));
   }
 
-  HandleSpecialEqtCheck(e) {
-    debugger;
-    let self = this;
-    if (e.target.checked) {
-      self.setState({ isSpacialEqt: false });
-    } else {
-      var elmnt1 = document.getElementsByName("spequType");
-      var elmnt1Len = elmnt1.length;
-      for (let index = 0; index < elmnt1Len; index++) {
-        if (elmnt1 != null && elmnt1 != "undefined") {
-          elmnt1[0].remove();
-          this.setState({
-            spEqtSelect: []
-          });
-        }
+  getCity = addressArray => {
+    let city = "";
+    for (let i = 0; i < addressArray.length; i++) {
+      if (
+        addressArray[i].types[0] &&
+        "administrative_area_level_2" === addressArray[i].types[0]
+      ) {
+        city = addressArray[i].long_name;
+        return city;
       }
-      self.setState({ isSpacialEqt: true, spEqtSelect: [] });
     }
-  }
-
-  //this Method For POD And POD Data Bind
-  HandlePOLPODListBind(type) {
+  };
+  onPlaceSelected = place => {
     debugger;
 
-    var shipmentType =
-      type == "sea" ? "O" : type == "air" ? "A" : type == "road" ? "I" : "";
+    console.log("plc", place);
+    const address = place.formatted_address,
+      addressArray = place.address_components,
+      city = this.getCity(addressArray),
+      latValue = place.geometry.location.lat(),
+      lngValue = place.geometry.location.lng();
+    if (addressArray.length > 4) {
+      this.setState({ zoomPOL: 15 });
+    } else if (addressArray.length > 2 && addressArray.length <= 4) {
+      this.setState({ zoomPOL: 10 });
+    } else {
+      this.setState({ zoomPOL: 6 });
+    }
+
+    var originGeoCordinates = latValue + "," + lngValue;
+    this.setState({
+      fullAddressPOL: address,
+      PickupCity: city,
+      OriginGeoCordinates: originGeoCordinates
+    });
+
+    this.setState({
+      markerPositionPOL: {
+        lat: Number(latValue),
+        lng: Number(lngValue)
+      },
+      mapPositionPOL: {
+        lat: Number(latValue),
+        lng: Number(lngValue)
+      }
+    });
+    this.addressChange("puAdd", address);
+  };
+  onPlaceSelectedPOD = place => {
+    debugger;
+    console.log("plc", place);
+    const address = place.formatted_address,
+      addressArray = place.address_components,
+      city = this.getCity(addressArray),
+      latValue = place.geometry.location.lat(),
+      lngValue = place.geometry.location.lng();
+    if (addressArray.length > 4) {
+      this.setState({ zoomPOD: 15 });
+    } else if (addressArray.length > 2 && addressArray.length <= 4) {
+      this.setState({ zoomPOD: 10 });
+    } else {
+      this.setState({ zoomPOD: 6 });
+    }
+    var destGeoCordinate = latValue + "," + lngValue;
+    this.setState({
+      fullAddressPOD: address,
+      DeliveryCity: city,
+      DestGeoCordinate: destGeoCordinate
+    });
+
+    this.setState({
+      markerPositionPOD: {
+        lat: Number(latValue),
+        lng: Number(lngValue)
+      },
+      mapPositionPOD: {
+        lat: Number(latValue),
+        lng: Number(lngValue)
+      }
+    });
+    this.addressChange("", address);
+  };
+
+  //this Method For ShipmentStages Data Bind
+  HandleShipmentStages(type) {
+    debugger;
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentStages`,
       data: {
-        Mode: shipmentType
+        Mode:
+          type == "SEA" ? "O" : type == "AIR" ? "A" : type == "ROAD" ? "I" : ""
       },
       headers: authHeader()
     }).then(function(response) {
@@ -150,13 +927,91 @@ class NewRateSearch extends Component {
       }
     });
   }
+
+  HandleBindIncoTeamData() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/IncoTermsAPI`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var table1 = response.data.Table1;
+      var table2 = response.data.Table2;
+      var finalArray = [];
+
+      var standerEquipment = new Object();
+      standerEquipment.StandardContainerCode = "Special Equipment";
+      standerEquipment.ProfileCodeID = "Special Equipment";
+      standerEquipment.ContainerName = "Special Equipment";
+
+      for (let index = 0; index < table1.length; index++) {
+        finalArray.push(table1[index]);
+      }
+
+      finalArray.push(standerEquipment);
+
+      self.setState({
+        StandardContainerCode: finalArray,
+        SpacialEqmt: table2
+      });
+    });
+  }
+
+  HandleTypeofMove(e) {
+     debugger;
+    //  let self =this;
+    this.setState({ typesofMove: 'ads'});
+
+    // var typeofmoveVal = e.target.id;
+    // if (typeofmoveVal === "p2p") {
+      
+    // }
+
+    this.HandleGetIncoTerms();
+
+    // next
+    document.getElementById("typeMove").classList.add("typeMove");
+    if (document.getElementById("cbmInner") == null)
+      document.getElementById("equipTypeInner").classList.add("equipTypeType");
+    else document.getElementById("cbmInner").classList.add("cbmType");
+
+    if (document.getElementById("cbmIconCntr") == null)
+      document
+        .getElementById("equipTypeIconCntr")
+        .classList.add("equipTypeIconCntr");
+    else document.getElementById("cbmIconCntr").classList.add("cbmIconCntr");
+    // document.getElementById("cbmIconCntr").classList.add("cbmIconCntr");
+
+    if (document.getElementById("cbmName") == null)
+      document.getElementById("equipTypeName").classList.remove("d-none");
+    else document.getElementById("cbmName").classList.remove("d-none");
+
+    // document.getElementById("cbmName").classList.remove("d-none");
+
+    if (document.getElementById("cbmMinusClick") == null)
+      document.getElementById("equipTypeMinusClick").classList.add("d-none");
+    else document.getElementById("cbmMinusClick").classList.add("d-none");
+
+    // document.getElementById("cbmMinusClick").classList.add("d-none");
+    // -------------------------------------Comment By Deepak Savani--------------------------
+    // if (document.getElementById("cbmInner") == null)
+    //   document.getElementById("equipTypePlusClick").classList.remove("d-none");
+    // else document.getElementById("cbmPlusClick").classList.remove("d-none");
+    // ----------------------------------------------------------------------------------------
+
+    // document.getElementById("cbmPlusClick").classList.remove("d-none");
+  }
+
   //this Method For Get Inco Team base on condition.
   HandleGetIncoTerms() {
     debugger;
     let self = this;
+
     var shipmentType = self.state.shipmentType;
     var typeofMove = self.state.typesofMove;
-    var HasCustomClear = "No";
+    var HasCustomClear = self.state.isCustomClear;
 
     if (shipmentType === "Export" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
@@ -194,73 +1049,6 @@ class NewRateSearch extends Component {
         this.setState({ incoTerms: "FOB" });
       }
     }
-  }
-
-  HandleBindIncoTeamData() {
-    let self = this;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/IncoTermsAPI`,
-
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var table1 = response.data.Table1;
-      var table2 = response.data.Table2;
-      // var finalArray = [];
-
-      // var standerEquipment = new Object();
-      // standerEquipment.StandardContainerCode = "Special Equipment";
-      // standerEquipment.ProfileCodeID = "Special Equipment";
-      // standerEquipment.ContainerName = "Special Equipment";
-
-      // for (let index = 0; index < table1.length; index++) {
-      //   finalArray.push(table1[index]);
-      // }
-
-      // finalArray.push(standerEquipment);
-
-      self.setState({
-        StandardContainerCode: table1,
-        SpacialEqmt: table2
-      });
-    });
-  }
-
-  HandleTypeofMove(e) {
-    debugger
-    this.setState({ typesofMove: e.target.id });
-    this.HandleGetIncoTerms();
-    // next
-    document.getElementById("typeMove").classList.add("typeMove");
-    if (document.getElementById("cbmInner") == null)
-      document.getElementById("equipTypeInner").classList.add("equipTypeType");
-    else document.getElementById("cbmInner").classList.add("cbmType");
-
-    if (document.getElementById("cbmIconCntr") == null)
-      document
-        .getElementById("equipTypeIconCntr")
-        .classList.add("equipTypeIconCntr");
-    else document.getElementById("cbmIconCntr").classList.add("cbmIconCntr");
-    // document.getElementById("cbmIconCntr").classList.add("cbmIconCntr");
-
-    if (document.getElementById("cbmName") == null)
-      document.getElementById("equipTypeName").classList.remove("d-none");
-    else document.getElementById("cbmName").classList.remove("d-none");
-
-    // document.getElementById("cbmName").classList.remove("d-none");
-
-    if (document.getElementById("cbmMinusClick") == null)
-      document.getElementById("equipTypeMinusClick").classList.add("d-none");
-    else document.getElementById("cbmMinusClick").classList.add("d-none");
-
-    // document.getElementById("cbmMinusClick").classList.add("d-none");
-
-    if (document.getElementById("cbmInner") == null)
-      document.getElementById("equipTypePlusClick").classList.remove("d-none");
-    else document.getElementById("cbmPlusClick").classList.remove("d-none");
-
-    // document.getElementById("cbmPlusClick").classList.remove("d-none");
   }
   typeMovePlusClick = e => {
     document.getElementById("typeMoveInner").classList.remove("typeMoveType");
@@ -333,7 +1121,7 @@ class NewRateSearch extends Component {
     document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
     document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
 
-    this.HandlePOLPODListBind(type);
+    this.HandleShipmentStages(type);
   };
   modeTransPlusClick = e => {
     document.getElementById("modeTransInner").classList.remove("modeTransType");
@@ -396,11 +1184,17 @@ class NewRateSearch extends Component {
       this.state.cbmHeight !== "" &&
       this.state.cbmQuantity !== ""
     ) {
-      let cbmVal =
-        parseFloat(this.state.cbmLength) +
-        parseFloat(this.state.cbmWidth) +
-        parseFloat(this.state.cbmHeight);
-      this.setState({ cbmVal });
+      var decVolumeWeight =
+        (this.state.cbmQuantity *
+          (this.state.cbmLength * this.state.cbmWidth * this.state.cbmHeight)) /
+        6000;
+
+      // var decVolume =
+      // this.state.cbmQuantity *
+      // ((this.state.cbmLength / 100)(this.state.cbmWidth / 100) *
+      //   (this.state.cbmHeight / 100));
+
+      this.setState({ cbmVal: decVolumeWeight });
 
       // next
       document.getElementById("cbm").classList.add("cbm");
@@ -488,10 +1282,10 @@ class NewRateSearch extends Component {
     document.getElementById("locationMinusClick").classList.add("d-none");
   };
 
-  addressChange = e => {
+  addressChange = (e, values) => {
     debugger;
-    let type = e.target.value;
-    let nme = e.target.name;
+    let type = values;
+    let nme = e;
     if (nme === "puAdd") {
       this.setState({ puAdd: type });
     } else if (nme === "deliAdd") {
@@ -536,6 +1330,7 @@ class NewRateSearch extends Component {
     if (document.getElementById("addressInner") == null)
       document.getElementById("typeMovePlusClick").classList.remove("d-none");
     else document.getElementById("addressPlusClick").classList.remove("d-none");
+    debugger;
   };
   addressPlusClick = e => {
     document.getElementById("addressInner").classList.remove("addressType");
@@ -582,7 +1377,7 @@ class NewRateSearch extends Component {
   equipChange = (value, option) => {
     debugger;
 
-    if (value !== null) {
+    if (value.length > 0) {
       let iCount = value.length;
 
       let difference = this.state.selected.filter(x => !value.includes(x));
@@ -638,11 +1433,21 @@ class NewRateSearch extends Component {
         cont.innerHTML = dropVal;
         let into = document.createElement("b");
         into.innerHTML = "X";
+
         let inpNum = document.createElement("input");
         let typ = document.createAttribute("type");
         typ.value = "number";
+
+        let nameEqt = document.createAttribute("name");
+        nameEqt.value =
+          iCount == 1
+            ? value[0].StandardContainerCode
+            : value[iCount - 1].StandardContainerCode;
+        inpNum.setAttributeNode(nameEqt);
+
         inpNum.setAttributeNode(typ);
         inpNum.value = 1;
+
         let cross = document.createElement("i");
         let crsCls = document.createAttribute("class");
         crsCls.value = "fa fa-times";
@@ -656,12 +1461,21 @@ class NewRateSearch extends Component {
     } else {
       debugger;
       var elmnt = document.getElementsByName("equType");
-      if (elmnt != null && elmnt != "undefined") {
-        elmnt[0].remove();
+      var elmntlen = elmnt.length;
+
+      for (let index = 0; index < elmntlen; index++) {
+        if (elmnt != null && elmnt != "undefined") {
+          elmnt[0].remove();
+          this.setState({
+            selected: [],
+            isSpacialEqt: true
+          });
+        }
       }
+
       var lastSelectVal = this.state.selected[0];
       if (lastSelectVal.StandardContainerCode == "Special Equipment") {
-        this.setState({ isSpacialEqt: true });
+        this.setState({ selected: [] });
       }
       var elmnt1 = document.getElementsByName("spequType");
       var elmnt1Len = elmnt1.length;
@@ -690,144 +1504,213 @@ class NewRateSearch extends Component {
       document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
     }
   };
-  specEquipChange = value1 => {
-    if (value1 != null && value1 != "") {
-      let iCount = value1.length;
-      let difference = this.state.spEqtSelect.filter(x => !value1.includes(x));
 
-      if (difference.length > 0) {
-        this.setState({ spEqtSelect: value1 });
-        var elmnt = document.getElementById(difference[0].SpecialContainerCode);
-        if (elmnt != null && elmnt != "undefined") {
-          elmnt.remove();
-        }
-      } else {
-        this.setState({ spEqtSelect: value1 });
-        i++;
+  specEquipChange = (value, option) => {
+    debugger;
 
-        let dropVal =
-          iCount == 1
-            ? value1[0].SpecialContainerCode
-            : value1[iCount - 1].SpecialContainerCode;
-        let div = document.createElement("div");
-        let clas = document.createAttribute("class");
-        clas.value = "spec-inner-cntr";
-        div.setAttributeNode(clas);
+    // let difference = this.state.referType.filter(x => !value.includes(x));
+    // let difference1 = this.state.flattack_openTop.filter(
+    //   x => !value.includes(x)
+    // );
 
-        let ids = document.createAttribute("id");
-        ids.value =
-          iCount == 1
-            ? value1[0].SpecialContainerCode
-            : value1[iCount - 1].SpecialContainerCode;
-        div.setAttributeNode(ids);
+    // // let difference2 = this.state.spacEqmtType.filter(x => !value.includes(x));
+    // let difference2 = this.state.spacEqmtType.filter(
+    //   vendor => vendor.TypeName === value[0].SpecialContainerCode
+    // );
 
-        let name = document.createAttribute("name");
-        name.value = "spequType";
-        div.setAttributeNode(name);
-
-        let cont = document.createElement("p");
-        cont.innerHTML = dropVal;
-        let into = document.createElement("b");
-        into.innerHTML = "X";
-
-        // let quan = document.createElement("span");
-        // quan.innerHTML = "Quan :";
-        let inpNum = document.createElement("input");
-        let typ = document.createAttribute("type");
-        typ.value = "number";
-        inpNum.setAttributeNode(typ);
-        inpNum.value = 1;
-
-        let temp = document.createElement("span");
-        let tempClas = document.createAttribute("class");
-        tempClas.value = "temp-mar";
-        temp.setAttributeNode(tempClas);
-        temp.innerHTML = "Temp :";
-        let inpTemp = document.createElement("input");
-        let typTemp = document.createAttribute("type");
-        typTemp.value = "number";
-        inpTemp.setAttributeNode(typTemp);
-        inpTemp.value = 1;
-        let faren = document.createElement("span");
-        faren.innerHTML = "F";
-
-        let divFC = document.createElement("div");
-        let clasFC = document.createAttribute("class");
-        clasFC.value = "new-radio-rate-cntr fc-radio";
-        divFC.setAttributeNode(clasFC);
-        let divF = document.createElement("div");
-        let inputF = document.createElement("input");
-        let typeF = document.createAttribute("type");
-        typeF.value = "radio";
-        inputF.setAttributeNode(typeF);
-        let nameF = document.createAttribute("name");
-        nameF.value = "fc" + i;
-        inputF.setAttributeNode(nameF);
-        let idF = document.createAttribute("id");
-        idF.value = "f" + i;
-        inputF.setAttributeNode(idF);
-        let labelF = document.createElement("label");
-        let forF = document.createAttribute("for");
-        forF.value = "f" + i;
-        labelF.innerHTML = "F";
-        labelF.setAttributeNode(forF);
-        divF.appendChild(inputF);
-        divF.appendChild(labelF);
-        divFC.appendChild(divF);
-        let divC = document.createElement("div");
-        let inputC = document.createElement("input");
-        let typeC = document.createAttribute("type");
-        typeC.value = "radio";
-        inputC.setAttributeNode(typeC);
-        let nameC = document.createAttribute("name");
-        nameC.value = "fc" + i;
-        inputC.setAttributeNode(nameC);
-        let idC = document.createAttribute("id");
-        idC.value = "c" + i;
-        inputC.setAttributeNode(idC);
-        let labelC = document.createElement("label");
-        let forC = document.createAttribute("for");
-        forC.value = "c" + i;
-        labelC.innerHTML = "C";
-        labelC.setAttributeNode(forC);
-        divC.appendChild(inputC);
-        divC.appendChild(labelC);
-        divFC.appendChild(divC);
-
-        let cross = document.createElement("i");
-        let crsCls = document.createAttribute("class");
-        crsCls.value = "fa fa-times";
-        cross.setAttributeNode(crsCls);
-
-        div.appendChild(cont);
-        div.appendChild(into);
-        // div.appendChild(quan);
-        div.appendChild(inpNum);
-        div.appendChild(temp);
-        div.appendChild(inpTemp);
-        div.appendChild(divFC); // faren
-        div.appendChild(cross);
-        document.getElementById("specEquipAppend").appendChild(div);
+    var difference = false;
+    for (var i = 0; i < this.state.referType.length; i++) {
+      if (
+        this.state.referType[i].referTypeName === value[0].SpecialContainerCode
+      ) {
+        difference = true;
+        break;
       }
-    } else {
-      var elmnt = document.getElementsByName("spequType");
-      if (elmnt != null && elmnt != "undefined") {
-        elmnt[0].remove();
-      }
-      this.setState({ spEqtSelect: [] });
     }
 
-    debugger;
+    var difference1 = false;
+    for (var i = 0; i < this.state.flattack_openTop.length; i++) {
+      if (
+        this.state.flattack_openTop[i].SpecialContainerCode ===
+        value[0].SpecialContainerCode
+      ) {
+        difference1 = true;
+        break;
+      }
+    }
+
+    var difference2 = false;
+    for (var i = 0; i < this.state.spacEqmtType.length; i++) {
+      if (
+        this.state.spacEqmtType[i].TypeName === value[0].SpecialContainerCode
+      ) {
+        difference2 = true;
+        break;
+      }
+    }
+
+    if (option.option.IsVolumeRequired === 1) {
+      if (difference1 === false) {
+        this.setState({
+          specialEqtSelect: true
+        });
+        this.addClickMultiCBM(value);
+      }
+    }
+    if (option.option.IsTemperatureRequired === 1) {
+      if (difference === false) {
+        this.setState({
+          refertypeSelect: true
+        });
+        this.addClickSpecial(value);
+      }
+    }
+
+    if (
+      option.option.IsTemperatureRequired === 0 &&
+      option.option.IsVolumeRequired === 0
+    ) {
+      if (difference2 === false) {
+        debugger;
+        this.setState({
+          spacEqmtTypeSelect: true
+        });
+        this.addSpacEqmtType(value);
+      }
+    }
+
+    // if (value1 != null && value1 != "") {
+    //   let iCount = value1.length;
+    //   let difference = this.state.spEqtSelect.filter(x => !value1.includes(x));
+
+    //   if (difference.length > 0) {
+    //     this.setState({ spEqtSelect: value1 });
+    //     var elmnt = document.getElementById(difference[0].SpecialContainerCode);
+    //     if (elmnt != null && elmnt != "undefined") {
+    //       elmnt.remove();
+    //     }
+    //   } else {
+    //     this.setState({ spEqtSelect: value1 });
+    //     i++;
+
+    //     let dropVal =
+    //       iCount == 1
+    //         ? value1[0].SpecialContainerCode
+    //         : value1[iCount - 1].SpecialContainerCode;
+    //     let div = document.createElement("div");
+    //     let clas = document.createAttribute("class");
+    //     clas.value = "spec-inner-cntr";
+    //     div.setAttributeNode(clas);
+
+    //     let ids = document.createAttribute("id");
+    //     ids.value =
+    //       iCount == 1
+    //         ? value1[0].SpecialContainerCode
+    //         : value1[iCount - 1].SpecialContainerCode;
+    //     div.setAttributeNode(ids);
+
+    //     let name = document.createAttribute("name");
+    //     name.value = "spequType";
+    //     div.setAttributeNode(name);
+
+    //     let cont = document.createElement("p");
+    //     cont.innerHTML = dropVal;
+    //     let into = document.createElement("b");
+    //     into.innerHTML = "X";
+
+    //     // let quan = document.createElement("span");
+    //     // quan.innerHTML = "Quan :";
+    //     let inpNum = document.createElement("input");
+    //     let typ = document.createAttribute("type");
+    //     typ.value = "number";
+    //     inpNum.setAttributeNode(typ);
+    //     inpNum.value = 1;
+
+    //     let temp = document.createElement("span");
+    //     let tempClas = document.createAttribute("class");
+    //     tempClas.value = "temp-mar";
+    //     temp.setAttributeNode(tempClas);
+    //     temp.innerHTML = "Temp :";
+    //     let inpTemp = document.createElement("input");
+    //     let typTemp = document.createAttribute("type");
+    //     typTemp.value = "number";
+    //     inpTemp.setAttributeNode(typTemp);
+    //     inpTemp.value = 1;
+    //     let faren = document.createElement("span");
+    //     faren.innerHTML = "F";
+
+    //     let divFC = document.createElement("div");
+    //     let clasFC = document.createAttribute("class");
+    //     clasFC.value = "new-radio-rate-cntr fc-radio";
+    //     divFC.setAttributeNode(clasFC);
+    //     let divF = document.createElement("div");
+    //     let inputF = document.createElement("input");
+    //     let typeF = document.createAttribute("type");
+    //     typeF.value = "radio";
+    //     inputF.setAttributeNode(typeF);
+    //     let nameF = document.createAttribute("name");
+    //     nameF.value = "fc" + i;
+    //     inputF.setAttributeNode(nameF);
+    //     let idF = document.createAttribute("id");
+    //     idF.value = "f" + i;
+    //     inputF.setAttributeNode(idF);
+    //     let labelF = document.createElement("label");
+    //     let forF = document.createAttribute("for");
+    //     forF.value = "f" + i;
+    //     labelF.innerHTML = "F";
+    //     labelF.setAttributeNode(forF);
+    //     divF.appendChild(inputF);
+    //     divF.appendChild(labelF);
+    //     divFC.appendChild(divF);
+    //     let divC = document.createElement("div");
+    //     let inputC = document.createElement("input");
+    //     let typeC = document.createAttribute("type");
+    //     typeC.value = "radio";
+    //     inputC.setAttributeNode(typeC);
+    //     let nameC = document.createAttribute("name");
+    //     nameC.value = "fc" + i;
+    //     inputC.setAttributeNode(nameC);
+    //     let idC = document.createAttribute("id");
+    //     idC.value = "c" + i;
+    //     inputC.setAttributeNode(idC);
+    //     let labelC = document.createElement("label");
+    //     let forC = document.createAttribute("for");
+    //     forC.value = "c" + i;
+    //     labelC.innerHTML = "C";
+    //     labelC.setAttributeNode(forC);
+    //     divC.appendChild(inputC);
+    //     divC.appendChild(labelC);
+    //     divFC.appendChild(divC);
+
+    //     let cross = document.createElement("i");
+    //     let crsCls = document.createAttribute("class");
+    //     crsCls.value = "fa fa-times";
+    //     cross.setAttributeNode(crsCls);
+
+    //     div.appendChild(cont);
+    //     div.appendChild(into);
+    //     // div.appendChild(quan);
+    //     div.appendChild(inpNum);
+    //     div.appendChild(temp);
+    //     div.appendChild(inpTemp);
+    //     div.appendChild(divFC); // faren
+    //     div.appendChild(cross);
+    //     document.getElementById("specEquipAppend").appendChild(div);
+    //   }
+    // } else {
+    //   var elmnt = document.getElementsByName("spequType");
+    //   if (elmnt != null && elmnt != "undefined") {
+    //     elmnt[0].remove();
+    //   }
+    //   this.setState({ spEqtSelect: [] });
+    // }
+
+    // debugger;
   };
 
   addClick() {
     this.setState(prevState => ({
       values: [...prevState.values, ""]
-    }));
-  }
-  addClickSpecial() {
-    this.setState(prevState => ({
-      values1: [...prevState.values1, ""]
     }));
   }
 
@@ -862,35 +1745,6 @@ class NewRateSearch extends Component {
       );
     });
   }
-  createUISpecial() {
-    const optionsSpeEqu = [
-      { value: "Refer Type", label: "Refer Type" },
-      { value: "abc", label: "abc" },
-      { value: "def", label: "def" }
-    ];
-    return this.state.values1.map((el, index) => {
-      return (
-        <div className="equip-plus-cntr">
-          <Select
-            className="rate-dropdown"
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            options={optionsSpeEqu}
-            placeholder="Select Kind of Special Equipment"
-          />
-          <div className="spe-equ">
-            <input type="text" placeholder="Quantity" />
-            <input type="text" placeholder="Temp" />
-          </div>
-          <i
-            className="fa fa-minus equip-plus"
-            id={"remove" + (index + 1)}
-            onClick={this.removeClickSpecial.bind(this, index)}
-          ></i>
-        </div>
-      );
-    });
-  }
 
   removeClick(i) {
     debugger;
@@ -898,12 +1752,12 @@ class NewRateSearch extends Component {
     values.splice(i, 1);
     this.setState({ values });
   }
-  removeClickSpecial(i) {
-    debugger;
-    let values1 = [...this.state.values1];
-    values1.splice(i, 1);
-    this.setState({ values1 });
-  }
+  // removeClickSpecial(i) {
+  //   debugger;
+  //   let values1 = [...this.state.values1];
+  //   values1.splice(i, 1);
+  //   this.setState({ values1 });
+  // }
 
   render() {
     let self = this;
@@ -1034,42 +1888,46 @@ class NewRateSearch extends Component {
                   className="new-radio-rate-cntr  radio-green"
                   id="modeTransInner"
                 >
-                  <div>
-                    <input
-                      type="radio"
-                      name="mode-transport"
-                      value="SEA"
-                      onClick={this.modeofTransportClick}
-                      id="sea"
-                    />
-                    <label htmlFor="sea">Sea</label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="mode-transport"
-                      value="AIR"
-                      onClick={this.modeofTransportClick}
-                      id="air"
-                    />
-                    <label htmlFor="air">Air</label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="mode-transport"
-                      name="mode-transport"
-                      value="ROAD"
-                      onClick={this.modeofTransportClick}
-                      id="road"
-                    />
-                    <label htmlFor="road">Road</label>
-                  </div>
+                  {this.state.shipmentType !== "Domestic" ? (
+                    <>
+                      <div>
+                        <input
+                          type="radio"
+                          name="mode-transport"
+                          value="SEA"
+                          onClick={this.modeofTransportClick}
+                          id="sea"
+                        />
+                        <label htmlFor="sea">Sea</label>
+                      </div>
+                      <div>
+                        <input
+                          type="radio"
+                          name="mode-transport"
+                          value="AIR"
+                          onClick={this.modeofTransportClick}
+                          id="air"
+                        />
+                        <label htmlFor="air">Air</label>
+                      </div>
+                      <div>
+                        <input
+                          type="radio"
+                          name="mode-transport"
+                          name="mode-transport"
+                          value="ROAD"
+                          onClick={this.modeofTransportClick}
+                          id="road"
+                        />
+                        <label htmlFor="road">Road</label>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </div>
               <div className="new-rate-cntr" id="containerLoad">
                 <div className="rate-title-cntr">
-                  <h3>Container Load</h3>
+                  <h3>Cargo Load</h3>
                   <div className="iconSelection" id="cntrLoadIconCntr">
                     <p className="side-selection" id="cntrLoadName">
                       {this.state.containerLoadType}
@@ -1154,11 +2012,15 @@ class NewRateSearch extends Component {
                   </div>
                 </div>
               </div>
-              {this.state.containerLoadType != "FCL" ? (
+              {this.state.containerLoadType !== "FCL" ? (
                 <>
                   <div className="new-rate-cntr" id="cbm">
                     <div className="rate-title-cntr">
-                      <h3>CBM / Dimensions</h3>
+                      <h3>
+                        {this.state.containerLoadType !== "LCL"
+                          ? "Dimensions"
+                          : "CBM"}
+                      </h3>
                       <div className="iconSelection" id="cbmIconCntr">
                         <p className="side-selection" id="cbmName">
                           {/* {this.state.modeoftransport} */}
@@ -1175,81 +2037,77 @@ class NewRateSearch extends Component {
                         ></i>
                       </div>
                     </div>
+                    <div>
+                      <div className="rate-radio-cntr">
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="exist-cust"
+                            value="ALL"
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="exist-cust"
+                          >
+                            ALL
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="new-cust"
+                            value="CBM"
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            CBM
+                          </label>
+                        </div>
+                      </div>
+                    </div>
                     <div id="cbmInner">
-                      <div className="row">
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              placeholder="Length (cm)"
-                              className="w-100"
-                              name="length"
-                              onBlur={this.cbmChange}
-                            />
+                      <div className="">
+                        {this.state.cmbTypeRadio === "ALL" ? (
+                          <>{this.CreateMultiCBM()}</>
+                        ) : this.state.cmbTypeRadio === "CBM" ? (
+                          <div className="col-md">
+                            <div className="spe-equ">
+                              <input
+                                type="text"
+                                placeholder={
+                                  this.state.modeoftransport != "AIR"
+                                    ? "CBM"
+                                    : "KG"
+                                }
+                                className="w-100"
+                                value={this.state.cbmVal}
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              placeholder="Width (cm)"
-                              className="w-100"
-                              name="width"
-                              onBlur={this.cbmChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              placeholder="Height (cm)"
-                              className="w-100"
-                              name="height"
-                              onBlur={this.cbmChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              placeholder="Quantity"
-                              className="w-100"
-                              name="qnty"
-                              onKeyDown={this.cbmChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              placeholder="Gross Weight"
-                              className="w-100"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              placeholder={
-                                this.state.modeoftransport != "AIR"
-                                  ? "CBM"
-                                  : "KG"
-                              }
-                              className="w-100"
-                              value={this.state.cbmVal}
-                            />
-                          </div>
-                        </div>
+                        ) : null}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                         <label htmlFor="haz-mat">HazMat</label>
-                        {/* <input id="unstack" type="checkbox" name={"haz-mat"} />
-                        <label htmlFor="unstack">Unstackable</label> */}
+                        {this.state.containerLoadType === "LCL" ||
+                        this.state.containerLoadType === "AIR" ||
+                        this.state.containerLoadType === "LTL" ? (
+                          <>
+                            <input
+                              id="unstack"
+                              type="checkbox"
+                              name={"haz-mat"}
+                            />
+                            <label htmlFor="unstack">NonStackable</label>
+                          </>
+                        ) : null}
+
                         {unStack}
                         <input
                           id="cust-clear"
@@ -1303,7 +2161,8 @@ class NewRateSearch extends Component {
                         getOptionValue={option => option.StandardContainerCode}
                         isMulti
                         options={self.state.StandardContainerCode}
-                        onChange={this.equipChange.bind(this)}
+                        // onChange={this.equipChange.bind(this)}
+                        onChange={this.newaddClick.bind(this)}
                         value={self.state.selected}
                         showNewOptionAtTop={false}
                       />
@@ -1320,9 +2179,9 @@ class NewRateSearch extends Component {
                       onClick={this.addClick.bind(this)}
                     ></i> */}
                     </div>
-
+                    {this.NewcreateUI()}
                     <div id="equipAppend"></div>
-                    <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                    {/* <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                       <input
                         id="Special-equType"
                         type="checkbox"
@@ -1330,8 +2189,8 @@ class NewRateSearch extends Component {
                         onChange={this.HandleSpecialEqtCheck.bind(this)}
                       />
                       <label htmlFor="Special-equType">Special Equipment</label>
-                    </div>
-                    {this.createUI()}
+                    </div> */}
+                    {/* {this.createUI()} */}
                     {/* <div className="remember-forgot">
                     <input
                       id="spe-equip"
@@ -1344,24 +2203,50 @@ class NewRateSearch extends Component {
                   </div> */}
                     <div className="spe-equ mt-0">
                       <div className="equip-plus-cntr">
-                        <Select
-                          isDisabled={self.state.isSpacialEqt}
-                          className="rate-dropdown"
-                          getOptionLabel={option => option.SpecialContainerCode}
-                          isMulti
-                          getOptionValue={option => option.SpecialContainerCode}
-                          components={animatedComponents}
-                          options={self.state.SpacialEqmt}
-                          placeholder="Select Kind of Special Equipment"
-                          onChange={this.specEquipChange}
-                          value={self.state.spEqtSelect}
-                          showNewOptionAtTop={false}
-                        />
+                        {self.state.specialEquipment === true ? (
+                          <Select
+                            isDisabled={self.state.isSpacialEqt}
+                            className="rate-dropdown"
+                            getOptionLabel={option =>
+                              option.SpecialContainerCode
+                            }
+                            isMulti
+                            getOptionValue={option =>
+                              option.SpecialContainerCode
+                            }
+                            components={animatedComponents}
+                            options={self.state.SpacialEqmt}
+                            placeholder="Select Kind of Special Equipment"
+                            onChange={this.specEquipChange}
+                            value={self.state.spEqtSelect}
+                            showNewOptionAtTop={false}
+                          />
+                        ) : null}
                       </div>
                     </div>
-                    <div id="specEquipAppend"></div>
-                    {this.createUISpecial()}
+                    <div id="cbmInner">
+                      {self.state.specialEquipment === true &&
+                      self.state.specialEqtSelect === true ? (
+                        self.state.flattack_openTop.length > 0 ? (
+                          <>{this.MultiCreateCBM()}</>
+                        ) : null
+                      ) : null}
 
+                      <div id="specEquipAppend"></div>
+                      {self.state.specialEquipment === true &&
+                      self.state.refertypeSelect === true ? (
+                        self.state.referType.length > 0 ? (
+                          <>{this.createUISpecial()}</>
+                        ) : null
+                      ) : null}
+
+                      {self.state.specialEquipment === true &&
+                      self.state.spacEqmtTypeSelect === true ? (
+                        self.state.spacEqmtType.length > 0 ? (
+                          <>{this.createUIspacEqmtType()}</>
+                        ) : null
+                      ) : null}
+                    </div>
                     <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                       <input id="haz-mat" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="haz-mat">HazMat</label>
@@ -1418,6 +2303,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="p2p"
+                      value={"p2p"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="p2p">Port2Port</label>
@@ -1427,6 +2313,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="d2p"
+                      value={"d2p"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="d2p">Door2Port</label>
@@ -1436,6 +2323,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="d2d"
+                      value={"d2d"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="d2d">Door2Door</label>
@@ -1445,6 +2333,7 @@ class NewRateSearch extends Component {
                       type="radio"
                       name="type-move"
                       id="p2d"
+                      value={"p2d"}
                       onChange={this.HandleTypeofMove}
                     />
                     <label htmlFor="p2d">Port2Door</label>
@@ -1474,35 +2363,43 @@ class NewRateSearch extends Component {
                 <div className="row justify-content-center" id="addressInner">
                   <div className="col-md-6">
                     <div className="spe-equ">
-                      <input className="w-100" type="text" />
+                      {this.state.typesofMove == "p2p" ||
+                      this.state.typesofMove === "p2d" ? (
+                        <input
+                          className="w-100"
+                          type="text"
+                          placeholder="Enter POL"
+                        />
+                      ) : (
+                        <Map1WithAMakredInfoWindowSearchBooks
+                          onPlaceSelected={this.onPlaceSelected}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div />}
+                          containerElement={<div />}
+                          mapElement={<div />}
+                        />
+                      )}
                     </div>
-                    <textarea
-                      className="rate-address"
-                      placeholder={
-                        this.state.typesofMove == "p2p" ||
-                        this.state.typesofMove == "p2d"
-                          ? "Enter POL"
-                          : "Enter PU Address"
-                      }
-                      onChange={this.addressChange}
-                      name="puAdd"
-                    ></textarea>
                   </div>
                   <div className="col-md-6">
-                    <div className="spe-equ">
-                      <input className="w-100" type="text" />
+                    <div className="spe-equ" style={{ marginBottom: "30px" }}>
+                      {this.state.typesofMove == "p2p" ||
+                      this.state.typesofMove === "d2p" ? (
+                        <input
+                          className="w-100"
+                          type="text"
+                          placeholder="Enter POD"
+                        />
+                      ) : (
+                        <GoogleMapPODSearchBox
+                          onPlaceSelected={this.onPlaceSelectedPOD}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div />}
+                          containerElement={<div />}
+                          mapElement={<div />}
+                        />
+                      )}
                     </div>
-                    <textarea
-                      className="rate-address"
-                      placeholder={
-                        this.state.typesofMove == "p2p" ||
-                        this.state.typesofMove == "d2p"
-                          ? "Enter POD"
-                          : "Enter Delivery Address"
-                      }
-                      onChange={this.addressChange}
-                      name="deliAdd"
-                    ></textarea>
                   </div>
                 </div>
               </div>
@@ -1548,20 +2445,21 @@ class NewRateSearch extends Component {
                       onChange={this.locationChange}
                       name="pol"
                     /> */}
-                    <Map1WithAMakredInfoWindow
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
-                      loadingElement={<div style={{ height: `100%` }} />}
-                      containerElement={
-                        <div
-                          style={{
-                            height: `200px`
-                            // width: `50%`,
-                            // marginLeft: `auto`
-                          }}
+                    {this.state.zoomPOL !== "" &&
+                    this.state.zomePOL !== null ? (
+                      <>
+                        <Map1WithAMakredInfoWindow
+                          zomePOL={this.state.zoomPOL}
+                          mapPositionPOL={this.state.mapPositionPOL}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div style={{ height: `100%` }} />}
+                          containerElement={
+                            <div style={{ height: `200px` /*width: `50%`*/ }} />
+                          }
+                          mapElement={<div style={{ height: `100%` }} />}
                         />
-                      }
-                      mapElement={<div style={{ height: `100%` }} />}
-                    />
+                      </>
+                    ) : null}
                     {/* <GoogleMapReactPage
                       google={this.props.google}
                       center={{ lat: 18.5204, lng: 73.8567 }}
@@ -1592,14 +2490,19 @@ class NewRateSearch extends Component {
                       onChange={this.locationChange}
                       name="pod"
                     /> */}
-                    <Map2WithAMakredInfoWindow
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
-                      loadingElement={<div style={{ height: `100%` }} />}
-                      containerElement={
-                        <div style={{ height: `200px` /*width: `50%`*/ }} />
-                      }
-                      mapElement={<div style={{ height: `100%` }} />}
-                    />
+                    {this.state.zoomPOD !== "" &&
+                    this.state.zomePOD !== null ? (
+                      <Map2WithAMakredInfoWindow
+                        zomePOL={this.state.zoomPOD}
+                        mapPositionPOD={this.state.mapPositionPOD}
+                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                        loadingElement={<div style={{ height: `100%` }} />}
+                        containerElement={
+                          <div style={{ height: `200px` /*width: `50%`*/ }} />
+                        }
+                        mapElement={<div style={{ height: `100%` }} />}
+                      />
+                    ) : null}
                   </div>
                 </div>
               </div>

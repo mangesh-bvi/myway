@@ -13,11 +13,18 @@ import ProfileSettingIcon from "./../assets/img/profilesetting.png";
 import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import { authHeader } from "../helpers/authHeader";
+import { Progress, Button, Modal, ModalBody } from "reactstrap";
+import ModalHeader from "react-bootstrap/ModalHeader";
 
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = { tooltipOpen: false, lastlogin: "", searchButn: true };
+    this.state = { tooltipOpen: false, laslastlogintlogin: "", searchButn: true, notificationData :[] ,modalDocu: false,  DropdownCommonMessage: [], popupHBLNO:""};
+    this.BindNotifiation = this.BindNotifiation.bind(this);
+    this.toggleDocu = this.toggleDocu.bind(this);
   }
 
   componentDidMount() {
@@ -48,7 +55,77 @@ class Header extends Component {
     if (window.location.pathname === "/rate-search") {
       this.setState({ searchButn: false });
     }
+
+    window.addEventListener('load', this.BindNotifiation);
+
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BindDropdownCommonMessage`,
+      
+      headers: authHeader()
+    }).then(function(response) {
+      self.setState({ DropdownCommonMessage: response.data });
+    });
+
+    
   }
+  toggleDocu() {
+    this.setState(prevState => ({
+      modalDocu: !prevState.modalDocu
+    }));
+
+
+    var sPath = window.location.pathname;
+    var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
+    //alert(sPage);
+  
+    if(sPage == "shipment-details")
+    {
+      this.setState({ popupHBLNO: document.getElementById("popupHBLNO").value });
+      //alert(document.getElementById("popupHBLNO").value)
+    }
+    
+  }
+  
+
+BindNotifiation()
+{
+  let self = this;
+
+  axios({
+    method: "post",
+    url: `${appSettings.APIURL}/UserNotification`,
+    data: {
+      UserID: encryption(window.localStorage.getItem("userid"), "desc")
+    },
+    headers: authHeader()
+  }).then(function(response) {
+           // self.state.Notificationcount = response.data.Table.length;
+           var today = new Date();   
+           today.setDate(today.getDate() - 8 );
+
+           if(response != null)
+           {
+             if(response.data != null)
+             {
+               if(response.data.Table != null)
+               {
+                 if(response.data.Table.length > 0)
+                 {
+                  self.setState({ notificationData : response.data.Table.filter(item =>
+                    item.ActivityDate > today.toJSON())
+                  });
+                 
+                  document.getElementById("Notificationcount").innerHTML  = self.state.notificationData.length;
+                 }
+               }
+             }
+           }  
+  });
+
+}
+
   toggle() {
     this.setState({
       tooltipOpen: !this.state.tooltipOpen
@@ -67,7 +144,120 @@ class Header extends Component {
   onSetting() {
     // document.getElementById("dvsetting").className.remove("cls-hide");
   }
+
+  SendMessage = () => {
+    var drpshipment = document.getElementById("drpshipment");
+    var txtShipmentNo = document.getElementById("txtShipmentNo");
+    var txtshipmentcomment = document.getElementById("txtshipmentcomment");
+
+    if (drpshipment.value.trim() == "0") {
+      alert("Please select shipment type");
+      drpshipment.focus();
+      return false;
+    }
+    if (txtShipmentNo.value.trim() == "") {
+      alert("Please enter shipment no.");
+      txtShipmentNo.focus();
+      return false;
+    }
+    if (txtshipmentcomment.value.trim() == "") {
+      alert("Please enter shipment comment.");
+      txtshipmentcomment.focus();
+      return false;
+    }
+
+    var month_names =["Jan","Feb","Mar",
+    "Apr","May","Jun",
+    "Jul","Aug","Sep",
+    "Oct","Nov","Dec"];
+
+    var today = new Date();   
+
+    var day = today.getDate();
+    var month_index = today.getMonth();
+    var year = today.getFullYear();
+
+//alert(txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year);
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SendCommonMessage`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        ReferenceNo: txtShipmentNo.value.trim(),
+        TypeOfMessage: drpshipment.value.trim(),
+        Message : txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      if(response != null)
+      {
+        if(response.data != null)
+        {
+          if(response.data.length > 0)
+          {
+            if(response.data[0] != null)
+            {
+              var message = response.data[0].Result;
+              alert(response.data[0].Result);
+            }
+          }
+        }
+      }
+
+      var sPath = window.location.pathname;
+    var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
+    //alert(sPage);
+  
+    if(sPage == "shipment-details")
+    {
+      document.getElementById("activity-tab").click();
+    }
+
+    });
+    this.toggleDocu();
+
+    
+
+  }
+
+ 
   render() {
+
+    let optionNotificationItems = this.state.notificationData.map((item, i) => (
+      <div>
+        <hr size="2" />
+        <p >Shipment: <a class="font-weight-bold"> {item.Product}</a></p>
+        <p >RefNo: <a class="font-weight-bold">{item.RefNo} </a></p>
+        <p>Status : <a class="font-weight-bold"> {item.ProductStatus} 
+       {/* - { new Date( item.ActivityDate).toLocaleDateString()}  */}
+       </a></p>
+       
+      </div>
+     
+    ));
+
+    let optionItems = this.state.DropdownCommonMessage.map((planet, i) => (
+      
+      (i ==  0) ? 
+      (<option
+        value={planet.ID}
+        selected = "selected"
+      >
+        {planet.Value}
+      </option>)
+     :
+     (<option
+      value={planet.ID}
+    >
+      {planet.Value}
+    </option>)
+
+    ));
+
+    let popupHBLNO = this.state.popupHBLNO;
+ 
     return (
       <div>
         <div className="cls-header-1">
@@ -85,12 +275,23 @@ class Header extends Component {
                   </li>
                 )}
                 <li>
-                  <img
-                    src={BellIcon}
-                    alt="bell-icon"
-                    className="header-bell-icon"
-                  />
+                  
+
+                  <div className="dropdown">
+                    <img
+                      src={BellIcon}
+                      alt="bell-icon"
+                      className="header-bell-icon"
+                      data-toggle="dropdown"
+                    />
+                   <a id="Notificationcount">0</a>
+                    <div className="dropdown-menu">
+                      {optionNotificationItems}
+                {/*<p>yuguhyuyg</p>*/}
+                    </div>
+                  </div>
                 </li>
+                
                 {/* <li style={{ padding: "10px 15px" }}>
                   <div className="dropdown">
                     <img
@@ -107,13 +308,58 @@ class Header extends Component {
                   </div>
                 </li> */}
                 <li style={{ padding: "10px 15px" }}>
+                 
+                  
                   <img
                     src={ChatIcon}
                     alt="chat-icon"
-                    className="header-chat-icon"
+                    className="header-chat-icon"  onClick={this.toggleDocu}
                   />
-
-                  <label>Live Chat</label>
+                       
+                <Modal
+                  className="delete-popup pol-pod-popup"
+                  isOpen={this.state.modalDocu}
+                  toggle={this.toggleDocu}
+                  centered={true}
+                  backdrop="static"
+                >
+                  <ModalHeader>Send Message</ModalHeader>
+                  <ModalBody>
+                    <div className="rename-cntr login-fields">
+                     
+                     <select id="drpshipment">
+                       <option value="0">Select</option>
+                       {/* <option value="Shipment">Shipment</option> */}
+                       {optionItems}
+                     </select>
+                    </div>
+                    <div className="rename-cntr login-fields">
+                      
+                      <input
+                        id="txtShipmentNo"
+                        type="text"
+                        placeholder="Enter Shipment No."
+                        value={popupHBLNO}
+                      />
+                    </div>
+                    <div className="rename-cntr login-fields">
+                      
+                    <textarea id="txtshipmentcomment" name="comment" rows = "5" cols = "50" style={{resize:"none"}} placeholder="Enter Comment..."></textarea>
+                    </div>
+                   
+                    <Button
+                      className="butn"
+                      onClick={() => {
+                        this.SendMessage();
+                      }}
+                    >
+                      Send
+                    </Button>
+                    <Button className="butn"  onClick={() => {
+                        this.toggleDocu();
+                      }}>Close</Button>
+                  </ModalBody>
+                </Modal>
                 </li>
 
                 <li id="activelog-open">
