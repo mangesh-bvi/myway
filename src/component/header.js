@@ -116,8 +116,14 @@ BindNotifiation()
                   self.setState({ notificationData : response.data.Table.filter(item =>
                     item.ActivityDate > today.toJSON())
                   });
-                 
-                  document.getElementById("Notificationcount").innerHTML  = self.state.notificationData.length;
+                 if( self.state.notificationData != null)
+                 {
+                    var element = !!document.getElementById("Notificationcount"); 
+                    if (element) { 
+                      document.getElementById("Notificationcount").innerHTML  = self.state.notificationData.length;
+                    }                  
+                 }
+                  
                  }
                }
              }

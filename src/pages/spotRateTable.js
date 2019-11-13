@@ -33,13 +33,16 @@ class SpotRateTable extends Component {
       pageNo: 10
     };
     this.HandleListSpotRateGrid = this.HandleListSpotRateGrid.bind(this);
-    this.toggleDel = this.toggleDel.bind(this);
+    //this.toggleDel = this.toggleDel.bind(this);
   }
 
-  toggleDel() {
-    this.setState(prevState => ({
-      modalDel: !prevState.modalDel
-    }));
+  toggleDel(Data) {
+    var detailid = [Data, "SpotRateID"];
+
+    this.props.history.push({
+      pathname: "spot-rate-details",
+      state: { detail: detailid }
+    });
   }
 
   componentDidMount() {
@@ -85,11 +88,18 @@ class SpotRateTable extends Component {
     }
   }
 
+  HandleChangeSpotRateDetails(RateQueryId)
+  {
+   // alert(RateQueryId)
+  }
+
   HandleRowClickEvt = (rowInfo, column) => {
+    
     return {
       onClick: e => {
-        var hblNo = column.original["HBL#"];
-        this.HandleChangeShipmentDetails(hblNo);
+        debugger;
+        var RateQueryId = column.original["RateQueryId"];
+        this.HandleChangeSpotRateDetails(RateQueryId);
       }
     };
   };
@@ -148,11 +158,12 @@ class SpotRateTable extends Component {
                       {
                         Cell: row => {
                           var noData = row.original["OriginPort_Name"];
+                          var RateQueryId = row.original["RateQueryId"];
                           debugger;
                           if (noData != "No Data Found") {
                             return (
                               <div
-                                // onClick={this.toggleDel}
+                                 onClick={e => this.toggleDel(RateQueryId)}
                                 className="tab-icon-view"
                               >
                                 <img src={Eye} alt="eye icon" />
@@ -161,7 +172,7 @@ class SpotRateTable extends Component {
                           } else {
                             return (
                               <div
-                                // onClick={this.toggleDel}
+                                 onClick={e => this.toggleDel(RateQueryId)}
                                 className="tab-icon-view"
                               ></div>
                             );
@@ -176,7 +187,7 @@ class SpotRateTable extends Component {
                 className="-striped -highlight"
                 defaultPageSize={this.state.pageNo}
                 minRows={1}
-                // getTrProps={this.HandleRowClickEvt}
+                getTrProps={this.HandleRowClickEvt}
               />
             </div>
           </div>

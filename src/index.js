@@ -40,6 +40,7 @@ import AddSalesUser from "./pages/AddSalesUser";
 import Analytics from "./pages/analytics";
 import RateFinalizing from "./pages/rateFinalizing";
 import RateFinalizingStill from "./pages/rateFinalizingStill";
+import SpotRateDetails from "./pages/SpotRateDetails";
 import EventManagement from "./pages/Event-Management";
 import AddEventManagement from "./pages/AddEventManagement";
 import ActivityLog from "./pages/activity-log";
@@ -89,6 +90,11 @@ ReactDOM.render(
       exact
       path="/rate-finalizing-still"
       component={RateFinalizingStill}
+    />
+     <Route
+      exact
+      path="/spot-rate-details"
+      component={SpotRateDetails}
     />
     <Route exact path="/event-management" component={EventManagement} />
     <Route exact path="/add-event-management" component={AddEventManagement} />

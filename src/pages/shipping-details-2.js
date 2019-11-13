@@ -403,6 +403,7 @@ class ShippingDetailsTwo extends Component {
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail;
     }
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ViewUploadShipmentDocument`,
@@ -419,6 +420,15 @@ class ShippingDetailsTwo extends Component {
       });
 
       self.setState({ documentData: documentdata });
+    }).catch(error => {
+      debugger;
+      var temperror = error.response.data;
+      var err = temperror.split(":");
+      alert("No Data Found")
+      var actData = [];
+      actData.push({DocumentDescription: "No Data Found"})
+    
+      self.setState({ documentData: actData });
     });
   }
 
@@ -1283,7 +1293,15 @@ class ShippingDetailsTwo extends Component {
                                 {
                                   Header: "Action",
                                   sortable: false,
+                                  accessor: "DocumentDescription",
                                   Cell: row => {
+                                    if (row.value == "No Data Found") {
+                                      return(
+                                        <div></div>
+                                      )
+                                    }
+                                    else
+                                    {
                                     return (
                                       <div>
                                         <img
@@ -1312,6 +1330,7 @@ class ShippingDetailsTwo extends Component {
                                         />
                                       </div>
                                     );
+                                        }
                                   }
                                 }
                               ]
@@ -1320,6 +1339,7 @@ class ShippingDetailsTwo extends Component {
                           // getTrProps={this.HandleDEDFile.bind(this)}
                           defaultPageSize={5}
                           className="-striped -highlight"
+                          minRows={1}
                         />
                       </div>
                     </div>
