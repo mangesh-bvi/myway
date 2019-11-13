@@ -424,9 +424,14 @@ class ShippingDetails extends Component {
     let errors = this.state.errors;
     let formIsValid = true;
 
-    if(!fields["ShipmentStage"] && !fields["ModeOfTransport"]){
+    if(!fields["ModeOfTransport"]){
       formIsValid = false;
-      alert("Please enter Fields");
+      alert("Please enter Mode Of Transport");
+   }
+   if(!fields["ShipmentStage"])
+   {
+    formIsValid = false;
+    alert("Please enter ShipmentStage");
    }
    return formIsValid;
   } 
