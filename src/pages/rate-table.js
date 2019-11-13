@@ -218,7 +218,7 @@ class RateTable extends Component {
                   onChange={value => this.setState({ value })}
                 />
               </div>
-              <div>
+              <div className="rate-table-butn">
                 <a href="rate-finalizing" className="blue-butn butn m-0">
                   Proceed
                 </a>

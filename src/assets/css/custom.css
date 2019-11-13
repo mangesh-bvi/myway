@@ -1517,7 +1517,7 @@ table tbody tr:last-child {
   background-color: #fff !important;
 }
 .rate-table-range .input-range {
-  width: 300px !important;
+  width: 250px !important;
 }
 .input-range__slider-container .input-range__label-container {
   display: none;
@@ -1657,6 +1657,10 @@ table tbody tr:last-child {
 }
 .pol-mar .equip-plus {
   right: -25px;
+}
+.rate-table-butn {
+  padding-right: 20px;
+  padding-left: 20px;
 }
 /* rate table ends */
 

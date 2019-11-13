@@ -102,6 +102,9 @@ class Analytics extends Component {
       toggleRoadShip: false,
       toggleShipInv: false,
       toggleRoadInv: false,
+      toggleWeekDate:false,
+      toggleMonthDate:true,
+      toggleYearDate:false,
       graflabels:[],
       graphdataset:[],
       setSupplierdrop:[]
@@ -115,10 +118,40 @@ class Analytics extends Component {
       startDate: e
     });
   };
+  
   handleChangeEnd = e => {
     this.setState({
       endDate: e
     });
+  };
+
+  handleChangePerion = e => {
+  //  alert(e.target.value)
+    //showMonthYearPicker
+    if(e.target.value == "W")
+    {
+      this.setState({
+      toggleWeekDate:true,
+      toggleMonthDate:false,
+      toggleYearDate:false
+      });
+    }
+    if(e.target.value == "M")
+    {
+      this.setState({
+      toggleWeekDate:false,
+      toggleMonthDate:true,
+      toggleYearDate:false
+      });
+    }
+    if(e.target.value == "Y")
+    {
+      this.setState({
+      toggleWeekDate:false,
+      toggleMonthDate:false,
+      toggleYearDate:true
+      });
+    }
   };
 
   toggleBtnsShip = e => {
@@ -161,15 +194,47 @@ class Analytics extends Component {
   };
 
   handleAnalyticsInvoice(event) {
-    debugger;
+
     let self = this;
     
-    var FromDate = "2019-01-01";
-    var ToDate = "2019-06-30";
+   
+
+   
     var ActiveFlag = "D";
     var Mode = "A,O";
     var period =  document.getElementById('drp-period-invoice').value;
 
+    var FromDate = "";
+    var ToDate = "";
+    if(period == "M")
+    {
+      var tempfromdate = document.getElementById('datpicker-from-invoice').value.split('/'); //05/12/2019
+      var temptodate = document.getElementById('datpicker-to-invoice').value.split('/');
+      FromDate = tempfromdate[1] +"-"+  tempfromdate[0] + "-01";
+      ToDate = temptodate[1] +"-"+  temptodate[0] + "-01";
+    }
+    else if (period == "W")
+    {
+      var tempfromdate = document.getElementById('datpicker-from-invoice').value.split('/'); //05/12/2019
+      var temptodate = document.getElementById('datpicker-to-invoice').value.split('/');
+      FromDate = tempfromdate[2] +"-"+  tempfromdate[0] + "-" + tempfromdate[1];
+      ToDate = temptodate[2] +"-"+  temptodate[0] + "-" + temptodate[1];
+    }
+    else if(period == "Y")
+    {
+      var tempfromdate =  document.getElementById('date-year-invoice').value
+      FromDate = tempfromdate +"-01-01";
+      ToDate = tempfromdate +"-12-31";
+    }
+    var g1 = new Date(FromDate); 
+    var g2 = new Date(ToDate); 
+    
+     if (g1.getTime() > g2.getTime()) 
+     {
+        alert("To date should be greater then From date.");
+        document.getElementById('datpicker-to-invoice').focus();
+        return false;
+     }
     if(event.target.id == "invoices-view-btn")
     {
       var ActiveFlagele = document.getElementsByName('ship-type-invoice');         
@@ -198,32 +263,56 @@ class Analytics extends Component {
         ToDate:ToDate,
         ActiveFlag: ActiveFlag,
         Mode: Mode,
-        period: period,
-        ShipperID:1340354108
+        period: period
+        //ShipperID:1340354108
       }
 
-      this.setgrafval(axiosdata)
-  
+      if(event.target.id == "invoices-view-btn")
+      {
+        axiosdata.ShipperID = document.getElementById("drp-supplie-invoice").value;
+        self.setgrafval(axiosdata)
+      }
+      else
+      {
+        this.setSupplierdrop(axiosdata) 
+      }
   }
 
-    setSupplierdrop()
+    setSupplierdrop(axiosdata)
     {
-      
-      // axios({
-      //   method: "post",
-      //   url: `${appSettings.APIURL}/InvoiceAnalyticsAPI`,
-      //   data: axiosdata,
-      //   headers: authHeader()
-      // }).then(function(response) {
+      let self = this;
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/ShipperDropdownListAPI`,
+        data: {UserID : encryption(window.localStorage.getItem("userid"), "desc")},
+        headers: authHeader()
+      }).then(function(response) {
 
+        self.setState({setSupplierdrop:response.data.Table})
 
+        if(response != null)
+        {
+          if(response.data != null)
+          {
+            if(response.data.Table != null)
+            {
+              if(response.data.Table.length > 0)
+              {
+                axiosdata.ShipperID = response.data.Table[0].ShipperID;
+              }
+            }
+          }
+        }
 
-      // }).catch(error => {
-      //   debugger;
-      //   var temperror = error.response.data;
-      //   var err = temperror.split(":");
-      //   alert(err[1].replace("}", ""))
-      // })
+        
+        self.setgrafval(axiosdata)
+      }).catch(error => {
+        
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        alert(err[1].replace("}", ""))
+        self.setState({setSupplierdrop:[]})
+      })
     }
 
   setgrafval(axiosdata)
@@ -236,10 +325,10 @@ class Analytics extends Component {
       data: axiosdata,
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
 
       self.setState({graphdataset: []})
-      
+
       var arraylabel = [];
       var arrayAirdata = [];
       var arrayOceandata = [];
@@ -255,7 +344,6 @@ class Analytics extends Component {
         }
         self.setState({graflabels: arraylabel})
       }
-
 
       var graphdataset = []
 
@@ -320,7 +408,7 @@ class Analytics extends Component {
       self.setState({graphdataset: graphdataset})
 
     }).catch(error => {
-      debugger;
+      
       var temperror = error.response.data;
       var err = temperror.split(":");
       alert(err[1].replace("}", ""))
@@ -328,6 +416,20 @@ class Analytics extends Component {
     })
   }
 
+  buildOptions() {
+    var arr = [];
+    var currentdate = new Date();
+    for (let i = 2018; i <= currentdate.getFullYear(); i++) {
+      if(i == currentdate.getFullYear())
+      {
+        arr.push(<option  value={i} selected>{i}</option>)
+      }
+      else{
+        arr.push(<option value={i}>{i}</option>)
+       }
+    }
+    return arr; 
+  }
 
   render() {
     var buyerData = {
@@ -346,6 +448,14 @@ class Analytics extends Component {
       ],
       text: "23%"
     };
+
+    let optionSupplierName = this.state.setSupplierdrop.map((item, i) => (
+
+      <option value={item.ShipperID}>
+        {item.ShipperName}
+      </option>
+
+    ))
 
     return (
       <React.Fragment>
@@ -645,7 +755,7 @@ class Analytics extends Component {
                           name="ship-way-invoice"
                           id="road-inv"
                           onClick={this.toggleBtnsInv}
-                          value="T"
+                          value="I"
                         />
                         <label htmlFor="road-inv">
                           <img
@@ -690,7 +800,7 @@ class Analytics extends Component {
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
-                    <select id="drp-period-invoice">
+                    <select id="drp-period-invoice" onChange={this.handleChangePerion}>
                       <option value="W">Weekly</option>
                       <option selected  value="M">Monthly</option>
                       <option  value="Y">Yearly</option>
@@ -699,28 +809,73 @@ class Analytics extends Component {
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Supplier </span>
                     <select id="drp-supplie-invoice">
-                      <option>Supplier Name</option>
-                      
+                      {optionSupplierName}
                     </select>
                   </div>
+                  {/* toggleYearDate */}
+                  {this.state.toggleYearDate && (
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                      <span>Year</span>
+                      <select id="date-year-invoice">
+                      {this.buildOptions()}
+                      </select>
+                    </div>
+                  )}
+                  {!this.state.toggleYearDate && (
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>From </span>
-                    <DatePicker
+                    {this.state.toggleWeekDate && (
+                      <DatePicker
                       id="datpicker-from-invoice"
                       className="ana-to"
                       selected={this.state.startDate}
                       onChange={this.handleChangeStart}
+                      maxDate={new Date()}
+                      showWeekNumbers
                     />
+                    )}
+                    {this.state.toggleMonthDate && (
+                     <DatePicker
+                     id="datpicker-from-invoice"
+                     className="ana-to"
+                     selected={this.state.startDate}
+                     onChange={this.handleChangeStart}
+                     dateFormat="MM/yyyy"
+                     maxDate={new Date()}
+                     showMonthYearPicker
+                   />
+                    )}
                   </div>
+                  )}
+                  {!this.state.toggleYearDate && (
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>To </span>
+                    {this.state.toggleWeekDate && (
+                     
                     <DatePicker
-                      id="datpicker-to-invoice"
-                      className="ana-to"
-                      selected={this.state.endDate}
-                      onChange={this.handleChangeEnd}
-                    />
+                    id="datpicker-to-invoice"
+                    className="ana-to"
+                    selected={this.state.endDate}
+                    onChange={this.handleChangeEnd}
+                    maxDate={new Date()}
+                    showWeekNumbers
+                  />
+                    )}
+                    {this.state.toggleMonthDate && (
+                    
+                   <DatePicker
+                    id="datpicker-to-invoice"
+                    className="ana-to"
+                    selected={this.state.endDate}
+                    onChange={this.handleChangeEnd}
+                    dateFormat="MM/yyyy"
+                    maxDate={new Date()}
+                    showMonthYearPicker
+                  />
+                    )}
+                   
                   </div>
+                  )}
                 </div>
                 <div className="row">
                   <div className="col-md-12">

@@ -71,7 +71,7 @@ class Login extends React.Component {
       loading: false,
       modalSalesLogin: false,
       salesUserData: [],
-      checked: [],
+      checked: ["/"],
       expanded: [],
       nodes: []
     };
@@ -226,7 +226,22 @@ class Login extends React.Component {
   }
   toggleSalesLoginPage() {
     debugger;
-    window.location.href = "./rate-search";
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        CompanyID: [1456412466, 1424312173, 1420702123]
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        window.location.href = "./rate-search";
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   handlechange(e) {
