@@ -69,6 +69,15 @@ class SpotRate extends Component {
               <div className="title-sect">
                 <h2>Rate Table</h2>
               </div>
+              <div className="login-fields mb-0 rate-tab-drop">
+                <select>
+                  <option>Select</option>
+                  <option>Select</option>
+                  <option>Select</option>
+                  <option>Select</option>
+                  <option>Select</option>
+                </select>
+              </div>
               <div className="rate-table-range">
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
@@ -80,7 +89,7 @@ class SpotRate extends Component {
                   onChange={value => this.setState({ value })}
                 />
               </div>
-              <div>
+              <div className="rate-table-butn">
                 <a href="#!" className="blue-butn butn m-0">
                   Proceed
                 </a>

@@ -451,13 +451,18 @@ class ShippingDetails extends Component {
     let errors = this.state.errors;
     let formIsValid = true;
 
-    if (!fields["ShipmentStage"] && !fields["ModeOfTransport"]) {
+    if(!fields["ModeOfTransport"]){
       formIsValid = false;
-      alert("Please enter Fields");
-    }
-    return formIsValid;
-  }
-
+      alert("Please enter Mode Of Transport");
+   }
+   if(!fields["ShipmentStage"])
+   {
+    formIsValid = false;
+    alert("Please enter ShipmentStage");
+   }
+   return formIsValid;
+  } 
+  
   render() {
     const { shipmentSummary } = this.state;
 
@@ -1097,10 +1102,17 @@ class ShippingDetails extends Component {
                           <label style={{ padding: "11px" }}></label>
                           <button
                             type="button"
-                            className="butn"
+                            className="butn mr-3"
                             onClick={this.handleSubmit}
                           >
                             Submit
+                          </button>
+                          <button
+                            type="button"
+                            className="butn cancel-butn"
+                            onClick={this.toggleAdvSearch}
+                          >
+                            Cancel
                           </button>
                         </div>
                       </div>

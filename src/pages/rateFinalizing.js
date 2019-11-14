@@ -3,6 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
+import Dummy from "./../assets/dummy.pdf";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -18,12 +19,24 @@ class RateFinalizing extends Component {
       modalNewConsignee: false,
       commoditySelect: "select",
       cargoSelect: "select",
-      rateQuery: true
+      rateQuery: true,
+      rateDetails: [],
+      rateSubDetails: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleNewConsignee = this.toggleNewConsignee.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
+  }
+
+  componentDidMount() {
+    debugger;
+    var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
+    var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
+    this.setState({
+      rateDetails: rateDetails,
+      rateSubDetails: rateSubDetails
+    });
   }
 
   toggleProfit() {
@@ -40,6 +53,10 @@ class RateFinalizing extends Component {
     this.setState(prevState => ({
       modalNewConsignee: !prevState.modalNewConsignee
     }));
+  }
+
+  newOpen() {
+    window.open("http://www.google.com", "_blank");
   }
 
   commoditySelect(e) {
@@ -108,33 +125,33 @@ class RateFinalizing extends Component {
   }
 
   render() {
-    var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
-    ];
-    var data2 = [
-      {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        finalPayment: "$45,986.00"
-      },
-      {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
-      },
-      {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
-      }
-    ];
+    // var data1 = [
+    //   { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
+    //   { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
+    // ];
+    // var data2 = [
+    //   {
+    //     chargeCode: "A23435",
+    //     chargeName: "Lorem",
+    //     units: "43",
+    //     unitPrice: "$134.00",
+    //     finalPayment: "$45,986.00"
+    //   },
+    //   {
+    //     chargeCode: "B45678",
+    //     chargeName: "Lorem",
+    //     units: "23",
+    //     unitPrice: "$56.45",
+    //     finalPayment: "$1200.00"
+    //   },
+    //   {
+    //     chargeCode: "C54545",
+    //     chargeName: "Lorem",
+    //     units: "56",
+    //     unitPrice: "$50.00",
+    //     finalPayment: "$3456.00"
+    //   }
+    // ];
 
     return (
       <React.Fragment>
@@ -284,8 +301,8 @@ class RateFinalizing extends Component {
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
-                                      <p className="details-title">Valid</p>
-                                      <p className="details-para">TT</p>
+                                      <p className="details-title">TT</p>
+                                      <p className="details-para">23</p>
                                     </React.Fragment>
                                   );
                                 }
@@ -304,7 +321,7 @@ class RateFinalizing extends Component {
                             ]
                           }
                         ]}
-                        data={data1}
+                        data={[JSON.parse(localStorage.getItem("rateDetails"))]}
                         minRows={0}
                         showPagination={false}
                         className="-striped -highlight"
@@ -312,7 +329,11 @@ class RateFinalizing extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={data2}
+                                data={[
+                                  JSON.parse(
+                                    localStorage.getItem("rateSubDetails")
+                                  )
+                                ]}
                                 columns={[
                                   {
                                     columns: [
@@ -493,7 +514,7 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                     <div className="text-right">
-                      <a href="#!" className="butn mr-3">
+                      <a href={Dummy} target="_blank" className="butn mr-3">
                         Preview
                       </a>
                       <a
@@ -546,8 +567,8 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
-              <div className="txt-cntr">
-                <div className="d-flex align-items-center">
+              <div className="txt-cntr text-center">
+                {/* <div className="d-flex align-items-center">
                   <p className="details-title mr-3">Consignee Name</p>
                   <div class="spe-equ d-block m-0 flex-grow-1">
                     <input type="text" class="w-100" />
@@ -570,12 +591,27 @@ class RateFinalizing extends Component {
                   <div class="spe-equ d-block m-0 flex-grow-1">
                     <input type="text" class="w-100" />
                   </div>
-                </div>
+                </div> */}
+                <p>Do you want to save the Quote ?</p>
               </div>
               <div className="text-center">
-                <Button className="butn" onClick={this.toggleNewConsignee}>
-                  Create
-                </Button>
+                <a
+                  href="/quote-table"
+                  className="butn mx-2"
+                  onClick={() => {
+                    this.toggleNewConsignee();
+                    this.newOpen();
+                  }}
+                >
+                  Yes
+                </a>
+                <a
+                  href="#!"
+                  className="butn cancel-butn mx-2"
+                  onClick={this.toggleNewConsignee}
+                >
+                  No
+                </a>
               </div>
             </ModalBody>
           </Modal>
@@ -589,19 +625,7 @@ class RateFinalizing extends Component {
               <h3 className="mb-4">Request Changes</h3>
               <div className="rename-cntr login-fields">
                 <label>Discount</label>
-                <div className="d-flex">
-                  <input
-                    type="text"
-                    className="w-50"
-                    placeholder="Enter Discount"
-                  />
-                  <input
-                    type="text"
-                    value="INR"
-                    disabled
-                    className="crncy-field"
-                  />
-                </div>
+                <input type="text" placeholder="Enter Discount" />
               </div>
               <div className="rename-cntr login-fields">
                 <label>Free Time</label>

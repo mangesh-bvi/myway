@@ -12,6 +12,7 @@ import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
 import Select from "react-select";
+import { Link } from "react-router-dom";
 import {
   withScriptjs,
   withGoogleMap,
@@ -61,12 +62,14 @@ class RateTable extends Component {
       value: 50,
       RateDetails: [],
       values: [],
-      RateSubDetails: []
+      RateSubDetails: [],
+      checkSelection: []
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
     this.toggleQuant = this.toggleQuant.bind(this);
     this.HandleRateDetails = this.HandleRateDetails.bind(this);
+    this.checkSelection = this.checkSelection.bind(this);
   }
 
   static defaultProps = {
@@ -90,6 +93,33 @@ class RateTable extends Component {
     this.setState(prevState => ({
       modalQuant: !prevState.modalQuant
     }));
+  }
+
+  handleCheck() {
+    debugger;
+    this.props.history.push({
+      pathname: "rate-finalizing",
+      state: { rateDetail: this.state.RateDetails }
+    });
+  }
+
+  // checkSelection(e, row) {
+  //   debugger;
+  //   var abc = row;
+  //   let checkSelectionLocal = this.state.checkSelection;
+  //   checkSelectionLocal.push(e.target.id);
+  //   this.setState({
+  //     checkSelection: checkSelectionLocal
+  //   });
+  //   console.log(this.state.checkSelection);
+  // }
+
+  checkSelection(evt, row) {
+    console.log(row.index);
+    let tempRate = this.state.RateDetails;
+    tempRate[row.index].checkbx = evt.target.checked;
+    this.setState({ RateDetails: tempRate });
+    console.log(this.state.RateDetails[row.index]);
   }
 
   HandleRateDetails() {
@@ -207,6 +237,15 @@ class RateTable extends Component {
               <div className="title-sect">
                 <h2>Rate Table</h2>
               </div>
+              <div className="login-fields mb-0 rate-tab-drop">
+                <select>
+                  <option>Select</option>
+                  <option>Select</option>
+                  <option>Select</option>
+                  <option>Select</option>
+                  <option>Select</option>
+                </select>
+              </div>
               <div className="rate-table-range">
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
@@ -219,9 +258,21 @@ class RateTable extends Component {
                 />
               </div>
               <div className="rate-table-butn">
-                <a href="rate-finalizing" className="blue-butn butn m-0">
+                {/* <button
+                  onClick={this.handleCheck}
+                  className="blue-butn butn m-0"
+                >
                   Proceed
-                </a>
+                </button> */}
+                <Link
+                  to={{
+                    pathname: "/rate-finalizing",
+                    state: { detail: this.state.rateDetail }
+                  }}
+                  className="blue-butn butn m-0"
+                >
+                  Proceed
+                </Link>
               </div>
             </div>
             <div className="rate-table-below">
@@ -350,28 +401,37 @@ class RateTable extends Component {
                       {
                         columns: [
                           {
-                            // Cell: row => {
-                            //   i++;
-                            //   return (
-                            //     <React.Fragment>
-                            //       <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                            //         <div className="remember-forgot d-block m-0">
-                            //           <input
-                            //             id={"maersk-logo" + i}
-                            //             type="checkbox"
-                            //             name={"rate-tab-check"}
-                            //           />
-                            //           <label
-                            //             htmlFor={"maersk-logo" + i}
-                            //           ></label>
-                            //         </div>
-                            //       </div>
-                            //       <div className="rate-tab-img">
-                            //         <img src={maersk} alt="maersk icon" />
-                            //       </div>
-                            //     </React.Fragment>
-                            //   );
-                            // },
+                            Cell: row => {
+                              i++;
+                              return (
+                                <React.Fragment>
+                                  <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                    <div className="remember-forgot d-block m-0">
+                                      <input
+                                        id={"maersk-logo" + i}
+                                        type="checkbox"
+                                        name={"rate-tab-check"}
+                                        checked={
+                                          this.state.RateDetails[i - 1].checkbx
+                                            ? this.state.RateDetails[i - 1]
+                                                .checkbx
+                                            : false
+                                        }
+                                        onChange={e =>
+                                          this.checkSelection(e, row)
+                                        }
+                                      />
+                                      <label
+                                        htmlFor={"maersk-logo" + i}
+                                      ></label>
+                                    </div>
+                                  </div>
+                                  <div className="rate-tab-img">
+                                    <img src={maersk} alt="maersk icon" />
+                                  </div>
+                                </React.Fragment>
+                              );
+                            },
                             accessor: "lineName",
                             minWidth: 200
                           },
@@ -380,9 +440,12 @@ class RateTable extends Component {
                               debugger;
                               return (
                                 <>
-                                  {new Date(
-                                    row.original.expiryDate
-                                  ).toLocaleDateString("en-US")}
+                                  <p className="details-title">Valid Until</p>
+                                  <p className="details-para">
+                                    {new Date(
+                                      row.original.expiryDate
+                                    ).toLocaleDateString("en-US")}
+                                  </p>
                                 </>
                               );
                             },
@@ -390,6 +453,17 @@ class RateTable extends Component {
                             minWidth: 175
                           },
                           {
+                            Cell: row => {
+                              debugger;
+                              return (
+                                <>
+                                  <p className="details-title">TT</p>
+                                  <p className="details-para">
+                                    {row.original.transitTime}
+                                  </p>
+                                </>
+                              );
+                            },
                             accessor: "transitTime",
                             minWidth: 120
                           },
@@ -398,10 +472,13 @@ class RateTable extends Component {
                               debugger;
                               return (
                                 <>
-                                  {row.original.baseFreightFee != "" ||
-                                  row.original.baseFreightFee != null
-                                    ? row.original.baseFreightFee + " USD"
-                                    : null}
+                                  <p className="details-title">Price</p>
+                                  <p className="details-para">
+                                    {row.original.baseFreightFee != "" ||
+                                    row.original.baseFreightFee != null
+                                      ? row.original.baseFreightFee + " USD"
+                                      : null}
+                                  </p>
                                 </>
                               );
                             },
@@ -424,30 +501,48 @@ class RateTable extends Component {
                               {
                                 columns: [
                                   {
-                                    Header: "Charge Code",
+                                    Header: "Charge Name",
                                     accessor: "ChargeCode"
                                   },
                                   {
-                                    Header: "Charge Name",
-                                    accessor: "ChargeItem"
+                                    Header: "Tax",
+                                    accessor: "Tax"
                                   },
                                   {
                                     Header: "Units",
-                                    accessor: "units"
+                                    accessor: "ChargeItem"
+                                  },
+                                  {
+                                    Header: "Exrate",
+                                    accessor: "Exrate"
+                                  },
+                                  {
+                                    Header: "Charge Type",
+                                    accessor: "ChargeType"
                                   },
                                   {
                                     Header: "Unit Price",
-                                    accessor: "Rate"
+                                    accessor: "Rate",
+                                    Cell: props => (
+                                      <React.Fragment>
+                                        {props.original.Rate}
+                                        &nbsp;
+                                        {props.original.Currency}
+                                      </React.Fragment>
+                                    )
                                   },
                                   {
                                     Cell: row => {
                                       debugger;
                                       return (
                                         <>
-                                          {row.original.TotalAmount != "" ||
+                                          {/* {row.original.TotalAmount != "" ||
                                           row.original.TotalAmount != null
                                             ? row.original.TotalAmount + " USD"
-                                            : null}
+                                            : null} */}
+                                          {row.original.TotalAmount}
+                                          &nbsp;
+                                          {row.original.BaseCurrency}
                                         </>
                                       );
                                     },

@@ -36,14 +36,14 @@ var volumeOptions = {
       padding: 20
     }
   },
-  scales: {
+  scales: { //volumeOptions.scales.yAxes.scaleLabel.labelString
     yAxes: [
       {
         ticks: {
           fontColor: "#999",
           fontSize: 14,
           callback: function(value) {
-            return value + "k";
+            return value ;
           }
         },
         scaleLabel: {
@@ -107,10 +107,255 @@ class Analytics extends Component {
       toggleYearDate:false,
       graflabels:[],
       graphdataset:[],
+      grafShipmentlabels:[],
+      graphShipmentdataset:[],
+      toggleShipmentWeekDate:false,
+      toggleShipmentMonthDate:true,
+      toggleShipmentYearDate:false,
       setSupplierdrop:[]
     };
+    this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
+  }
 
+  componentDidMount() {
+    this.handleAnalyticsShipment(null);
+    
+  }
 
+  handleAnalyticsShipment(event)
+  {
+    let self = this;
+
+   // var FromDate = "2019-01-01";
+   // var ToDate = "2019-06-30";
+   var FromDate = "";
+   var ToDate = "";
+    var ActiveFlag = "D";
+    var Mode = "A,O,I";
+    var period = document.getElementById('drp-period-shipment').value;
+    var DatedBy = document.getElementById("Datedbydrp").value;
+    
+    if(event != null)
+    {
+     // alert(event.target.id)
+
+      if(event.target.id == "shipment-view-btn")
+      {
+        var ActiveFlagele = document.getElementsByName('ship-type');         
+        for(var i = 0; i < ActiveFlagele.length; i++) { 
+          if(ActiveFlagele[i].checked) 
+          ActiveFlag = ActiveFlagele[i].value; 
+        } 
+
+      var Modeele = document.getElementsByName('ship-way');     
+        if(Modeele.length > 0)
+        {    
+          for(var i = 0; i < Modeele.length; i++) { 
+          if(Modeele[i].checked) 
+          Mode = Modeele[i].value; 
+          } 
+        }
+      }
+    }
+    else
+    {
+      //All
+      document.getElementById("delivered-ship").click();
+    }
+
+    if(period == "M")
+    {
+      var tempfromdate = document.getElementById('datpicker-from-shipment').value.split('/'); //05/12/2019
+      var temptodate = document.getElementById('datpicker-to-shipment').value.split('/');
+      FromDate = tempfromdate[1] +"-"+  tempfromdate[0] + "-01";
+      ToDate = temptodate[1] +"-"+  temptodate[0] + "-01";
+    }
+    else if (period == "W")
+    {
+      var tempfromdate = document.getElementById('datpicker-from-shipment').value.split('/'); //05/12/2019
+      var temptodate = document.getElementById('datpicker-to-shipment').value.split('/');
+      FromDate = tempfromdate[2] +"-"+  tempfromdate[0] + "-" + tempfromdate[1];
+      ToDate = temptodate[2] +"-"+  temptodate[0] + "-" + temptodate[1];
+    }
+    else if(period == "Y")
+    {
+      var tempfromdate =  document.getElementById('date-year-shipment').value
+      FromDate = tempfromdate +"-01-01";
+      ToDate = tempfromdate +"-12-31";
+    }
+    var g1 = new Date(FromDate); 
+    var g2 = new Date(ToDate); 
+    
+     if (g1.getTime() > g2.getTime()) 
+     {
+        alert("To date should be greater then From date.");
+        document.getElementById('datpicker-to-shipment').focus();
+        return false;
+     }
+  
+    var  axiosdata = {
+      UserId:encryption(window.localStorage.getItem("userid"), "desc"),
+      FromDate:FromDate,
+      ToDate:ToDate,
+      ActiveFlag: ActiveFlag,
+      Mode: Mode,
+      period: period,
+      //ShipperID:1340354108
+      DatedBy: DatedBy
+    }
+    
+    this.setShipmentGraph(axiosdata)
+  }
+
+  setShipmentGraph(axiosdata)
+  {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ShipmentAnalyticsAPI`,
+      data: axiosdata,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      self.setState({graphShipmentdataset: []})
+      var Segregatedby = document.getElementById("SegregatedBydrp").value;
+      //ValueChart
+      var Table = [];
+      var graphdataset = [];
+      var arrayAir = [];
+      var arrayOcean = [];
+      var arrayTruck = [];
+
+      if(Segregatedby == "CountChart")
+      {
+        Table = response.data.Table;
+        arrayAir = Table.filter(item => item.Modeoftransport == "Air")
+        arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean")
+        arrayTruck = Table.filter(item => item.Modeoftransport == "Inland")
+        volumeOptions.title.text = "Total no of shipment";
+        volumeOptions.scales.yAxes[0].scaleLabel.labelString = "Count";
+      }
+      else  if(Segregatedby == "VolumeChart")
+      {
+        Table = response.data.Table1;
+        arrayAir = Table.filter(item => item.ModeOfTransport == "Air")
+        arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean")
+        arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland")
+        volumeOptions.title.text = "Total volume of shipment";
+        volumeOptions.scales.yAxes[0].scaleLabel.labelString = "KGS";
+      }
+     
+      var arraylabel = [];
+      var arrayAirdata = [];
+      var arrayOceandata = [];
+      var arrayTruckdata = [];
+
+      for(var i = 0; i < Table.length; i++)
+      {
+        var index = arraylabel.indexOf(Table[i].ShipmentPeriod);
+        if (index > -1) {}
+        else
+        {
+          arraylabel.push(Table[i].ShipmentPeriod)
+        }
+        self.setState({grafShipmentlabels: arraylabel})
+      }
+
+      if(arrayAir != null)
+      {
+        if(arrayAir.length > 0)
+        {
+          for(var i = 0; i < arrayAir.length; i++)
+          {
+            if(Segregatedby == "VolumeChart")
+            {
+             arrayAirdata.push(arrayAir[i].Volume)
+            }
+            else  if(Segregatedby == "CountChart")
+            {
+              arrayAirdata.push(arrayAir[i].NoOfShipment)
+            }
+          }
+          graphdataset.push({
+            label: "Air",
+            data: arrayAirdata,
+            backgroundColor: "#3357ac"
+          });
+        }
+      }
+
+      if(arrayOcean != null)
+      {
+        if(arrayOcean.length > 0)
+        {
+          for(var i = 0; i < arrayOcean.length; i++)
+          {
+            if(Segregatedby == "VolumeChart")
+            {
+              arrayOceandata.push(arrayOcean[i].Volume)
+            }
+            else  if(Segregatedby == "CountChart")
+            {
+              arrayOceandata.push(arrayOcean[i].NoOfShipment)
+            }
+          }
+          graphdataset.push({
+            fillColor: "rgba(172,194,132,0.4)",
+            strokeColor: "#ACC26D",
+            pointColor: "#fff",
+            pointStrokeColor: "#9DB86D",
+            label: "Ocean",
+            data: arrayOceandata,
+            backgroundColor: "#4a99e7"
+          });
+        }
+        
+      }
+
+      if(arrayTruck != null)
+      {
+        if(arrayTruck.length > 0)
+        {
+          for(var i = 0; i < arrayTruck.length; i++)
+          {
+            if(Segregatedby == "VolumeChart")
+            {
+              arrayTruckdata.push(arrayTruck[i].Volume)
+            }
+            else  if(Segregatedby == "CountChart")
+            {
+              arrayTruckdata.push(arrayTruck[i].NoOfShipment)
+            }
+          }
+          graphdataset.push({
+            label: "Inland",
+            data: arrayTruckdata,
+            backgroundColor: "#50ad84"
+          });
+        }
+       
+      }
+
+      self.setState({graphShipmentdataset: graphdataset})
+
+    }).catch(error => {
+      debugger;
+      var temperror  = "";
+      var err = "";
+      if(error.response != undefined)
+      {
+        temperror = error.response.data;
+        err = temperror.split(":")[1].replace("}", "");
+      }
+      else{
+        temperror = error.message;
+        err = temperror;
+      }
+    
+      alert(err)
+      self.setState({graphShipmentdataset: []})
+    })
   }
 
   handleChangeStart = e => {
@@ -126,8 +371,7 @@ class Analytics extends Component {
   };
 
   handleChangePerion = e => {
-  //  alert(e.target.value)
-    //showMonthYearPicker
+
     if(e.target.value == "W")
     {
       this.setState({
@@ -154,6 +398,34 @@ class Analytics extends Component {
     }
   };
 
+  handleShipmentChangePerion = e => {
+
+    if(e.target.value == "W")
+    {
+      this.setState({
+      toggleShipmentWeekDate:true,
+      toggleShipmentMonthDate:false,
+      toggleShipmentYearDate:false
+      });
+    }
+    if(e.target.value == "M")
+    {
+      this.setState({
+      toggleShipmentWeekDate:false,
+      toggleShipmentMonthDate:true,
+      toggleShipmentYearDate:false
+      });
+    }
+    if(e.target.value == "Y")
+    {
+      this.setState({
+      toggleShipmentWeekDate:false,
+      toggleShipmentMonthDate:false,
+      toggleShipmentYearDate:true
+      });
+    }
+  };
+
   toggleBtnsShip = e => {
     console.log(e.target.id);
     if (e.target.id === "ship-ship") {
@@ -173,6 +445,7 @@ class Analytics extends Component {
       });
     }
   };
+
   toggleBtnsInv = e => {
     console.log(e.target.id);
     if (e.target.id === "ship-inv") {
@@ -196,10 +469,7 @@ class Analytics extends Component {
   handleAnalyticsInvoice(event) {
 
     let self = this;
-    
-   
 
-   
     var ActiveFlag = "D";
     var Mode = "A,O";
     var period =  document.getElementById('drp-period-invoice').value;
@@ -342,14 +612,14 @@ class Analytics extends Component {
         {
           arraylabel.push(response.data.Table[i].ShipmentPeriod)
         }
-        self.setState({graflabels: arraylabel})
+        self.setState({grafShipmentlabels: arraylabel})
       }
 
       var graphdataset = []
 
       var arrayAir = response.data.Table.filter(item => item.ModeOfTransport == "Air")
       var arrayOcean = response.data.Table.filter(item => item.ModeOfTransport == "Ocean")
-      var arrayTruck = response.data.Table.filter(item => item.ModeOfTransport == "Truck")
+      var arrayTruck = response.data.Table.filter(item => item.ModeOfTransport == "Inland")
 
         if(arrayAir != null)
         {
@@ -432,6 +702,10 @@ class Analytics extends Component {
   }
 
   render() {
+    var buyerShipmentData = {
+      labels: this.state.grafShipmentlabels,
+      datasets: this.state.graphShipmentdataset
+    };
     var buyerData = {
       labels: this.state.graflabels,
       datasets: this.state.graphdataset
@@ -475,6 +749,7 @@ class Analytics extends Component {
                   role="tab"
                   aria-controls="shipments"
                   aria-selected="true"
+                  onClick={this.handleAnalyticsShipment.bind(this)}
                 >
                   Shipments
                 </a>
@@ -504,7 +779,7 @@ class Analytics extends Component {
                   <div className="ana-viw">
                     <div className="analy-radio new-radio-rate-cntr radio-light-blue">
                       <div>
-                        <input type="radio" name="ship-type" id="active-ship" checked />
+                        <input type="radio" name="ship-type" id="active-ship" value="A" />
                         <label htmlFor="active-ship">Active</label>
                       </div>
                       <div>
@@ -512,6 +787,7 @@ class Analytics extends Component {
                           type="radio"
                           name="ship-type"
                           id="delivered-ship"
+                          value="D"
                         />
                         <label htmlFor="delivered-ship">Delivered</label>
                       </div>
@@ -522,6 +798,7 @@ class Analytics extends Component {
                           type="radio"
                           name="ship-way"
                           id="plane-ship"
+                          value="A"
                           onClick={this.toggleBtnsShip}
                         />
                         <label htmlFor="plane-ship">
@@ -542,6 +819,7 @@ class Analytics extends Component {
                           type="radio"
                           name="ship-way"
                           id="ship-ship"
+                          value="O"
                           onClick={this.toggleBtnsShip}
                         />
                         <label htmlFor="ship-ship">
@@ -562,6 +840,7 @@ class Analytics extends Component {
                           type="radio"
                           name="ship-way"
                           id="road-ship"
+                          value="I"
                           onClick={this.toggleBtnsShip}
                         />
                         <label htmlFor="road-ship">
@@ -603,14 +882,14 @@ class Analytics extends Component {
                       </div>
                     )}
                   </div>
-                  <button className="butn mt-0">view</button>
+                  <button className="butn mt-0"  onClick={this.handleAnalyticsShipment.bind(this)} id="shipment-view-btn">view</button>
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
-                    <select>
-                      <option>Weekly</option>
-                      <option>Monthly</option>
-                      <option>Yearly</option>
+                    <select onChange={this.handleShipmentChangePerion} id="drp-period-shipment">
+                      <option value="W">Weekly</option>
+                      <option selected value="M">Monthly</option>
+                      <option value="Y">Yearly</option>
                     </select>
                   </div>
                   {/* <div className="login-fields mb-0 d-flex align-items-center">
@@ -623,38 +902,86 @@ class Analytics extends Component {
                   </div> */}
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Segregated&nbsp;by </span>
-                    <select>
-                      <option>Volume Chart</option>
-                      <option>Count Chart</option>
-                      <option>Value Chart</option>
+                    <select id="SegregatedBydrp">
+                      <option value="VolumeChart">Volume Chart</option>
+                      <option value="CountChart">Count Chart</option>
+                      <option value="ValueChart">Value Chart</option>
                     </select>
                   </div>
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Dated&nbsp;by </span>
-                    <select>
-                      <option>Delivery Date</option>
-                      <option>Booking Date</option>
-                      <option>Dispatched Date</option>
+                    <select id="Datedbydrp">
+                      <option value="Delivery Date" seected>Delivery Date</option>
+                      <option value="Booking Date">Booking Date</option>
+                      <option value="Dispatched Date">Dispatched Date</option>
                     </select>
                   </div>
+                  {this.state.toggleShipmentYearDate && (
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>Year</span>
+                    <select id="date-year-shipment">
+                    {this.buildOptions()}
+                    </select>
+                  </div>
+                  )}
+                  {!this.state.toggleShipmentYearDate && (
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>From </span>
-                    <DatePicker
+
+                    {this.state.toggleShipmentWeekDate && (
+                      <DatePicker
+                      id="datpicker-from-shipment"
                       className="ana-to"
                       selected={this.state.startDate}
                       onChange={this.handleChangeStart}
+                      maxDate={new Date()}
+                      showWeekNumbers
                     />
+                    )}
+                    {this.state.toggleShipmentMonthDate && (
+                     <DatePicker
+                     id="datpicker-from-shipment"
+                     className="ana-to"
+                     selected={this.state.startDate}
+                     onChange={this.handleChangeStart}
+                     dateFormat="MM/yyyy"
+                     maxDate={new Date()}
+                     showMonthYearPicker
+                   />
+                    )}
                   </div>
+                  )}
+                  {!this.state.toggleShipmentYearDate && (
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>To </span>
+                    {this.state.toggleShipmentWeekDate && (
+                     
+                     <DatePicker
+                     id="datpicker-to-shipment"
+                     className="ana-to"
+                     selected={this.state.endDate}
+                     onChange={this.handleChangeEnd}
+                     maxDate={new Date()}
+                     showWeekNumbers
+                   />
+                     )}
+                     {this.state.toggleShipmentMonthDate && (
+                     
                     <DatePicker
-                      className="ana-to"
-                      selected={this.state.endDate}
-                      onChange={this.handleChangeEnd}
-                    />
+                     id="datpicker-to-shipment"
+                     className="ana-to"
+                     selected={this.state.endDate}
+                     onChange={this.handleChangeEnd}
+                     dateFormat="MM/yyyy"
+                     maxDate={new Date()}
+                     showMonthYearPicker
+                   />
+                     )}
+
                   </div>
+                  )}
                   {/* <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Values </span>
                     <select>
@@ -667,20 +994,20 @@ class Analytics extends Component {
                 <div className="row">
                   <div className="col-md-9">
                     <Bar
-                      data={buyerData}
+                      data={buyerShipmentData}
                       width={100}
                       height={50}
                       options={volumeOptions}
                     />
                   </div>
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <Doughnut
                       data={greenCounterdata}
                       width={700}
                       height={600}
                       options={greencounterOption}
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div
@@ -812,7 +1139,7 @@ class Analytics extends Component {
                       {optionSupplierName}
                     </select>
                   </div>
-                  {/* toggleYearDate */}
+
                   {this.state.toggleYearDate && (
                     <div className="login-fields mb-0 d-flex align-items-center">
                       <span>Year</span>

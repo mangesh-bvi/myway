@@ -86,14 +86,15 @@ class Login extends React.Component {
   }
 
   HandleDisplaySalesPersonData(sData) {
-    debugger;
+    //debugger;
     //get Companies
     let self = this;
     var mydata = sData; //JSON.parse(data);
     //alert(mydata.length);
 
     //get Companies
-    const finalNode=[];
+    const finalNode = [];
+    const checkedNode = [];
     const distinctOffice = [];
     const distinctContactDisName = [];
     const distinctAssociateComp = [];
@@ -123,7 +124,10 @@ class Login extends React.Component {
           officeName: officeName,
           value: ContactID,
           label: contactDName,
-          child: [{ value: 1, label: 2 }, { value: 1, label: 2 }]
+          child: [
+            { value: 1, label: 2 },
+            { value: 1, label: 2 }
+          ]
         });
       }
 
@@ -137,6 +141,7 @@ class Login extends React.Component {
       var ContactDisplayName = item.ContactDisplayName;
       var ContactID = item.ContactID;
       var nOfficeID = item.OfficeID;
+      var boolMap = item.ISCompMapped;
       if (
         !distinctAssociateCompmap.has(officeName) &&
         !distinctAssociateCompmap.has(Company_Name) &&
@@ -150,7 +155,8 @@ class Login extends React.Component {
           Company_ID: Company_ID,
           ContactDisplayName: ContactDisplayName,
           ContactID: ContactID,
-          OfficeID: nOfficeID
+          OfficeID: nOfficeID,
+          ISCompMapped: boolMap
         });
       }
     }
@@ -200,10 +206,18 @@ class Login extends React.Component {
 
             var cvId = distinctAssociateComp[k]["Company_ID"];
             var cnName = distinctAssociateComp[k]["Company_Name"];
+            var bMapped = distinctAssociateComp[k]["ISCompMapped"];
 
             associateCompData.value = cvId;
             associateCompData.label = cnName;
             salesPersonChildData.push(associateCompData);
+
+            ///Set checked Node
+            if (bMapped === true);
+            {
+              var tData = cvId.toString();
+              checkedNode.push(tData);
+            }
           }
         }
 
@@ -215,10 +229,14 @@ class Login extends React.Component {
         salesPersondata.push(salesPersonName);
       }
       salesPersonDataByComp.children = salesPersondata;
-      
+
       finalNode.push(salesPersonDataByComp);
     }
-    self.setState({ nodes: finalNode, checked: ["352200103"] });
+    debugger;
+    //self.setState({ nodes: finalNode, checked: ["352200103, 1337604146"] });
+    // self.setState({ nodes: finalNode, checked: ["1420702123"] });
+    //self.setState({ nodes: finalNode, checked: ["1420702123"] });
+    self.setState({ nodes: finalNode, checked: checkedNode });
   }
   toggleSalesLogin() {
     let self = this;
@@ -226,12 +244,20 @@ class Login extends React.Component {
   }
   toggleSalesLoginPage() {
     debugger;
+    var checkedCompData = this.state.checked;
+    var finalselectedData = [];
+    for (var i = 0; i < checkedCompData.length; i++) {
+      finalselectedData.push(parseInt(checkedCompData[i]));
+    }
+
+    debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        CompanyID: [1456412466, 1424312173, 1420702123]
+        //CompanyID: [1456412466, 1424312173, 1420702123]
+        CompanyID: finalselectedData
       },
       headers: authHeader()
     })
@@ -240,6 +266,7 @@ class Login extends React.Component {
         window.location.href = "./rate-search";
       })
       .catch(error => {
+        debugger;
         console.log(error);
       });
   }

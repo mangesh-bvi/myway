@@ -9,6 +9,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Eye from "./../assets/img/eye.png";
 import Copy from "./../assets/img/copy.png";
+import Edit from "./../assets/img/pencil.png";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -129,6 +130,13 @@ class BookingTable extends Component {
                             onClick={e => this.HandleRowClickEvt(e, row)}
                           /> */}
                           {/* </a> */}
+                          <a href="/rate-finalizing-still-booking">
+                            <img
+                              className="actionicon"
+                              src={Edit}
+                              alt="view-icon"
+                            />
+                          </a>
                           <a href="/rate-finalizing">
                             <img
                               className="actionicon"
