@@ -12,6 +12,7 @@ import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
 import Select from "react-select";
+import makeAnimated from "react-select/animated";
 import { Link } from "react-router-dom";
 import {
   withScriptjs,
@@ -21,6 +22,8 @@ import {
 } from "react-google-maps";
 import GreenIcon from "./../assets/img/green-circle.png";
 import RedIcon from "./../assets/img/red-circle.png";
+
+const animatedComponents = makeAnimated();
 
 class Reports extends Component {
   constructor(props) {
@@ -38,6 +41,12 @@ class Reports extends Component {
   }
 
   render() {
+    const options = [
+      { value: "20 DC", label: "20 DC" },
+      { value: "30 DC", label: "30 DC" },
+      { value: "40 DC", label: "40 DC" },
+      { value: "50 DC", label: "50 DC" }
+    ];
     return (
       <div>
         <Headers />
@@ -46,7 +55,120 @@ class Reports extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <p>kgiuij</p>
+            <div className="rate-fin-tit title-border title-sect mb-4">
+              <h2>Scheduler Report</h2>
+            </div>
+            <div className="report-cntr">
+              <div className="container">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="login-fields">
+                      <label>Report Name</label>
+                      <Select
+                        className="rate-dropdown w-100 m-0"
+                        components={animatedComponents}
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="login-fields">
+                      <label>Mode Of Transport</label>
+                      <Select
+                        className="rate-dropdown w-100 m-0"
+                        components={animatedComponents}
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="login-fields">
+                      <label>Origin Country</label>
+                      <Select
+                        className="rate-dropdown w-100 m-0"
+                        closeMenuOnSelect={false}
+                        components={animatedComponents}
+                        isMulti
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="login-fields">
+                      <label>Destination Country</label>
+                      <Select
+                        className="rate-dropdown w-100 m-0"
+                        closeMenuOnSelect={false}
+                        components={animatedComponents}
+                        isMulti
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="login-fields">
+                      <label>Port Of Loading</label>
+                      <Select
+                        className="rate-dropdown w-100 m-0"
+                        closeMenuOnSelect={false}
+                        components={animatedComponents}
+                        isMulti
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="login-fields">
+                      <label>Port Of Departure</label>
+                      <Select
+                        className="rate-dropdown w-100 m-0"
+                        closeMenuOnSelect={false}
+                        components={animatedComponents}
+                        isMulti
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="login-fields">
+                      <label>Product ID</label>
+                      <input />
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="login-fields">
+                      <label>PO Number</label>
+                      <input />
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="login-fields">
+                      <label>Invoice Number</label>
+                      <input />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="login-fields">
+                      <label>Reg. Company</label>
+                      <Select
+                        className="rate-dropdown w-100 m-0"
+                        closeMenuOnSelect={false}
+                        components={animatedComponents}
+                        isMulti
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12">
+                    <a href="#!" className="butn mt-3">
+                      View
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

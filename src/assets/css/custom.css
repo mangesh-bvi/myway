@@ -2060,6 +2060,12 @@ table tbody tr:last-child {
   overflow: auto;
 }
 
+/* reports starts */
+.report-cntr {
+  padding: 0 15px 35px;
+}
+/* reports ends */
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */

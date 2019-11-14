@@ -117,7 +117,7 @@ class NewRateSearch extends Component {
       shipmentType: "",
       modeoftransport: "",
       containerLoadType: "",
-      typesofMove: '',
+      typesofMove: "",
       PickupCity: "",
       DeliveryCity: "",
       OriginGeoCordinates: "",
@@ -322,9 +322,11 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "Gross Weight" :" Gross Weight"}
+              placeholder={
+                el.Gross_Weight === 0 ? "Gross Weight" : " Gross Weight"
+              }
               name="Gross_Weight"
-              value={el.Gross_Weight||""}
+              value={el.Gross_Weight || ""}
               className="w-100"
             />
           </div>
@@ -960,13 +962,13 @@ class NewRateSearch extends Component {
   }
 
   HandleTypeofMove(e) {
-     debugger;
+    debugger;
     //  let self =this;
-    this.setState({ typesofMove: 'ads'});
+    this.setState({ typesofMove: "ads" });
 
     // var typeofmoveVal = e.target.id;
     // if (typeofmoveVal === "p2p") {
-      
+
     // }
 
     this.HandleGetIncoTerms();
