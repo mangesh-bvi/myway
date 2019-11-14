@@ -2150,12 +2150,19 @@ table tbody tr:last-child {
   color: #999;
   font-size: 10px;
   line-height: 7px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .header-ul-login-dtls {
   list-style: none;
   display: flex;
   padding: 0;
+  max-width: 200px;
+}
+.loign-dtlss {
+  overflow: hidden;
 }
 
 .header-ul-login-dtls li {
@@ -2224,6 +2231,9 @@ table tbody tr:last-child {
   border: none;
   background-color: white;
   padding: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .drp-usericon {
   width: 30px;

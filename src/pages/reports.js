@@ -6,22 +6,9 @@ import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import { Button, Modal, ModalBody } from "reactstrap";
-import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
-import ReactTable from "react-table";
-import maersk from "./../assets/img/maersk.png";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { Link } from "react-router-dom";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker
-} from "react-google-maps";
-import GreenIcon from "./../assets/img/green-circle.png";
-import RedIcon from "./../assets/img/red-circle.png";
 
 const animatedComponents = makeAnimated();
 
@@ -162,7 +149,7 @@ class Reports extends Component {
                 </div>
                 <div className="row">
                   <div className="col-md-12">
-                    <a href="#!" className="butn mt-3">
+                    <a href="/report-details" className="butn mt-3">
                       View
                     </a>
                   </div>
