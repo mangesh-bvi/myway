@@ -363,6 +363,20 @@ class Reports extends Component {
     this.setState({valRegCompany : val.value})
   }
 
+  handleSubmit = () => {
+
+    // valReportName:"",
+    // valRegCompany:""
+
+    var detailid = [{valReportName:this.state.valReportName},
+                    {valRegCompany:this.state.valRegCompany}];
+
+    this.props.history.push({
+      pathname: "spot-rate-details",
+      state: { detail: detailid }
+    });
+  }
+
   render() {
     const options = [
       { value: "20 DC", label: "20 DC" },
@@ -534,7 +548,7 @@ class Reports extends Component {
                 </div>
                 <div className="row">
                   <div className="col-md-12">
-                    <a href="#!"  className="butn mt-3">
+                    <a href="#!" onClick={this.handleView}  className="butn mt-3">
                       View
                     </a>
                   </div>

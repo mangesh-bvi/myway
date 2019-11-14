@@ -337,6 +337,10 @@ class Login extends React.Component {
             "dashboardrefreshtime",
             data.Table[0].DashboardRefreshTime
           );
+          window.localStorage.setItem(
+            "companyname",
+            encryption(data.Table[0].Company_Name, "enc")
+          );
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
           debugger;

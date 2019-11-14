@@ -43,6 +43,10 @@ class Header extends Component {
         window.localStorage.getItem("username"),
         "desc"
       );
+      document.getElementById("compName").textContent = encryption(
+        window.localStorage.getItem("companyname"),
+        "desc"
+      );
       document.getElementById("spnFirstName").textContent = encryption(
         window.localStorage.getItem("username"),
         "desc"
@@ -383,7 +387,14 @@ class Header extends Component {
                       />
                     </li>
 
-                    <li data-toggle="dropdown" className="p-0 mt-1">
+                    <li
+                      data-toggle="dropdown"
+                      className="p-0 mt-1 loign-dtlss"
+                      title={encryption(
+                        window.localStorage.getItem("companyname"),
+                        "desc"
+                      )}
+                    >
                       <div className="dropdown rmarrow">
                         <button
                           type="button"
@@ -393,7 +404,7 @@ class Header extends Component {
                         ></button>
                       </div>
 
-                      <p className="login-actore-text">LOREM IPSUM</p>
+                      <p className="login-actore-text" id="compName"></p>
                     </li>
                     <div className="dropdown-menu profile-dropdown">
                       <ul className="profile-ul">
