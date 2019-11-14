@@ -512,6 +512,7 @@ class Dashboard extends Component {
   }
 
   onPlaceSelected = place => {
+
     debugger;
     console.log("plc", place);
     const address = place.formatted_address,
