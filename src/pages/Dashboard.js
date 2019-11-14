@@ -985,7 +985,7 @@ class Dashboard extends Component {
                           className="map-icon-cntr"
                           onClick={this.handleHamb.bind(this)}
                         >
-                          <i class="fa fa-bars" aria-hidden="true"></i>
+                          <i className="fa fa-bars" aria-hidden="true"></i>
                         </div>
                         <div
                           className="map-icon-cntr rem-icon"

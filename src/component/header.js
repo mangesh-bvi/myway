@@ -92,6 +92,48 @@ class Header extends Component {
       //alert(document.getElementById("popupHBLNO").value)
     }
   }
+  
+
+BindNotifiation()
+{
+  let self = this;
+
+  axios({
+    method: "post",
+    url: `${appSettings.APIURL}/UserNotification`,
+    data: {
+      UserID: encryption(window.localStorage.getItem("userid"), "desc")
+    },
+    headers: authHeader()
+  }).then(function(response) {
+           // self.state.Notificationcount = response.data.Table.length;
+           var today = new Date();   
+           today.setDate(today.getDate() - 8 );
+
+           if(response != null)
+           {
+             if(response.data != null)
+             {
+               if(response.data.Table != null)
+               {
+                 if(response.data.Table.length > 0)
+                 {
+                  self.setState({ notificationData : response.data.Table.filter(item =>
+                    item.ActivityDate > today.toJSON())
+                  });
+                 if( self.state.notificationData != null)
+                 {
+                    var element = !!document.getElementById("Notificationcount"); 
+                    if (element) { 
+                      document.getElementById("Notificationcount").innerHTML  = self.state.notificationData.length;
+                    }                  
+                 }
+                  
+                 }
+               }
+             }
+           }  
+  });
 
   BindNotifiation() {
     let self = this;
