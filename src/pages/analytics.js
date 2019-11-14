@@ -43,7 +43,7 @@ var volumeOptions = {
           fontColor: "#999",
           fontSize: 14,
           callback: function(value) {
-            return value + "k";
+            return value ;
           }
         },
         scaleLabel: {
@@ -132,7 +132,7 @@ class Analytics extends Component {
    var ToDate = "";
     var ActiveFlag = "D";
     var Mode = "A,O,I";
-    var period = "M";
+    var period = document.getElementById('drp-period-shipment').value;
     var DatedBy = document.getElementById("Datedbydrp").value;
     
     if(event != null)
@@ -165,21 +165,21 @@ class Analytics extends Component {
 
     if(period == "M")
     {
-      var tempfromdate = document.getElementById('datpicker-from-invoice').value.split('/'); //05/12/2019
-      var temptodate = document.getElementById('datpicker-to-invoice').value.split('/');
+      var tempfromdate = document.getElementById('datpicker-from-shipment').value.split('/'); //05/12/2019
+      var temptodate = document.getElementById('datpicker-to-shipment').value.split('/');
       FromDate = tempfromdate[1] +"-"+  tempfromdate[0] + "-01";
       ToDate = temptodate[1] +"-"+  temptodate[0] + "-01";
     }
     else if (period == "W")
     {
-      var tempfromdate = document.getElementById('datpicker-from-invoice').value.split('/'); //05/12/2019
-      var temptodate = document.getElementById('datpicker-to-invoice').value.split('/');
+      var tempfromdate = document.getElementById('datpicker-from-shipment').value.split('/'); //05/12/2019
+      var temptodate = document.getElementById('datpicker-to-shipment').value.split('/');
       FromDate = tempfromdate[2] +"-"+  tempfromdate[0] + "-" + tempfromdate[1];
       ToDate = temptodate[2] +"-"+  temptodate[0] + "-" + temptodate[1];
     }
     else if(period == "Y")
     {
-      var tempfromdate =  document.getElementById('date-year-invoice').value
+      var tempfromdate =  document.getElementById('date-year-shipment').value
       FromDate = tempfromdate +"-01-01";
       ToDate = tempfromdate +"-12-31";
     }
@@ -189,7 +189,7 @@ class Analytics extends Component {
      if (g1.getTime() > g2.getTime()) 
      {
         alert("To date should be greater then From date.");
-        document.getElementById('datpicker-to-invoice').focus();
+        document.getElementById('datpicker-to-shipment').focus();
         return false;
      }
   
@@ -886,7 +886,7 @@ class Analytics extends Component {
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
-                    <select onChange={this.handleShipmentChangePerion}>
+                    <select onChange={this.handleShipmentChangePerion} id="drp-period-shipment">
                       <option value="W">Weekly</option>
                       <option selected value="M">Monthly</option>
                       <option value="Y">Yearly</option>
@@ -921,7 +921,7 @@ class Analytics extends Component {
                   {this.state.toggleShipmentYearDate && (
                     <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Year</span>
-                    <select id="date-year-invoice">
+                    <select id="date-year-shipment">
                     {this.buildOptions()}
                     </select>
                   </div>
@@ -959,7 +959,7 @@ class Analytics extends Component {
                     {this.state.toggleShipmentWeekDate && (
                      
                      <DatePicker
-                     id="datpicker-to-invoice"
+                     id="datpicker-to-shipment"
                      className="ana-to"
                      selected={this.state.endDate}
                      onChange={this.handleChangeEnd}
@@ -970,7 +970,7 @@ class Analytics extends Component {
                      {this.state.toggleShipmentMonthDate && (
                      
                     <DatePicker
-                     id="datpicker-to-invoice"
+                     id="datpicker-to-shipment"
                      className="ana-to"
                      selected={this.state.endDate}
                      onChange={this.handleChangeEnd}
