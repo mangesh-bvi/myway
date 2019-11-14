@@ -11,6 +11,7 @@ import ReactTable from "react-table";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
+
 const animatedComponents = makeAnimated();
 
 class ReportDetails extends Component {
@@ -18,23 +19,53 @@ class ReportDetails extends Component {
     super(props);
 
     this.state = {
-      modalEdit: false,
-      modalQuant: false,
-      value: 50,
-      RateDetails: [],
-      values: [],
-      RateSubDetails: [],
-      checkSelection: []
+      reportdetails :[],lableofreport:""
     };
   }
 
+  componentWillMount(){
+    if (typeof this.props.location.state != "undefined") {
+      debugger;
+      var ReportDetails = this.props.location.state.detail;
+      this.setReportDetails(ReportDetails);
+    }
+  }
+
+  setReportDetails(ReportDetails)
+  {
+    let self = this;
+    this.setState({lableofreport:ReportDetails[2].TextReportName})
+    
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ReportGridAPI`,
+      data: {
+       // UserID: encryption(window.localStorage.getItem("userid"), "desc")
+       UserID: 341,
+       ReportID:  ReportDetails[0].valReportName,
+       RegCompID: ReportDetails[1].valRegCompany
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      
+     debugger;
+     self.setState({reportdetails:response.data.Table})
+    }).catch(error => {
+      debugger;
+      var temperror = error.response.data;
+      var err = temperror.split(":");
+      alert(err[1].replace("}", ""))
+      
+      var actData = [];
+      actData.push({
+        ModeOfTransport: "No Data Found"
+      });
+      self.setState({ reportdetails: actData });
+    });
+  }
+
   render() {
-    const options = [
-      { value: "20 DC", label: "20 DC" },
-      { value: "30 DC", label: "30 DC" },
-      { value: "40 DC", label: "40 DC" },
-      { value: "50 DC", label: "50 DC" }
-    ];
+   
     return (
       <div>
         <Headers />
@@ -44,7 +75,7 @@ class ReportDetails extends Component {
           </div>
           <div className="cls-rt">
             <div className="rate-fin-tit title-border title-sect mb-4">
-              <h2>Active Shipments - With Invoice</h2>
+              <h2>{this.state.lableofreport}</h2>
               <div>
                 <a href="/" download className="butn more-padd">
                   Download
@@ -58,38 +89,73 @@ class ReportDetails extends Component {
               <div className="container">
                 <div className="row">
                   <div className="col-md-12">
+                  
                     <ReactTable
-                      //   data={quotesData}
+                    id="test-table-xls-button"
+                       data={this.state.reportdetails}
                       filterable
-                      minRows={1}
+                      noDataText=""
                       columns={[
                         {
-                          Header: "Quote No",
-                          accessor: "Quote#"
+                          Header: "ModeOfTransport",
+                          accessor: "ModeOfTransport"
                         },
                         {
-                          Header: "Company",
-                          accessor: "Company"
+                          Header: "Shipper",
+                          accessor: "Shipper"
                         },
                         {
-                          Header: "Contact",
-                          accessor: "Contact"
+                          Header: "Consignee",
+                          accessor: "Consignee"
                         },
                         {
-                          Header: "Type",
-                          accessor: "type"
+                          Header: "POL",
+                          accessor: "POL"
+                        },
+                        {
+                          Header: "POLCountry",
+                          accessor: "POLCountry"
                         },
                         {
                           Header: "POD",
                           accessor: "POD"
                         },
                         {
-                          Header: "Notes",
-                          accessor: "Notes"
+                          Header: "PODCountry",
+                          accessor: "PODCountry"
+                        },
+                        {
+                          Header: "Type",
+                          accessor: "Type"
+                        },
+                        {
+                          Header: "20'",
+                          accessor: "20"
+                        },
+                        {
+                          Header: "40'",
+                          accessor: "40'"
+                        },
+                        {
+                          Header: "40HC",
+                          accessor: "40HC"
+                        },
+                        {
+                          Header: "TEU",
+                          accessor: "TEU"
+                        },
+                        {
+                          Header: "CBM",
+                          accessor: "CBM"
+                        },
+                        {
+                          Header: "KGS",
+                          accessor: "KGS"
                         }
+
                       ]}
                       className="-striped -highlight"
-                      defaultPageSize={5}
+                      defaultPageSize={10}
                       minRows={1}
                     />
                   </div>

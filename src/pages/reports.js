@@ -45,7 +45,8 @@ class Reports extends Component {
       toggleExtraModeTransportFilter: false,
 
       valReportName:"",
-      valRegCompany:""
+      valRegCompany:"",
+      TextReportName:""
     };
   }
   
@@ -105,7 +106,17 @@ class Reports extends Component {
   changesReportName(val)
   {
     let self = this;
+
     this.setState({valReportName : val.value})
+    this.setState({TextReportName : val.label})
+    
+
+    this.setState({toggleExtraModeofAirFilter : false})
+    this.setState({toggleExtraModeofOceanFilter : false})
+    this.setState({toggleExtraInvoiceNoFilter : false})
+    this.setState({toggleExtraModeTransportFilter : false})
+   
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ReportFiltersAPI`,
@@ -318,6 +329,7 @@ class Reports extends Component {
       self.setState({toggleExtraInvoiceNoFilter: InvoiceNo});
       self.setState({toggleExtraModeTransportFilter : ModeTransport})
 
+
      // alert(ModeTransport)
     }).catch(error => {
       debugger;
@@ -367,12 +379,12 @@ class Reports extends Component {
 
     // valReportName:"",
     // valRegCompany:""
-
     var detailid = [{valReportName:this.state.valReportName},
-                    {valRegCompany:this.state.valRegCompany}];
+                    {valRegCompany:this.state.valRegCompany},
+                    {TextReportName:this.state.TextReportName}];
 
     this.props.history.push({
-      pathname: "spot-rate-details",
+      pathname: "report-details",
       state: { detail: detailid }
     });
   }
@@ -548,9 +560,15 @@ class Reports extends Component {
                 </div>
                 <div className="row">
                   <div className="col-md-12">
-                    <a href="#!" onClick={this.handleView}  className="butn mt-3">
+                    {/* <a href="#!" onClick={this.handleView}  className="butn mt-3">
                       View
-                    </a>
+                    </a> */}
+                    <button
+                        onClick={this.handleSubmit}
+                        className="butn mt-3"
+                      >
+                        View
+                      </button>
                   </div>
                 </div>
               </div>
