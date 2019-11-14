@@ -7,12 +7,13 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
-import { de } from "date-fns/esm/locale";
+
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-google-autocomplete";
-import { element } from "prop-types";
+
+import ReactAutocomplete from "react-autocomplete";
 
 var i = 0;
 const animatedComponents = makeAnimated();
@@ -85,6 +86,7 @@ const Map1WithAMakredInfoWindow = compose(
     }
     defaultZoom={9}
     zoom={props.zomePOL}
+    zoom={9}
   >
     <Marker key={1} position={props.mapPositionPOL}></Marker>
   </GoogleMap>
@@ -98,11 +100,12 @@ const Map2WithAMakredInfoWindow = compose(
     center={
       props.mapPositionPOD
         ? props.mapPositionPOD
-        : { lat: parseFloat(32.24165126), lng: parseFloat(77.78319374) }
+        : { lat: 32.24165126, lng:77.78319374 }
     }
     defaultZoom={9}
-    zoom={props.zomePOL}
+    //zoom={props.zomePOL}
   >
+    {/* {this.props.mapPositionPOD === null ? alert(1) : null} */}
     <Marker position={props.mapPositionPOD} />
   </GoogleMap>
 ));
@@ -117,7 +120,7 @@ class NewRateSearch extends Component {
       shipmentType: "",
       modeoftransport: "",
       containerLoadType: "",
-      typesofMove: '',
+      typesofMove: "",
       PickupCity: "",
       DeliveryCity: "",
       OriginGeoCordinates: "",
@@ -145,6 +148,8 @@ class NewRateSearch extends Component {
       referType: [],
       flattack_openTop: [],
       spacEqmtType: [],
+
+      fieldspol: {},
       spacEqmtTypeSelect: false,
       specialEqtSelect: false,
       refertypeSelect: false,
@@ -154,6 +159,10 @@ class NewRateSearch extends Component {
       equipmentType: "",
       isSpecialEquipment: "0",
       tempratureEquipment: "",
+      fields: {},
+      poladdress: "",
+      polpodData: [],
+      polpodDataAdd: [],
       isHazMat: "",
       incoTerms: "",
       POL: "",
@@ -195,7 +204,10 @@ class NewRateSearch extends Component {
       fullAddressPOL: "",
       fullAddressPOD: "",
       totalQuantity: 0,
-      isCustomClear: "No"
+      isCustomClear: "No",
+      polfullAddData: {},
+      podfullAddData: {},
+      commodityData: []
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -203,7 +215,7 @@ class NewRateSearch extends Component {
     this.HandleBindIncoTeamData = this.HandleBindIncoTeamData.bind(this);
     this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
     this.HandleShipmentStages = this.HandleShipmentStages.bind(this);
-    this.HandlePOLPODAutosearch = this.HandlePOLPODAutosearch.bind();
+    this.HandleCommodityData = this.HandleCommodityData.bind(this);
   }
 
   componentDidMount() {
@@ -213,7 +225,7 @@ class NewRateSearch extends Component {
       this.setState({ companyId: compId.companyId });
     }
     this.HandleCounterListBind();
-    this.HandlePOLPODAutosearch();
+    this.HandleCommodityData();
   }
 
   cmbTypeRadioChange(e) {
@@ -221,27 +233,142 @@ class NewRateSearch extends Component {
     this.setState({ cmbTypeRadio: value });
   }
 
-  //// POL POD Autosearch Data
+  //// Commodity dropdown methos
 
-  HandlePOLPODAutosearch() {
-    var type = "SEA";
+  HandleCommodityData() {
+    let self = this;
+    debugger;
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/PolPodByCountry`,
-      data: {
-        Mode:
-          type === "SEA"
-            ? "O"
-            : type === "AIR"
-            ? "A"
-            : type === "ROAD"
-            ? "I"
-            : ""
-      },
+      url: `${appSettings.APIURL}/CommodityDropdown`,
+
       headers: authHeader()
     }).then(function(response) {
       debugger;
+      var data = response.data.Table;
+      self.setState({ commodityData: data });
     });
+  }
+
+  HandleChangeCommodity = (e, option) => {};
+  //// end Commodity drop-down
+  //// POL POD Autosearch Data
+  HandleAddressDropdownPolSelect(e, field, value, id) {
+    debugger;
+    let fields = this.state.fields;
+    fields[field] = value;
+
+    if (field === "pol") {
+      debugger;
+
+      if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+        var geoCoordinate = id.GeoCoordinate.split(",");
+        var mapPositionPOL = new Object();
+        mapPositionPOL.lat = parseFloat(geoCoordinate[0]);
+        mapPositionPOL.lng = parseFloat(geoCoordinate[1]);
+        this.setState({
+          polfullAddData: id,
+          fields,
+          mapPositionPOL: mapPositionPOL
+        });
+      }
+    } else {
+      if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+        var geoCoordinate = id.GeoCoordinate.split(",");
+        var mapPositionPOD = this.state.mapPositionPOD;
+        mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
+        mapPositionPOD.lng = parseFloat(geoCoordinate[1]);
+        this.setState({
+          podfullAddData: id,
+          fields,
+          markerPositionPOD: mapPositionPOD
+        });
+      }
+    }
+    document.getElementById("address").classList.add("address");
+    document.getElementById("typeMoveInner").classList.add("typeMoveType");
+    document
+      .getElementById("typeMoveIconCntr")
+      .classList.add("typeMoveIconCntr");
+    document.getElementById("typeMoveName").classList.remove("d-none");
+    document.getElementById("typeMoveMinusClick").classList.add("d-none");
+    document.getElementById("typeMovePlusClick").classList.remove("d-none");
+
+
+
+
+    document.getElementById("location").classList.add("location");
+    if (document.getElementById("addressInner") == null)
+      document.getElementById("typeMoveInner").classList.add("typeMoveType");
+    else document.getElementById("addressInner").classList.add("addressType");
+
+    if (document.getElementById("addressInner") == null)
+      document
+        .getElementById("typeMoveIconCntr")
+        .classList.add("typeMoveIconCntr");
+    else
+      document
+        .getElementById("addressIconCntr")
+        .classList.add("addressIconCntr");
+
+    if (document.getElementById("addressInner") == null)
+      document.getElementById("typeMoveName").classList.remove("d-none");
+    else document.getElementById("addressName").classList.remove("d-none");
+
+    if (document.getElementById("addressInner") == null)
+      document.getElementById("typeMoveMinusClick").classList.add("d-none");
+    else document.getElementById("addressMinusClick").classList.add("d-none");
+
+    if (document.getElementById("addressInner") == null)
+      document.getElementById("typeMovePlusClick").classList.remove("d-none");
+    else
+      document.getElementById("addressPlusClick").classList.remove("d-none");
+  
+  }
+
+  HandlePOLPODAutosearch(field, e) {
+    let self = this;
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+
+    var type = this.state.modeoftransport;
+    if (fields[field].length > 3) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/PolPodByCountry`,
+        data: {
+          Mode:
+            type === "SEA"
+              ? "O"
+              : type === "AIR"
+              ? "A"
+              : type === "ROAD"
+              ? "I"
+              : "",
+          Search: fields[field],
+          CountryCode: ""
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        if (field === "pol") {
+          self.setState({
+            polpodData: response.data.Table,
+            fields
+          });
+        } else {
+          self.setState({
+            polpodDataAdd: response.data.Table,
+            fields
+          });
+        }
+      });
+    } else {
+      self.setState({
+        fields,
+        polpodData: []
+      });
+    }
   }
 
   //// start dynamic element for LCL-AIR-LTL
@@ -322,9 +449,11 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "Gross Weight" :" Gross Weight"}
+              placeholder={
+                el.Gross_Weight === 0 ? "Gross Weight" : " Gross Weight"
+              }
               name="Gross_Weight"
-              value={el.Gross_Weight||""}
+              value={el.Gross_Weight || ""}
               className="w-100"
             />
           </div>
@@ -899,8 +1028,6 @@ class NewRateSearch extends Component {
 
   //this Method For ShipmentStages Data Bind
   HandleShipmentStages(type) {
-    debugger;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentStages`,
@@ -909,9 +1036,7 @@ class NewRateSearch extends Component {
           type == "SEA" ? "O" : type == "AIR" ? "A" : type == "ROAD" ? "I" : ""
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-    });
+    }).then(function(response) {});
   }
   //this Method for Bind Country Dropdown
   HandleCounterListBind() {
@@ -960,16 +1085,52 @@ class NewRateSearch extends Component {
   }
 
   HandleTypeofMove(e) {
-     debugger;
-    //  let self =this;
-    this.setState({ typesofMove: 'ads'});
+    debugger;
 
-    // var typeofmoveVal = e.target.id;
-    // if (typeofmoveVal === "p2p") {
-      
-    // }
+    var type = e.target.value;
 
-    this.HandleGetIncoTerms();
+    if (type === "p2p") {
+      this.setState(
+        {
+          typesofMove: "p2p"
+        },
+        function() {
+          this.setState({ typesofMove: "p2p" });
+          this.HandleGetIncoTerms();
+        }
+      );
+    } else if (type === "p2d") {
+      this.setState(
+        {
+          typesofMove: "p2d"
+        },
+        function() {
+          this.setState({ typesofMove: "p2d" });
+          this.HandleGetIncoTerms();
+        }
+      );
+    } else if (type === "d2d") {
+      this.setState(
+        {
+          typesofMove: "d2d"
+        },
+        function() {
+          this.setState({ typesofMove: "d2d" });
+          this.HandleGetIncoTerms();
+        }
+      );
+    } else if (type === "d2p") {
+      this.setState(
+        {
+          typesofMove: "d2p"
+        },
+        function() {
+          this.setState({ typesofMove: "d2p" });
+          this.HandleGetIncoTerms();
+        }
+      );
+    } else {
+    }
 
     // next
     document.getElementById("typeMove").classList.add("typeMove");
@@ -1002,6 +1163,20 @@ class NewRateSearch extends Component {
     // ----------------------------------------------------------------------------------------
 
     // document.getElementById("cbmPlusClick").classList.remove("d-none");
+  }
+
+  //// check cutome clearnce is check()
+
+  HandleCustomeClear(e) {
+    debugger;
+    var icheck = e.target.checked;
+    if (icheck === "true") {
+      this.setState({ isCustomClear: "Yes" });
+      this.HandleGetIncoTerms();
+    } else {
+      this.setState({ isCustomClear: "No" });
+      this.HandleGetIncoTerms();
+    }
   }
 
   //this Method For Get Inco Team base on condition.
@@ -1046,7 +1221,9 @@ class NewRateSearch extends Component {
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-        this.setState({ incoTerms: "FOB" });
+        this.setState({
+          incoTerms: "FOB"
+        });
       }
     }
   }
@@ -1087,9 +1264,9 @@ class NewRateSearch extends Component {
     document.getElementById("shipmentTypeName").classList.remove("d-none");
     document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
   };
-  modeofTransportClick = e => {
+  modeofTransportClick(e) {
     let type = e.target.value;
-
+    debugger;
     this.setState({ modeoftransport: type });
     document.getElementById("dvroad").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvair").classList.add("new-radio-rate-cntr-hide");
@@ -1122,7 +1299,8 @@ class NewRateSearch extends Component {
     document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
 
     this.HandleShipmentStages(type);
-  };
+    // this.HandlePOLPODAutosearch(type);
+  }
   modeTransPlusClick = e => {
     document.getElementById("modeTransInner").classList.remove("modeTransType");
     document.getElementById("modeTransPlusClick").classList.add("d-none");
@@ -1575,6 +1753,7 @@ class NewRateSearch extends Component {
         this.setState({
           spacEqmtTypeSelect: true
         });
+
         this.addSpacEqmtType(value);
       }
     }
@@ -1895,7 +2074,7 @@ class NewRateSearch extends Component {
                           type="radio"
                           name="mode-transport"
                           value="SEA"
-                          onClick={this.modeofTransportClick}
+                          onClick={this.modeofTransportClick.bind(this)}
                           id="sea"
                         />
                         <label htmlFor="sea">Sea</label>
@@ -1905,7 +2084,7 @@ class NewRateSearch extends Component {
                           type="radio"
                           name="mode-transport"
                           value="AIR"
-                          onClick={this.modeofTransportClick}
+                          onClick={this.modeofTransportClick.bind(this)}
                           id="air"
                         />
                         <label htmlFor="air">Air</label>
@@ -1916,7 +2095,7 @@ class NewRateSearch extends Component {
                           name="mode-transport"
                           name="mode-transport"
                           value="ROAD"
-                          onClick={this.modeofTransportClick}
+                          onClick={this.modeofTransportClick.bind(this)}
                           id="road"
                         />
                         <label htmlFor="road">Road</label>
@@ -2113,7 +2292,7 @@ class NewRateSearch extends Component {
                           id="cust-clear"
                           type="checkbox"
                           name={"haz-mat"}
-                          onChange={this.HandleGetIncoTerms.bind(this)}
+                          onChange={this.HandleCustomeClear.bind(this)}
                         />
                         <label htmlFor="cust-clear">Custom Clearance</label>
                       </div>
@@ -2257,7 +2436,7 @@ class NewRateSearch extends Component {
                         id="cust-clear"
                         type="checkbox"
                         name={"haz-mat"}
-                        onChange={this.HandleGetIncoTerms.bind(this)}
+                        onChange={this.HandleCustomeClear.bind(this)}
                       />
                       <label htmlFor="cust-clear">Custom Clearance</label>
                     </div>
@@ -2365,10 +2544,32 @@ class NewRateSearch extends Component {
                     <div className="spe-equ">
                       {this.state.typesofMove == "p2p" ||
                       this.state.typesofMove === "p2d" ? (
-                        <input
-                          className="w-100"
-                          type="text"
-                          placeholder="Enter POL"
+                        <ReactAutocomplete
+                          getItemValue={item => item.NameWoDiacritics}
+                          items={this.state.polpodData}
+                          renderItem={(item, isHighlighted) => (
+                            <div
+                              style={{
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
+                              }}
+                              value={item.AirPortID}
+                            >
+                              {item.NameWoDiacritics}
+                            </div>
+                          )}
+                          onChange={this.HandlePOLPODAutosearch.bind(
+                            this,
+                            "pol"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownPolSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "pol"
+                          )}
+                          value={this.state.fields["pol"]}
                         />
                       ) : (
                         <Map1WithAMakredInfoWindowSearchBooks
@@ -2385,10 +2586,32 @@ class NewRateSearch extends Component {
                     <div className="spe-equ" style={{ marginBottom: "30px" }}>
                       {this.state.typesofMove == "p2p" ||
                       this.state.typesofMove === "d2p" ? (
-                        <input
-                          className="w-100"
-                          type="text"
-                          placeholder="Enter POD"
+                        <ReactAutocomplete
+                          getItemValue={item => item.NameWoDiacritics}
+                          items={this.state.polpodDataAdd}
+                          renderItem={(item, isHighlighted) => (
+                            <div
+                              style={{
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
+                              }}
+                              value={item.AirPortID}
+                            >
+                              {item.NameWoDiacritics}
+                            </div>
+                          )}
+                          onChange={this.HandlePOLPODAutosearch.bind(
+                            this,
+                            "pod"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownPolSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "pod"
+                          )}
+                          value={this.state.fields["pod"]}
                         />
                       ) : (
                         <GoogleMapPODSearchBox
@@ -2425,26 +2648,6 @@ class NewRateSearch extends Component {
                 </div>
                 <div className="row polpodcls" id="locationInner">
                   <div className="col-md-6 ">
-                    {/* <Select
-                      className="rate-dropdown w-100 mb-4"
-                      getOptionLabel={option => option.CountryName}
-                      getOptionValue={option => option.SUCountry}
-                      components={animatedComponents}
-                      options={self.state.country}
-                      placeholder="Select Country"
-                      onChange={this.locationChange}
-                      name="polCountry"
-                      id="yooo"
-                    />
-                    <Select
-                      className="rate-dropdown w-100 mb-4"
-                      components={animatedComponents}
-                      options={optionsPOD}
-                      placeholder="Select POD"
-                      // value={this.state.pod}
-                      onChange={this.locationChange}
-                      name="pol"
-                    /> */}
                     {this.state.zoomPOL !== "" &&
                     this.state.zomePOL !== null ? (
                       <>
@@ -2460,41 +2663,13 @@ class NewRateSearch extends Component {
                         />
                       </>
                     ) : null}
-                    {/* <GoogleMapReactPage
-                      google={this.props.google}
-                      center={{ lat: 18.5204, lng: 73.8567 }}
-                      height="300px"
-                      zoom={15}
-                    /> */}
                   </div>
                   <div className="col-md-6">
-                    {/* <Select
-                      className="rate-dropdown w-100 mb-4"
-                      closeMenuOnSelect={false}
-                      getOptionLabel={option => option.CountryName}
-                      getOptionValue={option => option.SUCountry}
-                      components={animatedComponents}
-                      options={self.state.country}
-                      placeholder="Select POL"
-                      onChange={this.locationChange}
-                      // value={this.state.pol}
-                      name="podCountry"
-                    />
-                    <Select
-                      className="rate-dropdown w-100 mb-4"
-                      closeMenuOnSelect={false}
-                      components={animatedComponents}
-                      options={optionsPOD}
-                      placeholder="Select POD"
-                      // value={this.state.pod}
-                      onChange={this.locationChange}
-                      name="pod"
-                    /> */}
                     {this.state.zoomPOD !== "" &&
                     this.state.zomePOD !== null ? (
                       <Map2WithAMakredInfoWindow
                         zomePOL={this.state.zoomPOD}
-                        mapPositionPOD={this.state.mapPositionPOD}
+                        mapPositionPOD={this.state.markerPositionPOD}
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
                         loadingElement={<div style={{ height: `100%` }} />}
                         containerElement={
@@ -2502,15 +2677,30 @@ class NewRateSearch extends Component {
                         }
                         mapElement={<div style={{ height: `100%` }} />}
                       />
-                    ) : null}
+                    ) : (
+                      alert(1)
+                    )}
                   </div>
                 </div>
               </div>
               <div className="text-center new-rate-cntr p-0 border-0">
+                <Select
+                  className="rate-dropdown"
+                  closeMenuOnSelect={false}
+                  getOptionLabel={option => option.Commodity}
+                  getOptionValue={option => option.id}
+                 // components={animatedComponents}
+                  options={this.state.commodityData}
+                />
                 <a href="rate-table" className="butn blue-butn rate-search">
                   Search
                 </a>
               </div>
+              {/* <div className="text-center new-rate-cntr p-0 border-0">
+                <a href="rate-table" className="butn blue-butn rate-search">
+                  Search
+                </a>
+              </div> */}
             </div>
           </div>
         </div>
