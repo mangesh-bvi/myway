@@ -1097,10 +1097,17 @@ class ShippingDetails extends Component {
                           <label style={{ padding: "11px" }}></label>
                           <button
                             type="button"
-                            className="butn"
+                            className="butn mr-3"
                             onClick={this.handleSubmit}
                           >
                             Submit
+                          </button>
+                          <button
+                            type="button"
+                            className="butn cancel-butn"
+                            onClick={this.toggleAdvSearch}
+                          >
+                            Cancel
                           </button>
                         </div>
                       </div>

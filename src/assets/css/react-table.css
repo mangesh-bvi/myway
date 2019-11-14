@@ -48,6 +48,9 @@
 .ReactTable .rt-tbody .rt-expandable + .rt-td {
   text-align: left;
 }
+.ReactTable .rt-thead .rt-tr {
+  background-color: #fff;
+}
 
 /* pagination starts */
 .ReactTable .-pagination .-previous,

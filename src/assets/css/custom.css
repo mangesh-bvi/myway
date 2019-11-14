@@ -1526,6 +1526,8 @@ table tbody tr:last-child {
   padding-top: 24px;
   padding-bottom: 24px;
   position: relative;
+  border-right: 1px solid #d6d6d6;
+  border-left: 1px solid #d6d6d6;
 }
 .rate-table-range .cust-labl {
   font-size: 12px;
@@ -1548,11 +1550,11 @@ table tbody tr:last-child {
 .rate-table-header > * {
   padding-right: 25px;
   padding-left: 25px;
-  border-right: 1px solid #d6d6d6;
+  /* border-right: 1px solid #d6d6d6; */
 }
-.rate-table-header > *:last-child {
+/* .rate-table-header > *:last-child {
   border-right: 0;
-}
+} */
 .rate-table-header .title-sect {
   flex-grow: 1;
   padding-top: 20px;
@@ -1661,6 +1663,11 @@ table tbody tr:last-child {
 .rate-table-butn {
   padding-right: 20px;
   padding-left: 20px;
+}
+.rate-tab-drop select {
+  padding: 10px 40px 10px 20px;
+  background-position: right 15px center;
+  width: 200px;
 }
 /* rate table ends */
 
@@ -2035,6 +2042,24 @@ table tbody tr:last-child {
 }
 /* sales activity log ends */
 
+.noti-drop-down p {
+  white-space: nowrap;
+  font-family: "Medium Font";
+  padding: 2px 0;
+  font-size: 14px;
+}
+.noti-drop-down a {
+  color: #39b54a !important;
+}
+.noti-drop-down div {
+  padding: 10px 20px;
+  border-bottom: 1px solid #d6d6d6;
+}
+.noti-drop-down {
+  max-height: 70vh;
+  overflow: auto;
+}
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
@@ -2180,9 +2205,9 @@ table tbody tr:last-child {
 }
 
 .profile-dropdown {
-  top: 18px !important;
+  /* top: 18px !important; */
   right: 0;
-  left: -35px !important;
+  /* left: -35px !important; */
 }
 
 .rmarrow .dropdown-toggle::after {

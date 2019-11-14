@@ -227,7 +227,7 @@ class ShippingDetailsTwo extends Component {
       ShipmentExistsInWatchList: 0,
       showContent: false,
       packageViewMore: [],
-      MessagesActivityDetails:[]
+      MessagesActivityDetails: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -446,7 +446,8 @@ class ShippingDetailsTwo extends Component {
         containerData: shipmentdata.Table2,
         bookedStatus: shipmentdata.Table4,
         packageDetails: shipmentdata.Table7,
-        ShipmentExistsInWatchList: shipmentdata.Table6[0].ShipmentExistsInWatchList,
+        ShipmentExistsInWatchList:
+          shipmentdata.Table6[0].ShipmentExistsInWatchList,
         packageViewMore: shipmentdata.Table8
       });
       var sid = shipmentdata.Table[0].ShipperId;
@@ -544,16 +545,16 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/AddToWatchListAPI`,
       data: {
-        UserId:874588,
-        HBLNO:this.props.location.state.detail             
+        UserId: 874588,
+        HBLNO: this.props.location.state.detail
       },
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      alert(response.data[0].Result)
-      self.setState({ShipmentExistsInWatchList: 1})
-    })
-  }
+      alert(response.data[0].Result);
+      self.setState({ ShipmentExistsInWatchList: 1 });
+    });
+  };
 
   handleActivityList() {
     debugger;
@@ -562,26 +563,28 @@ class ShippingDetailsTwo extends Component {
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail;
     }
-    var userid = encryption(window.localStorage.getItem("userid"), "desc")
-   //alert(HblNo)
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
+    //alert(HblNo)
     axios({
       method: "post",
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
       data: {
-        UserId:encryption(window.localStorage.getItem("userid"), "desc"),
-        HBLNO:HblNo            
+        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        HBLNO: HblNo
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      //alert("Sucess")
-      self.setState({MessagesActivityDetails: response.data})
-    }).catch(error => {
-      debugger;
-      var temperror = error.response.data;
-      var err = temperror.split(":");
-      alert(err[1].replace("}", ""))
     })
+      .then(function(response) {
+        debugger;
+        //alert("Sucess")
+        self.setState({ MessagesActivityDetails: response.data });
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        alert(err[1].replace("}", ""));
+      });
   }
 
   handleRemoveWatchList = () => {
@@ -591,16 +594,16 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/RemoveFromWatchListAPI`,
       data: {
-        UserId:874588,
-        HBLNO:this.props.location.state.detail             
+        UserId: 874588,
+        HBLNO: this.props.location.state.detail
       },
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      alert(response.data[0].Result)
-      self.setState({ShipmentExistsInWatchList: 0})
-    })
-  }
+      alert(response.data[0].Result);
+      self.setState({ ShipmentExistsInWatchList: 0 });
+    });
+  };
 
   render() {
     let self = this;
@@ -674,41 +677,41 @@ class ShippingDetailsTwo extends Component {
       }
     }
     let Watchlist = "";
-    if(this.state.ShipmentExistsInWatchList == 0)
-    { 
+    if (this.state.ShipmentExistsInWatchList == 0) {
       Watchlist = (
-      <>
-      <button onClick={this.handleAddToWatchList} className="butn mt-0">
-      Add Watchlist
-      </button>
-      </>
-      )
-    }
-    else{
+        <>
+          <button onClick={this.handleAddToWatchList} className="butn mt-0">
+            Add Watchlist
+          </button>
+        </>
+      );
+    } else {
       Watchlist = (
-      <>
-      <button onClick={this.handleRemoveWatchList} className="butn mt-0">
-      Remove Watchlist
-      </button>
-      </>
-      )
+        <>
+          <button onClick={this.handleRemoveWatchList} className="butn mt-0">
+            Remove Watchlist
+          </button>
+        </>
+      );
     }
 
     let MsgActivityTab = "";
-    if(this.state.MessagesActivityDetails != null)
-    {
-      if(this.state.MessagesActivityDetails.length > 0)
-      {
+    if (this.state.MessagesActivityDetails != null) {
+      if (this.state.MessagesActivityDetails.length > 0) {
         MsgActivityTab = (
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
-            <div class="p-2">
-              <b>{team.Message}</b><div class="d-flex justify-content-end"> ({team.MessageCreationTime})</div>
-              <hr/>
-            </div>
-          ))}
+              <div class="p-2">
+                <b>{team.Message}</b>
+                <div class="d-flex justify-content-end">
+                  {" "}
+                  ({team.MessageCreationTime})
+                </div>
+                <hr />
+              </div>
+            ))}
           </div>
-        )
+        );
       }
     }
 
@@ -731,9 +734,8 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-md-7 p-0">
                   <div className="title-sect">
                     <h2>Details View</h2>
-    
+
                     {Watchlist}
-                    
                   </div>
                   <ul className="nav cust-tabs" role="tablist">
                     <li>
@@ -806,7 +808,11 @@ class ShippingDetailsTwo extends Component {
                             <p className="details-title">HBL#</p>
                             <a href="#!" className="details-para">
                               {detailsData.HBLNO}
-                              <input type="hidden" value={detailsData.HBLNO} id="popupHBLNO" />
+                              <input
+                                type="hidden"
+                                value={detailsData.HBLNO}
+                                id="popupHBLNO"
+                              />
                             </a>
                           </div>
                           <div className="col-md-3 details-border">
