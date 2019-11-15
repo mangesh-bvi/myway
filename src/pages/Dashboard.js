@@ -118,7 +118,10 @@ const MapWithAMakredInfoWindow = compose(
                                   )}
                                 >
                                   <a href={shipmentdetails}>
-                                    <p className="mapcontainerno">
+                                    <p
+                                      title="Container No."
+                                      className="mapcontainerno"
+                                    >
                                       {mdata.ContainerNo}
                                     </p>
                                   </a>
@@ -150,7 +153,10 @@ const MapWithAMakredInfoWindow = compose(
                                             ""
                                           )}
                                         >
-                                          <p className="mapcontainerno">
+                                          <p
+                                            title="HBL No."
+                                            className="mapcontainerno dash-hbl"
+                                          >
                                             {mdata["HBL#"]}
                                           </p>
                                         </div>
@@ -170,7 +176,10 @@ const MapWithAMakredInfoWindow = compose(
                                             ) {
                                               return (
                                                 <div>
-                                                  <p className="mapinvoice">
+                                                  <p
+                                                    title="MyWay No."
+                                                    className="mapinvoice"
+                                                  >
                                                     {idata}
                                                   </p>
                                                 </div>
@@ -247,7 +256,10 @@ const MapWithAMakredInfoWindow = compose(
                                   )}
                                 >
                                   <a href={shipmentdetails}>
-                                    <p className="mapcontainerno">
+                                    <p
+                                      title="Container No."
+                                      className="mapcontainerno"
+                                    >
                                       {mdata.ContainerNo}
                                     </p>
                                   </a>
@@ -279,7 +291,10 @@ const MapWithAMakredInfoWindow = compose(
                                             ""
                                           )}
                                         >
-                                          <p className="mapcontainerno">
+                                          <p
+                                            title="HBL No."
+                                            className="mapcontainerno dash-hbl"
+                                          >
                                             {mdata["HBL#"]}
                                           </p>
                                         </div>
@@ -299,7 +314,10 @@ const MapWithAMakredInfoWindow = compose(
                                             ) {
                                               return (
                                                 <div>
-                                                  <p className="mapinvoice">
+                                                  <p
+                                                    title="MyWay No."
+                                                    className="mapinvoice"
+                                                  >
                                                     {idata}
                                                   </p>
                                                 </div>
@@ -376,7 +394,10 @@ const MapWithAMakredInfoWindow = compose(
                                   )}
                                 >
                                   <a href={shipmentdetails}>
-                                    <p className="mapcontainerno">
+                                    <p
+                                      title="Container No."
+                                      className="mapcontainerno"
+                                    >
                                       {mdata.ContainerNo}
                                     </p>
                                   </a>
@@ -408,7 +429,10 @@ const MapWithAMakredInfoWindow = compose(
                                             ""
                                           )}
                                         >
-                                          <p className="mapcontainerno">
+                                          <p
+                                            title="HBL No."
+                                            className="mapcontainerno dash-hbl"
+                                          >
                                             {mdata["HBL#"]}
                                           </p>
                                         </div>
@@ -428,7 +452,10 @@ const MapWithAMakredInfoWindow = compose(
                                             ) {
                                               return (
                                                 <div>
-                                                  <p className="mapinvoice">
+                                                  <p
+                                                    title="MyWay No."
+                                                    className="mapinvoice"
+                                                  >
                                                     {idata}
                                                   </p>
                                                 </div>
@@ -714,8 +741,8 @@ class Dashboard extends Component {
 
         self.SelectPin = arrarSelectPin;
 
-        var element = !!document.getElementById("shipmentfilterdiv"); 
-        if (element) { 
+        var element = !!document.getElementById("shipmentfilterdiv");
+        if (element) {
           document.getElementById("shipmentfilterdiv").style.display = "block";
         }
       });

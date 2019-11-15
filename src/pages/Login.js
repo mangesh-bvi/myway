@@ -373,7 +373,7 @@ class Login extends React.Component {
       this.setState({ settoaste: true, loading: true });
 
       var error = username === "" ? "Please enter the username\n" : "";
-      error += password === "" ? "Please enter the passowrd" : "";
+      error += password === "" ? "Please enter the password" : "";
       // alert(error);
       //  window.location='./Dashboard'
       NotificationManager.error(error);

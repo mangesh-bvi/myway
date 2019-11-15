@@ -88,13 +88,11 @@ class SpotRateTable extends Component {
     }
   }
 
-  HandleChangeSpotRateDetails(RateQueryId)
-  {
-   // alert(RateQueryId)
+  HandleChangeSpotRateDetails(RateQueryId) {
+    // alert(RateQueryId)
   }
 
   HandleRowClickEvt = (rowInfo, column) => {
-    
     return {
       onClick: e => {
         debugger;
@@ -130,7 +128,7 @@ class SpotRateTable extends Component {
                         accessor: "RateQueryId"
                       },
                       {
-                        Header: "Shipper Name",
+                        Header: "Customer Name",
                         accessor: "ShipperName"
                       },
 
@@ -163,7 +161,7 @@ class SpotRateTable extends Component {
                           if (noData != "No Data Found") {
                             return (
                               <div
-                                 onClick={e => this.toggleDel(RateQueryId)}
+                                onClick={e => this.toggleDel(RateQueryId)}
                                 className="tab-icon-view"
                               >
                                 <img src={Eye} alt="eye icon" />
@@ -172,7 +170,7 @@ class SpotRateTable extends Component {
                           } else {
                             return (
                               <div
-                                 onClick={e => this.toggleDel(RateQueryId)}
+                                onClick={e => this.toggleDel(RateQueryId)}
                                 className="tab-icon-view"
                               ></div>
                             );
