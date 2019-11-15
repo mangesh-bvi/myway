@@ -72,7 +72,7 @@ class ShippingDetails extends Component {
         background: "rgba(255, 255, 255, 0.9)",
         padding: "2px 0",
         fontSize: "90%",
-        position: "fixed",
+        position: "absolute",
         overflow: "auto",
         zIndex: "1",
         maxWidth: "300px",
@@ -451,18 +451,17 @@ class ShippingDetails extends Component {
     let errors = this.state.errors;
     let formIsValid = true;
 
-    if(!fields["ModeOfTransport"]){
+    if (!fields["ModeOfTransport"]) {
       formIsValid = false;
       alert("Please enter Mode Of Transport");
-   }
-   if(!fields["ShipmentStage"])
-   {
-    formIsValid = false;
-    alert("Please enter ShipmentStage");
-   }
-   return formIsValid;
-  } 
-  
+    }
+    if (!fields["ShipmentStage"]) {
+      formIsValid = false;
+      alert("Please enter ShipmentStage");
+    }
+    return formIsValid;
+  }
+
   render() {
     const { shipmentSummary } = this.state;
 
@@ -692,7 +691,9 @@ class ShippingDetails extends Component {
                         }
                       },
                       {
-                        Header: "",
+                        Header: row => {
+                          return <span>&nbsp;</span>;
+                        },
                         width: 40,
                         Cell: row => {
                           return (

@@ -48,6 +48,7 @@ import SalesActivityLog from "./pages/salesActivityLog";
 import MyOrder from "./pages/MyOrder";
 import RateFinalizingStillBooking from "./pages/rateFinalizingStillBooking";
 import Reports from "./pages/reports";
+import ReportDetails from "./pages/report-details";
 
 // import Exmaple from './pages/Example';
 
@@ -92,17 +93,14 @@ ReactDOM.render(
       path="/rate-finalizing-still"
       component={RateFinalizingStill}
     />
-     <Route
-      exact
-      path="/spot-rate-details"
-      component={SpotRateDetails}
-    />
+    <Route exact path="/spot-rate-details" component={SpotRateDetails} />
     <Route exact path="/event-management" component={EventManagement} />
     <Route exact path="/add-event-management" component={AddEventManagement} />
     <Route exact path="/activity-log" component={ActivityLog} />
     <Route exact path="/sales-activity-log" component={SalesActivityLog} />
     <Route exact path="/myorder" component={MyOrder} />
     <Route exact path="/reports" component={Reports} />
+    <Route exact path="/report-details" component={ReportDetails} />
     <Route
       exact
       path="/rate-finalizing-still-booking"

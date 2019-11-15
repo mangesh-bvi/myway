@@ -29,6 +29,10 @@ import { authHeader } from "../helpers/authHeader";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
@@ -703,7 +707,7 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      alert(response.data[0].Result);
+      NotificationManager.success(response.data[0].Result);
       self.setState({ ShipmentExistsInWatchList: 1 });
     });
   };
@@ -752,7 +756,7 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      alert(response.data[0].Result);
+      NotificationManager.error(response.data[0].Result);
       self.setState({ ShipmentExistsInWatchList: 0 });
     });
   };
@@ -1038,7 +1042,10 @@ class ShippingDetailsTwo extends Component {
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
                           <span className="clr-green">POL</span>
-                          <Progress value="30" />
+                          <div className="pol-pod-progress">
+                            <Progress value="30" />
+                            <span className="pol-pod-percent">30%</span>
+                          </div>
                           <span className="clr-green">POD</span>
                         </div>
                         <div className="desti-places">
@@ -1554,7 +1561,7 @@ class ShippingDetailsTwo extends Component {
                             {departedDate}
                           </p>
                         </div>
-                        {/* <div className="track-line-cntr active">
+                        <div className="track-line-cntr">
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Transit} alt="transit icon" />
@@ -1563,7 +1570,7 @@ class ShippingDetailsTwo extends Component {
                           <p>
                             <span>On the way</span>
                           </p>
-                        </div> */}
+                        </div>
                         <div className={arrivedIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
@@ -1796,6 +1803,7 @@ class ShippingDetailsTwo extends Component {
                   </ModalBody>
                 </Modal>
               </div>
+              <NotificationContainer />
             </div>
           </div>
         </div>

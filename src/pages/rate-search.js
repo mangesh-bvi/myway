@@ -19,7 +19,7 @@ class RateSearch extends Component {
       customerData: [],
       customerName: "",
       customerType: true,
-      companyId:0,
+      companyId: 0,
       menuStyle: {
         textAlign: "left",
         borderRadius: "3px",
@@ -27,7 +27,7 @@ class RateSearch extends Component {
         background: "rgba(255, 255, 255, 0.9)",
         padding: "2px 0 0 10px",
         fontSize: "90%",
-        position: "fixed",
+        position: "absolute",
         overflow: "auto",
         zIndex: "1",
         maxWidth: "300px",
@@ -96,13 +96,14 @@ class RateSearch extends Component {
       fields
     });
   }
-  handleSelectCon(field, value,e) {
+  handleSelectCon(field, value, e) {
     debugger;
     let fields = this.state.fields;
     fields[field] = value;
-    var compId=e.Company_ID;
+    var compId = e.Company_ID;
     this.setState({
-      fields,companyId:compId
+      fields,
+      companyId: compId
     });
     document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -218,7 +219,6 @@ class RateSearch extends Component {
                 </div>
               </div>
               <button
-         
                 id="SearchRate"
                 className="butn blue-butn"
                 onClick={this.HandelPageredireact.bind(this)}

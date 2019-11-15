@@ -12,6 +12,8 @@ import ActivityLogIcon from "./../assets/img/activity-log.png";
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
 import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
+import FileUpload from "./../assets/img/file.png";
+
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -28,11 +30,15 @@ class Header extends Component {
       searchButn: true,
       notificationData: [],
       modalDocu: false,
+      modalProfile: false,
       DropdownCommonMessage: [],
+      selectedFile: "",
+      selectedFileName: "",
       popupHBLNO: ""
     };
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
+    this.toggleProfile = this.toggleProfile.bind(this);
   }
 
   componentDidMount() {
@@ -43,10 +49,14 @@ class Header extends Component {
         window.localStorage.getItem("username"),
         "desc"
       );
-      document.getElementById("spnFirstName").textContent = encryption(
-        window.localStorage.getItem("username"),
+      document.getElementById("compName").textContent = encryption(
+        window.localStorage.getItem("companyname"),
         "desc"
       );
+      // document.getElementById("spnFirstName").textContent = encryption(
+      //   window.localStorage.getItem("username"),
+      //   "desc"
+      // );
       document.getElementById("spnLastLogin").textContent = encryption(
         window.localStorage.getItem("lastlogindate"),
         "desc"
@@ -91,6 +101,12 @@ class Header extends Component {
       });
       //alert(document.getElementById("popupHBLNO").value)
     }
+  }
+
+  toggleProfile() {
+    this.setState(prevState => ({
+      modalProfile: !prevState.modalProfile
+    }));
   }
 
   BindNotifiation() {
@@ -141,6 +157,13 @@ class Header extends Component {
     localStorage.clear();
     window.location.href = "./login";
   }
+
+  onDocumentChangeHandler = event => {
+    this.setState({
+      selectedFile: event.target.files[0],
+      selectedFileName: event.target.files[0].name
+    });
+  };
 
   onSetting() {
     // document.getElementById("dvsetting").className.remove("cls-hide");
@@ -383,7 +406,14 @@ class Header extends Component {
                       />
                     </li>
 
-                    <li data-toggle="dropdown" className="p-0 mt-1">
+                    <li
+                      data-toggle="dropdown"
+                      className="p-0 mt-1 loign-dtlss"
+                      title={encryption(
+                        window.localStorage.getItem("companyname"),
+                        "desc"
+                      )}
+                    >
                       <div className="dropdown rmarrow">
                         <button
                           type="button"
@@ -393,11 +423,11 @@ class Header extends Component {
                         ></button>
                       </div>
 
-                      <p className="login-actore-text">LOREM IPSUM</p>
+                      <p className="login-actore-text" id="compName"></p>
                     </li>
                     <div className="dropdown-menu profile-dropdown">
                       <ul className="profile-ul">
-                        <li>
+                        {/* <li>
                           <img
                             src={UserIcon}
                             className="drp-usericon"
@@ -407,7 +437,7 @@ class Header extends Component {
                             id="spnFirstName"
                             className="lbl-cursor"
                           ></label>
-                        </li>
+                        </li> */}
                         <li className="lastlogin-li">
                           <ul className="lastlogin-ul">
                             <li>
@@ -447,7 +477,20 @@ class Header extends Component {
                               alt="profile-icon"
                               className="profilesetting-icon"
                             />
-                            Profile Setting
+                            Change Password
+                          </a>
+                        </li>
+                        <li
+                          className="profile-setting-li"
+                          onClick={this.toggleProfile}
+                        >
+                          <a href="#!">
+                            <img
+                              src={ProfileSettingIcon}
+                              alt="profile-icon"
+                              className="profilesetting-icon"
+                            />
+                            Profile Settings
                           </a>
                         </li>
                         <li className="profile-setting-li">
@@ -481,6 +524,69 @@ class Header extends Component {
             </div>
           </div>
         </div>
+
+        <Modal
+          className="delete-popup pol-pod-popup"
+          isOpen={this.state.modalProfile}
+          toggle={this.toggleProfile}
+          centered={true}
+        >
+          <ModalBody>
+            <div className="d-flex align-items-center text-left">
+              <div className="prof-img">
+                <img src={LoginActore} />
+              </div>
+              <div className="pl-3">
+                <p className="prof-name">
+                  {encryption(window.localStorage.getItem("username"), "desc")}
+                </p>
+                <p className="prof-comp">
+                  {encryption(
+                    window.localStorage.getItem("companyname"),
+                    "desc"
+                  )}
+                </p>
+              </div>
+            </div>
+            <div className="rename-cntr login-fields d-block mt-4">
+              <div className="d-flex w-100 align-items-center">
+                <label>Change Image</label>
+                <div className="w-100">
+                  <input
+                    id="file-upload"
+                    className="file-upload d-none"
+                    type="file"
+                    onChange={this.onDocumentChangeHandler}
+                  />
+                  <label htmlFor="file-upload">
+                    <div className="file-icon">
+                      <img src={FileUpload} alt="file-upload" />
+                    </div>
+                    Upload Image
+                  </label>
+                </div>
+              </div>
+              <p className="file-name">{this.state.selectedFileName}</p>
+            </div>
+            <Button
+              className="butn"
+              onClick={() => {
+                this.toggleProfile();
+                // this.onDocumentClickHandler();
+              }}
+            >
+              Submit
+            </Button>
+            <Button
+              className="butn cancel-butn"
+              onClick={() => {
+                this.toggleProfile();
+              }}
+            >
+              Cancel
+            </Button>
+          </ModalBody>
+        </Modal>
 
         <UncontrolledPopover
           trigger="legacy"

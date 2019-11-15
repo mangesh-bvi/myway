@@ -635,8 +635,8 @@ table tbody tr:last-child {
   height: 5px;
   border-radius: 0;
   overflow: initial;
-  width: 100%;
-  margin: 0 40px;
+  /* width: 100%; */
+  /* margin: 0 40px; */
 }
 .progress-sect .progress-bar {
   background-color: #ffb400;
@@ -653,6 +653,26 @@ table tbody tr:last-child {
   border-radius: 50%;
   transform: translateY(-50%);
 }
+.pol-pod-progress {
+  position: relative;
+  width: 100%;
+  margin: 0 40px;
+}
+.pol-pod-percent {
+  position: absolute;
+  bottom: 100%;
+  left: 30%;
+  transform: translate(-25px, -10px);
+  font-size: 14px !important;
+  font-family: "Regular Font" !important;
+  background: #39b54a;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  line-height: 40px;
+  text-align: center;
+}
 .desti-places span {
   font-size: 16px;
   color: #333;
@@ -664,7 +684,7 @@ table tbody tr:last-child {
 }
 .progress-sect {
   /*  */
-  padding: 40px 40px 0px 30px;
+  padding: 60px 40px 0px 30px;
 }
 .ship-detail-map {
   height: 300px;
@@ -1800,8 +1820,8 @@ table tbody tr:last-child {
 }
 .map-filter {
   position: absolute;
-  right: 10px;
-  top: 60px;
+  top: 10px;
+  right: 60px;
 }
 .map-filter .map-icon-cntr:first-child {
   position: relative;
@@ -1821,6 +1841,10 @@ table tbody tr:last-child {
 }
 .rem-icon {
   left: 0 !important;
+}
+.dash-hbl {
+  color: #002d73 !important;
+  font-size: 14px !important;
 }
 /* dashboard ends */
 
@@ -2060,6 +2084,12 @@ table tbody tr:last-child {
   overflow: auto;
 }
 
+/* reports starts */
+.report-cntr {
+  padding: 0 15px 35px;
+}
+/* reports ends */
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
@@ -2144,12 +2174,36 @@ table tbody tr:last-child {
   color: #999;
   font-size: 10px;
   line-height: 7px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .header-ul-login-dtls {
   list-style: none;
   display: flex;
   padding: 0;
+  max-width: 200px;
+}
+.loign-dtlss {
+  overflow: hidden;
+}
+
+.prof-img {
+  width: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.prof-name {
+  font-family: "Bold Font";
+  text-transform: capitalize;
+  color: #002d73;
+  font-size: 18px;
+}
+.prof-comp {
+  font-family: "Medium Font";
+  color: #39b54a;
+  font-size: 14px;
 }
 
 .header-ul-login-dtls li {
@@ -2218,6 +2272,9 @@ table tbody tr:last-child {
   border: none;
   background-color: white;
   padding: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .drp-usericon {
   width: 30px;
