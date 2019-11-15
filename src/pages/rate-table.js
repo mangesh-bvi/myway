@@ -81,7 +81,62 @@ class RateTable extends Component {
   };
 
   componentDidMount() {
-    this.HandleRateDetails();
+    debugger;
+    var isSearch = this.props.location.state.isSearch;
+    if (isSearch) {
+      debugger;
+      var rTypeofMove =
+        this.props.location.state.typesofMove === "p2p"
+          ? 1
+          : this.props.location.state.typesofMove === "d2p"
+          ? 2
+          : this.props.location.state.typesofMove === "d2d"
+          ? 4
+          : this.props.location.state.typesofMove === "p2d"
+          ? 3
+          : 0;
+
+      var rModeofTransport =
+        this.props.location.state.modeoftransport === "SEA"
+          ? "Ocean"
+          : this.props.location.state.modeoftransport === "AIR"
+          ? "Air"
+          : this.props.location.state.modeoftransport === "ROAD"
+          ? "Inland"
+          : "";
+      var polAddress = this.props.location.state.polfullAddData;
+      var podAddress = this.props.location.state.podfullAddData;
+      var rateQueryDim = [];
+      var containerdetails = this.props.location.state.users;
+
+      
+      var dataParameter = {
+        QuoteType: this.props.location.state.containerLoadType,
+        ModeOfTransport: rModeofTransport,
+        Type: this.props.location.state.containerLoadType,
+        TypeOfMove: rTypeofMove,
+
+        PortOfDischargeCode:
+          podAddress.UNECECode !== "" ? podAddress.UNECECode : "",
+        PortOfLoadingCode:
+          polAddress.UNECECode !== "" ? polAddress.UNECECode : "",
+        Containerdetails: containerdetails,
+        OriginGeoCordinates:
+          polAddress.GeoCoordinate !== "" ? polAddress.GeoCoordinate : "",
+        DestGeoCordinate:
+          podAddress.GeoCoordinate !== "" ? podAddress.GeoCoordinate : "",
+        PickupCity:
+          polAddress.NameWoDiacritics !== "" ? polAddress.NameWoDiacritics : "",
+        DeliveryCity:
+          podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
+        Currency: this.props.location.state.currencyCode,
+        ChargeableWeight: 0,
+        RateQueryDim: rateQueryDim
+      };
+
+      this.HandleRateDetails(dataParameter);
+    } else {
+    }
   }
 
   toggleEdit() {
@@ -122,31 +177,43 @@ class RateTable extends Component {
     console.log(this.state.RateDetails[row.index]);
   }
 
-  HandleRateDetails() {
+  HandleRateDetails(dataParameter) {
     debugger;
     let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQuery`,
-      data: {
-        //UserID: 874588,
-        QuoteType: "FCL",
-        ModeOfTransport: "Ocean",
-        Type: "Export",
-        TypeOfMove: 1,
-        PortOfDischargeCode: "TRPAM",
-        PortOfLoadingCode: "INNSA",
-        Containerdetails: [
-          {
-            ProfileCodeID: 16,
-            ContainerCode: "40HC",
-            Type: "40 High Cube",
-            ContainerQuantity: 2
-          }
-        ]
-      },
+      data: dataParameter,
+      // data: {
+      //   QuoteType: "FCL",
+      //   ModeOfTransport: "Ocean",
+      //   Type: "Export",
+      //   TypeOfMove: 1,
+      //   PortOfDischargeCode: "TRPAM",
+      //   PortOfLoadingCode: "INNSA",
+      //   Containerdetails: [
+      //     {
+      //       ProfileCodeID: 16,
+      //       ContainerCode: "40HC",
+      //       Type: "40 High Cube",
+      //       ContainerQuantity: 2,
+      //       Temperature: 40,
+      //       TemperatureType: "C"
+      //     }
+      //   ],
+      //   OriginGeoCordinates: "",
+      //   DestGeoCordinate: "",
+      //   PickupCity: "Mumbai",
+      //   DeliveryCity: "Ankara",
+      //   Currency: "INR",
+      //   ChargeableWeight: 0,
+      //   RateQueryDim: [
+
+      //   ]
+      // },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       console.log(response);
       var ratetable = response.data.Table;
       var ratetable1 = response.data.Table1;
