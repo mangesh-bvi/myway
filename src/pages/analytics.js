@@ -36,14 +36,15 @@ var volumeOptions = {
       padding: 20
     }
   },
-  scales: { //volumeOptions.scales.yAxes.scaleLabel.labelString
+  scales: {
+    //volumeOptions.scales.yAxes.scaleLabel.labelString
     yAxes: [
       {
         ticks: {
           fontColor: "#999",
           fontSize: 14,
           callback: function(value) {
-            return value ;
+            return value;
           }
         },
         scaleLabel: {
@@ -102,260 +103,227 @@ class Analytics extends Component {
       toggleRoadShip: false,
       toggleShipInv: false,
       toggleRoadInv: false,
-      toggleWeekDate:false,
-      toggleMonthDate:true,
-      toggleYearDate:false,
-      graflabels:[],
-      graphdataset:[],
-      grafShipmentlabels:[],
-      graphShipmentdataset:[],
-      toggleShipmentWeekDate:false,
-      toggleShipmentMonthDate:true,
-      toggleShipmentYearDate:false,
-      setSupplierdrop:[]
+      toggleWeekDate: false,
+      toggleMonthDate: true,
+      toggleYearDate: false,
+      graflabels: [],
+      graphdataset: [],
+      grafShipmentlabels: [],
+      graphShipmentdataset: [],
+      toggleShipmentWeekDate: false,
+      toggleShipmentMonthDate: true,
+      toggleShipmentYearDate: false,
+      setSupplierdrop: []
     };
     this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
   }
 
   componentDidMount() {
     this.handleAnalyticsShipment(null);
-    
   }
 
-  handleAnalyticsShipment(event)
-  {
+  handleAnalyticsShipment(event) {
     let self = this;
 
-   // var FromDate = "2019-01-01";
-   // var ToDate = "2019-06-30";
-   var FromDate = "";
-   var ToDate = "";
+    // var FromDate = "2019-01-01";
+    // var ToDate = "2019-06-30";
+    var FromDate = "";
+    var ToDate = "";
     var ActiveFlag = "D";
     var Mode = "A,O,I";
-    var period = document.getElementById('drp-period-shipment').value;
+    var period = document.getElementById("drp-period-shipment").value;
     var DatedBy = document.getElementById("Datedbydrp").value;
-    
-    if(event != null)
-    {
-     // alert(event.target.id)
 
-      if(event.target.id == "shipment-view-btn")
-      {
-        var ActiveFlagele = document.getElementsByName('ship-type');         
-        for(var i = 0; i < ActiveFlagele.length; i++) { 
-          if(ActiveFlagele[i].checked) 
-          ActiveFlag = ActiveFlagele[i].value; 
-        } 
+    if (event != null) {
+      // alert(event.target.id)
 
-      var Modeele = document.getElementsByName('ship-way');     
-        if(Modeele.length > 0)
-        {    
-          for(var i = 0; i < Modeele.length; i++) { 
-          if(Modeele[i].checked) 
-          Mode = Modeele[i].value; 
-          } 
+      if (event.target.id == "shipment-view-btn") {
+        var ActiveFlagele = document.getElementsByName("ship-type");
+        for (var i = 0; i < ActiveFlagele.length; i++) {
+          if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
+        }
+
+        var Modeele = document.getElementsByName("ship-way");
+        if (Modeele.length > 0) {
+          for (var i = 0; i < Modeele.length; i++) {
+            if (Modeele[i].checked) Mode = Modeele[i].value;
+          }
         }
       }
-    }
-    else
-    {
+    } else {
       //All
       document.getElementById("delivered-ship").click();
     }
 
-    if(period == "M")
-    {
-      var tempfromdate = document.getElementById('datpicker-from-shipment').value.split('/'); //05/12/2019
-      var temptodate = document.getElementById('datpicker-to-shipment').value.split('/');
-      FromDate = tempfromdate[1] +"-"+  tempfromdate[0] + "-01";
-      ToDate = temptodate[1] +"-"+  temptodate[0] + "-01";
+    if (period == "M") {
+      var tempfromdate = document
+        .getElementById("datpicker-from-shipment")
+        .value.split("/"); //05/12/2019
+      var temptodate = document
+        .getElementById("datpicker-to-shipment")
+        .value.split("/");
+      FromDate = tempfromdate[1] + "-" + tempfromdate[0] + "-01";
+      ToDate = temptodate[1] + "-" + temptodate[0] + "-01";
+    } else if (period == "W") {
+      var tempfromdate = document
+        .getElementById("datpicker-from-shipment")
+        .value.split("/"); //05/12/2019
+      var temptodate = document
+        .getElementById("datpicker-to-shipment")
+        .value.split("/");
+      FromDate =
+        tempfromdate[2] + "-" + tempfromdate[0] + "-" + tempfromdate[1];
+      ToDate = temptodate[2] + "-" + temptodate[0] + "-" + temptodate[1];
+    } else if (period == "Y") {
+      var tempfromdate = document.getElementById("date-year-shipment").value;
+      FromDate = tempfromdate + "-01-01";
+      ToDate = tempfromdate + "-12-31";
     }
-    else if (period == "W")
-    {
-      var tempfromdate = document.getElementById('datpicker-from-shipment').value.split('/'); //05/12/2019
-      var temptodate = document.getElementById('datpicker-to-shipment').value.split('/');
-      FromDate = tempfromdate[2] +"-"+  tempfromdate[0] + "-" + tempfromdate[1];
-      ToDate = temptodate[2] +"-"+  temptodate[0] + "-" + temptodate[1];
+    var g1 = new Date(FromDate);
+    var g2 = new Date(ToDate);
+
+    if (g1.getTime() > g2.getTime()) {
+      alert("To date should be greater then From date.");
+      document.getElementById("datpicker-to-shipment").focus();
+      return false;
     }
-    else if(period == "Y")
-    {
-      var tempfromdate =  document.getElementById('date-year-shipment').value
-      FromDate = tempfromdate +"-01-01";
-      ToDate = tempfromdate +"-12-31";
-    }
-    var g1 = new Date(FromDate); 
-    var g2 = new Date(ToDate); 
-    
-     if (g1.getTime() > g2.getTime()) 
-     {
-        alert("To date should be greater then From date.");
-        document.getElementById('datpicker-to-shipment').focus();
-        return false;
-     }
-  
-    var  axiosdata = {
-      UserId:encryption(window.localStorage.getItem("userid"), "desc"),
-      FromDate:FromDate,
-      ToDate:ToDate,
+
+    var axiosdata = {
+      UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+      FromDate: FromDate,
+      ToDate: ToDate,
       ActiveFlag: ActiveFlag,
       Mode: Mode,
       period: period,
       //ShipperID:1340354108
       DatedBy: DatedBy
-    }
-    
-    this.setShipmentGraph(axiosdata)
+    };
+
+    this.setShipmentGraph(axiosdata);
   }
 
-  setShipmentGraph(axiosdata)
-  {
+  setShipmentGraph(axiosdata) {
     let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentAnalyticsAPI`,
       data: axiosdata,
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-
-      self.setState({graphShipmentdataset: []})
-      var Segregatedby = document.getElementById("SegregatedBydrp").value;
-      //ValueChart
-      var Table = [];
-      var graphdataset = [];
-      var arrayAir = [];
-      var arrayOcean = [];
-      var arrayTruck = [];
-
-      if(Segregatedby == "CountChart")
-      {
-        Table = response.data.Table;
-        arrayAir = Table.filter(item => item.Modeoftransport == "Air")
-        arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean")
-        arrayTruck = Table.filter(item => item.Modeoftransport == "Inland")
-        volumeOptions.title.text = "Total no of shipment";
-        volumeOptions.scales.yAxes[0].scaleLabel.labelString = "Count";
-      }
-      else  if(Segregatedby == "VolumeChart")
-      {
-        Table = response.data.Table1;
-        arrayAir = Table.filter(item => item.ModeOfTransport == "Air")
-        arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean")
-        arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland")
-        volumeOptions.title.text = "Total volume of shipment";
-        volumeOptions.scales.yAxes[0].scaleLabel.labelString = "KGS";
-      }
-     
-      var arraylabel = [];
-      var arrayAirdata = [];
-      var arrayOceandata = [];
-      var arrayTruckdata = [];
-
-      for(var i = 0; i < Table.length; i++)
-      {
-        var index = arraylabel.indexOf(Table[i].ShipmentPeriod);
-        if (index > -1) {}
-        else
-        {
-          arraylabel.push(Table[i].ShipmentPeriod)
-        }
-        self.setState({grafShipmentlabels: arraylabel})
-      }
-
-      if(arrayAir != null)
-      {
-        if(arrayAir.length > 0)
-        {
-          for(var i = 0; i < arrayAir.length; i++)
-          {
-            if(Segregatedby == "VolumeChart")
-            {
-             arrayAirdata.push(arrayAir[i].Volume)
-            }
-            else  if(Segregatedby == "CountChart")
-            {
-              arrayAirdata.push(arrayAir[i].NoOfShipment)
-            }
-          }
-          graphdataset.push({
-            label: "Air",
-            data: arrayAirdata,
-            backgroundColor: "#3357ac"
-          });
-        }
-      }
-
-      if(arrayOcean != null)
-      {
-        if(arrayOcean.length > 0)
-        {
-          for(var i = 0; i < arrayOcean.length; i++)
-          {
-            if(Segregatedby == "VolumeChart")
-            {
-              arrayOceandata.push(arrayOcean[i].Volume)
-            }
-            else  if(Segregatedby == "CountChart")
-            {
-              arrayOceandata.push(arrayOcean[i].NoOfShipment)
-            }
-          }
-          graphdataset.push({
-            fillColor: "rgba(172,194,132,0.4)",
-            strokeColor: "#ACC26D",
-            pointColor: "#fff",
-            pointStrokeColor: "#9DB86D",
-            label: "Ocean",
-            data: arrayOceandata,
-            backgroundColor: "#4a99e7"
-          });
-        }
-        
-      }
-
-      if(arrayTruck != null)
-      {
-        if(arrayTruck.length > 0)
-        {
-          for(var i = 0; i < arrayTruck.length; i++)
-          {
-            if(Segregatedby == "VolumeChart")
-            {
-              arrayTruckdata.push(arrayTruck[i].Volume)
-            }
-            else  if(Segregatedby == "CountChart")
-            {
-              arrayTruckdata.push(arrayTruck[i].NoOfShipment)
-            }
-          }
-          graphdataset.push({
-            label: "Inland",
-            data: arrayTruckdata,
-            backgroundColor: "#50ad84"
-          });
-        }
-       
-      }
-
-      self.setState({graphShipmentdataset: graphdataset})
-
-    }).catch(error => {
-      debugger;
-      var temperror  = "";
-      var err = "";
-      if(error.response != undefined)
-      {
-        temperror = error.response.data;
-        err = temperror.split(":")[1].replace("}", "");
-      }
-      else{
-        temperror = error.message;
-        err = temperror;
-      }
-    
-      alert(err)
-      self.setState({graphShipmentdataset: []})
     })
+      .then(function(response) {
+        debugger;
+
+        self.setState({ graphShipmentdataset: [] });
+        var Segregatedby = document.getElementById("SegregatedBydrp").value;
+        //ValueChart
+        var Table = [];
+        var graphdataset = [];
+        var arrayAir = [];
+        var arrayOcean = [];
+        var arrayTruck = [];
+
+        if (Segregatedby == "CountChart") {
+          Table = response.data.Table;
+          arrayAir = Table.filter(item => item.Modeoftransport == "Air");
+          arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
+          arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
+          volumeOptions.title.text = "Total no of shipment";
+          volumeOptions.scales.yAxes[0].scaleLabel.labelString = "Count";
+        } else if (Segregatedby == "VolumeChart") {
+          Table = response.data.Table1;
+          arrayAir = Table.filter(item => item.ModeOfTransport == "Air");
+          arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean");
+          arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland");
+          volumeOptions.title.text = "Total volume of shipment";
+          volumeOptions.scales.yAxes[0].scaleLabel.labelString = "KGS";
+        }
+
+        var arraylabel = [];
+        var arrayAirdata = [];
+        var arrayOceandata = [];
+        var arrayTruckdata = [];
+
+        for (var i = 0; i < Table.length; i++) {
+          var index = arraylabel.indexOf(Table[i].ShipmentPeriod);
+          if (index > -1) {
+          } else {
+            arraylabel.push(Table[i].ShipmentPeriod);
+          }
+          self.setState({ grafShipmentlabels: arraylabel });
+        }
+
+        if (arrayAir != null) {
+          if (arrayAir.length > 0) {
+            for (var i = 0; i < arrayAir.length; i++) {
+              if (Segregatedby == "VolumeChart") {
+                arrayAirdata.push(arrayAir[i].Volume);
+              } else if (Segregatedby == "CountChart") {
+                arrayAirdata.push(arrayAir[i].NoOfShipment);
+              }
+            }
+            graphdataset.push({
+              label: "Air",
+              data: arrayAirdata,
+              backgroundColor: "#3357ac"
+            });
+          }
+        }
+
+        if (arrayOcean != null) {
+          if (arrayOcean.length > 0) {
+            for (var i = 0; i < arrayOcean.length; i++) {
+              if (Segregatedby == "VolumeChart") {
+                arrayOceandata.push(arrayOcean[i].Volume);
+              } else if (Segregatedby == "CountChart") {
+                arrayOceandata.push(arrayOcean[i].NoOfShipment);
+              }
+            }
+            graphdataset.push({
+              fillColor: "rgba(172,194,132,0.4)",
+              strokeColor: "#ACC26D",
+              pointColor: "#fff",
+              pointStrokeColor: "#9DB86D",
+              label: "Ocean",
+              data: arrayOceandata,
+              backgroundColor: "#4a99e7"
+            });
+          }
+        }
+
+        if (arrayTruck != null) {
+          if (arrayTruck.length > 0) {
+            for (var i = 0; i < arrayTruck.length; i++) {
+              if (Segregatedby == "VolumeChart") {
+                arrayTruckdata.push(arrayTruck[i].Volume);
+              } else if (Segregatedby == "CountChart") {
+                arrayTruckdata.push(arrayTruck[i].NoOfShipment);
+              }
+            }
+            graphdataset.push({
+              label: "Inland",
+              data: arrayTruckdata,
+              backgroundColor: "#50ad84"
+            });
+          }
+        }
+
+        self.setState({ graphShipmentdataset: graphdataset });
+      })
+      .catch(error => {
+        debugger;
+        var temperror = "";
+        var err = "";
+        if (error.response != undefined) {
+          temperror = error.response.data;
+          err = temperror.split(":")[1].replace("}", "");
+        } else {
+          temperror = error.message;
+          err = temperror;
+        }
+
+        alert(err);
+        self.setState({ graphShipmentdataset: [] });
+      });
   }
 
   handleChangeStart = e => {
@@ -363,7 +331,7 @@ class Analytics extends Component {
       startDate: e
     });
   };
-  
+
   handleChangeEnd = e => {
     this.setState({
       endDate: e
@@ -371,57 +339,49 @@ class Analytics extends Component {
   };
 
   handleChangePerion = e => {
-
-    if(e.target.value == "W")
-    {
+    if (e.target.value == "W") {
       this.setState({
-      toggleWeekDate:true,
-      toggleMonthDate:false,
-      toggleYearDate:false
+        toggleWeekDate: true,
+        toggleMonthDate: false,
+        toggleYearDate: false
       });
     }
-    if(e.target.value == "M")
-    {
+    if (e.target.value == "M") {
       this.setState({
-      toggleWeekDate:false,
-      toggleMonthDate:true,
-      toggleYearDate:false
+        toggleWeekDate: false,
+        toggleMonthDate: true,
+        toggleYearDate: false
       });
     }
-    if(e.target.value == "Y")
-    {
+    if (e.target.value == "Y") {
       this.setState({
-      toggleWeekDate:false,
-      toggleMonthDate:false,
-      toggleYearDate:true
+        toggleWeekDate: false,
+        toggleMonthDate: false,
+        toggleYearDate: true
       });
     }
   };
 
   handleShipmentChangePerion = e => {
-
-    if(e.target.value == "W")
-    {
+    if (e.target.value == "W") {
       this.setState({
-      toggleShipmentWeekDate:true,
-      toggleShipmentMonthDate:false,
-      toggleShipmentYearDate:false
+        toggleShipmentWeekDate: true,
+        toggleShipmentMonthDate: false,
+        toggleShipmentYearDate: false
       });
     }
-    if(e.target.value == "M")
-    {
+    if (e.target.value == "M") {
       this.setState({
-      toggleShipmentWeekDate:false,
-      toggleShipmentMonthDate:true,
-      toggleShipmentYearDate:false
+        toggleShipmentWeekDate: false,
+        toggleShipmentMonthDate: true,
+        toggleShipmentYearDate: false
       });
     }
-    if(e.target.value == "Y")
-    {
+    if (e.target.value == "Y") {
       this.setState({
-      toggleShipmentWeekDate:false,
-      toggleShipmentMonthDate:false,
-      toggleShipmentYearDate:true
+        toggleShipmentWeekDate: false,
+        toggleShipmentMonthDate: false,
+        toggleShipmentYearDate: true
       });
     }
   };
@@ -467,126 +427,116 @@ class Analytics extends Component {
   };
 
   handleAnalyticsInvoice(event) {
-
     let self = this;
 
     var ActiveFlag = "D";
     var Mode = "A,O";
-    var period =  document.getElementById('drp-period-invoice').value;
+    var period = document.getElementById("drp-period-invoice").value;
 
     var FromDate = "";
     var ToDate = "";
-    if(period == "M")
-    {
-      var tempfromdate = document.getElementById('datpicker-from-invoice').value.split('/'); //05/12/2019
-      var temptodate = document.getElementById('datpicker-to-invoice').value.split('/');
-      FromDate = tempfromdate[1] +"-"+  tempfromdate[0] + "-01";
-      ToDate = temptodate[1] +"-"+  temptodate[0] + "-01";
+    if (period == "M") {
+      var tempfromdate = document
+        .getElementById("datpicker-from-invoice")
+        .value.split("/"); //05/12/2019
+      var temptodate = document
+        .getElementById("datpicker-to-invoice")
+        .value.split("/");
+      FromDate = tempfromdate[1] + "-" + tempfromdate[0] + "-01";
+      ToDate = temptodate[1] + "-" + temptodate[0] + "-01";
+    } else if (period == "W") {
+      var tempfromdate = document
+        .getElementById("datpicker-from-invoice")
+        .value.split("/"); //05/12/2019
+      var temptodate = document
+        .getElementById("datpicker-to-invoice")
+        .value.split("/");
+      FromDate =
+        tempfromdate[2] + "-" + tempfromdate[0] + "-" + tempfromdate[1];
+      ToDate = temptodate[2] + "-" + temptodate[0] + "-" + temptodate[1];
+    } else if (period == "Y") {
+      var tempfromdate = document.getElementById("date-year-invoice").value;
+      FromDate = tempfromdate + "-01-01";
+      ToDate = tempfromdate + "-12-31";
     }
-    else if (period == "W")
-    {
-      var tempfromdate = document.getElementById('datpicker-from-invoice').value.split('/'); //05/12/2019
-      var temptodate = document.getElementById('datpicker-to-invoice').value.split('/');
-      FromDate = tempfromdate[2] +"-"+  tempfromdate[0] + "-" + tempfromdate[1];
-      ToDate = temptodate[2] +"-"+  temptodate[0] + "-" + temptodate[1];
-    }
-    else if(period == "Y")
-    {
-      var tempfromdate =  document.getElementById('date-year-invoice').value
-      FromDate = tempfromdate +"-01-01";
-      ToDate = tempfromdate +"-12-31";
-    }
-    var g1 = new Date(FromDate); 
-    var g2 = new Date(ToDate); 
-    
-     if (g1.getTime() > g2.getTime()) 
-     {
-        alert("To date should be greater then From date.");
-        document.getElementById('datpicker-to-invoice').focus();
-        return false;
-     }
-    if(event.target.id == "invoices-view-btn")
-    {
-      var ActiveFlagele = document.getElementsByName('ship-type-invoice');         
-      for(var i = 0; i < ActiveFlagele.length; i++) { 
-         if(ActiveFlagele[i].checked) 
-         ActiveFlag = ActiveFlagele[i].value; 
-      } 
+    var g1 = new Date(FromDate);
+    var g2 = new Date(ToDate);
 
-     var Modeele = document.getElementsByName('ship-way-invoice');     
-      if(Modeele.length > 0)
-      {    
-        for(var i = 0; i < Modeele.length; i++) { 
-        if(Modeele[i].checked) 
-        Mode = Modeele[i].value; 
-        } 
-      }
+    if (g1.getTime() > g2.getTime()) {
+      alert("To date should be greater then From date.");
+      document.getElementById("datpicker-to-invoice").focus();
+      return false;
     }
-    else
-    {
+    if (event.target.id == "invoices-view-btn") {
+      var ActiveFlagele = document.getElementsByName("ship-type-invoice");
+      for (var i = 0; i < ActiveFlagele.length; i++) {
+        if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
+      }
+
+      var Modeele = document.getElementsByName("ship-way-invoice");
+      if (Modeele.length > 0) {
+        for (var i = 0; i < Modeele.length; i++) {
+          if (Modeele[i].checked) Mode = Modeele[i].value;
+        }
+      }
+    } else {
       document.getElementById("delivered-inv").click();
-    } 
+    }
 
-      var  axiosdata = {
-        UserId:encryption(window.localStorage.getItem("userid"), "desc"),
-        FromDate:FromDate,
-        ToDate:ToDate,
-        ActiveFlag: ActiveFlag,
-        Mode: Mode,
-        period: period
-        //ShipperID:1340354108
-      }
+    var axiosdata = {
+      UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+      FromDate: FromDate,
+      ToDate: ToDate,
+      ActiveFlag: ActiveFlag,
+      Mode: Mode,
+      period: period
+      //ShipperID:1340354108
+    };
 
-      if(event.target.id == "invoices-view-btn")
-      {
-        axiosdata.ShipperID = document.getElementById("drp-supplie-invoice").value;
-        self.setgrafval(axiosdata)
-      }
-      else
-      {
-        this.setSupplierdrop(axiosdata) 
-      }
+    if (event.target.id == "invoices-view-btn") {
+      axiosdata.ShipperID = document.getElementById(
+        "drp-supplie-invoice"
+      ).value;
+      self.setgrafval(axiosdata);
+    } else {
+      this.setSupplierdrop(axiosdata);
+    }
   }
 
-    setSupplierdrop(axiosdata)
-    {
-      let self = this;
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/ShipperDropdownListAPI`,
-        data: {UserID : encryption(window.localStorage.getItem("userid"), "desc")},
-        headers: authHeader()
-      }).then(function(response) {
+  setSupplierdrop(axiosdata) {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/ShipperDropdownListAPI`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        self.setState({ setSupplierdrop: response.data.Table });
 
-        self.setState({setSupplierdrop:response.data.Table})
-
-        if(response != null)
-        {
-          if(response.data != null)
-          {
-            if(response.data.Table != null)
-            {
-              if(response.data.Table.length > 0)
-              {
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
                 axiosdata.ShipperID = response.data.Table[0].ShipperID;
               }
             }
           }
         }
 
-        
-        self.setgrafval(axiosdata)
-      }).catch(error => {
-        
+        self.setgrafval(axiosdata);
+      })
+      .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        alert(err[1].replace("}", ""))
-        self.setState({setSupplierdrop:[]})
-      })
-    }
+        alert(err[1].replace("}", ""));
+        self.setState({ setSupplierdrop: [] });
+      });
+  }
 
-  setgrafval(axiosdata)
-  {
+  setgrafval(axiosdata) {
     let self = this;
 
     axios({
@@ -594,40 +544,40 @@ class Analytics extends Component {
       url: `${appSettings.APIURL}/InvoiceAnalyticsAPI`,
       data: axiosdata,
       headers: authHeader()
-    }).then(function(response) {
-      
+    })
+      .then(function(response) {
+        self.setState({ graphdataset: [] });
 
-      self.setState({graphdataset: []})
+        var arraylabel = [];
+        var arrayAirdata = [];
+        var arrayOceandata = [];
+        var arrayTruckdata = [];
 
-      var arraylabel = [];
-      var arrayAirdata = [];
-      var arrayOceandata = [];
-      var arrayTruckdata = [];
-
-      for(var i = 0; i < response.data.Table.length; i++)
-      {
-        var index = arraylabel.indexOf(response.data.Table[i].ShipmentPeriod);
-        if (index > -1) {}
-        else
-        {
-          arraylabel.push(response.data.Table[i].ShipmentPeriod)
+        for (var i = 0; i < response.data.Table.length; i++) {
+          var index = arraylabel.indexOf(response.data.Table[i].ShipmentPeriod);
+          if (index > -1) {
+          } else {
+            arraylabel.push(response.data.Table[i].ShipmentPeriod);
+          }
+          self.setState({ grafShipmentlabels: arraylabel });
         }
-        self.setState({grafShipmentlabels: arraylabel})
-      }
 
-      var graphdataset = []
+        var graphdataset = [];
 
-      var arrayAir = response.data.Table.filter(item => item.ModeOfTransport == "Air")
-      var arrayOcean = response.data.Table.filter(item => item.ModeOfTransport == "Ocean")
-      var arrayTruck = response.data.Table.filter(item => item.ModeOfTransport == "Inland")
+        var arrayAir = response.data.Table.filter(
+          item => item.ModeOfTransport == "Air"
+        );
+        var arrayOcean = response.data.Table.filter(
+          item => item.ModeOfTransport == "Ocean"
+        );
+        var arrayTruck = response.data.Table.filter(
+          item => item.ModeOfTransport == "Inland"
+        );
 
-        if(arrayAir != null)
-        {
-          if(arrayAir.length > 0)
-          {
-            for(var i = 0; i < arrayAir.length; i++)
-            {
-              arrayAirdata.push(arrayAir[i].InvoiceUSDAmount)
+        if (arrayAir != null) {
+          if (arrayAir.length > 0) {
+            for (var i = 0; i < arrayAir.length; i++) {
+              arrayAirdata.push(arrayAir[i].InvoiceUSDAmount);
             }
             graphdataset.push({
               label: "Air",
@@ -637,13 +587,10 @@ class Analytics extends Component {
           }
         }
 
-        if(arrayOcean != null)
-        {
-          if(arrayOcean.length > 0)
-          {
-            for(var i = 0; i < arrayOcean.length; i++)
-            {
-              arrayOceandata.push(arrayOcean[i].InvoiceUSDAmount)
+        if (arrayOcean != null) {
+          if (arrayOcean.length > 0) {
+            for (var i = 0; i < arrayOcean.length; i++) {
+              arrayOceandata.push(arrayOcean[i].InvoiceUSDAmount);
             }
             graphdataset.push({
               fillColor: "rgba(172,194,132,0.4)",
@@ -655,16 +602,12 @@ class Analytics extends Component {
               backgroundColor: "#4a99e7"
             });
           }
-          
         }
 
-        if(arrayTruck != null)
-        {
-          if(arrayTruck.length > 0)
-          {
-            for(var i = 0; i < arrayTruck.length; i++)
-            {
-              arrayTruckdata.push(arrayTruck[i].InvoiceUSDAmount)
+        if (arrayTruck != null) {
+          if (arrayTruck.length > 0) {
+            for (var i = 0; i < arrayTruck.length; i++) {
+              arrayTruckdata.push(arrayTruck[i].InvoiceUSDAmount);
             }
             graphdataset.push({
               label: "Truck",
@@ -672,33 +615,33 @@ class Analytics extends Component {
               backgroundColor: "#50ad84"
             });
           }
-         
         }
 
-      self.setState({graphdataset: graphdataset})
-
-    }).catch(error => {
-      
-      var temperror = error.response.data;
-      var err = temperror.split(":");
-      alert(err[1].replace("}", ""))
-      self.setState({graphdataset: []})
-    })
+        self.setState({ graphdataset: graphdataset });
+      })
+      .catch(error => {
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        alert(err[1].replace("}", ""));
+        self.setState({ graphdataset: [] });
+      });
   }
 
   buildOptions() {
     var arr = [];
     var currentdate = new Date();
     for (let i = 2018; i <= currentdate.getFullYear(); i++) {
-      if(i == currentdate.getFullYear())
-      {
-        arr.push(<option  value={i} selected>{i}</option>)
+      if (i == currentdate.getFullYear()) {
+        arr.push(
+          <option value={i} selected>
+            {i}
+          </option>
+        );
+      } else {
+        arr.push(<option value={i}>{i}</option>);
       }
-      else{
-        arr.push(<option value={i}>{i}</option>)
-       }
     }
-    return arr; 
+    return arr;
   }
 
   render() {
@@ -724,12 +667,8 @@ class Analytics extends Component {
     };
 
     let optionSupplierName = this.state.setSupplierdrop.map((item, i) => (
-
-      <option value={item.ShipperID}>
-        {item.ShipperName}
-      </option>
-
-    ))
+      <option value={item.ShipperID}>{item.ShipperName}</option>
+    ));
 
     return (
       <React.Fragment>
@@ -779,7 +718,12 @@ class Analytics extends Component {
                   <div className="ana-viw">
                     <div className="analy-radio new-radio-rate-cntr radio-light-blue">
                       <div>
-                        <input type="radio" name="ship-type" id="active-ship" value="A" />
+                        <input
+                          type="radio"
+                          name="ship-type"
+                          id="active-ship"
+                          value="A"
+                        />
                         <label htmlFor="active-ship">Active</label>
                       </div>
                       <div>
@@ -858,7 +802,7 @@ class Analytics extends Component {
                       </div>
                     </div>
                     {this.state.toggleShipShip && (
-                      <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
                           <input type="radio" name="sea-opt" id="fcl-ship" />
                           <label htmlFor="fcl-ship">FCL</label>
@@ -870,7 +814,7 @@ class Analytics extends Component {
                       </div>
                     )}
                     {this.state.toggleRoadShip && (
-                      <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
                           <input type="radio" name="road-opt" id="ftl-ship" />
                           <label htmlFor="ftl-ship">FTL</label>
@@ -882,13 +826,24 @@ class Analytics extends Component {
                       </div>
                     )}
                   </div>
-                  <button className="butn mt-0"  onClick={this.handleAnalyticsShipment.bind(this)} id="shipment-view-btn">view</button>
+                  <button
+                    className="butn mt-0"
+                    onClick={this.handleAnalyticsShipment.bind(this)}
+                    id="shipment-view-btn"
+                  >
+                    view
+                  </button>
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
-                    <select onChange={this.handleShipmentChangePerion} id="drp-period-shipment">
+                    <select
+                      onChange={this.handleShipmentChangePerion}
+                      id="drp-period-shipment"
+                    >
                       <option value="W">Weekly</option>
-                      <option selected value="M">Monthly</option>
+                      <option selected value="M">
+                        Monthly
+                      </option>
                       <option value="Y">Yearly</option>
                     </select>
                   </div>
@@ -913,74 +868,73 @@ class Analytics extends Component {
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Dated&nbsp;by </span>
                     <select id="Datedbydrp">
-                      <option value="Delivery Date" seected>Delivery Date</option>
+                      <option value="Delivery Date" seected>
+                        Delivery Date
+                      </option>
                       <option value="Booking Date">Booking Date</option>
                       <option value="Dispatched Date">Dispatched Date</option>
                     </select>
                   </div>
                   {this.state.toggleShipmentYearDate && (
                     <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>Year</span>
-                    <select id="date-year-shipment">
-                    {this.buildOptions()}
-                    </select>
-                  </div>
+                      <span>Year</span>
+                      <select id="date-year-shipment">
+                        {this.buildOptions()}
+                      </select>
+                    </div>
                   )}
                   {!this.state.toggleShipmentYearDate && (
-                  <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>From </span>
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                      <span>From </span>
 
-                    {this.state.toggleShipmentWeekDate && (
-                      <DatePicker
-                      id="datpicker-from-shipment"
-                      className="ana-to"
-                      selected={this.state.startDate}
-                      onChange={this.handleChangeStart}
-                      maxDate={new Date()}
-                      showWeekNumbers
-                    />
-                    )}
-                    {this.state.toggleShipmentMonthDate && (
-                     <DatePicker
-                     id="datpicker-from-shipment"
-                     className="ana-to"
-                     selected={this.state.startDate}
-                     onChange={this.handleChangeStart}
-                     dateFormat="MM/yyyy"
-                     maxDate={new Date()}
-                     showMonthYearPicker
-                   />
-                    )}
-                  </div>
+                      {this.state.toggleShipmentWeekDate && (
+                        <DatePicker
+                          id="datpicker-from-shipment"
+                          className="ana-to"
+                          selected={this.state.startDate}
+                          onChange={this.handleChangeStart}
+                          maxDate={new Date()}
+                          showWeekNumbers
+                        />
+                      )}
+                      {this.state.toggleShipmentMonthDate && (
+                        <DatePicker
+                          id="datpicker-from-shipment"
+                          className="ana-to"
+                          selected={this.state.startDate}
+                          onChange={this.handleChangeStart}
+                          dateFormat="MM/yyyy"
+                          maxDate={new Date()}
+                          showMonthYearPicker
+                        />
+                      )}
+                    </div>
                   )}
                   {!this.state.toggleShipmentYearDate && (
-                  <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>To </span>
-                    {this.state.toggleShipmentWeekDate && (
-                     
-                     <DatePicker
-                     id="datpicker-to-shipment"
-                     className="ana-to"
-                     selected={this.state.endDate}
-                     onChange={this.handleChangeEnd}
-                     maxDate={new Date()}
-                     showWeekNumbers
-                   />
-                     )}
-                     {this.state.toggleShipmentMonthDate && (
-                     
-                    <DatePicker
-                     id="datpicker-to-shipment"
-                     className="ana-to"
-                     selected={this.state.endDate}
-                     onChange={this.handleChangeEnd}
-                     dateFormat="MM/yyyy"
-                     maxDate={new Date()}
-                     showMonthYearPicker
-                   />
-                     )}
-
-                  </div>
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                      <span>To </span>
+                      {this.state.toggleShipmentWeekDate && (
+                        <DatePicker
+                          id="datpicker-to-shipment"
+                          className="ana-to"
+                          selected={this.state.endDate}
+                          onChange={this.handleChangeEnd}
+                          maxDate={new Date()}
+                          showWeekNumbers
+                        />
+                      )}
+                      {this.state.toggleShipmentMonthDate && (
+                        <DatePicker
+                          id="datpicker-to-shipment"
+                          className="ana-to"
+                          selected={this.state.endDate}
+                          onChange={this.handleChangeEnd}
+                          dateFormat="MM/yyyy"
+                          maxDate={new Date()}
+                          showMonthYearPicker
+                        />
+                      )}
+                    </div>
                   )}
                   {/* <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Values </span>
@@ -1020,7 +974,12 @@ class Analytics extends Component {
                   <div className="ana-viw">
                     <div className="analy-radio new-radio-rate-cntr radio-light-blue">
                       <div>
-                        <input type="radio" name="ship-type-invoice"  id="active-inv" value="A" />
+                        <input
+                          type="radio"
+                          name="ship-type-invoice"
+                          id="active-inv"
+                          value="A"
+                        />
                         <label htmlFor="active-inv">Active</label>
                       </div>
                       <div>
@@ -1099,38 +1058,65 @@ class Analytics extends Component {
                       </div>
                     </div>
                     {this.state.toggleShipInv && (
-                      <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="sea-opt-invoice" id="fcl-inv" />
+                          <input
+                            type="radio"
+                            name="sea-opt-invoice"
+                            id="fcl-inv"
+                          />
                           <label htmlFor="fcl-inv">FCL</label>
                         </div>
                         <div>
-                          <input type="radio" name="sea-opt-invoice" id="lcl-inv" />
+                          <input
+                            type="radio"
+                            name="sea-opt-invoice"
+                            id="lcl-inv"
+                          />
                           <label htmlFor="lcl-inv">LCL</label>
                         </div>
                       </div>
                     )}
                     {this.state.toggleRoadInv && (
-                      <div className="analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
+                      <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="road-opt-invoice" id="ftl-inv" />
+                          <input
+                            type="radio"
+                            name="road-opt-invoice"
+                            id="ftl-inv"
+                          />
                           <label htmlFor="ftl-inv">FTL</label>
                         </div>
                         <div>
-                          <input type="radio" name="road-opt-invoice" id="ltl-inv" />
+                          <input
+                            type="radio"
+                            name="road-opt-invoice"
+                            id="ltl-inv"
+                          />
                           <label htmlFor="ltl-inv">LTL</label>
                         </div>
                       </div>
                     )}
                   </div>
-                  <button className="butn mt-0" onClick={this.handleAnalyticsInvoice.bind(this)} id="invoices-view-btn">view</button>
+                  <button
+                    className="butn mt-0"
+                    onClick={this.handleAnalyticsInvoice.bind(this)}
+                    id="invoices-view-btn"
+                  >
+                    view
+                  </button>
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
-                    <select id="drp-period-invoice" onChange={this.handleChangePerion}>
+                    <select
+                      id="drp-period-invoice"
+                      onChange={this.handleChangePerion}
+                    >
                       <option value="W">Weekly</option>
-                      <option selected  value="M">Monthly</option>
-                      <option  value="Y">Yearly</option>
+                      <option selected value="M">
+                        Monthly
+                      </option>
+                      <option value="Y">Yearly</option>
                     </select>
                   </div>
                   <div className="login-fields mb-0 d-flex align-items-center">
@@ -1144,64 +1130,61 @@ class Analytics extends Component {
                     <div className="login-fields mb-0 d-flex align-items-center">
                       <span>Year</span>
                       <select id="date-year-invoice">
-                      {this.buildOptions()}
+                        {this.buildOptions()}
                       </select>
                     </div>
                   )}
                   {!this.state.toggleYearDate && (
-                  <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>From </span>
-                    {this.state.toggleWeekDate && (
-                      <DatePicker
-                      id="datpicker-from-invoice"
-                      className="ana-to"
-                      selected={this.state.startDate}
-                      onChange={this.handleChangeStart}
-                      maxDate={new Date()}
-                      showWeekNumbers
-                    />
-                    )}
-                    {this.state.toggleMonthDate && (
-                     <DatePicker
-                     id="datpicker-from-invoice"
-                     className="ana-to"
-                     selected={this.state.startDate}
-                     onChange={this.handleChangeStart}
-                     dateFormat="MM/yyyy"
-                     maxDate={new Date()}
-                     showMonthYearPicker
-                   />
-                    )}
-                  </div>
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                      <span>From </span>
+                      {this.state.toggleWeekDate && (
+                        <DatePicker
+                          id="datpicker-from-invoice"
+                          className="ana-to"
+                          selected={this.state.startDate}
+                          onChange={this.handleChangeStart}
+                          maxDate={new Date()}
+                          showWeekNumbers
+                        />
+                      )}
+                      {this.state.toggleMonthDate && (
+                        <DatePicker
+                          id="datpicker-from-invoice"
+                          className="ana-to"
+                          selected={this.state.startDate}
+                          onChange={this.handleChangeStart}
+                          dateFormat="MM/yyyy"
+                          maxDate={new Date()}
+                          showMonthYearPicker
+                        />
+                      )}
+                    </div>
                   )}
                   {!this.state.toggleYearDate && (
-                  <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>To </span>
-                    {this.state.toggleWeekDate && (
-                     
-                    <DatePicker
-                    id="datpicker-to-invoice"
-                    className="ana-to"
-                    selected={this.state.endDate}
-                    onChange={this.handleChangeEnd}
-                    maxDate={new Date()}
-                    showWeekNumbers
-                  />
-                    )}
-                    {this.state.toggleMonthDate && (
-                    
-                   <DatePicker
-                    id="datpicker-to-invoice"
-                    className="ana-to"
-                    selected={this.state.endDate}
-                    onChange={this.handleChangeEnd}
-                    dateFormat="MM/yyyy"
-                    maxDate={new Date()}
-                    showMonthYearPicker
-                  />
-                    )}
-                   
-                  </div>
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                      <span>To </span>
+                      {this.state.toggleWeekDate && (
+                        <DatePicker
+                          id="datpicker-to-invoice"
+                          className="ana-to"
+                          selected={this.state.endDate}
+                          onChange={this.handleChangeEnd}
+                          maxDate={new Date()}
+                          showWeekNumbers
+                        />
+                      )}
+                      {this.state.toggleMonthDate && (
+                        <DatePicker
+                          id="datpicker-to-invoice"
+                          className="ana-to"
+                          selected={this.state.endDate}
+                          onChange={this.handleChangeEnd}
+                          dateFormat="MM/yyyy"
+                          maxDate={new Date()}
+                          showMonthYearPicker
+                        />
+                      )}
+                    </div>
                   )}
                 </div>
                 <div className="row">

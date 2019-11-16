@@ -330,7 +330,7 @@ class GreenCounter extends Component {
                   <div>
                     <div className="volcls">
                       <label className="grncuntr-lbl">
-                        Total CO2 Offset from Trees Planted
+                        Total CO<sub>2</sub> Offset from Trees Planted
                       </label>
                       <img
                         src={Image1}
@@ -397,7 +397,7 @@ class GreenCounter extends Component {
                         />
                         <label className="greenchartlbl">
                           Tons of
-                          <br /> CO2 Emission
+                          <br /> CO<sub>2</sub> Emission
                         </label>
                         <label className="counterval">
                           {this.state.cotowemission}

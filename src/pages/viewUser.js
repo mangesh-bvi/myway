@@ -267,9 +267,6 @@ class ViewUser extends Component {
                   );
                 }}
               />
-              <p className="bottom-profit">
-                Profit -------$ Customer Segment A Profit Margin %15
-              </p>
             </div>
           </div>
           <Modal

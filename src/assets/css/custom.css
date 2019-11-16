@@ -424,6 +424,12 @@ table tbody tr:last-child {
   position: relative;
   min-height: calc(100vh - 163px);
 }
+.max3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 /* shipping details ends */
 
 /* shipping details 2 starts */
@@ -1854,6 +1860,9 @@ table tbody tr:last-child {
   padding: 15px 20px !important;
   min-height: 47px;
 }
+.view-user-table .ReactTable .rt-tbody .rt-expandable + .rt-td {
+  text-align: center;
+}
 .view-user-inner {
   padding: 20px;
   background-color: #fff;
@@ -1936,6 +1945,9 @@ table tbody tr:last-child {
 }
 .ana-viw > div:last-child {
   margin-right: 0px;
+}
+.fix-width-label label {
+  min-width: 50px;
 }
 /* analytics ends */
 
@@ -2028,6 +2040,11 @@ table tbody tr:last-child {
 }
 .still-maersk {
   width: 50px;
+}
+.modal-body h3 {
+  background: #002d73;
+  color: #fff;
+  padding: 15px 0;
 }
 /* rate finalizing ends */
 
@@ -2501,7 +2518,7 @@ table tbody tr:last-child {
   border-radius: 100%;
   display: inline-block;
 
-  border: 1px solid #f1f3f2;
+  /* border: 1px solid #f1f3f2; */
   padding: 5px 8px;
   position: relative;
   margin-left: 60px;
@@ -2618,7 +2635,7 @@ table tbody tr:last-child {
   display: inline;
   margin: 10px;
   padding-top: 10px;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .gm-style-iw {
   width: 265px;
@@ -2699,6 +2716,7 @@ table tbody tr:last-child {
 }
 .autocom > div {
   display: block !important;
+  position: relative;
 }
 .remember-forgot-1 {
   margin-top: 20px;

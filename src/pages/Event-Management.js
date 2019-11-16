@@ -81,11 +81,11 @@ class EventManagement extends Component {
                   {
                     columns: [
                       {
-                        Header: "Container No",
+                        Header: "No",
                         accessor: "ContainerNo"
                       },
                       {
-                        Header: "Vessel Name",
+                        Header: "Vessel",
                         accessor: "VesselName"
                       },
                       {
@@ -105,7 +105,7 @@ class EventManagement extends Component {
                         accessor: "ATD"
                       },
                       {
-                        Header: "Eventmanagement Status",
+                        Header: "Eve Status",
                         accessor: "EventmanagementDayStatus"
                       },
                       {
@@ -136,9 +136,6 @@ class EventManagement extends Component {
                 minRows={1}
                 className="-striped -highlight"
               />
-              <p className="bottom-profit">
-                Profit -------$ Customer Segment A Profit Margin %15
-              </p>
             </div>
           </div>
         </div>
