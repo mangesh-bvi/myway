@@ -147,7 +147,14 @@ class NewRateSearch extends Component {
       referType: [],
       flattack_openTop: [],
       spacEqmtType: [],
-
+      TruckTypeSelect: [],
+      TruckTypeData: [
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: ""
+        }
+      ],
       fieldspol: {},
       spacEqmtTypeSelect: false,
       specialEqtSelect: false,
@@ -210,7 +217,8 @@ class NewRateSearch extends Component {
       packageTypeData: [],
       isSearch: false,
       currencyData: [],
-      currencyCode: ""
+      currencyCode: "",
+      TruckType: []
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -220,6 +228,7 @@ class NewRateSearch extends Component {
     this.HandleShipmentStages = this.HandleShipmentStages.bind(this);
     // this.HandleCommodityData = this.HandleCommodityData.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
+    this.HandleTruckTypeData = this.HandleTruckTypeData.bind(this);
   }
 
   componentDidMount() {
@@ -231,6 +240,7 @@ class NewRateSearch extends Component {
     this.HandleCounterListBind();
     // this.HandleCommodityData();
     this.HandlePackgeTypeData();
+    this.HandleTruckTypeData();
   }
 
   HandleSearchButton() {
@@ -244,6 +254,107 @@ class NewRateSearch extends Component {
     var value = e.target.value;
     this.setState({ cmbTypeRadio: value });
   }
+  //// Handle Truck Type Method
+
+  HandleTruckTypeData() {
+    let self = this;
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var data = response.data.Table;
+      self.setState({ TruckType: data });
+    });
+  }
+  ////
+
+  //// Create Trcuk Type dropdown dynamic element UI
+
+  addClickTruckType() {
+    debugger;
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: ""
+        }
+      ]
+    }));
+  }
+
+  createUITruckType() {
+    debugger;
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <div className="spe-equ">
+            <select name="TruckName" onChange={this.UITruckTypeChange.bind(this,i)}>
+              <option>select</option>
+            {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              name="Quantity"
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this,i)}
+            />
+          </div>
+          {i === 0 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus"
+                aria-hidden="true"
+                onClick={this.addClickTruckType.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.TruckTypeData.length > 1 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus"
+                aria-hidden="true"
+                onClick={this.removeClickTruckType.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        </div>
+      );
+    });
+  }
+
+  UITruckTypeChange(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData[i] = {
+      ...TruckTypeData[i],
+      [name]: name === "Quantity" ? parseInt(value) : value
+    };
+    this.setState({ TruckTypeData });
+  }
+  removeClickTruckType(i) {
+    debugger;
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
+
+  //// End Truck Tyep Dynamic element
 
   ////Package Type Dropdata DataBind Methos
 
@@ -581,6 +692,7 @@ class NewRateSearch extends Component {
     this.setState({ multiCBM });
   }
   addMultiCBM() {
+    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -890,20 +1002,17 @@ class NewRateSearch extends Component {
           flattack_openTop[i].width *
           flattack_openTop[i].height)) /
       6000;
-      if(decVolumeWeight>parseFloat(flattack_openTop[i].Gross_Weight))
-      {
-        flattack_openTop[i] = {
-          ...flattack_openTop[i],
-          ["total"]: parseFloat(decVolumeWeight)
-        };
-      }
-      else {
-        flattack_openTop[i] = {
-          ...flattack_openTop[i],
-          ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
-        };
-      }
-    
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+      };
+    }
 
     this.setState({ flattack_openTop });
   }
@@ -2227,17 +2336,19 @@ class NewRateSearch extends Component {
                         <label htmlFor="road">Road</label>
                       </div>
                     </>
-                  ) : <div>
-                  <input
-                    type="radio"
-                    name="mode-transport"
-                    name="mode-transport"
-                    value="ROAD"
-                    onClick={this.modeofTransportClick.bind(this)}
-                    id="road"
-                  />
-                  <label htmlFor="road">Road</label>
-                </div>}
+                  ) : (
+                    <div>
+                      <input
+                        type="radio"
+                        name="mode-transport"
+                        name="mode-transport"
+                        value="ROAD"
+                        onClick={this.modeofTransportClick.bind(this)}
+                        id="road"
+                      />
+                      <label htmlFor="road">Road</label>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="new-rate-cntr" id="containerLoad">
@@ -2360,6 +2471,11 @@ class NewRateSearch extends Component {
                             name="cmbTypeRadio"
                             id="exist-cust"
                             value="ALL"
+                            // onChange={
+                            //   this.state.containerLoadType !== "FTL"
+                            //     ? this.cmbTypeRadioChange.bind(this)
+                            //     : null
+                            // }
                             onChange={this.cmbTypeRadioChange.bind(this)}
                           />
                           <label
@@ -2381,7 +2497,9 @@ class NewRateSearch extends Component {
                             className="d-flex flex-column align-items-center"
                             htmlFor="new-cust"
                           >
-                           {this.state.containerLoadType==="AIR"?"Chargable Weight":"CBM"}
+                            {this.state.containerLoadType === "AIR"
+                              ? "Chargable Weight"
+                              : "CBM"}
                           </label>
                         </div>
                       </div>
@@ -2390,8 +2508,10 @@ class NewRateSearch extends Component {
                       <div className="">
                         {this.state.cmbTypeRadio === "ALL" ? (
                           <>
-                          
-                          {this.state.containerLoadType==="FTL"?"":this.CreateMultiCBM()}</>
+                            {this.state.containerLoadType === "FTL"
+                              ? this.createUITruckType()
+                              : this.CreateMultiCBM()}
+                          </>
                         ) : this.state.cmbTypeRadio === "CBM" ? (
                           <div className="col-md">
                             <div className="spe-equ">
@@ -2694,7 +2814,7 @@ class NewRateSearch extends Component {
                               }}
                               value={item.AirPortID}
                             >
-                              {item.NameWoDiacritics}
+                              {item.OceanPortLongName}
                             </div>
                           )}
                           onChange={this.HandlePOLPODAutosearch.bind(
@@ -2736,7 +2856,7 @@ class NewRateSearch extends Component {
                               }}
                               value={item.AirPortID}
                             >
-                              {item.NameWoDiacritics}
+                              {item.OceanPortLongName}
                             </div>
                           )}
                           onChange={this.HandlePOLPODAutosearch.bind(

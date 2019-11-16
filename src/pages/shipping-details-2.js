@@ -1518,11 +1518,11 @@ class ShippingDetailsTwo extends Component {
                         mapElement={<div style={{ height: `100%` }} />}
                         loadingElement={<div style={{ height: `100%` }} />}
                       ></MapWithAMakredInfoWindow> */}
-                      <iframe
-                        key={this.state.iframeKey}
-                        src="/MapHtmlPage.html"
-                        className="mapIframe"
-                      />
+                      <object
+                        width="100%"
+                        height="100%"
+                        data="/MapHtmlPage.html"
+                      ></object>
                     </div>
                     <div className="shipment-track-cntr">
                       <div className="shipment-track">

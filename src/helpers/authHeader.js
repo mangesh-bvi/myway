@@ -5,7 +5,8 @@ export function authHeader(token = "token") {
     return {
       Authorization: "Basic TXlXYXlVc2VyOmRlbW8=",
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
+      "Access-Control-Allow-Origin": "*",
+      'X-Frame-Options': 'sameorigin'
     };
   } else {
     // var token=window.localStorage.getItem('token');

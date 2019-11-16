@@ -1065,11 +1065,17 @@ class ShipmentPlanner extends Component {
                           //   loadingElement={<div style={{ height: `100%` }} />}
                           // ></MapWithAMakredInfoWindowLine>
 
-                          <iframe
-                            key={this.state.iframeKey}
-                            src="/MapHtmlPage.html"
-                            className="mapIframe"
-                          />
+                          // <iframe
+                          //   key={this.state.iframeKey}
+                          //   src="/MapHtmlPage.html"
+                          //   className="mapIframe"
+                          // />
+                          <object
+                            width="100%"
+                            height="100%"
+                            data="/MapHtmlPage.html"
+                          ></object>
+                          // <link rel="import" href="/MapHtmlPage.htm"></link>
                         )}
                       </div>
                     </div>
