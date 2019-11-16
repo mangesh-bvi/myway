@@ -63,12 +63,14 @@ class RateTable extends Component {
       RateDetails: [],
       values: [],
       RateSubDetails: [],
-      checkSelection: []
+      checkSelection: [],
+      polLatLng:{}
+
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
     this.toggleQuant = this.toggleQuant.bind(this);
-    this.HandleRateDetails = this.HandleRateDetails.bind(this);
+
     this.checkSelection = this.checkSelection.bind(this);
   }
 
@@ -81,7 +83,19 @@ class RateTable extends Component {
   };
 
   componentDidMount() {
-    this.HandleRateDetails();
+    debugger;
+    if (this.props.location.state !== null) {
+      var isSearch = this.props.location.state.isSearch;
+      if (isSearch) {
+        var paramData = this.props.location.state;
+        var modeofTransport=this.props.location.state.containerLoadType;
+        if (modeofTransport === "FCL") {
+          this.HandleRateDetailsFCL(paramData);
+        } else if (modeofTransport === "AIR") {
+          this.HandleRateDetailsLCL(paramData);
+        }
+      }
+    }
   }
 
   toggleEdit() {
@@ -122,43 +136,167 @@ class RateTable extends Component {
     console.log(this.state.RateDetails[row.index]);
   }
 
-  HandleRateDetails() {
+  HandleRateDetailsFCL(paramData) {
+    var dataParameter = {};
+    if (paramData.isSearch) {
+      debugger;
+      var rTypeofMove =
+        paramData.typesofMove === "p2p"
+          ? 1
+          : paramData.typesofMove === "d2p"
+          ? 2
+          : paramData.typesofMove === "d2d"
+          ? 4
+          : paramData.typesofMove === "p2d"
+          ? 3
+          : 0;
+
+      var rModeofTransport =
+        paramData.modeoftransport === "SEA"
+          ? "Ocean"
+          : paramData.modeoftransport === "AIR"
+          ? "Air"
+          : paramData.modeoftransport === "ROAD"
+          ? "Inland"
+          : "";
+      var polAddress = paramData.polfullAddData;
+      var podAddress = paramData.podfullAddData;
+      var rateQueryDim = [];
+      var containerdetails = paramData.users;
+      
+
+
+      this.setState({})
+      dataParameter = {
+        QuoteType: paramData.containerLoadType,
+        ModeOfTransport: rModeofTransport,
+        Type: paramData.containerLoadType,
+        TypeOfMove: rTypeofMove,
+
+        PortOfDischargeCode:
+          podAddress.UNECECode !== "" ? podAddress.UNECECode : "",
+        PortOfLoadingCode:
+          polAddress.UNECECode !== "" ? polAddress.UNECECode : "",
+        Containerdetails: containerdetails,
+        OriginGeoCordinates:
+          polAddress.GeoCoordinate !== "" ? polAddress.GeoCoordinate : "",
+        DestGeoCordinate:
+          podAddress.GeoCoordinate !== "" ? podAddress.GeoCoordinate : "",
+        PickupCity:
+          polAddress.NameWoDiacritics !== "" ? polAddress.NameWoDiacritics : "",
+        DeliveryCity:
+          podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
+        Currency: paramData.currencyCode,
+        ChargeableWeight: 0,
+        RateQueryDim: rateQueryDim
+      };
+    }
+
     debugger;
     let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQuery`,
-      data: {
-        //UserID: 874588,
-        QuoteType: "FCL",
-        ModeOfTransport: "Ocean",
-        Type: "Export",
-        TypeOfMove: 1,
-        PortOfDischargeCode: "TRPAM",
-        PortOfLoadingCode: "INNSA",
-        Containerdetails: [
-          {
-            ProfileCodeID: 16,
-            ContainerCode: "40HC",
-            Type: "40 High Cube",
-            ContainerQuantity: 2
-          }
-        ]
-      },
+      data: dataParameter,
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       console.log(response);
       var ratetable = response.data.Table;
       var ratetable1 = response.data.Table1;
       if (ratetable != null) {
-        self.setState({ RateDetails: ratetable });
+        self.setState({
+          RateDetails: ratetable
+        });
       }
       if (ratetable1 != null) {
-        self.setState({ RateSubDetails: ratetable1 });
+        self.setState({
+          RateSubDetails: ratetable1
+        });
       }
     });
   }
 
+  HandleRateDetailsLCL(paramData) {
+    var dataParameter = {};
+    if (paramData.isSearch) {
+      debugger;
+      var rTypeofMove =
+        paramData.typesofMove === "p2p"
+          ? 1
+          : paramData.typesofMove === "d2p"
+          ? 2
+          : paramData.typesofMove === "d2d"
+          ? 4
+          : paramData.typesofMove === "p2d"
+          ? 3
+          : 0;
+
+      var rModeofTransport =
+        paramData.modeoftransport === "SEA"
+          ? "Ocean"
+          : paramData.modeoftransport === "AIR"
+          ? "Air"
+          : paramData.modeoftransport === "ROAD"
+          ? "Inland"
+          : "";
+      var polAddress = paramData.polfullAddData;
+      var podAddress = paramData.podfullAddData;
+      var rateQueryDim = [];
+      var containerdetails = paramData.users;
+      
+
+
+      this.setState({})
+      dataParameter = {
+        QuoteType: paramData.containerLoadType,
+        ModeOfTransport: rModeofTransport,
+        Type: paramData.containerLoadType,
+        TypeOfMove: rTypeofMove,
+
+        PortOfDischargeCode:
+          podAddress.UNECECode !== "" ? podAddress.UNECECode : "",
+        PortOfLoadingCode:
+          polAddress.UNECECode !== "" ? polAddress.UNECECode : "",
+        Containerdetails: containerdetails,
+        OriginGeoCordinates:
+          polAddress.GeoCoordinate !== "" ? polAddress.GeoCoordinate : "",
+        DestGeoCordinate:
+          podAddress.GeoCoordinate !== "" ? podAddress.GeoCoordinate : "",
+        PickupCity:
+          polAddress.NameWoDiacritics !== "" ? polAddress.NameWoDiacritics : "",
+        DeliveryCity:
+          podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
+        Currency: paramData.currencyCode,
+        ChargeableWeight: 0,
+        RateQueryDim: rateQueryDim
+      };
+    }
+
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/RateSearchQuery`,
+      data: dataParameter,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      console.log(response);
+      var ratetable = response.data.Table;
+      var ratetable1 = response.data.Table1;
+      if (ratetable != null) {
+        self.setState({
+          RateDetails: ratetable
+        });
+      }
+      if (ratetable1 != null) {
+        self.setState({
+          RateSubDetails: ratetable1
+        });
+      }
+    });
+  }
   addClick() {
     this.setState(prevState => ({
       values: [...prevState.values, ""]
@@ -193,37 +331,7 @@ class RateTable extends Component {
   }
 
   render() {
-    let self = this;
-    var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" },
-      { validUntil: "Valid Until : AUGUST", tt: "TT", price: "$150.00" },
-      { validUntil: "Valid Until : OCTOBER", tt: "TT", price: "$135.00" },
-      { validUntil: "Valid Until : DECEMBER", tt: "TT", price: "$155.00" }
-    ];
-    var data2 = [
-      {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        finalPayment: "$45,986.00"
-      },
-      {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
-      },
-      {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
-      }
-    ];
+     
     var i = 0;
     return (
       <div>
@@ -411,12 +519,12 @@ class RateTable extends Component {
                                         id={"maersk-logo" + i}
                                         type="checkbox"
                                         name={"rate-tab-check"}
-                                        checked={
-                                          this.state.RateDetails[i - 1].checkbx
-                                            ? this.state.RateDetails[i - 1]
-                                                .checkbx
-                                            : false
-                                        }
+                                        // checked={
+                                        //   this.state.RateDetails[i - 1].checkbx
+                                        //     ? this.state.RateDetails[i - 1]
+                                        //         .checkbx
+                                        //     : false
+                                        // }
                                         onChange={e =>
                                           this.checkSelection(e, row)
                                         }

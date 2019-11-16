@@ -136,10 +136,9 @@ class NewRateSearch extends Component {
         {
           PackagingType: "",
           Quantity: "",
-          Length: "",
-          Width: "",
-          Height: "",
-          Weight: "",
+          length: "",
+          width: "",
+          height: "",
           Gross_Weight: "",
           total: ""
         }
@@ -148,7 +147,14 @@ class NewRateSearch extends Component {
       referType: [],
       flattack_openTop: [],
       spacEqmtType: [],
-
+      TruckTypeSelect: [],
+      TruckTypeData: [
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: ""
+        }
+      ],
       fieldspol: {},
       spacEqmtTypeSelect: false,
       specialEqtSelect: false,
@@ -207,7 +213,12 @@ class NewRateSearch extends Component {
       isCustomClear: "No",
       polfullAddData: {},
       podfullAddData: {},
-      commodityData: []
+      commodityData: [],
+      packageTypeData: [],
+      isSearch: false,
+      currencyData: [],
+      currencyCode: "",
+      TruckType: []
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -215,7 +226,9 @@ class NewRateSearch extends Component {
     this.HandleBindIncoTeamData = this.HandleBindIncoTeamData.bind(this);
     this.HandleCounterListBind = this.HandleCounterListBind.bind(this);
     this.HandleShipmentStages = this.HandleShipmentStages.bind(this);
-    this.HandleCommodityData = this.HandleCommodityData.bind(this);
+    // this.HandleCommodityData = this.HandleCommodityData.bind(this);
+    this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
+    this.HandleTruckTypeData = this.HandleTruckTypeData.bind(this);
   }
 
   componentDidMount() {
@@ -225,30 +238,164 @@ class NewRateSearch extends Component {
       this.setState({ companyId: compId.companyId });
     }
     this.HandleCounterListBind();
-    this.HandleCommodityData();
+    // this.HandleCommodityData();
+    this.HandlePackgeTypeData();
+    this.HandleTruckTypeData();
+  }
+
+  HandleSearchButton() {
+    debugger;
+    let self = this;
+
+    this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
   cmbTypeRadioChange(e) {
     var value = e.target.value;
     this.setState({ cmbTypeRadio: value });
   }
+  //// Handle Truck Type Method
 
-  //// Commodity dropdown methos
-
-  HandleCommodityData() {
+  HandleTruckTypeData() {
     let self = this;
     debugger;
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/CommodityDropdown`,
+      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
 
       headers: authHeader()
     }).then(function(response) {
       debugger;
       var data = response.data.Table;
-      self.setState({ commodityData: data });
+      self.setState({ TruckType: data });
     });
   }
+  ////
+
+  //// Create Trcuk Type dropdown dynamic element UI
+
+  addClickTruckType() {
+    debugger;
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: ""
+        }
+      ]
+    }));
+  }
+
+  createUITruckType() {
+    debugger;
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <div className="spe-equ">
+            <select name="TruckName" onChange={this.UITruckTypeChange.bind(this,i)}>
+              <option>select</option>
+            {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              name="Quantity"
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this,i)}
+            />
+          </div>
+          {i === 0 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus"
+                aria-hidden="true"
+                onClick={this.addClickTruckType.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.TruckTypeData.length > 1 ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus"
+                aria-hidden="true"
+                onClick={this.removeClickTruckType.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        </div>
+      );
+    });
+  }
+
+  UITruckTypeChange(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData[i] = {
+      ...TruckTypeData[i],
+      [name]: name === "Quantity" ? parseInt(value) : value
+    };
+    this.setState({ TruckTypeData });
+  }
+  removeClickTruckType(i) {
+    debugger;
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
+
+  //// End Truck Tyep Dynamic element
+
+  ////Package Type Dropdata DataBind Methos
+
+  HandlePackgeTypeData() {
+    let self = this;
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PackageTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
+
+  HandleCurrencyChange(e) {
+    debugger;
+
+    this.setState({ currencyCode: e.CurrencyCode, isSearch: true });
+  }
+
+  //// end package type method
+  //// Commodity dropdown methos
+
+  // HandleCommodityData() {
+  //   let self = this;
+  //   debugger;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/CommodityDropdown`,
+
+  //     headers: authHeader()
+  //   }).then(function(response) {
+  //     debugger;
+  //     var data = response.data.Table;
+  //     self.setState({ commodityData: data });
+  //   });
+  // }
 
   HandleChangeCommodity = (e, option) => {};
   //// end Commodity drop-down
@@ -285,6 +432,7 @@ class NewRateSearch extends Component {
         });
       }
     }
+
     document.getElementById("address").classList.add("address");
     document.getElementById("typeMoveInner").classList.add("typeMoveType");
     document
@@ -322,6 +470,7 @@ class NewRateSearch extends Component {
   }
 
   HandlePOLPODAutosearch(field, e) {
+    debugger;
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -374,15 +523,26 @@ class NewRateSearch extends Component {
       <div className="row" key={i}>
         <div className="col-md">
           <div className="spe-equ">
-            <select
-              name="PackagingType"
-              className="w-100 cmd-select"
+            {/* <Select
+              name="type"
+              className="rate-dropdown"
+              closeMenuOnSelect={false}
+              getOptionLabel={option => option.PackageName}
+              getOptionValue={option => option.PackageTypeId}
+              // components={animatedComponents}
+              options={this.state.packageTypeData}
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
+            /> */}
+            <select
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackagingType"
             >
-              <option>Select</option>
-              <option>Pallets</option>
-              <option>Bags</option>
-              <option>Cases</option>
+              <options>Select</options>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageTypeId}>
+                  {item.PackageName}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -459,7 +619,13 @@ class NewRateSearch extends Component {
               type="text"
               name="total"
               // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
               value={el.total || ""}
               className="w-100"
             />
@@ -502,18 +668,31 @@ class NewRateSearch extends Component {
     };
 
     this.setState({ multiCBM });
-    var decVolumeWeight =
-      (multiCBM[i].Quantity *
-        (multiCBM[i].length * multiCBM[i].width * multiCBM[i].height)) /
-      6000;
-    multiCBM[i] = {
-      ...multiCBM[i],
-      ["total"]: parseFloat(decVolumeWeight)
-    };
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].length * multiCBM[i].width * multiCBM[i].height)) /
+        6000;
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].length / 100) *
+          (multiCBM[i].width / 100) *
+          (multiCBM[i].height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["total"]: parseFloat(decVolume)
+      };
+    }
 
     this.setState({ multiCBM });
   }
   addMultiCBM() {
+    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -605,9 +784,12 @@ class NewRateSearch extends Component {
       referType: [
         ...prevState.referType,
         {
-          referTypeName: optionVal[0].SpecialContainerCode,
-          Quantity: 0,
-          temperature: 0
+          Type: optionVal[0].ContainerName,
+          ProfileCodeID: optionVal[0].ProfileCodeID,
+          ContainerCode: optionVal[0].SpecialContainerCode,
+          ContainerQuantity: 0,
+          Temperature: 0,
+          TemperatureType: ""
         }
       ]
     }));
@@ -618,24 +800,57 @@ class NewRateSearch extends Component {
     return this.state.referType.map((el, i) => {
       return (
         <div key={i} className="equip-plus-cntr">
-          <label name="referTypeName">{el.referTypeName}</label>
+          <label name="ContainerCode">{el.ContainerCode}</label>
           <div className="spe-equ">
             <input
               type="text"
-              name="qu"
+              name="ContainerQuantity"
               placeholder="Quantity"
               onChange={this.UISpecialChange.bind(this, i)}
             />
             <input
               type="text"
+              name="Temperature"
               placeholder="Temp"
               onChange={this.UISpecialChange.bind(this, i)}
             />
+            <div className="rate-radio-cntr">
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="exist-cust"
+                  value="C"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="exist-cust"
+                >
+                  Celcius
+                </label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="new-cust"
+                  value="F"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="new-cust"
+                >
+                  Farenheit
+                </label>
+              </div>
+            </div>
+            <i
+              className="fa fa-minus equip-plus"
+              onClick={this.removeClickSpecial.bind(this, i)}
+            ></i>
           </div>
-          <i
-            className="fa fa-minus equip-plus"
-            onClick={this.removeClickSpecial.bind(this, i)}
-          ></i>
         </div>
       );
     });
@@ -648,7 +863,7 @@ class NewRateSearch extends Component {
     let referType = [...this.state.referType];
     referType[i] = {
       ...referType[i],
-      [name]: parseFloat(value)
+      [name]: name === "TemperatureType" ? value : parseFloat(value)
     };
     this.setState({ referType });
   }
@@ -735,7 +950,9 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "Gross Weight" : null}
+              placeholder={
+                el.Gross_Weight === 0 ? "Gross Weight" : "Gross Weight"
+              }
               name="Gross_Weight"
               value={el.Gross_Weight}
               className="w-100"
@@ -785,10 +1002,17 @@ class NewRateSearch extends Component {
           flattack_openTop[i].width *
           flattack_openTop[i].height)) /
       6000;
-    flattack_openTop[i] = {
-      ...flattack_openTop[i],
-      ["total"]: parseFloat(decVolumeWeight)
-    };
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+      };
+    }
 
     this.setState({ flattack_openTop });
   }
@@ -857,7 +1081,9 @@ class NewRateSearch extends Component {
                 ContainerName: option.option.ContainerName,
                 ProfileCodeID: option.option.ProfileCodeID,
                 StandardContainerCode: option.option.StandardContainerCode,
-                ContainerQuantity: 0
+                ContainerQuantity: 0,
+                Temperature: 0,
+                TemperatureType: ""
               }
             ]
           }));
@@ -913,7 +1139,10 @@ class NewRateSearch extends Component {
     debugger;
     const { name, value } = e.target;
     let users = [...this.state.users];
-    users[i] = { ...users[i], [name]: value };
+    users[i] = {
+      ...users[i],
+      [name]: name === "ContainerQuantity" ? parseFloat(value) : 0
+    };
     this.setState({ users });
   }
 
@@ -1049,6 +1278,8 @@ class NewRateSearch extends Component {
   }
 
   HandleBindIncoTeamData() {
+    debugger;
+
     let self = this;
     axios({
       method: "post",
@@ -1059,6 +1290,7 @@ class NewRateSearch extends Component {
       debugger;
       var table1 = response.data.Table1;
       var table2 = response.data.Table2;
+      var table4 = response.data.Table4;
       var finalArray = [];
 
       var standerEquipment = new Object();
@@ -1074,7 +1306,8 @@ class NewRateSearch extends Component {
 
       self.setState({
         StandardContainerCode: finalArray,
-        SpacialEqmt: table2
+        SpacialEqmt: table2,
+        currencyData: table4
       });
     });
   }
@@ -1164,13 +1397,19 @@ class NewRateSearch extends Component {
 
   HandleCustomeClear(e) {
     debugger;
+    let self = this;
     var icheck = e.target.checked;
-    if (icheck === "true") {
-      this.setState({ isCustomClear: "Yes" });
-      this.HandleGetIncoTerms();
+    console.log(icheck, "----------icheck-----------");
+    if (icheck === true) {
+      self.setState({ isCustomClear: "Yes" });
+      setTimeout(function() {
+        self.HandleGetIncoTerms();
+      }, 3000);
     } else {
-      this.setState({ isCustomClear: "No" });
-      this.HandleGetIncoTerms();
+      self.setState({ isCustomClear: "No" });
+      setTimeout(function() {
+        self.HandleGetIncoTerms();
+      }, 3000);
     }
   }
 
@@ -1185,38 +1424,38 @@ class NewRateSearch extends Component {
 
     if (shipmentType === "Export" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({ incoTerms: "DAP" });
+        self.setState({ incoTerms: "DAP" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-        this.setState({ incoTerms: "CIF" });
+        self.setState({ incoTerms: "CIF" });
       }
     }
     if (shipmentType === "Export" && HasCustomClear === "Yes") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({ incoTerms: "DDP" });
+        self.setState({ incoTerms: "DDP" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-        this.setState({ incoTerms: "CIF" });
+        self.setState({ incoTerms: "CIF" });
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "No") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({ incoTerms: "ExWorks" });
+        self.setState({ incoTerms: "ExWorks" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-        this.setState({ incoTerms: "FOB" });
+        self.setState({ incoTerms: "FOB" });
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "Yes") {
       if (typeofMove == "d2d" || typeofMove === "p2d") {
-        this.setState({ incoTerms: "ExWorks" });
+        self.setState({ incoTerms: "ExWorks" });
       }
 
       if (typeofMove === "d2p" || typeofMove === "p2p") {
-        this.setState({
+        self.setState({
           incoTerms: "FOB"
         });
       }
@@ -1934,6 +2173,7 @@ class NewRateSearch extends Component {
   // }
 
   render() {
+    console.log(this.state, "--------------state--------------");
     let self = this;
 
     const optionsSpeEqu = [
@@ -2096,7 +2336,19 @@ class NewRateSearch extends Component {
                         <label htmlFor="road">Road</label>
                       </div>
                     </>
-                  ) : null}
+                  ) : (
+                    <div>
+                      <input
+                        type="radio"
+                        name="mode-transport"
+                        name="mode-transport"
+                        value="ROAD"
+                        onClick={this.modeofTransportClick.bind(this)}
+                        id="road"
+                      />
+                      <label htmlFor="road">Road</label>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="new-rate-cntr" id="containerLoad">
@@ -2219,6 +2471,11 @@ class NewRateSearch extends Component {
                             name="cmbTypeRadio"
                             id="exist-cust"
                             value="ALL"
+                            // onChange={
+                            //   this.state.containerLoadType !== "FTL"
+                            //     ? this.cmbTypeRadioChange.bind(this)
+                            //     : null
+                            // }
                             onChange={this.cmbTypeRadioChange.bind(this)}
                           />
                           <label
@@ -2240,7 +2497,9 @@ class NewRateSearch extends Component {
                             className="d-flex flex-column align-items-center"
                             htmlFor="new-cust"
                           >
-                            CBM
+                            {this.state.containerLoadType === "AIR"
+                              ? "Chargable Weight"
+                              : "CBM"}
                           </label>
                         </div>
                       </div>
@@ -2248,7 +2507,11 @@ class NewRateSearch extends Component {
                     <div id="cbmInner">
                       <div className="">
                         {this.state.cmbTypeRadio === "ALL" ? (
-                          <>{this.CreateMultiCBM()}</>
+                          <>
+                            {this.state.containerLoadType === "FTL"
+                              ? this.createUITruckType()
+                              : this.CreateMultiCBM()}
+                          </>
                         ) : this.state.cmbTypeRadio === "CBM" ? (
                           <div className="col-md">
                             <div className="spe-equ">
@@ -2551,7 +2814,7 @@ class NewRateSearch extends Component {
                               }}
                               value={item.AirPortID}
                             >
-                              {item.NameWoDiacritics}
+                              {item.OceanPortLongName}
                             </div>
                           )}
                           onChange={this.HandlePOLPODAutosearch.bind(
@@ -2593,7 +2856,7 @@ class NewRateSearch extends Component {
                               }}
                               value={item.AirPortID}
                             >
-                              {item.NameWoDiacritics}
+                              {item.OceanPortLongName}
                             </div>
                           )}
                           onChange={this.HandlePOLPODAutosearch.bind(
@@ -2681,15 +2944,19 @@ class NewRateSearch extends Component {
               <div className="text-center new-rate-cntr p-0 border-0">
                 <Select
                   className="rate-dropdown"
-                  closeMenuOnSelect={false}
-                  getOptionLabel={option => option.Commodity}
-                  getOptionValue={option => option.id}
-                  // components={animatedComponents}
-                  options={this.state.commodityData}
+                  closeMenuOnSelect={true}
+                  getOptionLabel={option => option.BaseCurrencyName}
+                  getOptionValue={option => option.CurrencyCode}
+                  components={animatedComponents}
+                  options={this.state.currencyData}
+                  onChange={this.HandleCurrencyChange.bind(this)}
                 />
-                <a href="rate-table" className="butn blue-butn rate-search">
+                <button
+                  onClick={this.HandleSearchButton.bind(this)}
+                  className="butn blue-butn rate-search"
+                >
                   Search
-                </a>
+                </button>
               </div>
               {/* <div className="text-center new-rate-cntr p-0 border-0">
                 <a href="rate-table" className="butn blue-butn rate-search">

@@ -35,9 +35,13 @@ class Reports extends Component {
       OriginCountry:[],
       DestinationCountry:[],
       OriginAirport:[],
+      acctualOriginAirport:[],
       DestinationAirport:[],
+      acctualDestinationAirport:[],
       PortOfLoading:[],
+      acctualPortOfLoading:[],
       PortOfDeparture:[],
+      acctualPortOfDeparture:[],
       RegCompany:[],
       toggleExtraModeofAirFilter: false,
       toggleExtraModeofOceanFilter: false,
@@ -46,10 +50,17 @@ class Reports extends Component {
 
       valReportName:"",
       valRegCompany:"",
-      TextReportName:""
+      TextReportName:"",
+      valModeOfTransport:"",
+      valOriginCountry:"",
+      valDestinationCountry:"",
+      valOriginAirport:"",
+      valDestinationAirport:"",
+      valPortOfLoading:"",
+      valPortOfDeparture:""
     };
   }
-  
+
   componentDidMount() {
     this.setReportName();
   }
@@ -57,7 +68,7 @@ class Reports extends Component {
   setReportName()
   {
     let self = this;
-    
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ReportListAPI`,
@@ -67,7 +78,7 @@ class Reports extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
+
       var optionItems = [];
       if(response != null)
       {
@@ -87,7 +98,7 @@ class Reports extends Component {
             optionItems.push({value: 0, label: "No Data Found"})
           }
         }
-      }      
+      }
       self.setState({reportName: optionItems});
 
     }).catch(error => {
@@ -109,13 +120,13 @@ class Reports extends Component {
 
     this.setState({valReportName : val.value})
     this.setState({TextReportName : val.label})
-    
+
 
     this.setState({toggleExtraModeofAirFilter : false})
     this.setState({toggleExtraModeofOceanFilter : false})
     this.setState({toggleExtraInvoiceNoFilter : false})
     this.setState({toggleExtraModeTransportFilter : false})
-   
+
 
     axios({
       method: "post",
@@ -138,7 +149,7 @@ class Reports extends Component {
       var RegCompany = [];
       var PortOfLoading = [];
       var PortOfDeparture = [];
-    
+
       var InvoiceNo = false;
       var ModeTransport = false;
 
@@ -151,7 +162,7 @@ class Reports extends Component {
             if(response.data.Table.length > 0)
             {
               var Table = response.data.Table;
-         
+
               for(var i = 0; i < Table.length; i++)
               {
                 if(Table[i].ColumnName == "InvoiceNo")
@@ -171,7 +182,7 @@ class Reports extends Component {
               {//For those who don't have Mode Of Transport
                 if(response.data.Table1 != null)
                 {//Reg. Company
-                  
+
                   if(response.data.Table1.length > 0)
                   {
                     response.data.Table1.map(comp => (
@@ -185,7 +196,7 @@ class Reports extends Component {
                   self.setState({RegCompany: RegCompany});
                 }
               }
-              
+
             }
 
             if(ModeTransport)
@@ -205,7 +216,7 @@ class Reports extends Component {
                 }
                 self.setState({RegCompany: RegCompany});
               }
-             
+
               if(response.data.Table2 != null)
               {//Mode Of Transport
                 self.setState({ModeOfTransport: []});
@@ -224,7 +235,7 @@ class Reports extends Component {
 
               if(response.data.Table1 != null)
               {//Destination Country
-               
+
                 if(response.data.Table1.length > 0)
                 {
                   response.data.Table1.map(comp => (
@@ -259,72 +270,72 @@ class Reports extends Component {
             {//For those who have Invoice No
               if(response.data.Table5 != null)
               {//Port Of Loading (ocean)
-                self.setState({PortOfLoading: []});
+                self.setState({acctualPortOfLoading: []});
                 if(response.data.Table5.length > 0)
                 {
                   response.data.Table5.map(comp => (
-                    PortOfLoading.push({value: comp.ID, label: comp.Name})
+                    PortOfLoading.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
                   ));
                 }
                 else
                 {
-                  PortOfLoading.push({value: 0, label: "No Data Found"})
+                  PortOfLoading.push({value: 0, label: "No Data Found", compcode: "Null"})
                 }
-                self.setState({PortOfLoading: PortOfLoading});
+                self.setState({acctualPortOfLoading: PortOfLoading});
               }
 
               if(response.data.Table6 != null)
               {//Port Of Departure (ocean)
-                self.setState({PortOfDeparture: []});
+                self.setState({acctualPortOfDeparture: []});
                 if(response.data.Table6.length > 0)
                 {
                   response.data.Table6.map(comp => (
-                    PortOfDeparture.push({value: comp.ID, label: comp.Name})
+                    PortOfDeparture.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
                   ));
                 }
                 else
                 {
-                  PortOfDeparture.push({value: 0, label: "No Data Found"})
+                  PortOfDeparture.push({value: 0, label: "No Data Found", compcode: "Null"})
                 }
-                self.setState({PortOfDeparture: PortOfDeparture});
+                self.setState({acctualPortOfDeparture: PortOfDeparture});
               }
-             
+
               if(response.data.Table7 != null)
               {//Origin Airport
-                self.setState({OriginAirport: []});
+                self.setState({acctualOriginAirport: []});
                 if(response.data.Table7.length > 0)
                 {
                   response.data.Table7.map(comp => (
-                     OriginAirport.push({value: comp.ID, label: comp.Name})
+                      OriginAirport.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
                   ));
                 }
                 else
                 {
                   OriginAirport.push({value: 0, label: "No Data Found"})
                 }
-                self.setState({OriginAirport: OriginAirport});
+                self.setState({acctualOriginAirport: OriginAirport, compcode: "Null"});
               }
 
               if(response.data.Table8 != null)
               {//Destination Airport
-                self.setState({DestinationAirport: []});
+                self.setState({acctualDestinationAirport: []});
                 if(response.data.Table8.length > 0)
                 {
                   response.data.Table8.map(comp => (
-                     DestinationAirport.push({value: comp.ID, label: comp.Name})
+                     DestinationAirport.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
                   ));
                 }
                 else
                 {
-                  DestinationAirport.push({value: 0, label: "No Data Found"})
+                  DestinationAirport.push({value: 0, label: "No Data Found", compcode: "Null"})
                 }
-                self.setState({DestinationAirport: DestinationAirport});
+                self.setState({acctualDestinationAirport : DestinationAirport});
               }
             }
           }
         }
       }
-    
+
 
       self.setState({toggleExtraInvoiceNoFilter: InvoiceNo});
       self.setState({toggleExtraModeTransportFilter : ModeTransport})
@@ -337,13 +348,15 @@ class Reports extends Component {
       var err = temperror.split(":");
       alert(err[1].replace("}", ""))
       var optionItems = [];
-      
+
     });
   }
 
   changesModeOfTransport(val)
   {
     debugger;
+
+    this.setState({valModeOfTransport:val.value})
 
     var oceanPortDepature = false;
     var airPortDepature = false;
@@ -357,6 +370,7 @@ class Reports extends Component {
         if(val.value == "Ocean")
         {
           oceanPortDepature = true;
+
         }
         if(val.value == "Land")
         {
@@ -367,7 +381,7 @@ class Reports extends Component {
 
     this.setState({toggleExtraModeofAirFilter: airPortDepature});
     this.setState({toggleExtraModeofOceanFilter: oceanPortDepature});
-    
+
   }
 
   changesRegCompany(val)
@@ -375,13 +389,192 @@ class Reports extends Component {
     this.setState({valRegCompany : val.value})
   }
 
+  changesOriginCountry(val)
+  {
+    debugger;
+    var OriginCountryarr = ""
+    var filterpo = [];
+    if(val != null)
+    {
+      if(val.length > 0)
+      {
+        for(var i = 0; i < val.length; i++)
+        {
+          OriginCountryarr +=  val[i].value + ",";
+
+          if(this.state.toggleExtraModeofAirFilter)
+          {
+            filterpo = filterpo.concat(
+              this.state.acctualOriginAirport.filter(item => item.compcode == val[i].value)
+            );
+          }
+          if(this.state.toggleExtraModeofOceanFilter)
+          {
+            filterpo = filterpo.concat(
+              this.state.acctualPortOfLoading.filter(item => item.compcode == val[i].value)
+            );
+          }
+        }
+
+      }
+    }
+    if(this.state.toggleExtraModeofAirFilter)
+    {
+      this.setState({OriginAirport : filterpo})
+    }
+    if(this.state.toggleExtraModeofOceanFilter)
+    {
+      this.setState({PortOfLoading : filterpo})
+    }
+    this.setState({valOriginCountry : OriginCountryarr.replace(/,\s*$/, "")})
+  }
+
+  changesDestinationCountry(val)
+  {
+    var DestinationCountryryarr = "";
+    var filterpo = [];
+    if(val != null)
+    {
+      if(val.length > 0)
+      {
+        for(var i = 0; i < val.length; i++)
+        {
+          DestinationCountryryarr +=  val[i].value + ",";
+
+          if(this.state.toggleExtraModeofAirFilter)
+          {
+            filterpo = filterpo.concat(
+              this.state.acctualDestinationAirport.filter(item => item.compcode == val[i].value)
+            );
+          }
+          if(this.state.toggleExtraModeofOceanFilter)
+          {
+            filterpo = filterpo.concat(
+              this.state.acctualPortOfDeparture.filter(item => item.compcode == val[i].value)
+            );
+          }
+        }
+      }
+    }
+    if(this.state.toggleExtraModeofAirFilter)
+    {
+      this.setState({DestinationAirport : filterpo})
+    }
+    if(this.state.toggleExtraModeofOceanFilter)
+    {
+      this.setState({PortOfDeparture : filterpo})
+    }
+    this.setState({valDestinationCountry : DestinationCountryryarr.replace(/,\s*$/, "")})
+  }
+
+  changesDestinationAirport(val)
+  {
+    var DestinationAirportarr = "";
+    if(val != null)
+    {
+      if(val.length > 0)
+      {
+        for(var i = 0; i < val.length; i++)
+        {
+          DestinationAirportarr +=  val[i].value + ",";
+        }
+      }
+    }
+    this.setState({valDestinationAirport : DestinationAirportarr.replace(/,\s*$/, "")})
+  }
+  changesOriginAirport(val)
+  {
+    var OriginAirportarr = "";
+    if(val != null)
+    {
+      if(val.length > 0)
+      {
+        for(var i = 0; i < val.length; i++)
+        {
+          OriginAirportarr +=  val[i].value + ",";
+        }
+      }
+    }
+    this.setState({valOriginAirport : OriginAirportarr.replace(/,\s*$/, "")})
+  }
+  changesPortOfDeparture(val)
+  {
+    var PortOfDeparturearr = "";
+    if(val != null)
+    {
+      if(val.length > 0)
+      {
+        for(var i = 0; i < val.length; i++)
+        {
+          PortOfDeparturearr +=  val[i].value + ",";
+        }
+      }
+    }
+    this.setState({valPortOfDeparture : PortOfDeparturearr.replace(/,\s*$/, "")})
+  }
+  changesPortOfLoading(val)
+  {
+    var PortOfLoadingearr = "";
+    if(val != null)
+    {
+      if(val.length > 0)
+      {
+        for(var i = 0; i < val.length; i++)
+        {
+          PortOfLoadingearr +=  val[i].value + ",";
+        }
+      }
+    }
+    this.setState({valPortOfLoading : PortOfLoadingearr.replace(/,\s*$/, "")})
+  }
+
   handleSubmit = () => {
 
-    // valReportName:"",
-    // valRegCompany:""
-    var detailid = [{valReportName:this.state.valReportName},
-                    {valRegCompany:this.state.valRegCompany},
-                    {TextReportName:this.state.TextReportName}];
+    if(this.state.valReportName == null || this.state.valReportName == "")
+    {
+      alert("Select Report Name")
+      return false;
+    }
+    if(this.state.valRegCompany == null || this.state.valRegCompany == "")
+    {
+      alert("Select Reg. Company")
+      return false;
+    }
+
+    var valProductID = "";
+    var valPONumber = "";
+    var valInvoiceNumber = "";
+
+    if(document.getElementById("txtProductID") != undefined)
+    {
+      valProductID = document.getElementById("txtProductID").value;
+    }
+    if(document.getElementById("txtPONumber") != undefined)
+    {
+      valPONumber = document.getElementById("txtPONumber").value;
+    }
+    if(document.getElementById("txtInvoiceNumber") != undefined)
+    {
+      valInvoiceNumber = document.getElementById("txtInvoiceNumber").value;
+    }
+
+
+    var detailid = {valReportName:this.state.valReportName,
+                    valRegCompany:this.state.valRegCompany,
+                    TextReportName:this.state.TextReportName,
+                    ModeTransportFilter:this.state.toggleExtraModeTransportFilter,
+                    InvoiceNoFilter:this.state.toggleExtraInvoiceNoFilter,
+                    valModeOfTransport:this.state.valModeOfTransport,
+                    valOriginCountry:this.state.valOriginCountry,
+                    valDestinationCountry:this.state.valDestinationCountry,
+                    valOriginAirport:this.state.valOriginAirport,
+                    valDestinationAirport:this.state.valDestinationAirport,
+                    valPortOfLoading:this.state.valPortOfLoading,
+                    valPortOfDeparture:this.state.valPortOfDeparture,
+                    valProductID:valProductID,
+                    valPONumber:valPONumber,
+                    valInvoiceNumber:valInvoiceNumber};
+
 
     this.props.history.push({
       pathname: "report-details",
@@ -390,12 +583,6 @@ class Reports extends Component {
   }
 
   render() {
-    const options = [
-      { value: "20 DC", label: "20 DC" },
-      { value: "30 DC", label: "30 DC" },
-      { value: "40 DC", label: "40 DC" },
-      { value: "50 DC", label: "50 DC" }
-    ];
     return (
       <div>
         <Headers />
@@ -412,6 +599,7 @@ class Reports extends Component {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="login-fields">
+
                       <label>Report Name</label>
                       <Select
                         className="rate-dropdown w-100 m-0"
@@ -445,6 +633,7 @@ class Reports extends Component {
                         components={animatedComponents}
                         isMulti
                         options={this.state.OriginCountry}
+                        onChange={this.changesOriginCountry.bind(this)}
                       />
                     </div>
                   </div>
@@ -459,6 +648,7 @@ class Reports extends Component {
                         components={animatedComponents}
                         isMulti
                         options={this.state.DestinationCountry}
+                        onChange={this.changesDestinationCountry.bind(this)}
                       />
                     </div>
                   </div>
@@ -473,6 +663,7 @@ class Reports extends Component {
                         components={animatedComponents}
                         isMulti
                         options={this.state.PortOfLoading}
+                        onChange={this.changesPortOfLoading.bind(this)}
                       />
                     </div>
                   </div>
@@ -487,6 +678,7 @@ class Reports extends Component {
                         components={animatedComponents}
                         isMulti
                         options={this.state.PortOfDeparture}
+                        onChange={this.changesPortOfDeparture.bind(this)}
                       />
                     </div>
                   </div>
@@ -501,6 +693,7 @@ class Reports extends Component {
                         components={animatedComponents}
                         isMulti
                         options={this.state.OriginAirport}
+                        onChange={this.changesOriginAirport.bind(this)}
                       />
                     </div>
                   </div>
@@ -515,6 +708,7 @@ class Reports extends Component {
                         components={animatedComponents}
                         isMulti
                         options={this.state.DestinationAirport}
+                        onChange={this.changesDestinationAirport.bind(this)}
                       />
                     </div>
                   </div>
@@ -523,7 +717,7 @@ class Reports extends Component {
                   <div className="col-md-4">
                     <div className="login-fields">
                       <label>Product ID</label>
-                      <input />
+                      <input type="text" id="txtProductID" />
                     </div>
                   </div>
                   )}
@@ -531,7 +725,7 @@ class Reports extends Component {
                   <div className="col-md-4">
                     <div className="login-fields">
                       <label>PO Number</label>
-                      <input />
+                      <input type="text" id="txtPONumber" />
                     </div>
                   </div>
                   )}
@@ -539,7 +733,7 @@ class Reports extends Component {
                   <div className="col-md-4">
                     <div className="login-fields">
                       <label>Invoice Number</label>
-                      <input />
+                      <input type="text" id="txtInvoiceNumber" />
                     </div>
                   </div>
                   )}

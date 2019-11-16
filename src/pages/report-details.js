@@ -34,17 +34,40 @@ class ReportDetails extends Component {
   setReportDetails(ReportDetails)
   {
     let self = this;
-    this.setState({lableofreport:ReportDetails[2].TextReportName})
+    this.setState({lableofreport:ReportDetails.TextReportName})
+    var POL = "";
+    var POD = "";
+
+    if(ReportDetails.valModeOfTransport == "Air")
+    {
+      POL = ReportDetails.valOriginAirport;
+      POD = ReportDetails.valDestinationAirport;
+    }
+    if(ReportDetails.valModeOfTransport == "Ocean")
+    {
+      POL = ReportDetails.valPortOfLoading;
+      POD = ReportDetails.valPortOfDeparture;
+    }
     
+    var axiosdata = {
+      // UserID: encryption(window.localStorage.getItem("userid"), "desc")
+      UserID: 341,
+      ReportID:  ReportDetails.valReportName,
+      RegCompID: ReportDetails.valRegCompany,
+      OriginCntry:  ReportDetails.valOriginCountry,
+      DestCntry:  ReportDetails.valDestinationCountry,
+      PONumber:  ReportDetails.valPONumber,
+      ModeTransport:  ReportDetails.valModeOfTransport,
+      POL: POL,//ReportDetails.valReportName,
+      POD: POD,//ReportDetails.valReportName,
+      ProductId: ReportDetails.valProductID,
+      InvoiceNo: ReportDetails.valInvoiceNumber
+     }
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ReportGridAPI`,
-      data: {
-       // UserID: encryption(window.localStorage.getItem("userid"), "desc")
-       UserID: 341,
-       ReportID:  ReportDetails[0].valReportName,
-       RegCompID: ReportDetails[1].valRegCompany
-      },
+      data: axiosdata,
       headers: authHeader()
     }).then(function(response) {
       

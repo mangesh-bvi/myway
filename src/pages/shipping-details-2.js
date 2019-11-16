@@ -231,7 +231,8 @@ class ShippingDetailsTwo extends Component {
       ShipmentExistsInWatchList: 0,
       showContent: false,
       packageViewMore: [],
-      MessagesActivityDetails: []
+      MessagesActivityDetails: [],
+      iframeKey: 0
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -270,93 +271,232 @@ class ShippingDetailsTwo extends Component {
   HandleMapDetailsData(mdetails) {
     debugger;
 
+    // var PinModalData = [];
+    // var RouteData = [];
+
+    // for (let i = 0; i < DetailsData.length; i++) {
+    //   var finalList = new Object();
+
+    //   // var orderId = DetailsData[i].ORDERID;
+    //   finalList.ORDERID = DetailsData[i].ORDERID;
+    //   finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
+    //   finalList.StartLocation = DetailsData[i].StartLocation;
+    //   finalList.ShipperName = DetailsData[i].ShipperName;
+    //   finalList.EndLocation = DetailsData[i].EndLocation;
+    //   finalList.ConsigneeName = DetailsData[i].ConsigneeName;
+    //   finalList.NTransit_Time = DetailsData[i].NTransit_Time;
+    //   finalList.NMax_Transit_Time = DetailsData[i].NMax_Transit_Time;
+    //   finalList.NMin_Transit_Time = DetailsData[i].NMin_Transit_Time;
+    //   finalList.CTransShipPort = DetailsData[i].CTransShipPort;
+    //   finalList.CType = DetailsData[i].CType;
+    //   finalList.Line = DetailsData[i].Line;
+    //   finalList.NEdLocationID = DetailsData[i].NEdLocationID;
+    //   finalList.NStLocationID = DetailsData[i].NStLocationID;
+    //   finalList.NTransRouteID = DetailsData[i].NTransRouteID;
+    //   finalList.SLinerID = DetailsData[i].SLinerID;
+    //   finalList.TransitType = DetailsData[i].TransitType;
+
+    //   //Start Location Lat lng
+    //   var CStLatLong = DetailsData[i].CStLatLong;
+    //   var startlatlng = [];
+    //   var startlatlnglst = new Object();
+    //   startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
+    //   startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
+    //   startlatlng.push(startlatlnglst);
+
+    //   finalList.StartLatLng = startlatlng;
+
+    //   // End Location Lat Lng
+    //   var CEdLatLong = DetailsData[i].CEdLatLong;
+    //   var endlatlng = [];
+    //   var endlatlnglst = new Object();
+    //   endlatlnglst.lat = Number(CEdLatLong.split(",")[0]);
+    //   endlatlnglst.lng = Number(CEdLatLong.split(",")[1]);
+    //   endlatlng.push(endlatlnglst);
+    //   finalList.EndLatLng = endlatlng;
+
+    //   //CRouteLatLong Lat Lng
+    //   // Rounting line
+    //   var cRouteLatLong = DetailsData[i].CRouteLatLong;
+    //   if (cRouteLatLong.length > 0) {
+    //     var routeArray = [];
+    //     var ComplexData = [];
+    //     routeArray.push(cRouteLatLong.split(";"));
+
+    //     var routlen = routeArray[0];
+    //     for (let k = 0; k < routlen.length; k++) {
+    //       var routelatlng = new Object();
+    //       var latlngvar = routlen[k];
+    //       routelatlng.lat = Number(latlngvar.split(",")[0]);
+    //       routelatlng.lng = Number(latlngvar.split(",")[1]);
+    //       ComplexData.push(routelatlng);
+    //     }
+    //     finalList.CRouteLatLong = ComplexData;
+    //   } else {
+    //     finalList.CRouteLatLong = null;
+    //   }
+
+    //   PinModalData.push(finalList);
+
+    //   // Rounting line
+    //   var RouteLatLong = DetailsData[i].RouteLatLong;
+    //   var RouteArray = [];
+    //   // var ComplexData = [];
+    //   RouteArray.push(RouteLatLong.split(";"));
+
+    //   var routlen = RouteArray[0];
+    //   for (let k = 0; k < routlen.length; k++) {
+    //     var routelatlng = new Object();
+    //     var latlngvar = routlen[k];
+    //     routelatlng.lat = Number(latlngvar.split(",")[0]);
+    //     routelatlng.lng = Number(latlngvar.split(",")[1]);
+    //     RouteData.push(routelatlng);
+    //   }
+    // }
+
+    // self.setState({ MapsDetailsData: PinModalData });
+
+    var mydata = mdetails.Table;
     let self = this;
-    var DetailsData = mdetails.Table;
+    /////Baloon with First's Start
+    //// and Last order's end address
+    var balloons = [];
+    var flags = [];
+    //var mainLineData = [];
 
-    var PinModalData = [];
-    var RouteData = [];
+    var allLineData = [];
+    for (var i = 0; i < mydata.length; i++) {
+      debugger;
+      var BlocationData = {};
+      var flagsData = {};
 
-    for (let i = 0; i < DetailsData.length; i++) {
-      var finalList = new Object();
+      var startLatLong = mydata[i]["CStLatLong"];
+      var endLatLong = mydata[i]["CEdLatLong"];
 
-      // var orderId = DetailsData[i].ORDERID;
-      finalList.ORDERID = DetailsData[i].ORDERID;
-      finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
-      finalList.StartLocation = DetailsData[i].StartLocation;
-      finalList.ShipperName = DetailsData[i].ShipperName;
-      finalList.EndLocation = DetailsData[i].EndLocation;
-      finalList.ConsigneeName = DetailsData[i].ConsigneeName;
-      finalList.NTransit_Time = DetailsData[i].NTransit_Time;
-      finalList.NMax_Transit_Time = DetailsData[i].NMax_Transit_Time;
-      finalList.NMin_Transit_Time = DetailsData[i].NMin_Transit_Time;
-      finalList.CTransShipPort = DetailsData[i].CTransShipPort;
-      finalList.CType = DetailsData[i].CType;
-      finalList.Line = DetailsData[i].Line;
-      finalList.NEdLocationID = DetailsData[i].NEdLocationID;
-      finalList.NStLocationID = DetailsData[i].NStLocationID;
-      finalList.NTransRouteID = DetailsData[i].NTransRouteID;
-      finalList.SLinerID = DetailsData[i].SLinerID;
-      finalList.TransitType = DetailsData[i].TransitType;
+      ////Baloon with start
+      ////Flag on First order's Ending Position
+      if (i === 0) {
+        var content =
+          "<div> <h3>" +
+          mydata[i]["ShipperName"] +
+          "</h3><br/><b>" +
+          mydata[i]["StartLocation"] +
+          "</b></div>";
+        BlocationData.title = "";
+        BlocationData.lat = startLatLong.split(",")[0];
+        BlocationData.long = startLatLong.split(",")[1];
+        BlocationData.addr = content;
+        ////balloons.push(startLatLong);
 
-      //Start Location Lat lng
-      var CStLatLong = DetailsData[i].CStLatLong;
-      var startlatlng = [];
-      var startlatlnglst = new Object();
-      startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
-      startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
-      startlatlng.push(startlatlnglst);
+        var fcontent =
+          "<div><h4>" +
+          mydata[i]["EndLocation"] +
+          "</h4><p>Transit time From " +
+          mydata[i]["StartLocation"] +
+          " To " +
+          mydata[i]["EndLocation"] +
+          " is:<b>" +
+          mydata[i]["NTransit_Time"] +
+          " ( Max " +
+          mydata[i]["NMax_Transit_Time"] +
+          ", Min" +
+          mydata[i]["NMin_Transit_Time"] +
+          " ) days</b></p></div>";
 
-      finalList.StartLatLng = startlatlng;
+        flagsData.title = "";
+        flagsData.Blat = endLatLong.split(",")[0];
+        flagsData.Blong = endLatLong.split(",")[1];
+        flagsData.baddr = fcontent;
+        ////flags.push(endLatLong);
 
-      // End Location Lat Lng
-      var CEdLatLong = DetailsData[i].CEdLatLong;
-      var endlatlng = [];
-      var endlatlnglst = new Object();
-      endlatlnglst.lat = Number(CEdLatLong.split(",")[0]);
-      endlatlnglst.lng = Number(CEdLatLong.split(",")[1]);
-      endlatlng.push(endlatlnglst);
-      finalList.EndLatLng = endlatlng;
-
-      //CRouteLatLong Lat Lng
-      // Rounting line
-      var cRouteLatLong = DetailsData[i].CRouteLatLong;
-      if (cRouteLatLong.length > 0) {
-        var routeArray = [];
-        var ComplexData = [];
-        routeArray.push(cRouteLatLong.split(";"));
-
-        var routlen = routeArray[0];
-        for (let k = 0; k < routlen.length; k++) {
-          var routelatlng = new Object();
-          var latlngvar = routlen[k];
-          routelatlng.lat = Number(latlngvar.split(",")[0]);
-          routelatlng.lng = Number(latlngvar.split(",")[1]);
-          ComplexData.push(routelatlng);
-        }
-        finalList.CRouteLatLong = ComplexData;
-      } else {
-        finalList.CRouteLatLong = null;
+        balloons.push(BlocationData);
+        flags.push(flagsData);
       }
 
-      PinModalData.push(finalList);
+      ////Ballon with last order's End address
+      if (i === mydata.length - 1) {
+        var Econtent =
+          "<div><h4>" +
+          mydata[i]["EndLocation"] +
+          "</h4><p>Transit time From" +
+          mydata[i]["StartLocation"] +
+          "To" +
+          mydata[i]["EndLocation"] +
+          " is:<b>" +
+          mydata[i]["NTransit_Time"] +
+          " (Max " +
+          mydata[i]["NMax_Transit_Time"] +
+          " , Min " +
+          mydata[i]["NMin_Transit_Time"] +
+          ") days</b></p></div>";
 
-      // Rounting line
-      var RouteLatLong = DetailsData[i].RouteLatLong;
-      var RouteArray = [];
-      // var ComplexData = [];
-      RouteArray.push(RouteLatLong.split(";"));
+        BlocationData.title = "";
+        BlocationData.lat = endLatLong.split(",")[0];
+        BlocationData.long = endLatLong.split(",")[1];
+        BlocationData.addr = Econtent;
+        ////balloons.push(endLatLong);
 
-      var routlen = RouteArray[0];
-      for (let k = 0; k < routlen.length; k++) {
-        var routelatlng = new Object();
-        var latlngvar = routlen[k];
-        routelatlng.lat = Number(latlngvar.split(",")[0]);
-        routelatlng.lng = Number(latlngvar.split(",")[1]);
-        RouteData.push(routelatlng);
+        balloons.push(BlocationData);
       }
+
+      if (i != mydata.length - 1 && i != 0) {
+        var gcontent =
+          "<div><h4>" +
+          mydata[i]["EndLocation"] +
+          "</h4><p>Transit time From " +
+          mydata[i]["StartLocation"] +
+          " To " +
+          mydata[i]["EndLocation"] +
+          " is:<b>" +
+          mydata[i]["NTransit_Time"] +
+          " ( Max " +
+          mydata[i]["NMax_Transit_Time"] +
+          ", Min" +
+          mydata[i]["NMin_Transit_Time"] +
+          " ) days</b></p></div>";
+
+        flagsData.title = "";
+        flagsData.Blat = endLatLong.split(",")[0];
+        flagsData.Blong = endLatLong.split(",")[1];
+        flagsData.baddr = gcontent;
+
+        flags.push(flagsData);
+      }
+
+      var CTransShipPort = mydata[i]["CTransShipPort"];
+      if (CTransShipPort != "") {
+        var mContent = mydata[i]["CTransShipPort"];
+        var CRouteLatLong = mydata[i]["CRouteLatLong"];
+        flagsData.title = mContent;
+        flagsData.Blat = CRouteLatLong.split(",")[0];
+        flagsData.Blong = CRouteLatLong.split(",")[1];
+        flagsData.baddr = "";
+
+        flags.push(flagsData);
+      }
+
+      ///Line data
+
+      var RouteLatLong = mydata[i]["RouteLatLong"];
+      var splitRouteLatLong = RouteLatLong.split(";");
+      for (var j = 0; j < splitRouteLatLong.length; j++) {
+        var lineData = {};
+        var tempSData = splitRouteLatLong[j].split(",");
+        lineData.lat = Number(tempSData[0]);
+        lineData.lng = Number(tempSData[1]);
+        allLineData.push(lineData);
+      }
+
+      //mainLineData = allLineData;
     }
+    localStorage.removeItem("BaloonData");
+    localStorage.removeItem("FlagsData");
+    localStorage.removeItem("AllLineData");
 
-    self.setState({ MapsDetailsData: PinModalData });
+    debugger;
+    localStorage.setItem("BaloonData", JSON.stringify(balloons));
+    localStorage.setItem("FlagsData", JSON.stringify(flags));
+    localStorage.setItem("AllLineData", JSON.stringify(allLineData));
   }
   HandleShipmentDetailsMap(sid, cid) {
     debugger;
@@ -1383,7 +1523,7 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-md-5">
                   <div className="ship-detail-maps">
                     <div className="ship-detail-map">
-                      <MapWithAMakredInfoWindow
+                      {/* <MapWithAMakredInfoWindow
                         markers={MapsDetailsData}
                         onClick={this.handleClick}
                         selectedMarker={this.state.selectedMarker}
@@ -1393,7 +1533,12 @@ class ShippingDetailsTwo extends Component {
                         }
                         mapElement={<div style={{ height: `100%` }} />}
                         loadingElement={<div style={{ height: `100%` }} />}
-                      ></MapWithAMakredInfoWindow>
+                      ></MapWithAMakredInfoWindow> */}
+                      <object
+                        width="100%"
+                        height="100%"
+                        data="/MapHtmlPage.html"
+                      ></object>
                     </div>
                     <div className="shipment-track-cntr">
                       <div className="shipment-track">
