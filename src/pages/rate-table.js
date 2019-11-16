@@ -27,28 +27,16 @@ const POLMaps = compose(
   withScriptjs,
   withGoogleMap
 )(props => (
-  <GoogleMap defaultZoom={8} defaultCenter={{ lat: 59.955413, lng: 30.337844 }}>
-    <Marker
-      position={{
-        lat: 59.955413,
-        lng: 30.337844
-      }}
-      icon={GreenIcon}
-    ></Marker>
+  <GoogleMap defaultZoom={8} defaultCenter={props.markerPOLData}>
+    <Marker position={props.markerPOLData} icon={GreenIcon}></Marker>
   </GoogleMap>
 ));
 const PODMaps = compose(
   withScriptjs,
   withGoogleMap
 )(props => (
-  <GoogleMap defaultZoom={8} defaultCenter={{ lat: 29.955413, lng: 50.337844 }}>
-    <Marker
-      position={{
-        lat: 29.955413,
-        lng: 50.337844
-      }}
-      icon={RedIcon}
-    ></Marker>
+  <GoogleMap defaultZoom={8} defaultCenter={props.markerPODData}>
+    <Marker position={props.markerPODData} icon={RedIcon}></Marker>
   </GoogleMap>
 ));
 
@@ -57,6 +45,16 @@ class RateTable extends Component {
     super(props);
 
     this.state = {
+
+      shipmentType: "",
+      modeoftransport: "",
+      containerLoadType: "",
+      typeofMove:"",
+      HazMat:false,
+      NonStackable:false,
+      Custom_Clearance:false,
+
+
       modalEdit: false,
       modalQuant: false,
       value: 50,
@@ -64,13 +62,16 @@ class RateTable extends Component {
       values: [],
       RateSubDetails: [],
       checkSelection: [],
-      polLatLng:{}
-
+      polLatLng: {},
+      podmapData: {},
+      selected: {},
+      selectedDataRow: [],
+      selectAll: 0
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
     this.toggleQuant = this.toggleQuant.bind(this);
-
+    this.toggleRow = this.toggleRow.bind(this);
     this.checkSelection = this.checkSelection.bind(this);
   }
 
@@ -84,17 +85,21 @@ class RateTable extends Component {
 
   componentDidMount() {
     debugger;
-    if (this.props.location.state !== null) {
-      var isSearch = this.props.location.state.isSearch;
-      if (isSearch) {
-        var paramData = this.props.location.state;
-        var modeofTransport=this.props.location.state.containerLoadType;
-        if (modeofTransport === "FCL") {
-          this.HandleRateDetailsFCL(paramData);
-        } else if (modeofTransport === "AIR") {
-          this.HandleRateDetailsLCL(paramData);
+    if (typeof this.props.location.state !== "undefined") {
+      if (this.props.location.state !== null) {
+        var isSearch = this.props.location.state.isSearch;
+        if (isSearch) {
+          var paramData = this.props.location.state;
+          var modeofTransport = this.props.location.state.containerLoadType;
+          if (modeofTransport === "FCL") {
+            this.HandleRateDetailsFCL(paramData);
+          } else if (modeofTransport === "AIR") {
+            this.HandleRateDetailsLCL(paramData);
+          }
         }
       }
+    } else {
+      this.props.history.push("rate-search");
     }
   }
 
@@ -111,22 +116,58 @@ class RateTable extends Component {
 
   handleCheck() {
     debugger;
-    this.props.history.push({
-      pathname: "rate-finalizing",
-      state: { rateDetail: this.state.RateDetails }
-    });
+    // this.props.history.push({
+    //   pathname: "rate-finalizing",
+    //   //state: { rateDetail: this.state.RateDetails }
+    // });
   }
 
-  // checkSelection(e, row) {
-  //   debugger;
-  //   var abc = row;
-  //   let checkSelectionLocal = this.state.checkSelection;
-  //   checkSelectionLocal.push(e.target.id);
-  //   this.setState({
-  //     checkSelection: checkSelectionLocal
-  //   });
-  //   console.log(this.state.checkSelection);
-  // }
+  toggleRow(rateID, rowData) {
+    debugger;
+
+    const newSelected = Object.assign({}, this.state.selected);
+    newSelected[rateID] = !this.state.selected[rateID];
+    this.setState({
+      selected: rateID ? newSelected : false
+    });
+    var selectedRow = [];
+
+    if (this.state.selectedDataRow.length == 0) {
+      selectedRow.push(rowData._original);
+      this.setState({
+        selectedDataRow: selectedRow
+      });
+    } else {
+      if (newSelected[rateID] === true) {
+        for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+          if (
+            this.state.selectedDataRow[i].rateID === rowData._original.rateID
+          ) {
+            selectedRow.splice(i, 1);
+
+            break;
+          } else {
+            selectedRow = this.state.selectedDataRow;
+            selectedRow.push(rowData._original);
+            break;
+          }
+        }
+      } else {
+        for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+          if (
+            this.state.selectedDataRow[i].rateID === rowData._original.rateID
+          ) {
+            selectedRow = this.state.selectedDataRow;
+            selectedRow.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+    this.setState({
+      selectedDataRow: selectedRow
+    });
+  }
 
   checkSelection(evt, row) {
     console.log(row.index);
@@ -163,14 +204,23 @@ class RateTable extends Component {
       var podAddress = paramData.podfullAddData;
       var rateQueryDim = [];
       var containerdetails = paramData.users;
-      
+      debugger;
+      var polLatLng = new Object();
+      var podLatLng = new Object();
 
+      var polmapData = polAddress.GeoCoordinate;
+      polLatLng.lat = Number(polmapData.split(",")[0]);
+      polLatLng.lng = Number(polmapData.split(",")[1]);
+      var podmapData = podAddress.GeoCoordinate;
+      podLatLng.lat = Number(podmapData.split(",")[0]);
+      podLatLng.lng = Number(podmapData.split(",")[1]);
 
-      this.setState({})
+      this.setState({ polLatLng: polLatLng, podmapData: podLatLng });
+
       dataParameter = {
         QuoteType: paramData.containerLoadType,
         ModeOfTransport: rModeofTransport,
-        Type: paramData.containerLoadType,
+        Type: paramData.shipmentType,
         TypeOfMove: rTypeofMove,
 
         PortOfDischargeCode:
@@ -190,6 +240,18 @@ class RateTable extends Component {
         ChargeableWeight: 0,
         RateQueryDim: rateQueryDim
       };
+
+
+      this.setState({
+        shipmentType: paramData.shipmentType,
+        modeoftransport: paramData.modeoftransport,
+        containerLoadType: paramData.containerLoadType,
+        typeofMove:rTypeofMove,
+        HazMat:false,
+        NonStackable:false,
+        Custom_Clearance:false,
+
+      })
     }
 
     debugger;
@@ -244,10 +306,8 @@ class RateTable extends Component {
       var podAddress = paramData.podfullAddData;
       var rateQueryDim = [];
       var containerdetails = paramData.users;
-      
 
-
-      this.setState({})
+      this.setState({});
       dataParameter = {
         QuoteType: paramData.containerLoadType,
         ModeOfTransport: rModeofTransport,
@@ -297,6 +357,16 @@ class RateTable extends Component {
       }
     });
   }
+
+  HandleDocumentView(evt, row) {
+    debugger;
+    var rowDataAry = [];
+    var rowDataObj = row.original;
+    rowDataAry.push(rowDataObj);
+
+    this.setState({ checkSelection: rowDataAry });
+  }
+
   addClick() {
     this.setState(prevState => ({
       values: [...prevState.values, ""]
@@ -331,8 +401,8 @@ class RateTable extends Component {
   }
 
   render() {
-     
     var i = 0;
+
     return (
       <div>
         <Headers />
@@ -374,8 +444,7 @@ class RateTable extends Component {
                 </button> */}
                 <Link
                   to={{
-                    pathname: "/rate-finalizing",
-                    state: { detail: this.state.rateDetail }
+                    pathname: "/rate-finalizing"
                   }}
                   className="blue-butn butn m-0"
                 >
@@ -389,13 +458,13 @@ class RateTable extends Component {
                   <div className="rate-table-left">
                     <div className="top-select d-flex justify-content-between">
                       <a href="new-rate-search" className="butn">
-                        Export
+                        {this.state.shipmentType}
                       </a>
                       <a href="new-rate-search" className="butn">
-                        Sea
+                        {this.state.modeoftransport}
                       </a>
                       <a href="new-rate-search" className="butn">
-                        FCL
+                        {this.state.containerLoadType}
                       </a>
                     </div>
                     <div className="cont-costs">
@@ -405,9 +474,9 @@ class RateTable extends Component {
                             <input
                               id="door"
                               type="checkbox"
-                              name={"cont-cost"}
+                              name="typeofMove"
                             />
-                            <label htmlFor="door">Door to Door</label>
+                            <label htmlFor="door">{this.state.typeofMove===1?"Port 2 Port":this.state.typeofMove===2?"Door 2 Port":this.state.typeofMove===4?"Port 2 Door":this.state.typeofMove===3?"Door 2 Door":""}</label>
                           </div>
                           <span>100$</span>
                         </div>
@@ -416,9 +485,10 @@ class RateTable extends Component {
                             <input
                               id="insu"
                               type="checkbox"
-                              name={"cont-cost"}
+                              name="HazMat"
+                              checked={this.state.HazMat}
                             />
-                            <label htmlFor="insu">Insurance</label>
+                            <label htmlFor="insu">HazMat</label>
                           </div>
                           <span>50$</span>
                         </div>
@@ -427,10 +497,11 @@ class RateTable extends Component {
                             <input
                               id="cont-trak"
                               type="checkbox"
-                              name={"cont-cost"}
+                              name="NonStackable"
+                              checked={this.state.NonStackable}
                             />
                             <label htmlFor="cont-trak">
-                              Container Tracking
+                            NonStackable
                             </label>
                           </div>
                           <span>150$</span>
@@ -440,7 +511,8 @@ class RateTable extends Component {
                             <input
                               id="cust-clear"
                               type="checkbox"
-                              name={"cont-cost"}
+                              name="Custom_Clearance"
+                              checked={this.state.Custom_Clearance}
                             />
                             <label htmlFor="cust-clear">Custom Clearance</label>
                           </div>
@@ -467,6 +539,7 @@ class RateTable extends Component {
                           <SourceIcon lat={59.955413} lng={30.337844} />
                         </GoogleMapReact> */}
                         <POLMaps
+                          markerPOLData={this.state.polLatLng}
                           googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                           containerElement={
                             <div style={{ height: `100%`, width: "100%" }} />
@@ -484,6 +557,7 @@ class RateTable extends Component {
                           +
                         </span>
                         <PODMaps
+                          markerPODData={this.state.podmapData}
                           googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                           containerElement={
                             <div style={{ height: `100%`, width: "100%" }} />
@@ -509,7 +583,7 @@ class RateTable extends Component {
                       {
                         columns: [
                           {
-                            Cell: row => {
+                            Cell: ({ original, row }) => {
                               i++;
                               return (
                                 <React.Fragment>
@@ -525,8 +599,13 @@ class RateTable extends Component {
                                         //         .checkbx
                                         //     : false
                                         // }
+                                        checked={
+                                          this.state.selected[
+                                            original.rateID
+                                          ] === true
+                                        }
                                         onChange={e =>
-                                          this.checkSelection(e, row)
+                                          this.toggleRow(original.rateID, row)
                                         }
                                       />
                                       <label
@@ -545,7 +624,6 @@ class RateTable extends Component {
                           },
                           {
                             Cell: row => {
-                              debugger;
                               return (
                                 <>
                                   <p className="details-title">Valid Until</p>
@@ -562,7 +640,6 @@ class RateTable extends Component {
                           },
                           {
                             Cell: row => {
-                              debugger;
                               return (
                                 <>
                                   <p className="details-title">TT</p>
@@ -577,7 +654,6 @@ class RateTable extends Component {
                           },
                           {
                             Cell: row => {
-                              debugger;
                               return (
                                 <>
                                   <p className="details-title">Price</p>
@@ -641,13 +717,12 @@ class RateTable extends Component {
                                   },
                                   {
                                     Cell: row => {
-                                      debugger;
                                       return (
                                         <>
-                                          {/* {row.original.TotalAmount != "" ||
+                                          {row.original.TotalAmount != "" ||
                                           row.original.TotalAmount != null
                                             ? row.original.TotalAmount + " USD"
-                                            : null} */}
+                                            : null}
                                           {row.original.TotalAmount}
                                           &nbsp;
                                           {row.original.BaseCurrency}
@@ -666,6 +741,11 @@ class RateTable extends Component {
                       );
                     }}
                   />
+                  {/* <ReactTable
+                    data={Data}
+                    columns={columns}
+                    defaultSorted={[{ id: "firstName", desc: false }]}
+                  /> */}
                   <p className="bottom-profit">
                     Profit -------$ Customer Segment A Profit Margin %15
                   </p>

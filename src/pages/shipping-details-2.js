@@ -497,6 +497,7 @@ class ShippingDetailsTwo extends Component {
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
+    self.setState({ iframeKey: self.state.iframeKey + 1 });
   }
   HandleShipmentDetailsMap(sid, cid) {
     debugger;
@@ -511,11 +512,11 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindShipmentSummaryMap`,
       data: {
-        ShipperID: 1340354108, //shipperId,  //shipperId,
-        ConsigneeID: 1340464123, //consigneeId,  //consigneeId,
+        ShipperID:shipperId, //1340354108, //shipperId,  //shipperId,
+        ConsigneeID:consigneeId,// 1340464123, //consigneeId,  //consigneeId,
         SwitchConsigneeID: 0,
         SwitchShipperID: 0,
-        HBLNo: "BOM 237730" //hblno
+        HBLNo: hblno//"BOM 237730" //hblno
       },
       headers: authHeader()
     }).then(function(response) {
@@ -1518,11 +1519,16 @@ class ShippingDetailsTwo extends Component {
                         mapElement={<div style={{ height: `100%` }} />}
                         loadingElement={<div style={{ height: `100%` }} />}
                       ></MapWithAMakredInfoWindow> */}
-                      <object
+                      {/* <object
                         width="100%"
                         height="100%"
                         data="/MapHtmlPage.html"
-                      ></object>
+                      ></object> */}
+                       // <iframe
+                            key={this.state.iframeKey}
+                            src="/MapHtmlPage.html"
+                            className="mapIframe"
+                          />
                     </div>
                     <div className="shipment-track-cntr">
                       <div className="shipment-track">

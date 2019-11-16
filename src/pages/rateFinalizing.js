@@ -31,12 +31,12 @@ class RateFinalizing extends Component {
 
   componentDidMount() {
     debugger;
-    var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
-    var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
-    this.setState({
-      rateDetails: rateDetails,
-      rateSubDetails: rateSubDetails
-    });
+    // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
+    // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
+    // this.setState({
+    //   rateDetails: rateDetails,
+    //   rateSubDetails: rateSubDetails
+    // });
   }
 
   toggleProfit() {
@@ -125,33 +125,33 @@ class RateFinalizing extends Component {
   }
 
   render() {
-    // var data1 = [
-    //   { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-    //   { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
-    // ];
-    // var data2 = [
-    //   {
-    //     chargeCode: "A23435",
-    //     chargeName: "Lorem",
-    //     units: "43",
-    //     unitPrice: "$134.00",
-    //     finalPayment: "$45,986.00"
-    //   },
-    //   {
-    //     chargeCode: "B45678",
-    //     chargeName: "Lorem",
-    //     units: "23",
-    //     unitPrice: "$56.45",
-    //     finalPayment: "$1200.00"
-    //   },
-    //   {
-    //     chargeCode: "C54545",
-    //     chargeName: "Lorem",
-    //     units: "56",
-    //     unitPrice: "$50.00",
-    //     finalPayment: "$3456.00"
-    //   }
-    // ];
+    var data1 = [
+      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
+      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
+    ];
+    var data2 = [
+      {
+        chargeCode: "A23435",
+        chargeName: "Lorem",
+        units: "43",
+        unitPrice: "$134.00",
+        finalPayment: "$45,986.00"
+      },
+      {
+        chargeCode: "B45678",
+        chargeName: "Lorem",
+        units: "23",
+        unitPrice: "$56.45",
+        finalPayment: "$1200.00"
+      },
+      {
+        chargeCode: "C54545",
+        chargeName: "Lorem",
+        units: "56",
+        unitPrice: "$50.00",
+        finalPayment: "$3456.00"
+      }
+    ];
 
     return (
       <React.Fragment>
@@ -321,7 +321,7 @@ class RateFinalizing extends Component {
                             ]
                           }
                         ]}
-                        data={[JSON.parse(localStorage.getItem("rateDetails"))]}
+                        data={data1}
                         minRows={0}
                         showPagination={false}
                         className="-striped -highlight"
@@ -329,11 +329,7 @@ class RateFinalizing extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={[
-                                  JSON.parse(
-                                    localStorage.getItem("rateSubDetails")
-                                  )
-                                ]}
+                                data={data2}
                                 columns={[
                                   {
                                     columns: [

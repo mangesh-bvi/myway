@@ -698,7 +698,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <i
-                              class="fa fa-share-alt shareicon"
+                              className="fa fa-share-alt shareicon"
                               onClick={this.toggleShare}
                               aria-hidden="true"
                             ></i>

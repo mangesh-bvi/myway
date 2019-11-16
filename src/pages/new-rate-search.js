@@ -132,6 +132,9 @@ class NewRateSearch extends Component {
       PortOfLoadingCode: "",
       Currency: "",
       //-----
+      Custom_Clearance:false,
+      NonStackable:false,
+      HazMat:false,
       multiCBM: [
         {
           PackagingType: "",
@@ -233,9 +236,11 @@ class NewRateSearch extends Component {
 
   componentDidMount() {
     debugger;
-    var compId = this.props.history.location.state;
-    if (compId !== null) {
-      this.setState({ companyId: compId.companyId });
+    if (typeof this.props.history.location.state !== "undefined") {
+      var compId = this.props.history.location.state;
+      if (compId !== null) {
+        this.setState({ companyId: compId.companyId });
+      }
     }
     this.HandleCounterListBind();
     // this.HandleCommodityData();
@@ -294,9 +299,12 @@ class NewRateSearch extends Component {
       return (
         <div key={i} className="equip-plus-cntr">
           <div className="spe-equ">
-            <select name="TruckName" onChange={this.UITruckTypeChange.bind(this,i)}>
+            <select
+              name="TruckName"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            >
               <option>select</option>
-            {this.state.TruckType.map((item, i) => (
+              {this.state.TruckType.map((item, i) => (
                 <option key={i} value={item.TruckID}>
                   {item.TruckName}
                 </option>
@@ -306,31 +314,31 @@ class NewRateSearch extends Component {
               type="text"
               name="Quantity"
               placeholder="Quantity"
-              onChange={this.UITruckTypeChange.bind(this,i)}
+              onChange={this.UITruckTypeChange.bind(this, i)}
             />
           </div>
           {i === 0 ? (
-          <div className="col-md">
-            <div className="spe-equ">
-              <i
-                className="fa fa-plus"
-                aria-hidden="true"
-                onClick={this.addClickTruckType.bind(this)}
-              ></i>
+            <div className="col-md">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus"
+                  aria-hidden="true"
+                  onClick={this.addClickTruckType.bind(this)}
+                ></i>
+              </div>
             </div>
-          </div>
-        ) : null}
-        {this.state.TruckTypeData.length > 1 ? (
-          <div className="col-md">
-            <div className="spe-equ">
-              <i
-                className="fa fa-minus"
-                aria-hidden="true"
-                onClick={this.removeClickTruckType.bind(this)}
-              ></i>
+          ) : null}
+          {this.state.TruckTypeData.length > 1 ? (
+            <div className="col-md">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-minus"
+                  aria-hidden="true"
+                  onClick={this.removeClickTruckType.bind(this)}
+                ></i>
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
         </div>
       );
     });
@@ -1399,17 +1407,17 @@ class NewRateSearch extends Component {
     debugger;
     let self = this;
     var icheck = e.target.checked;
-    console.log(icheck, "----------icheck-----------");
+
     if (icheck === true) {
       self.setState({ isCustomClear: "Yes" });
       setTimeout(function() {
         self.HandleGetIncoTerms();
-      }, 3000);
+      }, 500);
     } else {
       self.setState({ isCustomClear: "No" });
       setTimeout(function() {
         self.HandleGetIncoTerms();
-      }, 3000);
+      }, 500);
     }
   }
 
