@@ -1892,6 +1892,9 @@ table tbody tr:last-child {
   color: #002d73 !important;
   font-size: 14px !important;
 }
+.hbl-bor {
+  border-bottom: 0 !important;
+}
 /* dashboard ends */
 
 /* view user starts */
