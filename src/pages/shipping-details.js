@@ -591,20 +591,48 @@ class ShippingDetails extends Component {
                       },
                       {
                         Header: "Consignee",
-                        accessor: "Consignee"
+                        accessor: "Consignee",
+                        Cell: row => {
+                          return (
+                            <span title={row.value} className="max3">
+                              {row.value}
+                            </span>
+                          );
+                        }
                       },
                       {
                         Header: "Shipper",
-                        accessor: "Shipper"
+                        accessor: "Shipper",
+                        Cell: row => {
+                          return (
+                            <span title={row.value} className="max3">
+                              {row.value}
+                            </span>
+                          );
+                        }
                       },
                       {
                         Header: "POL",
-                        accessor: "POL"
+                        accessor: "POL",
+                        Cell: row => {
+                          return (
+                            <span title={row.value} className="max3">
+                              {row.value}
+                            </span>
+                          );
+                        }
                       },
 
                       {
                         Header: "POD",
-                        accessor: "POD"
+                        accessor: "POD",
+                        Cell: row => {
+                          return (
+                            <span title={row.value} className="max3">
+                              {row.value}
+                            </span>
+                          );
+                        }
                       },
                       {
                         Cell: row => {
@@ -1188,22 +1216,32 @@ class ShippingDetails extends Component {
               centered={true}
             >
               <ModalBody>
-                Popup will come
-                {/* <div className="txt-cntr">
+                <h3 className="mb-4 text-center">Share with others</h3>
+                <div className="txt-cntr">
                   <div className="d-flex align-items-center">
-                    <p className="details-title mr-3">Amount</p>
+                    <p className="details-title mr-3">Shareable Link</p>
                     <div class="spe-equ d-block m-0 flex-grow-1">
                       <input
                         type="text"
-                        placeholder="Enter Amount"
+                        disabled
                         class="w-100"
+                        value="Xs0259/Wpo76777"
                       />
                     </div>
                   </div>
-                </div> */}
-                <div className="text-center">
-                  <Button className="butn" onClick={this.toggleShare}>
-                    Done
+                </div>
+                <div className="text-right">
+                  <Button
+                    className="butn cancel-butn"
+                    onClick={this.toggleShare}
+                  >
+                    Cancel
+                  </Button>
+                  <Button className="butn mx-3" onClick={this.toggleShare}>
+                    Share
+                  </Button>
+                  <Button className="butn blue-butn" onClick={this.toggleShare}>
+                    Copy
                   </Button>
                 </div>
               </ModalBody>

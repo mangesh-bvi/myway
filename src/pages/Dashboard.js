@@ -539,7 +539,6 @@ class Dashboard extends Component {
   }
 
   onPlaceSelected = place => {
-
     debugger;
     console.log("plc", place);
     const address = place.formatted_address,
@@ -988,6 +987,15 @@ class Dashboard extends Component {
           </div>
           <div className="cls-rt">
             <div className="dash-outer" style={{}}>
+              {this.state.checkMapview == true ? (
+                ""
+              ) : (
+                <div className="text-right">
+                  <a href="/shipment-summary" className="butn mt-0 mb-2">
+                    Back
+                  </a>
+                </div>
+              )}
               {this.state.checkMapview == true ? (
                 <>
                   <div className="dash-map">

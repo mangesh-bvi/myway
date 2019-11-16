@@ -571,7 +571,7 @@ class ShippingDetailsTwo extends Component {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-        alert("No Data Found");
+        NotificationManager.error("No Data Found");
         var actData = [];
         actData.push({ DocumentDescription: "No Data Found" });
 
@@ -1295,6 +1295,11 @@ class ShippingDetailsTwo extends Component {
                       </div>
                       <div className="sect-padd">
                         <p className="details-heading">Package Details</p>
+                        {packageDetails.length === 0 ? (
+                          <p className="text-center">No details found</p>
+                        ) : (
+                          ""
+                        )}
                         {packageDetails.map(function(packData, i) {
                           return (
                             <>
@@ -1501,6 +1506,17 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="activity-tab"
                     >
+                      <div className="mb-4">
+                        <textarea
+                          className="txt-add"
+                          placeholder="Add Message"
+                        ></textarea>
+                        <div className="text-right">
+                          <a href="#!" className="butn">
+                            Post
+                          </a>
+                        </div>
+                      </div>
                       {MsgActivityTab}
                     </div>
                   </div>

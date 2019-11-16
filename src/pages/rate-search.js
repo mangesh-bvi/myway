@@ -28,10 +28,12 @@ class RateSearch extends Component {
         padding: "2px 0 0 10px",
         fontSize: "90%",
         position: "absolute",
+        top: "100%",
+        left: "0",
         overflow: "auto",
         zIndex: "1",
         maxWidth: "300px",
-        maxHeight: "50%" // TODO: don't cheat, let it flow to the bottom
+        maxHeight: "100px" // TODO: don't cheat, let it flow to the bottom
       },
       fields: {}
     };

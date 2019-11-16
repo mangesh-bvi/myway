@@ -346,10 +346,10 @@ class Header extends Component {
                     isOpen={this.state.modalDocu}
                     toggle={this.toggleDocu}
                     centered={true}
-                    backdrop="static"
+                    // backdrop="static"
                   >
-                    <ModalHeader>Send Message</ModalHeader>
                     <ModalBody>
+                      <h3 className="mb-4">Send Message</h3>
                       <div className="rename-cntr login-fields">
                         <select id="drpshipment">
                           <option value="0">Select</option>
@@ -369,9 +369,7 @@ class Header extends Component {
                         <textarea
                           id="txtshipmentcomment"
                           name="comment"
-                          rows="5"
-                          cols="50"
-                          style={{ resize: "none" }}
+                          className="txt-add"
                           placeholder="Enter Comment..."
                         ></textarea>
                       </div>

@@ -32,18 +32,10 @@ const Map1WithAMakredInfoWindowSearchBooks = compose(
 )(props => (
   <GoogleMap>
     <Autocomplete
-      placeholder="Enter POL"
+      placeholder="Enter PU Address"
+      className="w-100"
       name=""
-      style={{
-        height: "36px",
-        paddingLeft: "16px",
-        marginTop: "2px",
-        position: "absolute",
-        top: "18px",
-        left: "15px",
-        width: "94%",
-        border: "1px solid #959595"
-      }}
+      type="text"
       onPlaceSelected={props.onPlaceSelected}
       types={["(regions)"]}
     />
@@ -56,17 +48,9 @@ const GoogleMapPODSearchBox = compose(
 )(props => (
   <GoogleMap>
     <Autocomplete
-      placeholder="Enter POD"
-      style={{
-        height: "36px",
-        paddingLeft: "16px",
-        marginTop: "2px",
-        position: "absolute",
-        top: "18px",
-        left: "15px",
-        width: "94%",
-        border: "1px solid #959595"
-      }}
+      placeholder="Enter PD Address"
+      type="text"
+      className="w-100"
       onPlaceSelected={props.onPlaceSelected}
       types={["(regions)"]}
     />
@@ -249,7 +233,6 @@ class NewRateSearch extends Component {
   }
 
   HandleSearchButton() {
-    debugger;
     let self = this;
 
     this.props.history.push({ pathname: "rate-table", state: this.state });
@@ -263,14 +246,13 @@ class NewRateSearch extends Component {
 
   HandleTruckTypeData() {
     let self = this;
-    debugger;
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/TruckTypeListDropdown`,
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var data = response.data.Table;
       self.setState({ TruckType: data });
     });
@@ -280,7 +262,6 @@ class NewRateSearch extends Component {
   //// Create Trcuk Type dropdown dynamic element UI
 
   addClickTruckType() {
-    debugger;
     this.setState(prevState => ({
       TruckTypeData: [
         ...prevState.TruckTypeData,
@@ -294,16 +275,16 @@ class NewRateSearch extends Component {
   }
 
   createUITruckType() {
-    debugger;
     return this.state.TruckTypeData.map((el, i) => {
       return (
         <div key={i} className="equip-plus-cntr">
           <div className="spe-equ">
             <select
+              className="select-text mr-3"
               name="TruckName"
               onChange={this.UITruckTypeChange.bind(this, i)}
             >
-              <option>select</option>
+              <option>Select</option>
               {this.state.TruckType.map((item, i) => (
                 <option key={i} value={item.TruckID}>
                   {item.TruckName}
@@ -321,7 +302,7 @@ class NewRateSearch extends Component {
             <div className="col-md">
               <div className="spe-equ">
                 <i
-                  className="fa fa-plus"
+                  className="fa fa-plus mt-2"
                   aria-hidden="true"
                   onClick={this.addClickTruckType.bind(this)}
                 ></i>
@@ -330,7 +311,7 @@ class NewRateSearch extends Component {
           ) : null}
           {this.state.TruckTypeData.length > 1 ? (
             <div className="col-md">
-              <div className="spe-equ">
+              <div className="spe-equ mt-2">
                 <i
                   className="fa fa-minus"
                   aria-hidden="true"
@@ -345,7 +326,6 @@ class NewRateSearch extends Component {
   }
 
   UITruckTypeChange(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let TruckTypeData = [...this.state.TruckTypeData];
@@ -356,7 +336,6 @@ class NewRateSearch extends Component {
     this.setState({ TruckTypeData });
   }
   removeClickTruckType(i) {
-    debugger;
     let TruckTypeData = [...this.state.TruckTypeData];
     TruckTypeData.splice(i, 1);
     this.setState({ TruckTypeData });
@@ -368,22 +347,19 @@ class NewRateSearch extends Component {
 
   HandlePackgeTypeData() {
     let self = this;
-    debugger;
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/PackageTypeListDropdown`,
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var data = response.data.Table;
       self.setState({ packageTypeData: data });
     });
   }
 
   HandleCurrencyChange(e) {
-    debugger;
-
     this.setState({ currencyCode: e.CurrencyCode, isSearch: true });
   }
 
@@ -392,14 +368,14 @@ class NewRateSearch extends Component {
 
   // HandleCommodityData() {
   //   let self = this;
-  //   debugger;
+  //
   //   axios({
   //     method: "post",
   //     url: `${appSettings.APIURL}/CommodityDropdown`,
 
   //     headers: authHeader()
   //   }).then(function(response) {
-  //     debugger;
+  //
   //     var data = response.data.Table;
   //     self.setState({ commodityData: data });
   //   });
@@ -409,13 +385,10 @@ class NewRateSearch extends Component {
   //// end Commodity drop-down
   //// POL POD Autosearch Data
   HandleAddressDropdownPolSelect(e, field, value, id) {
-    debugger;
     let fields = this.state.fields;
     fields[field] = value;
 
     if (field === "pol") {
-      debugger;
-
       if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
         var geoCoordinate = id.GeoCoordinate.split(",");
         var mapPositionPOL = new Object();
@@ -443,6 +416,7 @@ class NewRateSearch extends Component {
 
     document.getElementById("address").classList.add("address");
     document.getElementById("typeMoveInner").classList.add("typeMoveType");
+    document.getElementById("typeMove").classList.add("less-padd");
     document
       .getElementById("typeMoveIconCntr")
       .classList.add("typeMoveIconCntr");
@@ -451,9 +425,13 @@ class NewRateSearch extends Component {
     document.getElementById("typeMovePlusClick").classList.remove("d-none");
 
     document.getElementById("location").classList.add("location");
-    if (document.getElementById("addressInner") == null)
+    if (document.getElementById("addressInner") == null) {
       document.getElementById("typeMoveInner").classList.add("typeMoveType");
-    else document.getElementById("addressInner").classList.add("addressType");
+      document.getElementById("typeMove").classList.add("less-padd");
+    } else {
+      document.getElementById("addressInner").classList.add("addressType");
+      document.getElementById("address").classList.add("less-padd");
+    }
 
     if (document.getElementById("addressInner") == null)
       document
@@ -478,7 +456,6 @@ class NewRateSearch extends Component {
   }
 
   HandlePOLPODAutosearch(field, e) {
-    debugger;
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -502,7 +479,6 @@ class NewRateSearch extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
         if (field === "pol") {
           self.setState({
             polpodData: response.data.Table,
@@ -526,9 +502,8 @@ class NewRateSearch extends Component {
   //// start dynamic element for LCL-AIR-LTL
 
   CreateMultiCBM() {
-    debugger;
     return this.state.multiCBM.map((el, i) => (
-      <div className="row" key={i}>
+      <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
             {/* <Select
@@ -542,6 +517,7 @@ class NewRateSearch extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
             /> */}
             <select
+              className="select-text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               name="PackagingType"
             >
@@ -559,7 +535,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="Quantity"
+              placeholder="QTY"
               className="w-100"
               name="Quantity"
               value={el.Quantity || ""}
@@ -572,7 +548,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"Length (cm)"}
+              placeholder={"L (cm)"}
               className="w-100"
               name="length"
               value={el.length || ""}
@@ -585,7 +561,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"Width (cm)"}
+              placeholder={"W (cm)"}
               className="w-100"
               name="width"
               value={el.width || ""}
@@ -598,7 +574,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="Height (cm)"
+              placeholder="H (cm)"
               className="w-100"
               name="height"
               value={el.height || ""}
@@ -612,9 +588,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={
-                el.Gross_Weight === 0 ? "Gross Weight" : " Gross Weight"
-              }
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
               name="Gross_Weight"
               value={el.Gross_Weight || ""}
               className="w-100"
@@ -640,10 +614,10 @@ class NewRateSearch extends Component {
           </div>
         </div>
         {i === 0 ? (
-          <div className="col-md">
+          <div className="">
             <div className="spe-equ">
               <i
-                className="fa fa-plus"
+                className="fa fa-plus mt-2"
                 aria-hidden="true"
                 onClick={this.addMultiCBM.bind(this)}
               ></i>
@@ -651,10 +625,10 @@ class NewRateSearch extends Component {
           </div>
         ) : null}
         {this.state.multiCBM.length > 1 ? (
-          <div className="col-md">
+          <div className="">
             <div className="spe-equ">
               <i
-                className="fa fa-minus"
+                className="fa fa-minus mt-2"
                 aria-hidden="true"
                 onClick={this.removeMultiCBM.bind(this)}
               ></i>
@@ -666,7 +640,6 @@ class NewRateSearch extends Component {
   }
 
   HandleChangeMultiCBM(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -698,9 +671,20 @@ class NewRateSearch extends Component {
     }
 
     this.setState({ multiCBM });
+
+    // next
+    document.getElementById("cbm").classList.add("cbm");
+    document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+    document.getElementById("containerLoad").classList.add("less-padd");
+
+    document
+      .getElementById("cntrLoadIconCntr")
+      .classList.add("cntrLoadIconCntr");
+    document.getElementById("cntrLoadName").classList.remove("d-none");
+    document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+    document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   addMultiCBM() {
-    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -718,7 +702,6 @@ class NewRateSearch extends Component {
     }));
   }
   removeMultiCBM(i) {
-    debugger;
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
     this.setState({ multiCBM });
@@ -729,7 +712,6 @@ class NewRateSearch extends Component {
   //// start  spacEqmtType dyamanic element
 
   addSpacEqmtType(optionVal) {
-    debugger;
     this.setState(prevState => ({
       spacEqmtType: [
         ...prevState.spacEqmtType,
@@ -742,21 +724,22 @@ class NewRateSearch extends Component {
   }
 
   createUIspacEqmtType() {
-    debugger;
     return this.state.spacEqmtType.map((el, i) => {
       return (
-        <div key={i} className="equip-plus-cntr">
-          <label name="TypeName">{el.TypeName}</label>
-          <div className="spe-equ">
-            <input
-              type="text"
-              name="qu"
-              placeholder="Quantity"
-              onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
-            />
-          </div>
+        <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
+          <label name="TypeName">
+            {el.TypeName} <span className="into-quant">X</span>
+          </label>
+          {/* <div className="spe-equ"> */}
+          <input
+            type="number"
+            name="qu"
+            placeholder="QTY"
+            onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+          />
+          {/* </div> */}
           <i
-            className="fa fa-minus equip-plus"
+            className="fa fa-times"
             onClick={this.removeClickSpacEqmtType.bind(this, i)}
           ></i>
         </div>
@@ -765,7 +748,6 @@ class NewRateSearch extends Component {
   }
 
   HandleChangeSpacEqmtType(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let spacEqmtType = [...this.state.spacEqmtType];
@@ -777,7 +759,6 @@ class NewRateSearch extends Component {
   }
 
   removeClickSpacEqmtType(i) {
-    debugger;
     let spacEqmtType = [...this.state.spacEqmtType];
     spacEqmtType.splice(i, 1);
     this.setState({ spacEqmtType });
@@ -787,7 +768,6 @@ class NewRateSearch extends Component {
 
   //// start refer type  dynamic element
   addClickSpecial(optionVal) {
-    debugger;
     this.setState(prevState => ({
       referType: [
         ...prevState.referType,
@@ -804,24 +784,37 @@ class NewRateSearch extends Component {
   }
 
   createUISpecial() {
-    debugger;
     return this.state.referType.map((el, i) => {
       return (
-        <div key={i} className="equip-plus-cntr">
-          <label name="ContainerCode">{el.ContainerCode}</label>
-          <div className="spe-equ">
-            <input
-              type="text"
-              name="ContainerQuantity"
-              placeholder="Quantity"
-              onChange={this.UISpecialChange.bind(this, i)}
-            />
-            <input
-              type="text"
-              name="Temperature"
-              placeholder="Temp"
-              onChange={this.UISpecialChange.bind(this, i)}
-            />
+        <div key={i} className="row cbm-space">
+          <div className="col-md">
+            <div className="spe-equ">
+              <label className="mt-2" name="ContainerCode">
+                {el.ContainerCode}
+              </label>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="ContainerQuantity"
+                placeholder="Quantity"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="Temperature"
+                placeholder="Temp"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md mt-2">
             <div className="rate-radio-cntr">
               <div>
                 <input
@@ -854,8 +847,10 @@ class NewRateSearch extends Component {
                 </label>
               </div>
             </div>
+          </div>
+          <div className="spe-equ">
             <i
-              className="fa fa-minus equip-plus"
+              className="fa fa-minus mt-2"
               onClick={this.removeClickSpecial.bind(this, i)}
             ></i>
           </div>
@@ -865,7 +860,6 @@ class NewRateSearch extends Component {
   }
 
   UISpecialChange(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let referType = [...this.state.referType];
@@ -876,7 +870,6 @@ class NewRateSearch extends Component {
     this.setState({ referType });
   }
   removeClickSpecial(i) {
-    debugger;
     let referType = [...this.state.referType];
     referType.splice(i, 1);
     this.setState({ referType });
@@ -888,7 +881,7 @@ class NewRateSearch extends Component {
 
   MultiCreateCBM() {
     return this.state.flattack_openTop.map((el, i) => (
-      <div className="row" key={i}>
+      <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
             {/* <select
@@ -897,7 +890,9 @@ class NewRateSearch extends Component {
             >
               <option>select</option>
             </select> */}
-            <label name="SpecialContainerCode">{el.SpecialContainerCode}</label>
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
           </div>
         </div>
         <div className="col-md">
@@ -907,7 +902,7 @@ class NewRateSearch extends Component {
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
               placeholder="Quantity"
               className="w-100"
-              name="Quantity"
+              name="QTY"
               value={el.Quantity || ""}
               //onKeyUp={this.cbmChange}
             />
@@ -918,7 +913,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={"Length (cm)"}
+              placeholder={"L (cm)"}
               className="w-100"
               name="length"
               value={el.length || ""}
@@ -931,7 +926,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={"Width (cm)"}
+              placeholder={"W (cm)"}
               className="w-100"
               name="width"
               value={el.width || ""}
@@ -944,7 +939,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder="Height (cm)"
+              placeholder="H (cm)"
               className="w-100"
               name="height"
               value={el.height || ""}
@@ -958,9 +953,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={
-                el.Gross_Weight === 0 ? "Gross Weight" : "Gross Weight"
-              }
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
               name="Gross_Weight"
               value={el.Gross_Weight}
               className="w-100"
@@ -980,10 +973,10 @@ class NewRateSearch extends Component {
           </div>
         </div>
 
-        <div className="col-md">
+        <div className="">
           <div className="spe-equ">
             <i
-              className="fa fa-minus"
+              className="fa fa-minus mt-2"
               aria-hidden="true"
               onClick={this.removeClickMultiCBM.bind(this)}
             ></i>
@@ -994,7 +987,6 @@ class NewRateSearch extends Component {
   }
 
   newMultiCBMHandleChange(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let flattack_openTop = [...this.state.flattack_openTop];
@@ -1025,7 +1017,6 @@ class NewRateSearch extends Component {
     this.setState({ flattack_openTop });
   }
   addClickMultiCBM(optionsVal) {
-    debugger;
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
@@ -1042,7 +1033,6 @@ class NewRateSearch extends Component {
     }));
   }
   removeClickMultiCBM(i) {
-    debugger;
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop.splice(i, 1);
     this.setState({ flattack_openTop });
@@ -1053,8 +1043,10 @@ class NewRateSearch extends Component {
   ////this for Equipment Type Dynamice Create Element
   NewcreateUI() {
     return this.state.users.map((el, i) => (
-      <div className="equip-plus-cntr" key={i}>
-        <label>{el.StandardContainerCode}</label>
+      <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+        <label>
+          {el.StandardContainerCode} <span className="into-quant">X</span>
+        </label>
         <div className="spe-equ">
           <input
             type="number"
@@ -1065,17 +1057,14 @@ class NewRateSearch extends Component {
             onChange={this.newhandleChange.bind(this, i)}
           />
         </div>
-
         <span onClick={this.newremoveClick.bind(this, i)}>
-          <i className="fa fa-trash" aria-hidden="true"></i>
+          <i className="fa fa-times" aria-hidden="true"></i>
         </span>
       </div>
     ));
   }
 
   newaddClick(e, option) {
-    debugger;
-
     if (e.length > 0) {
       if (this.state.users.length == 0) {
         if (option.option.ContainerName === "Special Equipment") {
@@ -1134,6 +1123,8 @@ class NewRateSearch extends Component {
       // next
       document.getElementById("equipType").classList.add("equipType");
       document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
+
       document
         .getElementById("cntrLoadIconCntr")
         .classList.add("cntrLoadIconCntr");
@@ -1144,7 +1135,6 @@ class NewRateSearch extends Component {
   }
 
   newhandleChange(i, e) {
-    debugger;
     const { name, value } = e.target;
     let users = [...this.state.users];
     users[i] = {
@@ -1155,8 +1145,6 @@ class NewRateSearch extends Component {
   }
 
   newremoveClick(i) {
-    debugger;
-
     let users = [...this.state.users];
     if (users[i].ContainerName === "Special Equipment") {
       this.setState({ specialEquipment: false, isSpacialEqt: true });
@@ -1188,8 +1176,6 @@ class NewRateSearch extends Component {
     }
   };
   onPlaceSelected = place => {
-    debugger;
-
     console.log("plc", place);
     const address = place.formatted_address,
       addressArray = place.address_components,
@@ -1224,7 +1210,6 @@ class NewRateSearch extends Component {
     this.addressChange("puAdd", address);
   };
   onPlaceSelectedPOD = place => {
-    debugger;
     console.log("plc", place);
     const address = place.formatted_address,
       addressArray = place.address_components,
@@ -1286,8 +1271,6 @@ class NewRateSearch extends Component {
   }
 
   HandleBindIncoTeamData() {
-    debugger;
-
     let self = this;
     axios({
       method: "post",
@@ -1295,7 +1278,6 @@ class NewRateSearch extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var table1 = response.data.Table1;
       var table2 = response.data.Table2;
       var table4 = response.data.Table4;
@@ -1321,8 +1303,6 @@ class NewRateSearch extends Component {
   }
 
   HandleTypeofMove(e) {
-    debugger;
-
     var type = e.target.value;
 
     if (type === "p2p") {
@@ -1404,7 +1384,6 @@ class NewRateSearch extends Component {
   //// check cutome clearnce is check()
 
   HandleCustomeClear(e) {
-    debugger;
     let self = this;
     var icheck = e.target.checked;
 
@@ -1423,7 +1402,6 @@ class NewRateSearch extends Component {
 
   //this Method For Get Inco Team base on condition.
   HandleGetIncoTerms() {
-    debugger;
     let self = this;
 
     var shipmentType = self.state.shipmentType;
@@ -1471,12 +1449,14 @@ class NewRateSearch extends Component {
   }
   typeMovePlusClick = e => {
     document.getElementById("typeMoveInner").classList.remove("typeMoveType");
+    document.getElementById("typeMove").classList.remove("less-padd");
     document.getElementById("typeMovePlusClick").classList.add("d-none");
     document.getElementById("typeMoveName").classList.add("d-none");
     document.getElementById("typeMoveMinusClick").classList.remove("d-none");
   };
   typeMoveMinusClick = e => {
     document.getElementById("typeMoveInner").classList.add("typeMoveType");
+    document.getElementById("typeMove").classList.add("less-padd");
     document.getElementById("typeMovePlusClick").classList.remove("d-none");
     document.getElementById("typeMoveName").classList.remove("d-none");
     document.getElementById("typeMoveMinusClick").classList.add("d-none");
@@ -1492,6 +1472,7 @@ class NewRateSearch extends Component {
     document
       .getElementById("shipmentTypeInner")
       .classList.remove("remShipmentType");
+    document.getElementById("shipmentType").classList.remove("less-padd");
     document.getElementById("shipmentTypePlusClick").classList.add("d-none");
     document.getElementById("shipmentTypeName").classList.add("d-none");
     document
@@ -1502,13 +1483,14 @@ class NewRateSearch extends Component {
     document
       .getElementById("shipmentTypeInner")
       .classList.add("remShipmentType");
+    document.getElementById("shipmentType").classList.add("less-padd");
     document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
     document.getElementById("shipmentTypeName").classList.remove("d-none");
     document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
   };
   modeofTransportClick(e) {
     let type = e.target.value;
-    debugger;
+
     this.setState({ modeoftransport: type });
     document.getElementById("dvroad").classList.add("new-radio-rate-cntr-hide");
     document.getElementById("dvair").classList.add("new-radio-rate-cntr-hide");
@@ -1530,6 +1512,7 @@ class NewRateSearch extends Component {
 
     // next
     document.getElementById("modeTransport").classList.add("modeTransport");
+    document.getElementById("shipmentType").classList.add("less-padd");
     document
       .getElementById("shipmentTypeInner")
       .classList.add("remShipmentType");
@@ -1545,12 +1528,14 @@ class NewRateSearch extends Component {
   }
   modeTransPlusClick = e => {
     document.getElementById("modeTransInner").classList.remove("modeTransType");
+    document.getElementById("modeTransport").classList.remove("less-padd");
     document.getElementById("modeTransPlusClick").classList.add("d-none");
     document.getElementById("modeTransName").classList.add("d-none");
     document.getElementById("modeTransMinusClick").classList.remove("d-none");
   };
   modeTransMinusClick = e => {
     document.getElementById("modeTransInner").classList.add("modeTransType");
+    document.getElementById("modeTransport").classList.add("less-padd");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
@@ -1562,6 +1547,7 @@ class NewRateSearch extends Component {
     // next
     document.getElementById("containerLoad").classList.add("containerLoad");
     document.getElementById("modeTransInner").classList.add("modeTransType");
+    document.getElementById("modeTransport").classList.add("less-padd");
     document
       .getElementById("modeTransIconCntr")
       .classList.add("modeTransIconCntr");
@@ -1574,18 +1560,19 @@ class NewRateSearch extends Component {
   };
   cntrLoadPlusClick = e => {
     document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
+    document.getElementById("containerLoad").classList.remove("less-padd");
     document.getElementById("cntrLoadPlusClick").classList.add("d-none");
     document.getElementById("cntrLoadName").classList.add("d-none");
     document.getElementById("cntrLoadMinusClick").classList.remove("d-none");
   };
   cntrLoadMinusClick = e => {
     document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+    document.getElementById("containerLoad").classList.add("less-padd");
     document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
     document.getElementById("cntrLoadName").classList.remove("d-none");
     document.getElementById("cntrLoadMinusClick").classList.add("d-none");
   };
   cbmChange = e => {
-    debugger;
     let type = e.target.value;
     let nme = e.target.name;
     if (nme === "length") {
@@ -1619,6 +1606,7 @@ class NewRateSearch extends Component {
       // next
       document.getElementById("cbm").classList.add("cbm");
       document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
       document
         .getElementById("cntrLoadIconCntr")
         .classList.add("cntrLoadIconCntr");
@@ -1641,7 +1629,6 @@ class NewRateSearch extends Component {
   };
 
   locationChange = (e, action) => {
-    debugger;
     let type = e.value;
     let nme = action.name;
     if (nme === "polCountry") {
@@ -1662,9 +1649,13 @@ class NewRateSearch extends Component {
     ) {
       // next
       document.getElementById("location").classList.add("location");
-      if (document.getElementById("addressInner") == null)
+      if (document.getElementById("addressInner") == null) {
         document.getElementById("typeMoveInner").classList.add("typeMoveType");
-      else document.getElementById("addressInner").classList.add("addressType");
+        document.getElementById("typeMove").classList.add("less-padd");
+      } else {
+        document.getElementById("addressInner").classList.add("addressType");
+        document.getElementById("address").classList.add("less-padd");
+      }
 
       if (document.getElementById("addressInner") == null)
         document
@@ -1703,7 +1694,6 @@ class NewRateSearch extends Component {
   };
 
   addressChange = (e, values) => {
-    debugger;
     let type = values;
     let nme = e;
     if (nme === "puAdd") {
@@ -1716,6 +1706,7 @@ class NewRateSearch extends Component {
       // next
       document.getElementById("address").classList.add("address");
       document.getElementById("typeMoveInner").classList.add("typeMoveType");
+      document.getElementById("typeMove").classList.add("less-padd");
       document
         .getElementById("typeMoveIconCntr")
         .classList.add("typeMoveIconCntr");
@@ -1750,16 +1741,17 @@ class NewRateSearch extends Component {
     if (document.getElementById("addressInner") == null)
       document.getElementById("typeMovePlusClick").classList.remove("d-none");
     else document.getElementById("addressPlusClick").classList.remove("d-none");
-    debugger;
   };
   addressPlusClick = e => {
     document.getElementById("addressInner").classList.remove("addressType");
+    document.getElementById("address").classList.remove("less-padd");
     document.getElementById("addressPlusClick").classList.add("d-none");
     document.getElementById("addressName").classList.add("d-none");
     document.getElementById("addressMinusClick").classList.remove("d-none");
   };
   addressMinusClick = e => {
     document.getElementById("addressInner").classList.add("addressType");
+    document.getElementById("address").classList.add("less-padd");
     document.getElementById("addressPlusClick").classList.remove("d-none");
     document.getElementById("addressName").classList.remove("d-none");
     document.getElementById("addressMinusClick").classList.add("d-none");
@@ -1773,6 +1765,7 @@ class NewRateSearch extends Component {
       // next
       document.getElementById("equipType").classList.add("equipType");
       document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
       document
         .getElementById("cntrLoadIconCntr")
         .classList.add("cntrLoadIconCntr");
@@ -1795,8 +1788,6 @@ class NewRateSearch extends Component {
   };
 
   equipChange = (value, option) => {
-    debugger;
-
     if (value.length > 0) {
       let iCount = value.length;
 
@@ -1879,7 +1870,6 @@ class NewRateSearch extends Component {
         document.getElementById("equipAppend").appendChild(div);
       }
     } else {
-      debugger;
       var elmnt = document.getElementsByName("equType");
       var elmntlen = elmnt.length;
 
@@ -1916,6 +1906,8 @@ class NewRateSearch extends Component {
       // next
       document.getElementById("equipType").classList.add("equipType");
       document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
+
       document
         .getElementById("cntrLoadIconCntr")
         .classList.add("cntrLoadIconCntr");
@@ -1926,8 +1918,6 @@ class NewRateSearch extends Component {
   };
 
   specEquipChange = (value, option) => {
-    debugger;
-
     // let difference = this.state.referType.filter(x => !value.includes(x));
     // let difference1 = this.state.flattack_openTop.filter(
     //   x => !value.includes(x)
@@ -1991,7 +1981,6 @@ class NewRateSearch extends Component {
       option.option.IsVolumeRequired === 0
     ) {
       if (difference2 === false) {
-        debugger;
         this.setState({
           spacEqmtTypeSelect: true
         });
@@ -2126,7 +2115,7 @@ class NewRateSearch extends Component {
     //   this.setState({ spEqtSelect: [] });
     // }
 
-    // debugger;
+    //
   };
 
   addClick() {
@@ -2168,13 +2157,12 @@ class NewRateSearch extends Component {
   }
 
   removeClick(i) {
-    debugger;
     let values = [...this.state.values];
     values.splice(i, 1);
     this.setState({ values });
   }
   // removeClickSpecial(i) {
-  //   debugger;
+  //
   //   let values1 = [...this.state.values1];
   //   values1.splice(i, 1);
   //   this.setState({ values1 });
@@ -2220,8 +2208,8 @@ class NewRateSearch extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt">
-            <div>
+          <div className="cls-rt rate-bg">
+            <div className="">
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">
                   <h3>Shipment Type</h3>
@@ -2472,7 +2460,7 @@ class NewRateSearch extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="rate-radio-cntr">
+                      <div className="rate-radio-cntr justify-content-center">
                         <div>
                           <input
                             type="radio"
@@ -2562,17 +2550,17 @@ class NewRateSearch extends Component {
                         />
                         <label htmlFor="cust-clear">Custom Clearance</label>
                       </div>
-                      <div className="spe-equ justify-content-center">
+                      {/* <div className="spe-equ justify-content-center">
                         <label>Inco Terms :</label>
                         <input
                           type="text"
                           placeholder="Inco Terms"
-                          className="w-50"
+                          className="w-25"
                           disabled
                           name="incoTerms"
                           value={self.state.incoTerms}
                         />
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </>
@@ -2624,7 +2612,9 @@ class NewRateSearch extends Component {
                       onClick={this.addClick.bind(this)}
                     ></i> */}
                     </div>
-                    {this.NewcreateUI()}
+                    <div className="d-flex justify-content-center align-items-center">
+                      {this.NewcreateUI()}
+                    </div>
                     <div id="equipAppend"></div>
                     {/* <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                       <input
@@ -2646,9 +2636,9 @@ class NewRateSearch extends Component {
                       Special Equipment
                     </label>
                   </div> */}
-                    <div className="spe-equ mt-0">
-                      <div className="equip-plus-cntr">
-                        {self.state.specialEquipment === true ? (
+                    {self.state.specialEquipment === true ? (
+                      <div className="spe-equ mt-0">
+                        <div className="equip-plus-cntr">
                           <Select
                             isDisabled={self.state.isSpacialEqt}
                             className="rate-dropdown"
@@ -2666,9 +2656,9 @@ class NewRateSearch extends Component {
                             value={self.state.spEqtSelect}
                             showNewOptionAtTop={false}
                           />
-                        ) : null}
+                        </div>
                       </div>
-                    </div>
+                    ) : null}
                     <div id="cbmInner">
                       {self.state.specialEquipment === true &&
                       self.state.specialEqtSelect === true ? (
@@ -2688,7 +2678,11 @@ class NewRateSearch extends Component {
                       {self.state.specialEquipment === true &&
                       self.state.spacEqmtTypeSelect === true ? (
                         self.state.spacEqmtType.length > 0 ? (
-                          <>{this.createUIspacEqmtType()}</>
+                          <>
+                            <div className="d-flex justify-content-center align-items-center">
+                              {this.createUIspacEqmtType()}
+                            </div>
+                          </>
                         ) : null
                       ) : null}
                     </div>
@@ -2706,17 +2700,17 @@ class NewRateSearch extends Component {
                       />
                       <label htmlFor="cust-clear">Custom Clearance</label>
                     </div>
-                    <div className="spe-equ justify-content-center">
+                    {/* <div className="spe-equ justify-content-center">
                       <label>Inco Terms :</label>
                       <input
                         type="text"
                         placeholder="Inco Terms"
-                        className="w-50"
+                        className="w-25"
                         disabled
                         name="incoTerms"
                         value={self.state.incoTerms}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               ) : null}
@@ -2784,6 +2778,17 @@ class NewRateSearch extends Component {
                     <label htmlFor="p2d">Port2Door</label>
                   </div>
                 </div>
+                <div className="spe-equ justify-content-center">
+                  <label>Inco Terms :</label>
+                  <input
+                    type="text"
+                    placeholder="Inco Terms"
+                    className="w-25"
+                    disabled
+                    name="incoTerms"
+                    value={self.state.incoTerms}
+                  />
+                </div>
               </div>
 
               <div className="new-rate-cntr" id="address">
@@ -2807,7 +2812,7 @@ class NewRateSearch extends Component {
                 </div>
                 <div className="row justify-content-center" id="addressInner">
                   <div className="col-md-6">
-                    <div className="spe-equ">
+                    <div className="spe-equ address-full">
                       {this.state.typesofMove == "p2p" ||
                       this.state.typesofMove === "p2d" ? (
                         <ReactAutocomplete
@@ -2825,6 +2830,16 @@ class NewRateSearch extends Component {
                               {item.OceanPortLongName}
                             </div>
                           )}
+                          renderInput={function(props) {
+                            return (
+                              <input
+                                placeholder="Enter POL"
+                                className="w-100"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
                           onChange={this.HandlePOLPODAutosearch.bind(
                             this,
                             "pol"
@@ -2849,7 +2864,7 @@ class NewRateSearch extends Component {
                     </div>
                   </div>
                   <div className="col-md-6">
-                    <div className="spe-equ" style={{ marginBottom: "30px" }}>
+                    <div className="spe-equ address-full">
                       {this.state.typesofMove == "p2p" ||
                       this.state.typesofMove === "d2p" ? (
                         <ReactAutocomplete
@@ -2867,6 +2882,16 @@ class NewRateSearch extends Component {
                               {item.OceanPortLongName}
                             </div>
                           )}
+                          renderInput={function(props) {
+                            return (
+                              <input
+                                placeholder="Enter POD"
+                                className="w-100"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
                           onChange={this.HandlePOLPODAutosearch.bind(
                             this,
                             "pod"
@@ -2949,9 +2974,9 @@ class NewRateSearch extends Component {
                   </div>
                 </div>
               </div>
-              <div className="text-center new-rate-cntr p-0 border-0">
+              <div className="text-center new-rate-cntr border-0">
                 <Select
-                  className="rate-dropdown"
+                  className="rate-dropdown mt-0"
                   closeMenuOnSelect={true}
                   getOptionLabel={option => option.BaseCurrencyName}
                   getOptionValue={option => option.CurrencyCode}
@@ -2961,7 +2986,7 @@ class NewRateSearch extends Component {
                 />
                 <button
                   onClick={this.HandleSearchButton.bind(this)}
-                  className="butn blue-butn rate-search"
+                  className="butn blue-butn rate-search mb-0"
                 >
                   Search
                 </button>

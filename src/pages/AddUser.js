@@ -1676,12 +1676,13 @@ if (this.state.selectedFile == null)
                             className="file-upload d-none"
                             type="file"
                             onChange={this.fileChangedHandler}
+                            accept="image/*"
                           />
                           <label htmlFor="file-upload">
                             <div className="file-icon">
                               <img src={FileUpload} alt="file-upload" />
                             </div>
-                            Add File
+                            Add Image File
                           </label>
                           <p className="file-name w-100 text-center mt-1">
                         {this.state.selectedFileName}
