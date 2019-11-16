@@ -138,7 +138,7 @@ const MapWithAMakredInfoWindow = compose(
                                 <div id="accordion-1">
                                   <div className="card">
                                     <div
-                                      className="card-header"
+                                      className="card-header hbl-bor"
                                       id="heading-1-1"
                                     >
                                       <h5 className="mb-0">
@@ -178,7 +178,7 @@ const MapWithAMakredInfoWindow = compose(
                                                 <div>
                                                   <p
                                                     title="MyWay No."
-                                                    className="mapinvoice"
+                                                    className="mapinvoice ml-2"
                                                   >
                                                     {idata}
                                                   </p>
@@ -276,7 +276,7 @@ const MapWithAMakredInfoWindow = compose(
                                 <div id="accordion-1">
                                   <div className="card">
                                     <div
-                                      className="card-header"
+                                      className="card-header hbl-bor"
                                       id="heading-1-1"
                                     >
                                       <h5 className="mb-0">
@@ -316,7 +316,7 @@ const MapWithAMakredInfoWindow = compose(
                                                 <div>
                                                   <p
                                                     title="MyWay No."
-                                                    className="mapinvoice"
+                                                    className="mapinvoice ml-2"
                                                   >
                                                     {idata}
                                                   </p>
@@ -414,7 +414,7 @@ const MapWithAMakredInfoWindow = compose(
                                 <div id="accordion-1">
                                   <div className="card">
                                     <div
-                                      className="card-header"
+                                      className="card-header hbl-bor"
                                       id="heading-1-1"
                                     >
                                       <h5 className="mb-0">
@@ -454,7 +454,7 @@ const MapWithAMakredInfoWindow = compose(
                                                 <div>
                                                   <p
                                                     title="MyWay No."
-                                                    className="mapinvoice"
+                                                    className="mapinvoice ml-2"
                                                   >
                                                     {idata}
                                                   </p>
