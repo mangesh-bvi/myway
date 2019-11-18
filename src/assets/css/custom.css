@@ -1411,6 +1411,7 @@ table tbody tr:last-child {
 }
 .address-full > div {
   width: 100%;
+  position: relative;
 }
 .cbm-space > div {
   padding-right: 7px;
@@ -1451,6 +1452,14 @@ table tbody tr:last-child {
   background-size: 30px;
   padding-right: 40px !important;
 } */
+
+.sticky-dropdown + div {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  max-height: 50px !important;
+  z-index: 1;
+}
 
 /* new rate search ends */
 
@@ -1911,6 +1920,24 @@ table tbody tr:last-child {
     center;
   background-size: 80px;
   z-index: 5;
+}
+.dash-search-cntr {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+}
+.dash-search-cntr .fa-search {
+  background: #002d73;
+  border-radius: 50%;
+  height: 30px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  text-align: center;
+  line-height: 28px;
+  color: #fff;
 }
 /* dashboard ends */
 

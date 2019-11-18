@@ -480,23 +480,25 @@ const MapWithAMakredInfoWindow = compose(
         );
       }
     })}
-    <div>
+    <div className="dash-search-cntr">
       <Autocomplete
         style={{
-          width: "auto",
+          // width: "auto",
           height: "40px",
           paddingLeft: "16px",
-          marginTop: "2px",
-          marginBottom: "500px",
-          position: "absolute",
-          top: "60px",
-          left: "10px",
+          // marginTop: "2px",
+          // marginBottom: "500px",
+          // position: "absolute",
+          // top: "60px",
+          // left: "10px",
           border: "0",
-          borderRadius: "50px"
+          borderRadius: "50px",
+          paddingRight: "45px"
         }}
         onPlaceSelected={props.onPlaceSelected}
         types={["(regions)"]}
       />
+      <i class="fa fa-search" aria-hidden="true"></i>
     </div>
   </GoogleMap>
 ));

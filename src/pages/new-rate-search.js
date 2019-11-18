@@ -260,13 +260,11 @@ class NewRateSearch extends Component {
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
+  HandleCMBtextChange(e) {
+    var Textvalue = e.target.value;
 
-HandleCMBtextChange(e){
-var Textvalue=e.target.value;
-
-this.setState({ cbmVal: parseInt(Textvalue) });
-
-}
+    this.setState({ cbmVal: parseInt(Textvalue) });
+  }
   toggleNonStackable() {
     this.setState({ NonStackable: !this.state.NonStackable });
   }
@@ -410,7 +408,7 @@ this.setState({ cbmVal: parseInt(Textvalue) });
   }
 
   //// end package type method
- 
+
   //// POL POD Autosearch Data
   HandleAddressDropdownPolSelect(e, field, value, id) {
     let fields = this.state.fields;
@@ -2875,7 +2873,7 @@ this.setState({ cbmVal: parseInt(Textvalue) });
                             return (
                               <input
                                 placeholder="Enter POL"
-                                className="w-100"
+                                className="w-100 sticky-dropdown"
                                 type="text"
                                 {...props}
                               />
@@ -2927,7 +2925,7 @@ this.setState({ cbmVal: parseInt(Textvalue) });
                             return (
                               <input
                                 placeholder="Enter POD"
-                                className="w-100"
+                                className="w-100 sticky-dropdown"
                                 type="text"
                                 {...props}
                               />
