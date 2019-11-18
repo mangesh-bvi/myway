@@ -62,29 +62,35 @@ class RateSearch extends Component {
 
     let fields = this.state.fields;
     fields[field] = e.target.value;
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/CustomerList`,
-      data: {
-        CustomerName: e.target.value,
-        CustomerType: "Existing"
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      if (field == "CustomerList") {
-        self.setState({
-          customerData: response.data.Table,
-          fields
-        });
-      } else {
-        self.setState({
-          customerData: response.data.Table,
-          fields
-        });
-      }
-    });
+    if (fields[field].length >= 3) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerList`,
+        data: {
+          CustomerName: e.target.value,
+          CustomerType: "Existing"
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        if (field == "CustomerList") {
+          self.setState({
+            customerData: response.data.Table,
+            fields
+          });
+        } else {
+          self.setState({
+            customerData: response.data.Table,
+            fields
+          });
+        }
+      });
+    } else {
+      self.setState({
+        customerData: [],
+        fields
+      });
+    }
   }
   HandleChangeSelect(field, e) {
     debugger;

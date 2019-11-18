@@ -45,15 +45,13 @@ class RateTable extends Component {
     super(props);
 
     this.state = {
-
       shipmentType: "",
       modeoftransport: "",
       containerLoadType: "",
-      typeofMove:"",
-      HazMat:false,
-      NonStackable:false,
-      Custom_Clearance:false,
-
+      typeofMove: "",
+      HazMat: false,
+      NonStackable: false,
+      Custom_Clearance: false,
 
       modalEdit: false,
       modalQuant: false,
@@ -64,9 +62,21 @@ class RateTable extends Component {
       checkSelection: [],
       polLatLng: {},
       podmapData: {},
-      selected: {},
+      cSelectedRow: {},
       selectedDataRow: [],
-      selectAll: 0
+      selectAll: 0,
+      selectaddress: "",
+      EquipmentType: [],
+      SpacialEqmt: [],
+      selected: [],
+      users: [],
+      spacEqmtType: [],
+      referType:[],
+      flattack_openTop:[],
+      spacEqmtTypeSelect: false,
+      specialEqtSelect: false,
+      refertypeSelect: false,
+
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -90,12 +100,10 @@ class RateTable extends Component {
         var isSearch = this.props.location.state.isSearch;
         if (isSearch) {
           var paramData = this.props.location.state;
-          var modeofTransport = this.props.location.state.containerLoadType;
-          if (modeofTransport === "FCL") {
-            this.HandleRateDetailsFCL(paramData);
-          } else if (modeofTransport === "AIR") {
-            this.HandleRateDetailsLCL(paramData);
-          }
+          // var modeofTransport = this.props.location.state.containerLoadType;
+          this.HandleRateDetailsFCL(paramData);
+
+           
         }
       }
     } else {
@@ -125,10 +133,10 @@ class RateTable extends Component {
   toggleRow(rateID, rowData) {
     debugger;
 
-    const newSelected = Object.assign({}, this.state.selected);
-    newSelected[rateID] = !this.state.selected[rateID];
+    const newSelected = Object.assign({}, this.state.cSelectedRow);
+    newSelected[rateID] = !this.state.cSelectedRow[rateID];
     this.setState({
-      selected: rateID ? newSelected : false
+      cSelectedRow: rateID ? newSelected : false
     });
     var selectedRow = [];
 
@@ -198,7 +206,7 @@ class RateTable extends Component {
           : paramData.modeoftransport === "AIR"
           ? "Air"
           : paramData.modeoftransport === "ROAD"
-          ? "Inland"
+          ? "inland"
           : "";
       var polAddress = paramData.polfullAddData;
       var podAddress = paramData.podfullAddData;
@@ -215,7 +223,13 @@ class RateTable extends Component {
       podLatLng.lat = Number(podmapData.split(",")[0]);
       podLatLng.lng = Number(podmapData.split(",")[1]);
 
-      this.setState({ polLatLng: polLatLng, podmapData: podLatLng });
+      this.setState({
+        polLatLng: polLatLng,
+        podmapData: podLatLng,
+        users: paramData.users,
+        selected: paramData.selected
+      });
+      var selectedPOLPOD = paramData.fields.pol + " , " + paramData.fields.pod;
 
       dataParameter = {
         QuoteType: paramData.containerLoadType,
@@ -238,20 +252,29 @@ class RateTable extends Component {
           podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
         Currency: paramData.currencyCode,
         ChargeableWeight: 0,
-        RateQueryDim: rateQueryDim
+        RateQueryDim: paramData.multiCBM
       };
-
 
       this.setState({
         shipmentType: paramData.shipmentType,
         modeoftransport: paramData.modeoftransport,
         containerLoadType: paramData.containerLoadType,
-        typeofMove:rTypeofMove,
-        HazMat:false,
-        NonStackable:false,
-        Custom_Clearance:false,
+        typeofMove: rTypeofMove,
+        selectaddress: selectedPOLPOD,
+        HazMat: paramData.HazMat,
+        NonStackable: paramData.NonStackable,
+        Custom_Clearance: paramData.Custom_Clearance,
+        SpacialEqmt: paramData.SpacialEqmt,
+        EquipmentType: paramData.StandardContainerCode,
+        spacEqmtType:paramData.spacEqmtType,
+        referType:paramData.referType,
+        flattack_openTop:paramData.flattack_openTop,
+        spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
+        specialEqtSelect: paramData.specialEqtSelect,
+        refertypeSelect: paramData.refertypeSelect,
 
-      })
+        
+      });
     }
 
     debugger;
@@ -279,84 +302,7 @@ class RateTable extends Component {
     });
   }
 
-  HandleRateDetailsLCL(paramData) {
-    var dataParameter = {};
-    if (paramData.isSearch) {
-      debugger;
-      var rTypeofMove =
-        paramData.typesofMove === "p2p"
-          ? 1
-          : paramData.typesofMove === "d2p"
-          ? 2
-          : paramData.typesofMove === "d2d"
-          ? 4
-          : paramData.typesofMove === "p2d"
-          ? 3
-          : 0;
-
-      var rModeofTransport =
-        paramData.modeoftransport === "SEA"
-          ? "Ocean"
-          : paramData.modeoftransport === "AIR"
-          ? "Air"
-          : paramData.modeoftransport === "ROAD"
-          ? "Inland"
-          : "";
-      var polAddress = paramData.polfullAddData;
-      var podAddress = paramData.podfullAddData;
-      var rateQueryDim = [];
-      var containerdetails = paramData.users;
-
-      this.setState({});
-      dataParameter = {
-        QuoteType: paramData.containerLoadType,
-        ModeOfTransport: rModeofTransport,
-        Type: paramData.containerLoadType,
-        TypeOfMove: rTypeofMove,
-
-        PortOfDischargeCode:
-          podAddress.UNECECode !== "" ? podAddress.UNECECode : "",
-        PortOfLoadingCode:
-          polAddress.UNECECode !== "" ? polAddress.UNECECode : "",
-        Containerdetails: containerdetails,
-        OriginGeoCordinates:
-          polAddress.GeoCoordinate !== "" ? polAddress.GeoCoordinate : "",
-        DestGeoCordinate:
-          podAddress.GeoCoordinate !== "" ? podAddress.GeoCoordinate : "",
-        PickupCity:
-          polAddress.NameWoDiacritics !== "" ? polAddress.NameWoDiacritics : "",
-        DeliveryCity:
-          podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
-        Currency: paramData.currencyCode,
-        ChargeableWeight: 0,
-        RateQueryDim: rateQueryDim
-      };
-    }
-
-    debugger;
-    let self = this;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/RateSearchQuery`,
-      data: dataParameter,
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      console.log(response);
-      var ratetable = response.data.Table;
-      var ratetable1 = response.data.Table1;
-      if (ratetable != null) {
-        self.setState({
-          RateDetails: ratetable
-        });
-      }
-      if (ratetable1 != null) {
-        self.setState({
-          RateSubDetails: ratetable1
-        });
-      }
-    });
-  }
+  
 
   HandleDocumentView(evt, row) {
     debugger;
@@ -400,6 +346,504 @@ class RateTable extends Component {
     this.setState({ values });
   }
 
+   //// start refer type  dynamic element
+   addClickSpecial(optionVal) {
+    this.setState(prevState => ({
+      referType: [
+        ...prevState.referType,
+        {
+          Type: optionVal[0].ContainerName,
+          ProfileCodeID: optionVal[0].ProfileCodeID,
+          ContainerCode: optionVal[0].SpecialContainerCode,
+          ContainerQuantity: 0,
+          Temperature: 0,
+          TemperatureType: ""
+        }
+      ]
+    }));
+  }
+
+  createUISpecial() {
+    return this.state.referType.map((el, i) => {
+      return (
+        <div key={i} className="row cbm-space">
+          <div className="col-md">
+            <div className="spe-equ">
+              <label className="mt-2" name="ContainerCode">
+                {el.ContainerCode}
+              </label>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="ContainerQuantity"
+                placeholder="Quantity"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="Temperature"
+                placeholder="Temp"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md mt-2">
+            <div className="rate-radio-cntr">
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="exist-cust"
+                  value="C"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="exist-cust"
+                >
+                  Celcius
+                </label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="new-cust"
+                  value="F"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="new-cust"
+                >
+                  Farenheit
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              onClick={this.removeClickSpecial.bind(this, i)}
+            ></i>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  UISpecialChange(i, e) {
+    const { name, value } = e.target;
+
+    let referType = [...this.state.referType];
+    referType[i] = {
+      ...referType[i],
+      [name]: name === "TemperatureType" ? value : parseFloat(value)
+    };
+    this.setState({ referType });
+  }
+  removeClickSpecial(i) {
+    let referType = [...this.state.referType];
+    referType.splice(i, 1);
+    this.setState({ referType });
+  }
+
+  //// refer type end to dynamic element
+
+  //// start flattack type and openTop type dynamic elememnt
+
+  MultiCreateCBM() {
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            {/* <select
+              className="w-100 cmd-select"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+            >
+              <option>select</option>
+            </select> */}
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="Quantity"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="Gross_Weight"
+              value={el.Gross_Weight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+
+        <div className="">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              aria-hidden="true"
+              onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div>
+      </div>
+    ));
+  }
+
+  newMultiCBMHandleChange(i, e) {
+    debugger  
+    const { name, value } = e.target;
+
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop[i] = {
+      ...flattack_openTop[i],
+      [name]: parseFloat(value)
+    };
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].width *
+          flattack_openTop[i].height)) /
+      6000;
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+  }
+  addClickMultiCBM(optionsVal) {
+    this.setState(prevState => ({
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
+        {
+          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          length: "",
+          width: "",
+          height: "",
+          Quantity: "",
+          Gross_Weight: "",
+          total: ""
+        }
+      ]
+    }));
+  }
+  removeClickMultiCBM(i) {
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
+  }
+
+  ////end for flattack and openTop dynamic create elements
+  ////this for Equipment Type Dynamice Create Element
+  NewcreateUI() {
+    return this.state.users.map((el, i) => (
+      <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+        <label>
+          {el.StandardContainerCode} <span className="into-quant">X</span>
+        </label>
+        <div className="spe-equ">
+          <input
+            type="number"
+            min="1"
+            placeholder="QTY"
+            name="ContainerQuantity"
+            value={el.ContainerQuantity || ""}
+            onChange={this.newhandleChange.bind(this, i)}
+          />
+        </div>
+        <span onClick={this.newremoveClick.bind(this, i)}>
+          <i className="fa fa-times" aria-hidden="true"></i>
+        </span>
+      </div>
+    ));
+  }
+
+  newaddClick(e, option) {
+    if (e.length > 0) {
+      if (this.state.users.length == 0) {
+        if (option.option.ContainerName === "Special Equipment") {
+        } else {
+          this.setState({ selected: e });
+          this.setState(prevState => ({
+            users: [
+              ...prevState.users,
+              {
+                ContainerName: option.option.ContainerName,
+                ProfileCodeID: option.option.ProfileCodeID,
+                StandardContainerCode: option.option.StandardContainerCode,
+                ContainerQuantity: 0,
+                Temperature: 0,
+                TemperatureType: ""
+              }
+            ]
+          }));
+        }
+      } else {
+        let difference = this.state.selected.filter(x => !e.includes(x));
+        if (difference.length === 0) {
+          if (option.option.ContainerName === "Special Equipment") {
+            this.setState({
+              specialEquipment: true,
+              isSpacialEqt: false
+            });
+          } else {
+            this.setState({ selected: e });
+            this.setState(prevState => ({
+              users: [
+                ...prevState.users,
+                {
+                  ContainerName: option.option.ContainerName,
+                  ProfileCodeID: option.option.ProfileCodeID,
+                  StandardContainerCode: option.option.StandardContainerCode,
+                  ContainerQuantity: 0
+                }
+              ]
+            }));
+          }
+        } else {
+        }
+      }
+    } else {
+      this.setState({
+        selected: [],
+        users: []
+      });
+    }
+  }
+
+  newhandleChange(i, e) {
+    const { name, value } = e.target;
+    let users = [...this.state.users];
+    users[i] = {
+      ...users[i],
+      [name]: name === "ContainerQuantity" ? parseFloat(value) : 0
+    };
+    this.setState({ users });
+  }
+
+  newremoveClick(i) {
+    let users = [...this.state.users];
+    if (users[i].ContainerName === "Special Equipment") {
+      this.setState({ specialEquipment: false, isSpacialEqt: true });
+    }
+    users.splice(i, 1);
+
+    let selected = [...this.state.selected];
+    selected.splice(i, 1);
+
+    this.setState({ users, selected });
+  }
+  //// end For Equipment to create element
+  specEquipChange = (value, option) => {
+     
+
+    var difference = false;
+    for (var i = 0; i < this.state.referType.length; i++) {
+      if (
+        this.state.referType[i].referTypeName === value[0].SpecialContainerCode
+      ) {
+        difference = true;
+        break;
+      }
+    }
+
+    var difference1 = false;
+    for (var i = 0; i < this.state.flattack_openTop.length; i++) {
+      if (
+        this.state.flattack_openTop[i].SpecialContainerCode ===
+        value[0].SpecialContainerCode
+      ) {
+        difference1 = true;
+        break;
+      }
+    }
+
+    var difference2 = false;
+    for (var i = 0; i < this.state.spacEqmtType.length; i++) {
+      if (
+        this.state.spacEqmtType[i].TypeName === value[0].SpecialContainerCode
+      ) {
+        difference2 = true;
+        break;
+      }
+    }
+
+    if (option.option.IsVolumeRequired === 1) {
+      if (difference1 === false) {
+        this.setState({
+          specialEqtSelect: true
+        });
+        this.addClickMultiCBM(value);
+      }
+    }
+    if (option.option.IsTemperatureRequired === 1) {
+      if (difference === false) {
+        this.setState({
+          refertypeSelect: true
+        });
+        this.addClickSpecial(value);
+      }
+    }
+
+    if (
+      option.option.IsTemperatureRequired === 0 &&
+      option.option.IsVolumeRequired === 0
+    ) {
+      if (difference2 === false) {
+        this.setState({
+          spacEqmtTypeSelect: true
+        });
+
+        this.addSpacEqmtType(value);
+      }
+    }
+ 
+  };
+
+
+   //// start  spacEqmtType dyamanic element
+
+   addSpacEqmtType(optionVal) {
+    this.setState(prevState => ({
+      spacEqmtType: [
+        ...prevState.spacEqmtType,
+        {
+          TypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0
+        }
+      ]
+    }));
+  }
+
+  createUIspacEqmtType() {
+    return this.state.spacEqmtType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
+          <label name="TypeName">
+            {el.TypeName} <span className="into-quant">X</span>
+          </label>
+          {/* <div className="spe-equ"> */}
+          <input
+            type="number"
+            name="Quantity"
+            placeholder="QTY"
+            onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+            value={el.Quantity||""}
+          />
+          {/* </div> */}
+          <i
+            className="fa fa-times"
+            onClick={this.removeClickSpacEqmtType.bind(this, i)}
+          ></i>
+        </div>
+      );
+    });
+  }
+
+  HandleChangeSpacEqmtType(i, e) {
+    const { name, value } = e.target;
+
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType[i] = {
+      ...spacEqmtType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ spacEqmtType });
+  }
+
+  removeClickSpacEqmtType(i) {
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType.splice(i, 1);
+    this.setState({ spacEqmtType });
+  }
+
+  //// end spacEqmtType dyamanic element
   render() {
     var i = 0;
 
@@ -475,8 +919,19 @@ class RateTable extends Component {
                               id="door"
                               type="checkbox"
                               name="typeofMove"
+                              checked={true}
                             />
-                            <label htmlFor="door">{this.state.typeofMove===1?"Port 2 Port":this.state.typeofMove===2?"Door 2 Port":this.state.typeofMove===4?"Port 2 Door":this.state.typeofMove===3?"Door 2 Door":""}</label>
+                            <label htmlFor="door">
+                              {this.state.typeofMove === 1
+                                ? "Port 2 Port"
+                                : this.state.typeofMove === 2
+                                ? "Door 2 Port"
+                                : this.state.typeofMove === 4
+                                ? "Port 2 Door"
+                                : this.state.typeofMove === 3
+                                ? "Door 2 Door"
+                                : ""}
+                            </label>
                           </div>
                           <span>100$</span>
                         </div>
@@ -500,9 +955,7 @@ class RateTable extends Component {
                               name="NonStackable"
                               checked={this.state.NonStackable}
                             />
-                            <label htmlFor="cont-trak">
-                            NonStackable
-                            </label>
+                            <label htmlFor="cont-trak">NonStackable</label>
                           </div>
                           <span>150$</span>
                         </div>
@@ -517,6 +970,19 @@ class RateTable extends Component {
                             <label htmlFor="cust-clear">Custom Clearance</label>
                           </div>
                           <span>900$</span>
+                        </div>
+                        <div>
+                          <div className="d-flex">
+                            <input
+                              id="cust-clear"
+                              type="checkbox"
+                              name="address"
+                            />
+                            <label htmlFor="cust-clear">
+                              {this.state.selectaddress}
+                            </label>
+                          </div>
+                          {/* <span>900$</span> */}
                         </div>
                       </div>
                     </div>
@@ -600,7 +1066,7 @@ class RateTable extends Component {
                                         //     : false
                                         // }
                                         checked={
-                                          this.state.selected[
+                                          this.state.cSelectedRow[
                                             original.rateID
                                           ] === true
                                         }
@@ -629,13 +1095,14 @@ class RateTable extends Component {
                                   <p className="details-title">Valid Until</p>
                                   <p className="details-para">
                                     {new Date(
-                                      row.original.expiryDate
+                                      row.original.expiryDate ||
+                                        row.original.ExpiryDate
                                     ).toLocaleDateString("en-US")}
                                   </p>
                                 </>
                               );
                             },
-                            accessor: "expiryDate",
+                            accessor: "expiryDate" || "ExpiryDate",
                             minWidth: 175
                           },
                           {
@@ -644,12 +1111,13 @@ class RateTable extends Component {
                                 <>
                                   <p className="details-title">TT</p>
                                   <p className="details-para">
-                                    {row.original.transitTime}
+                                    {row.original.transitTime ||
+                                      row.original.TransitTimeTo}
                                   </p>
                                 </>
                               );
                             },
-                            accessor: "transitTime",
+                            accessor: "transitTime" || "TransitTimeTo",
                             minWidth: 120
                           },
                           {
@@ -658,10 +1126,12 @@ class RateTable extends Component {
                                 <>
                                   <p className="details-title">Price</p>
                                   <p className="details-para">
-                                    {row.original.baseFreightFee != "" ||
-                                    row.original.baseFreightFee != null
-                                      ? row.original.baseFreightFee + " USD"
-                                      : null}
+                                    {row.original.TotalAmount !== "" &&
+                                    row.original.TotalAmount !== null
+                                      ? row.original.TotalAmount +
+                                        " " +
+                                        row.original.BaseCurrency
+                                      : ""}
                                   </p>
                                 </>
                               );
@@ -719,13 +1189,12 @@ class RateTable extends Component {
                                     Cell: row => {
                                       return (
                                         <>
-                                          {row.original.TotalAmount != "" ||
-                                          row.original.TotalAmount != null
-                                            ? row.original.TotalAmount + " USD"
-                                            : null}
-                                          {row.original.TotalAmount}
-                                          &nbsp;
-                                          {row.original.BaseCurrency}
+                                          {row.original.TotalAmount !== "" &&
+                                          row.original.TotalAmount !== null
+                                            ? row.original.TotalAmount +
+                                              " " +
+                                              row.original.BaseCurrency
+                                            : ""}
                                         </>
                                       );
                                     },
@@ -735,7 +1204,8 @@ class RateTable extends Component {
                                 ]
                               }
                             ]}
-                            showPagination={false}
+                            showPagination={true}
+                            defaultPageSize={5}
                           />
                         </div>
                       );
@@ -760,18 +1230,19 @@ class RateTable extends Component {
             >
               <ModalBody>
                 <h3 className="mb-4">Equipment Types</h3>
-                <div className="equip-plus-cntr w-100 mt-0">
+                <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                   <Select
                     className="rate-dropdown"
-                    // getOptionLabel={option => option.StandardContainerCode}
-                    // getOptionValue={option => option.StandardContainerCode}
+                    getOptionLabel={option => option.StandardContainerCode}
+                    getOptionValue={option => option.StandardContainerCode}
                     isMulti
-                    // options={self.state.StandardContainerCode}
+                    options={this.state.EquipmentType}
                     // onChange={this.equipChange.bind(this)}
-                    // value={self.state.selected}
-                    // showNewOptionAtTop={false}
+                    value={this.state.selected}
+                    showNewOptionAtTop={false}
                   />
                 </div>
+                <div>{this.NewcreateUI()}</div>
                 <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
                   <input
                     id="Special-equType"
@@ -785,19 +1256,44 @@ class RateTable extends Component {
                 <div className="spe-equ mt-0">
                   <div className="equip-plus-cntr w-100">
                     <Select
-                      // isDisabled={self.state.isSpacialEqt}
                       className="rate-dropdown"
-                      // getOptionLabel={option => option.SpecialContainerCode}
+                      getOptionLabel={option => option.SpecialContainerCode}
                       isMulti
-                      // getOptionValue={option => option.SpecialContainerCode}
-                      // components={animatedComponents}
-                      // options={self.state.SpacialEqmt}
+                      getOptionValue={option => option.SpecialContainerCode}
+                      options={this.state.SpacialEqmt}
                       placeholder="Select Kind of Special Equipment"
-                      // onChange={this.specEquipChange}
-                      // value={self.state.spEqtSelect}
+                      onChange={this.specEquipChange}
+                      // value={thi.state.spEqtSelect}
                       showNewOptionAtTop={false}
                     />
                   </div>
+                  <div id="cbmInner">
+                      { 
+                      this.state.specialEqtSelect === true ? (
+                        this.state.flattack_openTop.length > 0 ? (
+                          <>{this.MultiCreateCBM()}</>
+                        ) : null
+                      ) : null}
+
+                      
+                      { 
+                      this.state.refertypeSelect === true ? (
+                        this.state.referType.length > 0 ? (
+                          <>{this.createUISpecial()}</>
+                        ) : null
+                      ) : null}
+
+                      { 
+                      this.state.spacEqmtTypeSelect === true ? (
+                        this.state.spacEqmtType.length > 0 ? (
+                          <>
+                            <div className="d-flex justify-content-center align-items-center">
+                              {this.createUIspacEqmtType()}
+                            </div>
+                          </>
+                        ) : null
+                      ) : null}
+                    </div>
                 </div>
                 <Button className="butn" onClick={this.toggleQuant}>
                   Done

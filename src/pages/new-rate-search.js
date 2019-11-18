@@ -116,18 +116,19 @@ class NewRateSearch extends Component {
       PortOfLoadingCode: "",
       Currency: "",
       //-----
-      Custom_Clearance:false,
-      NonStackable:false,
-      HazMat:false,
+      Custom_Clearance: false,
+      NonStackable: false,
+      HazMat: false,
       multiCBM: [
         {
-          PackagingType: "",
-          Quantity: "",
-          length: "",
-          width: "",
-          height: "",
-          Gross_Weight: "",
-          total: ""
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: 0
         }
       ],
       users: [],
@@ -238,6 +239,13 @@ class NewRateSearch extends Component {
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
+  toggleNonStackable() {
+    this.setState({ NonStackable: !this.state.NonStackable });
+  }
+  toggleHazMat() {
+    this.setState({ HazMat: !this.state.HazMat });
+  }
+
   cmbTypeRadioChange(e) {
     var value = e.target.value;
     this.setState({ cmbTypeRadio: value });
@@ -334,6 +342,16 @@ class NewRateSearch extends Component {
       [name]: name === "Quantity" ? parseInt(value) : value
     };
     this.setState({ TruckTypeData });
+    document.getElementById("cbm").classList.add("cbm");
+    document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+    document.getElementById("containerLoad").classList.add("less-padd");
+
+    document
+      .getElementById("cntrLoadIconCntr")
+      .classList.add("cntrLoadIconCntr");
+    document.getElementById("cntrLoadName").classList.remove("d-none");
+    document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+    document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   removeClickTruckType(i) {
     let TruckTypeData = [...this.state.TruckTypeData];
@@ -413,7 +431,7 @@ class NewRateSearch extends Component {
         });
       }
     }
-
+    debugger;
     document.getElementById("address").classList.add("address");
     document.getElementById("typeMoveInner").classList.add("typeMoveType");
     document.getElementById("typeMove").classList.add("less-padd");
@@ -478,19 +496,28 @@ class NewRateSearch extends Component {
           CountryCode: ""
         },
         headers: authHeader()
-      }).then(function(response) {
-        if (field === "pol") {
-          self.setState({
-            polpodData: response.data.Table,
-            fields
-          });
-        } else {
-          self.setState({
-            polpodDataAdd: response.data.Table,
-            fields
-          });
-        }
-      });
+      })
+        .then(function(response) {
+          if (field === "pol") {
+            self.setState({
+              polpodData: response.data.Table,
+              fields
+            });
+          } else {
+            self.setState({
+              polpodDataAdd: response.data.Table,
+              fields
+            });
+          }
+        })
+        .catch(error => {
+          debugger
+          var errorData= error.response.data;
+          var err = errorData.split(":");
+          var data=[{OceanPortLongName:err[1].replace("}", "")}];
+          this.setState({ polpodData: data});
+          console.log(error);
+        });
     } else {
       self.setState({
         fields,
@@ -506,24 +533,14 @@ class NewRateSearch extends Component {
       <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
-            {/* <Select
-              name="type"
-              className="rate-dropdown"
-              closeMenuOnSelect={false}
-              getOptionLabel={option => option.PackageName}
-              getOptionValue={option => option.PackageTypeId}
-              // components={animatedComponents}
-              options={this.state.packageTypeData}
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-            /> */}
             <select
               className="select-text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              name="PackagingType"
+              name="PackageType"
             >
-              <options>Select</options>
+              <option selected>Select</option>
               {this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageTypeId}>
+                <option key={i} value={item.PackageName}>
                   {item.PackageName}
                 </option>
               ))}
@@ -550,8 +567,8 @@ class NewRateSearch extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={"L (cm)"}
               className="w-100"
-              name="length"
-              value={el.length || ""}
+              name="Lengths"
+              value={el.Lengths || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -563,8 +580,8 @@ class NewRateSearch extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={"W (cm)"}
               className="w-100"
-              name="width"
-              value={el.width || ""}
+              name="Width"
+              value={el.Width || ""}
               //onBlur={this.cbmChange}
             />
           </div>
@@ -576,8 +593,8 @@ class NewRateSearch extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder="H (cm)"
               className="w-100"
-              name="height"
-              value={el.height || ""}
+              name="Height"
+              value={el.Height || ""}
               //onBlur={this.cbmChange}
             />
           </div>
@@ -589,8 +606,8 @@ class NewRateSearch extends Component {
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
-              name="Gross_Weight"
-              value={el.Gross_Weight || ""}
+              name="GrossWt"
+              value={el.GrossWt || ""}
               className="w-100"
             />
           </div>
@@ -599,7 +616,11 @@ class NewRateSearch extends Component {
           <div className="spe-equ">
             <input
               type="text"
-              name="total"
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
               // onChange={this.newMultiCBMHandleChange.bind(this, i)}
               placeholder={
                 this.state.containerLoadType === "LCL"
@@ -608,7 +629,11 @@ class NewRateSearch extends Component {
                   ? "CW"
                   : "VW"
               }
-              value={el.total || ""}
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
               className="w-100"
             />
           </div>
@@ -640,33 +665,42 @@ class NewRateSearch extends Component {
   }
 
   HandleChangeMultiCBM(i, e) {
+    debugger;
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
-    multiCBM[i] = {
-      ...multiCBM[i],
-      [name]: parseFloat(value)
-    };
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: parseFloat(value)
+      };
+    }
 
     this.setState({ multiCBM });
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
         (multiCBM[i].Quantity *
-          (multiCBM[i].length * multiCBM[i].width * multiCBM[i].height)) /
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
       multiCBM[i] = {
         ...multiCBM[i],
-        ["total"]: parseFloat(decVolumeWeight)
+        ["VolumeWeight"]: parseFloat(decVolumeWeight)
       };
     } else {
       var decVolume =
         multiCBM[i].Quantity *
-        ((multiCBM[i].length / 100) *
-          (multiCBM[i].width / 100) *
-          (multiCBM[i].height / 100));
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["total"]: parseFloat(decVolume)
+        ["Volume"]: 2
       };
     }
 
@@ -689,14 +723,14 @@ class NewRateSearch extends Component {
       multiCBM: [
         ...prevState.multiCBM,
         {
-          PackagingType: "",
-          Quantity: "",
-          Length: "",
-          Width: "",
-          Height: "",
-          Weight: "",
-          Gross_Weight: "",
-          Total: ""
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
         }
       ]
     }));
@@ -733,9 +767,10 @@ class NewRateSearch extends Component {
           {/* <div className="spe-equ"> */}
           <input
             type="number"
-            name="qu"
+            name="Quantity"
             placeholder="QTY"
             onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+            value={el.Quantity||""}
           />
           {/* </div> */}
           <i
@@ -880,16 +915,12 @@ class NewRateSearch extends Component {
   //// start flattack type and openTop type dynamic elememnt
 
   MultiCreateCBM() {
+    debugger
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
-            {/* <select
-              className="w-100 cmd-select"
-              onChange={this.newMultiCBMHandleChange.bind(this, i)}
-            >
-              <option>select</option>
-            </select> */}
+            
             <label className="mr-0 mt-2" name="SpecialContainerCode">
               {el.SpecialContainerCode}
             </label>
@@ -902,8 +933,8 @@ class NewRateSearch extends Component {
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
               placeholder="Quantity"
               className="w-100"
-              name="QTY"
-              value={el.Quantity || ""}
+              name="Quantity"
+              value={el.Quantity}
               //onKeyUp={this.cbmChange}
             />
           </div>
@@ -988,7 +1019,7 @@ class NewRateSearch extends Component {
 
   newMultiCBMHandleChange(i, e) {
     const { name, value } = e.target;
-
+debugger;
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop[i] = {
       ...flattack_openTop[i],
@@ -1017,6 +1048,7 @@ class NewRateSearch extends Component {
     this.setState({ flattack_openTop });
   }
   addClickMultiCBM(optionsVal) {
+    debugger;
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
@@ -1386,17 +1418,19 @@ class NewRateSearch extends Component {
   HandleCustomeClear(e) {
     let self = this;
     var icheck = e.target.checked;
-
+    self.setState({ Custom_Clearance: !self.state.Custom_Clearance });
     if (icheck === true) {
-      self.setState({ isCustomClear: "Yes" });
+      self.setState({
+        isCustomClear: "Yes"
+      });
       setTimeout(function() {
         self.HandleGetIncoTerms();
-      }, 500);
+      }, 100);
     } else {
       self.setState({ isCustomClear: "No" });
       setTimeout(function() {
         self.HandleGetIncoTerms();
-      }, 500);
+      }, 100);
     }
   }
 
@@ -1554,9 +1588,8 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
-    if (type == "FCL") {
-      this.HandleBindIncoTeamData();
-    }
+
+    this.HandleBindIncoTeamData();
   };
   cntrLoadPlusClick = e => {
     document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
@@ -2526,8 +2559,14 @@ class NewRateSearch extends Component {
                         ) : null}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
-                        <input id="haz-mat" type="checkbox" name={"haz-mat"} />
-                        <label htmlFor="haz-mat">HazMat</label>
+                        <input
+                          id="HazMat"
+                          type="checkbox"
+                          name="HazMat"
+                          onChange={this.toggleHazMat.bind(this)}
+                          checked={this.state.HazMat}
+                        />
+                        <label htmlFor="HazMat">HazMat</label>
                         {this.state.containerLoadType === "LCL" ||
                         this.state.containerLoadType === "AIR" ||
                         this.state.containerLoadType === "LTL" ? (
@@ -2535,7 +2574,9 @@ class NewRateSearch extends Component {
                             <input
                               id="unstack"
                               type="checkbox"
-                              name={"haz-mat"}
+                              name="NonStackable"
+                              onChange={this.toggleNonStackable.bind(this)}
+                              checked={this.state.NonStackable}
                             />
                             <label htmlFor="unstack">NonStackable</label>
                           </>
@@ -2545,8 +2586,9 @@ class NewRateSearch extends Component {
                         <input
                           id="cust-clear"
                           type="checkbox"
-                          name={"haz-mat"}
+                          name="Custom_Clearance"
                           onChange={this.HandleCustomeClear.bind(this)}
+                          checked={this.state.Custom_Clearance}
                         />
                         <label htmlFor="cust-clear">Custom Clearance</label>
                       </div>
@@ -2616,26 +2658,7 @@ class NewRateSearch extends Component {
                       {this.NewcreateUI()}
                     </div>
                     <div id="equipAppend"></div>
-                    {/* <div className="remember-forgot flex-column rate-checkbox justify-content-center">
-                      <input
-                        id="Special-equType"
-                        type="checkbox"
-                        name={"Special-equType"}
-                        onChange={this.HandleSpecialEqtCheck.bind(this)}
-                      />
-                      <label htmlFor="Special-equType">Special Equipment</label>
-                    </div> */}
-                    {/* {this.createUI()} */}
-                    {/* <div className="remember-forgot">
-                    <input
-                      id="spe-equip"
-                      type="checkbox"
-                      name={"special equipment"}
-                    />
-                    <label htmlFor="spe-equip" className="m-auto">
-                      Special Equipment
-                    </label>
-                  </div> */}
+
                     {self.state.specialEquipment === true ? (
                       <div className="spe-equ mt-0">
                         <div className="equip-plus-cntr">
@@ -2687,7 +2710,13 @@ class NewRateSearch extends Component {
                       ) : null}
                     </div>
                     <div className="remember-forgot flex-column rate-checkbox justify-content-center">
-                      <input id="haz-mat" type="checkbox" name={"haz-mat"} />
+                      <input
+                        id="haz-mat"
+                        type="checkbox"
+                        name="HazMat"
+                        checked={this.state.HazMat}
+                        onChange={this.toggleHazMat.bind(this)}
+                      />
                       <label htmlFor="haz-mat">HazMat</label>
                       {/* <input id="unstack" type="checkbox" name={"haz-mat"} />
                       <label htmlFor="unstack">Unstackable</label> */}
@@ -2816,7 +2845,7 @@ class NewRateSearch extends Component {
                       {this.state.typesofMove == "p2p" ||
                       this.state.typesofMove === "p2d" ? (
                         <ReactAutocomplete
-                          getItemValue={item => item.NameWoDiacritics}
+                          getItemValue={item => item.OceanPortLongName}
                           items={this.state.polpodData}
                           renderItem={(item, isHighlighted) => (
                             <div
@@ -2980,7 +3009,7 @@ class NewRateSearch extends Component {
                   closeMenuOnSelect={true}
                   getOptionLabel={option => option.BaseCurrencyName}
                   getOptionValue={option => option.CurrencyCode}
-                  components={animatedComponents}
+                  // components={animatedComponents}
                   options={this.state.currencyData}
                   onChange={this.HandleCurrencyChange.bind(this)}
                 />

@@ -2818,6 +2818,10 @@ table tbody tr:last-child {
   border: 1px solid #959595;
   padding: 5px 10px;
 }
+.modelselecteqt .css-1rhbuit-multiValue{
+
+display: none
+}
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
