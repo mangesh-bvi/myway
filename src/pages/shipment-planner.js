@@ -367,6 +367,10 @@ class ShipmentPlanner extends Component {
       startlatlnglst.lng = Number(startlatlng[index].split(",")[1]);
       finalRouteData.push(startlatlnglst);
     }
+
+    localStorage.removeItem("GreenLineData"); //Green Line
+    localStorage.setItem("GreenLineData", JSON.stringify(finalRouteData)); //Green Line
+    self.setState({ iframeKey: self.state.iframeKey + 1 });
     self.setState({ modalTransit: false, transitpopupData: finalRouteData });
   }
 
@@ -855,7 +859,7 @@ class ShipmentPlanner extends Component {
       self.setState({ iframeKey: self.state.iframeKey + 1 });
 
       var submitdata = response;
-
+      localStorage.removeItem("GreenLineData"); 
       self.HandleSubmitDetailsData(submitdata);
     });
   };
@@ -1065,16 +1069,16 @@ class ShipmentPlanner extends Component {
                           //   loadingElement={<div style={{ height: `100%` }} />}
                           // ></MapWithAMakredInfoWindowLine>
 
-                          // <iframe
-                          //   key={this.state.iframeKey}
-                          //   src="/MapHtmlPage.html"
-                          //   className="mapIframe"
-                          // />
-                          <object
-                            width="100%"
-                            height="100%"
-                            data="/MapHtmlPage.html"
-                          ></object>
+                          <iframe
+                            key={this.state.iframeKey}
+                            src="/MapHtmlPage.html"
+                            className="mapIframe"
+                          />
+                          // <object
+                          //   width="100%"
+                          //   height="100%"
+                          //   data="/MapHtmlPage.html"
+                          // ></object>
                           // <link rel="import" href="/MapHtmlPage.htm"></link>
                         )}
                       </div>

@@ -234,12 +234,39 @@ class NewRateSearch extends Component {
     this.HandleTruckTypeData();
   }
 
+  // HandleStateValue(pValues) {
+  //   this.setState({
+  //     shipmentType: paramData.shipmentType,
+  //     modeoftransport: paramData.modeoftransport,
+  //     containerLoadType: paramData.containerLoadType,
+  //     typeofMove: rTypeofMove,
+  //     selectaddress: selectedPOLPOD,
+  //     HazMat: paramData.HazMat,
+  //     NonStackable: paramData.NonStackable,
+  //     Custom_Clearance: paramData.Custom_Clearance,
+  //     SpacialEqmt: paramData.SpacialEqmt,
+  //     EquipmentType: paramData.StandardContainerCode,
+  //     spacEqmtType: paramData.spacEqmtType,
+  //     referType: paramData.referType,
+  //     flattack_openTop: paramData.flattack_openTop,
+  //     spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
+  //     specialEqtSelect: paramData.specialEqtSelect,
+  //     refertypeSelect: paramData.refertypeSelect
+  //   });
+  // }
   HandleSearchButton() {
     let self = this;
 
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
+
+HandleCMBtextChange(e){
+var Textvalue=e.target.value;
+
+this.setState({ cbmVal: parseInt(Textvalue) });
+
+}
   toggleNonStackable() {
     this.setState({ NonStackable: !this.state.NonStackable });
   }
@@ -383,25 +410,7 @@ class NewRateSearch extends Component {
   }
 
   //// end package type method
-  //// Commodity dropdown methos
-
-  // HandleCommodityData() {
-  //   let self = this;
-  //
-  //   axios({
-  //     method: "post",
-  //     url: `${appSettings.APIURL}/CommodityDropdown`,
-
-  //     headers: authHeader()
-  //   }).then(function(response) {
-  //
-  //     var data = response.data.Table;
-  //     self.setState({ commodityData: data });
-  //   });
-  // }
-
-  HandleChangeCommodity = (e, option) => {};
-  //// end Commodity drop-down
+ 
   //// POL POD Autosearch Data
   HandleAddressDropdownPolSelect(e, field, value, id) {
     let fields = this.state.fields;
@@ -770,6 +779,7 @@ class NewRateSearch extends Component {
           <input
             type="number"
             name="Quantity"
+            min={1}
             placeholder="QTY"
             onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
             value={el.Quantity || ""}
@@ -1083,7 +1093,7 @@ class NewRateSearch extends Component {
         <div className="spe-equ">
           <input
             type="number"
-            min="1"
+            min={1}
             placeholder="QTY"
             name="ContainerQuantity"
             value={el.ContainerQuantity || ""}
@@ -2547,6 +2557,7 @@ class NewRateSearch extends Component {
                             <div className="spe-equ">
                               <input
                                 type="text"
+                                onChange={this.HandleCMBtextChange.bind(this)}
                                 placeholder={
                                   this.state.modeoftransport != "AIR"
                                     ? "CBM"
@@ -2895,10 +2906,10 @@ class NewRateSearch extends Component {
                   </div>
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
-                      {this.state.typesofMove == "p2p" ||
+                      {this.state.typesofMove === "p2p" ||
                       this.state.typesofMove === "d2p" ? (
                         <ReactAutocomplete
-                          getItemValue={item => item.NameWoDiacritics}
+                          getItemValue={item => item.OceanPortLongName}
                           items={this.state.polpodDataAdd}
                           renderItem={(item, isHighlighted) => (
                             <div

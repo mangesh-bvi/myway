@@ -13,6 +13,7 @@ import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
 import Select from "react-select";
 import { Link } from "react-router-dom";
+import Autocomplete from "react-google-autocomplete";
 import {
   withScriptjs,
   withGoogleMap,
@@ -21,22 +22,81 @@ import {
 } from "react-google-maps";
 import GreenIcon from "./../assets/img/green-circle.png";
 import RedIcon from "./../assets/img/red-circle.png";
+import ReactAutocomplete from "react-autocomplete";
 
 const { compose } = require("recompose");
 const POLMaps = compose(
   withScriptjs,
   withGoogleMap
 )(props => (
-  <GoogleMap defaultZoom={8} defaultCenter={props.markerPOLData}>
-    <Marker position={props.markerPOLData} icon={GreenIcon}></Marker>
+  <GoogleMap
+    defaultZoom={2}
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+  >
+    {props.markerPOLData.map((marker, i) => {
+      return (
+        <Marker
+          key={i}
+          position={{ lat: Number(marker.lat), lng: Number(marker.lng) }}
+        ></Marker>
+      );
+    })}
   </GoogleMap>
 ));
 const PODMaps = compose(
   withScriptjs,
   withGoogleMap
 )(props => (
-  <GoogleMap defaultZoom={8} defaultCenter={props.markerPODData}>
-    <Marker position={props.markerPODData} icon={RedIcon}></Marker>
+  <GoogleMap
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+    defaultZoom={2}
+  >
+    {props.markerPODData.map((marker, i) => {
+      return (
+        <Marker
+          key={i}
+          position={{ lat: Number(marker.lat), lng: Number(marker.lng) }}
+        ></Marker>
+      );
+    })}
+  </GoogleMap>
+));
+
+const AutoCompletePOLMaps = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+    defaultZoom={2}
+  >
+    <Autocomplete
+      placeholder="Enter POL"
+      className="w-100"
+      name=""
+      type="text"
+      // onPlaceSelected={props.onPlaceSelected}
+      types={["(regions)"]}
+    />
+  </GoogleMap>
+));
+
+const AutoCompletePODMaps = compose(
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap
+    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+    defaultZoom={2}
+  >
+    <Autocomplete
+      placeholder="Enter POD"
+      className="w-100"
+      name=""
+      type="text"
+      // onPlaceSelected={props.onPlaceSelected}
+      types={["(regions)"]}
+    />
   </GoogleMap>
 ));
 
@@ -45,15 +105,20 @@ class RateTable extends Component {
     super(props);
 
     this.state = {
+      modalSpot: false,
+
       shipmentType: "",
       modeoftransport: "",
       containerLoadType: "",
       typeofMove: "",
+      commodityData: [],
       HazMat: false,
       NonStackable: false,
       Custom_Clearance: false,
+      typeofMoveCheck: true,
 
-      modalEdit: false,
+      modalPOL: false,
+      modalPOD: false,
       modalQuant: false,
       value: 50,
       RateDetails: [],
@@ -71,18 +136,28 @@ class RateTable extends Component {
       selected: [],
       users: [],
       spacEqmtType: [],
-      referType:[],
-      flattack_openTop:[],
+      referType: [],
+      flattack_openTop: [],
       spacEqmtTypeSelect: false,
       specialEqtSelect: false,
       refertypeSelect: false,
-
+      specialEquipment: false,
+      polpodDataAdd: [],
+      fields: {},
+      polfullAddData: [],
+      podfullAddData: [],
+      mapPositionPOL: [],
+      markerPositionPOD: [],
+      zoomPOL: 0
     };
 
-    this.toggleEdit = this.toggleEdit.bind(this);
+    this.togglePODModal = this.togglePODModal.bind(this);
+    this.togglePOLModal = this.togglePOLModal.bind(this);
     this.toggleQuant = this.toggleQuant.bind(this);
     this.toggleRow = this.toggleRow.bind(this);
     this.checkSelection = this.checkSelection.bind(this);
+    this.HandleCommodityData = this.HandleCommodityData.bind(this);
+    this.toggleSpot = this.toggleSpot.bind(this);
   }
 
   static defaultProps = {
@@ -95,6 +170,10 @@ class RateTable extends Component {
 
   componentDidMount() {
     debugger;
+    setTimeout(() => {
+      this.HandleCommodityData();
+    }, 100);
+
     if (typeof this.props.location.state !== "undefined") {
       if (this.props.location.state !== null) {
         var isSearch = this.props.location.state.isSearch;
@@ -102,8 +181,6 @@ class RateTable extends Component {
           var paramData = this.props.location.state;
           // var modeofTransport = this.props.location.state.containerLoadType;
           this.HandleRateDetailsFCL(paramData);
-
-           
         }
       }
     } else {
@@ -111,9 +188,14 @@ class RateTable extends Component {
     }
   }
 
-  toggleEdit() {
+  togglePODModal() {
     this.setState(prevState => ({
-      modalEdit: !prevState.modalEdit
+      modalPOD: !prevState.modalPOD
+    }));
+  }
+  togglePOLModal() {
+    this.setState(prevState => ({
+      modalPOL: !prevState.modalPOL
     }));
   }
   toggleQuant() {
@@ -217,19 +299,44 @@ class RateTable extends Component {
       var podLatLng = new Object();
 
       var polmapData = polAddress.GeoCoordinate;
-      polLatLng.lat = Number(polmapData.split(",")[0]);
-      polLatLng.lng = Number(polmapData.split(",")[1]);
-      var podmapData = podAddress.GeoCoordinate;
-      podLatLng.lat = Number(podmapData.split(",")[0]);
-      podLatLng.lng = Number(podmapData.split(",")[1]);
+      var polmarkerData = [];
+      if (typeof polmapData !== "undefined" && polmapData !== null) {
+        polLatLng.lat = Number(polmapData.split(",")[0]);
+        polLatLng.lng = Number(polmapData.split(",")[1]);
 
+        polmarkerData.push(polmapData);
+      } else {
+        var mapPositionPOL = paramData.mapPositionPOL;
+        if (mapPositionPOL !== null && typeof mapPositionPOL !== "undefined") {
+          polmarkerData.push(mapPositionPOL);
+        }
+      }
+      var podmapData = podAddress.GeoCoordinate;
+      var podmarkerData = [];
+      if (typeof podmapData !== "undefined" && podmapData !== null) {
+        podLatLng.lat = Number(podmapData.split(",")[0]);
+        podLatLng.lng = Number(podmapData.split(",")[1]);
+
+        podmarkerData.push(podLatLng);
+      } else {
+        var mapPositionPOD = paramData.mapPositionPOD;
+        if (mapPositionPOD !== null && typeof mapPositionPOD !== "undefined") {
+          podmarkerData.push(mapPositionPOD);
+        }
+      }
+      debugger;
       this.setState({
-        polLatLng: polLatLng,
-        podmapData: podLatLng,
+        mapPositionPOL: polmarkerData,
+        markerPositionPOD: podmarkerData,
         users: paramData.users,
         selected: paramData.selected
       });
-      var selectedPOLPOD = paramData.fields.pol + " , " + paramData.fields.pod;
+      debugger;
+      var selectedPOLPOD =
+        paramData.polfullAddData.NameWoDiacritics ||
+        paramData.PickupCity +
+          " To " +
+          paramData.podfullAddData.NameWoDiacritics;
 
       dataParameter = {
         QuoteType: paramData.containerLoadType,
@@ -266,14 +373,13 @@ class RateTable extends Component {
         Custom_Clearance: paramData.Custom_Clearance,
         SpacialEqmt: paramData.SpacialEqmt,
         EquipmentType: paramData.StandardContainerCode,
-        spacEqmtType:paramData.spacEqmtType,
-        referType:paramData.referType,
-        flattack_openTop:paramData.flattack_openTop,
+        spacEqmtType: paramData.spacEqmtType,
+        referType: paramData.referType,
+        flattack_openTop: paramData.flattack_openTop,
         spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
         specialEqtSelect: paramData.specialEqtSelect,
         refertypeSelect: paramData.refertypeSelect,
-
-        
+        specialEquipment: paramData.specialEquipment
       });
     }
 
@@ -302,8 +408,6 @@ class RateTable extends Component {
     });
   }
 
-  
-
   HandleDocumentView(evt, row) {
     debugger;
     var rowDataAry = [];
@@ -315,7 +419,9 @@ class RateTable extends Component {
 
   addClick() {
     this.setState(prevState => ({
-      values: [...prevState.values, ""]
+      values: [...prevState.values, {
+        POD:""
+      }]
     }));
   }
 
@@ -324,7 +430,39 @@ class RateTable extends Component {
       return (
         <div>
           <div className="rename-cntr login-fields position-relative">
-            <input type="text" />
+            <ReactAutocomplete
+            name="POD"
+              getItemValue={item => item.OceanPortLongName}
+              items={this.state.polpodData}
+              renderItem={(item, isHighlighted) => (
+                <div
+                  style={{
+                    background: isHighlighted ? "lightgray" : "white"
+                  }}
+                  value={item.AirPortID}
+                >
+                  {item.OceanPortLongName}
+                </div>
+              )}
+              renderInput={function(props) {
+                return (
+                  <input
+                    placeholder="Enter POD"
+                    className="w-100"
+                    type="text"
+                    {...props}
+                  />
+                );
+              }}
+              onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
+              //menuStyle={this.state.menuStyle}
+              onSelect={this.HandleAddressDropdownPolSelect.bind(
+                this,
+                item => item.NameWoDiacritics,
+                "pod"
+              )}
+              value={this.state.fields["pol"]}
+            />
             <i
               className="fa fa-minus equip-plus"
               id={"remove" + (index + 1)}
@@ -346,15 +484,15 @@ class RateTable extends Component {
     this.setState({ values });
   }
 
-   //// start refer type  dynamic element
-   addClickSpecial(optionVal) {
+  //// start refer type  dynamic element
+  addClickSpecial(optionVal) {
     this.setState(prevState => ({
       referType: [
         ...prevState.referType,
         {
-          Type: optionVal[0].ContainerName,
-          ProfileCodeID: optionVal[0].ProfileCodeID,
-          ContainerCode: optionVal[0].SpecialContainerCode,
+          Type: optionVal.ContainerName,
+          ProfileCodeID: optionVal.ProfileCodeID,
+          ContainerCode: optionVal.SpecialContainerCode,
           ContainerQuantity: 0,
           Temperature: 0,
           TemperatureType: ""
@@ -440,6 +578,7 @@ class RateTable extends Component {
   }
 
   UISpecialChange(i, e) {
+    debugger;
     const { name, value } = e.target;
 
     let referType = [...this.state.referType];
@@ -567,7 +706,7 @@ class RateTable extends Component {
   }
 
   newMultiCBMHandleChange(i, e) {
-    debugger  
+    debugger;
     const { name, value } = e.target;
 
     let flattack_openTop = [...this.state.flattack_openTop];
@@ -602,7 +741,7 @@ class RateTable extends Component {
       flattack_openTop: [
         ...prevState.flattack_openTop,
         {
-          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          SpecialContainerCode: optionsVal.SpecialContainerCode,
           length: "",
           width: "",
           height: "",
@@ -648,6 +787,7 @@ class RateTable extends Component {
     if (e.length > 0) {
       if (this.state.users.length == 0) {
         if (option.option.ContainerName === "Special Equipment") {
+          this.setState({ specialEquipment: true, isSpacialEqt: false });
         } else {
           this.setState({ selected: e });
           this.setState(prevState => ({
@@ -721,8 +861,7 @@ class RateTable extends Component {
   }
   //// end For Equipment to create element
   specEquipChange = (value, option) => {
-     
-
+    debugger;
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
       if (
@@ -754,7 +893,7 @@ class RateTable extends Component {
       }
     }
 
-    if (option.option.IsVolumeRequired === 1) {
+    if (value.IsVolumeRequired === 1) {
       if (difference1 === false) {
         this.setState({
           specialEqtSelect: true
@@ -762,7 +901,7 @@ class RateTable extends Component {
         this.addClickMultiCBM(value);
       }
     }
-    if (option.option.IsTemperatureRequired === 1) {
+    if (value.IsTemperatureRequired === 1) {
       if (difference === false) {
         this.setState({
           refertypeSelect: true
@@ -771,10 +910,7 @@ class RateTable extends Component {
       }
     }
 
-    if (
-      option.option.IsTemperatureRequired === 0 &&
-      option.option.IsVolumeRequired === 0
-    ) {
+    if (value.IsTemperatureRequired === 0 && value.IsVolumeRequired === 0) {
       if (difference2 === false) {
         this.setState({
           spacEqmtTypeSelect: true
@@ -783,18 +919,16 @@ class RateTable extends Component {
         this.addSpacEqmtType(value);
       }
     }
- 
   };
 
+  //// start  spacEqmtType dyamanic element
 
-   //// start  spacEqmtType dyamanic element
-
-   addSpacEqmtType(optionVal) {
+  addSpacEqmtType(optionVal) {
     this.setState(prevState => ({
       spacEqmtType: [
         ...prevState.spacEqmtType,
         {
-          TypeName: optionVal[0].SpecialContainerCode,
+          TypeName: optionVal.SpecialContainerCode,
           Quantity: 0
         }
       ]
@@ -814,7 +948,7 @@ class RateTable extends Component {
             name="Quantity"
             placeholder="QTY"
             onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
-            value={el.Quantity||""}
+            value={el.Quantity || ""}
           />
           {/* </div> */}
           <i
@@ -844,8 +978,143 @@ class RateTable extends Component {
   }
 
   //// end spacEqmtType dyamanic element
+
+  //// Commodity dropdown methods
+
+  HandleCommodityData() {
+    debugger;
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CommodityDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var data = response.data.Table;
+      self.setState({ commodityData: data });
+    });
+  }
+
+  //// end Commodity drop-down
+  toggleSpot() {
+    this.setState(prevState => ({
+      modalSpot: !prevState.modalSpot
+    }));
+  }
+
+  HandlePOLPODAutosearch(field, e) {
+    let self = this;
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+
+    var type = this.state.modeoftransport;
+    if (fields[field].length > 3) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/PolPodByCountry`,
+        data: {
+          Mode:
+            type === "SEA"
+              ? "O"
+              : type === "AIR"
+              ? "A"
+              : type === "ROAD"
+              ? "I"
+              : "",
+          Search: fields[field],
+          CountryCode: ""
+        },
+        headers: authHeader()
+      })
+        .then(function(response) {
+          if (field === "pol") {
+            self.setState({
+              polpodData: response.data.Table,
+              fields
+            });
+          } else {
+            self.setState({
+              polpodData: response.data.Table,
+              fields
+            });
+          }
+        })
+        .catch(error => {
+          debugger;
+          var errorData = error.response.data;
+          var err = errorData.split(":");
+          var data = [{ OceanPortLongName: err[1].replace("}", "") }];
+          this.setState({ polpodData: data });
+          console.log(error);
+        });
+    } else {
+      self.setState({
+        fields,
+        polpodData: []
+      });
+    }
+  }
+
+  HandleAddressDropdownPolSelect(e, field, value, id) {
+    let fields = this.state.fields;
+    fields[field] = value;
+
+    if (field === "pol") {
+      if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+        var geoCoordinate = id.GeoCoordinate.split(",");
+        var mapPositionPOL = new Object();
+        mapPositionPOL.lat = parseFloat(geoCoordinate[0]);
+        mapPositionPOL.lng = parseFloat(geoCoordinate[1]);
+
+        this.setState({
+          polfullAddData: id,
+          fields,
+          mapPositionPOL: mapPositionPOL
+        });
+      }
+    } else {
+      if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+        var PositionPOD = [];
+        var geoCoordinate = id.GeoCoordinate.split(",");
+        var mapPositionPOD = new Object();
+        mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
+        mapPositionPOD.lng = parseFloat(geoCoordinate[1]);
+        PositionPOD.push(mapPositionPOD);
+        this.setState({
+          podfullAddData: id,
+          fields,
+          markerPositionPOD: PositionPOD
+        });
+      }
+    }
+  }
+
+  onPlaceSelected = place => {
+    // const address = place.formatted_address,
+    //   addressArray = place.address_components,
+    //   latValue = place.geometry.location.lat(),
+    //   lngValue = place.geometry.location.lng();
+    // if (addressArray.length > 4) {
+    //   this.setState({ zoomPOL: 15 });
+    // } else if (addressArray.length > 2 && addressArray.length <= 4) {
+    //   this.setState({ zoomPOL: 10 });
+    // } else {
+    //   this.setState({ zoomPOL: 6 });
+    // }
+    // var polmapData = polAddress.GeoCoordinate;
+    // polLatLng.lat = Number(latValue);
+    // polLatLng.lng = Number(lngValue);
+    // var podmarkerData = this.state.mapPositionPOL;
+    // podmarkerData.push(podmapData);
+    // this.setState({});
+  };
   render() {
     var i = 0;
+    console.log(
+      this.state.TypeofMove,
+      "---------------------------type Of move-----"
+    );
 
     return (
       <div>
@@ -862,10 +1131,11 @@ class RateTable extends Component {
               <div className="login-fields mb-0 rate-tab-drop">
                 <select>
                   <option>Select</option>
-                  <option>Select</option>
-                  <option>Select</option>
-                  <option>Select</option>
-                  <option>Select</option>
+                  {this.state.commodityData.map((item, i) => (
+                    <option key={i} value={item.id}>
+                      {item.Commodity}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="rate-table-range">
@@ -919,7 +1189,7 @@ class RateTable extends Component {
                               id="door"
                               type="checkbox"
                               name="typeofMove"
-                              checked={true}
+                              checked={this.state.typeofMoveCheck}
                             />
                             <label htmlFor="door">
                               {this.state.typeofMove === 1
@@ -933,7 +1203,7 @@ class RateTable extends Component {
                                 : ""}
                             </label>
                           </div>
-                          <span>100$</span>
+                          {/* <span>100$</span> */}
                         </div>
                         <div>
                           <div className="d-flex">
@@ -945,7 +1215,7 @@ class RateTable extends Component {
                             />
                             <label htmlFor="insu">HazMat</label>
                           </div>
-                          <span>50$</span>
+                          {/* <span>50$</span> */}
                         </div>
                         <div>
                           <div className="d-flex">
@@ -957,7 +1227,7 @@ class RateTable extends Component {
                             />
                             <label htmlFor="cont-trak">NonStackable</label>
                           </div>
-                          <span>150$</span>
+                          {/* <span>150$</span> */}
                         </div>
                         <div>
                           <div className="d-flex">
@@ -969,7 +1239,7 @@ class RateTable extends Component {
                             />
                             <label htmlFor="cust-clear">Custom Clearance</label>
                           </div>
-                          <span>900$</span>
+                          {/* <span>900$</span> */}
                         </div>
                         <div>
                           <div className="d-flex">
@@ -977,6 +1247,7 @@ class RateTable extends Component {
                               id="cust-clear"
                               type="checkbox"
                               name="address"
+                              checked={true}
                             />
                             <label htmlFor="cust-clear">
                               {this.state.selectaddress}
@@ -990,7 +1261,7 @@ class RateTable extends Component {
                       <div className="pol-pod-maps">
                         <span className="rate-map-ovrly">POL</span>
                         <span
-                          onClick={this.toggleEdit}
+                          onClick={this.togglePOLModal}
                           className="rate-map-ovrly rate-map-plus"
                         >
                           +
@@ -1005,7 +1276,7 @@ class RateTable extends Component {
                           <SourceIcon lat={59.955413} lng={30.337844} />
                         </GoogleMapReact> */}
                         <POLMaps
-                          markerPOLData={this.state.polLatLng}
+                          markerPOLData={this.state.mapPositionPOL}
                           googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                           containerElement={
                             <div style={{ height: `100%`, width: "100%" }} />
@@ -1017,13 +1288,13 @@ class RateTable extends Component {
                       <div className="pol-pod-maps pod-maps">
                         <span className="rate-map-ovrly">POD</span>
                         <span
-                          onClick={this.toggleEdit}
+                          onClick={this.togglePOLModal}
                           className="rate-map-ovrly rate-map-plus"
                         >
                           +
                         </span>
                         <PODMaps
-                          markerPODData={this.state.podmapData}
+                          markerPODData={this.state.markerPositionPOD}
                           googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                           containerElement={
                             <div style={{ height: `100%`, width: "100%" }} />
@@ -1033,195 +1304,211 @@ class RateTable extends Component {
                         ></PODMaps>
                       </div>
                     </div>
-                    <a
-                      href="#!"
+                    <button
                       onClick={this.toggleQuant}
                       className="butn white-butn w-100 mt-0"
                     >
                       Quantity
-                    </a>
+                    </button>
                   </div>
                 </div>
-
-                <div className="col-md-8 react-rate-table">
-                  <ReactTable
-                    columns={[
-                      {
-                        columns: [
-                          {
-                            Cell: ({ original, row }) => {
-                              i++;
-                              return (
-                                <React.Fragment>
-                                  <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                    <div className="remember-forgot d-block m-0">
-                                      <input
-                                        id={"maersk-logo" + i}
-                                        type="checkbox"
-                                        name={"rate-tab-check"}
-                                        // checked={
-                                        //   this.state.RateDetails[i - 1].checkbx
-                                        //     ? this.state.RateDetails[i - 1]
-                                        //         .checkbx
-                                        //     : false
-                                        // }
-                                        checked={
-                                          this.state.cSelectedRow[
-                                            original.rateID
-                                          ] === true
-                                        }
-                                        onChange={e =>
-                                          this.toggleRow(original.rateID, row)
-                                        }
-                                      />
-                                      <label
-                                        htmlFor={"maersk-logo" + i}
-                                      ></label>
+                {this.state.RateDetails.length > 0 ? (
+                  <div className="col-md-8 react-rate-table">
+                    <ReactTable
+                      columns={[
+                        {
+                          columns: [
+                            {
+                              Cell: ({ original, row }) => {
+                                i++;
+                                return (
+                                  <React.Fragment>
+                                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                      <div className="remember-forgot d-block m-0">
+                                        <input
+                                          id={"maersk-logo" + i}
+                                          type="checkbox"
+                                          name={"rate-tab-check"}
+                                          // checked={
+                                          //   this.state.RateDetails[i - 1].checkbx
+                                          //     ? this.state.RateDetails[i - 1]
+                                          //         .checkbx
+                                          //     : false
+                                          // }
+                                          checked={
+                                            this.state.cSelectedRow[
+                                              original.rateID
+                                            ] === true
+                                          }
+                                          onChange={e =>
+                                            this.toggleRow(original.rateID, row)
+                                          }
+                                        />
+                                        <label
+                                          htmlFor={"maersk-logo" + i}
+                                        ></label>
+                                      </div>
                                     </div>
-                                  </div>
-                                  <div className="rate-tab-img">
-                                    <img src={maersk} alt="maersk icon" />
-                                  </div>
-                                </React.Fragment>
-                              );
+                                    <div className="rate-tab-img">
+                                      <img src={maersk} alt="maersk icon" />
+                                    </div>
+                                  </React.Fragment>
+                                );
+                              },
+                              accessor: "lineName",
+                              minWidth: 200
                             },
-                            accessor: "lineName",
-                            minWidth: 200
-                          },
-                          {
-                            Cell: row => {
-                              return (
-                                <>
-                                  <p className="details-title">Valid Until</p>
-                                  <p className="details-para">
-                                    {new Date(
-                                      row.original.expiryDate ||
-                                        row.original.ExpiryDate
-                                    ).toLocaleDateString("en-US")}
-                                  </p>
-                                </>
-                              );
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Valid Until</p>
+                                    <p className="details-para">
+                                      {new Date(
+                                        row.original.expiryDate ||
+                                          row.original.ExpiryDate
+                                      ).toLocaleDateString("en-US")}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "expiryDate" || "ExpiryDate",
+                              minWidth: 175
                             },
-                            accessor: "expiryDate" || "ExpiryDate",
-                            minWidth: 175
-                          },
-                          {
-                            Cell: row => {
-                              return (
-                                <>
-                                  <p className="details-title">TT</p>
-                                  <p className="details-para">
-                                    {row.original.transitTime ||
-                                      row.original.TransitTimeTo}
-                                  </p>
-                                </>
-                              );
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">TT</p>
+                                    <p className="details-para">
+                                      {row.original.transitTime ||
+                                        row.original.TransitTimeTo}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "transitTime" || "TransitTimeTo",
+                              minWidth: 120
                             },
-                            accessor: "transitTime" || "TransitTimeTo",
-                            minWidth: 120
-                          },
-                          {
-                            Cell: row => {
-                              return (
-                                <>
-                                  <p className="details-title">Price</p>
-                                  <p className="details-para">
-                                    {row.original.TotalAmount !== "" &&
-                                    row.original.TotalAmount !== null
-                                      ? row.original.TotalAmount +
-                                        " " +
-                                        row.original.BaseCurrency
-                                      : ""}
-                                  </p>
-                                </>
-                              );
-                            },
-                            accessor: "baseFreightFee",
-                            minWidth: 120
-                          }
-                        ]
-                      }
-                    ]}
-                    data={this.state.RateDetails}
-                    defaultPageSize={10}
-                    className="-striped -highlight"
-                    SubComponent={row => {
-                      return (
-                        <div style={{ padding: "20px 0" }}>
-                          <ReactTable
-                            minRows={1}
-                            data={this.state.RateSubDetails}
-                            columns={[
-                              {
-                                columns: [
-                                  {
-                                    Header: "Charge Name",
-                                    accessor: "ChargeCode"
-                                  },
-                                  {
-                                    Header: "Tax",
-                                    accessor: "Tax"
-                                  },
-                                  {
-                                    Header: "Units",
-                                    accessor: "ChargeItem"
-                                  },
-                                  {
-                                    Header: "Exrate",
-                                    accessor: "Exrate"
-                                  },
-                                  {
-                                    Header: "Charge Type",
-                                    accessor: "ChargeType"
-                                  },
-                                  {
-                                    Header: "Unit Price",
-                                    accessor: "Rate",
-                                    Cell: props => (
-                                      <React.Fragment>
-                                        {props.original.Rate}
-                                        &nbsp;
-                                        {props.original.Currency}
-                                      </React.Fragment>
-                                    )
-                                  },
-                                  {
-                                    Cell: row => {
-                                      return (
-                                        <>
-                                          {row.original.TotalAmount !== "" &&
-                                          row.original.TotalAmount !== null
-                                            ? row.original.TotalAmount +
-                                              " " +
-                                              row.original.BaseCurrency
-                                            : ""}
-                                        </>
-                                      );
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Price</p>
+                                    <p className="details-para">
+                                      {row.original.TotalAmount !== "" &&
+                                      row.original.TotalAmount !== null
+                                        ? row.original.TotalAmount +
+                                          " " +
+                                          row.original.BaseCurrency
+                                        : ""}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "baseFreightFee",
+                              minWidth: 120
+                            }
+                          ]
+                        }
+                      ]}
+                      data={this.state.RateDetails}
+                      defaultPageSize={10}
+                      className="-striped -highlight"
+                      SubComponent={row => {
+                        return (
+                          <div style={{ padding: "20px 0" }}>
+                            <ReactTable
+                              minRows={1}
+                              data={this.state.RateSubDetails}
+                              columns={[
+                                {
+                                  columns: [
+                                    {
+                                      Header: "Charge Name",
+                                      accessor: "ChargeCode"
                                     },
-                                    Header: "Final Payment",
-                                    accessor: "TotalAmount"
-                                  }
-                                ]
-                              }
-                            ]}
-                            showPagination={true}
-                            defaultPageSize={5}
-                          />
-                        </div>
-                      );
-                    }}
-                  />
-                  {/* <ReactTable
+                                    {
+                                      Header: "Tax",
+                                      accessor: "Tax"
+                                    },
+                                    {
+                                      Header: "Units",
+                                      accessor: "ChargeItem"
+                                    },
+                                    {
+                                      Header: "Exrate",
+                                      accessor: "Exrate"
+                                    },
+                                    {
+                                      Header: "Charge Type",
+                                      accessor: "ChargeType"
+                                    },
+                                    {
+                                      Header: "Unit Price",
+                                      accessor: "Rate",
+                                      Cell: props => (
+                                        <React.Fragment>
+                                          {props.original.Rate}
+                                          &nbsp;
+                                          {props.original.Currency}
+                                        </React.Fragment>
+                                      )
+                                    },
+                                    {
+                                      Cell: row => {
+                                        return (
+                                          <>
+                                            {row.original.TotalAmount !== "" &&
+                                            row.original.TotalAmount !== null
+                                              ? row.original.TotalAmount +
+                                                " " +
+                                                row.original.BaseCurrency
+                                              : ""}
+                                          </>
+                                        );
+                                      },
+                                      Header: "Final Payment",
+                                      accessor: "TotalAmount"
+                                    }
+                                  ]
+                                }
+                              ]}
+                              showPagination={true}
+                              defaultPageSize={5}
+                            />
+                          </div>
+                        );
+                      }}
+                    />
+                    {/* <ReactTable
                     data={Data}
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}
                   /> */}
-                  <p className="bottom-profit">
-                    Profit -------$ Customer Segment A Profit Margin %15
-                  </p>
-                </div>
+                    <p className="bottom-profit">
+                      Profit -------$ Customer Segment A Profit Margin %15
+                    </p>
+                  </div>
+                ) : (
+                  <div className="col-md-8">
+                    <div className="spot-rate">
+                      <div className="no-rate">
+                        <p>No Rates Found, Ask for Spot Rates</p>
+                      </div>
+                      <button onClick={this.toggleSpot} className="butn">
+                        Spot Rate
+                      </button>
+                    </div>
+                    <p className="bottom-profit">
+                      Profit -------$ Customer Segment A Profit Margin %15
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
+            {/*  ////EquipmentType  */}
+
             <Modal
               className="delete-popup pol-pod-popup"
               isOpen={this.state.modalQuant}
@@ -1238,6 +1525,7 @@ class RateTable extends Component {
                     isMulti
                     options={this.state.EquipmentType}
                     // onChange={this.equipChange.bind(this)}
+                    onChange={this.newaddClick.bind(this)}
                     value={this.state.selected}
                     showNewOptionAtTop={false}
                   />
@@ -1251,40 +1539,36 @@ class RateTable extends Component {
                     name={"Special-equType"}
                     // onChange={this.HandleSpecialEqtCheck.bind(this)}
                   />
-                  <label htmlFor="Special-equType">Special Equipment</label>
+                  {/* <label htmlFor="Special-equType">Special Equipment</label> */}
                 </div>
-                <div className="spe-equ mt-0">
-                  <div className="equip-plus-cntr w-100">
-                    <Select
-                      className="rate-dropdown"
-                      getOptionLabel={option => option.SpecialContainerCode}
-                      isMulti
-                      getOptionValue={option => option.SpecialContainerCode}
-                      options={this.state.SpacialEqmt}
-                      placeholder="Select Kind of Special Equipment"
-                      onChange={this.specEquipChange}
-                      // value={thi.state.spEqtSelect}
-                      showNewOptionAtTop={false}
-                    />
-                  </div>
-                  <div id="cbmInner">
-                      { 
-                      this.state.specialEqtSelect === true ? (
+                {this.state.specialEquipment === true ? (
+                  <div className="spe-equ mt-0">
+                    <div className="equip-plus-cntr w-100">
+                      <Select
+                        className="rate-dropdown"
+                        getOptionLabel={option => option.SpecialContainerCode}
+                        getOptionValue={option => option.SpecialContainerCode}
+                        options={this.state.SpacialEqmt}
+                        placeholder="Select Kind of Special Equipment"
+                        onChange={this.specEquipChange}
+                        // value={thi.state.spEqtSelect}
+                        showNewOptionAtTop={false}
+                      />
+                    </div>
+                    <div id="cbmInner">
+                      {this.state.specialEqtSelect === true ? (
                         this.state.flattack_openTop.length > 0 ? (
                           <>{this.MultiCreateCBM()}</>
                         ) : null
                       ) : null}
 
-                      
-                      { 
-                      this.state.refertypeSelect === true ? (
+                      {this.state.refertypeSelect === true ? (
                         this.state.referType.length > 0 ? (
                           <>{this.createUISpecial()}</>
                         ) : null
                       ) : null}
 
-                      { 
-                      this.state.spacEqmtTypeSelect === true ? (
+                      {this.state.spacEqmtTypeSelect === true ? (
                         this.state.spacEqmtType.length > 0 ? (
                           <>
                             <div className="d-flex justify-content-center align-items-center">
@@ -1294,7 +1578,8 @@ class RateTable extends Component {
                         ) : null
                       ) : null}
                     </div>
-                </div>
+                  </div>
+                ) : null}
                 <Button className="butn" onClick={this.toggleQuant}>
                   Done
                 </Button>
@@ -1303,36 +1588,161 @@ class RateTable extends Component {
                 </Button>
               </ModalBody>
             </Modal>
+
+            {/* POL modal  */}
+
             <Modal
               className="delete-popup pol-pod-popup"
-              isOpen={this.state.modalEdit}
-              toggle={this.toggleEdit}
+              isOpen={this.state.modalPOL}
+              toggle={this.togglePOLModal}
               centered={true}
             >
               <ModalBody>
                 <div className="pol-mar">
                   <div>
                     <div className="rename-cntr login-fields position-relative">
+                    
+
+                      <i
+                        className="fa fa-plus equip-plus"
+                        onClick={this.addClick.bind(this)}
+                      ></i>
+                    </div>
+                    {/* <div className="rename-cntr login-fields">
+                      <textarea
+                        className="txt-add"
+                        placeholder="Enter POL"
+                      ></textarea>
+                    </div> */}
+                  </div>
+                  {this.createUI()}
+                </div>
+                <Button className="butn">Done</Button>
+                <Button
+                  className="butn cancel-butn"
+                  onClick={this.togglePOLModal}
+                >
+                  Cancel
+                </Button>
+              </ModalBody>
+            </Modal>
+
+            {/* POD modal  */}
+
+            <Modal
+              className="delete-popup pol-pod-popup"
+              isOpen={this.state.modalPOD}
+              toggle={this.togglePODModal}
+              centered={true}
+            >
+              <ModalBody>
+                <div className="pol-mar">
+                  <div>
+                    <div className="rename-cntr login-fields position-relative">
+                      {/* {this.state.typeofMove === 2 ||
+                      this.state.typeofMove === 4 ? (
+                        <ReactAutocomplete
+                          getItemValue={item => item.OceanPortLongName}
+                          items={this.state.polpodData}
+                          renderItem={(item, isHighlighted) => (
+                            <div
+                              style={{
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
+                              }}
+                              value={item.AirPortID}
+                            >
+                              {item.OceanPortLongName}
+                            </div>
+                          )}
+                          renderInput={function(props) {
+                            return (
+                              <input
+                                placeholder="Enter POD"
+                                className="w-100"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
+                          onChange={this.HandlePOLPODAutosearch.bind(
+                            this,
+                            "pod"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownPolSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "pod"
+                          )}
+                          value={this.state.fields["pol"]}
+                        />
+                      ) : (
+                        <AutoCompletePODMaps
+                          onPlaceSelected={this.onPlaceSelected}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div />}
+                          containerElement={<div />}
+                          mapElement={<div />}
+                        />
+                      )} */}
                       <input type="text" />
                       <i
                         className="fa fa-plus equip-plus"
                         onClick={this.addClick.bind(this)}
                       ></i>
                     </div>
-                    <div className="rename-cntr login-fields">
+                    {/* <div className="rename-cntr login-fields">
                       <textarea
                         className="txt-add"
                         placeholder="Enter POL"
                       ></textarea>
-                    </div>
+                    </div> */}
                   </div>
                   {this.createUI()}
                 </div>
-                <Button className="butn" onClick={this.toggleEdit}>
-                  Done
-                </Button>
-                <Button className="butn cancel-butn" onClick={this.toggleEdit}>
+                <Button className="butn">Done</Button>
+                <Button
+                  className="butn cancel-butn"
+                  onClick={this.togglePODModal}
+                >
                   Cancel
+                </Button>
+              </ModalBody>
+            </Modal>
+            <Modal
+              className="delete-popup spot-rate-popup pol-pod-popup"
+              isOpen={this.state.modalSpot}
+              toggle={this.toggleSpot}
+              centered={true}
+            >
+              <h3>Add Below Details</h3>
+              <ModalBody>
+                <div className="rename-cntr login-fields">
+                  <label>Commodity</label>
+                  <select>
+                    <option>Select</option>
+                    <option>Select</option>
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div className="rename-cntr login-fields">
+                  <label>Cargo</label>
+                  <select>
+                    <option>Select</option>
+                    <option>Select</option>
+                    <option>Select</option>
+                  </select>
+                </div>
+                <Button
+                  className="butn"
+                  onClick={() => {
+                    this.spotRateMsg();
+                    this.toggleSpot();
+                  }}
+                >
+                  Send
                 </Button>
               </ModalBody>
             </Modal>
