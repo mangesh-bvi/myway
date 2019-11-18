@@ -66,7 +66,7 @@ class EventManagement extends Component {
           <div className="cls-rt no-bg min-hei-auto">
             <div className="view-user-table">
               <div className="title-sect">
-                <h2>Event Management</h2>
+                <h2>Add Event</h2>
                 <button
                   type="button"
                   className="butn evt-add-btn"

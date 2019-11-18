@@ -490,7 +490,9 @@ const MapWithAMakredInfoWindow = compose(
           marginBottom: "500px",
           position: "absolute",
           top: "60px",
-          left: "10px"
+          left: "10px",
+          border: "0",
+          borderRadius: "50px"
         }}
         onPlaceSelected={props.onPlaceSelected}
         types={["(regions)"]}
