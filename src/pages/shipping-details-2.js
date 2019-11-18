@@ -512,11 +512,11 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindShipmentSummaryMap`,
       data: {
-        ShipperID:shipperId, //1340354108, //shipperId,  //shipperId,
-        ConsigneeID:consigneeId,// 1340464123, //consigneeId,  //consigneeId,
+        ShipperID: shipperId, //1340354108, //shipperId,  //shipperId,
+        ConsigneeID: consigneeId, // 1340464123, //consigneeId,  //consigneeId,
         SwitchConsigneeID: 0,
         SwitchShipperID: 0,
-        HBLNo: hblno//"BOM 237730" //hblno
+        HBLNo: hblno //"BOM 237730" //hblno
       },
       headers: authHeader()
     }).then(function(response) {
@@ -1540,11 +1540,11 @@ class ShippingDetailsTwo extends Component {
                         height="100%"
                         data="/MapHtmlPage.html"
                       ></object> */}
-                       // <iframe
-                            key={this.state.iframeKey}
-                            src="/MapHtmlPage.html"
-                            className="mapIframe"
-                          />
+                      <iframe
+                        key={this.state.iframeKey}
+                        src="/MapHtmlPage.html"
+                        className="mapIframe"
+                      />
                     </div>
                     <div className="shipment-track-cntr">
                       <div className="shipment-track">

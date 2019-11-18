@@ -7,6 +7,7 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
+import Weight from "./../assets/img/weight.png";
 
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -511,11 +512,11 @@ class NewRateSearch extends Component {
           }
         })
         .catch(error => {
-          debugger
-          var errorData= error.response.data;
+          debugger;
+          var errorData = error.response.data;
           var err = errorData.split(":");
-          var data=[{OceanPortLongName:err[1].replace("}", "")}];
-          this.setState({ polpodData: data});
+          var data = [{ OceanPortLongName: err[1].replace("}", "") }];
+          this.setState({ polpodData: data });
           console.log(error);
         });
     } else {
@@ -616,6 +617,7 @@ class NewRateSearch extends Component {
           <div className="spe-equ">
             <input
               type="text"
+              disabled
               name={
                 this.state.containerLoadType === "LCL"
                   ? "Volume"
@@ -634,7 +636,7 @@ class NewRateSearch extends Component {
                   ? el.Volume
                   : el.VolumeWeight || ""
               }
-              className="w-100"
+              className="w-100 weight-icon"
             />
           </div>
         </div>
@@ -770,7 +772,7 @@ class NewRateSearch extends Component {
             name="Quantity"
             placeholder="QTY"
             onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
-            value={el.Quantity||""}
+            value={el.Quantity || ""}
           />
           {/* </div> */}
           <i
@@ -915,12 +917,11 @@ class NewRateSearch extends Component {
   //// start flattack type and openTop type dynamic elememnt
 
   MultiCreateCBM() {
-    debugger
+    debugger;
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
-            
             <label className="mr-0 mt-2" name="SpecialContainerCode">
               {el.SpecialContainerCode}
             </label>
@@ -1019,7 +1020,7 @@ class NewRateSearch extends Component {
 
   newMultiCBMHandleChange(i, e) {
     const { name, value } = e.target;
-debugger;
+    debugger;
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop[i] = {
       ...flattack_openTop[i],
@@ -2542,7 +2543,7 @@ debugger;
                               : this.CreateMultiCBM()}
                           </>
                         ) : this.state.cmbTypeRadio === "CBM" ? (
-                          <div className="col-md">
+                          <div className="col-md-4 m-auto">
                             <div className="spe-equ">
                               <input
                                 type="text"

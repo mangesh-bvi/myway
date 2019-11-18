@@ -323,6 +323,16 @@ class SideMenu extends Component {
               Analytics
             </Link>
           </li>
+          <li className="sidemenu-ul-li">
+            <Link to="/reports">
+              <img
+                src={AnalyticsIcon}
+                alt="green-counter-icon"
+                className="header-greencounter-icon"
+              />
+              Reports
+            </Link>
+          </li>
           {(() => {
             if (
               encryption(window.localStorage.getItem("usertype"), "desc") ==

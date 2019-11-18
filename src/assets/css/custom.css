@@ -1349,7 +1349,7 @@ table tbody tr:last-child {
   padding: 71px 14px;
 }
 .spec-inner-cntr input {
-  width: 55px;
+  width: 40px;
   /* width: 35px; */
   margin-left: 5px;
   padding-left: 5px;
@@ -1446,6 +1446,11 @@ table tbody tr:last-child {
   width: 40%;
   /* width: 60%; */
 }
+/* .weight-icon {
+  background: url("../img/weight.png") no-repeat right 5px center;
+  background-size: 30px;
+  padding-right: 40px !important;
+} */
 
 /* new rate search ends */
 
@@ -1847,6 +1852,7 @@ table tbody tr:last-child {
 }
 .dash-map {
   position: relative;
+  /* min-height: calc(100vh - 250px); */
   min-height: calc(100vh - 332px);
 }
 .map-icon-cntr {
@@ -1894,6 +1900,17 @@ table tbody tr:last-child {
 }
 .hbl-bor {
   border-bottom: 0 !important;
+}
+.loader-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5) url("../img/table-loader.gif") no-repeat center
+    center;
+  background-size: 80px;
+  z-index: 5;
 }
 /* dashboard ends */
 

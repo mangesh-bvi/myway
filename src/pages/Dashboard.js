@@ -736,7 +736,9 @@ class Dashboard extends Component {
         if (BindingID != "All") {
           mdata = mdata.filter(map => map.Pin == BindingID);
         }
-        self.setState({ loading: false });
+        if (mdata.length > 0) {
+          self.setState({ loading: false });
+        }
         self.setState({ mapsData: mdata });
         self.ModalTotalMapData = mdata;
         var arrarSelectPin = ["Ocean", "Air", "Booking-Ocean", "Delay-Ocean"];
@@ -769,7 +771,9 @@ class Dashboard extends Component {
 
         //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
       }
-      self.setState({ loading: false });
+      if (mdata.length > 0) {
+        self.setState({ loading: false });
+      }
       self.setState({ mapsData: arraModalMapData });
     }
   }
@@ -994,7 +998,7 @@ class Dashboard extends Component {
               ) : (
                 <div className="text-right">
                   <a href="/shipment-summary" className="butn mt-0 mb-2">
-                    Back
+                    List Item
                   </a>
                 </div>
               )}
@@ -1018,6 +1022,12 @@ class Dashboard extends Component {
                         loadingElement={<div style={{ height: `100%` }} />}
                       ></MapWithAMakredInfoWindow>
 
+                      {this.state.loading === true ? (
+                        <div className="loader-icon"></div>
+                      ) : (
+                        ""
+                      )}
+
                       <div className="map-filter">
                         <div
                           className="map-icon-cntr"
@@ -1027,6 +1037,7 @@ class Dashboard extends Component {
                         </div>
                         <div
                           className="map-icon-cntr rem-icon"
+                          title="Ocean"
                           id="Ocean"
                           onClick={() => self.HandleShipmentPin("Ocean")}
                         >
@@ -1042,6 +1053,7 @@ class Dashboard extends Component {
                         </div>
                         <div
                           className="map-icon-cntr rem-icon"
+                          title="Air"
                           id="Air"
                           onClick={() => self.HandleShipmentPin("Air")}
                         >
@@ -1058,6 +1070,7 @@ class Dashboard extends Component {
                         <div
                           className="map-icon-cntr rem-icon"
                           id="Delay-Ocean"
+                          title="Delay Ocean"
                           onClick={() => self.HandleShipmentPin("Delay-Ocean")}
                         >
                           {/* <input
@@ -1073,6 +1086,7 @@ class Dashboard extends Component {
                         <div
                           className="map-icon-cntr rem-icon"
                           id="Booking-Ocean"
+                          title="Booking Ocean"
                           onClick={() =>
                             self.HandleShipmentPin("Booking-Ocean")
                           }
