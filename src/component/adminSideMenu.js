@@ -61,7 +61,7 @@ class AdminSideMenu extends Component {
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />{" "}
-              Event Management
+              Add Event
             </a>
           </li>
           <li className="sidemenu-ul-li">
