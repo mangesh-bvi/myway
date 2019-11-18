@@ -730,6 +730,7 @@ class Dashboard extends Component {
         headers: authHeader()
       }).then(function(response) {
         //alert("Complete")
+        debugger;
         mdata = response.data;
         if (BindingID != "All") {
           mdata = mdata.filter(map => map.Pin == BindingID);

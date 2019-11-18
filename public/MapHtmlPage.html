@@ -35,6 +35,7 @@
       var locations = JSON.parse(baloonData);
       var beaches = JSON.parse(flagData);
       var linesData = JSON.parse(linesData);
+      var greenRouteData = JSON.parse(localStorage.getItem("GreenLineData"));
 
       //var beaches = [
       //['1',49.24859,8.887826,'Falg 1'],
@@ -59,12 +60,21 @@
           path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
           scale: 5,
           strokeColor: "#ff0022",
-          strokeOpacity: 1.5,
+          strokeOpacity: 1.5
         };
 
         // Create the polyline and add the symbol to it via the 'icons' property.
+        // Create the polyline and add the symbol to it via the 'icons' property.
+        var line2 = new google.maps.Polyline({
+          path: greenRouteData,
+          strokeColor: "#9EFF98",
+          strokeWeight: 15,
+          map: map
+        });
+
+        // Create the polyline and add the symbol to it via the 'icons' property.
         var line = new google.maps.Polyline({
-          path: linesData, //[{lat:49.24859,lng:8.887826},{lat:50.03769,lng:8.562438},{lat:50.03769,lng:8.562438},{lat:19.090405,lng:72.86875},{lat:19.090405,lng:72.86875},{lat:19.111308,lng:72.849945},{lat:19.055328,lng:72.840234},{lat:19.036511,lng:72.849459},{lat:19.028708,lng:72.860141},{lat:18.94469,lng:72.835864},{lat:18.963517,lng:72.838292},{lat:18.971783,lng:72.833437},{lat:19.006216,lng:72.834408},{lat:19.060835,lng:72.872279},{lat:19.109931,lng:72.928115},{lat:19.131034,lng:72.929087},{lat:19.184236,lng:72.968415},{lat:19.207622,lng:73.015026},{lat:19.184695,lng:73.028621},{lat:19.225961,lng:73.095624},{lat:19.242464,lng:73.15583},{lat:19.271799,lng:73.173309},{lat:19.311211,lng:73.215065},{lat:19.353361,lng:73.213608},{lat:19.449075,lng:73.309743},{lat:19.470133,lng:73.300033},{lat:19.49302,lng:73.333534},{lat:19.511785,lng:73.326737},{lat:19.569896,lng:73.359268},{lat:19.581332,lng:73.395682},{lat:19.604203,lng:73.400538},{lat:19.634845,lng:73.432583},{lat:19.628443,lng:73.44812},{lat:19.702054,lng:73.500557},{lat:19.691998,lng:73.58504},{lat:19.73085,lng:73.639905},{lat:19.806241,lng:73.673892},{lat:19.812686,lng:73.774428},{lat:19.884499,lng:73.836487},{lat:19.971629,lng:73.849144},{lat:20.629313,lng:75.320236},{lat:21.015727,lng:75.537338},{lat:21.041596,lng:75.80987},{lat:20.739389,lng:77.004423},{lat:20.877561,lng:77.743492},{lat:20.748028,lng:78.602659},{lat:20.894824,lng:78.999909},{lat:21.058955,lng:79.050849},{lat:21.143956,lng:79.093453}],
+          path: linesData,
           icons: [
             {
               icon: lineSymbol,
@@ -73,18 +83,11 @@
           ],
           scale: 2,
           strokeColor: "#ff0022",
+          strokeWeight: 5,
           strokeOpacity: 1.5,
+          width: 8,
           map: map
         });
-
-        // Create the polyline and add the symbol to it via the 'icons' property.
-        //  var line2 = new google.maps.Polyline({
-        //  path: [{lat:49.24859,lng:8.887826},{lat:50.03769,lng:8.562438},{lat:50.03769,lng:8.562438},{lat:19.090405,lng:72.86875},{lat:19.090405,lng:72.86875},{lat:19.111308,lng:72.849945},{lat:19.055328,lng:72.840234},{lat:21.058955,lng:79.050849},{lat:21.143956,lng:79.093453}],
-        //  strokeColor: "#9EFF98",
-        //  strokeWeight: 1.8,
-        //  strokeOpacity: 2,
-        //  map: map
-        //  });
 
         animateCircle(line);
 
