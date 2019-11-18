@@ -1938,6 +1938,7 @@ table tbody tr:last-child {
   text-align: center;
   line-height: 28px;
   color: #fff;
+  cursor: pointer;
 }
 /* dashboard ends */
 

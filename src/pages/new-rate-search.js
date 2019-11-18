@@ -2852,7 +2852,7 @@ class NewRateSearch extends Component {
                 <div className="row justify-content-center" id="addressInner">
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
-                      {this.state.typesofMove == "p2p" ||
+                      {this.state.typesofMove == "p2p" &&
                       this.state.typesofMove === "p2d" ? (
                         <ReactAutocomplete
                           getItemValue={item => item.OceanPortLongName}
