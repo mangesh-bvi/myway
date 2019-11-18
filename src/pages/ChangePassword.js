@@ -16,6 +16,7 @@ class ChangePassword extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
+    debugger;
     if (encryption(window.localStorage.getItem("username"),"desc") == null) {
       window.location.href = "./";
     }
@@ -26,7 +27,7 @@ class ChangePassword extends React.Component {
     });
   }
   handleSubmit(e) {
-   
+   debugger;
     //  e.preventDefault();
 
     var oldpwd =encryption(window.localStorage.getItem("password"),"desc");
@@ -101,29 +102,33 @@ class ChangePassword extends React.Component {
 }
 
 function ChangePasswordCheck(password, newpassword) {
+  debugger;
   const requestOptions = {
     method: "POST",
     headers: authHeader(),
     body: JSON.stringify({
       UserName:encryption(window.localStorage.getItem("username"),"desc"),
       OldPassword: password,
-      NewPassword: newpassword
+      NewPassword: newpassword,
+      PrivateIPAddress:"",
+      PublicIPAddress: ""
     })
   };
   return fetch(`${appSettings.APIURL}/ChangeUserPassword`, requestOptions)
     .then(handleResponse)
     .catch(error => {
+      debugger;
       console.log(error);
     });
 }
 
 function handleResponse(response) {
-
+debugger;
   console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
-      alert("oops error occured");
+      alert("Internal Server error. Please contact administrator.");
     } else {
       alert("Password change successfully");
     }
