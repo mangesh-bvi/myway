@@ -261,7 +261,7 @@ class NewRateSearch extends Component {
   }
 
   HandleCMBtextChange(e) {
-    debugger
+    debugger;
     var Textvalue = e.target.value;
 
     this.setState({ cbmVal: Textvalue });
@@ -456,8 +456,8 @@ class NewRateSearch extends Component {
       document.getElementById("typeMoveInner").classList.add("typeMoveType");
       document.getElementById("typeMove").classList.add("less-padd");
     } else {
-      document.getElementById("addressInner").classList.add("addressType");
-      document.getElementById("address").classList.add("less-padd");
+      // document.getElementById("addressInner").classList.add("addressType");
+      // document.getElementById("address").classList.add("less-padd");
     }
 
     if (document.getElementById("addressInner") == null)
@@ -1346,7 +1346,7 @@ class NewRateSearch extends Component {
 
   HandleTypeofMove(e) {
     var type = e.target.value;
-    debugger;
+    // debugger;
     if (type === "p2p") {
       this.setState(
         {
@@ -1392,9 +1392,10 @@ class NewRateSearch extends Component {
 
     // next
     document.getElementById("typeMove").classList.add("typeMove");
-    if (document.getElementById("cbmInner") == null)
+    if (document.getElementById("cbmInner") == null) {
       document.getElementById("equipTypeInner").classList.add("equipTypeType");
-    else document.getElementById("cbmInner").classList.add("cbmType");
+      document.getElementById("equipType").classList.add("less-padd");
+    } else document.getElementById("cbmInner").classList.add("cbmType");
 
     if (document.getElementById("cbmIconCntr") == null)
       document
@@ -1409,9 +1410,10 @@ class NewRateSearch extends Component {
 
     // document.getElementById("cbmName").classList.remove("d-none");
 
-    if (document.getElementById("cbmMinusClick") == null)
+    if (document.getElementById("cbmMinusClick") == null) {
       document.getElementById("equipTypeMinusClick").classList.add("d-none");
-    else document.getElementById("cbmMinusClick").classList.add("d-none");
+      document.getElementById("equipTypePlusClick").classList.remove("d-none");
+    } else document.getElementById("cbmMinusClick").classList.add("d-none");
 
     // document.getElementById("cbmMinusClick").classList.add("d-none");
     // -------------------------------------Comment By Deepak Savani--------------------------
@@ -1696,8 +1698,8 @@ class NewRateSearch extends Component {
         document.getElementById("typeMoveInner").classList.add("typeMoveType");
         document.getElementById("typeMove").classList.add("less-padd");
       } else {
-        document.getElementById("addressInner").classList.add("addressType");
-        document.getElementById("address").classList.add("less-padd");
+        // document.getElementById("addressInner").classList.add("addressType");
+        // document.getElementById("address").classList.add("less-padd");
       }
 
       if (document.getElementById("addressInner") == null)
@@ -1786,18 +1788,18 @@ class NewRateSearch extends Component {
     else document.getElementById("addressPlusClick").classList.remove("d-none");
   };
   addressPlusClick = e => {
-    document.getElementById("addressInner").classList.remove("addressType");
+    // document.getElementById("addressInner").classList.remove("addressType");
     document.getElementById("address").classList.remove("less-padd");
-    document.getElementById("addressPlusClick").classList.add("d-none");
+    // document.getElementById("addressPlusClick").classList.add("d-none");
     document.getElementById("addressName").classList.add("d-none");
-    document.getElementById("addressMinusClick").classList.remove("d-none");
+    // document.getElementById("addressMinusClick").classList.remove("d-none");
   };
   addressMinusClick = e => {
-    document.getElementById("addressInner").classList.add("addressType");
+    // document.getElementById("addressInner").classList.add("addressType");
     document.getElementById("address").classList.add("less-padd");
-    document.getElementById("addressPlusClick").classList.remove("d-none");
+    // document.getElementById("addressPlusClick").classList.remove("d-none");
     document.getElementById("addressName").classList.remove("d-none");
-    document.getElementById("addressMinusClick").classList.add("d-none");
+    // document.getElementById("addressMinusClick").classList.add("d-none");
   };
 
   quantityChange = e => {
@@ -1820,12 +1822,14 @@ class NewRateSearch extends Component {
   equipTypePlusClick = e => {
     document.getElementById("equipTypeInner").classList.remove("equipTypeType");
     document.getElementById("equipTypePlusClick").classList.add("d-none");
+    document.getElementById("equipType").classList.remove("less-padd");
     document.getElementById("equipTypeName").classList.add("d-none");
     document.getElementById("equipTypeMinusClick").classList.remove("d-none");
   };
   equipTypeMinusClick = e => {
     document.getElementById("equipTypeInner").classList.add("equipTypeType");
     document.getElementById("equipTypePlusClick").classList.remove("d-none");
+    document.getElementById("equipType").classList.add("less-padd");
     document.getElementById("equipTypeName").classList.remove("d-none");
     document.getElementById("equipTypeMinusClick").classList.add("d-none");
   };
@@ -2693,14 +2697,14 @@ class NewRateSearch extends Component {
                         </div>
                       </div>
                     ) : null}
-                    <div id="cbmInner">
+                    <div>
+                      {/*  id="cbmInner" */}
                       {self.state.specialEquipment === true &&
                       self.state.specialEqtSelect === true ? (
                         self.state.flattack_openTop.length > 0 ? (
                           <>{this.MultiCreateCBM()}</>
                         ) : null
                       ) : null}
-
                       <div id="specEquipAppend"></div>
                       {self.state.specialEquipment === true &&
                       self.state.refertypeSelect === true ? (
@@ -2708,7 +2712,6 @@ class NewRateSearch extends Component {
                           <>{this.createUISpecial()}</>
                         ) : null
                       ) : null}
-
                       {self.state.specialEquipment === true &&
                       self.state.spacEqmtTypeSelect === true ? (
                         self.state.spacEqmtType.length > 0 ? (
@@ -2773,61 +2776,60 @@ class NewRateSearch extends Component {
                     ></i>
                   </div>
                 </div>
-                <div
-                  className="new-radio-rate-cntr radio-blue"
-                  id="typeMoveInner"
-                >
-                  <div>
-                    <input
-                      type="radio"
-                      name="type-move"
-                      id="p2p"
-                      value={"p2p"}
-                      onChange={this.HandleTypeofMove}
-                    />
-                    <label htmlFor="p2p">Port2Port</label>
+                <div id="typeMoveInner">
+                  <div className="new-radio-rate-cntr radio-blue">
+                    <div>
+                      <input
+                        type="radio"
+                        name="type-move"
+                        id="p2p"
+                        value={"p2p"}
+                        onChange={this.HandleTypeofMove}
+                      />
+                      <label htmlFor="p2p">Port2Port</label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="type-move"
+                        id="d2p"
+                        value={"d2p"}
+                        onChange={this.HandleTypeofMove}
+                      />
+                      <label htmlFor="d2p">Door2Port</label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="type-move"
+                        id="d2d"
+                        value={"d2d"}
+                        onChange={this.HandleTypeofMove}
+                      />
+                      <label htmlFor="d2d">Door2Door</label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="type-move"
+                        id="p2d"
+                        value={"p2d"}
+                        onChange={this.HandleTypeofMove}
+                      />
+                      <label htmlFor="p2d">Port2Door</label>
+                    </div>
                   </div>
-                  <div>
+                  <div className="spe-equ justify-content-center">
+                    <label>Inco Terms :</label>
                     <input
-                      type="radio"
-                      name="type-move"
-                      id="d2p"
-                      value={"d2p"}
-                      onChange={this.HandleTypeofMove}
+                      type="text"
+                      placeholder="Inco Terms"
+                      className="w-25"
+                      disabled
+                      name="incoTerms"
+                      value={self.state.incoTerms}
                     />
-                    <label htmlFor="d2p">Door2Port</label>
                   </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="type-move"
-                      id="d2d"
-                      value={"d2d"}
-                      onChange={this.HandleTypeofMove}
-                    />
-                    <label htmlFor="d2d">Door2Door</label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="type-move"
-                      id="p2d"
-                      value={"p2d"}
-                      onChange={this.HandleTypeofMove}
-                    />
-                    <label htmlFor="p2d">Port2Door</label>
-                  </div>
-                </div>
-                <div className="spe-equ justify-content-center">
-                  <label>Inco Terms :</label>
-                  <input
-                    type="text"
-                    placeholder="Inco Terms"
-                    className="w-25"
-                    disabled
-                    name="incoTerms"
-                    value={self.state.incoTerms}
-                  />
                 </div>
               </div>
 
@@ -3014,7 +3016,7 @@ class NewRateSearch extends Component {
                   </div>
                 </div>
               </div>
-              <div className="text-center new-rate-cntr border-0">
+              <div className="new-rate-cntr border-0">
                 <Select
                   className="rate-dropdown mt-0"
                   closeMenuOnSelect={true}
@@ -3024,12 +3026,14 @@ class NewRateSearch extends Component {
                   options={this.state.currencyData}
                   onChange={this.HandleCurrencyChange.bind(this)}
                 />
-                <button
-                  onClick={this.HandleSearchButton.bind(this)}
-                  className="butn blue-butn rate-search mb-0"
-                >
-                  Search
-                </button>
+                <div className="text-center">
+                  <button
+                    onClick={this.HandleSearchButton.bind(this)}
+                    className="butn blue-butn rate-search mb-0"
+                  >
+                    Search
+                  </button>
+                </div>
               </div>
               {/* <div className="text-center new-rate-cntr p-0 border-0">
                 <a href="rate-table" className="butn blue-butn rate-search">
