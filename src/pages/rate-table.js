@@ -419,9 +419,12 @@ class RateTable extends Component {
 
   addClick() {
     this.setState(prevState => ({
-      values: [...prevState.values, {
-        POD:""
-      }]
+      values: [
+        ...prevState.values,
+        {
+          POD: ""
+        }
+      ]
     }));
   }
 
@@ -431,7 +434,7 @@ class RateTable extends Component {
         <div>
           <div className="rename-cntr login-fields position-relative">
             <ReactAutocomplete
-            name="POD"
+              name="POD"
               getItemValue={item => item.OceanPortLongName}
               items={this.state.polpodData}
               renderItem={(item, isHighlighted) => (
@@ -1601,8 +1604,6 @@ class RateTable extends Component {
                 <div className="pol-mar">
                   <div>
                     <div className="rename-cntr login-fields position-relative">
-                    
-
                       <i
                         className="fa fa-plus equip-plus"
                         onClick={this.addClick.bind(this)}
