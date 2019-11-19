@@ -1482,7 +1482,7 @@ table tbody tr:last-child {
   background-color: #fff;
   border-color: #d3d3d3;
   min-width: auto;
-  flex: 0 0 32%;
+  flex: 0 0 23%;
 }
 .top-select .butn:hover {
   background-color: #d3d3d3;

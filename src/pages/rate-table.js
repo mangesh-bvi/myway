@@ -165,6 +165,7 @@ class RateTable extends Component {
     this.toggleSpot = this.toggleSpot.bind(this);
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
+    this.custClearToggle = this.custClearToggle.bind(this);
   }
 
   static defaultProps = {
@@ -1211,6 +1212,12 @@ class RateTable extends Component {
     this.setState({ filterAll, filtered });
   }
 
+  custClearToggle() {
+    this.setState({
+      Custom_Clearance: !this.state.Custom_Clearance
+    });
+  }
+
   render() {
     var i = 0;
 
@@ -1278,10 +1285,21 @@ class RateTable extends Component {
                       <a href="new-rate-search" className="butn">
                         {this.state.containerLoadType}
                       </a>
+                      <a href="new-rate-search" className="butn">
+                        {this.state.typeofMove === 1
+                          ? "P2P"
+                          : this.state.typeofMove === 2
+                          ? "D2P"
+                          : this.state.typeofMove === 4
+                          ? "P2D"
+                          : this.state.typeofMove === 3
+                          ? "D2D"
+                          : ""}
+                      </a>
                     </div>
                     <div className="cont-costs">
                       <div className="remember-forgot d-block m-0">
-                        <div>
+                        {/* <div>
                           <div className="d-flex">
                             <input
                               id="door"
@@ -1301,8 +1319,8 @@ class RateTable extends Component {
                                 : ""}
                             </label>
                           </div>
-                          {/* <span>100$</span> */}
-                        </div>
+                          <span>100$</span>
+                        </div> */}
                         <div>
                           <div className="d-flex">
                             <input
@@ -1334,6 +1352,7 @@ class RateTable extends Component {
                               type="checkbox"
                               name="Custom_Clearance"
                               checked={this.state.Custom_Clearance}
+                              onChange={this.custClearToggle}
                             />
                             <label htmlFor="cust-clear">Custom Clearance</label>
                           </div>
@@ -1342,12 +1361,12 @@ class RateTable extends Component {
                         <div>
                           <div className="d-flex">
                             <input
-                              id="cust-clear"
+                              id="pol-pod"
                               type="checkbox"
                               name="address"
                               checked={true}
                             />
-                            <label htmlFor="cust-clear">
+                            <label htmlFor="pol-pod">
                               {this.state.selectaddress}
                             </label>
                           </div>
@@ -1635,13 +1654,13 @@ class RateTable extends Component {
             {/*  ////EquipmentType  */}
 
             <Modal
-              className="delete-popup pol-pod-popup"
+              className="delete-popup text-left"
               isOpen={this.state.modalQuant}
               toggle={this.toggleQuant}
               centered={true}
             >
               <ModalBody>
-                <h3 className="mb-4">Equipment Types</h3>
+                <h3 className="mb-4 text-center">Equipment Types</h3>
                 <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                   <Select
                     className="rate-dropdown"
@@ -1655,7 +1674,9 @@ class RateTable extends Component {
                     showNewOptionAtTop={false}
                   />
                 </div>
-                <div>{this.NewcreateUI()}</div>
+                <div className="d-flex flex-wrap justify-content-center">
+                  {this.NewcreateUI()}
+                </div>
                 <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
                   <input
                     id="Special-equType"
@@ -1667,7 +1688,8 @@ class RateTable extends Component {
                   {/* <label htmlFor="Special-equType">Special Equipment</label> */}
                 </div>
                 {this.state.specialEquipment === true ? (
-                  <div className="spe-equ mt-0">
+                  <div className="">
+                    {/* spe-equ mt-0 */}
                     <div className="equip-plus-cntr w-100">
                       <Select
                         className="rate-dropdown"
@@ -1696,7 +1718,7 @@ class RateTable extends Component {
                       {this.state.spacEqmtTypeSelect === true ? (
                         this.state.spacEqmtType.length > 0 ? (
                           <>
-                            <div className="d-flex justify-content-center align-items-center">
+                            <div className="d-flex flex-wrap justify-content-center align-items-center">
                               {this.createUIspacEqmtType()}
                             </div>
                           </>
@@ -1705,12 +1727,17 @@ class RateTable extends Component {
                     </div>
                   </div>
                 ) : null}
-                <Button className="butn" onClick={this.toggleQuant}>
-                  Done
-                </Button>
-                <Button className="butn cancel-butn" onClick={this.toggleQuant}>
-                  Cancel
-                </Button>
+                <div className="text-center">
+                  <Button className="butn" onClick={this.toggleQuant}>
+                    Done
+                  </Button>
+                  <Button
+                    className="butn cancel-butn"
+                    onClick={this.toggleQuant}
+                  >
+                    Cancel
+                  </Button>
+                </div>
               </ModalBody>
             </Modal>
 
