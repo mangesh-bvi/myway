@@ -135,34 +135,50 @@ const MapWithAMakredInfoWindow = compose(
                               aria-labelledby="heading-1"
                             >
                               <div className="card-body">
-                                <div id="accordion-1">
+                                <div>
                                   <div className="card">
                                     <div
                                       className="card-header hbl-bor"
                                       id="heading-1-1"
                                     >
-                                      <h5 className="mb-0">
+                                      <h5>
                                         <div
-                                          className="collapsed"
+                                          //className="collapsed"
                                           role="button"
-                                          data-toggle="collapse"
+                                         // data-toggle="collapse"
                                           href={C_HblNO.replace(/ +/g, "")}
-                                          aria-expanded="false"
-                                          aria-controls={mdata["HBL#"].replace(
-                                            / +/g,
-                                            ""
-                                          )}
-                                        >
+                                          //aria-expanded="false"
+                                          // aria-controls={mdata["HBL#"].replace(
+                                          //   / +/g,
+                                          //   ""
+                                          // )}
+                                        > 
                                           <p
                                             title="HBL No."
                                             className="mapcontainerno dash-hbl"
                                           >
-                                            {mdata["HBL#"]}
+                                            {mdata["HBL#"]}{finalinvocearr.length > 0
+                                          ? finalinvocearr.map(function(
+                                              idata,
+                                              i
+                                            ) {
+                                              return (
+                                                <div>
+                                                  <p
+                                                    title="MyWay No."
+                                                    className="mapinvoice ml-2"
+                                                  >
+                                                    {idata}{","}
+                                                  </p>
+                                                </div>
+                                              );
+                                            })
+                                          : null}
                                           </p>
                                         </div>
                                       </h5>
                                     </div>
-                                    <div
+                                    {/* <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
                                       className="collapse"
                                       data-parent="#accordion-1"
@@ -187,7 +203,7 @@ const MapWithAMakredInfoWindow = compose(
                                             })
                                           : null}
                                       </div>
-                                    </div>
+                                    </div> */}
                                   </div>
                                 </div>
                               </div>
@@ -733,7 +749,7 @@ class Dashboard extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        //alert("Complete")
+        
         debugger;
         mdata = response.data;
         if (BindingID != "All") {

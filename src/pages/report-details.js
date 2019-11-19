@@ -10,8 +10,30 @@ import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import * as FileSaver from "file-saver";
+import * as XLSX from 'xlsx'
 
+export const ExportCSV = ({csvData, fileName}) => {
+debugger
+  const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  const fileExtension = '.xlsx';
 
+  const exportToCSV = (csvData, fileName) => {
+    debugger;
+      const ws = XLSX.utils.json_to_sheet(csvData);     
+      const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+      const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const data = new Blob([excelBuffer], {type: fileType});
+      FileSaver.saveAs(data, fileName + fileExtension);
+  }
+
+  return (
+    <a onClick={(e) => exportToCSV(csvData,fileName)} download className="butn more-padd">
+                  Download
+                </a>
+    // <button variant="warning" onClick={(e) => exportToCSV(csvData,fileName)}>Export</button>
+)
+}
 const animatedComponents = makeAnimated();
 
 class ReportDetails extends Component {
@@ -87,8 +109,9 @@ class ReportDetails extends Component {
     });
   }
 
+
   render() {
-   
+    
     return (
       <div>
         <Headers />
@@ -100,9 +123,8 @@ class ReportDetails extends Component {
             <div className="rate-fin-tit title-border title-sect mb-4">
               <h2>{this.state.lableofreport}</h2>
               <div>
-                <a href="/" download className="butn more-padd">
-                  Download
-                </a>
+                
+                <ExportCSV csvData={this.state.reportdetails} fileName={this.state.lableofreport} />
                 <a href="/reports" className="butn cancel-butn">
                   Back
                 </a>
