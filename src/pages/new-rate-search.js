@@ -265,6 +265,16 @@ class NewRateSearch extends Component {
     var Textvalue = e.target.value;
 
     this.setState({ cbmVal: Textvalue });
+    document.getElementById("cbm").classList.add("cbm");
+    document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+    document.getElementById("containerLoad").classList.add("less-padd");
+
+    document
+      .getElementById("cntrLoadIconCntr")
+      .classList.add("cntrLoadIconCntr");
+    document.getElementById("cntrLoadName").classList.remove("d-none");
+    document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+    document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   toggleNonStackable() {
     this.setState({ NonStackable: !this.state.NonStackable });

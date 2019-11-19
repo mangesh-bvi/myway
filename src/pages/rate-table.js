@@ -24,6 +24,7 @@ import GreenIcon from "./../assets/img/green-circle.png";
 import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
+import $ from "jquery";
 
 const { compose } = require("recompose");
 const POLMaps = compose(
@@ -121,11 +122,12 @@ class RateTable extends Component {
       modalPOL: false,
       modalPOD: false,
       modalQuant: false,
-      value: 50,
+      value: 0,
       RateDetails: [],
+      expanded: {},
+      RateSubDetails: [],
       valuesPOL: [{ pol: "" }],
       valuesPOD: [{ pod: "" }],
-      RateSubDetails: [],
       checkSelection: [],
       polLatLng: {},
       podmapData: {},
@@ -153,7 +155,8 @@ class RateTable extends Component {
       zoomPOL: 0,
       filterAll: "",
       filtered: [],
-      incoTerms: ""
+      incoTerms: "",
+      selectedCommodity: ""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -166,6 +169,7 @@ class RateTable extends Component {
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
     this.custClearToggle = this.custClearToggle.bind(this);
+    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   static defaultProps = {
@@ -177,7 +181,8 @@ class RateTable extends Component {
   };
 
   componentDidMount() {
-    debugger;
+    document.addEventListener("mousedown", this.handleClickOutside);
+
     setTimeout(() => {
       this.HandleCommodityData();
     }, 100);
@@ -195,7 +200,16 @@ class RateTable extends Component {
       this.props.history.push("new-rate-search");
     }
   }
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
 
+  handleClickOutside(event) {
+    // alert(1);
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      //   this.props.toggle();
+    }
+  }
   togglePODModal() {
     this.setState(prevState => ({
       modalPOD: !prevState.modalPOD
@@ -213,7 +227,6 @@ class RateTable extends Component {
   }
 
   handleCheck() {
-    debugger;
     this.props.history.push({
       pathname: "rate-finalizing",
       state: this.state
@@ -221,8 +234,6 @@ class RateTable extends Component {
   }
 
   toggleRow(rateID, rowData) {
-    debugger;
-
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
     this.setState({
@@ -278,7 +289,6 @@ class RateTable extends Component {
   HandleRateDetailsFCL(paramData) {
     var dataParameter = {};
     if (paramData.isSearch) {
-      debugger;
       var rTypeofMove =
         paramData.typesofMove === "p2p"
           ? 1
@@ -302,7 +312,7 @@ class RateTable extends Component {
       var podAddress = paramData.podfullAddData;
       var rateQueryDim = [];
       var containerdetails = paramData.users;
-      debugger;
+
       var polLatLng = new Object();
       var podLatLng = new Object();
 
@@ -344,6 +354,12 @@ class RateTable extends Component {
         paramData.polfullAddData.NameWoDiacritics || paramData.PickupCity;
       selectedPOLPOD =
         selectedPOLPOD + " To " + paramData.podfullAddData.NameWoDiacritics;
+      var cmbvalue = paramData.cbmVal;
+      if (cmbvalue != "") {
+        cmbvalue = parseInt(cmbvalue);
+      } else {
+        cmbvalue = 0;
+      }
 
       dataParameter = {
         QuoteType: paramData.containerLoadType,
@@ -365,7 +381,7 @@ class RateTable extends Component {
         DeliveryCity:
           podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
         Currency: paramData.currencyCode,
-        ChargeableWeight: 0,
+        ChargeableWeight: cmbvalue,
         RateQueryDim: paramData.multiCBM
       };
 
@@ -1203,13 +1219,20 @@ class RateTable extends Component {
       });
     } else this.setState({ filtered });
   }
-  filterAll(e) {
-    debugger;
+  filterAll(e, type) {
     const { value } = e.target;
-    const filterAll = value;
-    const filtered = [{ id: "all", value: filterAll }];
-
-    this.setState({ filterAll, filtered });
+    if (type !== "") {
+    } else {
+      var filterData = this.state.RateDetails.filter(
+        x => x.commodities === value
+      );
+      if (filterData.length > 0) {
+        this.setState({
+          RateDetails: filterData,
+          Commodity: value
+        });
+      }
+    }
   }
 
   custClearToggle() {
@@ -1218,9 +1241,16 @@ class RateTable extends Component {
     });
   }
 
+  HandleRangeSlider(value) {
+    this.setState({ value });
+    debugger;
+    this.filterAll(value, "R");
+  }
+
   render() {
     var i = 0;
-
+    console.log(this.state.filterAll, "-------------------Filter All----");
+    console.log(this.state.filtered, "-------------------Filtered----");
     return (
       <div>
         <Headers />
@@ -1251,7 +1281,7 @@ class RateTable extends Component {
                   maxValue={75}
                   minValue={32}
                   value={this.state.value}
-                  onChange={value => this.setState({ value })}
+                  onChange={this.HandleRangeSlider.bind(this)}
                 />
               </div>
               <div className="rate-table-butn">
@@ -1472,8 +1502,85 @@ class RateTable extends Component {
                                   </React.Fragment>
                                 );
                               },
-                              accessor: "lineName",
-                              minWidth: 200
+                              accessor: "lineName"
+                              // minWidth: 200
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POL</p>
+                                    <p className="details-para">
+                                      {row.original.POLName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "POLName",
+                              //  minWidth: 175
+                              filterable: true
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POD</p>
+                                    <p className="details-para">
+                                      {row.original.PODName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "PODName",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">
+                                      Shipment Port
+                                    </p>
+                                    <p className="details-para">
+                                      {row.original.TransshipmentPort}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "TransshipmentPort",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Free Time</p>
+                                    <p className="details-para">
+                                      {row.original.freeTime}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "freeTime",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Container</p>
+                                    <p className="details-para">
+                                      {row.original.ContainerType}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "ContainerType",
+                              filterable: true
+                              //minWidth: 175
                             },
                             {
                               Cell: row => {
@@ -1490,7 +1597,8 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "expiryDate" || "ExpiryDate",
-                              minWidth: 175
+                              filterable: true
+                              // minWidth: 175
                             },
                             {
                               Cell: row => {
@@ -1523,7 +1631,8 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "baseFreightFee",
-                              minWidth: 120
+                              filterable: true
+                              // minWidth: 120
                             }
                           ]
                         },
@@ -1534,6 +1643,7 @@ class RateTable extends Component {
                           width: 0,
                           resizable: false,
                           sortable: false,
+                          filterAll: true,
                           Filter: () => {},
                           getProps: () => {
                             return {
@@ -1541,21 +1651,34 @@ class RateTable extends Component {
                             };
                           },
                           filterMethod: (filter, rows) => {
+                            debugger;
+
                             const result = matchSorter(rows, filter.value, {
-                              keys: ["commodities"],
+                              keys: ["commodities", "TransitTime"],
                               threshold: matchSorter.rankings.WORD_STARTS_WITH
                             });
-
+                            console.log(
+                              result,
+                              "---------------result---------------"
+                            );
                             return result;
-                          },
-                          filterAll: true
+                          }
                         }
                       ]}
                       onFilteredChange={this.onFilteredChange.bind(this)}
                       filtered={this.state.filtered}
                       defaultFilterMethod={(filter, row) =>
-                        String(row[filter.id]) === filter.value
+                        String(row[filter.rateID]) === filter.value
                       }
+                      filterable
+                      // expanded={this.state.expanded}
+                      // onExpandedChange={(expand, event) => {
+                      //   this.setState({
+                      //     expanded: {
+                      //       [event]: {}
+                      //     }
+                      //   });
+                      // }}
                       data={this.state.RateDetails}
                       defaultPageSize={10}
                       className="-striped -highlight"
@@ -1564,7 +1687,9 @@ class RateTable extends Component {
                           <div style={{ padding: "20px 0" }}>
                             <ReactTable
                               minRows={1}
-                              data={this.state.RateSubDetails}
+                              data={this.state.RateSubDetails.filter(
+                                d => d.RateLineID === row.original.rateID
+                              )}
                               columns={[
                                 {
                                   columns: [
