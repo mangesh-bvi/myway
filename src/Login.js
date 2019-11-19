@@ -16,6 +16,7 @@ function App(props) {
 }
 
 const mapStateToProps=(state)=>{  
+  debugger
     console.log(state);
     return {
       myname:state.username
