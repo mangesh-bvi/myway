@@ -261,9 +261,10 @@ class NewRateSearch extends Component {
   }
 
   HandleCMBtextChange(e) {
+    debugger
     var Textvalue = e.target.value;
 
-    this.setState({ cbmVal: parseInt(Textvalue) });
+    this.setState({ cbmVal: Textvalue });
   }
   toggleNonStackable() {
     this.setState({ NonStackable: !this.state.NonStackable });
@@ -1345,7 +1346,7 @@ class NewRateSearch extends Component {
 
   HandleTypeofMove(e) {
     var type = e.target.value;
-
+    debugger;
     if (type === "p2p") {
       this.setState(
         {
@@ -2211,7 +2212,7 @@ class NewRateSearch extends Component {
   // }
 
   render() {
-    console.log(this.state, "--------------state--------------");
+    console.log(this.state.typesofMove, "--------------state--------------");
     let self = this;
 
     const optionsSpeEqu = [
@@ -2852,7 +2853,7 @@ class NewRateSearch extends Component {
                 <div className="row justify-content-center" id="addressInner">
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
-                      {this.state.typesofMove == "p2p" &&
+                      {this.state.typesofMove == "p2p" ||
                       this.state.typesofMove === "p2d" ? (
                         <ReactAutocomplete
                           getItemValue={item => item.OceanPortLongName}

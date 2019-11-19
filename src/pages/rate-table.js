@@ -23,6 +23,7 @@ import {
 import GreenIcon from "./../assets/img/green-circle.png";
 import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
+import matchSorter from "match-sorter";
 
 const { compose } = require("recompose");
 const POLMaps = compose(
@@ -116,13 +117,14 @@ class RateTable extends Component {
       NonStackable: false,
       Custom_Clearance: false,
       typeofMoveCheck: true,
-
+      incoTeam: "",
       modalPOL: false,
       modalPOD: false,
       modalQuant: false,
       value: 50,
       RateDetails: [],
-      values: [],
+      valuesPOL: [{ pol: "" }],
+      valuesPOD: [{ pod: "" }],
       RateSubDetails: [],
       checkSelection: [],
       polLatLng: {},
@@ -144,11 +146,14 @@ class RateTable extends Component {
       specialEquipment: false,
       polpodDataAdd: [],
       fields: {},
-      polfullAddData: [],
-      podfullAddData: [],
+      polfullAddData: {},
+      podfullAddData: {},
       mapPositionPOL: [],
       markerPositionPOD: [],
-      zoomPOL: 0
+      zoomPOL: 0,
+      filterAll: "",
+      filtered: [],
+      incoTerms: ""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -158,6 +163,8 @@ class RateTable extends Component {
     this.checkSelection = this.checkSelection.bind(this);
     this.HandleCommodityData = this.HandleCommodityData.bind(this);
     this.toggleSpot = this.toggleSpot.bind(this);
+    this.filterAll = this.filterAll.bind(this);
+    this.onFilteredChange = this.onFilteredChange.bind(this);
   }
 
   static defaultProps = {
@@ -184,7 +191,7 @@ class RateTable extends Component {
         }
       }
     } else {
-      this.props.history.push("rate-search");
+      this.props.history.push("new-rate-search");
     }
   }
 
@@ -206,10 +213,10 @@ class RateTable extends Component {
 
   handleCheck() {
     debugger;
-    // this.props.history.push({
-    //   pathname: "rate-finalizing",
-    //   //state: { rateDetail: this.state.RateDetails }
-    // });
+    this.props.history.push({
+      pathname: "rate-finalizing",
+      state: this.state
+    });
   }
 
   toggleRow(rateID, rowData) {
@@ -304,7 +311,7 @@ class RateTable extends Component {
         polLatLng.lat = Number(polmapData.split(",")[0]);
         polLatLng.lng = Number(polmapData.split(",")[1]);
 
-        polmarkerData.push(polmapData);
+        polmarkerData.push(polLatLng);
       } else {
         var mapPositionPOL = paramData.mapPositionPOL;
         if (mapPositionPOL !== null && typeof mapPositionPOL !== "undefined") {
@@ -333,10 +340,9 @@ class RateTable extends Component {
       });
       debugger;
       var selectedPOLPOD =
-        paramData.polfullAddData.NameWoDiacritics ||
-        paramData.PickupCity +
-          " To " +
-          paramData.podfullAddData.NameWoDiacritics;
+        paramData.polfullAddData.NameWoDiacritics || paramData.PickupCity;
+      selectedPOLPOD =
+        selectedPOLPOD + " To " + paramData.podfullAddData.NameWoDiacritics;
 
       dataParameter = {
         QuoteType: paramData.containerLoadType,
@@ -362,6 +368,7 @@ class RateTable extends Component {
         RateQueryDim: paramData.multiCBM
       };
 
+      var incoTerms = paramData.incoTerms;
       this.setState({
         shipmentType: paramData.shipmentType,
         modeoftransport: paramData.modeoftransport,
@@ -379,7 +386,10 @@ class RateTable extends Component {
         spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
         specialEqtSelect: paramData.specialEqtSelect,
         refertypeSelect: paramData.refertypeSelect,
-        specialEquipment: paramData.specialEquipment
+        specialEquipment: paramData.specialEquipment,
+        incoTerms,
+        polfullAddData: paramData.polfullAddData,
+        podfullAddData: paramData.podfullAddData
       });
     }
 
@@ -417,10 +427,20 @@ class RateTable extends Component {
     this.setState({ checkSelection: rowDataAry });
   }
 
-  addClick() {
+  addClickPOL() {
     this.setState(prevState => ({
-      values: [
-        ...prevState.values,
+      valuesPOL: [
+        ...prevState.valuesPOL,
+        {
+          POD: ""
+        }
+      ]
+    }));
+  }
+  addClickPOD() {
+    this.setState(prevState => ({
+      valuesPOD: [
+        ...prevState.valuesPOD,
         {
           POD: ""
         }
@@ -428,8 +448,8 @@ class RateTable extends Component {
     }));
   }
 
-  createUI() {
-    return this.state.values.map((el, index) => {
+  createUIPOL() {
+    return this.state.valuesPOL.map((el, index) => {
       return (
         <div>
           <div className="rename-cntr login-fields position-relative">
@@ -469,22 +489,80 @@ class RateTable extends Component {
             <i
               className="fa fa-minus equip-plus"
               id={"remove" + (index + 1)}
-              onClick={this.removeClick.bind(this, index)}
+              onClick={this.removeClickPOL.bind(this, index)}
             ></i>
           </div>
-          <div className="rename-cntr login-fields">
+          {/* <div className="rename-cntr login-fields">
             <textarea className="txt-add" placeholder="Enter POL"></textarea>
-          </div>
+          </div> */}
         </div>
       );
     });
   }
 
-  removeClick(i) {
+  createUIPOD() {
+    return this.state.valuesPOD.map((el, index) => {
+      return (
+        <div>
+          <div className="rename-cntr login-fields position-relative">
+            <ReactAutocomplete
+              name="POD"
+              getItemValue={item => item.OceanPortLongName}
+              items={this.state.polpodData}
+              renderItem={(item, isHighlighted) => (
+                <div
+                  style={{
+                    background: isHighlighted ? "lightgray" : "white"
+                  }}
+                  value={item.AirPortID}
+                >
+                  {item.OceanPortLongName}
+                </div>
+              )}
+              renderInput={function(props) {
+                return (
+                  <input
+                    placeholder="Enter POD"
+                    className="w-100"
+                    type="text"
+                    {...props}
+                  />
+                );
+              }}
+              onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
+              //menuStyle={this.state.menuStyle}
+              onSelect={this.HandleAddressDropdownPolSelect.bind(
+                this,
+                item => item.NameWoDiacritics,
+                "pod"
+              )}
+              value={this.state.fields["pod"]}
+            />
+            <i
+              className="fa fa-minus equip-plus"
+              id={"remove" + (index + 1)}
+              onClick={this.removeClickPOD.bind(this, index)}
+            ></i>
+          </div>
+          {/* <div className="rename-cntr login-fields">
+            <textarea className="txt-add" placeholder="Enter POL"></textarea>
+          </div> */}
+        </div>
+      );
+    });
+  }
+
+  removeClickPOL(i) {
     debugger;
-    let values = [...this.state.values];
-    values.splice(i, 1);
-    this.setState({ values });
+    let valuesPOL = [...this.state.valuesPOL];
+    valuesPOL.splice(i, 1);
+    this.setState({ valuesPOL });
+  }
+  removeClickPOD(i) {
+    debugger;
+    let valuesPOD = [...this.state.valuesPOD];
+    valuesPOD.splice(i, 1);
+    this.setState({ valuesPOD });
   }
 
   //// start refer type  dynamic element
@@ -1112,12 +1190,29 @@ class RateTable extends Component {
     // podmarkerData.push(podmapData);
     // this.setState({});
   };
+
+  onFilteredChange(filtered) {
+    debugger;
+    if (filtered.length > 1 && this.state.filterAll.length) {
+      // NOTE: this removes any FILTER ALL filter
+      const filterAll = "";
+      this.setState({
+        filtered: filtered.filter(item => item.id != "all"),
+        filterAll
+      });
+    } else this.setState({ filtered });
+  }
+  filterAll(e) {
+    debugger;
+    const { value } = e.target;
+    const filterAll = value;
+    const filtered = [{ id: "all", value: filterAll }];
+
+    this.setState({ filterAll, filtered });
+  }
+
   render() {
     var i = 0;
-    console.log(
-      this.state.TypeofMove,
-      "---------------------------type Of move-----"
-    );
 
     return (
       <div>
@@ -1132,10 +1227,10 @@ class RateTable extends Component {
                 <h2>Rate Table</h2>
               </div>
               <div className="login-fields mb-0 rate-tab-drop">
-                <select>
+                <select onChange={this.filterAll}>
                   <option>Select</option>
                   {this.state.commodityData.map((item, i) => (
-                    <option key={i} value={item.id}>
+                    <option key={i} value={item.Commodity}>
                       {item.Commodity}
                     </option>
                   ))}
@@ -1153,20 +1248,20 @@ class RateTable extends Component {
                 />
               </div>
               <div className="rate-table-butn">
-                {/* <button
-                  onClick={this.handleCheck}
+                <button
+                  onClick={this.handleCheck.bind(this)}
                   className="blue-butn butn m-0"
                 >
                   Proceed
-                </button> */}
-                <Link
+                </button>
+                {/* <Link
                   to={{
                     pathname: "/rate-finalizing"
                   }}
                   className="blue-butn butn m-0"
                 >
                   Proceed
-                </Link>
+                </Link> */}
               </div>
             </div>
             <div className="rate-table-below">
@@ -1384,13 +1479,12 @@ class RateTable extends Component {
                                   <>
                                     <p className="details-title">TT</p>
                                     <p className="details-para">
-                                      {row.original.transitTime ||
-                                        row.original.TransitTimeTo}
+                                      {row.original.TransitTime}
                                     </p>
                                   </>
                                 );
                               },
-                              accessor: "transitTime" || "TransitTimeTo",
+                              accessor: "TransitTime",
                               minWidth: 120
                             },
                             {
@@ -1413,8 +1507,36 @@ class RateTable extends Component {
                               minWidth: 120
                             }
                           ]
+                        },
+                        {
+                          show: false,
+                          Header: "All",
+                          id: "all",
+                          width: 0,
+                          resizable: false,
+                          sortable: false,
+                          Filter: () => {},
+                          getProps: () => {
+                            return {
+                              // style: { padding: "0px"}
+                            };
+                          },
+                          filterMethod: (filter, rows) => {
+                            const result = matchSorter(rows, filter.value, {
+                              keys: ["commodities"],
+                              threshold: matchSorter.rankings.WORD_STARTS_WITH
+                            });
+
+                            return result;
+                          },
+                          filterAll: true
                         }
                       ]}
+                      onFilteredChange={this.onFilteredChange.bind(this)}
+                      filtered={this.state.filtered}
+                      defaultFilterMethod={(filter, row) =>
+                        String(row[filter.id]) === filter.value
+                      }
                       data={this.state.RateDetails}
                       defaultPageSize={10}
                       className="-striped -highlight"
@@ -1604,10 +1726,11 @@ class RateTable extends Component {
                 <div className="pol-mar">
                   <div>
                     <div className="rename-cntr login-fields position-relative">
-                      <i
+                      {this.createUIPOL()}
+                      {/* <i
                         className="fa fa-plus equip-plus"
                         onClick={this.addClick.bind(this)}
-                      ></i>
+                      ></i> */}
                     </div>
                     {/* <div className="rename-cntr login-fields">
                       <textarea
@@ -1616,7 +1739,6 @@ class RateTable extends Component {
                       ></textarea>
                     </div> */}
                   </div>
-                  {this.createUI()}
                 </div>
                 <Button className="butn">Done</Button>
                 <Button
@@ -1688,11 +1810,12 @@ class RateTable extends Component {
                           mapElement={<div />}
                         />
                       )} */}
-                      <input type="text" />
-                      <i
+                      {/* <input type="text" /> */}
+                      {this.createUIPOD()}
+                      {/* <i
                         className="fa fa-plus equip-plus"
                         onClick={this.addClick.bind(this)}
-                      ></i>
+                      ></i> */}
                     </div>
                     {/* <div className="rename-cntr login-fields">
                       <textarea
@@ -1701,7 +1824,6 @@ class RateTable extends Component {
                       ></textarea>
                     </div> */}
                   </div>
-                  {this.createUI()}
                 </div>
                 <Button className="butn">Done</Button>
                 <Button
