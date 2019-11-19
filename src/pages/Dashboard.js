@@ -1186,7 +1186,7 @@ class Dashboard extends Component {
                             {Invoices}
                           </div>
                         </div>
-                        <span className="viewmore-span">...View More</span>
+                        {/* <span className="viewmore-span">...View More</span> */}
                       </div>
                     </div>
                   </div>

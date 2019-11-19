@@ -430,6 +430,13 @@ table tbody tr:last-child {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* .-sort-desc {
+  box-shadow: none !important;
+}
+.-sort-desc::before {
+  content: "▼";
+  float: right;
+} */
 /* shipping details ends */
 
 /* shipping details 2 starts */
