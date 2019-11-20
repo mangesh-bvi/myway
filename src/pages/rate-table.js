@@ -24,6 +24,7 @@ import GreenIcon from "./../assets/img/green-circle.png";
 import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
+import $ from "jquery";
 
 const { compose } = require("recompose");
 const POLMaps = compose(
@@ -121,11 +122,12 @@ class RateTable extends Component {
       modalPOL: false,
       modalPOD: false,
       modalQuant: false,
-      value: 50,
+      value: 0,
       RateDetails: [],
+      expanded: {},
+      RateSubDetails: [],
       valuesPOL: [{ pol: "" }],
       valuesPOD: [{ pod: "" }],
-      RateSubDetails: [],
       checkSelection: [],
       polLatLng: {},
       podmapData: {},
@@ -153,7 +155,10 @@ class RateTable extends Component {
       zoomPOL: 0,
       filterAll: "",
       filtered: [],
-      incoTerms: ""
+      incoTerms: "",
+      selectedCommodity: "",
+      tempRateDetails: [],
+      polpodData: []
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -166,6 +171,7 @@ class RateTable extends Component {
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
     this.custClearToggle = this.custClearToggle.bind(this);
+    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   static defaultProps = {
@@ -177,7 +183,8 @@ class RateTable extends Component {
   };
 
   componentDidMount() {
-    debugger;
+    document.addEventListener("mousedown", this.handleClickOutside);
+
     setTimeout(() => {
       this.HandleCommodityData();
     }, 100);
@@ -195,16 +202,27 @@ class RateTable extends Component {
       this.props.history.push("new-rate-search");
     }
   }
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
 
+  handleClickOutside(event) {
+    // alert(1);
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      //   this.props.toggle();
+    }
+  }
   togglePODModal() {
-    this.setState(prevState => ({
-      modalPOD: !prevState.modalPOD
-    }));
+    this.setState({
+      modalPOD: !this.state.modalPOD
+    });
   }
   togglePOLModal() {
-    this.setState(prevState => ({
-      modalPOL: !prevState.modalPOL
-    }));
+    debugger;
+
+    this.setState({
+      modalPOL: !this.state.modalPOL
+    });
   }
   toggleQuant() {
     this.setState(prevState => ({
@@ -213,7 +231,6 @@ class RateTable extends Component {
   }
 
   handleCheck() {
-    debugger;
     this.props.history.push({
       pathname: "rate-finalizing",
       state: this.state
@@ -221,8 +238,6 @@ class RateTable extends Component {
   }
 
   toggleRow(rateID, rowData) {
-    debugger;
-
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
     this.setState({
@@ -278,7 +293,6 @@ class RateTable extends Component {
   HandleRateDetailsFCL(paramData) {
     var dataParameter = {};
     if (paramData.isSearch) {
-      debugger;
       var rTypeofMove =
         paramData.typesofMove === "p2p"
           ? 1
@@ -300,9 +314,9 @@ class RateTable extends Component {
           : "";
       var polAddress = paramData.polfullAddData;
       var podAddress = paramData.podfullAddData;
-      var rateQueryDim = [];
+
       var containerdetails = paramData.users;
-      debugger;
+
       var polLatLng = new Object();
       var podLatLng = new Object();
 
@@ -340,10 +354,19 @@ class RateTable extends Component {
         selected: paramData.selected
       });
       debugger;
-      var selectedPOLPOD =
+
+      var selectedPOL =
         paramData.polfullAddData.NameWoDiacritics || paramData.PickupCity;
-      selectedPOLPOD =
-        selectedPOLPOD + " To " + paramData.podfullAddData.NameWoDiacritics;
+      var SelectPOD =
+        paramData.podfullAddData.NameWoDiacritics || paramData.DeliveryCity;
+      var selectedPOLPOD = selectedPOL + " To " + SelectPOD;
+
+      var cmbvalue = paramData.cbmVal;
+      if (cmbvalue != "") {
+        cmbvalue = parseInt(cmbvalue);
+      } else {
+        cmbvalue = 0;
+      }
 
       dataParameter = {
         QuoteType: paramData.containerLoadType,
@@ -365,7 +388,7 @@ class RateTable extends Component {
         DeliveryCity:
           podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
         Currency: paramData.currencyCode,
-        ChargeableWeight: 0,
+        ChargeableWeight: cmbvalue,
         RateQueryDim: paramData.multiCBM
       };
 
@@ -408,7 +431,8 @@ class RateTable extends Component {
       var ratetable1 = response.data.Table1;
       if (ratetable != null) {
         self.setState({
-          RateDetails: ratetable
+          RateDetails: ratetable,
+          tempRateDetails: ratetable
         });
       }
       if (ratetable1 != null) {
@@ -433,10 +457,11 @@ class RateTable extends Component {
       valuesPOL: [
         ...prevState.valuesPOL,
         {
-          POD: ""
+          POL: ""
         }
       ]
     }));
+    console.log(this.state.valuesPOL, "--------------POL Values");
   }
   addClickPOD() {
     this.setState(prevState => ({
@@ -450,52 +475,81 @@ class RateTable extends Component {
   }
 
   createUIPOL() {
+    debugger;
     return this.state.valuesPOL.map((el, index) => {
       return (
-        <div>
-          <div className="rename-cntr login-fields position-relative">
-            <ReactAutocomplete
-              name="POD"
-              getItemValue={item => item.OceanPortLongName}
-              items={this.state.polpodData}
-              renderItem={(item, isHighlighted) => (
-                <div
-                  style={{
-                    background: isHighlighted ? "lightgray" : "white"
-                  }}
-                  value={item.AirPortID}
-                >
-                  {item.OceanPortLongName}
-                </div>
-              )}
-              renderInput={function(props) {
-                return (
-                  <input
-                    placeholder="Enter POD"
-                    className="w-100"
-                    type="text"
-                    {...props}
-                  />
-                );
-              }}
-              onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
-              //menuStyle={this.state.menuStyle}
-              onSelect={this.HandleAddressDropdownPolSelect.bind(
-                this,
-                item => item.NameWoDiacritics,
-                "pod"
-              )}
-              value={this.state.fields["pol"]}
-            />
-            <i
-              className="fa fa-minus equip-plus"
-              id={"remove" + (index + 1)}
-              onClick={this.removeClickPOL.bind(this, index)}
-            ></i>
-          </div>
-          {/* <div className="rename-cntr login-fields">
+        <div key={index} className="row">
+          <div
+            className={
+              this.state.typeofMove === 1 || this.state.typeofMove === 3
+                ? "rename-cntr login-fields position-relative"
+                : ""
+            }
+          >
+            {this.state.typeofMove === 1 || this.state.typeofMove === 3 ? (
+              <ReactAutocomplete
+                key={index}
+                name="POL"
+                getItemValue={item => item.OceanPortLongName}
+                items={this.state.polpodData}
+                renderItem={(item, isHighlighted) => (
+                  <div
+                    style={{
+                      background: isHighlighted ? "lightgray" : "white"
+                    }}
+                    value={item.AirPortID}
+                  >
+                    {item.OceanPortLongName}
+                  </div>
+                )}
+                renderInput={function(props) {
+                  return (
+                    <input
+                      placeholder="Enter POD"
+                      className="w-100"
+                      type="text"
+                      {...props}
+                    />
+                  );
+                }}
+                onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
+                //menuStyle={this.state.menuStyle}
+                onSelect={this.HandleAddressDropdownPolSelect.bind(
+                  this,
+                  item => item.NameWoDiacritics,
+                  "pod"
+                )}
+                value={this.state.fields["pol"]}
+              />
+            ) : (
+              <AutoCompletePOLMaps
+                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                containerElement={
+                  <div style={{ height: `100%`, width: "100%" }} />
+                }
+                mapElement={<div />}
+                loadingElement={<div style={{ height: `100%` }} />}
+              ></AutoCompletePOLMaps>
+            )}
+
+            {index === 0 ? (
+              <i
+                className="fa fa-plus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.addClickPOL.bind(this, index)}
+              ></i>
+            ) : (
+              <i
+                className="fa fa-minus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.removeClickPOL.bind(this, index)}
+              ></i>
+            )}
+
+            {/* <div className="rename-cntr login-fields">
             <textarea className="txt-add" placeholder="Enter POL"></textarea>
           </div> */}
+          </div>
         </div>
       );
     });
@@ -504,50 +558,72 @@ class RateTable extends Component {
   createUIPOD() {
     return this.state.valuesPOD.map((el, index) => {
       return (
-        <div>
-          <div className="rename-cntr login-fields position-relative">
-            <ReactAutocomplete
-              name="POD"
-              getItemValue={item => item.OceanPortLongName}
-              items={this.state.polpodData}
-              renderItem={(item, isHighlighted) => (
-                <div
-                  style={{
-                    background: isHighlighted ? "lightgray" : "white"
-                  }}
-                  value={item.AirPortID}
-                >
-                  {item.OceanPortLongName}
-                </div>
-              )}
-              renderInput={function(props) {
-                return (
-                  <input
-                    placeholder="Enter POD"
-                    className="w-100"
-                    type="text"
-                    {...props}
-                  />
-                );
-              }}
-              onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
-              //menuStyle={this.state.menuStyle}
-              onSelect={this.HandleAddressDropdownPolSelect.bind(
-                this,
-                item => item.NameWoDiacritics,
-                "pod"
-              )}
-              value={this.state.fields["pod"]}
-            />
-            <i
-              className="fa fa-minus equip-plus"
-              id={"remove" + (index + 1)}
-              onClick={this.removeClickPOD.bind(this, index)}
-            ></i>
+        <div key={index} className="row">
+          <div
+            className={
+              this.state.typeofMove === 1 || this.state.typeofMove === 3
+                ? "rename-cntr login-fields position-relative"
+                : ""
+            }
+          >
+            {this.state.typeofMove === 1 || this.state.typeofMove ===3 ? (
+              <ReactAutocomplete
+                key={index}
+                name="POL"
+                getItemValue={item => item.OceanPortLongName}
+                items={this.state.polpodData}
+                renderItem={(item, isHighlighted) => (
+                  <div
+                    style={{
+                      background: isHighlighted ? "lightgray" : "white"
+                    }}
+                    value={item.AirPortID}
+                  >
+                    {item.OceanPortLongName}
+                  </div>
+                )}
+                renderInput={function(props) {
+                  return (
+                    <input
+                      placeholder="Enter POD"
+                      className="w-100"
+                      type="text"
+                      {...props}
+                    />
+                  );
+                }}
+                onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
+                //menuStyle={this.state.menuStyle}
+                onSelect={this.HandleAddressDropdownPolSelect.bind(
+                  this,
+                  item => item.NameWoDiacritics,
+                  "pod"
+                )}
+                value={this.state.fields["pod"]}
+              />
+            ) : (
+              <AutoCompletePODMaps
+                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                containerElement={<div />}
+                mapElement={<div />}
+                loadingElement={<div />}
+              ></AutoCompletePODMaps>
+            )}
+
+            {index === 0 ? (
+              <i
+                className="fa fa-plus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.addClickPOD.bind(this, index)}
+              ></i>
+            ) : (
+              <i
+                className="fa fa-minus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.removeClickPOD.bind(this, index)}
+              ></i>
+            )}
           </div>
-          {/* <div className="rename-cntr login-fields">
-            <textarea className="txt-add" placeholder="Enter POL"></textarea>
-          </div> */}
         </div>
       );
     });
@@ -947,7 +1023,7 @@ class RateTable extends Component {
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
       if (
-        this.state.referType[i].referTypeName === value[0].SpecialContainerCode
+        this.state.referType[i].referTypeName === value.SpecialContainerCode
       ) {
         difference = true;
         break;
@@ -958,7 +1034,7 @@ class RateTable extends Component {
     for (var i = 0; i < this.state.flattack_openTop.length; i++) {
       if (
         this.state.flattack_openTop[i].SpecialContainerCode ===
-        value[0].SpecialContainerCode
+        value.SpecialContainerCode
       ) {
         difference1 = true;
         break;
@@ -967,9 +1043,7 @@ class RateTable extends Component {
 
     var difference2 = false;
     for (var i = 0; i < this.state.spacEqmtType.length; i++) {
-      if (
-        this.state.spacEqmtType[i].TypeName === value[0].SpecialContainerCode
-      ) {
+      if (this.state.spacEqmtType[i].TypeName === value.SpecialContainerCode) {
         difference2 = true;
         break;
       }
@@ -1203,19 +1277,37 @@ class RateTable extends Component {
       });
     } else this.setState({ filtered });
   }
-  filterAll(e) {
+  filterAll(e, type) {
     debugger;
     const { value } = e.target;
-    const filterAll = value;
-    const filtered = [{ id: "all", value: filterAll }];
-
-    this.setState({ filterAll, filtered });
+    if (typeof type !== "undefined" && type !== "" && type !== null) {
+    } else {
+      if (value !== "All") {
+        var filterData = this.state.tempRateDetails.filter(
+          x => x.commodities === value
+        );
+        if (filterData.length > 0) {
+          this.setState({
+            tempRateDetails: filterData,
+            Commodity: value
+          });
+        }
+      } else {
+        this.setState({ tempRateDetails: this.state.RateDetails });
+      }
+    }
   }
 
   custClearToggle() {
     this.setState({
       Custom_Clearance: !this.state.Custom_Clearance
     });
+  }
+
+  HandleRangeSlider(value) {
+    this.setState({ value });
+    debugger;
+    this.filterAll(value, "R");
   }
 
   render() {
@@ -1236,6 +1328,7 @@ class RateTable extends Component {
               <div className="login-fields mb-0 rate-tab-drop">
                 <select onChange={this.filterAll}>
                   <option>Select</option>
+                  <option value="All">All</option>
                   {this.state.commodityData.map((item, i) => (
                     <option key={i} value={item.Commodity}>
                       {item.Commodity}
@@ -1251,7 +1344,7 @@ class RateTable extends Component {
                   maxValue={75}
                   minValue={32}
                   value={this.state.value}
-                  onChange={value => this.setState({ value })}
+                  onChange={this.HandleRangeSlider.bind(this)}
                 />
               </div>
               <div className="rate-table-butn">
@@ -1291,9 +1384,9 @@ class RateTable extends Component {
                           : this.state.typeofMove === 2
                           ? "D2P"
                           : this.state.typeofMove === 4
-                          ? "P2D"
-                          : this.state.typeofMove === 3
                           ? "D2D"
+                          : this.state.typeofMove === 3
+                          ? "P2D"
                           : ""}
                       </a>
                     </div>
@@ -1383,15 +1476,7 @@ class RateTable extends Component {
                         >
                           +
                         </span>
-                        {/* <GoogleMapReact
-                          bootstrapURLKeys={{
-                            key: "AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"
-                          }}
-                          defaultCenter={this.props.center}
-                          defaultZoom={this.props.zoom}
-                        >
-                          <SourceIcon lat={59.955413} lng={30.337844} />
-                        </GoogleMapReact> */}
+
                         <POLMaps
                           markerPOLData={this.state.mapPositionPOL}
                           googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
@@ -1405,7 +1490,7 @@ class RateTable extends Component {
                       <div className="pol-pod-maps pod-maps">
                         <span className="rate-map-ovrly">POD</span>
                         <span
-                          onClick={this.togglePOLModal}
+                          onClick={this.togglePODModal}
                           className="rate-map-ovrly rate-map-plus"
                         >
                           +
@@ -1472,8 +1557,85 @@ class RateTable extends Component {
                                   </React.Fragment>
                                 );
                               },
-                              accessor: "lineName",
-                              minWidth: 200
+                              accessor: "lineName"
+                              // minWidth: 200
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POL</p>
+                                    <p className="details-para">
+                                      {row.original.POLName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "POLName",
+                              //  minWidth: 175
+                              filterable: true
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POD</p>
+                                    <p className="details-para">
+                                      {row.original.PODName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "PODName",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">
+                                      Shipment Port
+                                    </p>
+                                    <p className="details-para">
+                                      {row.original.TransshipmentPort}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "TransshipmentPort",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Free Time</p>
+                                    <p className="details-para">
+                                      {row.original.freeTime}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "freeTime",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Container</p>
+                                    <p className="details-para">
+                                      {row.original.ContainerType}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "ContainerType",
+                              filterable: true
+                              //minWidth: 175
                             },
                             {
                               Cell: row => {
@@ -1490,7 +1652,8 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "expiryDate" || "ExpiryDate",
-                              minWidth: 175
+                              filterable: true
+                              // minWidth: 175
                             },
                             {
                               Cell: row => {
@@ -1523,7 +1686,8 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "baseFreightFee",
-                              minWidth: 120
+                              filterable: true
+                              // minWidth: 120
                             }
                           ]
                         },
@@ -1534,6 +1698,7 @@ class RateTable extends Component {
                           width: 0,
                           resizable: false,
                           sortable: false,
+                          filterAll: true,
                           Filter: () => {},
                           getProps: () => {
                             return {
@@ -1541,22 +1706,35 @@ class RateTable extends Component {
                             };
                           },
                           filterMethod: (filter, rows) => {
+                            debugger;
+
                             const result = matchSorter(rows, filter.value, {
-                              keys: ["commodities"],
+                              keys: ["commodities", "TransitTime"],
                               threshold: matchSorter.rankings.WORD_STARTS_WITH
                             });
-
+                            console.log(
+                              result,
+                              "---------------result---------------"
+                            );
                             return result;
-                          },
-                          filterAll: true
+                          }
                         }
                       ]}
                       onFilteredChange={this.onFilteredChange.bind(this)}
                       filtered={this.state.filtered}
                       defaultFilterMethod={(filter, row) =>
-                        String(row[filter.id]) === filter.value
+                        String(row[filter.rateID]) === filter.value
                       }
-                      data={this.state.RateDetails}
+                      filterable
+                      // expanded={this.state.expanded}
+                      // onExpandedChange={(expand, event) => {
+                      //   this.setState({
+                      //     expanded: {
+                      //       [event]: {}
+                      //     }
+                      //   });
+                      // }}
+                      data={this.state.tempRateDetails}
                       defaultPageSize={10}
                       className="-striped -highlight"
                       SubComponent={row => {
@@ -1564,7 +1742,9 @@ class RateTable extends Component {
                           <div style={{ padding: "20px 0" }}>
                             <ReactTable
                               minRows={1}
-                              data={this.state.RateSubDetails}
+                              data={this.state.RateSubDetails.filter(
+                                d => d.RateLineID === row.original.rateID
+                              )}
                               columns={[
                                 {
                                   columns: [
@@ -1651,12 +1831,11 @@ class RateTable extends Component {
                 )}
               </div>
             </div>
-            {/*  ////EquipmentType  */}
+            {/*  --------------------------EquipmentType  Modal ---------------------*/}
 
             <Modal
               className="delete-popup text-left"
               isOpen={this.state.modalQuant}
-              toggle={this.toggleQuant}
               centered={true}
             >
               <ModalBody>
@@ -1740,32 +1919,20 @@ class RateTable extends Component {
                 </div>
               </ModalBody>
             </Modal>
-
-            {/* POL modal  */}
+            {/* {-------------------------End Equipment Type Modal---------------------------} */}
+            {/* -----------------------Mutiple POL Modal  ------------------*/}
 
             <Modal
               className="delete-popup pol-pod-popup"
               isOpen={this.state.modalPOL}
-              toggle={this.togglePOLModal}
               centered={true}
             >
               <ModalBody>
                 <div className="pol-mar">
-                  <div>
-                    <div className="rename-cntr login-fields position-relative">
-                      {this.createUIPOL()}
-                      {/* <i
-                        className="fa fa-plus equip-plus"
-                        onClick={this.addClick.bind(this)}
-                      ></i> */}
-                    </div>
-                    {/* <div className="rename-cntr login-fields">
-                      <textarea
-                        className="txt-add"
-                        placeholder="Enter POL"
-                      ></textarea>
-                    </div> */}
-                  </div>
+                  {/* <div className="rename-cntr login-fields position-relative"> */}
+                  {this.createUIPOL()}
+
+                  {/* </div> */}
                 </div>
                 <Button className="butn">Done</Button>
                 <Button
@@ -1776,81 +1943,17 @@ class RateTable extends Component {
                 </Button>
               </ModalBody>
             </Modal>
-
-            {/* POD modal  */}
+            {/* {----------------------End Mutiple POL Modal-----------------------} */}
+            {/*-----------------------Mutiple POD Modal ------------------- */}
 
             <Modal
               className="delete-popup pol-pod-popup"
               isOpen={this.state.modalPOD}
-              toggle={this.togglePODModal}
               centered={true}
             >
               <ModalBody>
                 <div className="pol-mar">
-                  <div>
-                    <div className="rename-cntr login-fields position-relative">
-                      {/* {this.state.typeofMove === 2 ||
-                      this.state.typeofMove === 4 ? (
-                        <ReactAutocomplete
-                          getItemValue={item => item.OceanPortLongName}
-                          items={this.state.polpodData}
-                          renderItem={(item, isHighlighted) => (
-                            <div
-                              style={{
-                                background: isHighlighted
-                                  ? "lightgray"
-                                  : "white"
-                              }}
-                              value={item.AirPortID}
-                            >
-                              {item.OceanPortLongName}
-                            </div>
-                          )}
-                          renderInput={function(props) {
-                            return (
-                              <input
-                                placeholder="Enter POD"
-                                className="w-100"
-                                type="text"
-                                {...props}
-                              />
-                            );
-                          }}
-                          onChange={this.HandlePOLPODAutosearch.bind(
-                            this,
-                            "pod"
-                          )}
-                          //menuStyle={this.state.menuStyle}
-                          onSelect={this.HandleAddressDropdownPolSelect.bind(
-                            this,
-                            item => item.NameWoDiacritics,
-                            "pod"
-                          )}
-                          value={this.state.fields["pol"]}
-                        />
-                      ) : (
-                        <AutoCompletePODMaps
-                          onPlaceSelected={this.onPlaceSelected}
-                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
-                          loadingElement={<div />}
-                          containerElement={<div />}
-                          mapElement={<div />}
-                        />
-                      )} */}
-                      {/* <input type="text" /> */}
-                      {this.createUIPOD()}
-                      {/* <i
-                        className="fa fa-plus equip-plus"
-                        onClick={this.addClick.bind(this)}
-                      ></i> */}
-                    </div>
-                    {/* <div className="rename-cntr login-fields">
-                      <textarea
-                        className="txt-add"
-                        placeholder="Enter POL"
-                      ></textarea>
-                    </div> */}
-                  </div>
+                  <div>{this.createUIPOD()}</div>
                 </div>
                 <Button className="butn">Done</Button>
                 <Button
@@ -1861,10 +1964,11 @@ class RateTable extends Component {
                 </Button>
               </ModalBody>
             </Modal>
+            {/* {------------------------------End Mutliple POD Modal----------------------} */}
+            {/* {"-------------------------Spot Rate Modal-------------------"} */}
             <Modal
               className="delete-popup spot-rate-popup pol-pod-popup"
               isOpen={this.state.modalSpot}
-              toggle={this.toggleSpot}
               centered={true}
             >
               <h3>Add Below Details</h3>
@@ -1896,6 +2000,7 @@ class RateTable extends Component {
                 </Button>
               </ModalBody>
             </Modal>
+            {/* {----------------------End Spot Rate Modal------------------} */}
           </div>
         </div>
       </div>
