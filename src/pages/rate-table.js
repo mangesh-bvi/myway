@@ -566,7 +566,7 @@ class RateTable extends Component {
                 : ""
             }
           >
-            {this.state.typeofMove === 1 || this.state.typeofMove ===3 ? (
+            {this.state.typeofMove === 1 || this.state.typeofMove === 3 ? (
               <ReactAutocomplete
                 key={index}
                 name="POL"

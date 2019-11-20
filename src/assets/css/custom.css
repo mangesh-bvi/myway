@@ -1752,6 +1752,9 @@ table tbody tr:last-child {
   background-position: right 15px center;
   width: 200px;
 }
+.pac-container {
+  z-index: 9999;
+}
 /* rate table ends */
 
 /* spot rate starts */
