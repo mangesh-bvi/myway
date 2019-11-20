@@ -1925,6 +1925,7 @@ class RateTable extends Component {
             <Modal
               className="delete-popup pol-pod-popup"
               isOpen={this.state.modalPOL}
+              toggle={this.togglePOLModal}
               centered={true}
             >
               <ModalBody>
@@ -1949,6 +1950,7 @@ class RateTable extends Component {
             <Modal
               className="delete-popup pol-pod-popup"
               isOpen={this.state.modalPOD}
+              toggle={this.togglePODModal}
               centered={true}
             >
               <ModalBody>
@@ -1969,6 +1971,7 @@ class RateTable extends Component {
             <Modal
               className="delete-popup spot-rate-popup pol-pod-popup"
               isOpen={this.state.modalSpot}
+              toggle={this.toggleSpot}
               centered={true}
             >
               <h3>Add Below Details</h3>
@@ -1977,8 +1980,12 @@ class RateTable extends Component {
                   <label>Commodity</label>
                   <select>
                     <option>Select</option>
-                    <option>Select</option>
-                    <option>Select</option>
+                    <option value="All">All</option>
+                    {this.state.commodityData.map((item, i) => (
+                      <option key={i} value={item.Commodity}>
+                        {item.Commodity}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="rename-cntr login-fields">
