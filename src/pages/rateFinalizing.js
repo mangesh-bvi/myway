@@ -22,7 +22,23 @@ class RateFinalizing extends Component {
       cargoSelect: "select",
       rateQuery: true,
       rateDetails: [],
-      rateSubDetails: []
+      rateSubDetails: [],
+
+      ////
+      containerLoadType: "",
+      modeoftransport: "",
+      shipmentType: "",
+      HazMat: false,
+      incoTeam: "",
+      NonStackable: false,
+      typeofMove: "",
+      incoTerm: "",
+      commodityData: [],
+      selected:[],
+      flattack_openTop:[],
+      spacEqmtType:[],
+      polfullAddData:{},
+      podfullAddData:{}
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -32,7 +48,43 @@ class RateFinalizing extends Component {
   }
 
   componentDidMount() {
-   
+    debugger;
+
+    if (typeof this.props.location.state !== "undefined") {
+      var rateDetails = this.props.location.state.selectedDataRow;
+      var rateSubDetails = this.props.location.state.RateSubDetails;
+      var containerLoadType = this.props.location.state.containerLoadType;
+      var modeoftransport = this.props.location.state.modeoftransport;
+      var shipmentType = this.props.location.state.shipmentType;
+      var HazMat = this.props.location.state.HazMat;
+      var NonStackable = this.props.location.state.NonStackablel;
+      var typeofMove = this.props.location.state.typeofMove;
+      var incoTerms = this.props.location.state.incoTerms;
+      var commodityData = this.props.location.state.commodityData;
+      var selected=this.props.location.state.selected;
+      var spacEqmtType=this.props.location.state.spacEqmtType;
+      var flattack_openTop=this.props.location.state.flattack_openTop;
+      var polfullAddData=this.props.location.state.polfullAddData;
+      var podfullAddData=this.props.location.state.podfullAddData;
+
+      this.setState({
+        rateDetails,
+        rateSubDetails,
+        HazMat,
+        shipmentType,
+        modeoftransport,
+        containerLoadType,
+        typeofMove,
+        NonStackable,
+        incoTerms,
+        commodityData,
+        selected,
+        spacEqmtType,
+        flattack_openTop,
+        polfullAddData,
+        podfullAddData
+      });
+    }
     // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
     // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
     // this.setState({
@@ -169,33 +221,33 @@ class RateFinalizing extends Component {
   // }
 
   render() {
-    var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
-    ];
-    var data2 = [
-      {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        finalPayment: "$45,986.00"
-      },
-      {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
-      },
-      {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
-      }
-    ];
+    // var data1 = [
+    //   { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
+    //   { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
+    // ];
+    // var data2 = [
+    //   {
+    //     chargeCode: "A23435",
+    //     chargeName: "Lorem",
+    //     units: "43",
+    //     unitPrice: "$134.00",
+    //     finalPayment: "$45,986.00"
+    //   },
+    //   {
+    //     chargeCode: "B45678",
+    //     chargeName: "Lorem",
+    //     units: "23",
+    //     unitPrice: "$56.45",
+    //     finalPayment: "$1200.00"
+    //   },
+    //   {
+    //     chargeCode: "C54545",
+    //     chargeName: "Lorem",
+    //     units: "56",
+    //     unitPrice: "$50.00",
+    //     finalPayment: "$3456.00"
+    //   }
+    // ];
 
     return (
       <React.Fragment>
@@ -317,36 +369,47 @@ class RateFinalizing extends Component {
                             columns: [
                               {
                                 Cell: row => {
+                                  debugger;
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">
                                         Supplier Name
                                       </p>
-                                      <p className="details-para">Maersk</p>
+                                      <p className="details-para">
+                                        {row.original.lineName}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "validUntil",
+                                accessor: "expiryDate",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">
                                         Valid Until
                                       </p>
-                                      <p className="details-para">January</p>
+                                      <p className="details-para">
+                                        {new Date(
+                                          row.original.expiryDate ||
+                                            row.original.ExpiryDate
+                                        ).toLocaleDateString("en-US")}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "tt",
+                                accessor: "TransitTime",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">TT</p>
-                                      <p className="details-para">23</p>
+                                      <p className="details-para">
+                                        {" "}
+                                        {row.original.TransitTime}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
@@ -357,7 +420,14 @@ class RateFinalizing extends Component {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Price</p>
-                                      <p className="details-para">$43.00</p>
+                                      <p className="details-para">
+                                        {row.original.baseFreightFee !== "" &&
+                                        row.original.baseFreightFee !== null
+                                          ? row.original.baseFreightFee +
+                                            " " +
+                                            row.original.baseFreightCurr
+                                          : ""}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
@@ -365,7 +435,7 @@ class RateFinalizing extends Component {
                             ]
                           }
                         ]}
-                        data={data1}
+                        data={this.state.rateDetails}
                         minRows={0}
                         showPagination={false}
                         className="-striped -highlight"
@@ -373,35 +443,48 @@ class RateFinalizing extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={data2}
+                                data={this.state.rateSubDetails}
                                 columns={[
                                   {
                                     columns: [
                                       {
                                         Header: "Charge Code",
-                                        accessor: "chargeCode"
+                                        accessor: "ChargeCode"
                                       },
                                       {
                                         Header: "Charge Name",
-                                        accessor: "chargeName"
+                                        accessor: "ChargeType"
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "units"
+                                        accessor: "ChargeItem"
                                       },
                                       {
                                         Header: "Unit Price",
-                                        accessor: "unitPrice"
+                                        accessor: "Rate"
                                       },
                                       {
+                                        Cell: row => {
+                                          return (
+                                            <>
+                                              {row.original.TotalAmount !==
+                                                "" &&
+                                              row.original.TotalAmount !== null
+                                                ? row.original.TotalAmount +
+                                                  " " +
+                                                  row.original.BaseCurrency
+                                                : ""}
+                                            </>
+                                          );
+                                        },
                                         Header: "Final Payment",
-                                        accessor: "finalPayment"
+                                        accessor: "TotalAmount"
                                       }
                                     ]
                                   }
                                 ]}
-                                defaultPageSize={3}
-                                showPagination={false}
+                                defaultPageSize={5}
+                                showPagination={true}
                               />
                             </div>
                           );
@@ -419,57 +502,94 @@ class RateFinalizing extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Shipment Type</p>
-                            <p className="details-para">Import</p>
+                            <p className="details-para">
+                              {this.state.shipmentType}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
-                            <p className="details-para">Air</p>
+                            <p className="details-para">
+                              {this.state.modeoftransport}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
-                            <p className="details-para">FCL</p>
+                            <p className="details-para">
+                              {this.state.containerLoadType}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para">20 DC</p>
+                            {this.state.selected.map((item, i) => (
+                              <p className="details-para" key={i}>
+                                {item.StandardContainerCode}
+                              </p>
+                            ))}
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
-                            <p className="details-para">
-                              Refer Type (20 degrees)
-                            </p>
+                            {this.state.flattack_openTop.map((item, i) => (
+                              <p className="details-para" key={i}>
+                                {item.SpecialContainerCode}
+                              </p>
+                            ))}
+                            {this.state.spacEqmtType.map((item, i) => (
+                              <p className="details-para" key={i}>
+                                {item.TypeName}
+                              </p>
+                            ))}
+                             
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
+                            <p className="details-para">
+                              {this.state.HazMat === true ? "True " : "False "}&{" "}
+                              {this.state.NonStackable === true
+                                ? "True"
+                                : "False"}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
-                            <p className="details-para">Populated Data</p>
+                            <p className="details-para">
+                              {this.state.incoTerms}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
-                            <p className="details-para">Port2Port</p>
+                            <p className="details-para">
+                              {this.state.typeofMove === 1
+                                ? "Port 2 Port"
+                                : this.state.typeofMove === 2
+                                ? "Door 2 Port"
+                                : this.state.typeofMove === 3
+                                ? "Port 2 Door"
+                                : this.state.typeofMove === 4
+                                ? "Door 2 Door"
+                                : ""}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">POL</p>
-                            <p className="details-para">Mumbai</p>
+                              <p className="details-para">{this.state.polfullAddData.NameWoDiacritics}</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">POD</p>
-                            <p className="details-para">Vadodra</p>
+                            <p className="details-para">{this.state.podfullAddData.NameWoDiacritics}</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">PU Address</p>
                             <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
+                              {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
+                              {this.state.polfullAddData.OceanPortLongName}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Delivery Address</p>
                             <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
+                            {this.state.podfullAddData.OceanPortLongName}
                             </p>
                           </div>
                         </div>
@@ -542,7 +662,11 @@ class RateFinalizing extends Component {
                         <p className="details-title">Commodity</p>
                         <select onChange={this.commoditySelect.bind(this)}>
                           <option value="select">Select</option>
-                          <option value="new">New</option>
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.Commodity}>
+                              {item.Commodity}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="col-md-6 login-fields">

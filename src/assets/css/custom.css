@@ -430,6 +430,9 @@ table tbody tr:last-child {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.ship-summ-table .rt-tr .rt-th:last-child {
+  background-image: none;
+}
 /* shipping details ends */
 
 /* shipping details 2 starts */
@@ -812,8 +815,7 @@ table tbody tr:last-child {
 .cntrLoadIconCntr,
 .cbmIconCntr,
 .typeMoveIconCntr,
-.equipTypeIconCntr,
-.addressIconCntr {
+.equipTypeIconCntr /* addressIconCntr */ {
   display: block !important;
 }
 #equipTypeInner {
@@ -1132,7 +1134,8 @@ table tbody tr:last-child {
   margin-top: 0 !important;
   pointer-events: none;
 }
-.cntrLoadType .new-radio-rate-cntr {
+.cntrLoadType .new-radio-rate-cntr,
+.typeMoveType .new-radio-rate-cntr {
   margin-top: 0;
 }
 .shipmentType + .new-rate-cntr,
@@ -1482,7 +1485,7 @@ table tbody tr:last-child {
   background-color: #fff;
   border-color: #d3d3d3;
   min-width: auto;
-  flex: 0 0 32%;
+  flex: 0 0 23%;
 }
 .top-select .butn:hover {
   background-color: #d3d3d3;
@@ -1967,6 +1970,9 @@ table tbody tr:last-child {
 }
 .view-user-inner .row > div {
   margin-top: 20px;
+}
+.view-user-table .rt-tr .rt-th:first-child {
+  background-image: none;
 }
 /* view user starts */
 
@@ -2866,6 +2872,7 @@ table tbody tr:last-child {
 .modelselecteqt .css-1rhbuit-multiValue {
   display: none;
 }
+ 
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/

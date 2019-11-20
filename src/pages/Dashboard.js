@@ -134,35 +134,53 @@ const MapWithAMakredInfoWindow = compose(
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div className="card-body">
-                                <div id="accordion-1">
-                                  <div className="card">
-                                    <div
-                                      className="card-header hbl-bor"
-                                      id="heading-1-1"
+                              <div
+                                className="card-header hbl-bor"
+                                id="heading-1-1"
+                              >
+                                <h5>
+                                  <div
+                                    //className="collapsed"
+                                    role="button"
+                                    // data-toggle="collapse"
+                                    href={C_HblNO.replace(/ +/g, "")}
+                                    //aria-expanded="false"
+                                    // aria-controls={mdata["HBL#"].replace(
+                                    //   / +/g,
+                                    //   ""
+                                    // )}
+                                  >
+                                    <p
+                                      title="HBL No."
+                                      className="mapcontainerno dash-hbl"
                                     >
-                                      <h5 className="mb-0">
-                                        <div
-                                          className="collapsed"
-                                          role="button"
-                                          data-toggle="collapse"
-                                          href={C_HblNO.replace(/ +/g, "")}
-                                          aria-expanded="false"
-                                          aria-controls={mdata["HBL#"].replace(
-                                            / +/g,
-                                            ""
-                                          )}
-                                        >
-                                          <p
-                                            title="HBL No."
-                                            className="mapcontainerno dash-hbl"
-                                          >
-                                            {mdata["HBL#"]}
-                                          </p>
-                                        </div>
-                                      </h5>
-                                    </div>
-                                    <div
+                                      <a href={shipmentdetails}>
+                                        {" "}
+                                        {mdata["HBL#"]}
+                                      </a>
+                                      {finalinvocearr.length > 0
+                                        ? finalinvocearr.map(function(
+                                            idata,
+                                            i
+                                          ) {
+                                            return (
+                                              <div>
+                                                <p
+                                                  title="MyWay No."
+                                                  className="mapinvoice ml-2"
+                                                >
+                                                  {idata}
+                                                  {","}
+                                                </p>
+                                              </div>
+                                            );
+                                          })
+                                        : null}
+                                    </p>
+                                  </div>
+                                </h5>
+                              </div>
+                              {/* <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
                                       className="collapse"
                                       data-parent="#accordion-1"
@@ -187,10 +205,7 @@ const MapWithAMakredInfoWindow = compose(
                                             })
                                           : null}
                                       </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+                                    </div> */}
                             </div>
                           </div>
                         </div>
@@ -498,7 +513,7 @@ const MapWithAMakredInfoWindow = compose(
         onPlaceSelected={props.onPlaceSelected}
         types={["(regions)"]}
       />
-      <i class="fa fa-search" aria-hidden="true"></i>
+      <i className="fa fa-search" aria-hidden="true"></i>
     </div>
   </GoogleMap>
 ));
@@ -733,7 +748,6 @@ class Dashboard extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        //alert("Complete")
         debugger;
         mdata = response.data;
         if (BindingID != "All") {
@@ -842,7 +856,7 @@ class Dashboard extends Component {
     const ActiveShipment = ActiveShipmentData.map(function(addkey, i) {
       if (i < 4) {
         return (
-          <>
+          <div key={i}>
             {/* <p>
               Shipment ID:
               <span>{addkey.ShipmentID}</span>
@@ -896,14 +910,14 @@ class Dashboard extends Component {
             {/* <p>
               Mode of Transport :<span>{addkey.ModeOfTransport}</span>
             </p> */}
-          </>
+          </div>
         );
       }
     });
     const Booking = BookingData.map(function(book, i) {
       if (i < 4) {
         return (
-          <>
+          <div key={i}>
             <p>
               <span>{book.BookingNo}</span>
               <span style={{ float: "right" }}>
@@ -932,7 +946,7 @@ class Dashboard extends Component {
               POD : <span>{book.POD}</span>
             </p>
             <hr className="horizontal-line" />
-          </>
+          </div>
         );
       }
     });
@@ -940,7 +954,7 @@ class Dashboard extends Component {
     const Quotes = QuotesData.map(function(quotes, i) {
       if (i < 4) {
         return (
-          <>
+          <div key={i}>
             <p>
               <span title="Customer Name">{quotes.CompanyName}</span>
             </p>
@@ -958,7 +972,7 @@ class Dashboard extends Component {
               <span title="Expected Date">{quotes.ExpiryDate}</span>
             </p>
             <hr className="horizontal-line" />
-          </>
+          </div>
         );
       } else {
         return;
@@ -968,7 +982,7 @@ class Dashboard extends Component {
     const Invoices = InvoicesData.map(function(invoice, i) {
       if (i < 4) {
         return (
-          <>
+          <div key={i}>
             <p>
               <span title="Shipment No">{invoice.InvoiceNumber}</span>
             </p>
@@ -976,7 +990,7 @@ class Dashboard extends Component {
               <span title="Customer Name">{invoice.BillToName}</span>
             </p>
             <hr className="horizontal-line" />
-          </>
+          </div>
         );
       } else {
         return;
@@ -995,7 +1009,7 @@ class Dashboard extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <div className="dash-outer" style={{}}>
+            <div className="dash-outer">
               {this.state.checkMapview == true ? (
                 ""
               ) : (
@@ -1170,7 +1184,7 @@ class Dashboard extends Component {
                             {Invoices}
                           </div>
                         </div>
-                        <span className="viewmore-span">...View More</span>
+                        {/* <span className="viewmore-span">...View More</span> */}
                       </div>
                     </div>
                   </div>

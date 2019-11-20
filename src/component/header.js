@@ -13,6 +13,7 @@ import ProfileSettingIcon from "./../assets/img/profilesetting.png";
 import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
+import {Link} from 'react-router-dom'; 
 
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 import axios from "axios";
@@ -263,7 +264,7 @@ class Header extends Component {
 
   render() {
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
-      <div>
+      <div key={i}>
         <p>
           Shipment: <a> {item.Product}</a>
         </p>
@@ -283,7 +284,7 @@ class Header extends Component {
 
     let optionItems = this.state.DropdownCommonMessage.map((planet, i) =>
       i == 0 ? (
-        <option value={planet.ID} selected="selected">
+        <option key={i} value={planet.ID} selected="selected">
           {planet.Value}
         </option>
       ) : (
@@ -298,7 +299,9 @@ class Header extends Component {
         <div className="cls-header-1">
           <div className="row">
             <div className="col-xs col-sm-6 col-md-3">
-              <img src={Logo} alt="log-icon" className="header-log" />
+              <Link to="/Dashboard">
+                <img src={Logo} alt="log-icon" className="header-log" />
+              </Link>
             </div>
             <div className="col-xs col-sm-6 col-md-9">
               <ul className="header-ul">
