@@ -8,6 +8,11 @@ import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import { encryption } from "../helpers/encryption";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -49,6 +54,7 @@ class RateFinalizingStill extends Component {
   };
 
   HandleShipmentDetails(bookingNo) {
+    //alert(bookingNo)
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
@@ -59,7 +65,62 @@ class RateFinalizingStill extends Component {
     }).then(function(response) {
       debugger;
       var shipmentdata = response.data;
-    });
+    }).catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+       
+        NotificationManager.error(err[1].replace("}", ""));
+      });
+  }
+
+  AcceptQuotes()
+  {
+    var SalesQuoteNumber =  "";
+    if (typeof this.props.location.state != "undefined") {
+      SalesQuoteNumber = this.props.location.state.detail[0];
+    }
+    
+    var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
+
+    this.SendMail(SalesQuoteNumber, Messagebody)
+    
+  }
+
+  SendMail(SalesQuoteNumber, Messagebody)
+  {
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteMailAPI`,
+      data: {
+        CustomerID: 0,
+        SalesPersonID : 0,
+        SalesQuoteNumber: SalesQuoteNumber,
+        Body: Messagebody,
+        MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      if(response != null)
+      {
+        if(response.data != null)
+        {
+          if(response.data.length > 0)
+          {
+            NotificationManager.success(response.data[0].Result);
+          }
+        }
+      }
+    }).catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+        NotificationManager.error(err[1].replace("}", ""));
+      });
   }
 
   render() {
@@ -203,7 +264,7 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
-                      <button className="butn m-0">Accept</button>
+                      <button className="butn m-0" onClick={this.AcceptQuotes.bind(this)}>Accept</button>
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
@@ -622,6 +683,7 @@ class RateFinalizingStill extends Component {
             <ModalBody>Popup will come</ModalBody>
           </Modal>
         </div>
+        <NotificationContainer />
       </React.Fragment>
     );
   }

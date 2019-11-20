@@ -8,6 +8,7 @@ import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import { encryption } from "../helpers/encryption";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -27,16 +28,18 @@ class RateFinalizing extends Component {
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleNewConsignee = this.toggleNewConsignee.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
+    this.SendRequest = this.SendRequest.bind(this);
   }
 
   componentDidMount() {
-    debugger;
+   
     // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
     // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
     // this.setState({
     //   rateDetails: rateDetails,
     //   rateSubDetails: rateSubDetails
     // });
+  //   this.SendMail();
   }
 
   toggleProfit() {
@@ -123,6 +126,47 @@ class RateFinalizing extends Component {
       modalRequest: !prevState.modalRequest
     }));
   }
+
+  SendRequest()
+  {
+    var txtRequestDiscount , txtRequestFreeTime, txtRequestComments = "";
+
+    txtRequestDiscount = document.getElementById("txtRequestDiscount").value;
+    txtRequestFreeTime = document.getElementById("txtRequestFreeTime").value;
+    txtRequestComments = document.getElementById("txtRequestComments").value;
+
+    alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
+    
+
+  }
+
+  SendQuote()
+  {
+
+  }
+
+  // SendMail()
+  // {
+  //   debugger;
+  //   let self = this;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/MyWayMessage`,
+  //     data: {
+  //       UserID:encryption(window.localStorage.getItem("userid"), "desc")
+  //     },
+  //     headers: authHeader()
+  //   }).then(function(response) {
+      
+     
+  //    self.bindMyWayMessageById();
+  //   }).catch(error => {
+  //     debugger;
+  //     var temperror = error.response.data;
+  //     var err = temperror.split(":");
+  //     alert(err[1].replace("}", ""))
+  //   });
+  // }
 
   render() {
     var data1 = [
@@ -513,7 +557,7 @@ class RateFinalizing extends Component {
                       <a href={Dummy} target="_blank" className="butn mr-3">
                         Preview
                       </a>
-                      <a
+                      {/* <a
                         href="quote-table"
                         className={
                           this.state.commoditySelect == "select" ||
@@ -523,7 +567,18 @@ class RateFinalizing extends Component {
                         }
                       >
                         Send
-                      </a>
+                      </a> */}
+                      <button
+                              onClick={this.SendQuote}
+                              className={
+                                this.state.commoditySelect == "select" ||
+                                this.state.cargoSelect == "select"
+                                  ? "butn cancel-butn no-butn"
+                                  : "butn"
+                              }
+                            >
+                             Send
+                            </button>
                     </div>
                   </div>
                 </div>
@@ -617,25 +672,27 @@ class RateFinalizing extends Component {
             toggle={this.toggleRequest}
             centered={true}
           >
+            
             <ModalBody>
               <h3 className="mb-4">Request Changes</h3>
               <div className="rename-cntr login-fields">
                 <label>Discount</label>
-                <input type="text" placeholder="Enter Discount" />
+                <input type="text" id="txtRequestDiscount" placeholder="Enter Discount" />
               </div>
               <div className="rename-cntr login-fields">
                 <label>Free Time</label>
-                <input type="text" placeholder="Enter Time" maxLength="2" />
+                <input type="text" id="txtRequestFreeTime" placeholder="Enter Time" maxLength="2" />
               </div>
               <div className="rename-cntr login-fields mb-0">
                 <label>Comments</label>
                 <textarea
                   className="txt-add"
                   placeholder="Enter Comments"
+                  id="txtRequestComments"
                 ></textarea>
               </div>
               <div className="text-center">
-                <Button className="butn" onClick={this.toggleRequest}>
+                <Button className="butn" onClick={this.SendRequest}>
                   Request
                 </Button>
               </div>

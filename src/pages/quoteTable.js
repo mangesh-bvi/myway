@@ -66,8 +66,8 @@ class QuoteTable extends Component {
       url: `${appSettings.APIURL}/SalesQuoteGridAPI`,
       data: {
         UserId: userid,
-        fromDate: "2019-01-01",
-        Todate: "2019-10-26"
+        fromDate: "2010-01-01",
+        Todate: "2019-11-26"
       },
       headers: authHeader()
     }).then(function(response) {

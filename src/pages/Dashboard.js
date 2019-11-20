@@ -774,9 +774,9 @@ class Dashboard extends Component {
 
         //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
       }
-      if (mdata.length > 0) {
-        self.setState({ loading: false });
-      }
+      // if (mdata.length > 0) {
+      //   self.setState({ loading: false });
+      // }
       self.setState({ mapsData: arraModalMapData });
     }
   }

@@ -28,6 +28,7 @@ import ShippingDetailsTwo from "./pages/shipping-details-2";
 import GreenCounter from "./pages/GreenCounter";
 import ShipmentPlanner from "./pages/shipment-planner";
 import RateSearch from "./pages/rate-search";
+import myWayMessage from "./pages/myway-Message";
 import NewRateSearch from "./pages/new-rate-search";
 import AddUser from "./pages/AddUser";
 import RateTable from "./pages/rate-table";
@@ -77,6 +78,7 @@ ReactDOM.render(
     <Route exact path="/green-counter" component={GreenCounter} />
     <Route exact path="/shipment-planner" component={ShipmentPlanner} />
     <Route exact path="/rate-search" component={RateSearch} />
+    <Route exact path="/mywayMessage" component={myWayMessage} />
     <Route exact path="/new-rate-search" component={NewRateSearch} />
     <Route exact path="/add-user" component={AddUser} />
     <Route exact path="/rate-table" component={RateTable} />

@@ -254,6 +254,13 @@ class Header extends Component {
     this.toggleDocu();
   };
 
+  onShipmentNoChangeHandler = event => 
+  {
+    this.setState({
+      popupHBLNO: event.target.value
+    });
+  }
+
   render() {
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
       <div>
@@ -363,6 +370,7 @@ class Header extends Component {
                           type="text"
                           placeholder="Enter Shipment No."
                           value={popupHBLNO}
+                          onChange={this.onShipmentNoChangeHandler}
                         />
                       </div>
                       <div className="rename-cntr login-fields">
