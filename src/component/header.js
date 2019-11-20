@@ -257,7 +257,7 @@ class Header extends Component {
 
   render() {
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
-      <div>
+      <div key={i}>
         <p>
           Shipment: <a> {item.Product}</a>
         </p>
@@ -277,7 +277,7 @@ class Header extends Component {
 
     let optionItems = this.state.DropdownCommonMessage.map((planet, i) =>
       i == 0 ? (
-        <option value={planet.ID} selected="selected">
+        <option key={i} value={planet.ID} selected="selected">
           {planet.Value}
         </option>
       ) : (
