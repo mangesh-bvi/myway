@@ -430,13 +430,9 @@ table tbody tr:last-child {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/* .-sort-desc {
-  box-shadow: none !important;
+.ship-summ-table .rt-tr .rt-th:last-child {
+  background-image: none;
 }
-.-sort-desc::before {
-  content: "▼";
-  float: right;
-} */
 /* shipping details ends */
 
 /* shipping details 2 starts */
@@ -819,8 +815,7 @@ table tbody tr:last-child {
 .cntrLoadIconCntr,
 .cbmIconCntr,
 .typeMoveIconCntr,
-.equipTypeIconCntr,
-.addressIconCntr {
+.equipTypeIconCntr /* addressIconCntr */ {
   display: block !important;
 }
 #equipTypeInner {
@@ -1139,7 +1134,8 @@ table tbody tr:last-child {
   margin-top: 0 !important;
   pointer-events: none;
 }
-.cntrLoadType .new-radio-rate-cntr {
+.cntrLoadType .new-radio-rate-cntr,
+.typeMoveType .new-radio-rate-cntr {
   margin-top: 0;
 }
 .shipmentType + .new-rate-cntr,
@@ -1974,6 +1970,9 @@ table tbody tr:last-child {
 }
 .view-user-inner .row > div {
   margin-top: 20px;
+}
+.view-user-table .rt-tr .rt-th:first-child {
+  background-image: none;
 }
 /* view user starts */
 

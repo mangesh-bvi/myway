@@ -759,7 +759,7 @@ class ShippingDetails extends Component {
                     filterAll: true
                   }
                 ]}
-                className="-striped -highlight"
+                className="ship-summ-table -striped -highlight"
                 defaultPageSize={10}
                 getTrProps={this.HandleRowClickEvt}
                 minRows={1}

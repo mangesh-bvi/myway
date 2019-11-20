@@ -51,6 +51,16 @@
 .ReactTable .rt-thead .rt-tr {
   background-color: #fff;
 }
+.ReactTable .rt-thead .rt-th {
+  background: #cbcbcb url("../img/down-arrow.png") no-repeat right 10px center;
+}
+.ReactTable .rt-thead .rt-th.-sort-desc {
+  background: #cbcbcb url("../img/up-arrow.png") no-repeat right 10px center;
+}
+.-sort-desc,
+.-sort-asc {
+  box-shadow: none !important;
+}
 
 /* pagination starts */
 .ReactTable .-pagination .-previous,
