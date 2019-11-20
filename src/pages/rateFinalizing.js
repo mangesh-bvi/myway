@@ -38,7 +38,12 @@ class RateFinalizing extends Component {
       flattack_openTop:[],
       spacEqmtType:[],
       polfullAddData:{},
-      podfullAddData:{}
+      podfullAddData:{},
+      arrLocalsCharges: [],
+      fltLocalCharges: [],
+      arrSurCharges: [],
+      fltSurCharges: [],
+      ProfitAmount:0
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -68,22 +73,25 @@ class RateFinalizing extends Component {
       var podfullAddData=this.props.location.state.podfullAddData;
 
       this.setState({
-        rateDetails,
-        rateSubDetails,
-        HazMat,
-        shipmentType,
-        modeoftransport,
-        containerLoadType,
-        typeofMove,
-        NonStackable,
-        incoTerms,
-        commodityData,
-        selected,
-        spacEqmtType,
-        flattack_openTop,
-        polfullAddData,
-        podfullAddData
+        rateDetails:rateDetails,
+        rateSubDetails:rateSubDetails,
+        HazMat:HazMat,
+        shipmentType:shipmentType,
+        modeoftransport:modeoftransport,
+        containerLoadType:containerLoadType,
+        typeofMove:typeofMove,
+        NonStackable:NonStackable,
+        incoTerm:incoTerms,
+        commodityData:commodityData,
+        selected:selected,
+        spacEqmtType:spacEqmtType,
+        flattack_openTop:flattack_openTop,
+        polfullAddData:polfullAddData,
+        podfullAddData:podfullAddData
       });
+
+      this.HandleLocalCharges();
+      this.HandleSurCharges();
     }
     // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
     // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
@@ -92,6 +100,100 @@ class RateFinalizing extends Component {
     //   rateSubDetails: rateSubDetails
     // });
   //   this.SendMail();
+  }
+
+  HandleLocalCharges() {
+    let self = this;
+    //var userid = encryption(window.localStorage.getItem("userid"), "desc");
+    // var MultiplePOLPOD = [];
+    // for(var i=0; i < polfullAddData.length; i++)
+    // {
+    //   for(var j=i; j< podfullAddData.length;)
+    //   {
+    //     MultiplePOLPOD.push([{POL: polfullAddData[i].UNECECode, POD: podfullAddData}])
+    //   }
+    // }
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/LocalChargesSalesQuote`,
+      data: {
+        QuoteType:this.state.containerLoadType,
+        ModeOfTransport:this.state.modeoftransport,
+        Type:this.state.shipmentType,
+        TypeOfMove:this.state.typeofMove,
+        ChargeableWeight:0,
+        Containerdetails:[{   
+	          ProfileCodeID:this.state.selected.ProfileCodeID,ContainerCode:this.state.selected.StandardContainerCode,Type:'',ContainerQuantity:2,Temperature:0,TemperatureType:''
+        }],
+        Currency:'INR',
+        MultiplePOLPOD:[{POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
+        {POL:'INBOM',POD:'TRPAM',POLGeoCordinate:'19.078682,72.879144',
+        PODGeoCordinate:'40.968456,28.674417'}],
+        RateQueryDim:[{
+          Quantity:0,Lengths:0,Width:0,Height:0,GrossWt:0,
+          VolumeWeight:0,Volume:0
+        }],MyWayUserID:874588
+
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      self.setState({
+        arrLocalsCharges: response.data.Table,
+        fltLocalCharges: response.data.Table
+      })
+
+      // var data = [];
+      // data = response.data;
+      // self.setState({ bookingData: data }); ///problem not working setstat undefined
+    });
+  }
+
+  HandleSurCharges() {
+    let self = this;
+    //var userid = encryption(window.localStorage.getItem("userid"), "desc");
+    // var MultiplePOLPOD = [];
+    // for(var i=0; i < polfullAddData.length; i++)
+    // {
+    //   for(var j=i; j< podfullAddData.length;)
+    //   {
+    //     MultiplePOLPOD.push([{POL: polfullAddData[i].UNECECode, POD: podfullAddData}])
+    //   }
+    // }
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SurChargesSalesQuote`,
+      data: {
+        QuoteType:this.state.containerLoadType,
+        ModeOfTransport:this.state.modeoftransport,
+        Type:this.state.shipmentType,
+        TypeOfMove:this.state.typeofMove,
+        ChargeableWeight:0,
+        Containerdetails:[{   
+	          ProfileCodeID:this.state.selected.ProfileCodeID,ContainerCode:this.state.selected.StandardContainerCode,Type:'',ContainerQuantity:2,Temperature:0,TemperatureType:''
+        }],
+        Currency:'INR',
+        MultiplePOLPOD:[{POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
+        {POL:'INBOM',POD:'TRPAM',POLGeoCordinate:'19.078682,72.879144',
+        PODGeoCordinate:'40.968456,28.674417'}],
+        RateQueryDim:[{
+          Quantity:0,Lengths:0,Width:0,Height:0,GrossWt:0,
+          VolumeWeight:0,Volume:0
+        }],MyWayUserID:874588
+
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      self.setState({
+        arrSurCharges: response.data.Table,
+        fltSurCharges: response.data.Table
+      })
+
+      // var data = [];
+      // data = response.data;
+      // self.setState({ bookingData: data }); ///problem not working setstat undefined
+    });
   }
 
   toggleProfit() {
@@ -220,6 +322,66 @@ class RateFinalizing extends Component {
   //   });
   // }
 
+  filterLocAll = event => {   
+    var localcharge = event.target.value.toLowerCase();
+    if(localcharge!="")
+    {
+      this.state.arrLocalsCharges = [];
+    this.state.fltLocalCharges.map((item,index) => {
+      
+       if(item.ChargeDesc.toLowerCase().includes(localcharge)){      
+        this.state.arrLocalsCharges.push(this.state.fltLocalCharges[index])
+       }   
+    })
+   }
+   else
+   {
+    this.state.arrLocalsCharges = [];
+    this.state.arrLocalsCharges = this.state.fltLocalCharges
+   }
+    this.setState({
+      arrLocalsCharges:this.state.arrLocalsCharges
+    });
+  };
+
+  filterSurAll = event => {   
+    var surcharge = event.target.value.toLowerCase();
+    if(surcharge!="")
+    {
+      this.state.arrSurCharges = [];
+      this.state.fltSurCharges.map((item,index) => {
+      
+       if(item.ChargeDesc.toLowerCase().includes(surcharge)){      
+        this.state.arrSurCharges.push(this.state.fltSurCharges[index])
+       }   
+    })
+   }
+   else
+   {
+    this.state.arrSurCharges = [];
+    this.state.arrSurCharges = this.state.fltSurCharges
+   }
+    this.setState({
+      arrSurCharges:this.state.arrSurCharges
+    });
+  };
+  
+
+  hanleProfitAmountChange(e){
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+       this.setState({ProfitAmount: e.target.value})
+    }
+ }
+
+ hanleProfitAmountSubmit(){
+  
+  alert(this.state.ProfitAmount)
+ // this.setState({ProfitAmount: e.target.value})
+  
+
+}
+
   render() {
     // var data1 = [
     //   { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
@@ -248,7 +410,41 @@ class RateFinalizing extends Component {
     //     finalPayment: "$3456.00"
     //   }
     // ];
+    const checkLocalCharges = this.state.arrLocalsCharges.map((item,index) => {
+      let amtSign;
+      if(item.Currency == 'INR')
+      {
+        amtSign = ''
+      }
+      else if(item.Currency == 'USD'){amtSign = '$'}
+      return(
+        <div>
+          <div className="d-flex">
+            <input id={"local"+(index+1)} type="checkbox" name={"local"} />
+            <label htmlFor={"local"+(index+1)}>{item.ChargeDesc}</label>
+          </div>
+          <span>{item.Amount}{amtSign}</span>
+        </div>
+        )
+    })
 
+    const checkSurCharges = this.state.arrSurCharges.map((item,index) => {
+      let amtSign;
+      if(item.Currency == 'INR')
+      {
+        amtSign = ''
+      }
+      else if(item.Currency == 'USD'){amtSign = '$'}
+      return(
+        <div>
+          <div className="d-flex">
+            <input id={"Sur"+(index+1)} type="checkbox" name={"local"} />
+            <label htmlFor={"Sur"+(index+1)}>{item.ChargeDesc}</label>
+          </div>
+          <span>{item.Amount}{amtSign}</span>
+        </div>
+        )
+    })
     return (
       <React.Fragment>
         <Headers />
@@ -270,14 +466,15 @@ class RateFinalizing extends Component {
                       <input
                         type="search"
                         // value={this.state.filterAll}
-                        // onChange={this.filterAll}
+                        onChange={this.filterLocAll}
                         placeholder="Search here"
                         className="w-100"
                       />
                     </div>
                     <div className="cont-costs">
                       <div className="remember-forgot d-block m-0">
-                        <div>
+                        {checkLocalCharges}
+                        {/* <div>
                           <div className="d-flex">
                             <input id="ugm" type="checkbox" name={"local"} />
                             <label htmlFor="ugm">UGM</label>
@@ -301,7 +498,7 @@ class RateFinalizing extends Component {
                             <label htmlFor="stuffing">Stuffing</label>
                           </div>
                           <span>100$</span>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -311,14 +508,15 @@ class RateFinalizing extends Component {
                       <input
                         type="search"
                         // value={this.state.filterAll}
-                        // onChange={this.filterAll}
+                        onChange={this.filterSurAll}
                         placeholder="Search here"
                         className="w-100"
                       />
                     </div>
                     <div className="cont-costs">
                       <div className="remember-forgot d-block m-0">
-                        <div>
+                        {checkSurCharges}
+                        {/* <div>
                           <div className="d-flex">
                             <input
                               id="cont-clean"
@@ -350,7 +548,7 @@ class RateFinalizing extends Component {
                             <label htmlFor="tarpau">Tarpaulin</label>
                           </div>
                           <span>100$</span>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -724,12 +922,15 @@ class RateFinalizing extends Component {
                       type="text"
                       placeholder="Enter Amount"
                       class="w-100"
+                      value={this.state.ProfitAmount} 
+                      onChange={this.hanleProfitAmountChange.bind(this)}
+                      maxLength="10"
                     />
                   </div>
                 </div>
               </div>
               <div className="text-center">
-                <Button className="butn" onClick={this.toggleProfit}>
+                <Button className="butn" onClick={this.hanleProfitAmountSubmit.bind(this)}>
                   Done
                 </Button>
               </div>
