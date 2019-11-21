@@ -170,7 +170,11 @@ class RateTable extends Component {
       pickUpAddress: [],
       destAddress: [],
       multiCBM:[],
-      paramData:[]
+      paramData:[],
+      fields:[],
+      puAdd:"",
+      DeliveryCity:"",
+      typesofMove:""
 
     };
 
@@ -437,7 +441,12 @@ class RateTable extends Component {
         pickUpAddress: paramData.fullAddressPOL,
         destAddress: paramData.fullAddressPOD,
         multiCBM: paramData.multiCBM,
-        packageTypeData:paramData.packageTypeData
+        packageTypeData:paramData.packageTypeData,
+        fields: paramData.fields,
+        puAdd: paramData.puAdd,
+        DeliveryCity: paramData.DeliveryCity,
+        typesofMove:paramData.typesofMove
+
       });
     }
 
@@ -1463,7 +1472,7 @@ class RateTable extends Component {
             >
               <option selected>Select</option>
               {this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageTypeId}>
+                <option key={i} value={item.PackageName}>
                   {item.PackageName}
                 </option>
               ))}
@@ -1639,20 +1648,177 @@ class RateTable extends Component {
     let self = this;
     var truckTypeData = [];
     var MultiCBM = [];
-    var pickStreet=""; var pickCountry=""; var pickState=""; var pickZipCode="";
-    var destStreet=""; var destCountry=""; var destState=""; var pickZipCode="";
+    var containerdetails = [];
+    var pickUpAddressDetails =[];
+    var destUpAddressDetails =[];
+    var dataParameter = {};
+    var pickUpAddress = "";
+    var destinationAddress = "";
+    var originPort_ID = "";
+    var destinationPort_ID = "";
+
     for(var i=0; i< param.TruckTypeData.length;i++)
     {
         truckTypeData.push({TruckTypeID: parseInt(param.TruckTypeData[i].TruckName),TruckQty: param.TruckTypeData[i].Quantity, TruckDesc:param.TruckTypeData[i].TruckDesc})
     }
-
-    for(var i=0; i< param.multiCBM.length;i++)
+    if(param.flattack_openTop.length != 0)
     {
-      MultiCBM.push({Quantity:param.multiCBM[i].Quantity,Lengths:param.multiCBM[i].Lengths,Width:param.multiCBM[i].Width,Height:param.multiCBM[i].Height,GrossWt:param.multiCBM[i].GrossWt,VolumeWeight:param.multiCBM[i].VolumeWeight,Volume:param.multiCBM[i].Volume})
+      for(var i=0; i< param.flattack_openTop.length;i++)
+      {
+        MultiCBM.push({PackageType:param.flattack_openTop[i].PackageType,Quantity:param.flattack_openTop[i].Quantity,Lengths:param.flattack_openTop[i].length,Width:param.flattack_openTop[i].width,Height:param.flattack_openTop[i].height,GrossWt:param.flattack_openTop[i].Gross_Weight,VolumeWeight:param.flattack_openTop[i].total,Volume:0})
+      }
     }
+    else
+    {for(var i=0; i< param.multiCBM.length;i++)
+    {
+      MultiCBM.push({PackageType:param.multiCBM[i].PackageType,Quantity:param.multiCBM[i].Quantity,Lengths:param.multiCBM[i].Lengths,Width:param.multiCBM[i].Width,Height:param.multiCBM[i].Height,GrossWt:param.multiCBM[i].GrossWt,VolumeWeight:param.multiCBM[i].VolumeWeight,Volume:param.multiCBM[i].Volume})
+    }}
+
+    if(param.users.length!=0)
+    {
+      for(var i=0; i< param.users.length;i++)
+      {
+        containerdetails.push({ProfileCodeID:param.users[i].ProfileCodeID,ContainerCode:param.users[i].StandardContainerCode,Type:param.users[i].ContainerName,ContainerQuantity:param.users[i].ContainerQuantity,Temperature:param.users[i].Temperature})
+      }
+    }
+    if(param.typesofMove == 'p2p')
+    {
+    // if(param.polfullAddData.length != 0)
+    // {
+      pickUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''});
+      destUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''});
+      pickUpAddress = param.fields.pol;
+      destinationAddress = param.fields.pod;
+      originPort_ID = param.polfullAddData.Location;
+      destinationPort_ID = param.podfullAddData.Location;
+    //   pickUpAddress
+    // }
+    // else{
+     // pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
+    }
+    if(param.typesofMove == 'd2d')
+    {
+      pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
+      destUpAddressDetails.push({Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode})
+      pickUpAddress = param.puAdd;
+      destinationAddress = param.DeliveryCity;
+    }
+
+    if(param.typesofMove == 'd2p')
+    {
+      pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
+      destUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''})
+      pickUpAddress = param.puAdd;
+      destinationAddress = param.fields.pod;
+      destinationPort_ID = param.podfullAddData.Location;
+    }
+     
+    if(param.typesofMove == 'p2d')
+    {
+      pickUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''})
+      destUpAddressDetails.push({Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode})
+      pickUpAddress = param.fields.pol;
+      destinationAddress = param.DeliveryCity;
+      originPort_ID = param.polfullAddData.Location;
+    }
+
+    // if(param.podfullAddData.length != 0)
+    // {
+    //   destUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''})
+    // }
+    // else
+    // {
+    //   destUpAddressDetails.push({Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode})
+    // }
+
+    if(param.containerLoadType == 'AIR' || param.containerLoadType == 'FCL')
+    {
+    dataParameter = {
+        Mode :param.containerLoadType,
+        ShipmentType : param.shipmentType,
+        Inco_terms : param.incoTerms,
+        TypesOfMove : param.typeofMove,
+        OriginPort_ID :originPort_ID,
+        DestinationPort_ID : destinationPort_ID,
+        PickUpAddress :pickUpAddress,
+        DestinationAddress : destinationAddress,
+        Total_Weight_Unit : 'Kgs',
+        SalesPerson : 1452494145,
+        HazMat  : param.HazMat,
+        ChargeableWt : 0,
+        Containerdetails:containerdetails,  
+        // PickUpAddressDetails:{
+        //   Street:'',Country:'',State:'',City:'',ZipCode:''
+        
+        //   },
+         
+        PickUpAddressDetails:pickUpAddressDetails[0],
+        // DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:''},
+        DestinationAddressDetails:destUpAddressDetails[0],
+        RateQueryDim:MultiCBM,
+        MyWayUserID:874588,
+        CompanyID:1457295703,
+        CommodityID:parseInt(param.CommodityID),
+        OriginGeoCordinates:param.OriginGeoCordinates,
+        DestGeoCordinate:param.DestGeoCordinate
+    }
+    }
+    if(param.containerLoadType == 'LTL' || param.containerLoadType == 'LCL')
+    {
+    dataParameter = {
+        Mode :param.containerLoadType,
+        ShipmentType : param.shipmentType,
+        Inco_terms : param.incoTerms,
+        TypesOfMove : param.typeofMove,
+        OriginPort_ID :originPort_ID,
+        DestinationPort_ID : destinationPort_ID,
+        PickUpAddress :pickUpAddress,
+        DestinationAddress : destinationAddress,
+        Total_Weight_Unit : 'Kgs',
+        SalesPerson : 1452494145,
+        HazMat  : param.HazMat,
+        ChargeableWt : 0,
+        PickUpAddressDetails:pickUpAddressDetails[0],
+        DestinationAddressDetails:destUpAddressDetails[0],
+        RateQueryDim:MultiCBM,
+        MyWayUserID:874588,
+        CompanyID:1457295703,
+        CommodityID:parseInt(param.CommodityID),
+        OriginGeoCordinates:param.OriginGeoCordinates,
+        DestGeoCordinate:param.DestGeoCordinate
+    }
+    }
+    if(param.containerLoadType == 'FTL')
+    {
+    dataParameter = {
+        Mode :param.containerLoadType,
+        ShipmentType : param.shipmentType,
+        Inco_terms : param.incoTerms,
+        TypesOfMove : param.typeofMove,
+        OriginPort_ID :originPort_ID,
+        DestinationPort_ID : destinationPort_ID,
+        PickUpAddress :pickUpAddress,
+        DestinationAddress : destinationAddress,
+        Total_Weight_Unit : 'Kgs',
+        SalesPerson : 1452494145,
+        HazMat  : param.HazMat,
+        ChargeableWt : 0,
+        PickUpAddressDetails:pickUpAddressDetails[0],
+        DestinationAddressDetails:destUpAddressDetails[0],
+        RateQueryDim:MultiCBM,
+        MyWayUserID:874588,
+        CompanyID:1457295703,
+        CommodityID:parseInt(param.CommodityID),
+        OriginGeoCordinates:param.OriginGeoCordinates,
+        DestGeoCordinate:param.DestGeoCordinate,
+        FTLTruckDetails:truckTypeData
+    }
+    }
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SpotRateInsertion`,
+      data: dataParameter,
       // data: {
       //   Mode :param.containerLoadType,
       //   ShipmentType : param.shipmentType,
@@ -1683,34 +1849,63 @@ class RateTable extends Component {
       // DestGeoCordinate:param.DestGeoCordinate,
       // FTLTruckDetails:truckTypeData
       // },
-      data: {
-        Mode :param.containerLoadType,
-        ShipmentType : param.shipmentType,
-        Inco_terms : 'EXW',
-        TypesOfMove : param.typeofMove,
-        OriginPort_ID :'',
-        DestinationPort_ID : '',
-        PickUpAddress :param.pickUpAddress[0].City,
-        DestinationAddress : param.destAddress[0].City,
-        Total_Weight_Unit : 'Kgs',
-        SalesPerson : 1452494145,
-        HazMat  : param.HazMat,
-        ChargeableWt : 0,
+      // data: {
+      //   Mode :param.containerLoadType,
+      //   ShipmentType : param.shipmentType,
+      //   Inco_terms : 'EXW',
+      //   TypesOfMove : param.typeofMove,
+      //   OriginPort_ID :'',
+      //   DestinationPort_ID : '',
+      //   PickUpAddress :param.pickUpAddress[0].City,
+      //   DestinationAddress : param.destAddress[0].City,
+      //   Total_Weight_Unit : 'Kgs',
+      //   SalesPerson : 1452494145,
+      //   HazMat  : param.HazMat,
+      //   ChargeableWt : 0,
  
-        PickUpAddressDetails:{
-          Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
+      //   PickUpAddressDetails:{
+      //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
 
-          },
-        DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
-      ,
-      RateQueryDim:MultiCBM,
-      MyWayUserID:874588,
-      CompanyID:1457295703,
-      CommodityID:parseInt(param.CommodityID),
-      OriginGeoCordinates:param.OriginGeoCordinates,
-      DestGeoCordinate:param.DestGeoCordinate,
-      //FTLTruckDetails:truckTypeData
-      },
+      //     },
+      //   DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
+      // ,
+      // RateQueryDim:MultiCBM,
+      // MyWayUserID:874588,
+      // CompanyID:1457295703,
+      // CommodityID:parseInt(param.CommodityID),
+      // OriginGeoCordinates:param.OriginGeoCordinates,
+      // DestGeoCordinate:param.DestGeoCordinate,
+      // //FTLTruckDetails:truckTypeData
+      // },
+      // data: {
+      //   Mode :param.containerLoadType,
+      //   ShipmentType : param.shipmentType,
+      //   Inco_terms : param.incoTerms,
+      //   TypesOfMove : param.typeofMove,
+      //   OriginPort_ID :'',
+      //   DestinationPort_ID : '',
+      //   PickUpAddress :param.pickUpAddress[0].City,
+      //   DestinationAddress : param.destAddress[0].City,
+      //   Total_Weight_Unit : 'Kgs',
+      //   SalesPerson : 1452494145,
+      //   HazMat  : param.HazMat,
+      //   ChargeableWt : 0,
+      //   Containerdetails:containerdetails,
+        
+      //   PickUpAddressDetails:{
+      //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
+
+      //     },
+      //   DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
+      // ,
+      // RateQueryDim:MultiCBM,
+      // MyWayUserID:874588,
+      // CompanyID:1457295703,
+      // CommodityID:parseInt(param.CommodityID),
+      // OriginGeoCordinates:param.OriginGeoCordinates,
+      // DestGeoCordinate:param.DestGeoCordinate
+      // //FTLTruckDetails:truckTypeData
+      // },
       headers: authHeader()
     }).then(function(response) {
       debugger;
@@ -2416,7 +2611,74 @@ class RateTable extends Component {
                   <label>Cargo</label>
                   <div>
                     {this.state.containerLoadType === "FTL"
-                  ?this.createUITruckType()
+                  ?this.createUITruckType():this.state.containerLoadType === "FCL"
+                  ?<>               <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                  <Select
+                    className="rate-dropdown"
+                    getOptionLabel={option => option.StandardContainerCode}
+                    getOptionValue={option => option.StandardContainerCode}
+                    isMulti
+                    options={this.state.EquipmentType}
+                    // onChange={this.equipChange.bind(this)}
+                    onChange={this.newaddClick.bind(this)}
+                    value={this.state.selected}
+                    showNewOptionAtTop={false}
+                  />
+                </div>
+                <div className="d-flex flex-wrap justify-content-center">
+                  {this.NewcreateUI()}
+                </div>
+                <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                  <input
+                    id="Special-equType"
+                    type="checkbox"
+                    className="d-none"
+                    name={"Special-equType"}
+                    // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                  />
+                  {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                </div>
+                {this.state.specialEquipment === true ? (
+                  <div className="">
+                    {/* spe-equ mt-0 */}
+                    <div className="equip-plus-cntr w-100">
+                      <Select
+                        className="rate-dropdown"
+                        getOptionLabel={option => option.SpecialContainerCode}
+                        getOptionValue={option => option.SpecialContainerCode}
+                        options={this.state.SpacialEqmt}
+                        placeholder="Select Kind of Special Equipment"
+                        onChange={this.specEquipChange}
+                        // value={thi.state.spEqtSelect}
+                        showNewOptionAtTop={false}
+                      />
+                    </div>
+                    <div id="cbmInner">
+                      {this.state.specialEqtSelect === true ? (
+                        this.state.flattack_openTop.length > 0 ? (
+                          <>{this.MultiCreateCBM()}</>
+                        ) : null
+                      ) : null}
+
+                      {this.state.refertypeSelect === true ? (
+                        this.state.referType.length > 0 ? (
+                          <>{this.createUISpecial()}</>
+                        ) : null
+                      ) : null}
+
+                      {this.state.spacEqmtTypeSelect === true ? (
+                        this.state.spacEqmtType.length > 0 ? (
+                          <>
+                            <div className="d-flex flex-wrap justify-content-center align-items-center">
+                              {this.createUIspacEqmtType()}
+                            </div>
+                          </>
+                        ) : null
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+                 </>
                   :this.CreateMultiCBM()}
                    {/* {this.createUITruckType()} */}
                   </div>
