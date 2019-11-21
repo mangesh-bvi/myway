@@ -25,6 +25,7 @@ import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
 import $ from "jquery";
+import { encryption } from "../helpers/encryption";
 
 const { compose } = require("recompose");
 const POLMaps = compose(
@@ -158,7 +159,8 @@ class RateTable extends Component {
       incoTerms: "",
       selectedCommodity: "",
       tempRateDetails: [],
-      polpodData: []
+      polpodData: [],
+      currencyCode: "",
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -389,7 +391,8 @@ class RateTable extends Component {
           podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
         Currency: paramData.currencyCode,
         ChargeableWeight: cmbvalue,
-        RateQueryDim: paramData.multiCBM
+        RateQueryDim: paramData.multiCBM,
+        MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc")
       };
 
       var incoTerms = paramData.incoTerms;
@@ -413,7 +416,8 @@ class RateTable extends Component {
         specialEquipment: paramData.specialEquipment,
         incoTerms,
         polfullAddData: paramData.polfullAddData,
-        podfullAddData: paramData.podfullAddData
+        podfullAddData: paramData.podfullAddData,
+        currencyCode: paramData.currencyCode
       });
     }
 
@@ -426,7 +430,7 @@ class RateTable extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      console.log(response);
+      //console.log(response);
       var ratetable = response.data.Table;
       var ratetable1 = response.data.Table1;
       if (ratetable != null) {
@@ -475,7 +479,7 @@ class RateTable extends Component {
   }
 
   createUIPOL() {
-    debugger;
+
     return this.state.valuesPOL.map((el, index) => {
       return (
         <div key={index} className="row">
