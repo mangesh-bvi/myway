@@ -1455,10 +1455,11 @@ class RateTable extends Component {
               className="select-text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               name="PackageType"
+              value={parseInt(el.PackageType)}
             >
               <option selected>Select</option>
               {this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageName}>
+                <option key={i} value={item.PackageTypeId}>
                   {item.PackageName}
                 </option>
               ))}
@@ -1633,15 +1634,51 @@ class RateTable extends Component {
     debugger;
     let self = this;
     var truckTypeData = [];
+    var MultiCBM = [];
     var pickStreet=""; var pickCountry=""; var pickState=""; var pickZipCode="";
     var destStreet=""; var destCountry=""; var destState=""; var pickZipCode="";
     for(var i=0; i< param.TruckTypeData.length;i++)
     {
         truckTypeData.push({TruckTypeID: parseInt(param.TruckTypeData[i].TruckName),TruckQty: param.TruckTypeData[i].Quantity, TruckDesc:param.TruckTypeData[i].TruckDesc})
     }
+
+    for(var i=0; i< param.multiCBM.length;i++)
+    {
+      MultiCBM.push({Quantity:param.multiCBM[i].Quantity,Lengths:param.multiCBM[i].Lengths,Width:param.multiCBM[i].Width,Height:param.multiCBM[i].Height,GrossWt:param.multiCBM[i].GrossWt,VolumeWeight:param.multiCBM[i].VolumeWeight,Volume:param.multiCBM[i].Volume})
+    }
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SpotRateInsertion`,
+      // data: {
+      //   Mode :param.containerLoadType,
+      //   ShipmentType : param.shipmentType,
+      //   Inco_terms : 'EXW',
+      //   TypesOfMove : param.typeofMove,
+      //   OriginPort_ID :'',
+      //   DestinationPort_ID : '',
+      //   PickUpAddress :param.pickUpAddress[0].City,
+      //   DestinationAddress : param.destAddress[0].City,
+      //   Total_Weight_Unit : 'Kgs',
+      //   SalesPerson : 1452494145,
+      //   HazMat  : param.HazMat,
+      //   ChargeableWt : 0,
+ 
+      //   PickUpAddressDetails:{
+      //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
+
+      //     },
+      //   DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
+      // ,
+      // RateQueryDim:[{
+      //   Quantity:0,Lengths:0,Width:0,Height:0,GrossWt:44000.00,VolumeWeight:0,Volume:0
+      // }],
+      // MyWayUserID:874588,
+      // CompanyID:1457295703,
+      // CommodityID:parseInt(param.CommodityID),
+      // OriginGeoCordinates:param.OriginGeoCordinates,
+      // DestGeoCordinate:param.DestGeoCordinate,
+      // FTLTruckDetails:truckTypeData
+      // },
       data: {
         Mode :param.containerLoadType,
         ShipmentType : param.shipmentType,
@@ -1662,15 +1699,13 @@ class RateTable extends Component {
           },
         DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
       ,
-      RateQueryDim:[{
-        Quantity:0,Lengths:0,Width:0,Height:0,GrossWt:44000.00,VolumeWeight:0,Volume:0
-      }],
+      RateQueryDim:MultiCBM,
       MyWayUserID:874588,
       CompanyID:1457295703,
       CommodityID:parseInt(param.CommodityID),
       OriginGeoCordinates:param.OriginGeoCordinates,
       DestGeoCordinate:param.DestGeoCordinate,
-      FTLTruckDetails:truckTypeData
+      //FTLTruckDetails:truckTypeData
       },
       headers: authHeader()
     }).then(function(response) {
@@ -2352,7 +2387,9 @@ class RateTable extends Component {
             {/* {------------------------------End Mutliple POD Modal----------------------} */}
             {/* {"-------------------------Spot Rate Modal-------------------"} */}
             <Modal
-              className="delete-popup spot-rate-popup pol-pod-popup"
+              className={this.state.containerLoadType === "FTL"
+              ?"delete-popup spot-rate-popup pol-pod-popup"
+              :"delete-popup spot-rate-popup big-popup pol-pod-popup"}
               isOpen={this.state.modalSpot}
               toggle={this.toggleSpot}
               centered={true}

@@ -562,7 +562,7 @@ class NewRateSearch extends Component {
             >
               <option selected>Select</option>
               {this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageName}>
+                <option key={i} value={item.PackageTypeId}>
                   {item.PackageName}
                 </option>
               ))}
