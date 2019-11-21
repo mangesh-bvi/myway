@@ -119,6 +119,10 @@ class BookingTable extends Component {
                     accessor: "Commodity"
                   },
                   {
+                    Header: "Status",
+                    accessor: "Status"
+                  },
+                  {
                     Header: "Action",
                     sortable: false,
                     Cell: row => {
