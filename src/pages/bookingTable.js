@@ -20,7 +20,9 @@ class BookingTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
-      bookingData: []
+      bookingData: [],
+      
+       
     };
     this.HandleBookingList = this.HandleBookingList.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -35,6 +37,7 @@ class BookingTable extends Component {
   componentDidMount() {
     this.HandleBookingList();
   }
+
 
   HandleBookingList() {
     let self = this;
@@ -56,23 +59,22 @@ class BookingTable extends Component {
   }
 
   HandleChangeShipmentDetails(BookingNo) {
-    var data = [BookingNo, "Booking"];
+    debugger;
+
     this.props.history.push({
       pathname: "rate-finalizing-still-booking",
-      state: { detail: data }
+      state: { detail: BookingNo }
     });
   }
 
-  HandleRowClickEvt = (rowInfo, column) => {
+  HandleDocumentView(evt, row) {
     debugger;
-    return {
-      onClick: e => {
-        var BookingNo = column.original["BookingNo"];
-        this.HandleChangeShipmentDetails(BookingNo);
-      }
-    };
-  };
-
+    var BookingNo = row.original["BookingNo"];
+    this.props.history.push({
+      pathname: "rate-finalizing-still-booking",
+      state: { BookingNo: BookingNo }
+    });
+  }
   render() {
     const { bookingData } = this.state;
     return (
@@ -130,13 +132,16 @@ class BookingTable extends Component {
                             onClick={e => this.HandleRowClickEvt(e, row)}
                           /> */}
                           {/* </a> */}
-                          <a href="/rate-finalizing-still-booking">
-                            <img
-                              className="actionicon"
-                              src={Edit}
-                              alt="view-icon"
-                            />
-                          </a>
+                          {/* <a href="/rate-finalizing-still-booking"> */}
+                          <img
+                            className="actionicon"
+                            src={Edit}
+                            alt="view-icon"
+                            onClick={e =>
+                              this.HandleDocumentView(e, row)
+                            }
+                          />
+                          {/* </a> */}
                           <a href="/rate-finalizing">
                             <img
                               className="actionicon"
