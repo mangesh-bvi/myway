@@ -25,6 +25,7 @@ import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
 import $ from "jquery";
+import { parse } from "path";
 
 const { compose } = require("recompose");
 const POLMaps = compose(
@@ -158,7 +159,17 @@ class RateTable extends Component {
       incoTerms: "",
       selectedCommodity: "",
       tempRateDetails: [],
-      polpodData: []
+      polpodData: [],
+      TruckType: [],
+      TruckTypeData: [],
+      CommodityID:"",
+      OriginGeoCordinates:"",
+      DestGeoCordinate:"",
+      pickUpAddress: [],
+      destAddress: [],
+      multiCBM:[],
+      paramData:[]
+
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -172,6 +183,7 @@ class RateTable extends Component {
     this.onFilteredChange = this.onFilteredChange.bind(this);
     this.custClearToggle = this.custClearToggle.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.spotRateSubmit = this.spotRateSubmit.bind(this);
   }
 
   static defaultProps = {
@@ -413,7 +425,15 @@ class RateTable extends Component {
         specialEquipment: paramData.specialEquipment,
         incoTerms,
         polfullAddData: paramData.polfullAddData,
-        podfullAddData: paramData.podfullAddData
+        podfullAddData: paramData.podfullAddData,
+        TruckType: paramData.TruckType,
+        TruckTypeData: paramData.TruckTypeData,
+        OriginGeoCordinates: paramData.OriginGeoCordinates,
+        DestGeoCordinate: paramData.DestGeoCordinate,
+        pickUpAddress: paramData.fullAddressPOL,
+        destAddress: paramData.fullAddressPOD,
+        multiCBM: paramData.multiCBM,
+        packageTypeData:paramData.packageTypeData
       });
     }
 
@@ -1289,7 +1309,14 @@ class RateTable extends Component {
         if (filterData.length > 0) {
           this.setState({
             tempRateDetails: filterData,
-            Commodity: value
+            Commodity: value,
+            CommodityID: value
+          });
+        }
+        else
+        {
+          this.setState({
+            CommodityID: value
           });
         }
       } else {
@@ -1310,6 +1337,358 @@ class RateTable extends Component {
     this.filterAll(value, "R");
   }
 
+
+  addClickTruckType() {
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: ""
+        }
+      ]
+    }));
+  }
+
+  removeClickTruckType(i) {
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
+
+  UITruckTypeChange(i, e) {
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData[i] = {
+      ...TruckTypeData[i],
+      [name]: name === "Quantity" ? parseInt(value) : value,
+      ["TruckDesc"]: name === "TruckName" ? e.target.options[e.target.selectedIndex].text:TruckTypeData[i].TruckDesc
+    };
+    this.setState({ TruckTypeData });
+  }
+  
+  createUITruckType() {
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr spot-pop">
+          <div className="spe-equ">
+            <select
+              className="select-text mr-3"
+              name="TruckName"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+              value={el.TruckName}
+            >
+              <option>Select</option>
+              {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              name="Quantity"
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+              value={el.Quantity}
+            />
+          </div>
+          {i === 0 ? (
+            <div className="col-md">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addClickTruckType.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+          {this.state.TruckTypeData.length > 1 ? (
+            <div className="col-md">
+              <div className="spe-equ mt-2">
+                <i
+                  className="fa fa-minus"
+                  aria-hidden="true"
+                  onClick={this.removeClickTruckType.bind(this,i)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      );
+    });
+  }
+
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
+
+  removeMultiCBM(i) {
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  CreateMultiCBM() {
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Lengths"
+              value={el.Lengths || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="Height"
+              value={el.Height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="GrossWt"
+              value={el.GrossWt || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this,i)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        6000;
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["VolumeWeight"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: 2
+      };
+    }
+
+    this.setState({ multiCBM });
+
+  }
+
+
+  spotRateSubmit(param)
+  {
+    debugger;
+    let self = this;
+    var truckTypeData = [];
+    var pickStreet=""; var pickCountry=""; var pickState=""; var pickZipCode="";
+    var destStreet=""; var destCountry=""; var destState=""; var pickZipCode="";
+    for(var i=0; i< param.TruckTypeData.length;i++)
+    {
+        truckTypeData.push({TruckTypeID: parseInt(param.TruckTypeData[i].TruckName),TruckQty: param.TruckTypeData[i].Quantity, TruckDesc:param.TruckTypeData[i].TruckDesc})
+    }
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SpotRateInsertion`,
+      data: {
+        Mode :param.containerLoadType,
+        ShipmentType : param.shipmentType,
+        Inco_terms : 'EXW',
+        TypesOfMove : param.typeofMove,
+        OriginPort_ID :'',
+        DestinationPort_ID : '',
+        PickUpAddress :param.pickUpAddress[0].City,
+        DestinationAddress : param.destAddress[0].City,
+        Total_Weight_Unit : 'Kgs',
+        SalesPerson : 1452494145,
+        HazMat  : param.HazMat,
+        ChargeableWt : 0,
+ 
+        PickUpAddressDetails:{
+          Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
+
+          },
+        DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
+      ,
+      RateQueryDim:[{
+        Quantity:0,Lengths:0,Width:0,Height:0,GrossWt:44000.00,VolumeWeight:0,Volume:0
+      }],
+      MyWayUserID:874588,
+      CompanyID:1457295703,
+      CommodityID:parseInt(param.CommodityID),
+      OriginGeoCordinates:param.OriginGeoCordinates,
+      DestGeoCordinate:param.DestGeoCordinate,
+      FTLTruckDetails:truckTypeData
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data.Table[0].Message)
+      // self.setState({
+      //   arrLocalsCharges: response.data.Table,
+      //   fltLocalCharges: response.data.Table
+      // })
+
+      // var data = [];
+      // data = response.data;
+      // self.setState({ bookingData: data }); ///problem not working setstat undefined
+    }).catch(error =>{
+      debugger;
+      console.log(error);
+    });
+  }
   render() {
     var i = 0;
 
@@ -1366,7 +1745,7 @@ class RateTable extends Component {
             </div>
             <div className="rate-table-below">
               <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-4 less-right-rate">
                   <div className="rate-table-left">
                     <div className="top-select d-flex justify-content-between">
                       <a href="new-rate-search" className="butn">
@@ -1515,7 +1894,7 @@ class RateTable extends Component {
                   </div>
                 </div>
                 {this.state.RateDetails.length > 0 ? (
-                  <div className="col-md-8 react-rate-table">
+                  <div className="col-md-8 react-rate-table react-rate-tab">
                     <ReactTable
                       columns={[
                         {
@@ -1526,7 +1905,7 @@ class RateTable extends Component {
                                 return (
                                   <React.Fragment>
                                     <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                      <div className="remember-forgot d-block m-0">
+                                      <div className="remember-forgot rat-img d-block m-0">
                                         <input
                                           id={"maersk-logo" + i}
                                           type="checkbox"
@@ -1565,7 +1944,7 @@ class RateTable extends Component {
                                 return (
                                   <>
                                     <p className="details-title">POL</p>
-                                    <p className="details-para">
+                                    <p title={row.original.POLName} className="details-para max2">
                                       {row.original.POLName}
                                     </p>
                                   </>
@@ -1580,7 +1959,7 @@ class RateTable extends Component {
                                 return (
                                   <>
                                     <p className="details-title">POD</p>
-                                    <p className="details-para">
+                                    <p title={row.original.PODName} className="details-para max2">
                                       {row.original.PODName}
                                     </p>
                                   </>
@@ -1595,7 +1974,7 @@ class RateTable extends Component {
                                 return (
                                   <>
                                     <p className="details-title">
-                                      Shipment Port
+                                      S. Port
                                     </p>
                                     <p className="details-para">
                                       {row.original.TransshipmentPort}
@@ -1611,7 +1990,7 @@ class RateTable extends Component {
                               Cell: row => {
                                 return (
                                   <>
-                                    <p className="details-title">Free Time</p>
+                                    <p className="details-title">F. Time</p>
                                     <p className="details-para">
                                       {row.original.freeTime}
                                     </p>
@@ -1619,8 +1998,8 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "freeTime",
-                              filterable: true
-                              // minWidth: 175
+                              filterable: true,
+                              minWidth: 80
                             },
                             {
                               Cell: row => {
@@ -1641,7 +2020,7 @@ class RateTable extends Component {
                               Cell: row => {
                                 return (
                                   <>
-                                    <p className="details-title">Valid Until</p>
+                                    <p className="details-title">Expiry</p>
                                     <p className="details-para">
                                       {new Date(
                                         row.original.expiryDate ||
@@ -1652,8 +2031,8 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "expiryDate" || "ExpiryDate",
-                              filterable: true
-                              // minWidth: 175
+                              filterable: true,
+                              minWidth: 90
                             },
                             {
                               Cell: row => {
@@ -1667,7 +2046,7 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "TransitTime",
-                              minWidth: 120
+                              minWidth: 60
                             },
                             {
                               Cell: row => {
@@ -1686,8 +2065,8 @@ class RateTable extends Component {
                                 );
                               },
                               accessor: "baseFreightFee",
-                              filterable: true
-                              // minWidth: 120
+                              filterable: true,
+                              minWidth: 80
                             }
                           ]
                         },
@@ -1737,6 +2116,7 @@ class RateTable extends Component {
                       data={this.state.tempRateDetails}
                       defaultPageSize={10}
                       className="-striped -highlight"
+                      minRows={1}
                       SubComponent={row => {
                         return (
                           <div style={{ padding: "20px 0" }}>
@@ -1749,24 +2129,12 @@ class RateTable extends Component {
                                 {
                                   columns: [
                                     {
-                                      Header: "Charge Name",
-                                      accessor: "ChargeCode"
-                                    },
-                                    {
-                                      Header: "Tax",
-                                      accessor: "Tax"
-                                    },
-                                    {
-                                      Header: "Units",
-                                      accessor: "ChargeItem"
-                                    },
-                                    {
-                                      Header: "Exrate",
-                                      accessor: "Exrate"
-                                    },
-                                    {
-                                      Header: "Charge Type",
+                                      Header: "C. Type",
                                       accessor: "ChargeType"
+                                    },
+                                    {
+                                      Header: "C. Name",
+                                      accessor: "ChargeCode"
                                     },
                                     {
                                       Header: "Unit Price",
@@ -1779,6 +2147,20 @@ class RateTable extends Component {
                                         </React.Fragment>
                                       )
                                     },
+                                    {
+                                      Header: "Units",
+                                      accessor: "ChargeItem"
+                                    },
+                                    {
+                                      Header: "Tax",
+                                      accessor: "Tax"
+                                    },
+                                    
+                                    {
+                                      Header: "Exrate",
+                                      accessor: "Exrate"
+                                    },
+                                  
                                     {
                                       Cell: row => {
                                         return (
@@ -1800,6 +2182,7 @@ class RateTable extends Component {
                               ]}
                               showPagination={true}
                               defaultPageSize={5}
+                              
                             />
                           </div>
                         );
@@ -1815,7 +2198,7 @@ class RateTable extends Component {
                     </p>
                   </div>
                 ) : (
-                  <div className="col-md-8">
+                  <div className="col-md-8 less-left-rate">
                     <div className="spot-rate">
                       <div className="no-rate">
                         <p>No Rates Found, Ask for Spot Rates</p>
@@ -1925,6 +2308,7 @@ class RateTable extends Component {
             <Modal
               className="delete-popup pol-pod-popup"
               isOpen={this.state.modalPOL}
+              toggle={this.togglePOLModal}
               centered={true}
             >
               <ModalBody>
@@ -1949,6 +2333,7 @@ class RateTable extends Component {
             <Modal
               className="delete-popup pol-pod-popup"
               isOpen={this.state.modalPOD}
+              toggle={this.togglePODModal}
               centered={true}
             >
               <ModalBody>
@@ -1969,30 +2354,41 @@ class RateTable extends Component {
             <Modal
               className="delete-popup spot-rate-popup pol-pod-popup"
               isOpen={this.state.modalSpot}
+              toggle={this.toggleSpot}
               centered={true}
             >
               <h3>Add Below Details</h3>
               <ModalBody>
                 <div className="rename-cntr login-fields">
                   <label>Commodity</label>
-                  <select>
+                  <select onChange={this.filterAll}>
                     <option>Select</option>
-                    <option>Select</option>
-                    <option>Select</option>
+                    <option value="All">All</option>
+                    {this.state.commodityData.map((item, i) => (
+                      <option key={i} value={item.id}>
+                        {item.Commodity}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="rename-cntr login-fields">
                   <label>Cargo</label>
-                  <select>
+                  <div>
+                    {this.state.containerLoadType === "FTL"
+                  ?this.createUITruckType()
+                  :this.CreateMultiCBM()}
+                   {/* {this.createUITruckType()} */}
+                  </div>
+                  {/* <select>
                     <option>Select</option>
                     <option>Select</option>
                     <option>Select</option>
-                  </select>
+                  </select> */}
                 </div>
                 <Button
                   className="butn"
                   onClick={() => {
-                    this.spotRateMsg();
+                    this.spotRateSubmit(this.state);
                     this.toggleSpot();
                   }}
                 >

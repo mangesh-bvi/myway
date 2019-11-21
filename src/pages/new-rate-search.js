@@ -141,7 +141,8 @@ class NewRateSearch extends Component {
         {
           TruckID: "",
           TruckName: "",
-          Quantity: ""
+          Quantity: "",
+          TruckDesc:""
         }
       ],
       fieldspol: {},
@@ -196,8 +197,8 @@ class NewRateSearch extends Component {
       mapPositionPOL: {},
       markerPositionPOD: {},
       mapPositionPOD: {},
-      fullAddressPOL: "",
-      fullAddressPOD: "",
+      fullAddressPOL: [],
+      fullAddressPOD: [],
       totalQuantity: 0,
       isCustomClear: "No",
       polfullAddData: {},
@@ -313,7 +314,8 @@ class NewRateSearch extends Component {
         {
           TruckID: "",
           TruckName: "",
-          Quantity: ""
+          Quantity: "",
+          TruckDesc:""
         }
       ]
     }));
@@ -376,7 +378,8 @@ class NewRateSearch extends Component {
     let TruckTypeData = [...this.state.TruckTypeData];
     TruckTypeData[i] = {
       ...TruckTypeData[i],
-      [name]: name === "Quantity" ? parseInt(value) : value
+      [name]: name === "Quantity" ? parseInt(value) : value,
+      ["TruckDesc"]: name === "TruckName" ? e.target.options[e.target.selectedIndex].text:TruckTypeData[i].TruckDesc
     };
     this.setState({ TruckTypeData });
     document.getElementById("cbm").classList.add("cbm");
@@ -1222,16 +1225,75 @@ class NewRateSearch extends Component {
         addressArray[i].types[0] &&
         "administrative_area_level_2" === addressArray[i].types[0]
       ) {
-        city = addressArray[i].long_name;
-        return city;
+        city = addressArray[i].long_name;    
       }
     }
+    return city;
   };
+
+  getArea = ( addressArray ) => {
+    let area = '';
+    for( let i = 0; i < addressArray.length; i++ ) {
+     if ( addressArray[ i ].types[0]  ) {
+      for ( let j = 0; j < addressArray[ i ].types.length; j++ ) {
+       if ( 'sublocality_level_1' === addressArray[ i ].types[j] || 'locality' === addressArray[ i ].types[j] ) {
+        area = addressArray[ i ].long_name;       
+       }
+      }
+     }
+    }
+    return area;
+   };
+
+   getState = ( addressArray ) => {
+    let state = '';
+    for( let i = 0; i < addressArray.length; i++ ) {
+     for( let i = 0; i < addressArray.length; i++ ) {
+      if ( addressArray[ i ].types[0] && 'administrative_area_level_1' === addressArray[ i ].types[0] ) {
+       state = addressArray[ i ].long_name;     
+      }
+     }
+    }
+    return state;
+   }; 
+
+   getZipCode = ( addressArray ) => {
+    let zipcode = '';
+    for( let i = 0; i < addressArray.length; i++ ) {
+     if ( addressArray[ i ].types[0]  ) {
+      for ( let j = 0; j < addressArray[ i ].types.length; j++ ) {
+       if ( 'postal_code' === addressArray[ i ].types[j]) {
+        zipcode = addressArray[ i ].long_name;       
+       }
+      }
+     }
+    }
+    return zipcode;
+   }; 
+
+   getCountry = ( addressArray ) => {
+    let country = '';
+    for( let i = 0; i < addressArray.length; i++ ) {
+     if ( addressArray[ i ].types[0]  ) {
+      for ( let j = 0; j < addressArray[ i ].types.length; j++ ) {
+       if ( 'country' === addressArray[ i ].types[j]) {
+        country = addressArray[ i ].long_name;       
+       }
+      }
+     }
+    }
+    return country;
+   }; 
+
   onPlaceSelected = place => {
     console.log("plc", place);
     const address = place.formatted_address,
       addressArray = place.address_components,
       city = this.getCity(addressArray),
+      area = this.getArea(addressArray),
+      state = this.getState(addressArray),
+      zipcode = this.getZipCode(addressArray),
+      country = this.getCountry(addressArray),
       latValue = place.geometry.location.lat(),
       lngValue = place.geometry.location.lng();
     if (addressArray.length > 4) {
@@ -1241,10 +1303,11 @@ class NewRateSearch extends Component {
     } else {
       this.setState({ zoomPOL: 6 });
     }
+    this.state.fullAddressPOL.push({Area:area, City:city, State:state, ZipCode: zipcode, Country: country})
 
     var originGeoCordinates = latValue + "," + lngValue;
     this.setState({
-      fullAddressPOL: address,
+      fullAddressPOL: this.state.fullAddressPOL,
       PickupCity: city,
       OriginGeoCordinates: originGeoCordinates
     });
@@ -1266,6 +1329,10 @@ class NewRateSearch extends Component {
     const address = place.formatted_address,
       addressArray = place.address_components,
       city = this.getCity(addressArray),
+      area = this.getArea(addressArray),
+      state = this.getState(addressArray),
+      zipcode = this.getZipCode(addressArray),
+      country = this.getCountry(addressArray),
       latValue = place.geometry.location.lat(),
       lngValue = place.geometry.location.lng();
     if (addressArray.length > 4) {
@@ -1276,8 +1343,9 @@ class NewRateSearch extends Component {
       this.setState({ zoomPOD: 6 });
     }
     var destGeoCordinate = latValue + "," + lngValue;
+    this.state.fullAddressPOD.push({Area:area, City:city, State:state, ZipCode: zipcode, Country: country})
     this.setState({
-      fullAddressPOD: address,
+      fullAddressPOD: this.state.fullAddressPOD,
       DeliveryCity: city,
       DestGeoCordinate: destGeoCordinate
     });

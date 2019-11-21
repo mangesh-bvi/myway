@@ -222,14 +222,15 @@ class Header extends Component {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
         ReferenceNo: txtShipmentNo.value.trim(),
         TypeOfMessage: drpshipment.value.trim(),
-        Message:
-          txtshipmentcomment.value.trim() +
-          " on " +
-          day +
-          " " +
-          month_names[month_index] +
-          " " +
-          year
+        // Message:
+        //   txtshipmentcomment.value.trim() +
+        //   " on " +
+        //   day +
+        //   " " +
+        //   month_names[month_index] +
+        //   " " +
+        //   year
+        Message:txtshipmentcomment.value.trim() 
       },
       headers: authHeader()
     }).then(function(response) {
@@ -254,6 +255,13 @@ class Header extends Component {
     });
     this.toggleDocu();
   };
+
+  onShipmentNoChangeHandler = event => 
+  {
+    this.setState({
+      popupHBLNO: event.target.value
+    });
+  }
 
   render() {
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
@@ -366,6 +374,7 @@ class Header extends Component {
                           type="text"
                           placeholder="Enter Shipment No."
                           value={popupHBLNO}
+                          onChange={this.onShipmentNoChangeHandler}
                         />
                       </div>
                       <div className="rename-cntr login-fields">

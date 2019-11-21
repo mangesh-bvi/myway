@@ -8,6 +8,7 @@ import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import { encryption } from "../helpers/encryption";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -41,12 +42,14 @@ class RateFinalizing extends Component {
       arrLocalsCharges: [],
       fltLocalCharges: [],
       arrSurCharges: [],
-      fltSurCharges: []
+      fltSurCharges: [],
+      ProfitAmount:0
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleNewConsignee = this.toggleNewConsignee.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
+    this.SendRequest = this.SendRequest.bind(this);
   }
 
   componentDidMount() {
@@ -96,6 +99,7 @@ class RateFinalizing extends Component {
     //   rateDetails: rateDetails,
     //   rateSubDetails: rateSubDetails
     // });
+  //   this.SendMail();
   }
 
   HandleLocalCharges() {
@@ -277,6 +281,47 @@ class RateFinalizing extends Component {
     }));
   }
 
+  SendRequest()
+  {
+    var txtRequestDiscount , txtRequestFreeTime, txtRequestComments = "";
+
+    txtRequestDiscount = document.getElementById("txtRequestDiscount").value;
+    txtRequestFreeTime = document.getElementById("txtRequestFreeTime").value;
+    txtRequestComments = document.getElementById("txtRequestComments").value;
+
+    alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
+    
+
+  }
+
+  SendQuote()
+  {
+
+  }
+
+  // SendMail()
+  // {
+  //   debugger;
+  //   let self = this;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/MyWayMessage`,
+  //     data: {
+  //       UserID:encryption(window.localStorage.getItem("userid"), "desc")
+  //     },
+  //     headers: authHeader()
+  //   }).then(function(response) {
+      
+     
+  //    self.bindMyWayMessageById();
+  //   }).catch(error => {
+  //     debugger;
+  //     var temperror = error.response.data;
+  //     var err = temperror.split(":");
+  //     alert(err[1].replace("}", ""))
+  //   });
+  // }
+
   filterLocAll = event => {   
     var localcharge = event.target.value.toLowerCase();
     if(localcharge!="")
@@ -320,6 +365,23 @@ class RateFinalizing extends Component {
       arrSurCharges:this.state.arrSurCharges
     });
   };
+  
+
+  hanleProfitAmountChange(e){
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+       this.setState({ProfitAmount: e.target.value})
+    }
+ }
+
+ hanleProfitAmountSubmit(){
+  
+  alert(this.state.ProfitAmount)
+ // this.setState({ProfitAmount: e.target.value})
+  
+
+}
+
   render() {
     // var data1 = [
     //   { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
@@ -817,7 +879,7 @@ class RateFinalizing extends Component {
                       <a href={Dummy} target="_blank" className="butn mr-3">
                         Preview
                       </a>
-                      <a
+                      {/* <a
                         href="quote-table"
                         className={
                           this.state.commoditySelect == "select" ||
@@ -827,7 +889,18 @@ class RateFinalizing extends Component {
                         }
                       >
                         Send
-                      </a>
+                      </a> */}
+                      <button
+                              onClick={this.SendQuote}
+                              className={
+                                this.state.commoditySelect == "select" ||
+                                this.state.cargoSelect == "select"
+                                  ? "butn cancel-butn no-butn"
+                                  : "butn"
+                              }
+                            >
+                             Send
+                            </button>
                     </div>
                   </div>
                 </div>
@@ -849,12 +922,15 @@ class RateFinalizing extends Component {
                       type="text"
                       placeholder="Enter Amount"
                       class="w-100"
+                      value={this.state.ProfitAmount} 
+                      onChange={this.hanleProfitAmountChange.bind(this)}
+                      maxLength="10"
                     />
                   </div>
                 </div>
               </div>
               <div className="text-center">
-                <Button className="butn" onClick={this.toggleProfit}>
+                <Button className="butn" onClick={this.hanleProfitAmountSubmit.bind(this)}>
                   Done
                 </Button>
               </div>
@@ -921,25 +997,27 @@ class RateFinalizing extends Component {
             toggle={this.toggleRequest}
             centered={true}
           >
+            
             <ModalBody>
               <h3 className="mb-4">Request Changes</h3>
               <div className="rename-cntr login-fields">
                 <label>Discount</label>
-                <input type="text" placeholder="Enter Discount" />
+                <input type="text" id="txtRequestDiscount" placeholder="Enter Discount" />
               </div>
               <div className="rename-cntr login-fields">
                 <label>Free Time</label>
-                <input type="text" placeholder="Enter Time" maxLength="2" />
+                <input type="text" id="txtRequestFreeTime" placeholder="Enter Time" maxLength="2" />
               </div>
               <div className="rename-cntr login-fields mb-0">
                 <label>Comments</label>
                 <textarea
                   className="txt-add"
                   placeholder="Enter Comments"
+                  id="txtRequestComments"
                 ></textarea>
               </div>
               <div className="text-center">
-                <Button className="butn" onClick={this.toggleRequest}>
+                <Button className="butn" onClick={this.SendRequest}>
                   Request
                 </Button>
               </div>
