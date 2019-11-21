@@ -503,6 +503,43 @@ class RateFinalizingStillBooking extends Component {
                         </div>
                       </div>
                     </div>
+
+                    <div>
+                      <div className="title-border py-3">
+                        <div className="rate-radio-cntr">
+                          <div>
+                            <input
+                              type="radio"
+                              //onClick={this.HandleRadioBtn}
+                              name="cust-select"
+                              id="exist-cust"
+                              value="Existing Customer"
+                            />
+                            <label
+                              className="d-flex flex-column align-items-center"
+                              htmlFor="exist-cust"
+                            >
+                              Consignee
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              //onClick={this.HandleRadioBtn}
+                              name="cust-select"
+                              id="new-cust"
+                              value="New Customer"
+                            />
+                            <label
+                              className="d-flex flex-column align-items-center"
+                              htmlFor="new-cust"
+                            >
+                              Shipper
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <div>
                       <div className="title-border py-3">
                         <h3>Consignee Details</h3>
@@ -559,6 +596,7 @@ class RateFinalizingStillBooking extends Component {
                         </div>
                       </div>
                     </div>
+
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
@@ -576,11 +614,15 @@ class RateFinalizingStillBooking extends Component {
                         <input type="text" value="Dummy" disabled />
                       </div> */}
                     </div>
+
                     <div className="row">
                       <div className="col-md login-fields">
                         <p className="details-title">Cargo Details</p>
                       </div>
                     </div>
+
+                    <div className="row"></div>
+
                     <div className="row cargodetailsB">
                       <ReactTable
                         data={Booking2}
@@ -672,6 +714,8 @@ class RateFinalizingStillBooking extends Component {
               </div>
             </ModalBody>
           </Modal>
+
+          {/* {------------------Create Booking Modal --------------} */}
           <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalBook}
@@ -784,7 +828,7 @@ class RateFinalizingStillBooking extends Component {
               </a>
             </ModalBody>
           </Modal>
-
+          {/* {------------------End Booking Modal --------------} */}
           <Modal
             className=""
             isOpen={this.state.modalRequest}
