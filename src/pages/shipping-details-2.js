@@ -215,6 +215,7 @@ class ShippingDetailsTwo extends Component {
       detailsData: {},
       addressData: [],
       containerData: [],
+      containerDetails: [],
       ShowCard: true,
       documentData: [],
       sr_no: 0,
@@ -601,6 +602,7 @@ class ShippingDetailsTwo extends Component {
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
+        containerDetails: shipmentdata.Table3,
         bookedStatus: shipmentdata.Table4,
         packageDetails: shipmentdata.Table7,
         ShipmentExistsInWatchList:
@@ -629,11 +631,11 @@ class ShippingDetailsTwo extends Component {
     var docName = document.getElementById("docName").value;
     var docDesc = document.getElementById("docDesc").value;
     if (docName == "") {
-      alert("Please enter document name");
+      NotificationManager.error("Please enter document name");
       return false;
     }
     if (docDesc == "") {
-      alert("Please enter document description");
+      NotificationManager.error("Please enter document description");
       return false;
     }
     debugger;
@@ -740,7 +742,7 @@ class ShippingDetailsTwo extends Component {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-        alert(err[1].replace("}", ""));
+        NotificationManager.error(err[1].replace("}", ""));
       });
   }
 
@@ -768,6 +770,7 @@ class ShippingDetailsTwo extends Component {
       detailsData,
       addressData,
       containerData,
+      containerDetails,
       ShowCard,
       documentData,
       bookedStatus,
@@ -775,6 +778,8 @@ class ShippingDetailsTwo extends Component {
       packageDetails,
       packageViewMore
     } = this.state;
+    debugger;
+    console.log(bookedStatus);
     let bookingIsActive = "";
     let bookDate = "";
     let departedIsActive = "";
@@ -788,7 +793,8 @@ class ShippingDetailsTwo extends Component {
     for (let index = 0; index < bookedStatus.length; index++) {
       if (bookedStatus[index].Status == "Booked") {
         bookingIsActive =
-          bookedStatus[index].ActualDate == null
+          bookedStatus[index].ActualDate == null ||
+          bookedStatus[index].ActualDate == ""
             ? "track-line-cntr"
             : "track-line-cntr active";
         bookDate =
@@ -797,7 +803,8 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       } else if (bookedStatus[index].Status == "Departed") {
         departedIsActive =
-          bookedStatus[index].ActualDate == null
+          bookedStatus[index].ActualDate == null ||
+          bookedStatus[index].ActualDate == ""
             ? "track-line-cntr"
             : "track-line-cntr active";
         departedDate =
@@ -806,7 +813,8 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       } else if (bookedStatus[index].Status == "Arrived") {
         arrivedIsActive =
-          bookedStatus[index].ActualDate == null
+          bookedStatus[index].ActualDate == null ||
+          bookedStatus[index].ActualDate == ""
             ? "track-line-cntr"
             : "track-line-cntr active";
         arrivedDate =
@@ -815,7 +823,8 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       } else if (bookedStatus[index].Status == "Inland") {
         inlandIsActive =
-          bookedStatus[index].ActualDate == null
+          bookedStatus[index].ActualDate == null ||
+          bookedStatus[index].ActualDate == ""
             ? "track-line-cntr"
             : "track-line-cntr active";
         inlandDate =
@@ -824,7 +833,8 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       } else if (bookedStatus[index].Status == "Delivered") {
         deliveredIsActive =
-          bookedStatus[index].ActualDate == null
+          bookedStatus[index].ActualDate == null ||
+          bookedStatus[index].ActualDate == ""
             ? "track-line-cntr"
             : "track-line-cntr active";
         deliverDate =
@@ -833,6 +843,10 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       }
     }
+    console.log(bookDate, "book");
+    console.log(departedDate, "departure");
+    console.log(arrivedDate, "arrived");
+    console.log(deliverDate, "deliver");
     let Watchlist = "";
     if (this.state.ShipmentExistsInWatchList == 0) {
       Watchlist = (
@@ -942,7 +956,7 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="details-tab"
                     >
-                      <div className="sect-padd">
+                      {/* <div className="sect-padd">
                         <p className="details-heading">Booking Details</p>
                         <div className="row">
                           <div className="col-md-3 details-border">
@@ -958,7 +972,7 @@ class ShippingDetailsTwo extends Component {
                             <p className="details-para">EXW</p>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="sect-padd">
                         <div className="row">
                           <div className="col-md-3 details-border">
@@ -1032,26 +1046,59 @@ class ShippingDetailsTwo extends Component {
                             );
                           })}
                         </div>
-                        <div className="row">
+                        {/* <div className="row">
                           <div className="col-md-12">
                             <a href="#!" className="butn view-btn">
                               View more
                             </a>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
                           <span className="clr-green">POL</span>
                           <div className="pol-pod-progress">
-                            <Progress value="30" />
-                            <span className="pol-pod-percent">30%</span>
+                            <Progress
+                              value={
+                                deliverDate !== ""
+                                  ? "100"
+                                  : arrivedDate !== ""
+                                  ? "90"
+                                  : departedDate !== ""
+                                  ? "50"
+                                  : bookDate !== ""
+                                  ? "0"
+                                  : "0"
+                              }
+                            />
+                            <span
+                              className="pol-pod-percent"
+                              style={{ left: "50%" }}
+                            >
+                              {deliverDate !== ""
+                                ? "100%"
+                                : arrivedDate !== ""
+                                ? "90%"
+                                : departedDate !== ""
+                                ? "50%"
+                                : bookDate !== ""
+                                ? "0%"
+                                : "0%"}
+                            </span>
                           </div>
                           <span className="clr-green">POD</span>
                         </div>
                         <div className="desti-places">
-                          <span>Port of Houston</span>
-                          <span>Western Cape</span>
+                          <span>
+                            {containerData.length > 0
+                              ? containerData[0].DeparturePortName
+                              : ""}
+                          </span>
+                          <span>
+                            {containerData.length > 0
+                              ? containerData[0].DestinationPortName
+                              : ""}
+                          </span>
                         </div>
                       </div>
                       {containerData.map(function(routedata, i) {
@@ -1199,98 +1246,132 @@ class ShippingDetailsTwo extends Component {
                       })}
                       <div className="sect-padd">
                         <p className="details-heading">Container Details</p>
-                        <div className="row">
-                          <div className="col-md-3 details-border">
-                            <p className="details-title">Container Number</p>
-                            <p className="details-para">HLBU-1725486</p>
-                          </div>
-                          <div className="col-md-3 details-border">
-                            <p className="details-title">
-                              Container Code / Type
-                            </p>
-                            <p className="details-para">20GP / Standard 20</p>
-                          </div>
-                          <div className="col-md-3 details-border">
-                            <p className="details-title">Seal NO.1</p>
-                            <p className="details-para">2558156</p>
-                          </div>
-                          <div className="col-md-3 details-border">
-                            <p className="details-title">Seal NO.2</p>
-                          </div>
-                        </div>
-                        <UncontrolledCollapse toggler="#toggler">
-                          <div className="collapse-sect">
-                            <div className="row">
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Unit</p>
-                                <p className="details-para">Metric</p>
+                        <div className="cont-det-outer">
+                          {containerDetails.map(function(cntrDet, i = 0) {
+                            i++;
+                            return (
+                              <div className="cont-det-cntr">
+                                <div className="row">
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Container Number
+                                    </p>
+                                    <p className="details-para">
+                                      {cntrDet["Container Number"]}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">
+                                      Container Code / Type
+                                    </p>
+                                    <p className="details-para">
+                                      {cntrDet.ContainerCode} {"/"}
+                                      {cntrDet.ContainerType}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Seal NO.1</p>
+                                    <p className="details-para">
+                                      {cntrDet.SealNo1}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-3 details-border">
+                                    <p className="details-title">Seal NO.2</p>
+                                    <p className="details-para">
+                                      {cntrDet.SealNo2}
+                                    </p>
+                                  </div>
+                                </div>
+                                <UncontrolledCollapse
+                                  className="cont-deta"
+                                  toggler={"#toggler" + i}
+                                >
+                                  <div className="collapse-sect">
+                                    <div className="row">
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">Unit</p>
+                                        <p className="details-para">
+                                          {cntrDet.Unit}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">Height</p>
+                                        <p className="details-para">
+                                          {cntrDet.height}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">Width</p>
+                                        <p className="details-para">
+                                          {cntrDet.width}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">Length</p>
+                                        <p className="details-para">
+                                          {cntrDet.length}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="row">
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">
+                                          Gross Weight
+                                        </p>
+                                        <p className="details-para">
+                                          {cntrDet["Gross Weight"]}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">
+                                          Net Weight
+                                        </p>
+                                        <p className="details-para">
+                                          {cntrDet.NetWeight}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">
+                                          Volume Weight
+                                        </p>
+                                        <p className="details-para">
+                                          {cntrDet.VolumeWeight}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-3 details-border">
+                                        <p className="details-title">
+                                          Description
+                                        </p>
+                                        <p className="details-para">
+                                          {cntrDet.Description}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </UncontrolledCollapse>
+                                <div className="row">
+                                  <div className="col-md-12">
+                                    <a
+                                      href="#!"
+                                      id={"toggler" + i}
+                                      className="butn view-btn"
+                                      // onClick={() =>
+                                      //   self.setState({
+                                      //     showContent: !self.state.showContent
+                                      //   })
+                                      // }
+                                    >
+                                      {/* {self.state.showContent ? (
+                                      <span>VIEW LESS</span>
+                                    ) : (
+                                      <span>VIEW MORE</span>
+                                    )} */}
+                                    </a>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Height</p>
-                                <p className="details-para">85.2</p>
-                              </div>
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Width</p>
-                                <p className="details-para">93.6</p>
-                              </div>
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Length</p>
-                                <p className="details-para">232.8</p>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Gross Weight</p>
-                                <p className="details-para">0 Kgs</p>
-                              </div>
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Net Weight</p>
-                                <p className="details-para">0 Kgs</p>
-                              </div>
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Volume Weight</p>
-                                <p className="details-para">0.00 Kgs</p>
-                              </div>
-                              <div className="col-md-3 details-border">
-                                <p className="details-title">Description</p>
-                              </div>
-                            </div>
-                          </div>
-                        </UncontrolledCollapse>
-                        <div className="row">
-                          <div className="col-md-12">
-                            <a
-                              href="#!"
-                              id="toggler"
-                              className={className}
-                              onClick={() =>
-                                this.setState({
-                                  showContent: !this.state.showContent
-                                })
-                              }
-                            >
-                              {this.state.showContent ? (
-                                <span>VIEW LESS</span>
-                              ) : (
-                                <span>VIEW MORE</span>
-                              )}
-                            </a>
-                            {/* <button
-                              className={className}
-                              id="toggler"
-                              onClick={() =>
-                                this.setState({
-                                  showContent: !this.state.showContent
-                                })
-                              }
-                            >
-                              {this.state.showContent ? (
-                                <span>VIEW LESS</span>
-                              ) : (
-                                <span>VIEW MORE</span>
-                              )}
-                            </button> */}
-                          </div>
+                            );
+                          })}
                         </div>
                       </div>
                       <div className="sect-padd">
@@ -1583,7 +1664,7 @@ class ShippingDetailsTwo extends Component {
                             {departedDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr">
+                        <div className="track-line-cntr active">
                           <div className="track-img-cntr">
                             <div className="track-img">
                               <img src={Transit} alt="transit icon" />

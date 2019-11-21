@@ -5,7 +5,11 @@ import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 
 import ShipWhite from "./../assets/img/ship-white.png";
+import HambShip from "./../assets/img/hamb-ship.png";
 import PlaneWhite from "./../assets/img/plane-white.png";
+import DelayShip from "./../assets/img/delay-shipment.png";
+import CurrBook from "./../assets/img/current-booking.png";
+import HambPlane from "./../assets/img/hamb-plane.png";
 import BlueShip from "./../assets/img/circle-ship.png";
 import BluePlane from "./../assets/img/circle-plane.png";
 import BookingBlue from "./../assets/img/circle-booked.png";
@@ -788,9 +792,9 @@ class Dashboard extends Component {
 
         //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
       }
-      if (mdata.length > 0) {
-        self.setState({ loading: false });
-      }
+      // if (mdata.length > 0) {
+      //   self.setState({ loading: false });
+      // }
       self.setState({ mapsData: arraModalMapData });
     }
   }
@@ -1066,7 +1070,7 @@ class Dashboard extends Component {
                   name="search-rate"
                   onClick={() => self.HandleShipmentPin("Ocean")}
                 /> */}
-                          <img src={ShipWhite} alt="ship icon" />
+                          <img src={HambShip} alt="ship icon" />
                         </div>
                         <div
                           className="map-icon-cntr rem-icon"
@@ -1082,12 +1086,12 @@ class Dashboard extends Component {
                 name="search-rate"
                 onClick={() => self.HandleShipmentPin("Air")}
               /> */}
-                          <img src={PlaneWhite} alt="plane icon" />
+                          <img src={HambPlane} alt="plane icon" />
                         </div>
                         <div
                           className="map-icon-cntr rem-icon"
                           id="Delay-Ocean"
-                          title="Delay Ocean"
+                          title="Delay Shipment"
                           onClick={() => self.HandleShipmentPin("Delay-Ocean")}
                         >
                           {/* <input
@@ -1098,12 +1102,12 @@ class Dashboard extends Component {
                     name="search-rate"
                     onClick={() => self.HandleShipmentPin("Delay-Ocean")}
                   /> */}
-                          <img src={PlaneWhite} alt="plane icon" />
+                          <img src={DelayShip} alt="plane icon" />
                         </div>
                         <div
                           className="map-icon-cntr rem-icon"
                           id="Booking-Ocean"
-                          title="Booking Ocean"
+                          title="New Booking"
                           onClick={() =>
                             self.HandleShipmentPin("Booking-Ocean")
                           }
@@ -1116,7 +1120,7 @@ class Dashboard extends Component {
                     name="search-rate"
                     onClick={() => self.HandleShipmentPin("Booking-Ocean")}
                   /> */}
-                          <span>...</span>
+                          <img src={CurrBook} alt="plane icon" />
                         </div>
                       </div>
                     </div>

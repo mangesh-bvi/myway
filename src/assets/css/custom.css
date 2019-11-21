@@ -792,6 +792,34 @@ table tbody tr:last-child {
 .package-popup .modal-body {
   padding: 20px;
 }
+.cont-deta.show + div .butn {
+  background-color: #474747;
+  border-color: #474747;
+}
+.cont-deta + div .butn:before {
+  content: "View More";
+}
+.cont-deta.show + div .butn:before,
+.cont-deta.collapsing + div .butn:before {
+  content: "View Less";
+}
+.cont-deta.show + div .butn:hover {
+  color: #474747;
+  background: #fff;
+}
+.cont-det-cntr {
+  border-bottom: 1px solid #d6d6d6;
+  margin-top: 20px;
+}
+.cont-det-outer .cont-det-cntr:last-child {
+  border-bottom: 0;
+}
+.cont-det-outer .cont-det-cntr:last-child .butn {
+  margin-bottom: 0;
+}
+.cont-det-outer .cont-det-cntr:first-child {
+  margin-top: 0;
+}
 /* shipping details 2 ends */
 
 /* shipment planner starts */
@@ -1872,6 +1900,7 @@ table tbody tr:last-child {
 }
 .map-icon-cntr {
   width: 45px;
+  height: 45px;
   background: #0142aa;
   padding: 10px;
   border-radius: 50%;
@@ -1884,6 +1913,7 @@ table tbody tr:last-child {
 }
 .map-icon-cntr .fa-bars {
   color: #fff;
+  font-size: 21px;
 }
 .map-filter {
   position: absolute;
@@ -1893,6 +1923,7 @@ table tbody tr:last-child {
 .map-filter .map-icon-cntr:first-child {
   position: relative;
   z-index: 1;
+  line-height: 28px;
 }
 .map-filter .map-icon-cntr:nth-child(5) {
   left: -50px;
@@ -1929,7 +1960,8 @@ table tbody tr:last-child {
 }
 .dash-search-cntr {
   position: absolute;
-  top: 60px;
+  top: 100px;
+  /* top: 60px; */
   left: 10px;
 }
 .dash-search-cntr .fa-search {
@@ -2875,7 +2907,7 @@ table tbody tr:last-child {
 .modelselecteqt .css-1rhbuit-multiValue {
   display: none;
 }
- 
+
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/
