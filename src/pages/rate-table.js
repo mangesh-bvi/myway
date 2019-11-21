@@ -25,6 +25,7 @@ import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
 import $ from "jquery";
+import { encryption } from "../helpers/encryption";
 import { parse } from "path";
 
 const { compose } = require("recompose");
@@ -160,6 +161,7 @@ class RateTable extends Component {
       selectedCommodity: "",
       tempRateDetails: [],
       polpodData: [],
+      currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
       CommodityID:"",
@@ -401,7 +403,8 @@ class RateTable extends Component {
           podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
         Currency: paramData.currencyCode,
         ChargeableWeight: cmbvalue,
-        RateQueryDim: paramData.multiCBM
+        RateQueryDim: paramData.multiCBM,
+        MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc")
       };
 
       var incoTerms = paramData.incoTerms;
@@ -426,6 +429,7 @@ class RateTable extends Component {
         incoTerms,
         polfullAddData: paramData.polfullAddData,
         podfullAddData: paramData.podfullAddData,
+        currencyCode: paramData.currencyCode,
         TruckType: paramData.TruckType,
         TruckTypeData: paramData.TruckTypeData,
         OriginGeoCordinates: paramData.OriginGeoCordinates,
@@ -446,7 +450,7 @@ class RateTable extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      console.log(response);
+      //console.log(response);
       var ratetable = response.data.Table;
       var ratetable1 = response.data.Table1;
       if (ratetable != null) {
@@ -495,7 +499,7 @@ class RateTable extends Component {
   }
 
   createUIPOL() {
-    debugger;
+
     return this.state.valuesPOL.map((el, index) => {
       return (
         <div key={index} className="row">
