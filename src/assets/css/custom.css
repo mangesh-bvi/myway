@@ -2882,7 +2882,9 @@ table tbody tr:last-child {
 .modelselecteqt .css-1rhbuit-multiValue {
   display: none;
 }
- 
+ .cargodetailsB .ReactTable{
+   width: 100%;
+ }
 /* --------------------------------------------------------------------------- */
 
 /*--------------------------------- Rashmi CSS (Start) ---------------------------------*/

@@ -18,14 +18,54 @@ class RateFinalizingStillBooking extends Component {
       modalRequest: false,
       selectedFileName: "",
       showContent: false,
-      modalBook: false
+      modalBook: false,
+      BookingNo: "",
+      Booking: [],
+      Booking1: [],
+      Booking2: [],
+      Booking3: [],
+      Booking4: [],
+      Booking5: [],
+      commodityData: [],
+      selectedCommodity: "",
+      selectedFilePath: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
     this.toggleBook = this.toggleBook.bind(this);
+    this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
+  }
+  componentDidMount() {
+    debugger;
+    if (
+      typeof this.props.location.state.BookingNo != "undefined" &&
+      typeof this.props.location.state.BookingNo != ""
+    ) {
+      var BookingNo = this.props.location.state.BookingNo;
+      this.setState({ BookingNo });
+      setTimeout(() => {
+        this.HandleShipmentDetails();
+        this.HandleCommodityDropdown();
+      }, 100);
+    }
   }
 
+  HandleCommodityDropdown() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CommodityDropdown`,
+      data: {},
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      var commodityData = response.data.Table;
+      self.setState({ commodityData }); ///problem not working setstat undefined
+    });
+  }
   toggleBook(e) {
     e.stopPropagation();
     this.setState(prevState => ({
@@ -48,23 +88,58 @@ class RateFinalizingStillBooking extends Component {
     });
   };
 
-  HandleShipmentDetails(bookingNo) {
+  HandleShipmentDetails() {
+    let self = this;
+    var BookingNo = this.state.BookingNo;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
       data: {
-        BookingNo: bookingNo
+        BookingNo: BookingNo
       },
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      var shipmentdata = response.data;
+      var Booking = response.data.Table;
+      var Booking1 = response.data.Table1;
+      var Booking2 = response.data.Table2;
+      var Booking3 = response.data.Table3;
+      var Booking4 = response.data.Table4;
+      var Booking5 = response.data.Table5;
+      self.setState({
+        Booking,
+        Booking1,
+        Booking2,
+        Booking3,
+        Booking4,
+        Booking5,
+        selectedCommodity: Booking2[0].Commodity,
+        selectedFilePath: Booking4[0].FTPLink,
+        selectedFileName: Booking4[0].DocumentName
+      });
     });
   }
 
   render() {
+    const {
+      Booking,
+      Booking1,
+      Booking2,
+      Booking3,
+      Booking4,
+      Booking5
+    } = this.state;
+
+    // Booking2.length > 0
+    //   ? this.setState({ selectedCommodity: Booking2[0].Commodity })
+    //   : null;
+
     var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" }
+      {
+        validUntil: "Valid Until : JANUARY",
+        tt: "TT",
+        price: "$43.00"
+      }
     ];
     var data2 = [
       {
@@ -95,10 +170,7 @@ class RateFinalizingStillBooking extends Component {
     } else {
       className = "butn m-0";
     }
-    if (typeof this.props.location.state != "undefined") {
-      var bookingNo = this.props.location.state.detail[0];
-      this.HandleShipmentDetails(bookingNo);
-    }
+
     var i = 0;
 
     return (
@@ -320,15 +392,23 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Shipment Type</p>
-                            <p className="details-para">Import</p>
+                            <p className="details-para"></p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
-                            <p className="details-para">Air</p>
+                            <p className="details-para">
+                              {Booking5.length > 0
+                                ? Booking5[0].ModeOfTransport
+                                : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
-                            <p className="details-para">FCL</p>
+                            <p className="details-para">
+                              {Booking5.length > 0
+                                ? Booking5[0].CargoType
+                                : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
@@ -347,7 +427,11 @@ class RateFinalizingStillBooking extends Component {
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
-                            <p className="details-para">Populated Data</p>
+                            <p className="details-para">
+                              {Booking5.length > 0
+                                ? Booking5[0].Incoterm
+                                : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
@@ -396,36 +480,132 @@ class RateFinalizingStillBooking extends Component {
                   </div>
 
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
-                      <h3>Customer Details</h3>
+                    <div>
+                      <div className="title-border py-3">
+                        <h3>Customer Details</h3>
+                      </div>
+                      <div className="">
+                        <div className="row">
+                          <div className="col-md-4">
+                            <p className="details-title">Account/Customer</p>
+                            <p className="details-para">abcd</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Address</p>
+                            <p className="details-para">
+                              Lotus Park, Goregaon (E), Mumbai : 400099
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Notification Person</p>
+                            <p className="details-para">Raj Mahlotra</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="">
-                      <div className="row">
-                        <div className="col-md-4">
-                          <p className="details-title">Account/Customer</p>
-                          <p className="details-para">abcd</p>
+                    <div>
+                      <div className="title-border py-3">
+                        <h3>Consignee Details</h3>
+                      </div>
+                      <div>
+                        <div className="row">
+                          <div className="col-md-4">
+                            <p className="details-title">Consignee Name</p>
+                            <p className="details-para">
+                              {Booking3.length > 0
+                                ? Booking3[0].Consignee
+                                : null}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Address</p>
+                            <p className="details-para">
+                              {Booking3.length > 0
+                                ? Booking3[0].ConsigneeAddress
+                                : null}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Notification Person</p>
+                            <p className="details-para"></p>
+                          </div>
                         </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Address</p>
-                          <p className="details-para">
-                            Lotus Park, Goregaon (E), Mumbai : 400099
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Notification Person</p>
-                          <p className="details-para">Raj Mahlotra</p>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="title-border py-3">
+                        <h3>Shipper Details</h3>
+                      </div>
+                      <div>
+                        <div className="row">
+                          <div className="col-md-4">
+                            <p className="details-title">Shipper Name</p>
+                            <p className="details-para">
+                              {Booking3.length > 0 ? Booking3[0].Shipper : null}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Address</p>
+                            <p className="details-para">
+                              {Booking3.length > 0
+                                ? Booking3[0].ShipperAddress
+                                : null}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Notification Person</p>
+                            <p className="details-para"></p>
+                          </div>
                         </div>
                       </div>
                     </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <input type="text" value="Dummy" disabled />
+                        <select value={this.state.selectedCommodity}>
+                          <option>Select</option>
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.Commodity}>
+                              {item.Commodity}
+                            </option>
+                          ))}
+                        </select>
                       </div>
-                      <div className="col-md-6 login-fields">
+                      {/* <div className="col-md-6 login-fields">
                         <p className="details-title">Cargo Details</p>
                         <input type="text" value="Dummy" disabled />
+                      </div> */}
+                    </div>
+                    <div className="row">
+                      <div className="col-md login-fields">
+                        <p className="details-title">Cargo Details</p>
                       </div>
+                    </div>
+                    <div className="row cargodetailsB">
+                      <ReactTable
+                        data={Booking2}
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "Package Count",
+                                accessor: "PackageCount"
+                              },
+                              {
+                                Header: "Volume",
+                                accessor: "Volume"
+                              },
+                              {
+                                Header: "Weight",
+                                accessor: "Weight"
+                              }
+                            ]
+                          }
+                        ]}
+                        defaultPageSize={3}
+                        minRows={1}
+                        showPagination={false}
+                      />
                     </div>
                     {/* <div className="text-right">
                       <a href="quote-table" className="butn">
@@ -453,16 +633,18 @@ class RateFinalizingStillBooking extends Component {
                           </label>
                         </div>
                       </div>
-                      <p className="file-name w-100 text-center mt-1">
-                        {this.state.selectedFileName}
-                      </p>
+                      <a href={this.state.selectedFilePath}>
+                        <p className="file-name w-100 text-center mt-1">
+                          {this.state.selectedFileName}
+                        </p>
+                      </a>
                     </div>
                     <center>
                       <button
                         onClick={this.toggleBook}
                         className="butn more-padd mt-4"
                       >
-                        Create Booking
+                        Update Booking
                       </button>
                     </center>
                   </div>

@@ -154,7 +154,10 @@ const MapWithAMakredInfoWindow = compose(
                                       title="HBL No."
                                       className="mapcontainerno dash-hbl"
                                     >
-                                      <a href={shipmentdetails}>
+                                      <a
+                                        className="dash-hbl"
+                                        href={shipmentdetails}
+                                      >
                                         {" "}
                                         {mdata["HBL#"]}
                                       </a>
@@ -287,35 +290,56 @@ const MapWithAMakredInfoWindow = compose(
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div className="card-body">
-                                <div id="accordion-1">
-                                  <div className="card">
-                                    <div
-                                      className="card-header hbl-bor"
-                                      id="heading-1-1"
+                              <div
+                                className="card-header hbl-bor"
+                                id="heading-1-1"
+                              >
+                                <h5>
+                                  <div
+                                    //className="collapsed"
+                                    role="button"
+                                    // data-toggle="collapse"
+                                    href={C_HblNO.replace(/ +/g, "")}
+                                    //aria-expanded="false"
+                                    // aria-controls={mdata["HBL#"].replace(
+                                    //   / +/g,
+                                    //   ""
+                                    // )}
+                                  >
+                                    <p
+                                      title="HBL No."
+                                      className="mapcontainerno dash-hbl"
                                     >
-                                      <h5 className="mb-0">
-                                        <div
-                                          className="collapsed"
-                                          role="button"
-                                          data-toggle="collapse"
-                                          href={C_HblNO.replace(/ +/g, "")}
-                                          aria-expanded="false"
-                                          aria-controls={mdata["HBL#"].replace(
-                                            / +/g,
-                                            ""
-                                          )}
-                                        >
-                                          <p
-                                            title="HBL No."
-                                            className="mapcontainerno dash-hbl"
-                                          >
-                                            {mdata["HBL#"]}
-                                          </p>
-                                        </div>
-                                      </h5>
-                                    </div>
-                                    <div
+                                      <a
+                                        className="dash-hbl"
+                                        href={shipmentdetails}
+                                      >
+                                        {" "}
+                                        {mdata["HBL#"]}
+                                      </a>
+                                      {finalinvocearr.length > 0
+                                        ? finalinvocearr.map(function(
+                                            idata,
+                                            i
+                                          ) {
+                                            return (
+                                              <div>
+                                                <p
+                                                  title="MyWay No."
+                                                  className="mapinvoice ml-2"
+                                                >
+                                                  {idata}
+                                                  {","}
+                                                </p>
+                                              </div>
+                                            );
+                                          })
+                                        : null}
+                                    </p>
+                                  </div>
+                                </h5>
+                              </div>
+                              {/* <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
                                       className="collapse"
                                       data-parent="#accordion-1"
@@ -340,10 +364,7 @@ const MapWithAMakredInfoWindow = compose(
                                             })
                                           : null}
                                       </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+                                    </div> */}
                             </div>
                           </div>
                         </div>
@@ -356,7 +377,7 @@ const MapWithAMakredInfoWindow = compose(
           </Marker>
         );
       }
-      if (marker.Pin == "Booking") {
+      if (marker.Pin === "Booking") {
         return (
           <Marker
             key={marker.id}
@@ -425,35 +446,56 @@ const MapWithAMakredInfoWindow = compose(
                               data-parent="#accordion"
                               aria-labelledby="heading-1"
                             >
-                              <div className="card-body">
-                                <div id="accordion-1">
-                                  <div className="card">
-                                    <div
-                                      className="card-header hbl-bor"
-                                      id="heading-1-1"
+                              <div
+                                className="card-header hbl-bor"
+                                id="heading-1-1"
+                              >
+                                <h5>
+                                  <div
+                                    //className="collapsed"
+                                    role="button"
+                                    // data-toggle="collapse"
+                                    href={C_HblNO.replace(/ +/g, "")}
+                                    //aria-expanded="false"
+                                    // aria-controls={mdata["HBL#"].replace(
+                                    //   / +/g,
+                                    //   ""
+                                    // )}
+                                  >
+                                    <p
+                                      title="HBL No."
+                                      className="mapcontainerno dash-hbl"
                                     >
-                                      <h5 className="mb-0">
-                                        <div
-                                          className="collapsed"
-                                          role="button"
-                                          data-toggle="collapse"
-                                          href={C_HblNO.replace(/ +/g, "")}
-                                          aria-expanded="false"
-                                          aria-controls={mdata["HBL#"].replace(
-                                            / +/g,
-                                            ""
-                                          )}
-                                        >
-                                          <p
-                                            title="HBL No."
-                                            className="mapcontainerno dash-hbl"
-                                          >
-                                            {mdata["HBL#"]}
-                                          </p>
-                                        </div>
-                                      </h5>
-                                    </div>
-                                    <div
+                                      <a
+                                        className="dash-hbl"
+                                        href={shipmentdetails}
+                                      >
+                                        {" "}
+                                        {mdata["HBL#"]}
+                                      </a>
+                                      {finalinvocearr.length > 0
+                                        ? finalinvocearr.map(function(
+                                            idata,
+                                            i
+                                          ) {
+                                            return (
+                                              <div>
+                                                <p
+                                                  title="MyWay No."
+                                                  className="mapinvoice ml-2"
+                                                >
+                                                  {idata}
+                                                  {","}
+                                                </p>
+                                              </div>
+                                            );
+                                          })
+                                        : null}
+                                    </p>
+                                  </div>
+                                </h5>
+                              </div>
+                              {/* <div
                                       id={mdata["HBL#"].replace(/ +/g, "")}
                                       className="collapse"
                                       data-parent="#accordion-1"
@@ -478,10 +520,324 @@ const MapWithAMakredInfoWindow = compose(
                                             })
                                           : null}
                                       </div>
-                                    </div>
-                                  </div>
+                                    </div> */}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        );
+      }
+
+
+      if(marker.Pin==="Booking-Ocean")
+      {
+        return (
+          <Marker
+            key={marker.id}
+            onClick={onClick}
+            title={marker.Vessel}
+            position={{
+              lat: Number(marker.LastLocation_Lat),
+              lng: Number(marker.LastLocation_Lon)
+            }}
+            icon={bookingBlue}
+          >
+            {props.selectedMarker === marker && (
+              <InfoWindow>
+                <div>
+                  {props.ModalData.map(function(mdata, i) {
+                    let Hblno = mdata["HBL#"];
+                    let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno;
+                    var finalinvoce;
+                    var finalinvocearr = [];
+                    var C_colid = "#" + mdata.ContainerNo;
+                    var C_HblNO = "#" + mdata["HBL#"];
+
+                    if (
+                      (mdata["InvoiceNumber/Productid"] != "") &
+                      (mdata["InvoiceNumber/Productid"] != null)
+                    ) {
+                      inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                      if (inovceno.length > 0) {
+                        for (let index = 0; index < inovceno.length; index++) {
+                          finalinvoce = inovceno[index].split("|")[0];
+                          finalinvocearr.push(finalinvoce);
+                        }
+                      }
+                    }
+                    return (
+                      <div className="pinmodal">
+                        <div id="accordion">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
+                                <div
+                                  role="button"
+                                  data-toggle="collapse"
+                                  href={C_colid.replace(/ +/g, "")}
+                                  aria-expanded="false"
+                                  aria-controls={mdata.ContainerNo.replace(
+                                    / +/g,
+                                    ""
+                                  )}
+                                >
+                                  <a href={shipmentdetails}>
+                                    <p
+                                      title="Container No."
+                                      className="mapcontainerno"
+                                    >
+                                      {mdata.ContainerNo}
+                                    </p>
+                                  </a>
                                 </div>
+                              </h5>
+                            </div>
+                            <div
+                              id={mdata.ContainerNo.replace(/ +/g, "")}
+                              className="collapse"
+                              data-parent="#accordion"
+                              aria-labelledby="heading-1"
+                            >
+                              <div
+                                className="card-header hbl-bor"
+                                id="heading-1-1"
+                              >
+                                <h5>
+                                  <div
+                                    //className="collapsed"
+                                    role="button"
+                                    // data-toggle="collapse"
+                                    href={C_HblNO.replace(/ +/g, "")}
+                                    //aria-expanded="false"
+                                    // aria-controls={mdata["HBL#"].replace(
+                                    //   / +/g,
+                                    //   ""
+                                    // )}
+                                  >
+                                    <p
+                                      title="HBL No."
+                                      className="mapcontainerno dash-hbl"
+                                    >
+                                      <a
+                                        className="dash-hbl"
+                                        href={shipmentdetails}
+                                      >
+                                        {" "}
+                                        {mdata["HBL#"]}
+                                      </a>
+                                      {finalinvocearr.length > 0
+                                        ? finalinvocearr.map(function(
+                                            idata,
+                                            i
+                                          ) {
+                                            return (
+                                              <div>
+                                                <p
+                                                  title="MyWay No."
+                                                  className="mapinvoice ml-2"
+                                                >
+                                                  {idata}
+                                                  {","}
+                                                </p>
+                                              </div>
+                                            );
+                                          })
+                                        : null}
+                                    </p>
+                                  </div>
+                                </h5>
                               </div>
+                              {/* <div
+                                      id={mdata["HBL#"].replace(/ +/g, "")}
+                                      className="collapse"
+                                      data-parent="#accordion-1"
+                                      aria-labelledby="heading-1-1"
+                                    >
+                                      <div className="card-body">
+                                        {finalinvocearr.length > 0
+                                          ? finalinvocearr.map(function(
+                                              idata,
+                                              i
+                                            ) {
+                                              return (
+                                                <div>
+                                                  <p
+                                                    title="MyWay No."
+                                                    className="mapinvoice ml-2"
+                                                  >
+                                                    {idata}
+                                                  </p>
+                                                </div>
+                                              );
+                                            })
+                                          : null}
+                                      </div>
+                                    </div> */}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        );
+      }
+
+      if(marker.Pin==="Delay-Ocean")
+      {
+        return (
+          <Marker
+            key={marker.id}
+            onClick={onClick}
+            title={marker.Vessel}
+            position={{
+              lat: Number(marker.LastLocation_Lat),
+              lng: Number(marker.LastLocation_Lon)
+            }}
+            icon={bookingBlue}
+          >
+            {props.selectedMarker === marker && (
+              <InfoWindow>
+                <div>
+                  {props.ModalData.map(function(mdata, i) {
+                    let Hblno = mdata["HBL#"];
+                    let shipmentdetails = "shipment-details?hblno=" + Hblno;
+                    var inovceno;
+                    var finalinvoce;
+                    var finalinvocearr = [];
+                    var C_colid = "#" + mdata.ContainerNo;
+                    var C_HblNO = "#" + mdata["HBL#"];
+
+                    if (
+                      (mdata["InvoiceNumber/Productid"] != "") &
+                      (mdata["InvoiceNumber/Productid"] != null)
+                    ) {
+                      inovceno = mdata["InvoiceNumber/Productid"].split(":");
+                      if (inovceno.length > 0) {
+                        for (let index = 0; index < inovceno.length; index++) {
+                          finalinvoce = inovceno[index].split("|")[0];
+                          finalinvocearr.push(finalinvoce);
+                        }
+                      }
+                    }
+                    return (
+                      <div className="pinmodal">
+                        <div id="accordion">
+                          <div className="card">
+                            <div className="card-header" id="heading-1">
+                              <h5 className="mb-0">
+                                <div
+                                  role="button"
+                                  data-toggle="collapse"
+                                  href={C_colid.replace(/ +/g, "")}
+                                  aria-expanded="false"
+                                  aria-controls={mdata.ContainerNo.replace(
+                                    / +/g,
+                                    ""
+                                  )}
+                                >
+                                  <a href={shipmentdetails}>
+                                    <p
+                                      title="Container No."
+                                      className="mapcontainerno"
+                                    >
+                                      {mdata.ContainerNo}
+                                    </p>
+                                  </a>
+                                </div>
+                              </h5>
+                            </div>
+                            <div
+                              id={mdata.ContainerNo.replace(/ +/g, "")}
+                              className="collapse"
+                              data-parent="#accordion"
+                              aria-labelledby="heading-1"
+                            >
+                              <div
+                                className="card-header hbl-bor"
+                                id="heading-1-1"
+                              >
+                                <h5>
+                                  <div
+                                    //className="collapsed"
+                                    role="button"
+                                    // data-toggle="collapse"
+                                    href={C_HblNO.replace(/ +/g, "")}
+                                    //aria-expanded="false"
+                                    // aria-controls={mdata["HBL#"].replace(
+                                    //   / +/g,
+                                    //   ""
+                                    // )}
+                                  >
+                                    <p
+                                      title="HBL No."
+                                      className="mapcontainerno dash-hbl"
+                                    >
+                                      <a
+                                        className="dash-hbl"
+                                        href={shipmentdetails}
+                                      >
+                                        {" "}
+                                        {mdata["HBL#"]}
+                                      </a>
+                                      {finalinvocearr.length > 0
+                                        ? finalinvocearr.map(function(
+                                            idata,
+                                            i
+                                          ) {
+                                            return (
+                                              <div>
+                                                <p
+                                                  title="MyWay No."
+                                                  className="mapinvoice ml-2"
+                                                >
+                                                  {idata}
+                                                  {","}
+                                                </p>
+                                              </div>
+                                            );
+                                          })
+                                        : null}
+                                    </p>
+                                  </div>
+                                </h5>
+                              </div>
+                              {/* <div
+                                      id={mdata["HBL#"].replace(/ +/g, "")}
+                                      className="collapse"
+                                      data-parent="#accordion-1"
+                                      aria-labelledby="heading-1-1"
+                                    >
+                                      <div className="card-body">
+                                        {finalinvocearr.length > 0
+                                          ? finalinvocearr.map(function(
+                                              idata,
+                                              i
+                                            ) {
+                                              return (
+                                                <div>
+                                                  <p
+                                                    title="MyWay No."
+                                                    className="mapinvoice ml-2"
+                                                  >
+                                                    {idata}
+                                                  </p>
+                                                </div>
+                                              );
+                                            })
+                                          : null}
+                                      </div>
+                                    </div> */}
                             </div>
                           </div>
                         </div>
