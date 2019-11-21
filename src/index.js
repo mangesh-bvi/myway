@@ -10,9 +10,7 @@ import "./index.css";
 import Login from "./pages/Login";
 
 import * as serviceWorker from "./serviceWorker";
-// import {createStore} from 'redux';
-// import {Provider} from 'react-redux';
-// import reducer from './reducers/reducer';
+ 
 import Dashboard from "./pages/Dashboard";
 import ChangePassword from "./pages/ChangePassword";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -54,7 +52,7 @@ import ReportDetails from "./pages/report-details";
 // import Exmaple from './pages/Example';
 
 // import Signin from './pages/Signin';
-// const store=createStore(reducer);
+ 
 
 ReactDOM.render(
   <Router>
