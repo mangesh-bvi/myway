@@ -81,7 +81,7 @@ const MapWithAMakredInfoWindow = compose(
             //   lng: this.state.mapPosition.lng
             // }}
           >
-            {props.selectedMarker === marker && (
+            {props.selectedMarker === marker ||props.selectedMarker && (
               <InfoWindow>
                 <div>
                   {props.ModalData.map(function(mdata, i) {
@@ -538,9 +538,7 @@ const MapWithAMakredInfoWindow = compose(
         );
       }
 
-
-      if(marker.Pin==="Booking-Ocean")
-      {
+      if (marker.Pin === "Booking-Ocean") {
         return (
           <Marker
             key={marker.id}
@@ -697,8 +695,7 @@ const MapWithAMakredInfoWindow = compose(
         );
       }
 
-      if(marker.Pin==="Delay-Ocean")
-      {
+      if (marker.Pin === "Delay-Ocean") {
         return (
           <Marker
             key={marker.id}
@@ -870,10 +867,15 @@ const MapWithAMakredInfoWindow = compose(
           borderRadius: "50px",
           paddingRight: "45px"
         }}
+        onChange={props.onChangeSearchBox}
         onPlaceSelected={props.onPlaceSelected}
         types={["(regions)"]}
       />
-      <i className="fa fa-search" aria-hidden="true"></i>
+      <i
+        className="fa fa-search"
+        aria-hidden="true"
+        onClick={props.onPlaceSelected}
+      ></i>
     </div>
   </GoogleMap>
 ));
@@ -916,6 +918,14 @@ class Dashboard extends Component {
     this.HandleBookingCardApi = this.HandleBookingCardApi.bind(this);
     this.HandleWatchListData = this.HandleWatchListData.bind(this);
   }
+
+  /////this method for onChangeSearchBox for react google autocomplete box
+
+  onChangeSearchBox = e => {
+    debugger;
+  };
+
+  //// end
 
   onPlaceSelected = place => {
     debugger;
@@ -1062,6 +1072,7 @@ class Dashboard extends Component {
     });
   }
   handleClick = (marker, event) => {
+
     debugger;
     let selt = this;
     selt.setState({ selectedMarker: "" });
@@ -1389,6 +1400,7 @@ class Dashboard extends Component {
                         selectedMarker={selectedMarker}
                         ModalData={ModalData}
                         onPlaceSelected={this.onPlaceSelected}
+                        onChangeSearchBox={this.onChangeSearchBox}
                         mapPosition={this.state.mapPosition}
                         zoom={this.state.zoom}
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
@@ -1561,6 +1573,7 @@ class Dashboard extends Component {
                       selectedMarker={selectedMarker}
                       ModalData={ModalData}
                       onPlaceSelected={this.onPlaceSelected}
+                      onChangeSearchBox={this.onChangeSearchBox}
                       mapPosition={this.state.mapPosition}
                       zoom={this.state.zoom}
                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
