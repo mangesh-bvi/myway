@@ -2844,6 +2844,10 @@ class NewRateSearch extends Component {
                 </div>
                 <div id="typeMoveInner">
                   <div className="new-radio-rate-cntr radio-blue">
+                    {this.state.containerLoadType === "LCL" ||
+                        this.state.containerLoadType === "AIR" || 
+                        this.state.containerLoadType === "FCL" ?(
+                          <>
                     <div>
                       <input
                         type="radio"
@@ -2864,6 +2868,8 @@ class NewRateSearch extends Component {
                       />
                       <label htmlFor="d2p">Door2Port</label>
                     </div>
+                       </> 
+                        ):null}
                     <div>
                       <input
                         type="radio"
@@ -2874,6 +2880,10 @@ class NewRateSearch extends Component {
                       />
                       <label htmlFor="d2d">Door2Door</label>
                     </div>
+                    {this.state.containerLoadType === "LCL" ||
+                    this.state.containerLoadType === "AIR" || 
+                    this.state.containerLoadType === "FCL" ?(
+                    <>
                     <div>
                       <input
                         type="radio"
@@ -2884,6 +2894,8 @@ class NewRateSearch extends Component {
                       />
                       <label htmlFor="p2d">Port2Door</label>
                     </div>
+                    </> 
+                        ):null}
                   </div>
                   <div className="spe-equ justify-content-center">
                     <label>Inco Terms :</label>
