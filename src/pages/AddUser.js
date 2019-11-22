@@ -845,6 +845,9 @@ if (this.state.selectedFile == null)
     if (this.state.fields["displayConsignee"] == undefined || this.state.fields["displayConsignee"]=="") {
       this.state.fields["displayConsignee"] = this.state.selectIsEnable[0].key;
     }
+    if (this.state.fields["usercreation"] == undefined || this.state.fields["usercreation"]=="") {
+      this.state.fields["usercreation"] = this.state.selectUserCreate[0].key;
+    }
     // if (this.state.fields["isenabled"] == undefined || this.state.fields["isenabled"]=="") {
     //   this.state.fields["isenabled"] = this.state.selectIsEnable[0].value;
     // }
@@ -1676,7 +1679,7 @@ if (this.state.selectedFile == null)
                             className="file-upload d-none"
                             type="file"
                             onChange={this.fileChangedHandler}
-                            accept="image/*"
+                            accept=".jpg, .JPG, .jpeg, .png, .gif"
                           />
                           <label htmlFor="file-upload">
                             <div className="file-icon">

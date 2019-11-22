@@ -1106,7 +1106,7 @@ class AddSalesUser extends React.Component {
                       className="file-upload d-none"
                       type="file"
                       onChange={this.fileChangedHandler}
-                      accept="image/*"
+                      accept=".jpg, .jpeg, .png, .gif"
                     />
                     <label htmlFor="file-upload">
                       <div className="file-icon">

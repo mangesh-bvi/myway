@@ -9,6 +9,10 @@ import ShipBlue from "./../assets/img/ship-blue.svg";
 import ShipWhite from "./../assets/img/ship-white.svg";
 import SideMenu from "../component/sidemenu";
 import DatePicker from "react-datepicker";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
 import "react-datepicker/dist/react-datepicker.css";
 import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
@@ -183,7 +187,7 @@ class Analytics extends Component {
     var g2 = new Date(ToDate);
 
     if (g1.getTime() > g2.getTime()) {
-      alert("To date should be greater then From date.");
+      NotificationManager.error("To date should be greater then From date.");
       document.getElementById("datpicker-to-shipment").focus();
       return false;
     }
@@ -321,7 +325,7 @@ class Analytics extends Component {
           err = temperror;
         }
 
-        alert(err);
+        NotificationManager.error(err);
         self.setState({ graphShipmentdataset: [] });
       });
   }
@@ -463,7 +467,7 @@ class Analytics extends Component {
     var g2 = new Date(ToDate);
 
     if (g1.getTime() > g2.getTime()) {
-      alert("To date should be greater then From date.");
+      NotificationManager.error("To date should be greater then From date.");
       document.getElementById("datpicker-to-invoice").focus();
       return false;
     }
@@ -531,7 +535,7 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        alert(err[1].replace("}", ""));
+        NotificationManager.error(err[1].replace("}", ""));
         self.setState({ setSupplierdrop: [] });
       });
   }
@@ -622,7 +626,7 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        alert(err[1].replace("}", ""));
+        NotificationManager.error(err[1].replace("}", ""));
         self.setState({ graphdataset: [] });
       });
   }
@@ -678,6 +682,7 @@ class Analytics extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
+            <NotificationContainer />
             <ul className="nav cust-tabs pt-2" role="tablist">
               <li>
                 <a

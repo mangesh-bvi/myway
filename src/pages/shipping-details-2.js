@@ -232,6 +232,7 @@ class ShippingDetailsTwo extends Component {
       ShipmentExistsInWatchList: 0,
       showContent: false,
       packageViewMore: [],
+      packageTable: [],
       MessagesActivityDetails: [],
       iframeKey: 0
     };
@@ -671,11 +672,20 @@ class ShippingDetailsTwo extends Component {
       modalDel: !prevState.modalDel
     }));
   }
-  togglePackage() {
+  togglePackage(cargoId) {
     debugger;
     let self = this;
+    let packageTable = [];
+
+    this.state.packageViewMore.forEach(function iterator(item) {
+      if (item.CargoPackID === cargoId) {
+        packageTable.push(item);
+      }
+    });
+
     self.setState(prevState => ({
-      modalPackage: !prevState.modalPackage
+      modalPackage: !prevState.modalPackage,
+      packageTable
     }));
   }
   toggleDocu() {
@@ -776,7 +786,8 @@ class ShippingDetailsTwo extends Component {
       bookedStatus,
       MapsDetailsData,
       packageDetails,
-      packageViewMore
+      packageViewMore,
+      packageTable
     } = this.state;
     debugger;
     console.log(bookedStatus);
@@ -1073,7 +1084,18 @@ class ShippingDetailsTwo extends Component {
                             />
                             <span
                               className="pol-pod-percent"
-                              style={{ left: "50%" }}
+                              style={{
+                                left:
+                                  deliverDate !== ""
+                                    ? "100%"
+                                    : arrivedDate !== ""
+                                    ? "90%"
+                                    : departedDate !== ""
+                                    ? "50%"
+                                    : bookDate !== ""
+                                    ? "0%"
+                                    : "0%"
+                              }}
                             >
                               {deliverDate !== ""
                                 ? "100%"
@@ -1101,11 +1123,12 @@ class ShippingDetailsTwo extends Component {
                           </span>
                         </div>
                       </div>
-                      {containerData.map(function(routedata, i) {
+                      {containerData.map(function(routedata, i = 0) {
+                        i++;
                         return (
                           <div className="sect-padd">
                             <p className="details-heading">
-                              Routing Information - {i + 1}
+                              Routing Information - {i}
                             </p>
                             <div className="row mid-border">
                               <div className="col-md-6 details-border">
@@ -1179,7 +1202,10 @@ class ShippingDetailsTwo extends Component {
                                 </div>
                               </div>
                             </div>
-                            {ShowCard ? (
+                            <UncontrolledCollapse
+                              className="cont-deta"
+                              toggler={"#route" + i}
+                            >
                               <div className="collapse-sect">
                                 <div className="row">
                                   <div className="col-md-3 details-border">
@@ -1226,21 +1252,18 @@ class ShippingDetailsTwo extends Component {
                                   </div>
                                 </div>
                               </div>
-                            ) : (
-                              ""
-                            )}
-                            {
-                              <div className="row">
-                                <div className="col-md-12">
-                                  <a
-                                    href="#!"
-                                    className="butn view-btn less-btn"
-                                  >
-                                    Show Less
-                                  </a>
-                                </div>
+                            </UncontrolledCollapse>
+                            <div className="row">
+                              <div className="col-md-12">
+                                <a
+                                  href="#!"
+                                  id={"route" + i}
+                                  className="butn view-btn"
+                                >
+                                  {/* Show Less */}
+                                </a>
                               </div>
-                            }
+                            </div>
                           </div>
                         );
                       })}
@@ -1392,107 +1415,118 @@ class ShippingDetailsTwo extends Component {
                                   </p>
                                 </div>
                               </div>
-
-                              <div className="collapse-sect">
-                                <div className="row">
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">Case Number</p>
-                                    <p className="details-para">
-                                      {packData.CaseNumber}
-                                    </p>
+                              <UncontrolledCollapse
+                                className="cont-deta"
+                                toggler={"#package" + i}
+                              >
+                                <div className="collapse-sect">
+                                  <div className="row">
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">
+                                        Case Number
+                                      </p>
+                                      <p className="details-para">
+                                        {packData.CaseNumber}
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">Units</p>
+                                      <p className="details-para">
+                                        {packData.UnitType}
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">
+                                        Package Count
+                                      </p>
+                                      <p className="details-para">
+                                        {packData.PackageCount}
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">Length</p>
+                                      <p className="details-para">
+                                        {packData.Length}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">Units</p>
-                                    <p className="details-para">
-                                      {packData.UnitType}
-                                    </p>
+                                  <div className="row">
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">Width</p>
+                                      <p className="details-para">
+                                        {packData.Width}
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">Height</p>
+                                      <p className="details-para">
+                                        {packData.Height}
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">
+                                        Net Weight
+                                      </p>
+                                      <p className="details-para">
+                                        {packData.NetWeight} Kgs.
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">
+                                        Gross Weight
+                                      </p>
+                                      <p className="details-para">
+                                        {packData.GrossWeight} Kgs.
+                                      </p>
+                                    </div>
                                   </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">
-                                      Package Count
-                                    </p>
-                                    <p className="details-para">
-                                      {packData.PackageCount}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">Length</p>
-                                    <p className="details-para">
-                                      {packData.Length}
-                                    </p>
+                                  <div className="row">
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">Volume</p>
+                                      <p className="details-para">
+                                        {packData.Volume}
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">
+                                        Volume Weight
+                                      </p>
+                                      <p className="details-para">
+                                        {packData.VolumeWeight} Kgs.
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">
+                                        Total Net Weight
+                                      </p>
+                                      <p className="details-para">
+                                        {packData.TotalNetWeight} Kgs.
+                                      </p>
+                                    </div>
+                                    <div className="col-md-3 details-border">
+                                      <p className="details-title">
+                                        Total Gross Weight
+                                      </p>
+                                      <p className="details-para">
+                                        {packData.TotalGrossWeight} Kgs.
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
-                                <div className="row">
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">Width</p>
-                                    <p className="details-para">
-                                      {packData.Width}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">Height</p>
-                                    <p className="details-para">
-                                      {packData.Height}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">Net Weight</p>
-                                    <p className="details-para">
-                                      {packData.NetWeight} Kgs.
-                                    </p>
-                                  </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">
-                                      Gross Weight
-                                    </p>
-                                    <p className="details-para">
-                                      {packData.GrossWeight} Kgs.
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">Volume</p>
-                                    <p className="details-para">
-                                      {packData.Volume}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">
-                                      Volume Weight
-                                    </p>
-                                    <p className="details-para">
-                                      {packData.VolumeWeight} Kgs.
-                                    </p>
-                                  </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">
-                                      Total Net Weight
-                                    </p>
-                                    <p className="details-para">
-                                      {packData.TotalNetWeight} Kgs.
-                                    </p>
-                                  </div>
-                                  <div className="col-md-3 details-border">
-                                    <p className="details-title">
-                                      Total Gross Weight
-                                    </p>
-                                    <p className="details-para">
-                                      {packData.TotalGrossWeight} Kgs.
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
+                              </UncontrolledCollapse>
                               <div className="row">
                                 <div className="col-md-12">
                                   <a
                                     href="#!"
-                                    className="butn view-btn less-btn mr-2"
+                                    id={"package" + i}
+                                    className="butn view-btn mr-2"
                                   >
-                                    Show Less
+                                    {/* Show Less */}
                                   </a>
                                   <button
-                                    onClick={() => self.togglePackage()}
+                                    onClick={() =>
+                                      self.togglePackage(packData.CargoPackID)
+                                    }
                                     className="butn view-btn"
                                   >
                                     View Items
@@ -1653,36 +1687,90 @@ class ShippingDetailsTwo extends Component {
                             {bookDate}
                           </p>
                         </div>
-                        <div className={departedIsActive}>
+                        <div className={departedIsActive + " active"}>
                           <div className="track-img-cntr">
                             <div className="track-img">
-                              <img src={Departed} alt="departed icon" />
+                              {/* <img src={Departed} alt="departed icon" /> */}
+                              <img
+                                src={
+                                  departedDate === "" || departedDate === null
+                                    ? Transit
+                                    : Departed
+                                }
+                                alt="departed icon"
+                              />
                             </div>
                           </div>
                           <p>
-                            <span>Departed : </span>
+                            <span>
+                              {departedDate === "" || departedDate === null
+                                ? "On the way"
+                                : "Departed :"}
+                            </span>
                             {departedDate}
                           </p>
                         </div>
-                        <div className="track-line-cntr active">
+                        <div
+                          className={
+                            departedDate === "" || departedDate === null
+                              ? "track-line-cntr"
+                              : "track-line-cntr active"
+                          }
+                        >
                           <div className="track-img-cntr">
                             <div className="track-img">
-                              <img src={Transit} alt="transit icon" />
+                              <img
+                                src={
+                                  departedDate === "" || departedDate === null
+                                    ? Departed
+                                    : arrivedDate !== null || arrivedDate !== ""
+                                    ? Arrived
+                                    : Transit
+                                }
+                                alt="transit icon"
+                              />
                             </div>
                           </div>
                           <p>
-                            <span>On the way</span>
+                            <span>
+                              {departedDate === "" || departedDate === null
+                                ? "Departed : "
+                                : arrivedDate !== null || arrivedDate !== ""
+                                ? "Arrived : "
+                                : "On the way"}
+                            </span>
+                            {arrivedDate !== null || arrivedDate !== ""
+                              ? arrivedDate
+                              : null}
+                            {/* {arrivedDate} */}
                           </p>
                         </div>
                         <div className={arrivedIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
-                              <img src={Arrived} alt="arrived icon" />
+                              {/* <img src={Arrived} alt="arrived icon" /> */}
+                              <img
+                                src={
+                                  deliverDate !== null || deliverDate !== ""
+                                    ? Transit
+                                    : Arrived
+                                }
+                                alt="arrived icon"
+                              />
                             </div>
                           </div>
                           <p>
-                            <span>Arrived : </span>
-                            {arrivedDate}
+                            <span>
+                              {arrivedDate === "" || arrivedDate === null
+                                ? "Arrived : "
+                                : deliverDate !== null || deliverDate !== ""
+                                ? "On the way"
+                                : "Delivered : "}
+                            </span>
+                            {/* {arrivedDate} */}
+                            {deliverDate !== null || deliverDate !== ""
+                              ? deliverDate
+                              : null}
                           </p>
                         </div>
                         <div className={inlandIsActive}>
@@ -1696,6 +1784,19 @@ class ShippingDetailsTwo extends Component {
                             {inlandDate}
                           </p>
                         </div>
+                        {/* {deliverDate !== null || deliverDate !== "" ? null : (
+                          <div className={deliveredIsActive}>
+                            <div className="track-img-cntr">
+                              <div className="track-img">
+                                <img src={Delivery} alt="delivery icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Delivered : </span>
+                              {deliverDate}
+                            </p>
+                          </div>
+                        )} */}
                         <div className={deliveredIsActive}>
                           <div className="track-img-cntr">
                             <div className="track-img">
@@ -1718,14 +1819,14 @@ class ShippingDetailsTwo extends Component {
                 >
                   <ModalBody>
                     <ReactTable
-                      data={packageViewMore}
+                      data={packageTable}
                       // noDataText="<i className='fa fa-refresh fa-spin'></i>"
                       noDataText=""
                       columns={[
                         {
                           columns: [
                             {
-                              Header: "Package Type",
+                              Header: "Type",
                               accessor: "Packagetype",
                               sortable: true
                             },
@@ -1742,15 +1843,15 @@ class ShippingDetailsTwo extends Component {
                               accessor: "Description"
                             },
                             {
-                              Header: "Quantity Ordered",
+                              Header: "Qty Ordered",
                               accessor: "Qtyordered"
                             },
                             {
-                              Header: "Quantity Shipped",
+                              Header: "Qty Shipped",
                               accessor: "Qtyshipped"
                             },
                             {
-                              Header: "UOM (Unit of Measurement)",
+                              Header: "UOM",
                               accessor: "Uomeasurement"
                             },
                             {
