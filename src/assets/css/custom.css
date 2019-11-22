@@ -3075,6 +3075,9 @@ table tbody tr:last-child {
 .less-left-rate {
   padding-left: 5px;
 }
+.big-popup {
+  max-width: 90%;
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/

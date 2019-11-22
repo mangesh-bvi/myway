@@ -8,6 +8,7 @@ import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import { Autocomplete } from "react-autocomplete";
 
 class RateFinalizingStillBooking extends Component {
   constructor(props) {
@@ -28,7 +29,14 @@ class RateFinalizingStillBooking extends Component {
       Booking5: [],
       commodityData: [],
       selectedCommodity: "",
-      selectedFilePath: ""
+      selectedFilePath: "",
+      selectedType: "Shipper",
+      ConsigneeID: 0,
+      ShipperID: 0,
+      fields: {},
+      Consignee: [],
+      Shipper: [],
+      multiCBM: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -51,6 +59,68 @@ class RateFinalizingStillBooking extends Component {
     }
   }
 
+  HandleChangeSelect(field, e) {
+    let fields = this.state.fields;
+    if (e.target.value == "Select") {
+      fields[field] = "";
+    } else {
+      fields[field] = e.target.value;
+    }
+    this.setState({
+      fields,
+      selectShipStage: []
+    });
+    this.BindShipmentStage();
+  }
+
+  HandleChangeCon(field, e) {
+    let self = this;
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerList`,
+      data: {
+        CustomerName: e.target.value,
+        CustomerType: "Existing"
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      if (field == "Consignee") {
+        self.setState({
+          Consignee: response.data.Table,
+          fields
+        });
+      } else {
+        self.setState({
+          Shipper: response.data.Table,
+          fields
+        });
+      }
+    });
+    // this.setState({
+    //   value: this.state.value
+    // });
+  }
+
+  handleSelectCon(e, field, value, id) {
+    let fields = this.state.fields;
+    fields[field] = value;
+    if (field == "Consignee") {
+      this.state.ConsigneeID = id.Company_ID;
+    } else {
+      this.state.ShipperID = id.Company_ID;
+    }
+
+    this.setState({
+      fields,
+      ConsigneeID: this.state.ConsigneeID,
+      ShipperID: this.state.ShipperID
+    });
+  }
+
+  ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
     let self = this;
 
@@ -66,28 +136,237 @@ class RateFinalizingStillBooking extends Component {
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
   }
+
   toggleBook(e) {
     e.stopPropagation();
     this.setState(prevState => ({
       modalBook: !prevState.modalBook
     }));
   }
+
   toggleProfit() {
     this.setState(prevState => ({
       modalProfit: !prevState.modalProfit
     }));
   }
+
   toggleRequest() {
     this.setState(prevState => ({
       modalRequest: !prevState.modalRequest
     }));
   }
+
   onDocumentChangeHandler = event => {
     this.setState({
       selectedFileName: event.target.files[0].name
     });
   };
 
+  CreateMultiCBM() {
+    debugger;
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Lengths"
+              value={el.Lengths || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="Height"
+              value={el.Height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="GrossWt"
+              value={el.GrossWt || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        6000;
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["VolumeWeight"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: 2
+      };
+    }
+
+    this.setState({ multiCBM });
+
+    // next
+    document.getElementById("cbm").classList.add("cbm");
+    document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+    document.getElementById("containerLoad").classList.add("less-padd");
+
+    document
+      .getElementById("cntrLoadIconCntr")
+      .classList.add("cntrLoadIconCntr");
+    document.getElementById("cntrLoadName").classList.remove("d-none");
+    document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+    document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+  }
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
+  removeMultiCBM(i) {
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  ////change value of SelectType methiod
+  HandleRadioBtn = e => {
+    debugger;
+    var selectedType = e.target.value;
+    this.setState({ selectedType });
+  };
   HandleShipmentDetails() {
     let self = this;
     var BookingNo = this.state.BookingNo;
@@ -115,7 +394,8 @@ class RateFinalizingStillBooking extends Component {
         Booking5,
         selectedCommodity: Booking2[0].Commodity,
         selectedFilePath: Booking4[0].FTPLink,
-        selectedFileName: Booking4[0].DocumentName
+        selectedFileName: Booking4[0].DocumentName,
+        multiCBM: Booking2
       });
     });
   }
@@ -127,7 +407,8 @@ class RateFinalizingStillBooking extends Component {
       Booking2,
       Booking3,
       Booking4,
-      Booking5
+      Booking5,
+      selectedType
     } = this.state;
 
     // Booking2.length > 0
@@ -488,17 +769,78 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Account/Customer</p>
-                            <p className="details-para">abcd</p>
+                            <p className="details-para">
+                              {this.state.selectedType === "Shipper"
+                                ? Booking3.length > 0
+                                  ? Booking3[0].Shipper
+                                  : null
+                                : Booking3.length > 0
+                                ? Booking3[0].Consignee
+                                : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
+                              {this.state.selectedType === "Shipper"
+                                ? Booking3.length > 0
+                                  ? Booking3[0].ShipperAddress
+                                  : null
+                                : Booking3.length > 0
+                                ? Booking3[0].ConsigneeAddress
+                                : null}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">Raj Mahlotra</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="title-border py-3">
+                        <div className="rate-radio-cntr">
+                          <div>
+                            <input
+                              type="radio"
+                              onChange={this.HandleRadioBtn}
+                              name="cust-select"
+                              id="exist-cust"
+                              checked={
+                                this.state.selectedType === "Consignee"
+                                  ? true
+                                  : false
+                              }
+                              value="Consignee"
+                            />
+                            <label
+                              className="d-flex flex-column align-items-center"
+                              htmlFor="exist-cust"
+                            >
+                              Consignee
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              onChange={this.HandleRadioBtn}
+                              name="cust-select"
+                              id="new-cust"
+                              checked={
+                                this.state.selectedType === "Shipper"
+                                  ? true
+                                  : false
+                              }
+                              value="Shipper"
+                            />
+                            <label
+                              className="d-flex flex-column align-items-center"
+                              htmlFor="new-cust"
+                            >
+                              Shipper
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -525,10 +867,6 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Notification Person</p>
-                            <p className="details-para"></p>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -552,17 +890,17 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Notification Person</p>
-                            <p className="details-para"></p>
-                          </div>
                         </div>
                       </div>
                     </div>
+
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select value={this.state.selectedCommodity}>
+                        <select
+                          disabled={true}
+                          value={this.state.selectedCommodity}
+                        >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
                             <option key={i} value={item.Commodity}>
@@ -571,15 +909,29 @@ class RateFinalizingStillBooking extends Component {
                           ))}
                         </select>
                       </div>
-                      {/* <div className="col-md-6 login-fields">
-                        <p className="details-title">Cargo Details</p>
-                        <input type="text" value="Dummy" disabled />
-                      </div> */}
+                    </div>
+
+                    <div className="row">
+                      <div className="col-md">
+                        <div className="rename-cntr login-fields">
+                          <label>Notify Party</label>
+                          <select>
+                            <option>Name</option>
+                            <option>Name</option>
+                            <option>Name</option>
+                            <option>Name</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
                     <div className="row">
-                      <div className="col-md login-fields">
-                        <p className="details-title">Cargo Details</p>
+                      <div
+                        className="title-border py-3"
+                        style={{ width: "100%" }}
+                      >
+                        <h3>Cargo Details</h3>
                       </div>
+                      <div>{this.CreateMultiCBM()}</div>
                     </div>
                     <div className="row cargodetailsB">
                       <ReactTable
@@ -633,7 +985,12 @@ class RateFinalizingStillBooking extends Component {
                           </label>
                         </div>
                       </div>
-                      <a href={this.state.selectedFilePath}>
+                      <a
+                        href={
+                          "https://vizio.atafreight.com/WebVizio_3_0/" +
+                          this.state.selectedFilePath
+                        }
+                      >
                         <p className="file-name w-100 text-center mt-1">
                           {this.state.selectedFileName}
                         </p>
@@ -672,6 +1029,8 @@ class RateFinalizingStillBooking extends Component {
               </div>
             </ModalBody>
           </Modal>
+
+          {/* {------------------Create Booking Modal --------------} */}
           <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalBook}
@@ -784,7 +1143,7 @@ class RateFinalizingStillBooking extends Component {
               </a>
             </ModalBody>
           </Modal>
-
+          {/* {------------------End Booking Modal --------------} */}
           <Modal
             className=""
             isOpen={this.state.modalRequest}

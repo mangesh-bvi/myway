@@ -142,7 +142,7 @@ class NewRateSearch extends Component {
           TruckID: "",
           TruckName: "",
           Quantity: "",
-          TruckDesc:""
+          TruckDesc: ""
         }
       ],
       fieldspol: {},
@@ -315,7 +315,7 @@ class NewRateSearch extends Component {
           TruckID: "",
           TruckName: "",
           Quantity: "",
-          TruckDesc:""
+          TruckDesc: ""
         }
       ]
     }));
@@ -379,7 +379,10 @@ class NewRateSearch extends Component {
     TruckTypeData[i] = {
       ...TruckTypeData[i],
       [name]: name === "Quantity" ? parseInt(value) : value,
-      ["TruckDesc"]: name === "TruckName" ? e.target.options[e.target.selectedIndex].text:TruckTypeData[i].TruckDesc
+      ["TruckDesc"]:
+        name === "TruckName"
+          ? e.target.options[e.target.selectedIndex].text
+          : TruckTypeData[i].TruckDesc
     };
     this.setState({ TruckTypeData });
     document.getElementById("cbm").classList.add("cbm");
@@ -559,6 +562,7 @@ class NewRateSearch extends Component {
               className="select-text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               name="PackageType"
+              value={el.PackageType}
             >
               <option selected>Select</option>
               {this.state.packageTypeData.map((item, i) => (
@@ -951,6 +955,23 @@ class NewRateSearch extends Component {
         </div>
         <div className="col-md">
           <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
@@ -1044,10 +1065,17 @@ class NewRateSearch extends Component {
     const { name, value } = e.target;
     debugger;
     let flattack_openTop = [...this.state.flattack_openTop];
-    flattack_openTop[i] = {
-      ...flattack_openTop[i],
-      [name]: parseFloat(value)
-    };
+    if (name === "PackageType") {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: value
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: parseFloat(value)
+      };
+    }
 
     this.setState({ flattack_openTop });
     var decVolumeWeight =
@@ -1077,6 +1105,7 @@ class NewRateSearch extends Component {
         ...prevState.flattack_openTop,
         {
           SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          PackageType: "",
           length: "",
           width: "",
           height: "",
@@ -1225,65 +1254,71 @@ class NewRateSearch extends Component {
         addressArray[i].types[0] &&
         "administrative_area_level_2" === addressArray[i].types[0]
       ) {
-        city = addressArray[i].long_name;    
+        city = addressArray[i].long_name;
       }
     }
     return city;
   };
 
-  getArea = ( addressArray ) => {
-    let area = '';
-    for( let i = 0; i < addressArray.length; i++ ) {
-     if ( addressArray[ i ].types[0]  ) {
-      for ( let j = 0; j < addressArray[ i ].types.length; j++ ) {
-       if ( 'sublocality_level_1' === addressArray[ i ].types[j] || 'locality' === addressArray[ i ].types[j] ) {
-        area = addressArray[ i ].long_name;       
-       }
+  getArea = addressArray => {
+    let area = "";
+    for (let i = 0; i < addressArray.length; i++) {
+      if (addressArray[i].types[0]) {
+        for (let j = 0; j < addressArray[i].types.length; j++) {
+          if (
+            "sublocality_level_1" === addressArray[i].types[j] ||
+            "locality" === addressArray[i].types[j]
+          ) {
+            area = addressArray[i].long_name;
+          }
+        }
       }
-     }
     }
     return area;
-   };
+  };
 
-   getState = ( addressArray ) => {
-    let state = '';
-    for( let i = 0; i < addressArray.length; i++ ) {
-     for( let i = 0; i < addressArray.length; i++ ) {
-      if ( addressArray[ i ].types[0] && 'administrative_area_level_1' === addressArray[ i ].types[0] ) {
-       state = addressArray[ i ].long_name;     
+  getState = addressArray => {
+    let state = "";
+    for (let i = 0; i < addressArray.length; i++) {
+      for (let i = 0; i < addressArray.length; i++) {
+        if (
+          addressArray[i].types[0] &&
+          "administrative_area_level_1" === addressArray[i].types[0]
+        ) {
+          state = addressArray[i].long_name;
+        }
       }
-     }
     }
     return state;
-   }; 
+  };
 
-   getZipCode = ( addressArray ) => {
-    let zipcode = '';
-    for( let i = 0; i < addressArray.length; i++ ) {
-     if ( addressArray[ i ].types[0]  ) {
-      for ( let j = 0; j < addressArray[ i ].types.length; j++ ) {
-       if ( 'postal_code' === addressArray[ i ].types[j]) {
-        zipcode = addressArray[ i ].long_name;       
-       }
+  getZipCode = addressArray => {
+    let zipcode = "";
+    for (let i = 0; i < addressArray.length; i++) {
+      if (addressArray[i].types[0]) {
+        for (let j = 0; j < addressArray[i].types.length; j++) {
+          if ("postal_code" === addressArray[i].types[j]) {
+            zipcode = addressArray[i].long_name;
+          }
+        }
       }
-     }
     }
     return zipcode;
-   }; 
+  };
 
-   getCountry = ( addressArray ) => {
-    let country = '';
-    for( let i = 0; i < addressArray.length; i++ ) {
-     if ( addressArray[ i ].types[0]  ) {
-      for ( let j = 0; j < addressArray[ i ].types.length; j++ ) {
-       if ( 'country' === addressArray[ i ].types[j]) {
-        country = addressArray[ i ].long_name;       
-       }
+  getCountry = addressArray => {
+    let country = "";
+    for (let i = 0; i < addressArray.length; i++) {
+      if (addressArray[i].types[0]) {
+        for (let j = 0; j < addressArray[i].types.length; j++) {
+          if ("country" === addressArray[i].types[j]) {
+            country = addressArray[i].long_name;
+          }
+        }
       }
-     }
     }
     return country;
-   }; 
+  };
 
   onPlaceSelected = place => {
     console.log("plc", place);
@@ -1303,7 +1338,13 @@ class NewRateSearch extends Component {
     } else {
       this.setState({ zoomPOL: 6 });
     }
-    this.state.fullAddressPOL.push({Area:area, City:city, State:state, ZipCode: zipcode, Country: country})
+    this.state.fullAddressPOL.push({
+      Area: area,
+      City: city,
+      State: state,
+      ZipCode: zipcode,
+      Country: country
+    });
 
     var originGeoCordinates = latValue + "," + lngValue;
     this.setState({
@@ -1343,7 +1384,13 @@ class NewRateSearch extends Component {
       this.setState({ zoomPOD: 6 });
     }
     var destGeoCordinate = latValue + "," + lngValue;
-    this.state.fullAddressPOD.push({Area:area, City:city, State:state, ZipCode: zipcode, Country: country})
+    this.state.fullAddressPOD.push({
+      Area: area,
+      City: city,
+      State: state,
+      ZipCode: zipcode,
+      Country: country
+    });
     this.setState({
       fullAddressPOD: this.state.fullAddressPOD,
       DeliveryCity: city,
@@ -2586,13 +2633,11 @@ class NewRateSearch extends Component {
                     </div>
                     <div id="cbmInner">
                       <div className="">
-
-                          <>
-                            {this.state.containerLoadType === "FTL"
-                              ? this.createUITruckType()
-                              : this.CreateMultiCBM()}
-                          </>
-                       
+                        <>
+                          {this.state.containerLoadType === "FTL"
+                            ? this.createUITruckType()
+                            : this.CreateMultiCBM()}
+                        </>
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input
@@ -2799,6 +2844,10 @@ class NewRateSearch extends Component {
                 </div>
                 <div id="typeMoveInner">
                   <div className="new-radio-rate-cntr radio-blue">
+                    {this.state.containerLoadType === "LCL" ||
+                        this.state.containerLoadType === "AIR" || 
+                        this.state.containerLoadType === "FCL" ?(
+                          <>
                     <div>
                       <input
                         type="radio"
@@ -2819,6 +2868,8 @@ class NewRateSearch extends Component {
                       />
                       <label htmlFor="d2p">Door2Port</label>
                     </div>
+                       </> 
+                        ):null}
                     <div>
                       <input
                         type="radio"
@@ -2829,6 +2880,10 @@ class NewRateSearch extends Component {
                       />
                       <label htmlFor="d2d">Door2Door</label>
                     </div>
+                    {this.state.containerLoadType === "LCL" ||
+                    this.state.containerLoadType === "AIR" || 
+                    this.state.containerLoadType === "FCL" ?(
+                    <>
                     <div>
                       <input
                         type="radio"
@@ -2839,6 +2894,8 @@ class NewRateSearch extends Component {
                       />
                       <label htmlFor="p2d">Port2Door</label>
                     </div>
+                    </> 
+                        ):null}
                   </div>
                   <div className="spe-equ justify-content-center">
                     <label>Inco Terms :</label>
