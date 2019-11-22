@@ -790,7 +790,7 @@ class ShippingDetailsTwo extends Component {
       packageTable
     } = this.state;
     debugger;
-    console.log(bookedStatus);
+    console.log(bookedStatus,"--------------------------bookistatus");
     let bookingIsActive = "";
     let bookDate = "";
     let departedIsActive = "";

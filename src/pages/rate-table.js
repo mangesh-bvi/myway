@@ -2003,7 +2003,7 @@ class RateTable extends Component {
                   <option>Select</option>
                   <option value="All">All</option>
                   {this.state.commodityData.map((item, i) => (
-                    <option key={i} value={item.Commodity}>
+                    <option key={i} value={item.id}>
                       {item.Commodity}
                     </option>
                   ))}

@@ -47,7 +47,14 @@ class RateFinalizing extends Component {
       currencyCode :"",
       count:0,
       toggleProfitRemoveBtn: false,
-      Addedprofit:0
+      Addedprofit:"0",
+      toggleAddProfitBtn:true,
+      users:[],
+      referType:[],
+      CargoDetailsArr:[],
+      CommodityID:"",
+      destAddress:[],
+      pickUpAddress:[]
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -77,6 +84,57 @@ class RateFinalizing extends Component {
       var polfullAddData=this.props.location.state.polfullAddData;
       var podfullAddData=this.props.location.state.podfullAddData;
       var currencyCode = this.props.location.state.currencyCode;
+      var users = this.props.location.state.users;
+      var referType = this.props.location.state.referType;
+      var CommodityID = this.props.location.state.CommodityID;
+      var  destAddress = this.props.location.state.destAddress;
+      var pickUpAddress = this.props.location.state.pickUpAddress;
+
+      var CargoDetailsArr = [];
+
+      if(users != null)
+      {
+        if(users.length > 0)
+        {
+          for(var i = 0; i < users.length; i++)
+          {
+            CargoDetailsArr.push({ContainerType: users[i].StandardContainerCode, "Packaging":"-", Quantity: users[i].ContainerQuantity, Lenght:"-",Width:"-",Height:"-",Weight:"-",Gross_Weight: "-",Temperature:"-"})
+          }
+        }
+      }
+
+      if(spacEqmtType != null)
+      {
+        if(spacEqmtType.length > 0)
+        {
+          for(var i = 0; i < spacEqmtType.length; i++)
+          {
+            CargoDetailsArr.push({ContainerType: spacEqmtType[i].TypeName, "Packaging":"-", Quantity: spacEqmtType[i].Quantity, Lenght:"-",Width:"-",Height:"-",Weight:"-",Gross_Weight: "-",Temperature:"-"})
+          }
+        }
+      }
+
+      if(referType != null)
+      {
+        if(referType.length > 0)
+        {
+          for(var i = 0; i < referType.length; i++)
+          {
+            CargoDetailsArr.push({ContainerType: referType[i].ContainerCode, "Packaging":"-", Quantity: referType[i].ContainerQuantity, Lenght:"-",Width:"-",Height:"-",Weight:"-",Gross_Weight: "-",Temperature:referType[i].Temperature + " " + referType[i].TemperatureType})
+          }
+        }
+      }
+
+      if(flattack_openTop != null)
+      {
+        if(flattack_openTop.length > 0)
+        {
+          for(var i = 0; i < flattack_openTop.length; i++)
+          {
+            CargoDetailsArr.push({ContainerType: flattack_openTop[i].SpecialContainerCode, "Packaging":"-", Quantity: flattack_openTop[i].Quantity, Lenght:flattack_openTop[i].length,Width:flattack_openTop[i].width,Height:flattack_openTop[i].height,Weight:flattack_openTop[i].Gross_Weight,Gross_Weight: "-",Temperature:"-"})
+          }
+        }
+      }
 
       this.setState({
         rateDetails:rateDetails,
@@ -95,9 +153,14 @@ class RateFinalizing extends Component {
         polfullAddData:polfullAddData,
         podfullAddData:podfullAddData,
         currencyCode:currencyCode,
-        
+        users:users,
+        referType:referType,
+        CargoDetailsArr:CargoDetailsArr,
+        CommodityID:CommodityID,
+        destAddress:destAddress,
+        pickUpAddress:pickUpAddress
       });
-
+      
 
       this.state.rateDetails=rateDetails;
         this.state.rateSubDetails=rateSubDetails;
@@ -122,7 +185,10 @@ class RateFinalizing extends Component {
        
 
 
-       
+       if(encryption(window.localStorage.getItem("usertype"), "desc") == "Customer")
+       {
+        this.setState({toggleAddProfitBtn:false});
+       }
     }
     // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
     // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
@@ -130,27 +196,13 @@ class RateFinalizing extends Component {
     //   rateDetails: rateDetails,
     //   rateSubDetails: rateSubDetails
     // });
-  //   this.SendMail();
+
   }
 
   
   HandleLocalCharges() {
-    debugger;
     let self = this;
-    //var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    // var MultiplePOLPOD = [];
-    // for(var i=0; i < polfullAddData.length; i++)
-    // {
-    //   for(var j=i; j< podfullAddData.length;)
-    //   {
-    //     MultiplePOLPOD.push([{POL: polfullAddData[i].UNECECode, POD: podfullAddData}])
-    //   }
-    // }
-
-    //currencyCode
-    //polfullAddData
-    //podfullAddData
-    
+  
     var LocalChargeData = {
       QuoteType:this.state.containerLoadType,
       ModeOfTransport:this.state.modeoftransport,
@@ -191,16 +243,14 @@ class RateFinalizing extends Component {
       data: LocalChargeData,
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       self.setState({
         arrLocalsCharges: response.data.Table,
         fltLocalCharges: response.data.Table
       })
-
-      // var data = [];
-      // data = response.data;
-      // self.setState({ bookingData: data }); ///problem not working setstat undefined
-    });
+    }).catch(error => {
+      debugger;
+      console.log(error.response)
+      });
   }
 
   HandleSurCharges() {
@@ -268,13 +318,15 @@ class RateFinalizing extends Component {
   }
 
   newOpen() {
-    window.open("http://www.google.com", "_blank");
+    window.open("https://org242240bd.crm.dynamics.com/main.aspx?etn=lead&pagetype=entityrecord", "_blank");
   }
 
   commoditySelect(e) {
     this.setState({
-      commoditySelect: e.target.value
+      commoditySelect: e.target.value,
+      CommodityID : ""
     });
+    
   }
   cargoSelect(e) {
     this.setState({
@@ -339,13 +391,229 @@ class RateFinalizing extends Component {
   SendRequest()
   {
     var txtRequestDiscount , txtRequestFreeTime, txtRequestComments = "";
-
-    txtRequestDiscount = document.getElementById("txtRequestDiscount").value;
-    txtRequestFreeTime = document.getElementById("txtRequestFreeTime").value;
+    if(document.getElementById("txtRequestDiscount") != undefined)
+    {
+      txtRequestDiscount = document.getElementById("txtRequestDiscount").value;
+    }
+    if(document.getElementById("txtRequestFreeTime") != undefined)
+    {
+      txtRequestFreeTime = document.getElementById("txtRequestFreeTime").value;
+    }
+  
     txtRequestComments = document.getElementById("txtRequestComments").value;
 
-    alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
+    //alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
 
+    var FCLSQLocalChargesarr = [];
+    var FCLSQSurChargesarr = [];
+
+    var chkslocalcharge = document.getElementsByName("localCharge");    
+    for (var i = 0; i < chkslocalcharge.length; i++) {
+      if (chkslocalcharge[i].checked) {
+        FCLSQLocalChargesarr.push({
+          LocalChargeID :0,
+          Description : chkslocalcharge[0].attributes["data-chargedesc"].value,
+          Amount: chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
+          Currency : chkslocalcharge[0].attributes["data-currency"].value,
+          Minimum :0,
+          Tax :0,
+          ChargeItem : chkslocalcharge[0].attributes["data-chargeitem"].value,
+          RateID : 0,
+          Exrate : 0 });
+      }
+    }
+
+    var rateDetailsarr = this.state.rateDetails;
+    var rateSubDetailsarr = this.state.rateSubDetails;
+    var FCLSQBaseFreight = [];
+
+    for(var i =0; i < rateDetailsarr.length; i++)
+    {
+      FCLSQBaseFreight.push({RateID:rateDetailsarr[i].rateID,RateType:rateDetailsarr[i].TypeOfRate });
+    }  
+
+    var FCLSQCharges = [];
+
+    for(var i =0; i < rateDetailsarr.length; i++)
+    {
+      for(var j = 0; j < rateSubDetailsarr.length; j++){
+        if(rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].rateID){
+          FCLSQCharges.push({
+            ChargeID: rateSubDetailsarr[j].ChargeID ,
+            Rate :rateSubDetailsarr[j].Rate ,
+            Currency :rateSubDetailsarr[j].Currency ,
+            RateLineID:rateSubDetailsarr[j].RateLineID ,
+            ChargeCode :rateSubDetailsarr[j].ChargeCode ,
+            Tax:rateSubDetailsarr[j].Tax ,
+            ChargeItem :rateSubDetailsarr[j].ChargeItem ,
+            Exrate:rateSubDetailsarr[j].Exrate ,
+            ChargeType: rateSubDetailsarr[j].ChargeType ,
+            TotalAmount:rateSubDetailsarr[j].TotalAmount 
+            });
+        }
+      }
+    }
+
+    var chksurcharges = document.getElementsByName("surcharges");    
+    for (var i = 0; i < chksurcharges.length; i++) {
+      if (chksurcharges[i].checked) {
+        FCLSQSurChargesarr.push({
+          SurchargeID :0,
+          ChargeCode : chksurcharges[0].attributes["data-chargedesc"].value,
+          Amount: chksurcharges[0].attributes["data-amountinbasecurrency"].value,
+          Currency : chksurcharges[0].attributes["data-currency"].value,
+          Tax :0,
+          ChargeItem : chksurcharges[0].attributes["data-chargeitem"].value,
+          RateID : 0,
+          Exrate : 0 });
+      }
+    }
+
+    var Containerdetails = [];
+    var RateQueryDim = [];
+  // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+var usesr = this.state.users;
+var spacEqmtType = this.state.spacEqmtType;
+var referType = this.state.referType;
+var flattack_openTop = this.state.flattack_openTop;
+
+  if(usesr != null)
+      {
+        if(usesr.length > 0)
+        {
+          for(var i = 0; i < usesr.length; i++)
+          {
+            Containerdetails.push({ProfileCodeID:usesr[i].ProfileCodeID, ContainerCode:usesr[i].StandardContainerCode, Type:usesr[i].ContainerName, ContainerQuantity:usesr[i].ContainerQuantity, Temperature: usesr[i].Temperature == undefined ? 0 : usesr[i].Temperature} )
+          }
+        }
+      }
+
+      if(spacEqmtType != null)
+      {
+        if(spacEqmtType.length > 0)
+        {
+          for(var i = 0; i < spacEqmtType.length; i++)
+          {
+            Containerdetails.push({ProfileCodeID:0, ContainerCode:spacEqmtType[i].TypeName, Type:'',ContainerQuantity:spacEqmtType[i].Quantity, Temperature:0})
+          }
+        }
+      }
+
+      if(referType != null)
+      {
+        if(referType.length > 0)
+        {
+          for(var i = 0; i < referType.length; i++)
+          {
+            Containerdetails.push({ProfileCodeID:referType[i].ProfileCodeID, ContainerCode:referType[i].ContainerCode ,Type:referType[i].Type ,ContainerQuantity:referType[i].ContainerQuantity ,Temperature:referType[i].Temperature })
+          }
+        }
+      }
+
+      if(flattack_openTop != null)
+      {
+        if(flattack_openTop.length > 0)
+        {
+          for(var i = 0; i < flattack_openTop.length; i++)
+          {
+            RateQueryDim.push({Quantity:flattack_openTop[i].Quantity ,Lengths:flattack_openTop[i].length ,Width:flattack_openTop[i].width ,Height:flattack_openTop[i].height ,GrossWt:flattack_openTop[i].Gross_Weight, VolumeWeight:0, Volume:0, PackageType:flattack_openTop[i].PackageType == undefined ? "" : flattack_openTop[i].PackageType})
+          }
+        }
+      }
+
+      var PickUpAddress = "";
+      var DestinationAddress = "";
+      var PickUpAddressDetails = {Street:'',Country:'',State:'',City:'',ZipCode:0}
+      var DestinationAddressDetails = {Street:'',Country:'',State:'',City:'',ZipCode:0};
+
+
+      if(this.state.incoTerm == 2 || this.state.incoTerm == 4)
+      {
+        PickUpAddress = this.props.location.state.pickUpAddress[0].City
+        PickUpAddressDetails = {
+          Street: this.props.location.state.pickUpAddress[0].Area,
+          Country: this.props.location.state.pickUpAddress[0].Country,
+          State: this.props.location.state.pickUpAddress[0].State,
+          City: this.props.location.state.pickUpAddress[0].City,
+          ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+          }
+      }
+
+      if(this.state.incoTerm == 3 || this.state.incoTerm == 4)
+      {
+        DestinationAddress = this.props.location.state.destAddress[0].City
+        DestinationAddressDetails = {
+        Street: this.props.location.state.destAddress[0].Area,
+        Country: this.props.location.state.destAddress[0].Country,
+        State: this.props.location.state.destAddress[0].State,
+        City: this.props.location.state.destAddress[0].City,
+        ZipCode: this.props.location.state.destAddress[0].ZipCode}
+      }
+
+   
+
+debugger;
+    var senrequestpara ={
+    ShipmentType : this.state.shipmentType,
+    Inco_terms : this.state.incoTerm,
+    TypesOfMove : this.state.typeofMove,
+    PickUpAddress : PickUpAddress,
+    DestinationAddress : DestinationAddress,
+    HazMat  : this.state.HazMat == true ? 1 : 0,
+    ChargeableWt : 0,
+    Containerdetails: Containerdetails,
+    PickUpAddressDetails: PickUpAddressDetails,
+    DestinationAddressDetails: DestinationAddressDetails    ,
+    MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
+    CompanyID:1457295703,
+    BaseCurrency: this.state.currencyCode,
+    MywayProfit: this.state.Addedprofit,
+    MywayDiscount: txtRequestDiscount,
+    // FCLSQBaseFreight:FCLSQBaseFreightarr,
+    // FCLSQLocalCharges: FCLSQLocalChargesarr,
+    // FCLSQSurCharges: FCLSQSurChargesarr,
+    
+    Comments: txtRequestComments,
+    FreeTime: txtRequestFreeTime,
+    RateQueryDim:RateQueryDim,
+      MailBody:"test FCL"
+  }
+  
+  if(this.state.containerLoadType == "FCL")
+  {
+    senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
+    senrequestpara.FCLSQCharges = FCLSQCharges;
+  }
+  else if(this.state.containerLoadType == "LCL")
+  {
+    senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
+    senrequestpara.LCLSQCharges = FCLSQCharges;
+  }
+  //return false;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/FCLSalesQuoteInsertion`,
+      data: senrequestpara,
+    headers: authHeader()
+    }).then(function(response){
+      debugger;
+      if(response != null)
+      {
+        if(response.data != null)
+        {
+          if(response.data.Table != null){
+            if(response.data.Table.length > 0){
+              alert(response.data.Table[0].Message)
+            }
+          }
+        }
+      }
+      //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+    }).catch(error => {
+    debugger;
+    console.log(error.response)
+    })
 
   }
 
@@ -423,7 +691,7 @@ class RateFinalizing extends Component {
 
 
   hanleProfitAmountChange(e){
-    const re = /^[0-9\b]+$/;
+    const re = /^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/;
     if (e.target.value === '' || re.test(e.target.value)) {
        this.setState({ProfitAmount: e.target.value})
     }
@@ -465,7 +733,7 @@ class RateFinalizing extends Component {
 
         for(var i =0; i < rateDetailsarr.length; i++)
         {
-          rateDetailsarr[i].TotalAmount = parseFloat(rateDetailsarr[i].TotalAmount) - parseFloat(this.state.ProfitAmount)
+          rateDetailsarr[i].TotalAmount = parseFloat(rateDetailsarr[i].TotalAmount) - parseFloat(this.state.Addedprofit)
           
         }  
         this.setState(prevState => ({
@@ -476,13 +744,13 @@ class RateFinalizing extends Component {
 
         for(var i = 0; i <= rateSubDetailsarr.length - 1; i++){
           if(rateSubDetailsarr[i].ChargeCode == "Freight"){
-              rateSubDetailsarr[i].TotalAmount = parseFloat(rateSubDetailsarr[i].TotalAmount) - parseFloat(this.state.ProfitAmount)
+              rateSubDetailsarr[i].TotalAmount = parseFloat(rateSubDetailsarr[i].TotalAmount) - parseFloat(this.state.Addedprofit)
             }
           }
 
           this.setState({
             toggleProfitRemoveBtn: false,
-            Addedprofit : 0
+            Addedprofit : ""
           });
         this.forceUpdate()
     }
@@ -502,13 +770,14 @@ class RateFinalizing extends Component {
             ChargeCode: e.target.getAttribute('data-chargedesc'),
             ChargeID: 0,
             ChargeItem:  e.target.getAttribute('data-chargeitem'),
-            ChargeType: e.target.getAttribute('data-chargedesc'),
+            ChargeType: e.target.getAttribute('data-chargetype'),
             Currency: e.target.getAttribute('data-currency'),
             Exrate: 0,
-            Rate: e.target.value,
+            Rate: parseFloat(e.target.value),
             RateLineID: this.state.rateDetails[i].rateID,
             Tax: 0,
-            TotalAmount:  e.target.getAttribute('data-amountinbasecurrency')
+            TotalAmount:  parseFloat(e.target.getAttribute('data-amountinbasecurrency')),
+            Extracharge:true
           }
 
           this.state.rateSubDetails = this.state.rateSubDetails.concat(
@@ -535,10 +804,7 @@ class RateFinalizing extends Component {
          
     }
 
-    ModalOnclose()
-    {
-      alert("Closed")
-    }
+    
 
   render() {
     // var data1 = [
@@ -580,7 +846,7 @@ class RateFinalizing extends Component {
       return(
         <div>
           <div className="d-flex">
-            <input id={"local"+(index+1)} value={item.Amount} type="checkbox" name={"local"} data-chargeitem ={item.ChargeItem} data-chargedesc ={item.ChargeDesc} data-currency ={item.Currency} data-amountinbasecurrency ={item.AmountInBaseCurrency}  onChange={this.HandleLocalSearchCharges.bind(this)}/>
+            <input id={"local"+(index+1)} value={item.Amount} type="checkbox" name={"localCharge"} data-chargeitem ={item.ChargeItem} data-chargedesc ={item.ChargeDesc} data-currency ={item.Currency} data-amountinbasecurrency ={item.AmountInBaseCurrency} data-chargetype="Localcharge"  onChange={this.HandleLocalSearchCharges.bind(this)}/>
             <label htmlFor={"local"+(index+1)}>{item.ChargeDesc}</label>
           </div>
           <span>{item.Amount}{amtSign}</span>
@@ -598,14 +864,47 @@ class RateFinalizing extends Component {
       return(
         <div>
           <div className="d-flex">
-            <input id={"Sur"+(index+1)} type="checkbox" name={"local"} value={item.Amount} data-chargeitem ={item.ChargeItem} data-chargedesc ={item.ChargeDesc} data-currency ={item.Currency} data-amountinbasecurrency ={item.AmountInBaseCurrency}  onChange={this.HandleLocalSearchCharges.bind(this)} />
+            <input id={"Sur"+(index+1)} type="checkbox" name={"surcharges"} value={item.Amount} data-chargeitem ={item.ChargeItem} data-chargedesc ={item.ChargeDesc} data-currency ={item.Currency} data-amountinbasecurrency ={item.AmountInBaseCurrency} data-chargetype="surcharge"  onChange={this.HandleLocalSearchCharges.bind(this)} />
             <label htmlFor={"Sur"+(index+1)}>{item.ChargeDesc}</label>
           </div>
           <span>{item.Amount}{amtSign}</span>
         </div>
         )
     })
+var self = this;
 
+var Commoditypresent = false;
+const commodityDatadrp = this.state.commodityData.map((item, i) => {
+ 
+  if(item.id == self.state.CommodityID)
+  {
+    Commoditypresent = true;
+    return(<option key={i} value={item.id} selected>
+    {item.Commodity}
+  </option>)
+  }
+  else
+  {
+    if(!Commoditypresent)
+    {
+      Commoditypresent = false;
+    }
+   
+    return(<option key={i} value={item.id} >
+    {item.Commodity}
+  </option>)
+  }
+  
+})
+
+if(Commoditypresent)
+{
+  this.state.commoditySelect  =self.state.CommodityID
+
+}
+
+
+    const { CargoDetailsArr } = this.state;
     return (
       <React.Fragment>
         <Headers />
@@ -741,12 +1040,89 @@ class RateFinalizing extends Component {
                                 }
                               },
                               {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">POL</p>
+                                      <p title={row.original.POLName} className="details-para">
+                                        {row.original.POLName}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "POLName",
+                                //  minWidth: 175
+                                filterable: true
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">POD</p>
+                                      <p title={row.original.PODName} className="details-para">
+                                        {row.original.PODName}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "PODName",
+                                filterable: true
+                                // minWidth: 175
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">
+                                        S.Port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "TransshipmentPort",
+                                filterable: true
+                                // minWidth: 175
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">F.Time</p>
+                                      <p className="details-para">
+                                        {row.original.freeTime}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "freeTime",
+                                filterable: true,
+                                minWidth: 80
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Container</p>
+                                      <p className="details-para">
+                                        {row.original.ContainerType}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "ContainerType",
+                                filterable: true
+                                //minWidth: 175
+                              },
+                              {
                                 accessor: "expiryDate",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">
-                                        Valid Until
+                                      Expiry
                                       </p>
                                       <p className="details-para">
                                         {new Date(
@@ -877,9 +1253,9 @@ class RateFinalizing extends Component {
                       <div className="rate-final-contr p-0">
                         <div className="d-flex justify-content-between align-items-center title-border py-3">
                           <h3>Rate Query</h3>
-                          <a href="rate-table" className="rate-edit-icon">
+                          {/* <a href="rate-table" className="rate-edit-icon">
                             <img src={Edit} alt="edit icon" />
-                          </a>
+                          </a> */}
                         </div>
                         <div className="row">
                           <div className="col-md-4">
@@ -977,12 +1353,14 @@ class RateFinalizing extends Component {
                         </div>
                         <div className="row">
                           <div className="col-md-6 d-flex align-items-center">
+                          {this.state.toggleAddProfitBtn && (
                             <button
                               onClick={this.toggleProfit}
                               className="butn more-padd m-0"
                             >
                               Add Profit
                             </button>
+                          )}
                           </div>
                           <div className="col-md-6 text-right">
                             <button
@@ -1011,13 +1389,66 @@ class RateFinalizing extends Component {
 
                   <div className="rate-final-contr">
                     <div className="title-border py-3">
+                      <h3>Cargo Details</h3>
+                    </div>
+                    <div className="ag-fresh redirect-row">
+                      <ReactTable
+                        data={CargoDetailsArr}
+                        filterable
+                        minRows={1}
+                        columns={[
+                          {
+                            Header: "ContainerType",
+                            accessor: "ContainerType"
+                          },
+                          {
+                            Header: "Quantity",
+                            accessor: "Quantity"
+                          },
+                          {
+                            Header: "Lenght",
+                            accessor: "Lenght"
+                          },
+                          {
+                            Header: "Width",
+                            accessor: "Width"
+                          },
+                          {
+                            Header: "Height",
+                            accessor: "Height"
+                          },
+                          {
+                            Header: "Weight",
+                            accessor: "Weight"
+                          },
+                          {
+
+                            Header:"Temperature",
+                            accessor:"Temperature"
+                          },
+                        ]}
+                        className="-striped -highlight"
+                        defaultPageSize={5}
+                        //getTrProps={this.HandleRowClickEvt}
+                        //minRows={1}
+                      />
+                              </div>
+                   </div>
+
+                  <div className="rate-final-contr">
+                    <div className="title-border py-3">
                       <h3>Customer Details</h3>
                     </div>
                     <div className="">
                       <div className="row">
                         <div className="col-md-4">
                           <p className="details-title">Account/Customer</p>
+                          {this.state.toggleAddProfitBtn && (
                           <p className="details-para">abcd</p>
+                          )}
+                          {!this.state.toggleAddProfitBtn && (
+                          <p className="details-para">{encryption(window.localStorage.getItem("username"), "desc")}</p>
+                          )}
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
@@ -1032,32 +1463,35 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                     <div className="text-right">
+                    {this.state.toggleAddProfitBtn  && (
                       <button
                         onClick={this.toggleNewConsignee}
                         className="butn more-padd"
                       >
                         Create Customer
                       </button>
+                    )}
                     </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
                         <select onChange={this.commoditySelect.bind(this)}>
                           <option value="select">Select</option>
-                          {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity}>
+                          {/* {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.Commodity} >
                               {item.Commodity}
                             </option>
-                          ))}
+                          ))} */}
+                          {commodityDatadrp}
                         </select>
                       </div>
-                      <div className="col-md-6 login-fields">
+                      {/* <div className="col-md-6 login-fields">
                         <p className="details-title">Cargo Details</p>
                         <select onChange={this.cargoSelect.bind(this)}>
                           <option value="select">Select</option>
                           <option value="new">New</option>
                         </select>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="text-right">
                       <a href={Dummy} target="_blank" className="butn mr-3">
@@ -1077,8 +1511,8 @@ class RateFinalizing extends Component {
                       <button
                               onClick={this.SendQuote}
                               className={
-                                this.state.commoditySelect == "select" ||
-                                this.state.cargoSelect == "select"
+                                this.state.commoditySelect == "select"// ||
+                                // this.state.cargoSelect == "select"
                                   ? "butn cancel-butn no-butn"
                                   : "butn"
                               }
@@ -1087,6 +1521,8 @@ class RateFinalizing extends Component {
                             </button>
                     </div>
                   </div>
+
+                 
                 </div>
               </div>
             </div>
@@ -1191,14 +1627,18 @@ class RateFinalizing extends Component {
 
             <ModalBody>
               <h3 className="mb-4">Request Changes</h3>
+              {this.state.toggleAddProfitBtn && (
               <div className="rename-cntr login-fields">
                 <label>Discount</label>
                 <input type="text" id="txtRequestDiscount" placeholder="Enter Discount" />
               </div>
+              )}
+              {this.state.toggleAddProfitBtn && (
               <div className="rename-cntr login-fields">
                 <label>Free Time</label>
                 <input type="text" id="txtRequestFreeTime" placeholder="Enter Time" maxLength="2" />
               </div>
+              )}
               <div className="rename-cntr login-fields mb-0">
                 <label>Comments</label>
                 <textarea
