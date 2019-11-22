@@ -11,8 +11,12 @@ import DelayShip from "./../assets/img/delay-shipment.png";
 import CurrBook from "./../assets/img/current-booking.png";
 import HambPlane from "./../assets/img/hamb-plane.png";
 import BlueShip from "./../assets/img/circle-ship.png";
+import ShipBlue from "./../assets/img/blue-ship.png";
 import BluePlane from "./../assets/img/circle-plane.png";
+import PlaneBlue from "./../assets/img/blue-plane.png";
 import BookingBlue from "./../assets/img/circle-booked.png";
+import DelayBlue from "./../assets/img/blue-delay.png";
+import BookBlue from "./../assets/img/blue-booking.png";
 import LoadingImg from "./../assets/img/loading.gif";
 
 // import TruckWhite from "./../assets/img/truck-white.png";
@@ -44,21 +48,28 @@ const MapWithAMakredInfoWindow = compose(
     {props.markers.map(marker => {
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
-        BlueShip,
+        ShipBlue,
         null /* size is determined at runtime */,
         null /* origin is 0,0 */,
         null /* anchor is bottom center of the scaled image */,
         new window.google.maps.Size(32, 32)
       );
       let bluePlane = new window.google.maps.MarkerImage(
-        BluePlane,
+        PlaneBlue,
         null /* size is determined at runtime */,
         null /* origin is 0,0 */,
         null /* anchor is bottom center of the scaled image */,
         new window.google.maps.Size(32, 32)
       );
       let bookingBlue = new window.google.maps.MarkerImage(
-        BookingBlue,
+        BookBlue,
+        null /* size is determined at runtime */,
+        null /* origin is 0,0 */,
+        null /* anchor is bottom center of the scaled image */,
+        new window.google.maps.Size(32, 32)
+      );
+      let delayBlue = new window.google.maps.MarkerImage(
+        DelayBlue,
         null /* size is determined at runtime */,
         null /* origin is 0,0 */,
         null /* anchor is bottom center of the scaled image */,
@@ -734,7 +745,7 @@ const MapWithAMakredInfoWindow = compose(
               lat: Number(marker.LastLocation_Lat),
               lng: Number(marker.LastLocation_Lon)
             }}
-            icon={bookingBlue}
+            icon={delayBlue}
           >
             {props.selectedMarker === marker && (
               <InfoWindow>
@@ -1434,7 +1445,7 @@ class Dashboard extends Component {
               ) : (
                 <div className="text-right">
                   <a href="/shipment-summary" className="butn mt-0 mb-2">
-                    List Item
+                    List View
                   </a>
                 </div>
               )}

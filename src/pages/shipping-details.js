@@ -7,6 +7,7 @@ import "../assets/css/react-table.css";
 import GoogleMapReact from "google-map-react";
 import ShipWhite from "./../assets/img/ship-white.png";
 import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import LoginActore from "./../assets/img/login-actore.jfif";
@@ -21,6 +22,15 @@ import Box from "./../assets/img/box.png";
 import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
+import ArrivedStatus from "./../assets/img/arrived-status.png";
+import InlandTransportStatus from "./../assets/img/inland-transportation-status.png";
+import TransshippedStatus from "./../assets/img/transshipped-status.png";
+import InTransitStatus from "./../assets/img/in-transit-status.png";
+import GateInStatus from "./../assets/img/gate-in-status.png";
+import DepartedStatus from "./../assets/img/departed-status.png";
+import DeliveredStatus from "./../assets/img/delivered-status.png";
+import BookedStatus from "./../assets/img/booked-status.png";
+import ApprovedStatus from "./../assets/img/approved-status.png";
 import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -50,6 +60,8 @@ class ShippingDetails extends Component {
       shipmentSummary: [],
       listDis: "none",
       mapDis: "block",
+      copied: false,
+      shareLink: "http://localhost:3000/shipment-details?hblno=",
       filterAll: "",
       filtered: [],
       modalAdvSearch: false,
@@ -97,6 +109,7 @@ class ShippingDetails extends Component {
     this.toggleAdvSearch = this.toggleAdvSearch.bind(this);
     this.BindShipmentStage = this.BindShipmentStage.bind(this);
     this.toggleShare = this.toggleShare.bind(this);
+    // this.onShare = this.onShare.bind(this);
   }
 
   componentDidMount() {
@@ -107,7 +120,19 @@ class ShippingDetails extends Component {
   toggleShare(e) {
     e.stopPropagation();
     this.setState(prevState => ({
-      modalShare: !prevState.modalShare
+      modalShare: !prevState.modalShare,
+      copied: false,
+      shareLink: "http://localhost:3000/shipment-details?hblno="
+    }));
+  }
+
+  HandleDocumentView(evt, row) {
+    debugger;
+    evt.stopPropagation();
+    var hblNo = row.original["HBL#"];
+    this.setState(prevState => ({
+      modalShare: !prevState.modalShare,
+      shareLink: this.state.shareLink + hblNo
     }));
   }
 
@@ -257,6 +282,10 @@ class ShippingDetails extends Component {
       ShipperID: this.state.ShipperID
     });
   }
+
+  onCopy = () => {
+    this.setState({ copied: true });
+  };
 
   HandleCountryDropDown() {
     let self = this;
@@ -638,36 +667,72 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           if (row.value == "Planning in Progress") {
                             return (
-                              <div title="In Progress" className="status-img">
+                              <div
+                                title="Planning in Progress"
+                                className="status-img"
+                              >
                                 <img src={Delivered} />
                               </div>
                             );
                           } else if (row.value == "Departed") {
                             return (
                               <div title="Departed" className="status-img">
-                                <img src={Delivered} />
+                                <img src={DepartedStatus} />
                               </div>
                             );
                           } else if (row.value == "Transshipped") {
                             return (
                               <div title="Transshipped" className="status-img">
-                                <img src={Transit} />
+                                <img src={TransshippedStatus} />
                               </div>
                             );
                           } else if (row.value == "Arrived") {
                             return (
                               <div title="Arrived" className="status-img">
-                                <img src={Arrived} />
+                                <img src={ArrivedStatus} />
+                              </div>
+                            );
+                          } else if (row.value == "Booked") {
+                            return (
+                              <div title="Booked" className="status-img">
+                                <img src={BookedStatus} />
+                              </div>
+                            );
+                          } else if (row.value == "Gate In") {
+                            return (
+                              <div title="Gate In" className="status-img">
+                                <img src={GateInStatus} />
+                              </div>
+                            );
+                          } else if (row.value == "Approved") {
+                            return (
+                              <div title="Approved" className="status-img">
+                                <img src={ApprovedStatus} />
+                              </div>
+                            );
+                          } else if (row.value == "In Transit") {
+                            return (
+                              <div title="In Transit" className="status-img">
+                                <img src={InTransitStatus} />
+                              </div>
+                            );
+                          } else if (row.value == "Inland Transportation") {
+                            return (
+                              <div
+                                title="Inland Transportation"
+                                className="status-img"
+                              >
+                                <img src={InlandTransportStatus} />
                               </div>
                             );
                           } else if (row.value == "Delivered") {
                             return (
                               <div title="Delivered" className="status-img">
-                                <img src={Delivered} />
+                                <img src={DeliveredStatus} />
                               </div>
                             );
                           } else if (row.value == "DO Issued") {
-                            return <div title="Issued">{row.value}</div>;
+                            return <div title="DO Issued">{row.value}</div>;
                           } else {
                             return row.value;
                           }
@@ -727,7 +792,8 @@ class ShippingDetails extends Component {
                           return (
                             <i
                               className="fa fa-share-alt shareicon"
-                              onClick={this.toggleShare}
+                              // onClick={this.toggleShare}
+                              onClick={e => this.HandleDocumentView(e, row)}
                               aria-hidden="true"
                             ></i>
                           );
@@ -1225,24 +1291,52 @@ class ShippingDetails extends Component {
                         type="text"
                         disabled
                         class="w-100"
-                        value="Xs0259/Wpo76777"
+                        value={this.state.shareLink}
                       />
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right d-flex justify-content-end mb-0">
                   <Button
                     className="butn cancel-butn"
                     onClick={this.toggleShare}
                   >
                     Cancel
                   </Button>
-                  <Button className="butn mx-3" onClick={this.toggleShare}>
+                  <a
+                    href={
+                      "mailto:username@example.com?subject=Shipment Details&body=Check the link :" +
+                      this.state.shareLink
+                    }
+                    className="butn mx-3"
+                    onClick={this.onShare}
+                  >
                     Share
-                  </Button>
-                  <Button className="butn blue-butn" onClick={this.toggleShare}>
-                    Copy
-                  </Button>
+                  </a>
+                  <CopyToClipboard
+                    onCopy={this.onCopy}
+                    text={this.state.shareLink}
+                  >
+                    <Button
+                      className="butn blue-butn"
+                      // onClick={this.toggleShare}
+                    >
+                      Copy
+                    </Button>
+                  </CopyToClipboard>
+                </div>
+                <div className="text-right">
+                  {this.state.copied ? (
+                    <span
+                      style={{
+                        color: "#39b54a",
+                        marginTop: "5px",
+                        display: "block"
+                      }}
+                    >
+                      Copied.
+                    </span>
+                  ) : null}
                 </div>
               </ModalBody>
             </Modal>

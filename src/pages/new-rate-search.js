@@ -1438,6 +1438,7 @@ class NewRateSearch extends Component {
   }
 
   HandleBindIncoTeamData() {
+    
     let self = this;
     axios({
       method: "post",
@@ -1449,7 +1450,7 @@ class NewRateSearch extends Component {
       var table2 = response.data.Table2;
       var table4 = response.data.Table4;
       var finalArray = [];
-
+      debugger;
       var standerEquipment = new Object();
       standerEquipment.StandardContainerCode = "Special Equipment";
       standerEquipment.ProfileCodeID = "Special Equipment";
