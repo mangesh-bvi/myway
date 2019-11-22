@@ -254,13 +254,13 @@ class ShippingDetailsTwo extends Component {
       .split("=")[1];
     if (url != "" && url != null) {
       self.HandleShipmentDetails(url);
+    } else if (typeof this.props.location.state != "undefined") {
+      var hblno = this.props.location.state.detail;
+      self.HandleShipmentDetails(hblno);
+      //self.handleActivityList();
+      self.setState({ HblNo: hblno });
     } else {
-      if (typeof this.props.location.state != "undefined") {
-        var hblno = this.props.location.state.detail;
-        self.HandleShipmentDetails(hblno);
-        //self.handleActivityList();
-        self.setState({ HblNo: hblno });
-      }
+      this.props.history.push("shipment-summary");
     }
   }
 

@@ -859,7 +859,7 @@ class ShipmentPlanner extends Component {
       self.setState({ iframeKey: self.state.iframeKey + 1 });
 
       var submitdata = response;
-      localStorage.removeItem("GreenLineData"); 
+      localStorage.removeItem("GreenLineData");
       self.HandleSubmitDetailsData(submitdata);
     });
   };
@@ -1121,7 +1121,7 @@ class ShipmentPlanner extends Component {
                                   <span id="ContentPlaceHolder1_lbl_avg_days_header">
                                     {this.state.firstAvg}
                                   </span>
-                                  &nbsp;Days Avarage
+                                  &nbsp;Days Average
                                 </div>
                               </div>
                             </div>
@@ -1152,7 +1152,7 @@ class ShipmentPlanner extends Component {
                                   <span id="ContentPlaceHolder1_lbl_avg_days_footer">
                                     {this.state.thirdAvg}
                                   </span>
-                                  &nbsp; Days Avarage
+                                  &nbsp; Days Average
                                 </div>
                               </div>
                             </div>
@@ -1183,7 +1183,7 @@ class ShipmentPlanner extends Component {
                       if (cell.POLLocation == "") {
                         return (
                           <div className="container-fluid p-0 no-sched-avail">
-                            no schedule available
+                            No Schedule Available
                           </div>
                         );
                       } else {
