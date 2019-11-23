@@ -321,7 +321,9 @@ class Analytics extends Component {
           err = temperror;
         }
 
-        alert(err);
+       // alert(err);
+       // volumeOptions.title.text = "No Data Found";
+       // volumeOptions.scales.yAxes[0].scaleLabel.labelString = "";
         self.setState({ graphShipmentdataset: [] });
       });
   }
@@ -531,7 +533,7 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        alert(err[1].replace("}", ""));
+       // alert(err[1].replace("}", ""));
         self.setState({ setSupplierdrop: [] });
       });
   }
@@ -622,7 +624,7 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        alert(err[1].replace("}", ""));
+       // alert(err[1].replace("}", ""));
         self.setState({ graphdataset: [] });
       });
   }

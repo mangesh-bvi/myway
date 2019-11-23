@@ -81,6 +81,7 @@ class ReportDetails extends Component {
       PONumber:  ReportDetails.valPONumber,
       ModeTransport:  ReportDetails.valModeOfTransport,
       POL: POL,//ReportDetails.valReportName,
+      POL: POL,//ReportDetails.valReportName,
       POD: POD,//ReportDetails.valReportName,
       ProductId: ReportDetails.valProductID,
       InvoiceNo: ReportDetails.valInvoiceNumber
@@ -99,11 +100,11 @@ class ReportDetails extends Component {
       debugger;
       var temperror = error.response.data;
       var err = temperror.split(":");
-      alert(err[1].replace("}", ""))
+     // alert(err[1].replace("}", ""))
       
       var actData = [];
       actData.push({
-        ModeOfTransport: "No Data Found"
+        POLCountry: "No Data Found"
       });
       self.setState({ reportdetails: actData });
     });

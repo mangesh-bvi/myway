@@ -473,7 +473,10 @@ class RateTable extends Component {
           RateSubDetails: ratetable1
         });
       }
-    });
+    }).catch(error => {
+      debugger;
+      console.log(error.response)
+      });
   }
 
   HandleDocumentView(evt, row) {
@@ -2356,8 +2359,14 @@ class RateTable extends Component {
                           <div style={{ padding: "20px 0" }}>
                             <ReactTable
                               minRows={1}
-                              data={this.state.RateSubDetails.filter(
+                              data= { this.props.location.state.containerLoadType == "LCL" ? this.state.RateSubDetails.filter(
+                                
+                                d => d.RateLineID === row.original.RateLineID
+
+                              ) : this.state.RateSubDetails.filter(
+                                
                                 d => d.RateLineID === row.original.rateID
+
                               )}
                               columns={[
                                 {
