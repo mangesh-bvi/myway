@@ -208,7 +208,8 @@ class NewRateSearch extends Component {
       isSearch: false,
       currencyData: [],
       currencyCode: "",
-      TruckType: []
+      TruckType: [],
+      testSelection: false
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -734,7 +735,11 @@ class NewRateSearch extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
+<<<<<<< HEAD
         ["Volume"]: parseFloat(decVolume)
+=======
+        ["Volume"]: 0
+>>>>>>> cdd2909bdc25efc62e5748fcf207e53a093a77df
       };
     }
 
@@ -1445,7 +1450,6 @@ class NewRateSearch extends Component {
   }
 
   HandleBindIncoTeamData() {
-    
     let self = this;
     axios({
       method: "post",
@@ -1522,7 +1526,7 @@ class NewRateSearch extends Component {
       );
     } else {
     }
-debugger;
+    debugger;
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null) {
@@ -1735,6 +1739,122 @@ debugger;
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
 
     this.HandleBindIncoTeamData();
+
+    //Remove State
+
+    //this.setState({ selected: []});
+    if (
+      type === "FCL" ||
+      type === "LCL" ||
+      type === "AIR" ||
+      type === "FTL" ||
+      type === "LTL"
+    ) {
+      this.setState({
+        typesofMove: "",
+        PickupCity: "",
+        DeliveryCity: "",
+        OriginGeoCordinates: "",
+        DestGeoCordinate: "",
+        companyId: 0,
+        Containerdetails: [],
+        PortOfDischargeCode: "",
+        PortOfLoadingCode: "",
+        Currency: "",
+        //-----
+        Custom_Clearance: false,
+        NonStackable: false,
+        HazMat: false,
+        multiCBM: [
+          {
+            PackageType: "",
+            Quantity: 0,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            GrossWt: 0,
+            VolumeWeight: 0,
+            Volume: 0
+          }
+        ],
+        users: [],
+        referType: [],
+        flattack_openTop: [],
+        spacEqmtType: [],
+
+        TruckTypeData: [
+          {
+            TruckID: "",
+            TruckName: "",
+            Quantity: ""
+          }
+        ],
+        fieldspol: {},
+        spacEqmtTypeSelect: false,
+        specialEqtSelect: false,
+        refertypeSelect: false,
+        isTypeofMove: "",
+        cmbTypeRadio: "",
+        specialEquipment: false,
+        equipmentType: "",
+        isSpecialEquipment: "0",
+        tempratureEquipment: "",
+        fields: {},
+        poladdress: "",
+        polpodData: [],
+        polpodDataAdd: [],
+        isHazMat: "",
+        incoTerms: "",
+        POL: "",
+        POD: "",
+        PUAddress: "",
+        PDAddress: "",
+        modalPuAdd: false,
+        cbmLength: "",
+        cbmWidth: "",
+        cbmHeight: "",
+        cbmQuantity: "1",
+        cbmVal: "",
+        PODData: [],
+        POLData: [],
+        puAdd: "",
+        deliAdd: "",
+        values: [],
+        values1: [],
+        equQuan: "",
+        polCountry: "",
+        pol: "",
+        podCountry: "",
+        pod: "",
+        equipDrop: [],
+        country: [],
+        StandardContainerCode: [],
+        multi: true,
+        selected: [],
+        isSpacialEqt: true,
+        SpacialEqmt: [],
+        spEqtSelect: [],
+        searchTextPOD: "",
+        zoomPOL: 0,
+        zoomPOD: 0,
+        markerPositionPOL: {},
+        mapPositionPOL: {},
+        markerPositionPOD: {},
+        mapPositionPOD: {},
+        fullAddressPOL: "",
+        fullAddressPOD: "",
+        totalQuantity: 0,
+        isCustomClear: "No",
+        polfullAddData: {},
+        podfullAddData: {},
+        commodityData: [],
+        // packageTypeData: [],
+        isSearch: false,
+        currencyData: [],
+        currencyCode: "",
+        testSelection: true
+      });
+    }
   };
   cntrLoadPlusClick = e => {
     document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
@@ -2911,32 +3031,43 @@ debugger;
                 </div>
                 <div id="typeMoveInner">
                   <div className="new-radio-rate-cntr radio-blue">
+                  {/* <div style={{display:"none"}}>
+                      <input
+                        type="radio"
+                        name="type-move"
+                        id="testId"
+                        value={"test"}
+                        checked={this.state.testSelection}
+                      />
+                      <label htmlFor="testId">Test</label>
+                    </div> */}
                     {this.state.containerLoadType === "LCL" ||
-                        this.state.containerLoadType === "AIR" || 
-                        this.state.containerLoadType === "FCL" ?(
-                          <>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="p2p"
-                        value={"p2p"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="p2p">Port2Port</label>
-                    </div>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="d2p"
-                        value={"d2p"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="d2p">Door2Port</label>
-                    </div>
-                       </> 
-                        ):null}
+                    this.state.containerLoadType === "AIR" ||
+                    this.state.containerLoadType === "FCL" ? (
+                      <>
+                      
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="p2p"
+                            value={"p2p"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="p2p">Port2Port</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="d2p"
+                            value={"d2p"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="d2p">Door2Port</label>
+                        </div>
+                      </>
+                    ) : null}
                     <div>
                       <input
                         type="radio"
@@ -2948,21 +3079,21 @@ debugger;
                       <label htmlFor="d2d">Door2Door</label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
-                    this.state.containerLoadType === "AIR" || 
-                    this.state.containerLoadType === "FCL" ?(
-                    <>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="p2d"
-                        value={"p2d"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="p2d">Port2Door</label>
-                    </div>
-                    </> 
-                        ):null}
+                    this.state.containerLoadType === "AIR" ||
+                    this.state.containerLoadType === "FCL" ? (
+                      <>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="p2d"
+                            value={"p2d"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="p2d">Port2Door</label>
+                        </div>
+                      </>
+                    ) : null}
                   </div>
                   <div className="spe-equ justify-content-center">
                     <label>Inco Terms :</label>
