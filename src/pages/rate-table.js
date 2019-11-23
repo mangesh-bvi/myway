@@ -588,7 +588,8 @@ class RateTable extends Component {
         polArray:this.state.polArray,
         podArray:this.state.podArray,
         polFilterArray:this.state.polFilterArray,
-        podFilterArray:this.state.podFilterArray
+        podFilterArray:this.state.podFilterArray,
+        ChargeableWeight: cmbvalue
       });
     }
 
@@ -1963,8 +1964,8 @@ class RateTable extends Component {
       });
       pickUpAddress = param.fields.pol;
       destinationAddress = param.fields.pod;
-      originPort_ID = param.polfullAddData.Location;
-      destinationPort_ID = param.podfullAddData.Location;
+      originPort_ID = param.polfullAddData.UNECECode;
+      destinationPort_ID = param.podfullAddData.UNECECode;
       //   pickUpAddress
       // }
       // else{
@@ -2006,7 +2007,7 @@ class RateTable extends Component {
       });
       pickUpAddress = param.puAdd;
       destinationAddress = param.fields.pod;
-      destinationPort_ID = param.podfullAddData.Location;
+      destinationPort_ID = param.podfullAddData.UNECECode;
     }
 
     if (param.typesofMove == "p2d") {
@@ -2026,7 +2027,7 @@ class RateTable extends Component {
       });
       pickUpAddress = param.fields.pol;
       destinationAddress = param.DeliveryCity;
-      originPort_ID = param.polfullAddData.Location;
+      originPort_ID = param.polfullAddData.UNECECode;
     }
 
     // if(param.podfullAddData.length != 0)
@@ -2051,7 +2052,7 @@ class RateTable extends Component {
         Total_Weight_Unit: "Kgs",
         SalesPerson: 1452494145,
         HazMat: param.HazMat,
-        ChargeableWt: 0,
+        ChargeableWt: param.ChargeableWeight,
         Containerdetails: containerdetails,
         // PickUpAddressDetails:{
         //   Street:'',Country:'',State:'',City:'',ZipCode:''
@@ -2084,7 +2085,7 @@ class RateTable extends Component {
         Total_Weight_Unit : 'Kgs',
         SalesPerson : 1452494145,
         HazMat  : param.HazMat,
-        ChargeableWt : 0,
+        ChargeableWt : param.ChargeableWeight,
         PickUpAddressDetails:pickUpAddressDetails[0],
         DestinationAddressDetails:destUpAddressDetails[0],
         RateQueryDim:MultiCBM,
@@ -2110,7 +2111,7 @@ class RateTable extends Component {
         Total_Weight_Unit : 'Kgs',
         SalesPerson : 1452494145,
         HazMat  : param.HazMat,
-        ChargeableWt : 0,
+        ChargeableWt : param.ChargeableWeight,
         PickUpAddressDetails:pickUpAddressDetails[0],
         DestinationAddressDetails:destUpAddressDetails[0],
         RateQueryDim:MultiCBM,
