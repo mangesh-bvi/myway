@@ -537,10 +537,10 @@ class NewRateSearch extends Component {
         })
         .catch(error => {
           debugger;
-          var errorData = error.response.data;
-          var err = errorData.split(":");
-          var data = [{ OceanPortLongName: err[1].replace("}", "") }];
-          this.setState({ polpodData: data });
+          // var errorData = error.response.data;
+          // var err = errorData.split(":");
+          // var data = [{ OceanPortLongName: err[1].replace("}", "") }];
+          // this.setState({ polpodData: data });
           console.log(error);
         });
     } else {

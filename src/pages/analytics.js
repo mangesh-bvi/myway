@@ -325,7 +325,10 @@ class Analytics extends Component {
           err = temperror;
         }
 
-        NotificationManager.error(err);
+       // alert(err);
+       // volumeOptions.title.text = "No Data Found";
+       // volumeOptions.scales.yAxes[0].scaleLabel.labelString = "";
+       NotificationManager.error(err);
         self.setState({ graphShipmentdataset: [] });
       });
   }
@@ -535,7 +538,7 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        NotificationManager.error(err[1].replace("}", ""));
+       // alert(err[1].replace("}", ""));
         self.setState({ setSupplierdrop: [] });
       });
   }
@@ -626,7 +629,7 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        NotificationManager.error(err[1].replace("}", ""));
+       // alert(err[1].replace("}", ""));
         self.setState({ graphdataset: [] });
       });
   }
@@ -682,7 +685,7 @@ class Analytics extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <NotificationContainer />
+          <NotificationContainer />
             <ul className="nav cust-tabs pt-2" role="tablist">
               <li>
                 <a
