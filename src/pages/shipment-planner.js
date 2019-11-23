@@ -864,14 +864,29 @@ class ShipmentPlanner extends Component {
     });
   };
   toggleTransit() {
-    this.setState(prevState => ({
-      modalTransit: !prevState.modalTransit
-    }));
+    if(this.state.transitpopup != null)
+    {
+      if(this.state.transitpopup.length > 0)
+      {
+        this.setState(prevState => ({
+          modalTransit: !prevState.modalTransit
+        }));
+      }
+    }
+    
   }
   toggleDelivery() {
-    this.setState(prevState => ({
-      modalDelivery: !prevState.modalDelivery
-    }));
+    debugger;
+    if(this.state.deliveryPopup != null)
+    {
+      if(this.state.deliveryPopup.length > 0)
+      {
+        this.setState(prevState => ({
+          modalDelivery: !prevState.modalDelivery
+        }));
+      }
+    }
+   
   }
   toggleVisual() {
     this.setState(prevState => ({

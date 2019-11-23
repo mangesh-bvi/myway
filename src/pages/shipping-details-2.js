@@ -573,7 +573,7 @@ class ShippingDetailsTwo extends Component {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-        NotificationManager.error("No Data Found");
+       // NotificationManager.error("No Data Found");
         var actData = [];
         actData.push({ DocumentDescription: "No Data Found" });
 
@@ -752,7 +752,7 @@ class ShippingDetailsTwo extends Component {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-        NotificationManager.error(err[1].replace("}", ""));
+        //NotificationManager.error(err[1].replace("}", ""));
       });
   }
 
