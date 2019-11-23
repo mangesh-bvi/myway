@@ -42,7 +42,8 @@ class RateFinalizingStillBooking extends Component {
       Shipper: [],
       multiCBM: [],
       packageTypeData: [],
-      userType: ""
+      userType: "",
+      NonCustomerData: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -149,6 +150,23 @@ class RateFinalizingStillBooking extends Component {
       ShipperID: this.state.ShipperID
     });
   }
+
+  ////this method for NonCustomerList bind
+  NonCustomerList = () => {
+    let self = this;
+    
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/NonCustomerList`,
+      data: {
+        MyWayUserID: 2679
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ NonCustomerData: data });
+    });
+  };
 
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
@@ -598,12 +616,10 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
-                        columns={
-                          [
+                        columns={[
                           {
                             columns: [
                               {
-                               
                                 Cell: row => {
                                   i++;
                                   return (
@@ -623,10 +639,12 @@ class RateFinalizingStillBooking extends Component {
                                         </div>
                                         <div>
                                           <p className="details-title">
-                                          <img src={maersk} alt="maersk icon" />
+                                            <img
+                                              src={maersk}
+                                              alt="maersk icon"
+                                            />
                                           </p>
                                         </div>
-                                        
                                       </div>
                                     </React.Fragment>
                                   );
