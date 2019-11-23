@@ -22,6 +22,21 @@ class SideMenu extends Component {
     };
   }
 
+  clickShipmentType(e)
+  {
+    var value = e.target.getAttribute('data-shptye');
+  //  alert(value)
+  if(value == "" || value == null)
+  {
+    window.location.href="shipment-summary"
+  }
+  else
+  {
+    window.location.href="shipment-summary?stype="+value
+  }
+   
+  }
+
   render() {
     var urlShipSum = window.location.pathname;
     window.localStorage.setItem("defShipActKey", "0");
@@ -143,7 +158,7 @@ class SideMenu extends Component {
             >
               <Card>
                 <Card.Header>
-                  <Link to="/shipment-summary" style={{ display: "block" }}>
+                  <Link to="#" data-shptye="" onClick={this.clickShipmentType.bind(this)} style={{ display: "block" }}>
                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
                       <img
                         src={ShipmentsIcon}
@@ -158,19 +173,19 @@ class SideMenu extends Component {
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
-                        <label className="shipment-ul-lilbl1">Air</label>
+                        <label className="shipment-ul-lilbl1"  data-shptye="Air" onClick={this.clickShipmentType.bind(this)}>Air</label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("aircount")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Ocean</label>
+                        <label className="shipment-ul-lilbl1" data-shptye="Ocean" onClick={this.clickShipmentType.bind(this)}>Ocean</label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("oceancount")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Inland</label>
+                        <label className="shipment-ul-lilbl1" data-shptye="Inland" onClick={this.clickShipmentType.bind(this)}>Inland</label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("inlandcount")}
                         </label>

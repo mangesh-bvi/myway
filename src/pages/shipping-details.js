@@ -117,7 +117,16 @@ class ShippingDetails extends Component {
   }
 
   componentDidMount() {
-    this.HandleListShipmentSummey();
+
+    var url = window.location.href
+    .slice(window.location.href.indexOf("?") + 1)
+    .split("=")[1];
+    var shiptype = "";
+    if(url != undefined)
+    {
+      shiptype  = url;
+    }
+    this.HandleListShipmentSummey(shiptype);
     this.HandleCountryDropDown();
   }
 
@@ -159,7 +168,7 @@ class ShippingDetails extends Component {
     this.setState({ filterAll, filtered });
   }
 
-  HandleListShipmentSummey() {
+  HandleListShipmentSummey(shiptype) {
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -180,7 +189,14 @@ class ShippingDetails extends Component {
       window.localStorage.setItem("oceancount", ocean);
       window.localStorage.setItem("inlandcount", inland);
       var data = [];
+
+      //ModeOfTransport
       data = response.data.Table1;
+      if(shiptype != "")
+      {
+        data = data.filter(item => item.ModeOfTransport == shiptype)
+      }
+      
       self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
     });
   }
@@ -244,6 +260,7 @@ class ShippingDetails extends Component {
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
+    debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/CustomerList`,
@@ -253,7 +270,7 @@ class ShippingDetails extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+     
       if (field == "Consignee") {
         self.setState({
           Consignee: response.data.Table,
@@ -265,7 +282,12 @@ class ShippingDetails extends Component {
           fields
         });
       }
-    });
+    }) .catch(error => {
+      debugger;
+      var temperror = error.response.data;
+      var err = temperror.split(":");
+      //NotificationManager.error(err[1].replace("}", ""));
+    });;
     // this.setState({
     //   value: this.state.value
     // });
