@@ -538,10 +538,10 @@ class NewRateSearch extends Component {
         })
         .catch(error => {
           debugger;
-          var errorData = error.response.data;
-          var err = errorData.split(":");
-          var data = [{ OceanPortLongName: err[1].replace("}", "") }];
-          this.setState({ polpodData: data });
+          // var errorData = error.response.data;
+          // var err = errorData.split(":");
+          // var data = [{ OceanPortLongName: err[1].replace("}", "") }];
+          // this.setState({ polpodData: data });
           console.log(error);
         });
     } else {
@@ -2748,13 +2748,72 @@ class NewRateSearch extends Component {
                         ></i>
                       </div>
                     </div>
+                    <div>
+                      <div className="rate-radio-cntr justify-content-center">
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="exist-cust"
+                            value="ALL"
+                            // onChange={
+                            //   this.state.containerLoadType !== "FTL"
+                            //     ? this.cmbTypeRadioChange.bind(this)
+                            //     : null
+                            // }
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="exist-cust"
+                          >
+                            ALL
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="new-cust"
+                            value="CBM"
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            {this.state.containerLoadType === "AIR"
+                              ? "Chargable Weight"
+                              : "CBM"}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
                     <div id="cbmInner">
                       <div className="">
+                      {this.state.cmbTypeRadio === "ALL" ? (
                         <>
                           {this.state.containerLoadType === "FTL"
                             ? this.createUITruckType()
                             : this.CreateMultiCBM()}
                         </>
+                        ) : this.state.cmbTypeRadio === "CBM" ? (
+                          <div className="col-md-4 m-auto">
+                            <div className="spe-equ">
+                              <input
+                                type="text"
+                                onChange={this.HandleCMBtextChange.bind(this)}
+                                placeholder={
+                                  this.state.modeoftransport != "AIR"
+                                    ? "CBM"
+                                    : "KG"
+                                }
+                                className="w-100"
+                                value={this.state.cbmVal}
+                              />
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input
