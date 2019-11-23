@@ -845,7 +845,7 @@ class ShippingDetails extends Component {
                                     ? "lightgray"
                                     : "white"
                                 }}
-                                value={item.Company_ID}
+                                //value={item.Company_ID}
                               >
                                 {item.Company_Name}
                               </div>

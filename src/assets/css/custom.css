@@ -3078,6 +3078,16 @@ table tbody tr:last-child {
 .big-popup {
   max-width: 90%;
 }
+.pol-pod {
+  display: block !important;
+  border-top: 1px solid #d3d3d3;
+  padding-top: 10px;
+}
+.pol-pod span {
+  padding-bottom: 5px;
+  display: block;
+  margin-left: 13px;
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/
