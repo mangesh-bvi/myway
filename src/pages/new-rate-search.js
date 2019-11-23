@@ -735,11 +735,7 @@ class NewRateSearch extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-<<<<<<< HEAD
-        ["Volume"]: parseFloat(decVolume)
-=======
         ["Volume"]: 0
->>>>>>> cdd2909bdc25efc62e5748fcf207e53a093a77df
       };
     }
 
