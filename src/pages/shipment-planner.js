@@ -975,7 +975,7 @@ class ShipmentPlanner extends Component {
                         </select>
                       </div>
                       <div className="login-fields">
-                        <label>Select Company</label>
+                        <label>Select Sub Company</label>
                         <select
                           onChange={this.consigneeChange}
                           id="drpConsigneeCompany"
@@ -1019,22 +1019,13 @@ class ShipmentPlanner extends Component {
                 </div>
                 <div className="col-md-7">
                   <div className="planner-top-butns">
-                    <button
-                      onClick={this.toggleDelivery}
-                      className="butn cancel-butn"
-                    >
+                    <button onClick={this.toggleDelivery} className="butn">
                       Delivery Date
                     </button>
-                    <button
-                      onClick={this.toggleVisual}
-                      className="butn cancel-butn"
-                    >
+                    <button onClick={this.toggleVisual} className="butn">
                       Visual Summary
                     </button>
-                    <button
-                      onClick={this.toggleTransit}
-                      className="butn cancel-butn"
-                    >
+                    <button onClick={this.toggleTransit} className="butn">
                       Transit Time
                     </button>
                   </div>
@@ -1170,6 +1161,12 @@ class ShipmentPlanner extends Component {
                         </tr>
                       </tbody>
                     </table>
+                    <a
+                      href="#!"
+                      className="popup-cross fa fa-times"
+                      onClick={this.toggleVisual}
+                      style={{ color: "#fff" }}
+                    ></a>
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -1243,6 +1240,11 @@ class ShipmentPlanner extends Component {
                         );
                       }
                     })}
+                    <a
+                      href="#!"
+                      className="popup-cross fa fa-times"
+                      onClick={this.toggleDelivery}
+                    ></a>
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -1351,6 +1353,11 @@ class ShipmentPlanner extends Component {
                         })}
                       </div>
                     </div>
+                    <a
+                      href="#!"
+                      className="popup-cross fa fa-times"
+                      onClick={this.toggleTransit}
+                    ></a>
                   </ModalBody>
                 </Modal>
                 {/* <Modal

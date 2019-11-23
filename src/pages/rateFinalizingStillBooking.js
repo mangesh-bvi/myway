@@ -8,7 +8,9 @@ import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import { Autocomplete } from "react-autocomplete";
+import Autocomplete from "react-autocomplete";
+import { encryption } from "../helpers/encryption";
+import maersk from "./../assets/img/maersk.png";
 
 class RateFinalizingStillBooking extends Component {
   constructor(props) {
@@ -27,16 +29,20 @@ class RateFinalizingStillBooking extends Component {
       Booking3: [],
       Booking4: [],
       Booking5: [],
+      shiperVal: "",
+      consigneeval: "",
       commodityData: [],
       selectedCommodity: "",
       selectedFilePath: "",
-      selectedType: "Shipper",
+      selectedType: "",
       ConsigneeID: 0,
       ShipperID: 0,
       fields: {},
       Consignee: [],
       Shipper: [],
-      multiCBM: []
+      multiCBM: [],
+      packageTypeData: [],
+      userType: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -46,19 +52,40 @@ class RateFinalizingStillBooking extends Component {
   }
   componentDidMount() {
     debugger;
+
     if (
       typeof this.props.location.state.BookingNo != "undefined" &&
       typeof this.props.location.state.BookingNo != ""
     ) {
+      var userType = encryption(
+        window.localStorage.getItem("usertype"),
+        "desc"
+      );
       var BookingNo = this.props.location.state.BookingNo;
-      this.setState({ BookingNo });
+      this.setState({ BookingNo, userType });
       setTimeout(() => {
         this.HandleShipmentDetails();
         this.HandleCommodityDropdown();
+        this.HandlePackgeTypeData();
       }, 100);
     }
   }
 
+  ////Package Type Dropdata DataBind Methos
+
+  HandlePackgeTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PackageTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
   HandleChangeSelect(field, e) {
     let fields = this.state.fields;
     if (e.target.value == "Select") {
@@ -77,31 +104,34 @@ class RateFinalizingStillBooking extends Component {
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/CustomerList`,
-      data: {
-        CustomerName: e.target.value,
-        CustomerType: "Existing"
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      if (field == "Consignee") {
-        self.setState({
-          Consignee: response.data.Table,
-          fields
-        });
-      } else {
-        self.setState({
-          Shipper: response.data.Table,
-          fields
-        });
-      }
-    });
-    // this.setState({
-    //   value: this.state.value
-    // });
+    if (fields[field].length > 3) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerList`,
+        data: {
+          CustomerName: e.target.value,
+          CustomerType: "Existing"
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        if (field == "Consignee") {
+          self.setState({
+            Consignee: response.data.Table,
+            fields
+          });
+        } else {
+          self.setState({
+            Shipper: response.data.Table,
+            fields
+          });
+        }
+      });
+    } else {
+      this.setState({
+        fields
+      });
+    }
   }
 
   handleSelectCon(e, field, value, id) {
@@ -168,13 +198,30 @@ class RateFinalizingStillBooking extends Component {
       <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder="QTY"
               className="w-100"
-              name="Quantity"
-              value={el.Quantity || ""}
+              name="PackageCount"
+              value={el.PackageCount || ""}
               //onKeyUp={this.cbmChange}
             />
           </div>
@@ -224,9 +271,9 @@ class RateFinalizingStillBooking extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
-              name="GrossWt"
-              value={el.GrossWt || ""}
+              placeholder={el.Weight === 0 ? "G W" : "G W"}
+              name="Weight"
+              value={el.Weight || ""}
               className="w-100"
             />
           </div>
@@ -325,34 +372,10 @@ class RateFinalizingStillBooking extends Component {
     }
 
     this.setState({ multiCBM });
-
-    // next
-    document.getElementById("cbm").classList.add("cbm");
-    document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
-    document.getElementById("containerLoad").classList.add("less-padd");
-
-    document
-      .getElementById("cntrLoadIconCntr")
-      .classList.add("cntrLoadIconCntr");
-    document.getElementById("cntrLoadName").classList.remove("d-none");
-    document.getElementById("cntrLoadMinusClick").classList.add("d-none");
-    document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   addMultiCBM() {
     this.setState(prevState => ({
-      multiCBM: [
-        ...prevState.multiCBM,
-        {
-          PackageType: "",
-          Quantity: 0,
-          Lengths: 0,
-          Width: 0,
-          Height: 0,
-          Weight: 0,
-          VolumeWeight: 0,
-          Volume: 0
-        }
-      ]
+      multiCBM: [...prevState.multiCBM, ""]
     }));
   }
   removeMultiCBM(i) {
@@ -367,6 +390,7 @@ class RateFinalizingStillBooking extends Component {
     var selectedType = e.target.value;
     this.setState({ selectedType });
   };
+  ////this method for get Booking details by ID
   HandleShipmentDetails() {
     let self = this;
     var BookingNo = this.state.BookingNo;
@@ -395,10 +419,26 @@ class RateFinalizingStillBooking extends Component {
         selectedCommodity: Booking2[0].Commodity,
         selectedFilePath: Booking4[0].FTPLink,
         selectedFileName: Booking4[0].DocumentName,
-        multiCBM: Booking2
+        multiCBM: Booking2,
+
+        fields: {
+          Consignee: Booking3[0].Consignee,
+          Shipper: Booking3[0].Shipper
+        }
       });
     });
   }
+  //// this method for Handle Change values of Consignee and shipper
+
+  HandleChangeCon_Ship = e => {
+    var type = e.target.name;
+    var value = e.target.name;
+    if (type === "Consignee") {
+      this.setState({ consigneeVal: value });
+    } else {
+      this.setState({ shiperVal: value });
+    }
+  };
 
   render() {
     const {
@@ -417,32 +457,40 @@ class RateFinalizingStillBooking extends Component {
 
     var data1 = [
       {
-        validUntil: "Valid Until : JANUARY",
-        tt: "TT",
-        price: "$43.00"
+        POL: "Nhava Sheva (Jawaharlal Nehru)",
+        POD: "Marport",
+        SPort: "Piraeus",
+        FTime: "",
+        Container: "40 Standard Dry",
+        Expiry: "11/24/2019",
+        TT: "24-26",
+        Price: "0 INR"
       }
     ];
     var data2 = [
       {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
+        ctype: "A23435",
+        cname: "Lorem",
         units: "43",
         unitPrice: "$134.00",
+        tax: "0",
         finalPayment: "$45,986.00"
       },
       {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
+        ctype: "A23435",
+        cname: "Lorem",
+        units: "43",
+        unitPrice: "$134.00",
+        tax: "0",
+        finalPayment: "$45,986.00"
       },
       {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
+        ctype: "A23435",
+        cname: "Lorem",
+        units: "43",
+        unitPrice: "$134.00",
+        tax: "0",
+        finalPayment: "$45,986.00"
       }
     ];
     let className = "butn m-0";
@@ -550,10 +598,12 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
-                        columns={[
+                        columns={
+                          [
                           {
                             columns: [
                               {
+                               
                                 Cell: row => {
                                   i++;
                                   return (
@@ -573,46 +623,116 @@ class RateFinalizingStillBooking extends Component {
                                         </div>
                                         <div>
                                           <p className="details-title">
-                                            Supplier Name
+                                          <img src={maersk} alt="maersk icon" />
                                           </p>
-                                          <p className="details-para">Maersk</p>
                                         </div>
+                                        
                                       </div>
                                     </React.Fragment>
                                   );
-                                }
+                                },
+                                width: 200
                               },
                               {
-                                accessor: "validUntil",
+                                accessor: "POL",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
-                                      <p className="details-title">
-                                        Valid Until
+                                      <p className="details-title">POL</p>
+                                      <p className="details-para">
+                                        {row.original.POL}
                                       </p>
-                                      <p className="details-para">January</p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "tt",
+                                accessor: "POD",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">POD</p>
+                                      <p className="details-para">
+                                        {row.original.POD}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "SPort",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">S. Port</p>
+                                      <p className="details-para">
+                                        {row.original.SPort}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "FTime",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">F. Time</p>
+                                      <p className="details-para">
+                                        {row.original.FTime}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "Container",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">Container</p>
+                                      <p className="details-para">
+                                        {row.original.Container}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "Expiry",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">Expiry</p>
+                                      <p className="details-para">
+                                        {row.original.Expiry}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "TT",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">TT</p>
-                                      <p className="details-para">23</p>
+                                      <p className="details-para">
+                                        {row.original.TT}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "price",
+                                accessor: "Price",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Price</p>
-                                      <p className="details-para">$43.00</p>
+                                      <p className="details-para">
+                                        {row.original.Price}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
@@ -633,12 +753,12 @@ class RateFinalizingStillBooking extends Component {
                                   {
                                     columns: [
                                       {
-                                        Header: "Charge Code",
-                                        accessor: "chargeCode"
+                                        Header: "C.Type",
+                                        accessor: "ctype"
                                       },
                                       {
-                                        Header: "Charge Name",
-                                        accessor: "chargeName"
+                                        Header: "C.Name",
+                                        accessor: "cname"
                                       },
                                       {
                                         Header: "Units",
@@ -769,12 +889,11 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Account/Customer</p>
+
                             <p className="details-para">
                               {this.state.selectedType === "Shipper"
-                                ? Booking3.length > 0
-                                  ? Booking3[0].Shipper
-                                  : null
-                                : Booking3.length > 0
+                                ? Booking3[0].Shipper
+                                : this.state.selectedType === "Consinee"
                                 ? Booking3[0].Consignee
                                 : null}
                             </p>
@@ -782,11 +901,17 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {this.state.selectedType === "Shipper"
+                              {/* {this.state.selectedType === "Shipper"
                                 ? Booking3.length > 0
                                   ? Booking3[0].ShipperAddress
                                   : null
                                 : Booking3.length > 0
+                                ? Booking3[0].ConsigneeAddress
+                                : null} */}
+
+                              {this.state.selectedType === "Shipper"
+                                ? Booking3[0].ShipperAddress
+                                : this.state.selectedType === "Consinee"
                                 ? Booking3[0].ConsigneeAddress
                                 : null}
                             </p>
@@ -800,7 +925,7 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border py-3">
+                      <div className=" ">
                         <div className="rate-radio-cntr">
                           <div>
                             <input
@@ -851,14 +976,51 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-md-6 login-fields">
                             <p className="details-title">Consignee Name</p>
-                            <p className="details-para">
+                            {this.state.userType === "Customer" ? (
+                              <input
+                                type="text"
+                                name="Consignee"
+                                value={this.state.consigneeVal}
+                              />
+                            ) : (
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Consignee}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                    value={item.Company_ID}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Consignee"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Consignee"
+                                )}
+                                value={this.state.fields["Consignee"]}
+                              />
+                            )}
+                          </div>
+
+                          {/* <p className="details-para">
                               {Booking3.length > 0
                                 ? Booking3[0].Consignee
                                 : null}
-                            </p>
-                          </div>
+                            </p> */}
+
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
@@ -876,12 +1038,49 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-md-6 login-fields">
                             <p className="details-title">Shipper Name</p>
-                            <p className="details-para">
+                            {this.state.userType === "Customer" ? (
+                              <input
+                                type="text"
+                                name="Shipper"
+                                onChange={this.HandleChangeCon_Ship}
+                                value={this.state.shipperval}
+                              />
+                            ) : (
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Shipper}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Shipper"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Shipper"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Shipper"
+                                )}
+                                isMulti
+                              />
+                            )}
+                            {/* <p className="details-para">
                               {Booking3.length > 0 ? Booking3[0].Shipper : null}
-                            </p>
+                            </p> */}
                           </div>
+
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
@@ -931,10 +1130,14 @@ class RateFinalizingStillBooking extends Component {
                       >
                         <h3>Cargo Details</h3>
                       </div>
-                      <div>{this.CreateMultiCBM()}</div>
+                      <div>
+                        {this.state.multiCBM.length > 0
+                          ? this.CreateMultiCBM()
+                          : null}
+                      </div>
                     </div>
                     <div className="row cargodetailsB">
-                      <ReactTable
+                      {/* <ReactTable
                         data={Booking2}
                         columns={[
                           {
@@ -957,7 +1160,7 @@ class RateFinalizingStillBooking extends Component {
                         defaultPageSize={3}
                         minRows={1}
                         showPagination={false}
-                      />
+                      /> */}
                     </div>
                     {/* <div className="text-right">
                       <a href="quote-table" className="butn">

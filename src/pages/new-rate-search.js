@@ -1515,7 +1515,7 @@ class NewRateSearch extends Component {
       );
     } else {
     }
-
+debugger;
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null) {
