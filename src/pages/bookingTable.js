@@ -20,9 +20,7 @@ class BookingTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
-      bookingData: [],
-      
-       
+      bookingData: []
     };
     this.HandleBookingList = this.HandleBookingList.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -37,7 +35,6 @@ class BookingTable extends Component {
   componentDidMount() {
     this.HandleBookingList();
   }
-
 
   HandleBookingList() {
     let self = this;
@@ -54,7 +51,10 @@ class BookingTable extends Component {
       debugger;
       var data = [];
       data = response.data;
-      self.setState({ bookingData: data }); ///problem not working setstat undefined
+      if (data.length > 0) {
+        self.setState({ bookingData: data }); ///problem not working setstat undefined
+      }
+      
     });
   }
 
@@ -141,9 +141,7 @@ class BookingTable extends Component {
                             className="actionicon"
                             src={Edit}
                             alt="view-icon"
-                            onClick={e =>
-                              this.HandleDocumentView(e, row)
-                            }
+                            onClick={e => this.HandleDocumentView(e, row)}
                           />
                           {/* </a> */}
                           <a href="/rate-finalizing">

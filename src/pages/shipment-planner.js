@@ -859,7 +859,7 @@ class ShipmentPlanner extends Component {
       self.setState({ iframeKey: self.state.iframeKey + 1 });
 
       var submitdata = response;
-      localStorage.removeItem("GreenLineData"); 
+      localStorage.removeItem("GreenLineData");
       self.HandleSubmitDetailsData(submitdata);
     });
   };
@@ -975,7 +975,7 @@ class ShipmentPlanner extends Component {
                         </select>
                       </div>
                       <div className="login-fields">
-                        <label>Select Company</label>
+                        <label>Select Sub Company</label>
                         <select
                           onChange={this.consigneeChange}
                           id="drpConsigneeCompany"
@@ -1019,22 +1019,13 @@ class ShipmentPlanner extends Component {
                 </div>
                 <div className="col-md-7">
                   <div className="planner-top-butns">
-                    <button
-                      onClick={this.toggleDelivery}
-                      className="butn cancel-butn"
-                    >
+                    <button onClick={this.toggleDelivery} className="butn">
                       Delivery Date
                     </button>
-                    <button
-                      onClick={this.toggleVisual}
-                      className="butn cancel-butn"
-                    >
+                    <button onClick={this.toggleVisual} className="butn">
                       Visual Summary
                     </button>
-                    <button
-                      onClick={this.toggleTransit}
-                      className="butn cancel-butn"
-                    >
+                    <button onClick={this.toggleTransit} className="butn">
                       Transit Time
                     </button>
                   </div>
@@ -1121,7 +1112,7 @@ class ShipmentPlanner extends Component {
                                   <span id="ContentPlaceHolder1_lbl_avg_days_header">
                                     {this.state.firstAvg}
                                   </span>
-                                  &nbsp;Days Avarage
+                                  &nbsp;Days Average
                                 </div>
                               </div>
                             </div>
@@ -1152,7 +1143,7 @@ class ShipmentPlanner extends Component {
                                   <span id="ContentPlaceHolder1_lbl_avg_days_footer">
                                     {this.state.thirdAvg}
                                   </span>
-                                  &nbsp; Days Avarage
+                                  &nbsp; Days Average
                                 </div>
                               </div>
                             </div>
@@ -1170,6 +1161,12 @@ class ShipmentPlanner extends Component {
                         </tr>
                       </tbody>
                     </table>
+                    <a
+                      href="#!"
+                      className="popup-cross fa fa-times"
+                      onClick={this.toggleVisual}
+                      style={{ color: "#fff" }}
+                    ></a>
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -1183,7 +1180,7 @@ class ShipmentPlanner extends Component {
                       if (cell.POLLocation == "") {
                         return (
                           <div className="container-fluid p-0 no-sched-avail">
-                            no schedule available
+                            No Schedule Available
                           </div>
                         );
                       } else {
@@ -1243,6 +1240,11 @@ class ShipmentPlanner extends Component {
                         );
                       }
                     })}
+                    <a
+                      href="#!"
+                      className="popup-cross fa fa-times"
+                      onClick={this.toggleDelivery}
+                    ></a>
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -1351,6 +1353,11 @@ class ShipmentPlanner extends Component {
                         })}
                       </div>
                     </div>
+                    <a
+                      href="#!"
+                      className="popup-cross fa fa-times"
+                      onClick={this.toggleTransit}
+                    ></a>
                   </ModalBody>
                 </Modal>
                 {/* <Modal

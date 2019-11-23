@@ -170,9 +170,9 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID:"",
-      OriginGeoCordinates:"",
-      DestGeoCordinate:"",
+      CommodityID: "",
+      OriginGeoCordinates: "",
+      DestGeoCordinate: "",
       pickUpAddress: [],
       destAddress: [],
       multiCBM:[],
@@ -265,8 +265,9 @@ class RateTable extends Component {
 
   toggleQuantPOLSave(){
     debugger;
+    this.state.polFilterArray = this.state.polArray
     this.setState(prevState => ({
-      polFilterArray: this.state.polArray
+      polFilterArray: this.state.polFilterArray
       //modalQuant: !prevState.modalQuant
     }));
 
@@ -275,8 +276,9 @@ class RateTable extends Component {
 
   toggleQuantPODSave(){
     debugger;
+    this.state.podFilterArray = this.state.podArray
     this.setState(prevState => ({
-      podFilterArray: this.state.podArray
+      podFilterArray: this.state.podFilterArray
       //modalQuant: !prevState.modalQuant
     }));
 
@@ -521,7 +523,7 @@ class RateTable extends Component {
         Currency: paramData.currencyCode,
         ChargeableWeight: cmbvalue,
         RateQueryDim: paramData.multiCBM,
-        MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc")
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
       if(paramData.typesofMove === "p2p")
@@ -578,7 +580,7 @@ class RateTable extends Component {
         pickUpAddress: paramData.fullAddressPOL,
         destAddress: paramData.fullAddressPOD,
         multiCBM: paramData.multiCBM,
-        packageTypeData:paramData.packageTypeData,
+        packageTypeData: paramData.packageTypeData,
         fields: paramData.fields,
         puAdd: paramData.puAdd,
         DeliveryCity: paramData.DeliveryCity,
@@ -663,7 +665,6 @@ class RateTable extends Component {
   }
 
   createUIPOL() {
-
     return this.state.valuesPOL.map((el, index) => {
       return (
         <div key={index+1} className="row">
@@ -1123,7 +1124,7 @@ class RateTable extends Component {
             min="1"
             placeholder="QTY"
             name="ContainerQuantity"
-            value={el.ContainerQuantity || ""}
+            value={el.ContainerQuantity || 1}
             onChange={this.newhandleChange.bind(this, i)}
           />
         </div>
@@ -1294,10 +1295,11 @@ class RateTable extends Component {
           {/* <div className="spe-equ"> */}
           <input
             type="number"
+            min="1"
             name="Quantity"
             placeholder="QTY"
             onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
-            value={el.Quantity || ""}
+            value={el.Quantity || 1}
           />
           {/* </div> */}
           <i
@@ -1564,9 +1566,7 @@ class RateTable extends Component {
             Commodity: value,
             CommodityID: value
           });
-        }
-        else
-        {
+        } else {
           this.setState({
             CommodityID: value
           });
@@ -1588,7 +1588,6 @@ class RateTable extends Component {
     debugger;
     this.filterAll(value, "R");
   }
-
 
   addClickTruckType() {
     this.setState(prevState => ({
@@ -1616,11 +1615,14 @@ class RateTable extends Component {
     TruckTypeData[i] = {
       ...TruckTypeData[i],
       [name]: name === "Quantity" ? parseInt(value) : value,
-      ["TruckDesc"]: name === "TruckName" ? e.target.options[e.target.selectedIndex].text:TruckTypeData[i].TruckDesc
+      ["TruckDesc"]:
+        name === "TruckName"
+          ? e.target.options[e.target.selectedIndex].text
+          : TruckTypeData[i].TruckDesc
     };
     this.setState({ TruckTypeData });
   }
-  
+
   createUITruckType() {
     return this.state.TruckTypeData.map((el, i) => {
       return (
@@ -1664,7 +1666,7 @@ class RateTable extends Component {
                 <i
                   className="fa fa-minus"
                   aria-hidden="true"
-                  onClick={this.removeClickTruckType.bind(this,i)}
+                  onClick={this.removeClickTruckType.bind(this, i)}
                 ></i>
               </div>
             </div>
@@ -1827,7 +1829,7 @@ class RateTable extends Component {
               <i
                 className="fa fa-minus mt-2"
                 aria-hidden="true"
-                onClick={this.removeMultiCBM.bind(this,i)}
+                onClick={this.removeMultiCBM.bind(this, i)}
               ></i>
             </div>
           </div>
@@ -1877,85 +1879,148 @@ class RateTable extends Component {
     }
 
     this.setState({ multiCBM });
-
   }
 
-
-  spotRateSubmit(param)
-  {
+  spotRateSubmit(param) {
     debugger;
     let self = this;
     var truckTypeData = [];
     var MultiCBM = [];
     var containerdetails = [];
-    var pickUpAddressDetails =[];
-    var destUpAddressDetails =[];
+    var pickUpAddressDetails = [];
+    var destUpAddressDetails = [];
     var dataParameter = {};
     var pickUpAddress = "";
     var destinationAddress = "";
     var originPort_ID = "";
     var destinationPort_ID = "";
 
-    for(var i=0; i< param.TruckTypeData.length;i++)
-    {
-        truckTypeData.push({TruckTypeID: parseInt(param.TruckTypeData[i].TruckName),TruckQty: param.TruckTypeData[i].Quantity, TruckDesc:param.TruckTypeData[i].TruckDesc})
+    for (var i = 0; i < param.TruckTypeData.length; i++) {
+      truckTypeData.push({
+        TruckTypeID: parseInt(param.TruckTypeData[i].TruckName),
+        TruckQty: param.TruckTypeData[i].Quantity,
+        TruckDesc: param.TruckTypeData[i].TruckDesc
+      });
     }
-    if(param.flattack_openTop.length != 0)
-    {
-      for(var i=0; i< param.flattack_openTop.length;i++)
-      {
-        MultiCBM.push({PackageType:param.flattack_openTop[i].PackageType,Quantity:param.flattack_openTop[i].Quantity,Lengths:param.flattack_openTop[i].length,Width:param.flattack_openTop[i].width,Height:param.flattack_openTop[i].height,GrossWt:param.flattack_openTop[i].Gross_Weight,VolumeWeight:param.flattack_openTop[i].total,Volume:0})
+    if (param.flattack_openTop.length != 0) {
+      for (var i = 0; i < param.flattack_openTop.length; i++) {
+        MultiCBM.push({
+          PackageType: param.flattack_openTop[i].PackageType,
+          Quantity: param.flattack_openTop[i].Quantity,
+          Lengths: param.flattack_openTop[i].length,
+          Width: param.flattack_openTop[i].width,
+          Height: param.flattack_openTop[i].height,
+          GrossWt: param.flattack_openTop[i].Gross_Weight,
+          VolumeWeight: param.flattack_openTop[i].total,
+          Volume: 0
+        });
+      }
+    } else {
+      for (var i = 0; i < param.multiCBM.length; i++) {
+        MultiCBM.push({
+          PackageType: param.multiCBM[i].PackageType,
+          Quantity: param.multiCBM[i].Quantity,
+          Lengths: param.multiCBM[i].Lengths,
+          Width: param.multiCBM[i].Width,
+          Height: param.multiCBM[i].Height,
+          GrossWt: param.multiCBM[i].GrossWt,
+          VolumeWeight: param.multiCBM[i].VolumeWeight,
+          Volume: param.multiCBM[i].Volume
+        });
       }
     }
-    else
-    {for(var i=0; i< param.multiCBM.length;i++)
-    {
-      MultiCBM.push({PackageType:param.multiCBM[i].PackageType,Quantity:param.multiCBM[i].Quantity,Lengths:param.multiCBM[i].Lengths,Width:param.multiCBM[i].Width,Height:param.multiCBM[i].Height,GrossWt:param.multiCBM[i].GrossWt,VolumeWeight:param.multiCBM[i].VolumeWeight,Volume:param.multiCBM[i].Volume})
-    }}
 
-    if(param.users.length!=0)
-    {
-      for(var i=0; i< param.users.length;i++)
-      {
-        containerdetails.push({ProfileCodeID:param.users[i].ProfileCodeID,ContainerCode:param.users[i].StandardContainerCode,Type:param.users[i].ContainerName,ContainerQuantity:param.users[i].ContainerQuantity,Temperature:param.users[i].Temperature})
+    if (param.users.length != 0) {
+      for (var i = 0; i < param.users.length; i++) {
+        containerdetails.push({
+          ProfileCodeID: param.users[i].ProfileCodeID,
+          ContainerCode: param.users[i].StandardContainerCode,
+          Type: param.users[i].ContainerName,
+          ContainerQuantity: param.users[i].ContainerQuantity,
+          Temperature: param.users[i].Temperature
+        });
       }
     }
-    if(param.typesofMove == 'p2p')
-    {
-    // if(param.polfullAddData.length != 0)
-    // {
-      pickUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''});
-      destUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''});
+    if (param.typesofMove == "p2p") {
+      // if(param.polfullAddData.length != 0)
+      // {
+      pickUpAddressDetails.push({
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: ""
+      });
+      destUpAddressDetails.push({
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: ""
+      });
       pickUpAddress = param.fields.pol;
       destinationAddress = param.fields.pod;
       originPort_ID = param.polfullAddData.Location;
       destinationPort_ID = param.podfullAddData.Location;
-    //   pickUpAddress
-    // }
-    // else{
-     // pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
+      //   pickUpAddress
+      // }
+      // else{
+      // pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
     }
-    if(param.typesofMove == 'd2d')
-    {
-      pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
-      destUpAddressDetails.push({Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode})
+    if (param.typesofMove == "d2d") {
+      pickUpAddressDetails.push({
+        Street: param.pickUpAddress[0].Area,
+        Country: param.pickUpAddress[0].Country,
+        State: param.pickUpAddress[0].State,
+        City: param.pickUpAddress[0].City,
+        ZipCode: param.pickUpAddress[0].ZipCode
+      });
+      destUpAddressDetails.push({
+        Street: param.destAddress[0].Area,
+        Country: param.destAddress[0].Country,
+        State: param.destAddress[0].State,
+        City: param.destAddress[0].City,
+        ZipCode: param.destAddress[0].ZipCode
+      });
       pickUpAddress = param.puAdd;
       destinationAddress = param.DeliveryCity;
     }
 
-    if(param.typesofMove == 'd2p')
-    {
-      pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
-      destUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''})
+    if (param.typesofMove == "d2p") {
+      pickUpAddressDetails.push({
+        Street: param.pickUpAddress[0].Area,
+        Country: param.pickUpAddress[0].Country,
+        State: param.pickUpAddress[0].State,
+        City: param.pickUpAddress[0].City,
+        ZipCode: param.pickUpAddress[0].ZipCode
+      });
+      destUpAddressDetails.push({
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: ""
+      });
       pickUpAddress = param.puAdd;
       destinationAddress = param.fields.pod;
       destinationPort_ID = param.podfullAddData.Location;
     }
-     
-    if(param.typesofMove == 'p2d')
-    {
-      pickUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''})
-      destUpAddressDetails.push({Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode})
+
+    if (param.typesofMove == "p2d") {
+      pickUpAddressDetails.push({
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: ""
+      });
+      destUpAddressDetails.push({
+        Street: param.destAddress[0].Area,
+        Country: param.destAddress[0].Country,
+        State: param.destAddress[0].State,
+        City: param.destAddress[0].City,
+        ZipCode: param.destAddress[0].ZipCode
+      });
       pickUpAddress = param.fields.pol;
       destinationAddress = param.DeliveryCity;
       originPort_ID = param.polfullAddData.Location;
@@ -1970,28 +2035,27 @@ class RateTable extends Component {
     //   destUpAddressDetails.push({Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode})
     // }
 
-    if(param.containerLoadType == 'AIR' || param.containerLoadType == 'FCL')
-    {
-    dataParameter = {
-        Mode :param.containerLoadType,
-        ShipmentType : param.shipmentType,
-        Inco_terms : param.incoTerms,
-        TypesOfMove : param.typeofMove,
-        OriginPort_ID :originPort_ID,
-        DestinationPort_ID : destinationPort_ID,
-        PickUpAddress :pickUpAddress,
-        DestinationAddress : destinationAddress,
-        Total_Weight_Unit : 'Kgs',
-        SalesPerson : 1452494145,
-        HazMat  : param.HazMat,
-        ChargeableWt : 0,
-        Containerdetails:containerdetails,  
+    if (param.containerLoadType == "AIR" || param.containerLoadType == "FCL") {
+      dataParameter = {
+        Mode: param.containerLoadType,
+        ShipmentType: param.shipmentType,
+        Inco_terms: param.incoTerms,
+        TypesOfMove: param.typeofMove,
+        OriginPort_ID: originPort_ID,
+        DestinationPort_ID: destinationPort_ID,
+        PickUpAddress: pickUpAddress,
+        DestinationAddress: destinationAddress,
+        Total_Weight_Unit: "Kgs",
+        SalesPerson: 1452494145,
+        HazMat: param.HazMat,
+        ChargeableWt: 0,
+        Containerdetails: containerdetails,
         // PickUpAddressDetails:{
         //   Street:'',Country:'',State:'',City:'',ZipCode:''
-        
+
         //   },
-         
-        PickUpAddressDetails:pickUpAddressDetails[0],
+
+        PickUpAddressDetails: pickUpAddressDetails[0],
         // DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:''},
         DestinationAddressDetails:destUpAddressDetails[0],
         RateQueryDim:MultiCBM,
@@ -2055,7 +2119,7 @@ class RateTable extends Component {
         FTLTruckDetails:truckTypeData,
         BaseCurrency:param.currencyCode
     }
-    }
+  }
 
     axios({
       method: "post",
@@ -2074,7 +2138,7 @@ class RateTable extends Component {
       //   SalesPerson : 1452494145,
       //   HazMat  : param.HazMat,
       //   ChargeableWt : 0,
- 
+
       //   PickUpAddressDetails:{
       //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
 
@@ -2104,7 +2168,7 @@ class RateTable extends Component {
       //   SalesPerson : 1452494145,
       //   HazMat  : param.HazMat,
       //   ChargeableWt : 0,
- 
+
       //   PickUpAddressDetails:{
       //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
 
@@ -2133,7 +2197,7 @@ class RateTable extends Component {
       //   HazMat  : param.HazMat,
       //   ChargeableWt : 0,
       //   Containerdetails:containerdetails,
-        
+
       //   PickUpAddressDetails:{
       //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
 
@@ -2149,21 +2213,23 @@ class RateTable extends Component {
       // //FTLTruckDetails:truckTypeData
       // },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      alert(response.data.Table[0].Message)
-      // self.setState({
-      //   arrLocalsCharges: response.data.Table,
-      //   fltLocalCharges: response.data.Table
-      // })
+    })
+      .then(function(response) {
+        debugger;
+        alert(response.data.Table[0].Message);
+        // self.setState({
+        //   arrLocalsCharges: response.data.Table,
+        //   fltLocalCharges: response.data.Table
+        // })
 
-      // var data = [];
-      // data = response.data;
-      // self.setState({ bookingData: data }); ///problem not working setstat undefined
-    }).catch(error =>{
-      debugger;
-      console.log(error);
-    });
+        // var data = [];
+        // data = response.data;
+        // self.setState({ bookingData: data }); ///problem not working setstat undefined
+      })
+      .catch(error => {
+        debugger;
+        console.log(error);
+      });
   }
   render() {
     var i = 0;
@@ -2185,7 +2251,7 @@ class RateTable extends Component {
                   <option>Select</option>
                   <option value="All">All</option>
                   {this.state.commodityData.map((item, i) => (
-                    <option key={i} value={item.Commodity}>
+                    <option key={i} value={item.id}>
                       {item.Commodity}
                     </option>
                   ))}
@@ -2464,7 +2530,10 @@ class RateTable extends Component {
                                 return (
                                   <>
                                     <p className="details-title">POL</p>
-                                    <p title={row.original.POLName} className="details-para max2">
+                                    <p
+                                      title={row.original.POLName}
+                                      className="details-para max2"
+                                    >
                                       {row.original.POLName}
                                     </p>
                                   </>
@@ -2479,7 +2548,10 @@ class RateTable extends Component {
                                 return (
                                   <>
                                     <p className="details-title">POD</p>
-                                    <p title={row.original.PODName} className="details-para max2">
+                                    <p
+                                      title={row.original.PODName}
+                                      className="details-para max2"
+                                    >
                                       {row.original.PODName}
                                     </p>
                                   </>
@@ -2493,9 +2565,7 @@ class RateTable extends Component {
                               Cell: row => {
                                 return (
                                   <>
-                                    <p className="details-title">
-                                      S. Port
-                                    </p>
+                                    <p className="details-title">S. Port</p>
                                     <p className="details-para">
                                       {row.original.TransshipmentPort}
                                     </p>
@@ -2675,12 +2745,12 @@ class RateTable extends Component {
                                       Header: "Tax",
                                       accessor: "Tax"
                                     },
-                                    
+
                                     {
                                       Header: "Exrate",
                                       accessor: "Exrate"
                                     },
-                                  
+
                                     {
                                       Cell: row => {
                                         return (
@@ -2702,7 +2772,6 @@ class RateTable extends Component {
                               ]}
                               showPagination={true}
                               defaultPageSize={5}
-                              
                             />
                           </div>
                         );
@@ -2872,9 +2941,11 @@ class RateTable extends Component {
             {/* {------------------------------End Mutliple POD Modal----------------------} */}
             {/* {"-------------------------Spot Rate Modal-------------------"} */}
             <Modal
-              className={this.state.containerLoadType === "FTL"
-              ?"delete-popup spot-rate-popup pol-pod-popup"
-              :"delete-popup spot-rate-popup big-popup pol-pod-popup"}
+              className={
+                this.state.containerLoadType === "FTL"
+                  ? "delete-popup spot-rate-popup pol-pod-popup"
+                  : "delete-popup spot-rate-popup big-popup pol-pod-popup"
+              }
               isOpen={this.state.modalSpot}
               toggle={this.toggleSpot}
               centered={true}
@@ -2896,77 +2967,90 @@ class RateTable extends Component {
                 <div className="rename-cntr login-fields">
                   <label>Cargo</label>
                   <div>
-                    {this.state.containerLoadType === "FTL"
-                  ?this.createUITruckType():this.state.containerLoadType === "FCL"
-                  ?<>               <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                  <Select
-                    className="rate-dropdown"
-                    getOptionLabel={option => option.StandardContainerCode}
-                    getOptionValue={option => option.StandardContainerCode}
-                    isMulti
-                    options={this.state.EquipmentType}
-                    // onChange={this.equipChange.bind(this)}
-                    onChange={this.newaddClick.bind(this)}
-                    value={this.state.selected}
-                    showNewOptionAtTop={false}
-                  />
-                </div>
-                <div className="d-flex flex-wrap justify-content-center">
-                  {this.NewcreateUI()}
-                </div>
-                <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                  <input
-                    id="Special-equType"
-                    type="checkbox"
-                    className="d-none"
-                    name={"Special-equType"}
-                    // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                  />
-                  {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                </div>
-                {this.state.specialEquipment === true ? (
-                  <div className="">
-                    {/* spe-equ mt-0 */}
-                    <div className="equip-plus-cntr w-100">
-                      <Select
-                        className="rate-dropdown"
-                        getOptionLabel={option => option.SpecialContainerCode}
-                        getOptionValue={option => option.SpecialContainerCode}
-                        options={this.state.SpacialEqmt}
-                        placeholder="Select Kind of Special Equipment"
-                        onChange={this.specEquipChange}
-                        // value={thi.state.spEqtSelect}
-                        showNewOptionAtTop={false}
-                      />
-                    </div>
-                    <div id="cbmInner">
-                      {this.state.specialEqtSelect === true ? (
-                        this.state.flattack_openTop.length > 0 ? (
-                          <>{this.MultiCreateCBM()}</>
-                        ) : null
-                      ) : null}
-
-                      {this.state.refertypeSelect === true ? (
-                        this.state.referType.length > 0 ? (
-                          <>{this.createUISpecial()}</>
-                        ) : null
-                      ) : null}
-
-                      {this.state.spacEqmtTypeSelect === true ? (
-                        this.state.spacEqmtType.length > 0 ? (
-                          <>
-                            <div className="d-flex flex-wrap justify-content-center align-items-center">
-                              {this.createUIspacEqmtType()}
+                    {this.state.containerLoadType === "FTL" ? (
+                      this.createUITruckType()
+                    ) : this.state.containerLoadType === "FCL" ? (
+                      <>
+                        {" "}
+                        <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                          <Select
+                            className="rate-dropdown"
+                            getOptionLabel={option =>
+                              option.StandardContainerCode
+                            }
+                            getOptionValue={option =>
+                              option.StandardContainerCode
+                            }
+                            isMulti
+                            options={this.state.EquipmentType}
+                            // onChange={this.equipChange.bind(this)}
+                            onChange={this.newaddClick.bind(this)}
+                            value={this.state.selected}
+                            showNewOptionAtTop={false}
+                          />
+                        </div>
+                        <div className="d-flex flex-wrap justify-content-center">
+                          {this.NewcreateUI()}
+                        </div>
+                        <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                          <input
+                            id="Special-equType"
+                            type="checkbox"
+                            className="d-none"
+                            name={"Special-equType"}
+                            // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                          />
+                          {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                        </div>
+                        {this.state.specialEquipment === true ? (
+                          <div className="">
+                            {/* spe-equ mt-0 */}
+                            <div className="equip-plus-cntr w-100">
+                              <Select
+                                className="rate-dropdown"
+                                getOptionLabel={option =>
+                                  option.SpecialContainerCode
+                                }
+                                getOptionValue={option =>
+                                  option.SpecialContainerCode
+                                }
+                                options={this.state.SpacialEqmt}
+                                placeholder="Select Kind of Special Equipment"
+                                onChange={this.specEquipChange}
+                                // value={thi.state.spEqtSelect}
+                                showNewOptionAtTop={false}
+                              />
                             </div>
-                          </>
-                        ) : null
-                      ) : null}
-                    </div>
-                  </div>
-                ) : null}
-                 </>
-                  :this.CreateMultiCBM()}
-                   {/* {this.createUITruckType()} */}
+                            <div id="cbmInner">
+                              {this.state.specialEqtSelect === true ? (
+                                this.state.flattack_openTop.length > 0 ? (
+                                  <>{this.MultiCreateCBM()}</>
+                                ) : null
+                              ) : null}
+
+                              {this.state.refertypeSelect === true ? (
+                                this.state.referType.length > 0 ? (
+                                  <>{this.createUISpecial()}</>
+                                ) : null
+                              ) : null}
+
+                              {this.state.spacEqmtTypeSelect === true ? (
+                                this.state.spacEqmtType.length > 0 ? (
+                                  <>
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center">
+                                      {this.createUIspacEqmtType()}
+                                    </div>
+                                  </>
+                                ) : null
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : null}
+                      </>
+                    ) : (
+                      this.CreateMultiCBM()
+                    )}
+                    {/* {this.createUITruckType()} */}
                   </div>
                   {/* <select>
                     <option>Select</option>

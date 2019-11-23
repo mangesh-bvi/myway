@@ -845,6 +845,9 @@ if (this.state.selectedFile == null)
     if (this.state.fields["displayConsignee"] == undefined || this.state.fields["displayConsignee"]=="") {
       this.state.fields["displayConsignee"] = this.state.selectIsEnable[0].key;
     }
+    if (this.state.fields["usercreation"] == undefined || this.state.fields["usercreation"]=="") {
+      this.state.fields["usercreation"] = this.state.selectUserCreate[0].key;
+    }
     // if (this.state.fields["isenabled"] == undefined || this.state.fields["isenabled"]=="") {
     //   this.state.fields["isenabled"] = this.state.selectIsEnable[0].value;
     // }
@@ -1309,7 +1312,7 @@ if (this.state.selectedFile == null)
           <div className="container add-user-cntr"> {/* login-input-cntr */}
             <div className="row mt-3">
                 <div className="login-fields col-md-4">
-                  <label>User Name</label>
+                  <label>User Name <sup style={{color: '#f00', fontSize: '14px'}}>*</sup></label>
                   <input
                     type="text"
                     name={"username"}
@@ -1321,7 +1324,7 @@ if (this.state.selectedFile == null)
                   <span style={{color: "red"}}>{this.state.errors["username"]}</span>
                </div>
                <div className="login-fields col-md-4">
-                  <label>Password</label>
+                  <label>Password <sup style={{color: '#f00', fontSize: '14px'}}>*</sup></label>
                   <input
                     type="password"
                     name={"password"}
@@ -1332,7 +1335,7 @@ if (this.state.selectedFile == null)
                   <span style={{color: "red"}}>{this.state.errors["password"]}</span>
                </div>
                <div className="login-fields col-md-4">
-                  <label>Email Id</label>
+                  <label>Email Id <sup style={{color: '#f00', fontSize: '14px'}}>*</sup></label>
                   <input
                     type="text"
                     name={"emailid"}
@@ -1346,7 +1349,7 @@ if (this.state.selectedFile == null)
                </div>
             <div className="row">
                 <div className="login-fields col-md-4">
-                  <label>First Name</label>
+                  <label>First Name <sup style={{color: '#f00', fontSize: '14px'}}>*</sup></label>
                   <input
                     type="text"
                     name={"firstname"}
@@ -1357,7 +1360,7 @@ if (this.state.selectedFile == null)
                   <span style={{color: "red"}}>{this.state.errors["firstname"]}</span>
                </div>
                <div className="login-fields col-md-4">
-                  <label>Last Name</label>
+                  <label>Last Name <sup style={{color: '#f00', fontSize: '14px'}}>*</sup></label>
                   <input
                     type="text"
                     name={"lastname"}
@@ -1368,7 +1371,7 @@ if (this.state.selectedFile == null)
                   <span style={{color: "red"}}>{this.state.errors["lastname"]}</span>
                </div>
                <div className="login-fields col-md-4">
-               <label>Country</label>
+               <label>Country <sup style={{color: '#f00', fontSize: '14px'}}>*</sup></label>
                
                <select
                     onChange={this.HandleChangeSelect.bind(this, "country")}
@@ -1676,13 +1679,13 @@ if (this.state.selectedFile == null)
                             className="file-upload d-none"
                             type="file"
                             onChange={this.fileChangedHandler}
-                            accept="image/*"
+                            accept=".jpg, .JPG, .jpeg, .png, .gif"
                           />
                           <label htmlFor="file-upload">
                             <div className="file-icon">
                               <img src={FileUpload} alt="file-upload" />
                             </div>
-                            Add Image File
+                            Add Image File <sup style={{color: '#f00', fontSize: '14px'}}>*</sup>
                           </label>
                           <p className="file-name w-100 text-center mt-1">
                         {this.state.selectedFileName}

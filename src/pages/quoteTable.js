@@ -139,6 +139,11 @@ class QuoteTable extends Component {
                     accessor: "Notes"
                   },
                   {
+
+                    Header:"Status",
+                    accessor:"Status"
+                  },
+                  {
                     Header: "Action",
                     sortable: false,
                     Cell: row => {

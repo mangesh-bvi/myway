@@ -8,6 +8,9 @@ import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import Autocomplete from "react-autocomplete";
+import { encryption } from "../helpers/encryption";
+import maersk from "./../assets/img/maersk.png";
 
 class RateFinalizingStillBooking extends Component {
   constructor(props) {
@@ -26,9 +29,20 @@ class RateFinalizingStillBooking extends Component {
       Booking3: [],
       Booking4: [],
       Booking5: [],
+      shiperVal: "",
+      consigneeval: "",
       commodityData: [],
       selectedCommodity: "",
-      selectedFilePath: ""
+      selectedFilePath: "",
+      selectedType: "",
+      ConsigneeID: 0,
+      ShipperID: 0,
+      fields: {},
+      Consignee: [],
+      Shipper: [],
+      multiCBM: [],
+      packageTypeData: [],
+      userType: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -38,19 +52,105 @@ class RateFinalizingStillBooking extends Component {
   }
   componentDidMount() {
     debugger;
+
     if (
       typeof this.props.location.state.BookingNo != "undefined" &&
       typeof this.props.location.state.BookingNo != ""
     ) {
+      var userType = encryption(
+        window.localStorage.getItem("usertype"),
+        "desc"
+      );
       var BookingNo = this.props.location.state.BookingNo;
-      this.setState({ BookingNo });
+      this.setState({ BookingNo, userType });
       setTimeout(() => {
         this.HandleShipmentDetails();
         this.HandleCommodityDropdown();
+        this.HandlePackgeTypeData();
       }, 100);
     }
   }
 
+  ////Package Type Dropdata DataBind Methos
+
+  HandlePackgeTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PackageTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
+  HandleChangeSelect(field, e) {
+    let fields = this.state.fields;
+    if (e.target.value == "Select") {
+      fields[field] = "";
+    } else {
+      fields[field] = e.target.value;
+    }
+    this.setState({
+      fields,
+      selectShipStage: []
+    });
+    this.BindShipmentStage();
+  }
+
+  HandleChangeCon(field, e) {
+    let self = this;
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+    if (fields[field].length > 3) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerList`,
+        data: {
+          CustomerName: e.target.value,
+          CustomerType: "Existing"
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        if (field == "Consignee") {
+          self.setState({
+            Consignee: response.data.Table,
+            fields
+          });
+        } else {
+          self.setState({
+            Shipper: response.data.Table,
+            fields
+          });
+        }
+      });
+    } else {
+      this.setState({
+        fields
+      });
+    }
+  }
+
+  handleSelectCon(e, field, value, id) {
+    let fields = this.state.fields;
+    fields[field] = value;
+    if (field == "Consignee") {
+      this.state.ConsigneeID = id.Company_ID;
+    } else {
+      this.state.ShipperID = id.Company_ID;
+    }
+
+    this.setState({
+      fields,
+      ConsigneeID: this.state.ConsigneeID,
+      ShipperID: this.state.ShipperID
+    });
+  }
+
+  ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
     let self = this;
 
@@ -66,28 +166,231 @@ class RateFinalizingStillBooking extends Component {
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
   }
+
   toggleBook(e) {
     e.stopPropagation();
     this.setState(prevState => ({
       modalBook: !prevState.modalBook
     }));
   }
+
   toggleProfit() {
     this.setState(prevState => ({
       modalProfit: !prevState.modalProfit
     }));
   }
+
   toggleRequest() {
     this.setState(prevState => ({
       modalRequest: !prevState.modalRequest
     }));
   }
+
   onDocumentChangeHandler = event => {
     this.setState({
       selectedFileName: event.target.files[0].name
     });
   };
 
+  CreateMultiCBM() {
+    debugger;
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="PackageCount"
+              value={el.PackageCount || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Lengths"
+              value={el.Lengths || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="Height"
+              value={el.Height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Weight === 0 ? "G W" : "G W"}
+              name="Weight"
+              value={el.Weight || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        6000;
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["VolumeWeight"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: 2
+      };
+    }
+
+    this.setState({ multiCBM });
+  }
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [...prevState.multiCBM, ""]
+    }));
+  }
+  removeMultiCBM(i) {
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  ////change value of SelectType methiod
+  HandleRadioBtn = e => {
+    debugger;
+    var selectedType = e.target.value;
+    this.setState({ selectedType });
+  };
+  ////this method for get Booking details by ID
   HandleShipmentDetails() {
     let self = this;
     var BookingNo = this.state.BookingNo;
@@ -115,10 +418,27 @@ class RateFinalizingStillBooking extends Component {
         Booking5,
         selectedCommodity: Booking2[0].Commodity,
         selectedFilePath: Booking4[0].FTPLink,
-        selectedFileName: Booking4[0].DocumentName
+        selectedFileName: Booking4[0].DocumentName,
+        multiCBM: Booking2,
+
+        fields: {
+          Consignee: Booking3[0].Consignee,
+          Shipper: Booking3[0].Shipper
+        }
       });
     });
   }
+  //// this method for Handle Change values of Consignee and shipper
+
+  HandleChangeCon_Ship = e => {
+    var type = e.target.name;
+    var value = e.target.name;
+    if (type === "Consignee") {
+      this.setState({ consigneeVal: value });
+    } else {
+      this.setState({ shiperVal: value });
+    }
+  };
 
   render() {
     const {
@@ -127,7 +447,8 @@ class RateFinalizingStillBooking extends Component {
       Booking2,
       Booking3,
       Booking4,
-      Booking5
+      Booking5,
+      selectedType
     } = this.state;
 
     // Booking2.length > 0
@@ -136,32 +457,40 @@ class RateFinalizingStillBooking extends Component {
 
     var data1 = [
       {
-        validUntil: "Valid Until : JANUARY",
-        tt: "TT",
-        price: "$43.00"
+        POL: "Nhava Sheva (Jawaharlal Nehru)",
+        POD: "Marport",
+        SPort: "Piraeus",
+        FTime: "",
+        Container: "40 Standard Dry",
+        Expiry: "11/24/2019",
+        TT: "24-26",
+        Price: "0 INR"
       }
     ];
     var data2 = [
       {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
+        ctype: "A23435",
+        cname: "Lorem",
         units: "43",
         unitPrice: "$134.00",
+        tax: "0",
         finalPayment: "$45,986.00"
       },
       {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
+        ctype: "A23435",
+        cname: "Lorem",
+        units: "43",
+        unitPrice: "$134.00",
+        tax: "0",
+        finalPayment: "$45,986.00"
       },
       {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
+        ctype: "A23435",
+        cname: "Lorem",
+        units: "43",
+        unitPrice: "$134.00",
+        tax: "0",
+        finalPayment: "$45,986.00"
       }
     ];
     let className = "butn m-0";
@@ -269,10 +598,12 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
-                        columns={[
+                        columns={
+                          [
                           {
                             columns: [
                               {
+                               
                                 Cell: row => {
                                   i++;
                                   return (
@@ -292,46 +623,116 @@ class RateFinalizingStillBooking extends Component {
                                         </div>
                                         <div>
                                           <p className="details-title">
-                                            Supplier Name
+                                          <img src={maersk} alt="maersk icon" />
                                           </p>
-                                          <p className="details-para">Maersk</p>
                                         </div>
+                                        
                                       </div>
                                     </React.Fragment>
                                   );
-                                }
+                                },
+                                width: 200
                               },
                               {
-                                accessor: "validUntil",
+                                accessor: "POL",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
-                                      <p className="details-title">
-                                        Valid Until
+                                      <p className="details-title">POL</p>
+                                      <p className="details-para">
+                                        {row.original.POL}
                                       </p>
-                                      <p className="details-para">January</p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "tt",
+                                accessor: "POD",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">POD</p>
+                                      <p className="details-para">
+                                        {row.original.POD}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "SPort",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">S. Port</p>
+                                      <p className="details-para">
+                                        {row.original.SPort}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "FTime",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">F. Time</p>
+                                      <p className="details-para">
+                                        {row.original.FTime}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "Container",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">Container</p>
+                                      <p className="details-para">
+                                        {row.original.Container}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "Expiry",
+                                Cell: row => {
+                                  return (
+                                    <React.Fragment>
+                                      <p className="details-title">Expiry</p>
+                                      <p className="details-para">
+                                        {row.original.Expiry}
+                                      </p>
+                                    </React.Fragment>
+                                  );
+                                }
+                              },
+                              {
+                                accessor: "TT",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">TT</p>
-                                      <p className="details-para">23</p>
+                                      <p className="details-para">
+                                        {row.original.TT}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "price",
+                                accessor: "Price",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Price</p>
-                                      <p className="details-para">$43.00</p>
+                                      <p className="details-para">
+                                        {row.original.Price}
+                                      </p>
                                     </React.Fragment>
                                   );
                                 }
@@ -352,12 +753,12 @@ class RateFinalizingStillBooking extends Component {
                                   {
                                     columns: [
                                       {
-                                        Header: "Charge Code",
-                                        accessor: "chargeCode"
+                                        Header: "C.Type",
+                                        accessor: "ctype"
                                       },
                                       {
-                                        Header: "Charge Name",
-                                        accessor: "chargeName"
+                                        Header: "C.Name",
+                                        accessor: "cname"
                                       },
                                       {
                                         Header: "Units",
@@ -488,12 +889,31 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Account/Customer</p>
-                            <p className="details-para">abcd</p>
+
+                            <p className="details-para">
+                              {this.state.selectedType === "Shipper"
+                                ? Booking3[0].Shipper
+                                : this.state.selectedType === "Consinee"
+                                ? Booking3[0].Consignee
+                                : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
+                              {/* {this.state.selectedType === "Shipper"
+                                ? Booking3.length > 0
+                                  ? Booking3[0].ShipperAddress
+                                  : null
+                                : Booking3.length > 0
+                                ? Booking3[0].ConsigneeAddress
+                                : null} */}
+
+                              {this.state.selectedType === "Shipper"
+                                ? Booking3[0].ShipperAddress
+                                : this.state.selectedType === "Consinee"
+                                ? Booking3[0].ConsigneeAddress
+                                : null}
                             </p>
                           </div>
                           <div className="col-md-4">
@@ -505,15 +925,20 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border py-3">
+                      <div className=" ">
                         <div className="rate-radio-cntr">
                           <div>
                             <input
                               type="radio"
-                              //onClick={this.HandleRadioBtn}
+                              onChange={this.HandleRadioBtn}
                               name="cust-select"
                               id="exist-cust"
-                              value="Existing Customer"
+                              checked={
+                                this.state.selectedType === "Consignee"
+                                  ? true
+                                  : false
+                              }
+                              value="Consignee"
                             />
                             <label
                               className="d-flex flex-column align-items-center"
@@ -525,10 +950,15 @@ class RateFinalizingStillBooking extends Component {
                           <div>
                             <input
                               type="radio"
-                              //onClick={this.HandleRadioBtn}
+                              onChange={this.HandleRadioBtn}
                               name="cust-select"
                               id="new-cust"
-                              value="New Customer"
+                              checked={
+                                this.state.selectedType === "Shipper"
+                                  ? true
+                                  : false
+                              }
+                              value="Shipper"
                             />
                             <label
                               className="d-flex flex-column align-items-center"
@@ -546,14 +976,51 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-md-6 login-fields">
                             <p className="details-title">Consignee Name</p>
-                            <p className="details-para">
+                            {this.state.userType === "Customer" ? (
+                              <input
+                                type="text"
+                                name="Consignee"
+                                value={this.state.consigneeVal}
+                              />
+                            ) : (
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Consignee}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                    value={item.Company_ID}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Consignee"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Consignee"
+                                )}
+                                value={this.state.fields["Consignee"]}
+                              />
+                            )}
+                          </div>
+
+                          {/* <p className="details-para">
                               {Booking3.length > 0
                                 ? Booking3[0].Consignee
                                 : null}
-                            </p>
-                          </div>
+                            </p> */}
+
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
@@ -561,10 +1028,6 @@ class RateFinalizingStillBooking extends Component {
                                 ? Booking3[0].ConsigneeAddress
                                 : null}
                             </p>
-                          </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Notification Person</p>
-                            <p className="details-para"></p>
                           </div>
                         </div>
                       </div>
@@ -575,12 +1038,49 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-md-6 login-fields">
                             <p className="details-title">Shipper Name</p>
-                            <p className="details-para">
+                            {this.state.userType === "Customer" ? (
+                              <input
+                                type="text"
+                                name="Shipper"
+                                onChange={this.HandleChangeCon_Ship}
+                                value={this.state.shipperval}
+                              />
+                            ) : (
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Shipper}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Shipper"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Shipper"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Shipper"
+                                )}
+                                isMulti
+                              />
+                            )}
+                            {/* <p className="details-para">
                               {Booking3.length > 0 ? Booking3[0].Shipper : null}
-                            </p>
+                            </p> */}
                           </div>
+
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
@@ -589,10 +1089,6 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Notification Person</p>
-                            <p className="details-para"></p>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -600,7 +1096,10 @@ class RateFinalizingStillBooking extends Component {
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select value={this.state.selectedCommodity}>
+                        <select
+                          disabled={true}
+                          value={this.state.selectedCommodity}
+                        >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
                             <option key={i} value={item.Commodity}>
@@ -609,22 +1108,36 @@ class RateFinalizingStillBooking extends Component {
                           ))}
                         </select>
                       </div>
-                      {/* <div className="col-md-6 login-fields">
-                        <p className="details-title">Cargo Details</p>
-                        <input type="text" value="Dummy" disabled />
-                      </div> */}
                     </div>
 
                     <div className="row">
-                      <div className="col-md login-fields">
-                        <p className="details-title">Cargo Details</p>
+                      <div className="col-md">
+                        <div className="rename-cntr login-fields">
+                          <label>Notify Party</label>
+                          <select>
+                            <option>Name</option>
+                            <option>Name</option>
+                            <option>Name</option>
+                            <option>Name</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="row"></div>
-
+                    <div className="row">
+                      <div
+                        className="title-border py-3"
+                        style={{ width: "100%" }}
+                      >
+                        <h3>Cargo Details</h3>
+                      </div>
+                      <div>
+                        {this.state.multiCBM.length > 0
+                          ? this.CreateMultiCBM()
+                          : null}
+                      </div>
+                    </div>
                     <div className="row cargodetailsB">
-                      <ReactTable
+                      {/* <ReactTable
                         data={Booking2}
                         columns={[
                           {
@@ -647,7 +1160,7 @@ class RateFinalizingStillBooking extends Component {
                         defaultPageSize={3}
                         minRows={1}
                         showPagination={false}
-                      />
+                      /> */}
                     </div>
                     {/* <div className="text-right">
                       <a href="quote-table" className="butn">
@@ -675,7 +1188,12 @@ class RateFinalizingStillBooking extends Component {
                           </label>
                         </div>
                       </div>
-                      <a href={this.state.selectedFilePath}>
+                      <a
+                        href={
+                          "https://vizio.atafreight.com/WebVizio_3_0/" +
+                          this.state.selectedFilePath
+                        }
+                      >
                         <p className="file-name w-100 text-center mt-1">
                           {this.state.selectedFileName}
                         </p>
