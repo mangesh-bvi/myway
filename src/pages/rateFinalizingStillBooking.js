@@ -154,7 +154,7 @@ class RateFinalizingStillBooking extends Component {
   ////this method for NonCustomerList bind
   NonCustomerList = () => {
     let self = this;
-    
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/NonCustomerList`,
@@ -409,43 +409,65 @@ class RateFinalizingStillBooking extends Component {
     this.setState({ selectedType });
   };
   ////this method for get Booking details by ID
-  HandleShipmentDetails() {
-    let self = this;
-    var BookingNo = this.state.BookingNo;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
-      data: {
-        BookingNo: BookingNo
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var Booking = response.data.Table;
-      var Booking1 = response.data.Table1;
-      var Booking2 = response.data.Table2;
-      var Booking3 = response.data.Table3;
-      var Booking4 = response.data.Table4;
-      var Booking5 = response.data.Table5;
-      self.setState({
-        Booking,
-        Booking1,
-        Booking2,
-        Booking3,
-        Booking4,
-        Booking5,
-        selectedCommodity: Booking2[0].Commodity,
-        selectedFilePath: Booking4[0].FTPLink,
-        selectedFileName: Booking4[0].DocumentName,
-        multiCBM: Booking2,
+  // HandleShipmentDetails() {
+  //   let self = this;
+  //   var BookingNo = this.state.BookingNo;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
+  //     data: {
+  //       BookingNo: BookingNo
+  //     },
+  //     headers: authHeader()
+  //   }).then(function(response) {
+  //     debugger;
+  //     var Booking = response.data.Table;
+  //     var Booking1 = response.data.Table1;
+  //     var Booking2 = response.data.Table2;
+  //     var Booking3 = response.data.Table3;
+  //     var Booking4 = response.data.Table4;
+  //     var Booking5 = response.data.Table5;
+  //     self.setState({
+  //       Booking,
+  //       Booking1,
+  //       Booking2,
+  //       Booking3,
+  //       Booking4,
+  //       Booking5,
+  //       selectedCommodity: Booking2[0].Commodity,
+  //       selectedFilePath: Booking4[0].FTPLink,
+  //       selectedFileName: Booking4[0].DocumentName,
+  //       multiCBM: Booking2,
 
-        fields: {
-          Consignee: Booking3[0].Consignee,
-          Shipper: Booking3[0].Shipper
-        }
-      });
-    });
-  }
+  //       fields: {
+  //         Consignee: Booking3[0].Consignee,
+  //         Shipper: Booking3[0].Shipper
+  //       }
+  //     });
+  //   });
+  // }
+
+
+
+
+
+
+  // BookigGridDetailsList=()=>{
+
+    
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/NonCustomerList`,
+  //     data: {
+  //       MyWayUserID: 2679
+  //     },
+  //     headers: authHeader()
+  //   }).then(function(response) {
+  //     var data = response.data.Table;
+  //     self.setState({ NonCustomerData: data });
+  //   });
+  //   BookigGridDetailsList
+  // }
   //// this method for Handle Change values of Consignee and shipper
 
   HandleChangeCon_Ship = e => {
