@@ -208,7 +208,8 @@ class NewRateSearch extends Component {
       isSearch: false,
       currencyData: [],
       currencyCode: "",
-      TruckType: []
+      TruckType: [],
+      testSelection: false
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -715,10 +716,17 @@ class NewRateSearch extends Component {
         (multiCBM[i].Quantity *
           (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
+        if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      }
+        else{
       multiCBM[i] = {
         ...multiCBM[i],
         ["VolumeWeight"]: parseFloat(decVolumeWeight)
-      };
+      };}
     } else {
       var decVolume =
         multiCBM[i].Quantity *
@@ -727,7 +735,11 @@ class NewRateSearch extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: 2
+<<<<<<< HEAD
+        ["Volume"]: parseFloat(decVolume)
+=======
+        ["Volume"]: 0
+>>>>>>> cdd2909bdc25efc62e5748fcf207e53a093a77df
       };
     }
 
@@ -1438,7 +1450,6 @@ class NewRateSearch extends Component {
   }
 
   HandleBindIncoTeamData() {
-    
     let self = this;
     axios({
       method: "post",
@@ -1515,7 +1526,7 @@ class NewRateSearch extends Component {
       );
     } else {
     }
-debugger;
+    debugger;
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null) {
@@ -1728,6 +1739,122 @@ debugger;
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
 
     this.HandleBindIncoTeamData();
+
+    //Remove State
+
+    //this.setState({ selected: []});
+    if (
+      type === "FCL" ||
+      type === "LCL" ||
+      type === "AIR" ||
+      type === "FTL" ||
+      type === "LTL"
+    ) {
+      this.setState({
+        typesofMove: "",
+        PickupCity: "",
+        DeliveryCity: "",
+        OriginGeoCordinates: "",
+        DestGeoCordinate: "",
+        companyId: 0,
+        Containerdetails: [],
+        PortOfDischargeCode: "",
+        PortOfLoadingCode: "",
+        Currency: "",
+        //-----
+        Custom_Clearance: false,
+        NonStackable: false,
+        HazMat: false,
+        multiCBM: [
+          {
+            PackageType: "",
+            Quantity: 0,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            GrossWt: 0,
+            VolumeWeight: 0,
+            Volume: 0
+          }
+        ],
+        users: [],
+        referType: [],
+        flattack_openTop: [],
+        spacEqmtType: [],
+
+        TruckTypeData: [
+          {
+            TruckID: "",
+            TruckName: "",
+            Quantity: ""
+          }
+        ],
+        fieldspol: {},
+        spacEqmtTypeSelect: false,
+        specialEqtSelect: false,
+        refertypeSelect: false,
+        isTypeofMove: "",
+        cmbTypeRadio: "",
+        specialEquipment: false,
+        equipmentType: "",
+        isSpecialEquipment: "0",
+        tempratureEquipment: "",
+        fields: {},
+        poladdress: "",
+        polpodData: [],
+        polpodDataAdd: [],
+        isHazMat: "",
+        incoTerms: "",
+        POL: "",
+        POD: "",
+        PUAddress: "",
+        PDAddress: "",
+        modalPuAdd: false,
+        cbmLength: "",
+        cbmWidth: "",
+        cbmHeight: "",
+        cbmQuantity: "1",
+        cbmVal: "",
+        PODData: [],
+        POLData: [],
+        puAdd: "",
+        deliAdd: "",
+        values: [],
+        values1: [],
+        equQuan: "",
+        polCountry: "",
+        pol: "",
+        podCountry: "",
+        pod: "",
+        equipDrop: [],
+        country: [],
+        StandardContainerCode: [],
+        multi: true,
+        selected: [],
+        isSpacialEqt: true,
+        SpacialEqmt: [],
+        spEqtSelect: [],
+        searchTextPOD: "",
+        zoomPOL: 0,
+        zoomPOD: 0,
+        markerPositionPOL: {},
+        mapPositionPOL: {},
+        markerPositionPOD: {},
+        mapPositionPOD: {},
+        fullAddressPOL: "",
+        fullAddressPOD: "",
+        totalQuantity: 0,
+        isCustomClear: "No",
+        polfullAddData: {},
+        podfullAddData: {},
+        commodityData: [],
+        // packageTypeData: [],
+        isSearch: false,
+        currencyData: [],
+        currencyCode: "",
+        testSelection: true
+      });
+    }
   };
   cntrLoadPlusClick = e => {
     document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
@@ -2632,13 +2759,72 @@ debugger;
                         ></i>
                       </div>
                     </div>
+                    <div>
+                      <div className="rate-radio-cntr justify-content-center">
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="exist-cust"
+                            value="ALL"
+                            // onChange={
+                            //   this.state.containerLoadType !== "FTL"
+                            //     ? this.cmbTypeRadioChange.bind(this)
+                            //     : null
+                            // }
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="exist-cust"
+                          >
+                            ALL
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="new-cust"
+                            value="CBM"
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            {this.state.containerLoadType === "AIR"
+                              ? "Chargable Weight"
+                              : "CBM"}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
                     <div id="cbmInner">
                       <div className="">
+                      {this.state.cmbTypeRadio === "ALL" ? (
                         <>
                           {this.state.containerLoadType === "FTL"
                             ? this.createUITruckType()
                             : this.CreateMultiCBM()}
                         </>
+                        ) : this.state.cmbTypeRadio === "CBM" ? (
+                          <div className="col-md-4 m-auto">
+                            <div className="spe-equ">
+                              <input
+                                type="text"
+                                onChange={this.HandleCMBtextChange.bind(this)}
+                                placeholder={
+                                  this.state.modeoftransport != "AIR"
+                                    ? "CBM"
+                                    : "KG"
+                                }
+                                className="w-100"
+                                value={this.state.cbmVal}
+                              />
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input
@@ -2845,32 +3031,43 @@ debugger;
                 </div>
                 <div id="typeMoveInner">
                   <div className="new-radio-rate-cntr radio-blue">
+                  {/* <div style={{display:"none"}}>
+                      <input
+                        type="radio"
+                        name="type-move"
+                        id="testId"
+                        value={"test"}
+                        checked={this.state.testSelection}
+                      />
+                      <label htmlFor="testId">Test</label>
+                    </div> */}
                     {this.state.containerLoadType === "LCL" ||
-                        this.state.containerLoadType === "AIR" || 
-                        this.state.containerLoadType === "FCL" ?(
-                          <>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="p2p"
-                        value={"p2p"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="p2p">Port2Port</label>
-                    </div>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="d2p"
-                        value={"d2p"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="d2p">Door2Port</label>
-                    </div>
-                       </> 
-                        ):null}
+                    this.state.containerLoadType === "AIR" ||
+                    this.state.containerLoadType === "FCL" ? (
+                      <>
+                      
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="p2p"
+                            value={"p2p"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="p2p">Port2Port</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="d2p"
+                            value={"d2p"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="d2p">Door2Port</label>
+                        </div>
+                      </>
+                    ) : null}
                     <div>
                       <input
                         type="radio"
@@ -2882,21 +3079,21 @@ debugger;
                       <label htmlFor="d2d">Door2Door</label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
-                    this.state.containerLoadType === "AIR" || 
-                    this.state.containerLoadType === "FCL" ?(
-                    <>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="p2d"
-                        value={"p2d"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="p2d">Port2Door</label>
-                    </div>
-                    </> 
-                        ):null}
+                    this.state.containerLoadType === "AIR" ||
+                    this.state.containerLoadType === "FCL" ? (
+                      <>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="p2d"
+                            value={"p2d"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="p2d">Port2Door</label>
+                        </div>
+                      </>
+                    ) : null}
                   </div>
                   <div className="spe-equ justify-content-center">
                     <label>Inco Terms :</label>
