@@ -221,6 +221,7 @@ class ShippingDetailsTwo extends Component {
       sr_no: 0,
       filtered: [],
       viewDocument: false,
+      addWat: "",
       bookedStatus: [],
       selectedFile: "",
       selectedFileName: "",
@@ -255,6 +256,9 @@ class ShippingDetailsTwo extends Component {
       .split("=")[1];
     if (url != "" && url != null) {
       self.HandleShipmentDetails(url);
+      self.setState({
+        addWat: url
+      });
     } else if (typeof this.props.location.state != "undefined") {
       var hblno = this.props.location.state.detail;
       self.HandleShipmentDetails(hblno);
@@ -710,12 +714,18 @@ class ShippingDetailsTwo extends Component {
   handleAddToWatchList = () => {
     debugger;
     let self = this;
+    var hbll = "";
+    if (self.state.addWat !== null && self.state.addWat !== "") {
+      hbll = self.state.addWat;
+    } else {
+      hbll = self.state.HblNo;
+    }
     axios({
       method: "post",
       url: `${appSettings.APIURL}/AddToWatchListAPI`,
       data: {
-        UserId: 874588,
-        HBLNO: this.props.location.state.detail
+        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        HBLNO: hbll
       },
       headers: authHeader()
     }).then(function(response) {
@@ -759,12 +769,18 @@ class ShippingDetailsTwo extends Component {
   handleRemoveWatchList = () => {
     debugger;
     let self = this;
+    var hbll = "";
+    if (self.state.addWat !== null && self.state.addWat !== "") {
+      hbll = self.state.addWat;
+    } else {
+      hbll = self.state.HblNo;
+    }
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RemoveFromWatchListAPI`,
       data: {
-        UserId: 874588,
-        HBLNO: this.props.location.state.detail
+        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        HBLNO: hbll
       },
       headers: authHeader()
     }).then(function(response) {
@@ -790,7 +806,7 @@ class ShippingDetailsTwo extends Component {
       packageTable
     } = this.state;
     debugger;
-    console.log(bookedStatus,"--------------------------bookistatus");
+    console.log(bookedStatus, "--------------------------bookistatus");
     let bookingIsActive = "";
     let bookDate = "";
     let departedIsActive = "";

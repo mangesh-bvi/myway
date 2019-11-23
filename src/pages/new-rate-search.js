@@ -208,7 +208,8 @@ class NewRateSearch extends Component {
       isSearch: false,
       currencyData: [],
       currencyCode: "",
-      TruckType: []
+      TruckType: [],
+      showCurr: false
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -255,10 +256,17 @@ class NewRateSearch extends Component {
   //     refertypeSelect: paramData.refertypeSelect
   //   });
   // }
+
   HandleSearchButton() {
     let self = this;
-
-    this.props.history.push({ pathname: "rate-table", state: this.state });
+    if (this.state.currencyCode === "") {
+      this.setState({
+        showCurr: true
+      });
+    }
+    if (this.state.currencyCode !== "") {
+      this.props.history.push({ pathname: "rate-table", state: this.state });
+    }
   }
 
   HandleCMBtextChange(e) {
@@ -421,7 +429,7 @@ class NewRateSearch extends Component {
   }
 
   HandleCurrencyChange(e) {
-    this.setState({ currencyCode: e.CurrencyCode, isSearch: true });
+    this.setState({ currencyCode: e.CurrencyCode, isSearch: true, showCurr: false });
   }
 
   //// end package type method
@@ -1438,7 +1446,6 @@ class NewRateSearch extends Component {
   }
 
   HandleBindIncoTeamData() {
-    
     let self = this;
     axios({
       method: "post",
@@ -1515,7 +1522,7 @@ class NewRateSearch extends Component {
       );
     } else {
     }
-debugger;
+    debugger;
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null) {
@@ -2846,31 +2853,31 @@ debugger;
                 <div id="typeMoveInner">
                   <div className="new-radio-rate-cntr radio-blue">
                     {this.state.containerLoadType === "LCL" ||
-                        this.state.containerLoadType === "AIR" || 
-                        this.state.containerLoadType === "FCL" ?(
-                          <>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="p2p"
-                        value={"p2p"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="p2p">Port2Port</label>
-                    </div>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="d2p"
-                        value={"d2p"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="d2p">Door2Port</label>
-                    </div>
-                       </> 
-                        ):null}
+                    this.state.containerLoadType === "AIR" ||
+                    this.state.containerLoadType === "FCL" ? (
+                      <>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="p2p"
+                            value={"p2p"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="p2p">Port2Port</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="d2p"
+                            value={"d2p"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="d2p">Door2Port</label>
+                        </div>
+                      </>
+                    ) : null}
                     <div>
                       <input
                         type="radio"
@@ -2882,21 +2889,21 @@ debugger;
                       <label htmlFor="d2d">Door2Door</label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
-                    this.state.containerLoadType === "AIR" || 
-                    this.state.containerLoadType === "FCL" ?(
-                    <>
-                    <div>
-                      <input
-                        type="radio"
-                        name="type-move"
-                        id="p2d"
-                        value={"p2d"}
-                        onChange={this.HandleTypeofMove}
-                      />
-                      <label htmlFor="p2d">Port2Door</label>
-                    </div>
-                    </> 
-                        ):null}
+                    this.state.containerLoadType === "AIR" ||
+                    this.state.containerLoadType === "FCL" ? (
+                      <>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type-move"
+                            id="p2d"
+                            value={"p2d"}
+                            onChange={this.HandleTypeofMove}
+                          />
+                          <label htmlFor="p2d">Port2Door</label>
+                        </div>
+                      </>
+                    ) : null}
                   </div>
                   <div className="spe-equ justify-content-center">
                     <label>Inco Terms :</label>
@@ -3105,6 +3112,17 @@ debugger;
                   options={this.state.currencyData}
                   onChange={this.HandleCurrencyChange.bind(this)}
                 />
+                {this.state.showCurr && (
+                  <p
+                    style={{
+                      color: "red",
+                      textAlign: "center",
+                      marginTop: "5px"
+                    }}
+                  >
+                    Enter Value
+                  </p>
+                )}
                 <div className="text-center">
                   <button
                     onClick={this.HandleSearchButton.bind(this)}
