@@ -42,13 +42,20 @@ class RateFinalizingStillBooking extends Component {
       Shipper: [],
       multiCBM: [],
       packageTypeData: [],
-      userType: ""
+      userType: "",
+      NonCustomerData: [],
+      QuotationData: [],
+      QuotationSubData: [],
+      typeofMove: "",
+      cargoType: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
     this.toggleBook = this.toggleBook.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
+    this.BookigGridDetailsList = this.BookigGridDetailsList.bind(this);
+    this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
   }
   componentDidMount() {
     debugger;
@@ -64,9 +71,9 @@ class RateFinalizingStillBooking extends Component {
       var BookingNo = this.props.location.state.BookingNo;
       this.setState({ BookingNo, userType });
       setTimeout(() => {
-        this.HandleShipmentDetails();
         this.HandleCommodityDropdown();
         this.HandlePackgeTypeData();
+        this.BookigGridDetailsList();
       }, 100);
     }
   }
@@ -149,6 +156,23 @@ class RateFinalizingStillBooking extends Component {
       ShipperID: this.state.ShipperID
     });
   }
+
+  ////this method for NonCustomerList bind
+  NonCustomerList = () => {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/NonCustomerList`,
+      data: {
+        MyWayUserID: 2679
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ NonCustomerData: data });
+    });
+  };
 
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
@@ -390,43 +414,60 @@ class RateFinalizingStillBooking extends Component {
     var selectedType = e.target.value;
     this.setState({ selectedType });
   };
-  ////this method for get Booking details by ID
-  HandleShipmentDetails() {
-    let self = this;
-    var BookingNo = this.state.BookingNo;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
-      data: {
-        BookingNo: BookingNo
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var Booking = response.data.Table;
-      var Booking1 = response.data.Table1;
-      var Booking2 = response.data.Table2;
-      var Booking3 = response.data.Table3;
-      var Booking4 = response.data.Table4;
-      var Booking5 = response.data.Table5;
-      self.setState({
-        Booking,
-        Booking1,
-        Booking2,
-        Booking3,
-        Booking4,
-        Booking5,
-        selectedCommodity: Booking2[0].Commodity,
-        selectedFilePath: Booking4[0].FTPLink,
-        selectedFileName: Booking4[0].DocumentName,
-        multiCBM: Booking2,
 
-        fields: {
-          Consignee: Booking3[0].Consignee,
-          Shipper: Booking3[0].Shipper
+  ////this methos for bookig details BookigGridDetailsList
+  BookigGridDetailsList() {
+    debugger;
+    let self = this;
+    var bookingNo = self.state.BookingNo;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (bookingNo !== "" && bookingNo !== null) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookigGridDetailsList`,
+        data: {
+          UserID: 874654,//userId, //874654, ,
+          BookingID: bookingNo // 830651 // bookingNo
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        console.log(response.data, "booking Details Data");
+        var QuotationData = response.data.Table4;
+        var QuotationSubData = response.data.Table5;
+        var Booking = response.data.Table;
+        debugger;
+        if (typeof QuotationData !== "undefined") {
+          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
+            self.setState({ QuotationData, QuotationSubData, Booking });
+          }
+        }
+        if (typeof Booking !== "undefined") {
+          if (Booking.length > 0) {
+            if (Booking[0].typeofMove === 1) {
+              self.setState({ typeofMove: "Port 2 Port" });
+            }
+            if (Booking[0].typeofMove === 2) {
+              self.setState({ typeofMove: "Door 2 Port" });
+            }
+            if (Booking[0].typeofMove === 3) {
+              self.setState({ typeofMove: " Port to Door" });
+            }
+            if (Booking[0].typeofMove === 4) {
+              self.setState({ typeofMove: " Door 2 Door" });
+            }
+
+            self.setState({
+              cargoType: Booking[0].CargoType,
+              selectedCommodity: Booking[0].Commodity,
+              fields: {
+                Consignee: Booking[0].Consignee_Name,
+                Shipper: Booking[0].Shipper_Name
+              }
+            });
+          }
         }
       });
-    });
+    }
   }
   //// this method for Handle Change values of Consignee and shipper
 
@@ -443,56 +484,10 @@ class RateFinalizingStillBooking extends Component {
   render() {
     const {
       Booking,
-      Booking1,
-      Booking2,
-      Booking3,
-      Booking4,
-      Booking5,
+      
       selectedType
     } = this.state;
 
-    // Booking2.length > 0
-    //   ? this.setState({ selectedCommodity: Booking2[0].Commodity })
-    //   : null;
-
-    var data1 = [
-      {
-        POL: "Nhava Sheva (Jawaharlal Nehru)",
-        POD: "Marport",
-        SPort: "Piraeus",
-        FTime: "",
-        Container: "40 Standard Dry",
-        Expiry: "11/24/2019",
-        TT: "24-26",
-        Price: "0 INR"
-      }
-    ];
-    var data2 = [
-      {
-        ctype: "A23435",
-        cname: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        tax: "0",
-        finalPayment: "$45,986.00"
-      },
-      {
-        ctype: "A23435",
-        cname: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        tax: "0",
-        finalPayment: "$45,986.00"
-      },
-      {
-        ctype: "A23435",
-        cname: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        tax: "0",
-        finalPayment: "$45,986.00"
-      }
-    ];
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -598,12 +593,10 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
-                        columns={
-                          [
+                        columns={[
                           {
                             columns: [
                               {
-                               
                                 Cell: row => {
                                   i++;
                                   return (
@@ -623,10 +616,12 @@ class RateFinalizingStillBooking extends Component {
                                         </div>
                                         <div>
                                           <p className="details-title">
-                                          <img src={maersk} alt="maersk icon" />
+                                            <img
+                                              src={maersk}
+                                              alt="maersk icon"
+                                            />
                                           </p>
                                         </div>
-                                        
                                       </div>
                                     </React.Fragment>
                                   );
@@ -659,79 +654,44 @@ class RateFinalizingStillBooking extends Component {
                                   );
                                 }
                               },
+
                               {
-                                accessor: "SPort",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">S. Port</p>
-                                      <p className="details-para">
-                                        {row.original.SPort}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "FTime",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">F. Time</p>
-                                      <p className="details-para">
-                                        {row.original.FTime}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "Container",
+                                accessor: "ContainerType",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Container</p>
                                       <p className="details-para">
-                                        {row.original.Container}
+                                        {row.original.ContainerType}
                                       </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "Expiry",
+                                accessor: "ExpiryDate",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Expiry</p>
                                       <p className="details-para">
-                                        {row.original.Expiry}
+                                        {new Date(
+                                          row.original.ExpiryDate
+                                        ).toLocaleDateString("en-US")}
                                       </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
+
                               {
-                                accessor: "TT",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">TT</p>
-                                      <p className="details-para">
-                                        {row.original.TT}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "Price",
+                                accessor: "Total",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Price</p>
                                       <p className="details-para">
-                                        {row.original.Price}
+                                        {row.original.Total}
                                       </p>
                                     </React.Fragment>
                                   );
@@ -740,7 +700,7 @@ class RateFinalizingStillBooking extends Component {
                             ]
                           }
                         ]}
-                        data={data1}
+                        data={this.state.QuotationData}
                         minRows={0}
                         showPagination={false}
                         className="-striped -highlight"
@@ -748,29 +708,29 @@ class RateFinalizingStillBooking extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={data2}
+                                data={this.state.QuotationSubData}
                                 columns={[
                                   {
                                     columns: [
                                       {
                                         Header: "C.Type",
-                                        accessor: "ctype"
+                                        accessor: "Type"
                                       },
                                       {
                                         Header: "C.Name",
-                                        accessor: "cname"
+                                        accessor: "ChargeCode"
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "units"
+                                        accessor: "Chargeitem"
                                       },
                                       {
                                         Header: "Unit Price",
-                                        accessor: "unitPrice"
+                                        accessor: "Amount"
                                       },
                                       {
                                         Header: "Final Payment",
-                                        accessor: "finalPayment"
+                                        accessor: "Total"
                                       }
                                     ]
                                   }
@@ -798,28 +758,24 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
-                              {Booking5.length > 0
-                                ? Booking5[0].ModeOfTransport
+                              {Booking.length > 0
+                                ? Booking[0].ModeOfTransport
                                 : null}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
-                              {Booking5.length > 0
-                                ? Booking5[0].CargoType
-                                : null}
+                              {Booking.length > 0 ? Booking[0].CargoType : null}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para">20 DC</p>
+                            <p className="details-para"> </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
-                            <p className="details-para">
-                              Refer Type (20 degrees)
-                            </p>
+                            <p className="details-para"></p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
@@ -829,22 +785,37 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
-                              {Booking5.length > 0
-                                ? Booking5[0].Incoterm
-                                : null}
+                              {Booking.length > 0 ? Booking[0].Incoterm : ""}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
-                            <p className="details-para">Port2Port</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].typeofMove === 1
+                                  ? "Port 2 Port"
+                                  : Booking[0].typeofMove === 2
+                                  ? "Door 2 Port"
+                                  : Booking[0].typeofMove === 3
+                                  ? "Port to Door"
+                                  : Booking[0].typeofMove === 4
+                                  ? "Door 2 Door"
+                                  : ""
+                                : null}
+                            </p>
                           </div>
+
                           <div className="col-md-4">
                             <p className="details-title">POL</p>
-                            <p className="details-para">Mumbai</p>
+                            <p className="details-para">
+                              {Booking.length > 0 ? Booking[0].POL : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">POD</p>
-                            <p className="details-para">Vadodra</p>
+                            <p className="details-para">
+                              {Booking.length > 0 ? Booking[0].POD : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">PU Address</p>
@@ -891,10 +862,10 @@ class RateFinalizingStillBooking extends Component {
                             <p className="details-title">Account/Customer</p>
 
                             <p className="details-para">
-                              {this.state.selectedType === "Shipper"
-                                ? Booking3[0].Shipper
-                                : this.state.selectedType === "Consinee"
-                                ? Booking3[0].Consignee
+                              {selectedType === "Shipper"
+                                ? Booking[0].Shipper_Name
+                                : selectedType === "Consignee"
+                                ? Booking[0].Consignee_Name
                                 : null}
                             </p>
                           </div>
@@ -909,10 +880,10 @@ class RateFinalizingStillBooking extends Component {
                                 ? Booking3[0].ConsigneeAddress
                                 : null} */}
 
-                              {this.state.selectedType === "Shipper"
-                                ? Booking3[0].ShipperAddress
-                                : this.state.selectedType === "Consinee"
-                                ? Booking3[0].ConsigneeAddress
+                              {selectedType === "Shipper"
+                                ? Booking[0].Shipper_Displayas
+                                : selectedType === "Consignee"
+                                ? Booking[0].Consignee_Displayas
                                 : null}
                             </p>
                           </div>
@@ -978,7 +949,7 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Consignee Name</p>
-                            {this.state.userType === "Customer" ? (
+                            {this.state.userType !== "Customer" ? (
                               <input
                                 type="text"
                                 name="Consignee"
@@ -1024,8 +995,8 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking3.length > 0
-                                ? Booking3[0].ConsigneeAddress
+                              {Booking.length > 0
+                                ? Booking[0].Consignee_Displayas
                                 : null}
                             </p>
                           </div>
@@ -1040,7 +1011,7 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Shipper Name</p>
-                            {this.state.userType === "Customer" ? (
+                            {this.state.userType !== "Customer" ? (
                               <input
                                 type="text"
                                 name="Shipper"
@@ -1084,8 +1055,8 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking3.length > 0
-                                ? Booking3[0].ShipperAddress
+                              {Booking.length > 0
+                                ? Booking[0].Shipper_Displayas
                                 : null}
                             </p>
                           </div>
@@ -1102,7 +1073,7 @@ class RateFinalizingStillBooking extends Component {
                         >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity}>
+                            <option key={i} value={item.id}>
                               {item.Commodity}
                             </option>
                           ))}
@@ -1110,7 +1081,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
 
-                    <div className="row">
+                    {/* <div className="row">
                       <div className="col-md">
                         <div className="rename-cntr login-fields">
                           <label>Notify Party</label>
@@ -1120,6 +1091,32 @@ class RateFinalizingStillBooking extends Component {
                             <option>Name</option>
                             <option>Name</option>
                           </select>
+                        </div>
+                      </div>
+                      
+                    </div> */}
+                    <div>
+                      <div className="title-border py-3">
+                        <h3>Buyer Details</h3>
+                      </div>
+                      <div>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <p className="details-title">Buyer Name</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].Buyer_Name
+                                : null}
+                            </p>
+                          </div>
+                          <div className="col-md-6">
+                            <p className="details-title">Address</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].Buyer_Displayas
+                                : null}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>

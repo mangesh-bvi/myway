@@ -785,6 +785,7 @@ class ShippingDetailsTwo extends Component {
       HblNo = this.props.location.state.detail;
     }
     // if (typeof this.props.location.state != "undefined") {
+
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     //alert(HblNo)
 
