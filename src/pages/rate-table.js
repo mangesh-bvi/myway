@@ -187,7 +187,21 @@ class RateTable extends Component {
       polFilterArray:[],
       podFilterArray:[],
       enablePOL:true,
-      enablePOD:true
+      enablePOD:true,
+      ModeOfTransport:"",
+      Type:"",
+      TypeOfMove:"",
+      PortOfDischargeCode:"",
+      PortOfLoadingCode:"",
+      Containerdetails:[],
+      OriginGeoCordinates:"",
+      DestGeoCordinate:"",
+      PickupCity:"",
+      DeliveryCity:"",
+      Currency:"",
+      ChargeableWeight:0,
+      RateQueryDim:[],
+      cbmVal:""
 
     };
 
@@ -205,6 +219,7 @@ class RateTable extends Component {
     this.spotRateSubmit = this.spotRateSubmit.bind(this);
     this.toggleQuantPOLSave = this.toggleQuantPOLSave.bind(this);
     this.toggleQuantPODSave = this.toggleQuantPODSave.bind(this);
+    this.toggleQuantQuantity = this.toggleQuantQuantity.bind(this);
   }
 
   static defaultProps = {
@@ -228,6 +243,36 @@ class RateTable extends Component {
         if (isSearch) {
           var paramData = this.props.location.state;
           // var modeofTransport = this.props.location.state.containerLoadType;
+          if(paramData.typesofMove === "p2p")
+        {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+        this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+        this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+        this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+        }
+        if (paramData.typesofMove === "d2p") {
+          this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+          this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+          this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+          this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+        }
+        if (paramData.typesofMove === "d2d") {
+          this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+          this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+          this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+          this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+        }
+        if (paramData.typesofMove === "p2d") {
+          this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+          this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+          this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+          this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+        }
+        this.setState({
+          polArray:this.state.polArray,
+          podArray:this.state.podArray,
+          polFilterArray:this.state.polFilterArray,
+          podFilterArray:this.state.podFilterArray
+        })
           this.HandleRateDetailsFCL(paramData);
         }
       }
@@ -261,6 +306,13 @@ class RateTable extends Component {
     this.setState(prevState => ({
       modalQuant: !prevState.modalQuant
     }));
+  }
+
+  toggleQuantQuantity(paramData) {
+    // this.setState(prevState => ({
+    //   modalQuant: !prevState.modalQuant
+    // }));
+    this.HandleRateDetailsFCL(paramData);
   }
 
   toggleQuantPOLSave(){
@@ -298,6 +350,7 @@ class RateTable extends Component {
           : "";
           var multiPOL = [];
           var multiPOD = [];
+          var containerdetails = [];
           for(var i=0; i<this.state.polFilterArray.length; i++)
           {
             if (this.state.polFilterArray[i].IsFilter == true) {
@@ -312,7 +365,19 @@ class RateTable extends Component {
             }
           }
 
-    axios({
+          if (this.state.users.length != 0) {
+            for (var i = 0; i < this.state.users.length; i++) {
+              containerdetails.push({
+                ProfileCodeID: this.state.users[i].ProfileCodeID,
+                ContainerCode: this.state.users[i].StandardContainerCode,
+                Type: this.state.users[i].ContainerName,
+                ContainerQuantity: this.state.users[i].ContainerQuantity,
+                Temperature: this.state.users[i].Temperature
+              });
+            }
+          }
+
+      axios({
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
       data: {
@@ -320,9 +385,7 @@ class RateTable extends Component {
         ModeOfTransport:rModeofTransport,
         Type:this.state.shipmentType,
         TypeOfMove:this.state.typeofMove,
-        Containerdetails:[{   
-          ProfileCodeID:16,ContainerCode:'',Type:'',ContainerQuantity:2,Temperature:0,TemperatureType:''
-        }],
+        Containerdetails:containerdetails,
         Currency:this.state.currencyCode
         ,
         MultiplePOL:multiPOL
@@ -508,48 +571,48 @@ class RateTable extends Component {
         TypeOfMove: rTypeofMove,
 
         PortOfDischargeCode:
-          podAddress.UNECECode !== "" ? podAddress.UNECECode : "",
+          podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined ? podAddress.UNECECode : "",
         PortOfLoadingCode:
-          polAddress.UNECECode !== "" ? polAddress.UNECECode : "",
+          polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined ? polAddress.UNECECode : "",
         Containerdetails: containerdetails,
         OriginGeoCordinates:
-          polAddress.GeoCoordinate !== "" ? polAddress.GeoCoordinate : "",
+          polAddress.GeoCoordinate !== "" && polAddress.GeoCoordinate !== undefined? polAddress.GeoCoordinate : paramData.OriginGeoCordinates,
         DestGeoCordinate:
-          podAddress.GeoCoordinate !== "" ? podAddress.GeoCoordinate : "",
+          podAddress.GeoCoordinate !== "" && podAddress.GeoCoordinate !== undefined ? podAddress.GeoCoordinate : paramData.DestGeoCordinate,
         PickupCity:
-          polAddress.NameWoDiacritics !== "" ? polAddress.NameWoDiacritics : "",
+          polAddress.NameWoDiacritics !== "" && polAddress.NameWoDiacritics !== undefined ? polAddress.NameWoDiacritics : "",
         DeliveryCity:
-          podAddress.NameWoDiacritics !== "" ? podAddress.NameWoDiacritics : "",
+          podAddress.NameWoDiacritics !== "" && podAddress.NameWoDiacritics !== undefined ? podAddress.NameWoDiacritics : "",
         Currency: paramData.currencyCode,
         ChargeableWeight: cmbvalue,
         RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      if(paramData.typesofMove === "p2p")
-      {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      }
-      if (paramData.typesofMove === "d2p") {
-        this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-        this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      }
-      if (paramData.typesofMove === "d2d") {
-        this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-        this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      }
-      if (paramData.typesofMove === "p2d") {
-        this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-        this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-        this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-        this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      }
+      // if(paramData.typesofMove === "p2p")
+      // {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+      // this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+      // this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+      // this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+      // }
+      // if (paramData.typesofMove === "d2p") {
+      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+      //   this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+      //   this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+      // }
+      // if (paramData.typesofMove === "d2d") {
+      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
+      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+      // }
+      // if (paramData.typesofMove === "p2d") {
+      //   this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+      //   this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
+      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+      // }
       var incoTerms = paramData.incoTerms;
       this.setState({
         shipmentType: paramData.shipmentType,
@@ -575,8 +638,8 @@ class RateTable extends Component {
         currencyCode: paramData.currencyCode,
         TruckType: paramData.TruckType,
         TruckTypeData: paramData.TruckTypeData,
-        OriginGeoCordinates: paramData.OriginGeoCordinates,
-        DestGeoCordinate: paramData.DestGeoCordinate,
+        // OriginGeoCordinates: paramData.OriginGeoCordinates,
+        // DestGeoCordinate: paramData.DestGeoCordinate,
         pickUpAddress: paramData.fullAddressPOL,
         destAddress: paramData.fullAddressPOD,
         multiCBM: paramData.multiCBM,
@@ -585,11 +648,29 @@ class RateTable extends Component {
         puAdd: paramData.puAdd,
         DeliveryCity: paramData.DeliveryCity,
         typesofMove:paramData.typesofMove,
-        polArray:this.state.polArray,
-        podArray:this.state.podArray,
-        polFilterArray:this.state.polFilterArray,
-        podFilterArray:this.state.podFilterArray,
-        ChargeableWeight: cmbvalue
+        // polArray:this.state.polArray,
+        // podArray:this.state.podArray,
+        // polFilterArray:this.state.polFilterArray,
+        // podFilterArray:this.state.podFilterArray,
+        ChargeableWeight: cmbvalue,
+        ModeOfTransport: rModeofTransport,
+        TypeOfMove: rTypeofMove,
+        PortOfDischargeCode:
+        podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined ? podAddress.UNECECode : "",
+        PortOfLoadingCode:
+          polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined ? polAddress.UNECECode : "",
+        Containerdetails: containerdetails,
+        OriginGeoCordinates:
+          polAddress.GeoCoordinate !== "" && polAddress.GeoCoordinate !== undefined? polAddress.GeoCoordinate : paramData.OriginGeoCordinates,
+        DestGeoCordinate:
+          podAddress.GeoCoordinate !== "" && podAddress.GeoCoordinate !== undefined ? podAddress.GeoCoordinate : paramData.DestGeoCordinate,
+        PickupCity:
+          polAddress.NameWoDiacritics !== "" && polAddress.NameWoDiacritics !== undefined ? polAddress.NameWoDiacritics : "",
+        DeliveryCity:
+        podAddress.NameWoDiacritics !== "" && podAddress.NameWoDiacritics !== undefined ? podAddress.NameWoDiacritics : "",
+        Currency: paramData.currencyCode,
+        isSearch:paramData.isSearch,
+        cbmVal:paramData.cbmVal
       });
     }
 
@@ -1364,7 +1445,7 @@ class RateTable extends Component {
     multiFields[field] = e.target.value;
 
     var type = this.state.modeoftransport;
-    if (multiFields[field].length > 3) {
+    if (multiFields[field].length > 2) {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/PolPodByCountry`,
@@ -1866,17 +1947,17 @@ class RateTable extends Component {
         (multiCBM[i].Quantity *
           (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
-      multiCBM[i] = {
+        multiCBM[i] = {
         ...multiCBM[i],
         ["VolumeWeight"]: parseFloat(decVolumeWeight)
       };
     } else {
       var decVolume =
-        multiCBM[i].Quantity *
+      multiCBM[i].Quantity *
         ((multiCBM[i].Lengths / 100) *
           (multiCBM[i].Width / 100) *
           (multiCBM[i].Height / 100));
-      multiCBM[i] = {
+          multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: 2
       };
@@ -2063,7 +2144,7 @@ class RateTable extends Component {
         // DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:''},
         DestinationAddressDetails:destUpAddressDetails[0],
         RateQueryDim:MultiCBM,
-        MyWayUserID:431,
+        MyWayUserID:encryption(window.localStorage.getItem("userid"),"desc"),
         CompanyID:1457295703,
         CommodityID:parseInt(param.CommodityID),
         OriginGeoCordinates:param.OriginGeoCordinates,
@@ -2089,7 +2170,7 @@ class RateTable extends Component {
         PickUpAddressDetails:pickUpAddressDetails[0],
         DestinationAddressDetails:destUpAddressDetails[0],
         RateQueryDim:MultiCBM,
-        MyWayUserID:431,
+        MyWayUserID:encryption(window.localStorage.getItem("userid"),"desc"),
         CompanyID:1457295703,
         CommodityID:parseInt(param.CommodityID),
         OriginGeoCordinates:param.OriginGeoCordinates,
@@ -2115,7 +2196,7 @@ class RateTable extends Component {
         PickUpAddressDetails:pickUpAddressDetails[0],
         DestinationAddressDetails:destUpAddressDetails[0],
         RateQueryDim:MultiCBM,
-        MyWayUserID:431,
+        MyWayUserID:encryption(window.localStorage.getItem("userid"),"desc"),
         CompanyID:1457295703,
         CommodityID:parseInt(param.CommodityID),
         OriginGeoCordinates:param.OriginGeoCordinates,
@@ -2889,7 +2970,7 @@ class RateTable extends Component {
                   </div>
                 ) : null}
                 <div className="text-center">
-                  <Button className="butn" onClick={this.toggleQuant}>
+                  <Button className="butn" onClick={() => {this.toggleQuantQuantity(this.state)}}>
                     Done
                   </Button>
                   <Button
