@@ -209,7 +209,7 @@ class NewRateSearch extends Component {
       currencyData: [],
       currencyCode: "",
       TruckType: [],
-      showCurr: false
+      showCurr: false,
       testSelection: false
     };
 

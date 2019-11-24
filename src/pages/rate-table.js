@@ -38,7 +38,9 @@ const POLMaps = compose(
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
   >
     {props.markerPOLData.map((marker, i) => {
-    {/* {(() => { */}
+      {
+        /* {(() => { */
+      }
       return (
         <Marker
           key={i}
@@ -46,9 +48,8 @@ const POLMaps = compose(
           position={{ lat: Number(marker.lat), lng: Number(marker.lng) }}
         ></Marker>
       );
-    // })()}
-      })}
-
+      // })()}
+    })}
   </GoogleMap>
 ));
 const PODMaps = compose(
@@ -60,14 +61,16 @@ const PODMaps = compose(
     defaultZoom={2}
   >
     {props.markerPODData.map((marker, i) => {
-    {/* {(() => { */}
+      {
+        /* {(() => { */
+      }
       return (
         <Marker
           key={i}
           position={{ lat: Number(marker.lat), lng: Number(marker.lng) }}
         ></Marker>
       );
-    // })()}
+      // })()}
     })}
   </GoogleMap>
 ));
@@ -175,20 +178,19 @@ class RateTable extends Component {
       DestGeoCordinate: "",
       pickUpAddress: [],
       destAddress: [],
-      multiCBM:[],
-      paramData:[],
-      fields:[],
-      puAdd:"",
-      DeliveryCity:"",
-      typesofMove:"",
-      polArray:[],
-      podArray:[],
-      multiFields:{},
-      polFilterArray:[],
-      podFilterArray:[],
-      enablePOL:true,
-      enablePOD:true
-
+      multiCBM: [],
+      paramData: [],
+      fields: [],
+      puAdd: "",
+      DeliveryCity: "",
+      typesofMove: "",
+      polArray: [],
+      podArray: [],
+      multiFields: {},
+      polFilterArray: [],
+      podFilterArray: [],
+      enablePOL: true,
+      enablePOD: true
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -263,9 +265,9 @@ class RateTable extends Component {
     }));
   }
 
-  toggleQuantPOLSave(){
+  toggleQuantPOLSave() {
     debugger;
-    this.state.polFilterArray = this.state.polArray
+    this.state.polFilterArray = this.state.polArray;
     this.setState(prevState => ({
       polFilterArray: this.state.polFilterArray
       //modalQuant: !prevState.modalQuant
@@ -274,9 +276,9 @@ class RateTable extends Component {
     this.HandleMultiPOLPODFilter();
   }
 
-  toggleQuantPODSave(){
+  toggleQuantPODSave() {
     debugger;
-    this.state.podFilterArray = this.state.podArray
+    this.state.podFilterArray = this.state.podArray;
     this.setState(prevState => ({
       podFilterArray: this.state.podFilterArray
       //modalQuant: !prevState.modalQuant
@@ -285,62 +287,68 @@ class RateTable extends Component {
     this.HandleMultiPOLPODFilter();
   }
 
-  HandleMultiPOLPODFilter()
-  {
+  HandleMultiPOLPODFilter() {
     let self = this;
     var rModeofTransport =
-        this.state.modeoftransport === "SEA"
-          ? "Ocean"
-          : this.state.modeoftransport === "AIR"
-          ? "Air"
-          : this.state.modeoftransport === "ROAD"
-          ? "inland"
-          : "";
-          var multiPOL = [];
-          var multiPOD = [];
-          for(var i=0; i<this.state.polFilterArray.length; i++)
-          {
-            if (this.state.polFilterArray[i].IsFilter == true) {
-              multiPOL.push({POL:this.state.polFilterArray[i].POL,POLGeoCordinate:this.state.polFilterArray[i].POLGeoCordinate})
-            }
-            
-          }
-          for(var i=0; i<this.state.podFilterArray.length; i++)
-          {
-            if (this.state.podFilterArray[i].IsFilter == true) {
-            multiPOD.push({POD:this.state.podFilterArray[i].POD,PODGeoCordinate:this.state.podFilterArray[i].PODGeoCordinate})
-            }
-          }
+      this.state.modeoftransport === "SEA"
+        ? "Ocean"
+        : this.state.modeoftransport === "AIR"
+        ? "Air"
+        : this.state.modeoftransport === "ROAD"
+        ? "inland"
+        : "";
+    var multiPOL = [];
+    var multiPOD = [];
+    for (var i = 0; i < this.state.polFilterArray.length; i++) {
+      if (this.state.polFilterArray[i].IsFilter == true) {
+        multiPOL.push({
+          POL: this.state.polFilterArray[i].POL,
+          POLGeoCordinate: this.state.polFilterArray[i].POLGeoCordinate
+        });
+      }
+    }
+    for (var i = 0; i < this.state.podFilterArray.length; i++) {
+      if (this.state.podFilterArray[i].IsFilter == true) {
+        multiPOD.push({
+          POD: this.state.podFilterArray[i].POD,
+          PODGeoCordinate: this.state.podFilterArray[i].PODGeoCordinate
+        });
+      }
+    }
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
       data: {
-        QuoteType:this.state.containerLoadType,
-        ModeOfTransport:rModeofTransport,
-        Type:this.state.shipmentType,
-        TypeOfMove:this.state.typeofMove,
-        Containerdetails:[{   
-          ProfileCodeID:16,ContainerCode:'',Type:'',ContainerQuantity:2,Temperature:0,TemperatureType:''
-        }],
-        Currency:this.state.currencyCode
-        ,
-        MultiplePOL:multiPOL
-        ,MultiplePOD:multiPOD
-        ,MyWayUserID:874588,
+        QuoteType: this.state.containerLoadType,
+        ModeOfTransport: rModeofTransport,
+        Type: this.state.shipmentType,
+        TypeOfMove: this.state.typeofMove,
+        Containerdetails: [
+          {
+            ProfileCodeID: 16,
+            ContainerCode: "",
+            Type: "",
+            ContainerQuantity: 2,
+            Temperature: 0,
+            TemperatureType: ""
+          }
+        ],
+        Currency: this.state.currencyCode,
+        MultiplePOL: multiPOL,
+        MultiplePOD: multiPOD,
+        MyWayUserID: 874588,
         RateQueryDim: [
-        {
-        "Quantity": 0,
-        "Lengths": 0,
-        "Width": 0,
-        "Height": 0,
-        "GrossWt": 0,
-        "VolumeWeight": 0,
-        "Volume": 0
-        }
+          {
+            Quantity: 0,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            GrossWt: 0,
+            VolumeWeight: 0,
+            Volume: 0
+          }
         ]
-        
-
       },
       headers: authHeader()
     }).then(function(response) {
@@ -359,9 +367,8 @@ class RateTable extends Component {
           RateSubDetails: ratetable1
         });
       }
-   
     });
-}
+  }
 
   handleCheck() {
     this.props.history.push({
@@ -371,11 +378,21 @@ class RateTable extends Component {
   }
 
   toggleRow(rateID, rowData) {
+    // if (typeof rateId === "undefined") {
+    //   this.setState({
+    //     cSelectedRow: true
+    //   });
+
+    //   rateID = 0;
+    // }
+
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
+
     this.setState({
       cSelectedRow: rateID ? newSelected : false
     });
+
     var selectedRow = [];
 
     if (this.state.selectedDataRow.length == 0) {
@@ -526,29 +543,109 @@ class RateTable extends Component {
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      if(paramData.typesofMove === "p2p")
-      {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+      if (paramData.typesofMove === "p2p") {
+        this.state.polArray.push({
+          POL: paramData.polfullAddData.UNECECode,
+          POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
+          Address: paramData.fields.pol,
+          IsFilter: true
+        });
+        this.state.podArray.push({
+          POD: paramData.podfullAddData.UNECECode,
+          PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
+          Address: paramData.fields.pod,
+          IsFilter: true
+        });
+        this.state.polFilterArray.push({
+          POL: paramData.polfullAddData.UNECECode,
+          POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
+          Address: paramData.fields.pol,
+          IsFilter: true
+        });
+        this.state.podFilterArray.push({
+          POD: paramData.podfullAddData.UNECECode,
+          PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
+          Address: paramData.fields.pod,
+          IsFilter: true
+        });
       }
       if (paramData.typesofMove === "d2p") {
-        this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-        this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
+        this.state.polArray.push({
+          POL: "",
+          POLGeoCordinate: paramData.OriginGeoCordinates,
+          Address: paramData.puAdd,
+          IsFilter: true
+        });
+        this.state.podArray.push({
+          POD: paramData.podfullAddData.UNECECode,
+          PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
+          Address: paramData.fields.pod,
+          IsFilter: true
+        });
+        this.state.polFilterArray.push({
+          POL: "",
+          POLGeoCordinate: paramData.OriginGeoCordinates,
+          Address: paramData.puAdd,
+          IsFilter: true
+        });
+        this.state.podFilterArray.push({
+          POD: paramData.podfullAddData.UNECECode,
+          PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
+          Address: paramData.fields.pod,
+          IsFilter: true
+        });
       }
       if (paramData.typesofMove === "d2d") {
-        this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-        this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-        this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+        this.state.polArray.push({
+          POL: "",
+          POLGeoCordinate: paramData.OriginGeoCordinates,
+          Address: paramData.puAdd,
+          IsFilter: true
+        });
+        this.state.podArray.push({
+          POD: "",
+          PODGeoCordinate: paramData.DestGeoCordinate,
+          Address: paramData.DeliveryCity,
+          IsFilter: true
+        });
+        this.state.polFilterArray.push({
+          POL: "",
+          POLGeoCordinate: paramData.OriginGeoCordinates,
+          Address: paramData.puAdd,
+          IsFilter: true
+        });
+        this.state.podFilterArray.push({
+          POD: "",
+          PODGeoCordinate: paramData.DestGeoCordinate,
+          Address: paramData.DeliveryCity,
+          IsFilter: true
+        });
       }
       if (paramData.typesofMove === "p2d") {
-        this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-        this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-        this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-        this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
+        this.state.polArray.push({
+          POL: paramData.polfullAddData.UNECECode,
+          POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
+          Address: paramData.fields.pol,
+          IsFilter: true
+        });
+        this.state.podArray.push({
+          POD: "",
+          PODGeoCordinate: paramData.DestGeoCordinate,
+          Address: paramData.DeliveryCity,
+          IsFilter: true
+        });
+        this.state.polFilterArray.push({
+          POL: paramData.polfullAddData.UNECECode,
+          POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
+          Address: paramData.fields.pol,
+          IsFilter: true
+        });
+        this.state.podFilterArray.push({
+          POD: "",
+          PODGeoCordinate: paramData.DestGeoCordinate,
+          Address: paramData.DeliveryCity,
+          IsFilter: true
+        });
       }
       var incoTerms = paramData.incoTerms;
       this.setState({
@@ -584,11 +681,11 @@ class RateTable extends Component {
         fields: paramData.fields,
         puAdd: paramData.puAdd,
         DeliveryCity: paramData.DeliveryCity,
-        typesofMove:paramData.typesofMove,
-        polArray:this.state.polArray,
-        podArray:this.state.podArray,
-        polFilterArray:this.state.polFilterArray,
-        podFilterArray:this.state.podFilterArray,
+        typesofMove: paramData.typesofMove,
+        polArray: this.state.polArray,
+        podArray: this.state.podArray,
+        polFilterArray: this.state.polFilterArray,
+        podFilterArray: this.state.podFilterArray,
         ChargeableWeight: cmbvalue
       });
     }
@@ -600,42 +697,48 @@ class RateTable extends Component {
       url: `${appSettings.APIURL}/RateSearchQuery`,
       data: dataParameter,
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      //console.log(response);
-      var ratetable = response.data.Table;
-      var ratetable1 = response.data.Table1;
-      if (ratetable != null) {
-        self.setState({
-          RateDetails: ratetable,
-          tempRateDetails: ratetable
-        });
-      }
-      if (ratetable1 != null) {
-        self.setState({
-          RateSubDetails: ratetable1
-        });
-      }
-    }).catch(error => {
-      debugger;
-      console.log(error.response)
+    })
+      .then(function(response) {
+        debugger;
+        //console.log(response);
+        var ratetable = response.data.Table;
+        var ratetable1 = response.data.Table1;
+        if (ratetable != null) {
+          self.setState({
+            RateDetails: ratetable,
+            tempRateDetails: ratetable
+          });
+        }
+        if (ratetable1 != null) {
+          self.setState({
+            RateSubDetails: ratetable1
+          });
+        }
+      })
+      .catch(error => {
+        debugger;
+        console.log(error.response);
       });
   }
 
-  toggleChangePOLPOD(i,field,e){
-    debugger
+  toggleChangePOLPOD(i, field, e) {
+    debugger;
     if (field == "POL") {
-      this.state.polFilterArray[i].IsFilter = !this.state.enablePOL
-      this.setState({polFilterArray:this.state.polFilterArray,enablePOL:!this.state.enablePOL})
-    }
-    else{
-      this.state.podFilterArray[i].IsFilter = !this.state.enablePOD
-      this.setState({podFilterArray:this.state.podFilterArray,enablePOD:!this.state.enablePOD})
+      this.state.polFilterArray[i].IsFilter = !this.state.enablePOL;
+      this.setState({
+        polFilterArray: this.state.polFilterArray,
+        enablePOL: !this.state.enablePOL
+      });
+    } else {
+      this.state.podFilterArray[i].IsFilter = !this.state.enablePOD;
+      this.setState({
+        podFilterArray: this.state.podFilterArray,
+        enablePOD: !this.state.enablePOD
+      });
     }
 
     this.HandleMultiPOLPODFilter();
   }
-
 
   HandleDocumentView(evt, row) {
     debugger;
@@ -671,7 +774,7 @@ class RateTable extends Component {
   createUIPOL() {
     return this.state.valuesPOL.map((el, index) => {
       return (
-        <div key={index+1} className="row">
+        <div key={index + 1} className="row">
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 3
@@ -682,7 +785,7 @@ class RateTable extends Component {
             {this.state.typeofMove === 1 || this.state.typeofMove === 3 ? (
               <ReactAutocomplete
                 key={index}
-                name={"POL"+(index+1)}
+                name={"POL" + (index + 1)}
                 getItemValue={item => item.OceanPortLongName}
                 items={this.state.polpodData}
                 renderItem={(item, isHighlighted) => (
@@ -695,11 +798,10 @@ class RateTable extends Component {
                     {item.OceanPortLongName}
                   </div>
                 )}
-                renderInput={
-                  function(props) {
+                renderInput={function(props) {
                   return (
                     <input
-                      id={"POLid"+(index+1)}
+                      id={"POLid" + (index + 1)}
                       placeholder="Enter POL"
                       className="w-100"
                       type="text"
@@ -708,14 +810,19 @@ class RateTable extends Component {
                     />
                   );
                 }}
-                onChange={this.HandlePOLPODAutosearch.bind(this, "pol"+(index+1), (index+1))}
+                onChange={this.HandlePOLPODAutosearch.bind(
+                  this,
+                  "pol" + (index + 1),
+                  index + 1
+                )}
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownPolSelect.bind(
                   this,
                   item => item.NameWoDiacritics,
-                  "pol"+(index+1),(index+1)
+                  "pol" + (index + 1),
+                  index + 1
                 )}
-                value={this.state.multiFields["pol"+(index+1)]}
+                value={this.state.multiFields["pol" + (index + 1)]}
               />
             ) : (
               <AutoCompletePOLMaps
@@ -755,7 +862,7 @@ class RateTable extends Component {
   createUIPOD() {
     return this.state.valuesPOD.map((el, index) => {
       return (
-        <div key={index+1} className="row">
+        <div key={index + 1} className="row">
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 3
@@ -765,8 +872,8 @@ class RateTable extends Component {
           >
             {this.state.typeofMove === 1 || this.state.typeofMove === 3 ? (
               <ReactAutocomplete
-                key={index+1}
-                name={"POD"+(index+1)}
+                key={index + 1}
+                name={"POD" + (index + 1)}
                 getItemValue={item => item.OceanPortLongName}
                 items={this.state.polpodDataAdd}
                 renderItem={(item, isHighlighted) => (
@@ -789,14 +896,19 @@ class RateTable extends Component {
                     />
                   );
                 }}
-                onChange={this.HandlePOLPODAutosearch.bind(this, "pod"+(index+1), (index+1))}
+                onChange={this.HandlePOLPODAutosearch.bind(
+                  this,
+                  "pod" + (index + 1),
+                  index + 1
+                )}
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownPolSelect.bind(
                   this,
                   item => item.NameWoDiacritics,
-                  "pod"+(index+1),(index+1)
+                  "pod" + (index + 1),
+                  index + 1
                 )}
-                value={this.state.multiFields["pod"+(index+1)]}
+                value={this.state.multiFields["pod" + (index + 1)]}
               />
             ) : (
               <AutoCompletePODMaps
@@ -1118,7 +1230,10 @@ class RateTable extends Component {
   ////this for Equipment Type Dynamice Create Element
   NewcreateUI() {
     return this.state.users.map((el, i) => (
-      <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+      <div
+        className="equip-plus-cntr rate-tab-spot spec-inner-cntr w-auto"
+        key={i}
+      >
         <label>
           {el.StandardContainerCode} <span className="into-quant">X</span>
         </label>
@@ -1292,7 +1407,10 @@ class RateTable extends Component {
   createUIspacEqmtType() {
     return this.state.spacEqmtType.map((el, i) => {
       return (
-        <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
+        <div
+          key={i}
+          className="equip-plus-cntr rate-tab-spot spec-inner-cntr w-auto"
+        >
           <label name="TypeName">
             {el.TypeName} <span className="into-quant">X</span>
           </label>
@@ -1358,7 +1476,7 @@ class RateTable extends Component {
     }));
   }
 
-  HandlePOLPODAutosearch(field,i, e) {
+  HandlePOLPODAutosearch(field, i, e) {
     let self = this;
     let multiFields = this.state.multiFields;
     multiFields[field] = e.target.value;
@@ -1383,7 +1501,7 @@ class RateTable extends Component {
         headers: authHeader()
       })
         .then(function(response) {
-          if (field === "pol"+i) {
+          if (field === "pol" + i) {
             self.setState({
               polpodData: response.data.Table,
               multiFields
@@ -1411,22 +1529,30 @@ class RateTable extends Component {
     }
   }
 
-  HandleAddressDropdownPolSelect(e, field,i, value, id) {
+  HandleAddressDropdownPolSelect(e, field, i, value, id) {
     let multiFields = this.state.multiFields;
     multiFields[field] = value;
-    if (field === "pol"+i) {
+    if (field === "pol" + i) {
       if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
         var geoCoordinate = id.GeoCoordinate.split(",");
         var PositionPOL = new Object();
         PositionPOL.lat = parseFloat(geoCoordinate[0]);
         PositionPOL.lng = parseFloat(geoCoordinate[1]);
-        this.state.mapPositionPOL.push({lat:PositionPOL.lat, lng:PositionPOL.lng})
-        this.state.polArray.push({POL:id.UNECECode,POLGeoCordinate:id.GeoCoordinate, Address:value, IsFilter:true})
+        this.state.mapPositionPOL.push({
+          lat: PositionPOL.lat,
+          lng: PositionPOL.lng
+        });
+        this.state.polArray.push({
+          POL: id.UNECECode,
+          POLGeoCordinate: id.GeoCoordinate,
+          Address: value,
+          IsFilter: true
+        });
         this.setState({
           polfullAddData: id,
           multiFields,
           mapPositionPOL: this.state.mapPositionPOL,
-          polArray:this.state.polArray
+          polArray: this.state.polArray
         });
       }
     } else {
@@ -1436,13 +1562,21 @@ class RateTable extends Component {
         var mapPositionPOD = new Object();
         mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
         mapPositionPOD.lng = parseFloat(geoCoordinate[1]);
-        this.state.markerPositionPOD.push({lat:mapPositionPOD.lat, lng:mapPositionPOD.lng})
-        this.state.podArray.push({POD:id.UNECECode,PODGeoCordinate:id.GeoCoordinate, Address:value, IsFilter:true})
+        this.state.markerPositionPOD.push({
+          lat: mapPositionPOD.lat,
+          lng: mapPositionPOD.lng
+        });
+        this.state.podArray.push({
+          POD: id.UNECECode,
+          PODGeoCordinate: id.GeoCoordinate,
+          Address: value,
+          IsFilter: true
+        });
         this.setState({
           podfullAddData: id,
           multiFields,
           markerPositionPOD: this.state.markerPositionPOD,
-          podArray:this.state.podArray
+          podArray: this.state.podArray
         });
       }
     }
@@ -1474,14 +1608,22 @@ class RateTable extends Component {
     //   Country: country
     // });
     var originGeoCordinates = latValue + "," + lngValue;
-    this.state.polArray.push({POL:'',POLGeoCordinate:originGeoCordinates, Address:address, IsFilter:true})
+    this.state.polArray.push({
+      POL: "",
+      POLGeoCordinate: originGeoCordinates,
+      Address: address,
+      IsFilter: true
+    });
     this.setState({
       // fullAddressPOL: this.state.fullAddressPOL,
       // PickupCity: city,
       // OriginGeoCordinates: originGeoCordinates
       polArray: this.state.polArray
     });
-    this.state.mapPositionPOL.push({lat:Number(latValue), lng:Number(lngValue)})
+    this.state.mapPositionPOL.push({
+      lat: Number(latValue),
+      lng: Number(lngValue)
+    });
     this.setState({
       markerPositionPOL: {
         lat: Number(latValue),
@@ -1506,7 +1648,7 @@ class RateTable extends Component {
       // country = this.getCountry(addressArray),
       latValue = place.geometry.location.lat(),
       lngValue = place.geometry.location.lng();
-      
+
     if (addressArray.length > 4) {
       this.setState({ zoomPOD: 15 });
     } else if (addressArray.length > 2 && addressArray.length <= 4) {
@@ -1516,7 +1658,12 @@ class RateTable extends Component {
     }
 
     var destGeoCordinate = latValue + "," + lngValue;
-    this.state.podArray.push({POD:'',PODGeoCordinate:destGeoCordinate, Address:address, IsFilter:true})
+    this.state.podArray.push({
+      POD: "",
+      PODGeoCordinate: destGeoCordinate,
+      Address: address,
+      IsFilter: true
+    });
     // this.state.fullAddressPOD.push({
     //   Area: area,
     //   City: city,
@@ -1529,7 +1676,10 @@ class RateTable extends Component {
     //   DeliveryCity: city,
     //   DestGeoCordinate: destGeoCordinate
     // });
-    this.state.markerPositionPOD.push({lat:Number(latValue), lng:Number(lngValue)})
+    this.state.markerPositionPOD.push({
+      lat: Number(latValue),
+      lng: Number(lngValue)
+    });
     this.setState({
       // markerPositionPOD: {
       //   lat: Number(latValue),
@@ -2061,69 +2211,67 @@ class RateTable extends Component {
 
         PickUpAddressDetails: pickUpAddressDetails[0],
         // DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:''},
-        DestinationAddressDetails:destUpAddressDetails[0],
-        RateQueryDim:MultiCBM,
-        MyWayUserID:431,
-        CompanyID:1457295703,
-        CommodityID:parseInt(param.CommodityID),
-        OriginGeoCordinates:param.OriginGeoCordinates,
-        DestGeoCordinate:param.DestGeoCordinate,
-        BaseCurrency:param.currencyCode
+        DestinationAddressDetails: destUpAddressDetails[0],
+        RateQueryDim: MultiCBM,
+        MyWayUserID: 431,
+        CompanyID: 1457295703,
+        CommodityID: parseInt(param.CommodityID),
+        OriginGeoCordinates: param.OriginGeoCordinates,
+        DestGeoCordinate: param.DestGeoCordinate,
+        BaseCurrency: param.currencyCode
+      };
     }
+    if (param.containerLoadType == "LTL" || param.containerLoadType == "LCL") {
+      dataParameter = {
+        Mode: param.containerLoadType,
+        ShipmentType: param.shipmentType,
+        Inco_terms: param.incoTerms,
+        TypesOfMove: param.typeofMove,
+        OriginPort_ID: originPort_ID,
+        DestinationPort_ID: destinationPort_ID,
+        PickUpAddress: pickUpAddress,
+        DestinationAddress: destinationAddress,
+        Total_Weight_Unit: "Kgs",
+        SalesPerson: 1452494145,
+        HazMat: param.HazMat,
+        ChargeableWt: param.ChargeableWeight,
+        PickUpAddressDetails: pickUpAddressDetails[0],
+        DestinationAddressDetails: destUpAddressDetails[0],
+        RateQueryDim: MultiCBM,
+        MyWayUserID: 431,
+        CompanyID: 1457295703,
+        CommodityID: parseInt(param.CommodityID),
+        OriginGeoCordinates: param.OriginGeoCordinates,
+        DestGeoCordinate: param.DestGeoCordinate,
+        BaseCurrency: param.currencyCode
+      };
     }
-    if(param.containerLoadType == 'LTL' || param.containerLoadType == 'LCL')
-    {
-    dataParameter = {
-        Mode :param.containerLoadType,
-        ShipmentType : param.shipmentType,
-        Inco_terms : param.incoTerms,
-        TypesOfMove : param.typeofMove,
-        OriginPort_ID :originPort_ID,
-        DestinationPort_ID : destinationPort_ID,
-        PickUpAddress :pickUpAddress,
-        DestinationAddress : destinationAddress,
-        Total_Weight_Unit : 'Kgs',
-        SalesPerson : 1452494145,
-        HazMat  : param.HazMat,
-        ChargeableWt : param.ChargeableWeight,
-        PickUpAddressDetails:pickUpAddressDetails[0],
-        DestinationAddressDetails:destUpAddressDetails[0],
-        RateQueryDim:MultiCBM,
-        MyWayUserID:431,
-        CompanyID:1457295703,
-        CommodityID:parseInt(param.CommodityID),
-        OriginGeoCordinates:param.OriginGeoCordinates,
-        DestGeoCordinate:param.DestGeoCordinate,
-        BaseCurrency:param.currencyCode
+    if (param.containerLoadType == "FTL") {
+      dataParameter = {
+        Mode: param.containerLoadType,
+        ShipmentType: param.shipmentType,
+        Inco_terms: param.incoTerms,
+        TypesOfMove: param.typeofMove,
+        OriginPort_ID: originPort_ID,
+        DestinationPort_ID: destinationPort_ID,
+        PickUpAddress: pickUpAddress,
+        DestinationAddress: destinationAddress,
+        Total_Weight_Unit: "Kgs",
+        SalesPerson: 1452494145,
+        HazMat: param.HazMat,
+        ChargeableWt: param.ChargeableWeight,
+        PickUpAddressDetails: pickUpAddressDetails[0],
+        DestinationAddressDetails: destUpAddressDetails[0],
+        RateQueryDim: MultiCBM,
+        MyWayUserID: 431,
+        CompanyID: 1457295703,
+        CommodityID: parseInt(param.CommodityID),
+        OriginGeoCordinates: param.OriginGeoCordinates,
+        DestGeoCordinate: param.DestGeoCordinate,
+        FTLTruckDetails: truckTypeData,
+        BaseCurrency: param.currencyCode
+      };
     }
-    }
-    if(param.containerLoadType == 'FTL')
-    {
-    dataParameter = {
-        Mode :param.containerLoadType,
-        ShipmentType : param.shipmentType,
-        Inco_terms : param.incoTerms,
-        TypesOfMove : param.typeofMove,
-        OriginPort_ID :originPort_ID,
-        DestinationPort_ID : destinationPort_ID,
-        PickUpAddress :pickUpAddress,
-        DestinationAddress : destinationAddress,
-        Total_Weight_Unit : 'Kgs',
-        SalesPerson : 1452494145,
-        HazMat  : param.HazMat,
-        ChargeableWt : param.ChargeableWeight,
-        PickUpAddressDetails:pickUpAddressDetails[0],
-        DestinationAddressDetails:destUpAddressDetails[0],
-        RateQueryDim:MultiCBM,
-        MyWayUserID:431,
-        CompanyID:1457295703,
-        CommodityID:parseInt(param.CommodityID),
-        OriginGeoCordinates:param.OriginGeoCordinates,
-        DestGeoCordinate:param.DestGeoCordinate,
-        FTLTruckDetails:truckTypeData,
-        BaseCurrency:param.currencyCode
-    }
-  }
 
     axios({
       method: "post",
@@ -2378,20 +2526,24 @@ class RateTable extends Component {
                         </div>
                         <div className="pol-pod">
                           <span>POL</span>
-                          {this.state.polFilterArray.map((mapPOL, index) =>
+                          {this.state.polFilterArray.map((mapPOL, index) => (
                             <div className="d-flex">
-                            <input
-                              id={"pol"+(index+1)}
-                              type="checkbox"
-                              name="address"
-                              defaultChecked={true} 
-                              onChange={this.toggleChangePOLPOD.bind(this,index, "POL")}
-                            />
-                            <label htmlFor={"pol"+(index+1)}>
-                              {mapPOL.Address}
-                            </label>
-                          </div>
-                          )}
+                              <input
+                                id={"pol" + (index + 1)}
+                                type="checkbox"
+                                name="address"
+                                defaultChecked={true}
+                                onChange={this.toggleChangePOLPOD.bind(
+                                  this,
+                                  index,
+                                  "POL"
+                                )}
+                              />
+                              <label htmlFor={"pol" + (index + 1)}>
+                                {mapPOL.Address}
+                              </label>
+                            </div>
+                          ))}
                           {/* <div className="d-flex">
                             <input
                               id="pol-pod"
@@ -2407,20 +2559,24 @@ class RateTable extends Component {
                         </div>
                         <div className="pol-pod">
                           <span>POD</span>
-                          {this.state.podFilterArray.map((mapPOD, index) =>
+                          {this.state.podFilterArray.map((mapPOD, index) => (
                             <div className="d-flex">
-                            <input
-                              id={"pod"+(index+1)}
-                              type="checkbox"
-                              name="address"
-                              defaultChecked={true} 
-                              onChange={this.toggleChangePOLPOD.bind(this,index, "POD")}
-                            />
-                            <label htmlFor={"pod"+(index+1)}>
-                              {mapPOD.Address}
-                            </label>
-                          </div>
-                          )}
+                              <input
+                                id={"pod" + (index + 1)}
+                                type="checkbox"
+                                name="address"
+                                defaultChecked={true}
+                                onChange={this.toggleChangePOLPOD.bind(
+                                  this,
+                                  index,
+                                  "POD"
+                                )}
+                              />
+                              <label htmlFor={"pod" + (index + 1)}>
+                                {mapPOD.Address}
+                              </label>
+                            </div>
+                          ))}
                           {/* <div className="d-flex">
                             <input
                               id="pol-pod"
@@ -2716,15 +2872,17 @@ class RateTable extends Component {
                           <div style={{ padding: "20px 0" }}>
                             <ReactTable
                               minRows={1}
-                              data= { this.props.location.state.containerLoadType == "LCL" ? this.state.RateSubDetails.filter(
-                                
-                                d => d.RateLineID === row.original.RateLineID
-
-                              ) : this.state.RateSubDetails.filter(
-                                
-                                d => d.RateLineID === row.original.rateID
-
-                              )}
+                              data={
+                                this.props.location.state.containerLoadType ==
+                                "LCL"
+                                  ? this.state.RateSubDetails.filter(
+                                      d =>
+                                        d.RateLineID === row.original.RateLineID
+                                    )
+                                  : this.state.RateSubDetails.filter(
+                                      d => d.RateLineID === row.original.rateID
+                                    )
+                              }
                               columns={[
                                 {
                                   columns: [
@@ -2917,7 +3075,9 @@ class RateTable extends Component {
 
                   {/* </div> */}
                 </div>
-                <Button className="butn" onClick={this.toggleQuantPOLSave}>Done</Button>
+                <Button className="butn" onClick={this.toggleQuantPOLSave}>
+                  Done
+                </Button>
                 <Button
                   className="butn cancel-butn"
                   onClick={this.togglePOLModal}
@@ -2939,7 +3099,9 @@ class RateTable extends Component {
                 <div className="pol-mar">
                   <div>{this.createUIPOD()}</div>
                 </div>
-                <Button className="butn" onClick={this.toggleQuantPODSave}>Done</Button>
+                <Button className="butn" onClick={this.toggleQuantPODSave}>
+                  Done
+                </Button>
                 <Button
                   className="butn cancel-butn"
                   onClick={this.togglePODModal}
@@ -2976,7 +3138,7 @@ class RateTable extends Component {
                 </div>
                 <div className="rename-cntr login-fields">
                   <label>Cargo</label>
-                  <div>
+                  <div className="w-100">
                     {this.state.containerLoadType === "FTL" ? (
                       this.createUITruckType()
                     ) : this.state.containerLoadType === "FCL" ? (

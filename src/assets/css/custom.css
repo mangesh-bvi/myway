@@ -2920,6 +2920,17 @@ table tbody tr:last-child {
 .modelselecteqt .css-1rhbuit-multiValue {
   display: none;
 }
+.modelselecteqt .rate-dropdown {
+  margin-right: 0;
+}
+.rate-tab-spot.spec-inner-cntr input {
+  width: 40px;
+  padding: 3px 5px;
+}
+.pol-pod-popup .rate-tab-spot label {
+  margin-right: 0;
+  flex: auto;
+}
 
 .cargodetailsB .ReactTable {
   width: 100%;
