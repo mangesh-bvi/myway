@@ -209,6 +209,7 @@ class NewRateSearch extends Component {
       currencyData: [],
       currencyCode: "",
       TruckType: [],
+      showCurr: false,
       testSelection: false
     };
 
@@ -256,10 +257,17 @@ class NewRateSearch extends Component {
   //     refertypeSelect: paramData.refertypeSelect
   //   });
   // }
+
   HandleSearchButton() {
     let self = this;
-
-    this.props.history.push({ pathname: "rate-table", state: this.state });
+    if (this.state.currencyCode === "") {
+      this.setState({
+        showCurr: true
+      });
+    }
+    if (this.state.currencyCode !== "") {
+      this.props.history.push({ pathname: "rate-table", state: this.state });
+    }
   }
 
   HandleCMBtextChange(e) {
@@ -422,7 +430,7 @@ class NewRateSearch extends Component {
   }
 
   HandleCurrencyChange(e) {
-    this.setState({ currencyCode: e.CurrencyCode, isSearch: true });
+    this.setState({ currencyCode: e.CurrencyCode, isSearch: true, showCurr: false });
   }
 
   //// end package type method
@@ -3440,6 +3448,17 @@ class NewRateSearch extends Component {
                   options={this.state.currencyData}
                   onChange={this.HandleCurrencyChange.bind(this)}
                 />
+                {this.state.showCurr && (
+                  <p
+                    style={{
+                      color: "red",
+                      textAlign: "center",
+                      marginTop: "5px"
+                    }}
+                  >
+                    Enter Value
+                  </p>
+                )}
                 <div className="text-center">
                   <button
                     onClick={this.HandleSearchButton.bind(this)}

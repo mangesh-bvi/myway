@@ -14,7 +14,10 @@ import maersk from "./../assets/img/maersk.png";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { encryption } from "../helpers/encryption";
-
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
 
 const animatedComponents = makeAnimated();
 
@@ -105,7 +108,7 @@ class Reports extends Component {
       debugger;
       var temperror = error.response.data;
       var err = temperror.split(":");
-      alert(err[1].replace("}", ""))
+      //alert(err[1].replace("}", ""))
       var optionItems = [];
       optionItems.push({value: 0, label: "No Data Found"})
       self.setState({
@@ -346,7 +349,7 @@ class Reports extends Component {
       debugger;
       var temperror = error.response.data;
       var err = temperror.split(":");
-      alert(err[1].replace("}", ""))
+      //alert(err[1].replace("}", ""))
       var optionItems = [];
 
     });
@@ -532,12 +535,14 @@ class Reports extends Component {
 
     if(this.state.valReportName == null || this.state.valReportName == "")
     {
-      alert("Select Report Name")
+      //alert("Select Report Name")
+      NotificationManager.error("Select Report Name");
       return false;
     }
     if(this.state.valRegCompany == null || this.state.valRegCompany == "")
     {
-      alert("Select Reg. Company")
+      //alert("Select Reg. Company")
+      NotificationManager.error("Select Reg. Company");
       return false;
     }
 
@@ -769,6 +774,7 @@ class Reports extends Component {
             </div>
           </div>
         </div>
+        <NotificationContainer />
       </div>
     );
   }

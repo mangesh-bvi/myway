@@ -326,8 +326,8 @@ class Analytics extends Component {
         }
 
        // alert(err);
-       // volumeOptions.title.text = "No Data Found";
-       // volumeOptions.scales.yAxes[0].scaleLabel.labelString = "";
+      //  volumeOptions.title.text = "No Data Found";
+      //  volumeOptions.scales.yAxes[0].scaleLabel.labelString = "";
        NotificationManager.error(err);
         self.setState({ graphShipmentdataset: [] });
       });
@@ -566,7 +566,7 @@ class Analytics extends Component {
           } else {
             arraylabel.push(response.data.Table[i].ShipmentPeriod);
           }
-          self.setState({ grafShipmentlabels: arraylabel });
+          self.setState({ graflabels: arraylabel });
         }
 
         var graphdataset = [];
