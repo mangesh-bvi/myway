@@ -312,7 +312,7 @@ class NewRateSearch extends Component {
       self.setState({ TruckType: data });
     });
   }
-  ////
+  //// end method
 
   //// Create Trcuk Type dropdown dynamic element UI
 

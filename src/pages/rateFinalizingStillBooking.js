@@ -40,14 +40,28 @@ class RateFinalizingStillBooking extends Component {
       fields: {},
       Consignee: [],
       Shipper: [],
-      multiCBM: [],
+     
       packageTypeData: [],
       userType: "",
       NonCustomerData: [],
       QuotationData: [],
       QuotationSubData: [],
       typeofMove: "",
-      cargoType: ""
+      cargoType: "",
+      
+      //dynamic element
+      TruckTypeData: [
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: "",
+          TruckDesc: ""
+        }
+      ],
+      spacEqmtType: [],
+      multiCBM: [],
+      referType: [],
+      flattack_openTop: [],
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -56,6 +70,7 @@ class RateFinalizingStillBooking extends Component {
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
     this.BookigGridDetailsList = this.BookigGridDetailsList.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
+    this.HandleTruckTypeData = this.HandleTruckTypeData.bind(this);
   }
   componentDidMount() {
     debugger;
@@ -215,10 +230,88 @@ class RateFinalizingStillBooking extends Component {
       selectedFileName: event.target.files[0].name
     });
   };
+  
+  ////change value of SelectType methiod
+  HandleRadioBtn = e => {
+    debugger;
+    var selectedType = e.target.value;
+    this.setState({ selectedType });
+  };
+
+  ////this methos for bookig details BookigGridDetailsList
+  BookigGridDetailsList() {
+    debugger;
+    let self = this;
+    var bookingNo = self.state.BookingNo;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (bookingNo !== "" && bookingNo !== null) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookigGridDetailsList`,
+        data: {
+          UserID: 874654, //userId, //874654, ,
+          BookingID: 830651 // 830651 // bookingNo
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        console.log(response.data, "booking Details Data");
+        var QuotationData = response.data.Table4;
+        var QuotationSubData = response.data.Table5;
+        var Booking = response.data.Table;
+        var CargoDetails=response.data.Table2
+        debugger;
+        if (typeof QuotationData !== "undefined") {
+          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
+            self.setState({ QuotationData, QuotationSubData, Booking });
+          }
+        }
+        if (typeof Booking !== "undefined") {
+          if (Booking.length > 0) {
+            if (Booking[0].typeofMove === 1) {
+              self.setState({ typeofMove: "Port 2 Port" });
+            }
+            if (Booking[0].typeofMove === 2) {
+              self.setState({ typeofMove: "Door 2 Port" });
+            }
+            if (Booking[0].typeofMove === 3) {
+              self.setState({ typeofMove: " Port to Door" });
+            }
+            if (Booking[0].typeofMove === 4) {
+              self.setState({ typeofMove: " Door 2 Door" });
+            }
+
+            self.setState({
+              multiCBM:CargoDetails,
+              cargoType: Booking[0].CargoType,
+              selectedCommodity: Booking[0].Commodity,
+              fields: {
+                Consignee: Booking[0].Consignee_Name,
+                Shipper: Booking[0].Shipper_Name
+              }
+            });
+          }
+        }
+      });
+    }
+  }
+  //// this method for Handle Change values of Consignee and shipper
+
+  HandleChangeCon_Ship = e => {
+    var type = e.target.name;
+    var value = e.target.name;
+    if (type === "Consignee") {
+      this.setState({ consigneeVal: value });
+    } else {
+      this.setState({ shiperVal: value });
+    }
+  };
+
+  //// start dynamic element for LCL-AIR-LTL
 
   CreateMultiCBM() {
-    debugger;
+
     return this.state.multiCBM.map((el, i) => (
+       
       <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
@@ -244,8 +337,8 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder="QTY"
               className="w-100"
-              name="PackageCount"
-              value={el.PackageCount || ""}
+              name="Quantity"
+              value={el.Quantity|| ""}
               //onKeyUp={this.cbmChange}
             />
           </div>
@@ -295,9 +388,9 @@ class RateFinalizingStillBooking extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Weight === 0 ? "G W" : "G W"}
-              name="Weight"
-              value={el.Weight || ""}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="GrossWt"
+              value={el.GrossWt || ""}
               className="w-100"
             />
           </div>
@@ -379,10 +472,17 @@ class RateFinalizingStillBooking extends Component {
         (multiCBM[i].Quantity *
           (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["VolumeWeight"]: parseFloat(decVolumeWeight)
-      };
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
     } else {
       var decVolume =
         multiCBM[i].Quantity *
@@ -391,15 +491,29 @@ class RateFinalizingStillBooking extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: 2
+        ["Volume"]: parseFloat(decVolume)
       };
     }
 
     this.setState({ multiCBM });
+
+   
   }
   addMultiCBM() {
     this.setState(prevState => ({
-      multiCBM: [...prevState.multiCBM, ""]
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
     }));
   }
   removeMultiCBM(i) {
@@ -408,83 +522,579 @@ class RateFinalizingStillBooking extends Component {
     this.setState({ multiCBM });
   }
 
-  ////change value of SelectType methiod
-  HandleRadioBtn = e => {
-    debugger;
-    var selectedType = e.target.value;
-    this.setState({ selectedType });
-  };
+  ////End dynamic element
 
-  ////this methos for bookig details BookigGridDetailsList
-  BookigGridDetailsList() {
-    debugger;
-    let self = this;
-    var bookingNo = self.state.BookingNo;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    if (bookingNo !== "" && bookingNo !== null) {
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/BookigGridDetailsList`,
-        data: {
-          UserID: 874654,//userId, //874654, ,
-          BookingID: bookingNo // 830651 // bookingNo
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        console.log(response.data, "booking Details Data");
-        var QuotationData = response.data.Table4;
-        var QuotationSubData = response.data.Table5;
-        var Booking = response.data.Table;
-        debugger;
-        if (typeof QuotationData !== "undefined") {
-          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
-            self.setState({ QuotationData, QuotationSubData, Booking });
-          }
+  //// start  spacEqmtType dyamanic element
+
+  addSpacEqmtType(optionVal) {
+    this.setState(prevState => ({
+      spacEqmtType: [
+        ...prevState.spacEqmtType,
+        {
+          TypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0
         }
-        if (typeof Booking !== "undefined") {
-          if (Booking.length > 0) {
-            if (Booking[0].typeofMove === 1) {
-              self.setState({ typeofMove: "Port 2 Port" });
-            }
-            if (Booking[0].typeofMove === 2) {
-              self.setState({ typeofMove: "Door 2 Port" });
-            }
-            if (Booking[0].typeofMove === 3) {
-              self.setState({ typeofMove: " Port to Door" });
-            }
-            if (Booking[0].typeofMove === 4) {
-              self.setState({ typeofMove: " Door 2 Door" });
-            }
+      ]
+    }));
+  }
 
-            self.setState({
-              cargoType: Booking[0].CargoType,
-              selectedCommodity: Booking[0].Commodity,
-              fields: {
-                Consignee: Booking[0].Consignee_Name,
-                Shipper: Booking[0].Shipper_Name
+  createUIspacEqmtType() {
+    return this.state.spacEqmtType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
+          <label name="TypeName">
+            {el.TypeName} <span className="into-quant">X</span>
+          </label>
+          {/* <div className="spe-equ"> */}
+          <input
+            type="number"
+            name="Quantity"
+            min={1}
+            placeholder="QTY"
+            onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+            value={el.Quantity || ""}
+          />
+          {/* </div> */}
+          <i
+            className="fa fa-times"
+            onClick={this.removeClickSpacEqmtType.bind(this, i)}
+          ></i>
+        </div>
+      );
+    });
+  }
+
+  HandleChangeSpacEqmtType(i, e) {
+    const { name, value } = e.target;
+
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType[i] = {
+      ...spacEqmtType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ spacEqmtType });
+  }
+
+  removeClickSpacEqmtType(i) {
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType.splice(i, 1);
+    this.setState({ spacEqmtType });
+  }
+
+  //// end spacEqmtType dyamanic element
+
+  //// start refer type  dynamic element
+  addClickSpecial(optionVal) {
+    this.setState(prevState => ({
+      referType: [
+        ...prevState.referType,
+        {
+          Type: optionVal[0].ContainerName,
+          ProfileCodeID: optionVal[0].ProfileCodeID,
+          ContainerCode: optionVal[0].SpecialContainerCode,
+          ContainerQuantity: 0,
+          Temperature: 0,
+          TemperatureType: ""
+        }
+      ]
+    }));
+  }
+
+  createUISpecial() {
+    return this.state.referType.map((el, i) => {
+      return (
+        <div key={i} className="row cbm-space">
+          <div className="col-md">
+            <div className="spe-equ">
+              <label className="mt-2" name="ContainerCode">
+                {el.ContainerCode}
+              </label>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="ContainerQuantity"
+                placeholder="Quantity"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="Temperature"
+                placeholder="Temp"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md mt-2">
+            <div className="rate-radio-cntr">
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="exist-cust"
+                  value="C"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="exist-cust"
+                >
+                  Celcius
+                </label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="new-cust"
+                  value="F"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="new-cust"
+                >
+                  Farenheit
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              onClick={this.removeClickSpecial.bind(this, i)}
+            ></i>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  UISpecialChange(i, e) {
+    const { name, value } = e.target;
+
+    let referType = [...this.state.referType];
+    referType[i] = {
+      ...referType[i],
+      [name]: name === "TemperatureType" ? value : parseFloat(value)
+    };
+    this.setState({ referType });
+  }
+  removeClickSpecial(i) {
+    let referType = [...this.state.referType];
+    referType.splice(i, 1);
+    this.setState({ referType });
+  }
+
+  //// refer type end to dynamic element
+
+  //// start flattack type and openTop type dynamic elememnt
+
+  MultiCreateCBM() {
+    debugger;
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="Quantity"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="Gross_Weight"
+              value={el.Gross_Weight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+
+        <div className="">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              aria-hidden="true"
+              onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div>
+      </div>
+    ));
+  }
+
+  newMultiCBMHandleChange(i, e) {
+    const { name, value } = e.target;
+    debugger;
+    let flattack_openTop = [...this.state.flattack_openTop];
+    if (name === "PackageType") {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: value
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: parseFloat(value)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].width *
+          flattack_openTop[i].height)) /
+      6000;
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+  }
+  addClickMultiCBM(optionsVal) {
+    debugger;
+    this.setState(prevState => ({
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
+        {
+          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          PackageType: "",
+          length: "",
+          width: "",
+          height: "",
+          Quantity: "",
+          Gross_Weight: "",
+          total: ""
+        }
+      ]
+    }));
+  }
+  removeClickMultiCBM(i) {
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
+  }
+
+  ////end for flattack and openTop dynamic create elements
+  ////this for Equipment Type Dynamice Create Element
+  NewcreateUI() {
+    return this.state.users.map((el, i) => (
+      <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+        <label>
+          {el.StandardContainerCode} <span className="into-quant">X</span>
+        </label>
+        <div className="spe-equ">
+          <input
+            type="number"
+            min={1}
+            placeholder="QTY"
+            name="ContainerQuantity"
+            value={el.ContainerQuantity || ""}
+            onChange={this.newhandleChange.bind(this, i)}
+          />
+        </div>
+        <span onClick={this.newremoveClick.bind(this, i)}>
+          <i className="fa fa-times" aria-hidden="true"></i>
+        </span>
+      </div>
+    ));
+  }
+
+  newaddClick(e, option) {
+    if (e.length > 0) {
+      if (this.state.users.length == 0) {
+        if (option.option.ContainerName === "Special Equipment") {
+          this.setState({ specialEquipment: true, isSpacialEqt: false });
+        } else {
+          this.setState({ selected: e });
+          this.setState(prevState => ({
+            users: [
+              ...prevState.users,
+              {
+                ContainerName: option.option.ContainerName,
+                ProfileCodeID: option.option.ProfileCodeID,
+                StandardContainerCode: option.option.StandardContainerCode,
+                ContainerQuantity: 0,
+                Temperature: 0,
+                TemperatureType: ""
               }
-            });
-          }
+            ]
+          }));
         }
+      } else {
+        let difference = this.state.selected.filter(x => !e.includes(x));
+        if (difference.length === 0) {
+          if (option.option.ContainerName === "Special Equipment") {
+            this.setState({
+              specialEquipment: true,
+              isSpacialEqt: false
+            });
+          } else {
+            this.setState({ selected: e });
+            this.setState(prevState => ({
+              users: [
+                ...prevState.users,
+                {
+                  ContainerName: option.option.ContainerName,
+                  ProfileCodeID: option.option.ProfileCodeID,
+                  StandardContainerCode: option.option.StandardContainerCode,
+                  ContainerQuantity: 0
+                }
+              ]
+            }));
+          }
+        } else {
+        }
+      }
+    } else {
+      this.setState({
+        specialEquipment: false,
+        isSpacialEqt: true,
+        selected: [],
+        users: []
       });
     }
-  }
-  //// this method for Handle Change values of Consignee and shipper
 
-  HandleChangeCon_Ship = e => {
-    var type = e.target.name;
-    var value = e.target.name;
-    if (type === "Consignee") {
-      this.setState({ consigneeVal: value });
-    } else {
-      this.setState({ shiperVal: value });
+    if (this.state.selected !== null) {
+      // next
+      
     }
-  };
+  }
 
+  newhandleChange(i, e) {
+    const { name, value } = e.target;
+    let users = [...this.state.users];
+    users[i] = {
+      ...users[i],
+      [name]: name === "ContainerQuantity" ? parseFloat(value) : 0
+    };
+    this.setState({ users });
+  }
+
+  newremoveClick(i) {
+    let users = [...this.state.users];
+    if (users[i].ContainerName === "Special Equipment") {
+      this.setState({ specialEquipment: false, isSpacialEqt: true });
+    }
+    users.splice(i, 1);
+
+    let selected = [...this.state.selected];
+    selected.splice(i, 1);
+
+    this.setState({ users, selected });
+  }
+  //// end For Equipment to create element
+
+  //// Create Trcuk Type dropdown dynamic element UI
+
+  addClickTruckType() {
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: "",
+          TruckDesc: ""
+        }
+      ]
+    }));
+  }
+
+  createUITruckType() {
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <div className="spe-equ">
+            <select
+              className="select-text mr-3"
+              name="TruckName"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            >
+              <option>Select</option>
+              {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              name="Quantity"
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            />
+          </div>
+          {i === 0 ? (
+            <div className="col-md">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addClickTruckType.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+          {this.state.TruckTypeData.length > 1 ? (
+            <div className="col-md">
+              <div className="spe-equ mt-2">
+                <i
+                  className="fa fa-minus"
+                  aria-hidden="true"
+                  onClick={this.removeClickTruckType.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      );
+    });
+  }
+
+  UITruckTypeChange(i, e) {
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData[i] = {
+      ...TruckTypeData[i],
+      [name]: name === "Quantity" ? parseInt(value) : value,
+      ["TruckDesc"]:
+        name === "TruckName"
+          ? e.target.options[e.target.selectedIndex].text
+          : TruckTypeData[i].TruckDesc
+    };
+    this.setState({ TruckTypeData });
+  }
+  removeClickTruckType(i) {
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
+
+  //// End Truck Tyep Dynamic element
+
+  //// Handle Truck Type Method
+
+  HandleTruckTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ TruckType: data });
+    });
+  }
+  //// end method
   render() {
     const {
       Booking,
-      
+
       selectedType
     } = this.state;
 
@@ -496,6 +1106,8 @@ class RateFinalizingStillBooking extends Component {
     }
 
     var i = 0;
+    console.log(this.state.multiCBM, "..................multiCBM");
+    
 
     return (
       <React.Fragment>
