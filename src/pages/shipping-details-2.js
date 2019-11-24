@@ -577,7 +577,7 @@ class ShippingDetailsTwo extends Component {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-       // NotificationManager.error("No Data Found");
+        // NotificationManager.error("No Data Found");
         var actData = [];
         actData.push({ DocumentDescription: "No Data Found" });
 
@@ -738,10 +738,11 @@ class ShippingDetailsTwo extends Component {
   handleActivityList() {
     debugger;
     let self = this;
-    var HblNo;
+    var HblNo = this.state.HblNo;
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail;
     }
+    
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     //alert(HblNo)
     axios({
