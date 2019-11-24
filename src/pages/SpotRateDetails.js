@@ -26,10 +26,119 @@ class SpotRateDetails extends Component {
       spotrateresponseTbl4: {},
       commodityData: [],
       historyModalData: [],
-      historyModal: false
+      historyModal: false,
+      shipmentType: "",
+      modeoftransport: "",
+      containerLoadType: "",
+      typesofMove: "",
+      PickupCity: "",
+      DeliveryCity: "",
+      OriginGeoCordinates: "",
+      DestGeoCordinate: "",
+      companyId: 0,
+
+      Containerdetails: [],
+      PortOfDischargeCode: "",
+      PortOfLoadingCode: "",
+      Currency: "",
+      //-----
+      Custom_Clearance: false,
+      NonStackable: false,
+      HazMat: false,
+      multiCBM: [
+        {
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ],
+      users: [],
+      referType: [],
+      flattack_openTop: [],
+      spacEqmtType: [],
+      TruckTypeSelect: [],
+      TruckTypeData: [
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: "",
+          TruckDesc: ""
+        }
+      ],
+      fieldspol: {},
+      spacEqmtTypeSelect: false,
+      specialEqtSelect: false,
+      refertypeSelect: false,
+      isTypeofMove: "",
+      cmbTypeRadio: "",
+      specialEquipment: false,
+      equipmentType: "",
+      isSpecialEquipment: "0",
+      tempratureEquipment: "",
+      fields: {},
+      poladdress: "",
+      polpodData: [],
+      polpodDataAdd: [],
+      isHazMat: "",
+      incoTerms: "",
+      POL: "",
+      POD: "",
+      PUAddress: "",
+      PDAddress: "",
+      modalPuAdd: false,
+      cbmLength: "",
+      cbmWidth: "",
+      cbmHeight: "",
+      cbmQuantity: "1",
+      cbmVal: "",
+      PODData: [],
+      POLData: [],
+      puAdd: "",
+      deliAdd: "",
+      values: [],
+      values1: [],
+      equQuan: "",
+      polCountry: "",
+      pol: "",
+      podCountry: "",
+      pod: "",
+      equipDrop: [],
+      country: [],
+      StandardContainerCode: [],
+      multi: true,
+      selected: [],
+      isSpacialEqt: true,
+      SpacialEqmt: [],
+      spEqtSelect: [],
+      searchTextPOD: "",
+      zoomPOL: 0,
+      zoomPOD: 0,
+      markerPositionPOL: {},
+      mapPositionPOL: {},
+      markerPositionPOD: {},
+      mapPositionPOD: {},
+      fullAddressPOL: [],
+      fullAddressPOD: [],
+      totalQuantity: 0,
+      isCustomClear: "No",
+      polfullAddData: {},
+      podfullAddData: {},
+      commodityData: [],
+      packageTypeData: [],
+      isSearch: false,
+      currencyData: [],
+      currencyCode: "",
+      TruckType: [],
+      testSelection: false
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
+    this.toggleViewRate = this.toggleViewRate.bind(this);
   }
   componentWillMount() {
     if (typeof this.props.location.state != "undefined") {
@@ -39,6 +148,10 @@ class SpotRateDetails extends Component {
         this.HandleCommodityDropdown();
       }, 100);
     }
+
+    this.HandlePackgeTypeData();
+    this.HandleTruckTypeData();
+    this.HandleGetIncoTerms();
   }
 
   toggleSpotHistory() {
@@ -132,6 +245,207 @@ class SpotRateDetails extends Component {
           });
       }
     }
+  }
+
+  
+  HandleBindIncoTeamData() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/IncoTermsAPI`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var table1 = response.data.Table1;
+      var table2 = response.data.Table2;
+      var table4 = response.data.Table4;
+      var finalArray = [];
+      debugger;
+      var standerEquipment = new Object();
+      standerEquipment.StandardContainerCode = "Special Equipment";
+      standerEquipment.ProfileCodeID = "Special Equipment";
+      standerEquipment.ContainerName = "Special Equipment";
+
+      for (let index = 0; index < table1.length; index++) {
+        finalArray.push(table1[index]);
+      }
+
+      finalArray.push(standerEquipment);
+
+      self.setState({
+        StandardContainerCode: finalArray,
+        SpacialEqmt: table2,
+        currencyData: table4
+      });
+    });
+  }
+
+  HandleTruckTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ TruckType: data });
+    });
+  }
+
+  HandlePackgeTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PackageTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
+
+  HandleGetIncoTerms() {
+    let self = this;
+
+    var shipmentType = self.state.shipmentType;
+    var typeofMove = self.state.typesofMove;
+    var HasCustomClear = self.state.isCustomClear;
+
+    if (shipmentType === "Export" && HasCustomClear === "No") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        self.setState({ incoTerms: "DAP" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        self.setState({ incoTerms: "CIF" });
+      }
+    }
+    if (shipmentType === "Export" && HasCustomClear === "Yes") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        self.setState({ incoTerms: "DDP" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        self.setState({ incoTerms: "CIF" });
+      }
+    }
+    if (shipmentType === "Import" && HasCustomClear === "No") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        self.setState({ incoTerms: "ExWorks" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        self.setState({ incoTerms: "FOB" });
+      }
+    }
+    if (shipmentType === "Import" && HasCustomClear === "Yes") {
+      if (typeofMove == "d2d" || typeofMove === "p2d") {
+        self.setState({ incoTerms: "ExWorks" });
+      }
+
+      if (typeofMove === "d2p" || typeofMove === "p2p") {
+        self.setState({
+          incoTerms: "FOB"
+        });
+      }
+    }
+  }
+
+  toggleViewRate(){
+    let self = this;
+    let fields = this.state.fields;
+    fields["pod"] = this.state.spotrateresponseTbl.DestinationAddress;
+    fields["pol"] = this.state.spotrateresponseTbl.PickUpAddress;
+    self.setState({
+      Custom_Clearance:this.state.spotrateresponseTbl.Custom_Clearance,
+      DeliveryCity: this.state.spotrateresponseTbl.DestinationAddress,
+      DestGeoCordinate:"",
+      HazMat:this.state.spotrateresponseTbl.HAZMAT,
+      NonStackable: false,
+      OriginGeoCordinates:"",
+      PDAddress:"",
+      POD: "",
+      PODData:[],
+      POL:"",
+      PUAddress: "",
+      PickupCity: "",
+      PortOfDischargeCode: "",
+      PortOfLoadingCode: "",
+      containerLoadType:this.state.spotrateresponseTbl.Trade_terms,
+      currencyCode: "INR",
+      fields,
+      incoTerms:'CIF',
+      isCustomClear: "No",
+      isSearch: true,
+      isSpacialEqt: true,
+      isSpecialEquipment: "0",
+      isTypeofMove: "",
+      mapPositionPOD: {lat: 40.968456, lng: 28.674417},
+      mapPositionPOL: {lat: 18.950123, lng: 72.950055},
+      markerPositionPOD: {lat: 40.968456, lng: 28.674417},
+      markerPositionPOL: {},
+      modalPuAdd: false,
+      modeoftransport: "SEA",
+      multi: true,
+     // multiCBM: [{…}]
+      pod: "",
+      podCountry: "",
+      podfullAddData:{GeoCoordinate: "40.968456,28.674417",
+                      Location: "AMB",
+                      NameWoDiacritics: "Ambarli",
+                      OceanPortID: 6302,
+                      OceanPortLongName: "Ambarli, Istanbul, Turkey",
+                      UNECECode: "TRPAM"},
+      pol: "",
+      polCountry: "",
+      poladdress: "",
+      polfullAddData: {GeoCoordinate: "18.950123,72.950055",
+                      Location: "NSA",
+                      NameWoDiacritics: "Nhava Sheva (Jawaharlal Nehru)",
+                      OceanPortID: 1500,
+                      OceanPortLongName: "Nhava Sheva (Jawaharlal Nehru), Mahārāshtra, India",
+                      UNECECode: "INNSA"},
+      polpodData: [],
+      polpodDataAdd: [{GeoCoordinate: "40.968456,28.674417",
+                      Location: "AMB",
+                      NameWoDiacritics: "Ambarli",
+                      OceanPortID: 6302,
+                      OceanPortLongName: "Ambarli, Istanbul, Turkey",
+                      UNECECode: "TRPAM"}],
+      puAdd: "",
+      referType: [],
+      refertypeSelect: false,
+      searchTextPOD: "",
+      selected: [{ContainerName: "20 Standard Dry",
+                ProfileCodeID: 9,
+                StandardContainerCode: "20GP"}],
+      shipmentType: "Export",
+      spEqtSelect: [],
+      spacEqmtType: [],
+      spacEqmtTypeSelect: false,
+      specialEqtSelect: false,
+      specialEquipment: false,
+      tempratureEquipment: "",
+      testSelection: true,
+      totalQuantity: 0,
+      typesofMove: "p2p",
+      users: [{ContainerName: "20 Standard Dry",
+              ContainerQuantity: 0,
+              ProfileCodeID: 9,
+              StandardContainerCode: "20GP",
+              Temperature: 0,
+              TemperatureType: ""}],
+      values: [],
+      values1: [],
+      zoomPOD: 0,
+      zoomPOL: 0   
+    })
+
+    this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
   render() {
@@ -334,7 +648,14 @@ class SpotRateDetails extends Component {
                         <input type="text" value="Dummy" disabled />
                       </div>
                     </div>
-
+                    <div>
+                    <button
+                    onClick={this.toggleViewRate}
+                    className="butn more-padd"
+                    >
+                    View Rate
+                     </button>
+                     </div>
                     {/* <center>
                       <button
                         onClick={this.toggleBook}

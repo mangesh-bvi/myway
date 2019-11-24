@@ -513,7 +513,7 @@ class NewRateSearch extends Component {
     fields[field] = e.target.value;
 
     var type = this.state.modeoftransport;
-    if (fields[field].length > 3) {
+    if (fields[field].length > 2) {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/PolPodByCountry`,
@@ -1845,8 +1845,8 @@ class NewRateSearch extends Component {
         mapPositionPOL: {},
         markerPositionPOD: {},
         mapPositionPOD: {},
-        fullAddressPOL: "",
-        fullAddressPOD: "",
+        fullAddressPOL: [],
+        fullAddressPOD: [],
         totalQuantity: 0,
         isCustomClear: "No",
         polfullAddData: {},
@@ -3135,7 +3135,7 @@ class NewRateSearch extends Component {
                 <div className="row justify-content-center" id="addressInner">
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
-                      {this.state.typesofMove == "p2p" ||
+                      {/* {this.state.typesofMove == "p2p" ||
                       this.state.typesofMove === "p2d" ? (
                         <ReactAutocomplete
                           getItemValue={item => item.OceanPortLongName}
@@ -3182,12 +3182,154 @@ class NewRateSearch extends Component {
                           containerElement={<div />}
                           mapElement={<div />}
                         />
-                      )}
+                      )} */}
+                      {this.state.modeoftransport === "AIR"? ( this.state.typesofMove == "p2p" ||
+                      this.state.typesofMove === "p2d" ? (
+                        <ReactAutocomplete
+                          getItemValue={item => item.AirportLongName}
+                          items={this.state.polpodData}
+                          renderItem={(item, isHighlighted) => (
+                            <div
+                              style={{
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
+                              }}
+                              value={item.AirPortID}
+                            >
+                              {item.AirportLongName}
+                            </div>
+                          )}
+                          renderInput={function(props) {
+                            return (
+                              <input
+                                placeholder="Enter POL"
+                                className="w-100 sticky-dropdown"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
+                          onChange={this.HandlePOLPODAutosearch.bind(
+                            this,
+                            "pol"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownPolSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "pol"
+                          )}
+                          value={this.state.fields["pol"]}
+                        />
+                      ) : (
+                        <Map1WithAMakredInfoWindowSearchBooks
+                          onPlaceSelected={this.onPlaceSelected}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div />}
+                          containerElement={<div />}
+                          mapElement={<div />}
+                        />
+                      )):(this.state.typesofMove == "p2p" ||
+                      this.state.typesofMove === "p2d" ? (
+                        <ReactAutocomplete
+                          getItemValue={item => item.OceanPortLongName}
+                          items={this.state.polpodData}
+                          renderItem={(item, isHighlighted) => (
+                            <div
+                              style={{
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
+                              }}
+                              value={item.AirPortID}
+                            >
+                              {item.OceanPortLongName}
+                            </div>
+                          )}
+                          renderInput={function(props) {
+                            return (
+                              <input
+                                placeholder="Enter POL"
+                                className="w-100 sticky-dropdown"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
+                          onChange={this.HandlePOLPODAutosearch.bind(
+                            this,
+                            "pol"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownPolSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "pol"
+                          )}
+                          value={this.state.fields["pol"]}
+                        />
+                      ) : (
+                        <Map1WithAMakredInfoWindowSearchBooks
+                          onPlaceSelected={this.onPlaceSelected}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div />}
+                          containerElement={<div />}
+                          mapElement={<div />}
+                        />
+                      ))}
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
-                      {this.state.typesofMove === "p2p" ||
+                    {this.state.modeoftransport === "AIR"? ( this.state.typesofMove === "p2p" ||
+                      this.state.typesofMove === "d2p" ? (
+                        <ReactAutocomplete
+                          getItemValue={item => item.AirportLongName}
+                          items={this.state.polpodDataAdd}
+                          renderItem={(item, isHighlighted) => (
+                            <div
+                              style={{
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
+                              }}
+                              value={item.AirPortID}
+                            >
+                              {item.AirportLongName}
+                            </div>
+                          )}
+                          renderInput={function(props) {
+                            return (
+                              <input
+                                placeholder="Enter POD"
+                                className="w-100 sticky-dropdown"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
+                          onChange={this.HandlePOLPODAutosearch.bind(
+                            this,
+                            "pod"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownPolSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "pod"
+                          )}
+                          value={this.state.fields["pod"]}
+                        />
+                      ) : (
+                        <GoogleMapPODSearchBox
+                          onPlaceSelected={this.onPlaceSelectedPOD}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
+                          loadingElement={<div />}
+                          containerElement={<div />}
+                          mapElement={<div />}
+                        />
+                      )) :(this.state.typesofMove === "p2p" ||
                       this.state.typesofMove === "d2p" ? (
                         <ReactAutocomplete
                           getItemValue={item => item.OceanPortLongName}
@@ -3234,7 +3376,7 @@ class NewRateSearch extends Component {
                           containerElement={<div />}
                           mapElement={<div />}
                         />
-                      )}
+                      ))}
                     </div>
                   </div>
                 </div>
