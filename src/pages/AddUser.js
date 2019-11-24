@@ -960,6 +960,7 @@ if (this.state.selectedFile == null)
         setTimeout(function(){ window.location.href="/add-user" }, 1000);
       }).catch(
         error =>{ 
+          debugger;
           alert(error.response.data.split("'")[1]);
           console.log(error.response)}
         )

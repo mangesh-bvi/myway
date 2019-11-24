@@ -407,6 +407,7 @@ class RateTable extends Component {
 
     this.HandleMultiPOLPODFilter();
   }
+
   toggleQuantPODSave() {
     debugger;
     this.state.podFilterArray = this.state.podArray;
@@ -1794,27 +1795,29 @@ class RateTable extends Component {
       });
     } else this.setState({ filtered });
   }
-  filterAll(e) {
+  filterAll(e, type) {
     debugger;
     const { value } = e.target;
-
-    if (value !== "All") {
-      var filterData = this.state.tempRateDetails.filter(
-        x => x.commodities === value
-      );
-      if (filterData.length > 0) {
-        this.setState({
-          tempRateDetails: filterData,
-          Commodity: value,
-          CommodityID: value
-        });
-      } else {
-        this.setState({
-          CommodityID: value
-        });
-      }
+    if (typeof type !== "undefined" && type !== "" && type !== null) {
     } else {
-      this.setState({ tempRateDetails: this.state.RateDetails });
+      if (value !== "All") {
+        var filterData = this.state.tempRateDetails.filter(
+          x => x.commodities === value
+        );
+        if (filterData.length > 0) {
+          this.setState({
+            tempRateDetails: filterData,
+            Commodity: value,
+            CommodityID: value
+          });
+        } else {
+          this.setState({
+            CommodityID: value
+          });
+        }
+      } else {
+        this.setState({ tempRateDetails: this.state.RateDetails });
+      }
     }
   }
 
@@ -2332,80 +2335,143 @@ class RateTable extends Component {
         DestGeoCordinate: param.DestGeoCordinate,
         BaseCurrency: param.currencyCode
       };
-      if (
-        param.containerLoadType == "LTL" ||
-        param.containerLoadType == "LCL"
-      ) {
-        dataParameter = {
-          Mode: param.containerLoadType,
-          ShipmentType: param.shipmentType,
-          Inco_terms: param.incoTerms,
-          TypesOfMove: param.typeofMove,
-          OriginPort_ID: originPort_ID,
-          DestinationPort_ID: destinationPort_ID,
-          PickUpAddress: pickUpAddress,
-          DestinationAddress: destinationAddress,
-          Total_Weight_Unit: "Kgs",
-          SalesPerson: 1452494145,
-          HazMat: param.HazMat,
-          ChargeableWt: param.ChargeableWeight,
-          PickUpAddressDetails: pickUpAddressDetails[0],
-          DestinationAddressDetails: destUpAddressDetails[0],
-          RateQueryDim: MultiCBM,
-          MyWayUserID: 431,
-          CompanyID: 1457295703,
-          CommodityID: parseInt(param.CommodityID),
-          OriginGeoCordinates: param.OriginGeoCordinates,
-          DestGeoCordinate: param.DestGeoCordinate,
-          BaseCurrency: param.currencyCode
-        };
-      }
-      if (param.containerLoadType == "FTL") {
-        dataParameter = {
-          Mode: param.containerLoadType,
-          ShipmentType: param.shipmentType,
-          Inco_terms: param.incoTerms,
-          TypesOfMove: param.typeofMove,
-          OriginPort_ID: originPort_ID,
-          DestinationPort_ID: destinationPort_ID,
-          PickUpAddress: pickUpAddress,
-          DestinationAddress: destinationAddress,
-          Total_Weight_Unit: "Kgs",
-          SalesPerson: 1452494145,
-          HazMat: param.HazMat,
-          ChargeableWt: param.ChargeableWeight,
-          PickUpAddressDetails: pickUpAddressDetails[0],
-          DestinationAddressDetails: destUpAddressDetails[0],
-          RateQueryDim: MultiCBM,
-          MyWayUserID: encryption(
-            window.localStorage.getItem("userid"),
-            "desc"
-          ),
-          CompanyID: 1457295703,
-          CommodityID: parseInt(param.CommodityID),
-          OriginGeoCordinates: param.OriginGeoCordinates,
-          DestGeoCordinate: param.DestGeoCordinate,
-          FTLTruckDetails: truckTypeData,
-          BaseCurrency: param.currencyCode
-        };
-
-        axios({
-          method: "post",
-          url: `${appSettings.APIURL}/SpotRateInsertion`,
-          data: dataParameter,
-
-          headers: authHeader()
-        })
-          .then(function(response) {
-            debugger;
-            alert(response.data.Table[0].Message);
-          })
-          .catch(error => {
-            debugger;
-            console.log(error);
-          });
-      }
     }
+    if (param.containerLoadType == "FTL") {
+      dataParameter = {
+        Mode: param.containerLoadType,
+        ShipmentType: param.shipmentType,
+        Inco_terms: param.incoTerms,
+        TypesOfMove: param.typeofMove,
+        OriginPort_ID: originPort_ID,
+        DestinationPort_ID: destinationPort_ID,
+        PickUpAddress: pickUpAddress,
+        DestinationAddress: destinationAddress,
+        Total_Weight_Unit: "Kgs",
+        SalesPerson: 1452494145,
+        HazMat: param.HazMat,
+        ChargeableWt: param.ChargeableWeight,
+        PickUpAddressDetails: pickUpAddressDetails[0],
+        DestinationAddressDetails: destUpAddressDetails[0],
+        RateQueryDim: MultiCBM,
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        CompanyID: 1457295703,
+        CommodityID: parseInt(param.CommodityID),
+        OriginGeoCordinates: param.OriginGeoCordinates,
+        DestGeoCordinate: param.DestGeoCordinate,
+        FTLTruckDetails: truckTypeData,
+        BaseCurrency: param.currencyCode
+      };
+    }
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SpotRateInsertion`,
+      data: dataParameter,
+      // data: {
+      //   Mode :param.containerLoadType,
+      //   ShipmentType : param.shipmentType,
+      //   Inco_terms : 'EXW',
+      //   TypesOfMove : param.typeofMove,
+      //   OriginPort_ID :'',
+      //   DestinationPort_ID : '',
+      //   PickUpAddress :param.pickUpAddress[0].City,
+      //   DestinationAddress : param.destAddress[0].City,
+      //   Total_Weight_Unit : 'Kgs',
+      //   SalesPerson : 1452494145,
+      //   HazMat  : param.HazMat,
+      //   ChargeableWt : 0,
+
+      //   PickUpAddressDetails:{
+      //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
+
+      //     },
+      //   DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
+      // ,
+      // RateQueryDim:[{
+      //   Quantity:0,Lengths:0,Width:0,Height:0,GrossWt:44000.00,VolumeWeight:0,Volume:0
+      // }],
+      // MyWayUserID:874588,
+      // CompanyID:1457295703,
+      // CommodityID:parseInt(param.CommodityID),
+      // OriginGeoCordinates:param.OriginGeoCordinates,
+      // DestGeoCordinate:param.DestGeoCordinate,
+      // FTLTruckDetails:truckTypeData
+      // },
+      // data: {
+      //   Mode :param.containerLoadType,
+      //   ShipmentType : param.shipmentType,
+      //   Inco_terms : 'EXW',
+      //   TypesOfMove : param.typeofMove,
+      //   OriginPort_ID :'',
+      //   DestinationPort_ID : '',
+      //   PickUpAddress :param.pickUpAddress[0].City,
+      //   DestinationAddress : param.destAddress[0].City,
+      //   Total_Weight_Unit : 'Kgs',
+      //   SalesPerson : 1452494145,
+      //   HazMat  : param.HazMat,
+      //   ChargeableWt : 0,
+
+      //   PickUpAddressDetails:{
+      //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
+
+      //     },
+      //   DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
+      // ,
+      // RateQueryDim:MultiCBM,
+      // MyWayUserID:874588,
+      // CompanyID:1457295703,
+      // CommodityID:parseInt(param.CommodityID),
+      // OriginGeoCordinates:param.OriginGeoCordinates,
+      // DestGeoCordinate:param.DestGeoCordinate,
+      // //FTLTruckDetails:truckTypeData
+      // },
+      // data: {
+      //   Mode :param.containerLoadType,
+      //   ShipmentType : param.shipmentType,
+      //   Inco_terms : param.incoTerms,
+      //   TypesOfMove : param.typeofMove,
+      //   OriginPort_ID :'',
+      //   DestinationPort_ID : '',
+      //   PickUpAddress :param.pickUpAddress[0].City,
+      //   DestinationAddress : param.destAddress[0].City,
+      //   Total_Weight_Unit : 'Kgs',
+      //   SalesPerson : 1452494145,
+      //   HazMat  : param.HazMat,
+      //   ChargeableWt : 0,
+      //   Containerdetails:containerdetails,
+
+      //   PickUpAddressDetails:{
+      //     Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode
+
+      //     },
+      //   DestinationAddressDetails:{Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode}
+      // ,
+      // RateQueryDim:MultiCBM,
+      // MyWayUserID:874588,
+      // CompanyID:1457295703,
+      // CommodityID:parseInt(param.CommodityID),
+      // OriginGeoCordinates:param.OriginGeoCordinates,
+      // DestGeoCordinate:param.DestGeoCordinate
+      // //FTLTruckDetails:truckTypeData
+      // },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        alert(response.data.Table[0].Message);
+        // self.setState({
+        //   arrLocalsCharges: response.data.Table,
+        //   fltLocalCharges: response.data.Table
+        // })
+
+        // var data = [];
+        // data = response.data;
+        // self.setState({ bookingData: data }); ///problem not working setstat undefined
+      })
+      .catch(error => {
+        debugger;
+        console.log(error);
+      });
   }
   render() {
     var i = 0;
@@ -2427,7 +2493,7 @@ class RateTable extends Component {
                   <option>Select</option>
                   <option value="All">All</option>
                   {this.state.commodityData.map((item, i) => (
-                    <option key={i} value={item.Commodity}>
+                    <option key={i} value={item.id}>
                       {item.Commodity}
                     </option>
                   ))}

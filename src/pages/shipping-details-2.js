@@ -242,7 +242,7 @@ class ShippingDetailsTwo extends Component {
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     this.togglePackage = this.togglePackage.bind(this);
-    //this.handleActivityList = this.handleActivityList.bind(this);
+    this.handleActivityList = this.handleActivityList.bind(this);
     // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
@@ -250,6 +250,12 @@ class ShippingDetailsTwo extends Component {
 
   componentDidMount() {
     debugger;
+    localStorage.removeItem(
+      "AllLineData",
+      "FlagsData",
+      "BaloonData",
+      "GreenLineData"
+    );
     let self = this;
     var url = window.location.href
       .slice(window.location.href.indexOf("?") + 1)
@@ -268,6 +274,42 @@ class ShippingDetailsTwo extends Component {
       this.props.history.push("shipment-summary");
     }
   }
+
+  SendMessage = () => {
+    let self = this;
+    var hbllNo = document.getElementById("popupHBLNO").value;
+    var msgg = document.getElementById("addMess").value;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SendCommonMessage`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        ReferenceNo: hbllNo,
+        // TypeOfMessage: drpshipment.value.trim(),
+        Message: msgg
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      if (response != null) {
+        if (response.data != null) {
+          if (response.data.length > 0) {
+            if (response.data[0] != null) {
+              var message = response.data[0].Result;
+              // self.setState({ MessagesActivityDetails });
+              if (response.data[0].Result === "Message Send Successfully") {
+                // setTimeout(() => {
+                // this.handleActivityList();
+                // }, 100);
+                alert(response.data[0].Result);
+              }
+              self.handleActivityList();
+            }
+          }
+        }
+      }
+    });
+  };
 
   handleClick = (marker, event) => {
     debugger;
@@ -742,9 +784,11 @@ class ShippingDetailsTwo extends Component {
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail;
     }
-    
+    // if (typeof this.props.location.state != "undefined") {
+
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     //alert(HblNo)
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
@@ -758,6 +802,7 @@ class ShippingDetailsTwo extends Component {
         debugger;
         //alert("Sucess")
         self.setState({ MessagesActivityDetails: response.data });
+        document.getElementById("addMess").value = "";
       })
       .catch(error => {
         debugger;
@@ -765,6 +810,7 @@ class ShippingDetailsTwo extends Component {
         var err = temperror.split(":");
         //NotificationManager.error(err[1].replace("}", ""));
       });
+    // }
   }
 
   handleRemoveWatchList = () => {
@@ -1642,9 +1688,14 @@ class ShippingDetailsTwo extends Component {
                         <textarea
                           className="txt-add"
                           placeholder="Add Message"
+                          id="addMess"
                         ></textarea>
                         <div className="text-right">
-                          <a href="#!" className="butn">
+                          <a
+                            href="#!"
+                            onClick={this.SendMessage}
+                            className="butn"
+                          >
                             Post
                           </a>
                         </div>
