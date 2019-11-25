@@ -118,27 +118,33 @@ class SideMenu extends Component {
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
-                        <label className="shipment-ul-lilbl1">Open</label>
+                        <label className="shipment-ul-lilbl1">Current</label>
                         <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("aircount")}
+                          {window.localStorage.getItem("quotecurrent")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Accepted</label>
+                        <label className="shipment-ul-lilbl1">Pending</label>
                         <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("oceancount")}
+                          {window.localStorage.getItem("quotepending")}
+                        </label>
+                      </li>
+                      <li>
+                        <label className="shipment-ul-lilbl1">Approved</label>
+                        <label className="shipment-ul-lilbl2">
+                          {window.localStorage.getItem("quoteapproved")}
                         </label>
                       </li>
                       <li>
                         <label className="shipment-ul-lilbl1">Expired</label>
                         <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("inlandcount")}
+                          {window.localStorage.getItem("quoteexpired")}
                         </label>
                       </li>
                       <li>
                         <label className="shipment-ul-lilbl1">Rejected</label>
                         <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("inlandcount")}
+                          {window.localStorage.getItem("quoterejected")}
                         </label>
                       </li>
                     </ul>
@@ -263,21 +269,15 @@ class SideMenu extends Component {
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
-                        <label className="shipment-ul-lilbl1">Open</label>
+                        <label className="shipment-ul-lilbl1">Pending</label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("bookpending")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Accepted</label>
+                        <label className="shipment-ul-lilbl1">Approved</label>
                         <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("bookaccepted")}
-                        </label>
-                      </li>
-                      <li>
-                        <label className="shipment-ul-lilbl1">Expired</label>
-                        <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("bookexpired")}
+                          {window.localStorage.getItem("bookapproved")}
                         </label>
                       </li>
                       <li>

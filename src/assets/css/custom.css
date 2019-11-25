@@ -1500,8 +1500,11 @@ table tbody tr:last-child {
   position: absolute !important;
   top: 100% !important;
   left: 0 !important;
-  max-height: 50px !important;
+  max-height: 150px !important;
   z-index: 1;
+}
+.sticky-dropdown + div div {
+  padding: 5px;
 }
 
 /* new rate search ends */

@@ -117,14 +117,12 @@ class ShippingDetails extends Component {
   }
 
   componentDidMount() {
-
     var url = window.location.href
-    .slice(window.location.href.indexOf("?") + 1)
-    .split("=")[1];
+      .slice(window.location.href.indexOf("?") + 1)
+      .split("=")[1];
     var shiptype = "";
-    if(url != undefined)
-    {
-      shiptype  = url;
+    if (url != undefined) {
+      shiptype = url;
     }
     this.HandleListShipmentSummey(shiptype);
     this.HandleCountryDropDown();
@@ -182,21 +180,35 @@ class ShippingDetails extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      var air = response.data.Table[0].Count;
-      var ocean = response.data.Table[1].Count;
-      var inland = response.data.Table[2].Count;
-      window.localStorage.setItem("aircount", air);
-      window.localStorage.setItem("oceancount", ocean);
-      window.localStorage.setItem("inlandcount", inland);
+      // var air = 0,
+      //   ocean = 0,
+      //   inland = 0;
+      var inland = response.data.Table[0].Count;
+      var air = response.data.Table[1].Count;
+      var ocean = response.data.Table[2].Count;
+
       var data = [];
 
       //ModeOfTransport
       data = response.data.Table1;
-      if(shiptype != "")
-      {
-        data = data.filter(item => item.ModeOfTransport == shiptype)
+      if (shiptype != "") {
+        data = data.filter(item => item.ModeOfTransport == shiptype);
       }
-      
+
+      // for (let i = 0; i < data.length; i++) {
+      //   if (data[i].ModeOfTransport === "Ocean") {
+      //     ocean = ocean + 1;
+      //   } else if (data[i].ModeOfTransport === "Air") {
+      //     air = air + 1;
+      //   } else if (data[i].ModeOfTransport === "Inland") {
+      //     inland = inland + 1;
+      //   }
+      // }
+
+      window.localStorage.setItem("aircount", air);
+      window.localStorage.setItem("oceancount", ocean);
+      window.localStorage.setItem("inlandcount", inland);
+
       self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
     });
   }
@@ -269,25 +281,26 @@ class ShippingDetails extends Component {
         CustomerType: "Existing"
       },
       headers: authHeader()
-    }).then(function(response) {
-     
-      if (field == "Consignee") {
-        self.setState({
-          Consignee: response.data.Table,
-          fields
-        });
-      } else {
-        self.setState({
-          Shipper: response.data.Table,
-          fields
-        });
-      }
-    }) .catch(error => {
-      debugger;
-      var temperror = error.response.data;
-      var err = temperror.split(":");
-      //NotificationManager.error(err[1].replace("}", ""));
-    });;
+    })
+      .then(function(response) {
+        if (field == "Consignee") {
+          self.setState({
+            Consignee: response.data.Table,
+            fields
+          });
+        } else {
+          self.setState({
+            Shipper: response.data.Table,
+            fields
+          });
+        }
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //NotificationManager.error(err[1].replace("}", ""));
+      });
     // this.setState({
     //   value: this.state.value
     // });

@@ -12,10 +12,16 @@ import GoogleMapReact from "google-map-react";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
+import Deactivate from "./../assets/img/deactivate.png";
+import DeactivateGray from "./../assets/img/deactivate-gray.png";
 import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
 
 const SourceIcon = () => <div className="map-circ source-circ" />;
 const DestiIcon = () => <div className="map-circ desti-circ" />;
@@ -28,10 +34,13 @@ class ViewUser extends Component {
       modalDel: false,
       modalEdit: false,
       value: 50,
-      viewData: []
+      viewData: [],
+      deactivateId: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
+    this.toggleDeactivate = this.toggleDeactivate.bind(this);
+    this.handleViewUserData = this.handleViewUserData.bind(this);
 
     this.toggleEdit = this.toggleEdit.bind(this);
   }
@@ -56,13 +65,40 @@ class ViewUser extends Component {
     }));
   }
 
+  toggleDeactivate() {
+    let self = this;
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DeactivateUser`,
+      data: {
+        Modifiedby: userid,
+        UserID: self.state.deactivateId
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      self.handleViewUserData();
+      NotificationManager.success(response.data.Table[0].Result);
+    });
+
+    this.setState(prevState => ({
+      modalDel: !prevState.modalDel
+    }));
+  }
+
   HandleDocumentDelete(evt, row) {
     debugger;
     var HblNo = row.original["HBL#"];
-    this.setState({ modalDel: true });
+    var UserId = row.original["UserId"];
+    this.setState({ modalDel: true, deactivateId: UserId });
   }
 
   componentDidMount() {
+    this.handleViewUserData();
+  }
+
+  handleViewUserData() {
     let self = this;
     axios({
       method: "post",
@@ -159,6 +195,7 @@ class ViewUser extends Component {
             <AdminSideMenu />
           </div>
           <div className="cls-rt no-bg min-hei-auto">
+            <NotificationContainer />
             <div className="title-sect">
               <h2>View Users</h2>
             </div>
@@ -199,9 +236,18 @@ class ViewUser extends Component {
                                 onClick={e => this.HandleDocumentView(e, row)}
                               />
                               <img
+                                style={{
+                                  pointerEvents: row.original.IsEnabled
+                                    ? "initial"
+                                    : "none"
+                                }}
                                 className="actionicon"
-                                src={Delete}
-                                alt="delete-icon"
+                                src={
+                                  row.original.IsEnabled
+                                    ? Deactivate
+                                    : DeactivateGray
+                                }
+                                alt="deactivate-icon"
                                 onClick={e => this.HandleDocumentDelete(e, row)}
                               />
                             </div>
@@ -277,7 +323,7 @@ class ViewUser extends Component {
           >
             <ModalBody>
               <p>Are you sure ?</p>
-              <Button className="butn" onClick={this.toggleDel}>
+              <Button className="butn" onClick={this.toggleDeactivate}>
                 Yes
               </Button>
               <Button className="butn cancel-butn" onClick={this.toggleDel}>
