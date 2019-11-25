@@ -358,8 +358,15 @@ class SpotRateDetails extends Component {
   toggleViewRate(){
     let self = this;
     let fields = this.state.fields;
+    let podfullAddData = this.state.podfullAddData;
     fields["pod"] = this.state.spotrateresponseTbl.DestinationAddress;
     fields["pol"] = this.state.spotrateresponseTbl.PickUpAddress;
+    podfullAddData["GeoCoordinate"] = "40.968456,28.674417";
+    podfullAddData["Location"] = "AMB";
+    podfullAddData["NameWoDiacritics"] = "Ambarli";
+    podfullAddData["OceanPortID"] = 6302;
+    podfullAddData["OceanPortLongName"] = "Ambarli, Istanbul, Turkey";
+    podfullAddData["UNECECode"] = "TRPAM";
     self.setState({
       Custom_Clearance:this.state.spotrateresponseTbl.Custom_Clearance,
       DeliveryCity: this.state.spotrateresponseTbl.DestinationAddress,
@@ -394,12 +401,7 @@ class SpotRateDetails extends Component {
      // multiCBM: [{…}]
       pod: "",
       podCountry: "",
-      podfullAddData:{GeoCoordinate: "40.968456,28.674417",
-                      Location: "AMB",
-                      NameWoDiacritics: "Ambarli",
-                      OceanPortID: 6302,
-                      OceanPortLongName: "Ambarli, Istanbul, Turkey",
-                      UNECECode: "TRPAM"},
+      podfullAddData:podfullAddData,
       pol: "",
       polCountry: "",
       poladdress: "",
@@ -444,7 +446,12 @@ class SpotRateDetails extends Component {
       zoomPOD: 0,
       zoomPOL: 0   
     })
+    this.HandleViewRateData();
+    
+  }
 
+  HandleViewRateData()
+  {
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 

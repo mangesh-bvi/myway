@@ -15,6 +15,10 @@ import Select from "react-select";
 import { Link } from "react-router-dom";
 import Autocomplete from "react-google-autocomplete";
 import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
@@ -1327,7 +1331,10 @@ class RateTable extends Component {
   ////this for Equipment Type Dynamice Create Element
   NewcreateUI() {
     return this.state.users.map((el, i) => (
-      <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+      <div
+        className="equip-plus-cntr rate-tab-spot spec-inner-cntr w-auto"
+        key={i}
+      >
         <label>
           {el.StandardContainerCode} <span className="into-quant">X</span>
         </label>
@@ -1501,7 +1508,10 @@ class RateTable extends Component {
   createUIspacEqmtType() {
     return this.state.spacEqmtType.map((el, i) => {
       return (
-        <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
+        <div
+          key={i}
+          className="equip-plus-cntr rate-tab-spot spec-inner-cntr w-auto"
+        >
           <label name="TypeName">
             {el.TypeName} <span className="into-quant">X</span>
           </label>
@@ -2459,7 +2469,7 @@ class RateTable extends Component {
     })
       .then(function(response) {
         debugger;
-        alert(response.data.Table[0].Message);
+        NotificationManager.success(response.data.Table[0].Message);
         // self.setState({
         //   arrLocalsCharges: response.data.Table,
         //   fltLocalCharges: response.data.Table
@@ -2485,6 +2495,7 @@ class RateTable extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt no-bg min-hei-auto">
+            <NotificationContainer />
             <div className="rate-table-header">
               <div className="title-sect">
                 <h2>Rate Table</h2>
@@ -3208,14 +3219,14 @@ class RateTable extends Component {
             <Modal
               className={
                 this.state.containerLoadType === "FTL"
-                  ? "delete-popup spot-rate-popup pol-pod-popup"
-                  : "delete-popup spot-rate-popup big-popup pol-pod-popup"
+                  ? "delete-popup text-left spot-rate-popup pol-pod-popup"
+                  : "delete-popup text-left spot-rate-popup big-popup pol-pod-popup"
               }
               isOpen={this.state.modalSpot}
               toggle={this.toggleSpot}
               centered={true}
             >
-              <h3>Add Below Details</h3>
+              <h3 className="text-center">Add Below Details</h3>
               <ModalBody>
                 <div className="rename-cntr login-fields">
                   <label>Commodity</label>
@@ -3229,9 +3240,9 @@ class RateTable extends Component {
                     ))}
                   </select>
                 </div>
-                <div className="rename-cntr login-fields">
+                <div className="rename-cntr login-fields align-items-start">
                   <label>Cargo</label>
-                  <div>
+                  <div className="w-100">
                     {this.state.containerLoadType === "FTL" ? (
                       this.createUITruckType()
                     ) : this.state.containerLoadType === "FCL" ? (
@@ -3323,15 +3334,17 @@ class RateTable extends Component {
                     <option>Select</option>
                   </select> */}
                 </div>
-                <Button
-                  className="butn"
-                  onClick={() => {
-                    this.spotRateSubmit(this.state);
-                    this.toggleSpot();
-                  }}
-                >
-                  Send
-                </Button>
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    onClick={() => {
+                      this.spotRateSubmit(this.state);
+                      this.toggleSpot();
+                    }}
+                  >
+                    Send
+                  </Button>
+                </div>
               </ModalBody>
             </Modal>
             {/* {----------------------End Spot Rate Modal------------------} */}
