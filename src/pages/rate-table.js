@@ -513,11 +513,12 @@ class RateTable extends Component {
     });
   }
 
-  toggleRow(rateID, rowData) {
+  toggleRow(RateLineID, rowData) {
+    debugger;
     const newSelected = Object.assign({}, this.state.cSelectedRow);
-    newSelected[rateID] = !this.state.cSelectedRow[rateID];
+    newSelected[RateLineID] = !this.state.cSelectedRow[RateLineID];
     this.setState({
-      cSelectedRow: rateID ? newSelected : false
+      cSelectedRow: RateLineID ? newSelected : false
     });
     var selectedRow = [];
 
@@ -527,10 +528,10 @@ class RateTable extends Component {
         selectedDataRow: selectedRow
       });
     } else {
-      if (newSelected[rateID] === true) {
+      if (newSelected[RateLineID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
-            this.state.selectedDataRow[i].rateID === rowData._original.rateID
+            this.state.selectedDataRow[i].RateLineID === rowData._original.RateLineID
           ) {
             selectedRow.splice(i, 1);
 
@@ -544,7 +545,7 @@ class RateTable extends Component {
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
-            this.state.selectedDataRow[i].rateID === rowData._original.rateID
+            this.state.selectedDataRow[i].RateLineID === rowData._original.RateLineID
           ) {
             selectedRow = this.state.selectedDataRow;
             selectedRow.splice(i, 1);
@@ -2617,7 +2618,7 @@ class RateTable extends Component {
                         <div className="pol-pod">
                           <span>POL</span>
                           {this.state.polFilterArray.map((mapPOL, index) => (
-                            <div className="d-flex">
+                            <div className="d-flex" key={index}>
                               <input
                                 id={"pol" + (index + 1)}
                                 type="checkbox"
@@ -2754,11 +2755,11 @@ class RateTable extends Component {
                                           // }
                                           checked={
                                             this.state.cSelectedRow[
-                                              original.rateID
+                                              original.RateLineID
                                             ] === true
                                           }
                                           onChange={e =>
-                                            this.toggleRow(original.rateID, row)
+                                            this.toggleRow(original.RateLineID, row)
                                           }
                                         />
                                         <label
@@ -2931,10 +2932,7 @@ class RateTable extends Component {
                               keys: ["commodities", "TransitTime"],
                               threshold: matchSorter.rankings.WORD_STARTS_WITH
                             });
-                            console.log(
-                              result,
-                              "---------------result---------------"
-                            );
+                             
                             return result;
                           }
                         }
@@ -2942,7 +2940,7 @@ class RateTable extends Component {
                       onFilteredChange={this.onFilteredChange.bind(this)}
                       filtered={this.state.filtered}
                       defaultFilterMethod={(filter, row) =>
-                        String(row[filter.rateID]) === filter.value
+                        String(row[filter.RateLineID]) === filter.value
                       }
                       filterable
                       // expanded={this.state.expanded}
@@ -2970,7 +2968,7 @@ class RateTable extends Component {
                                         d.RateLineID === row.original.RateLineID
                                     )
                                   : this.state.RateSubDetails.filter(
-                                      d => d.RateLineID === row.original.rateID
+                                      d => d.RateLineID === row.original.RateLineID
                                     )
                               }
                               columns={[

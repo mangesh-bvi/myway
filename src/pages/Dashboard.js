@@ -45,7 +45,7 @@ const MapWithAMakredInfoWindow = compose(
   withGoogleMap
 )(props => (
   <GoogleMap defaultCenter={props.mapPosition} defaultZoom={props.zoom}>
-    {props.markers.map(marker => {
+    {props.markers.map((marker,i) => {
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
         ShipBlue,
@@ -78,7 +78,7 @@ const MapWithAMakredInfoWindow = compose(
 
       if (marker.Pin == "Ocean") {
         return (
-          <div>
+          <div key={i}>
              
              {/* <Marker
                   key={marker.index}

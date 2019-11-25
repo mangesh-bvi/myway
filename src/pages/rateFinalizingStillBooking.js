@@ -11,6 +11,8 @@ import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
 import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
+import Delete from "./../assets/img/red-delete-icon.png";
+import Download from "./../assets/img/csv.png";
 
 class RateFinalizingStillBooking extends Component {
   constructor(props) {
@@ -40,7 +42,7 @@ class RateFinalizingStillBooking extends Component {
       fields: {},
       Consignee: [],
       Shipper: [],
-     
+      FileData: [],
       packageTypeData: [],
       userType: "",
       NonCustomerData: [],
@@ -48,7 +50,7 @@ class RateFinalizingStillBooking extends Component {
       QuotationSubData: [],
       typeofMove: "",
       cargoType: "",
-      
+
       //dynamic element
       TruckTypeData: [
         {
@@ -62,19 +64,18 @@ class RateFinalizingStillBooking extends Component {
       multiCBM: [],
       referType: [],
       flattack_openTop: [],
+      eqmtType: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
-    this.toggleBook = this.toggleBook.bind(this);
+
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
     this.BookigGridDetailsList = this.BookigGridDetailsList.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
     this.HandleTruckTypeData = this.HandleTruckTypeData.bind(this);
   }
   componentDidMount() {
-    debugger;
-
     if (
       typeof this.props.location.state.BookingNo != "undefined" &&
       typeof this.props.location.state.BookingNo != ""
@@ -205,12 +206,45 @@ class RateFinalizingStillBooking extends Component {
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
   }
+  ////Handel Update Booking Details
+  HandleBookingUpdate() {
+    var paramData = {
+      BookingNo: this.state.Booking[0].BookingNo,
+      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+      ShipperID: 2,
+      Shipper_Displayas: this.state.Booking[0].ShipperID,
+      Shipper_AddressID: this.state.Booking[0].Shipper_AddressID,
+      ShipperName: this.state.Booking[0].Shipper_Name,
+      ConsigneeID: this.state.Booking[0].Consignee,
+      ConsigneeName: this.state.Booking[0].Consignee_Name,
+      Consignee_AddressID: this.state.Booking[0].Consignee_AddressID,
+      Consignee_Displayas: this.state.Booking[0].Consignee_Displayas,
+      BuyerID: this.state.Booking[0].BuyerID,
+      Buyer_AddressID: this.state.Booking[0].Buyer_AddressID,
+      Buyer_Displayas: this.state.Booking[0].Buyer_Displayas,
+      BuyerName: this.state.Booking[0].Buyer_Name,
+      Mode: this.state.Booking[0].CargoType,
+      Commodity: this.state.Booking[0].Commodity,
+      saleQuoteID: this.state.Booking[0].saleQuoteID,
+      saleQuoteNo: this.state.Booking[0].saleQuoteNo,
+      saleQuoteLineID: this.state.Booking[0].saleQuoteLineID,
+      // DefaultEntityTypeID:this.state.Booking[0].,
+      BookingDocs: this.state.Booking3,
+      RateQueryDim: this.multiCBM,
+      NotifyID: this.state.Booking[0].NotifyID,
+      Notify_AddressID: this.state.Booking[0].Notify_AddressID,
+      Notify_Displayas: this.state.Booking[0].Notify_Displayas,
+      NotifyName: this.state.Booking[0].NotifyName
+    };
 
-  toggleBook(e) {
-    e.stopPropagation();
-    this.setState(prevState => ({
-      modalBook: !prevState.modalBook
-    }));
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookingUpdation`,
+      data: paramData,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
   }
 
   toggleProfit() {
@@ -230,7 +264,7 @@ class RateFinalizingStillBooking extends Component {
       selectedFileName: event.target.files[0].name
     });
   };
-  
+
   ////change value of SelectType methiod
   HandleRadioBtn = e => {
     debugger;
@@ -240,7 +274,6 @@ class RateFinalizingStillBooking extends Component {
 
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
-    debugger;
     let self = this;
     var bookingNo = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
@@ -254,15 +287,22 @@ class RateFinalizingStillBooking extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        console.log(response.data, "booking Details Data");
+        debugger;
         var QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
-        var CargoDetails=response.data.Table2
-        debugger;
+        var CargoDetails = response.data.Table2;
+        var FileData = response.data.Table3;
+        var eqmtType = response.data.Table1;
+
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
             self.setState({ QuotationData, QuotationSubData, Booking });
+          }
+        }
+        if (typeof eqmtType !== "undefined") {
+          if (eqmtType.length > 0) {
+            self.setState({ eqmtType });
           }
         }
         if (typeof Booking !== "undefined") {
@@ -281,7 +321,7 @@ class RateFinalizingStillBooking extends Component {
             }
 
             self.setState({
-              multiCBM:CargoDetails,
+              multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
               selectedCommodity: Booking[0].Commodity,
               fields: {
@@ -289,6 +329,10 @@ class RateFinalizingStillBooking extends Component {
                 Shipper: Booking[0].Shipper_Name
               }
             });
+          }
+
+          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
+            self.setState({ FileData });
           }
         }
       });
@@ -309,9 +353,7 @@ class RateFinalizingStillBooking extends Component {
   //// start dynamic element for LCL-AIR-LTL
 
   CreateMultiCBM() {
-
     return this.state.multiCBM.map((el, i) => (
-       
       <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
@@ -337,8 +379,8 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder="QTY"
               className="w-100"
-              name="Quantity"
-              value={el.Quantity|| ""}
+              name="QTY"
+              value={"" + el.QTY || ""}
               //onKeyUp={this.cbmChange}
             />
           </div>
@@ -350,8 +392,8 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={"L (cm)"}
               className="w-100"
-              name="Lengths"
-              value={el.Lengths || ""}
+              name="Length"
+              value={"" + el.Length || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -364,7 +406,7 @@ class RateFinalizingStillBooking extends Component {
               placeholder={"W (cm)"}
               className="w-100"
               name="Width"
-              value={el.Width || ""}
+              value={"" + el.Width || ""}
               //onBlur={this.cbmChange}
             />
           </div>
@@ -377,7 +419,7 @@ class RateFinalizingStillBooking extends Component {
               placeholder="H (cm)"
               className="w-100"
               name="Height"
-              value={el.Height || ""}
+              value={"" + el.Height || ""}
               //onBlur={this.cbmChange}
             />
           </div>
@@ -389,8 +431,8 @@ class RateFinalizingStillBooking extends Component {
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
-              name="GrossWt"
-              value={el.GrossWt || ""}
+              name="GrossWeight"
+              value={"" + el.GrossWeight || ""}
               className="w-100"
             />
           </div>
@@ -415,8 +457,8 @@ class RateFinalizingStillBooking extends Component {
               }
               value={
                 this.state.containerLoadType === "LCL"
-                  ? el.Volume
-                  : el.VolumeWeight || ""
+                  ? "" + el.Volume
+                  : "" + el.VolumeWeight || ""
               }
               className="w-100 weight-icon"
             />
@@ -432,8 +474,18 @@ class RateFinalizingStillBooking extends Component {
               ></i>
             </div>
           </div>
-        ) : null}
-        {this.state.multiCBM.length > 1 ? (
+        ) : (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this, i)}
+              ></i>
+            </div>
+          </div>
+        )}
+        {/* {this.state.multiCBM.length > 1 ? (
           <div className="">
             <div className="spe-equ">
               <i
@@ -443,7 +495,7 @@ class RateFinalizingStillBooking extends Component {
               ></i>
             </div>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     ));
   }
@@ -462,15 +514,17 @@ class RateFinalizingStillBooking extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: parseFloat(value)
+        [name]: value !== "" ? parseFloat(value) : ""
       };
     }
 
     this.setState({ multiCBM });
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        ((multiCBM[i].Quantity || 0) *
+          ((multiCBM[i].Lengths || 0) *
+            (multiCBM[i].Width || 0) *
+            (multiCBM[i].Height || 0))) /
         6000;
       if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
         multiCBM[i] = {
@@ -485,10 +539,10 @@ class RateFinalizingStillBooking extends Component {
       }
     } else {
       var decVolume =
-        multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
+        (multiCBM[i].Quantity || 0) *
+        (((multiCBM[i].Lengths || 0) / 100) *
+          ((multiCBM[i].Width || 0) / 100) *
+          ((multiCBM[i].Height || 0) / 100));
       multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: parseFloat(decVolume)
@@ -496,8 +550,6 @@ class RateFinalizingStillBooking extends Component {
     }
 
     this.setState({ multiCBM });
-
-   
   }
   addMultiCBM() {
     this.setState(prevState => ({
@@ -516,9 +568,10 @@ class RateFinalizingStillBooking extends Component {
       ]
     }));
   }
-  removeMultiCBM(i) {
+  removeMultiCBM(type, i) {
+    debugger;
     let multiCBM = [...this.state.multiCBM];
-    multiCBM.splice(i, 1);
+    multiCBM.splice(type, 1);
     this.setState({ multiCBM });
   }
 
@@ -879,110 +932,52 @@ class RateFinalizingStillBooking extends Component {
   ////end for flattack and openTop dynamic create elements
   ////this for Equipment Type Dynamice Create Element
   NewcreateUI() {
-    return this.state.users.map((el, i) => (
-      <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
-        <label>
-          {el.StandardContainerCode} <span className="into-quant">X</span>
-        </label>
-        <div className="spe-equ">
-          <input
-            type="number"
-            min={1}
-            placeholder="QTY"
-            name="ContainerQuantity"
-            value={el.ContainerQuantity || ""}
-            onChange={this.newhandleChange.bind(this, i)}
-          />
-        </div>
-        <span onClick={this.newremoveClick.bind(this, i)}>
-          <i className="fa fa-times" aria-hidden="true"></i>
-        </span>
-      </div>
+    return this.state.eqmtType.map((el, i) => (
+      <>
+        {i === 0 ? (
+          <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+            <input type="hidden" name="BookingID" value={el.BookingID} />
+            <input
+              type="hidden"
+              name="ProfileCodeID"
+              value={el.ProfileCodeID}
+            />
+            <label>
+              {el.ContainerCode} <span className="into-quant">X</span>
+            </label>
+            <div className="spe-equ">
+              <input
+                type="number"
+                min={1}
+                placeholder="QTY"
+                name="ContainerCount"
+                value={el.ContainerCount || ""}
+                onChange={this.newhandleChange.bind(this, i)}
+              />
+            </div>
+            <span onClick={this.newremoveClick.bind(this, i)}>
+              <i className="fa fa-times" aria-hidden="true"></i>
+            </span>
+          </div>
+        ) : null}
+      </>
     ));
-  }
-
-  newaddClick(e, option) {
-    if (e.length > 0) {
-      if (this.state.users.length == 0) {
-        if (option.option.ContainerName === "Special Equipment") {
-          this.setState({ specialEquipment: true, isSpacialEqt: false });
-        } else {
-          this.setState({ selected: e });
-          this.setState(prevState => ({
-            users: [
-              ...prevState.users,
-              {
-                ContainerName: option.option.ContainerName,
-                ProfileCodeID: option.option.ProfileCodeID,
-                StandardContainerCode: option.option.StandardContainerCode,
-                ContainerQuantity: 0,
-                Temperature: 0,
-                TemperatureType: ""
-              }
-            ]
-          }));
-        }
-      } else {
-        let difference = this.state.selected.filter(x => !e.includes(x));
-        if (difference.length === 0) {
-          if (option.option.ContainerName === "Special Equipment") {
-            this.setState({
-              specialEquipment: true,
-              isSpacialEqt: false
-            });
-          } else {
-            this.setState({ selected: e });
-            this.setState(prevState => ({
-              users: [
-                ...prevState.users,
-                {
-                  ContainerName: option.option.ContainerName,
-                  ProfileCodeID: option.option.ProfileCodeID,
-                  StandardContainerCode: option.option.StandardContainerCode,
-                  ContainerQuantity: 0
-                }
-              ]
-            }));
-          }
-        } else {
-        }
-      }
-    } else {
-      this.setState({
-        specialEquipment: false,
-        isSpacialEqt: true,
-        selected: [],
-        users: []
-      });
-    }
-
-    if (this.state.selected !== null) {
-      // next
-      
-    }
   }
 
   newhandleChange(i, e) {
     const { name, value } = e.target;
-    let users = [...this.state.users];
-    users[i] = {
-      ...users[i],
-      [name]: name === "ContainerQuantity" ? parseFloat(value) : 0
+    let eqmtType = [...this.state.eqmtType];
+    eqmtType[i] = {
+      ...eqmtType[i],
+      [name]: name === "ContainerCount" ? parseFloat(value) : 0
     };
-    this.setState({ users });
+    this.setState({ eqmtType });
   }
 
   newremoveClick(i) {
-    let users = [...this.state.users];
-    if (users[i].ContainerName === "Special Equipment") {
-      this.setState({ specialEquipment: false, isSpacialEqt: true });
-    }
-    users.splice(i, 1);
-
-    let selected = [...this.state.selected];
-    selected.splice(i, 1);
-
-    this.setState({ users, selected });
+    let eqmtType = [...this.state.eqmtType];
+    eqmtType.splice(i, 1);
+    this.setState({ eqmtType });
   }
   //// end For Equipment to create element
 
@@ -1091,6 +1086,36 @@ class RateFinalizingStillBooking extends Component {
     });
   }
   //// end method
+
+  ////this method for remove document
+  HandleDocumentDelete(evt, row) {
+    debugger;
+    // var HblNo = row.original["HBL#"];
+    // this.setState({ modalDel: true });
+  }
+  ////end method of remove documents
+
+  //// this method for download file
+  HandleDocumentDownloadFile(evt, row) {
+    debugger;
+    //var filePath = row.original["HBL#"];
+  }
+
+  //// end methos of download file
+
+  ////Create File element method
+
+  CreateFileElement() {
+    debugger;
+    return this.state.FileData.map((el, i) => (
+      <div key={i}>
+        <a href={el.FilePath}>
+          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+        </a>
+      </div>
+    ));
+  }
+
   render() {
     const {
       Booking,
@@ -1106,8 +1131,6 @@ class RateFinalizingStillBooking extends Component {
     }
 
     var i = 0;
-    console.log(this.state.multiCBM, "..................multiCBM");
-    
 
     return (
       <React.Fragment>
@@ -1732,12 +1755,42 @@ class RateFinalizingStillBooking extends Component {
                         </div>
                       </div>
                     </div>
+                    <div>
+                      <div className="title-border py-3">
+                        <h3>Notify Party</h3>
+                      </div>
+                      <div>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <p className="details-title">Party Name</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].NotifyName
+                                : null}
+                            </p>
+                          </div>
+                          <div className="col-md-6">
+                            <p className="details-title">Address</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].Notify_Displayas
+                                : null}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <div className="row">
                       <div
                         className="title-border py-3"
                         style={{ width: "100%" }}
                       >
                         <h3>Cargo Details</h3>
+                      </div>
+                      <div>
+                        {this.state.eqmtType.length > 0
+                          ? this.NewcreateUI()
+                          : null}
                       </div>
                       <div>
                         {this.state.multiCBM.length > 0
@@ -1797,7 +1850,56 @@ class RateFinalizingStillBooking extends Component {
                           </label>
                         </div>
                       </div>
-                      <a
+                      <br />
+                      {/* <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "File Name",
+                                accessor: "FileName"
+                              },
+
+                              {
+                                Header: "Action",
+                                sortable: false,
+                                accessor: "DocumentDescription",
+                                Cell: row => {
+                                  if (row.value == "No Data Found") {
+                                    return <div></div>;
+                                  } else {
+                                    return (
+                                      <div>
+                                        <img
+                                          className="actionicon"
+                                          src={Delete}
+                                          alt="delete-icon"
+                                          onClick={e =>
+                                            this.HandleDocumentDelete(e, row)
+                                          }
+                                        />
+                                        <img
+                                          className="actionicon"
+                                          src={Download}
+                                          alt="download-icon"
+                                          onClick={e =>
+                                            this.HandleDownloadFile(e, row)
+                                          }
+                                        />
+                                      </div>
+                                    );
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.FileData}
+                        minRows={0}
+                        showPagination={false}
+                      ></ReactTable> */}
+
+                      {/* <a
                         href={
                           "https://vizio.atafreight.com/WebVizio_3_0/" +
                           this.state.selectedFilePath
@@ -1806,11 +1908,14 @@ class RateFinalizingStillBooking extends Component {
                         <p className="file-name w-100 text-center mt-1">
                           {this.state.selectedFileName}
                         </p>
-                      </a>
+                      </a> */}
+                      {this.state.FileData.length > 0
+                        ? this.CreateFileElement()
+                        : null}
                     </div>
                     <center>
                       <button
-                        onClick={this.toggleBook}
+                        onClick={this.HandleBookingUpdate.bind(this)}
                         className="butn more-padd mt-4"
                       >
                         Update Booking

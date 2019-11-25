@@ -86,7 +86,6 @@ class Login extends React.Component {
   }
 
   HandleDisplaySalesPersonData(sData) {
-    //debugger;
     //get Companies
     let self = this;
     var mydata = sData; //JSON.parse(data);
@@ -115,7 +114,7 @@ class Login extends React.Component {
       }
 
       //Contact display
-      //debugger;
+
       var contactDName = item.ContactDisplayName;
       var ContactID = item.ContactID;
       if (!ContactDismap.has(contactDName)) {
@@ -147,7 +146,6 @@ class Login extends React.Component {
         !distinctAssociateCompmap.has(Company_Name) &&
         !distinctAssociateCompmap.has(Company_ID)
       ) {
-        //debugger;
         distinctAssociateCompmap.set(contactDName, true); // set any value to Map
         distinctAssociateComp.push({
           officeName: officeName,
@@ -161,13 +159,8 @@ class Login extends React.Component {
       }
     }
 
-    //debugger;
-    //alert('distinctOffice:-' + distinctOffice.length);
-    //alert('distinctContactDisName:-' + distinctContactDisName.length);
-    //alert('distinctAssociateComp:-' + distinctAssociateComp.length);
     var iCompanies = distinctOffice.length;
     var iContacts = distinctContactDisName.length;
-
     var iAssocCompany = distinctAssociateComp.length;
 
     ////Company
@@ -180,7 +173,7 @@ class Login extends React.Component {
       salesPersonDataByComp.children = [];
 
       var salesPersondata = [];
-      //debugger;
+
       for (var j = 0; j < distinctContactDisName.length; j++) {
         var salesPersonName = {};
         var salesPersonChildData = [];
@@ -189,12 +182,10 @@ class Login extends React.Component {
         salesPersonName.value = distinctContactDisName[j]["value"];
         salesPersonName.label = distinctContactDisName[j]["label"];
 
-        //debugger;
         ///////For loop for the Sales Person's ///////Company
         for (var k = 0; k < iAssocCompany; k++) {
           var associateCompData = {};
 
-          //debugger;
           var ofID = distinctAssociateComp[k]["OfficeID"];
           //var cnID = distinctAssociateComp[k]["ContactID"];
           //var cotName = distinctAssociateComp[k]["ContactDisplayName"];
@@ -224,7 +215,7 @@ class Login extends React.Component {
         //associateCompData.value = j;
         //associateCompData.label = j;
         //salesPersonChildData.push(associateCompData);
-        //debugger;
+
         salesPersonName.children = salesPersonChildData;
         salesPersondata.push(salesPersonName);
       }
@@ -232,7 +223,7 @@ class Login extends React.Component {
 
       finalNode.push(salesPersonDataByComp);
     }
-    debugger;
+
     //self.setState({ nodes: finalNode, checked: ["352200103, 1337604146"] });
     // self.setState({ nodes: finalNode, checked: ["1420702123"] });
     //self.setState({ nodes: finalNode, checked: ["1420702123"] });
@@ -243,14 +234,12 @@ class Login extends React.Component {
     self.setState({ modalSalesLogin: false, loading: false });
   }
   toggleSalesLoginPage() {
-    debugger;
     var checkedCompData = this.state.checked;
     var finalselectedData = [];
     for (var i = 0; i < checkedCompData.length; i++) {
       finalselectedData.push(parseInt(checkedCompData[i]));
     }
 
-    debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
@@ -266,7 +255,6 @@ class Login extends React.Component {
         window.location.href = "./rate-search";
       })
       .catch(error => {
-        debugger;
         console.log(error);
       });
   }
@@ -277,7 +265,6 @@ class Login extends React.Component {
     });
   }
   handleSubmit(e) {
-    debugger;
     let self = this;
     e.preventDefault();
     this.setState({ submitted: true, loading: true });
@@ -299,11 +286,11 @@ class Login extends React.Component {
       })
         .then(function(response) {
           debugger;
-          console.log("axios response" + new Date());
-          debugger;
+          console.log(response.data, "--------------------login data");
+
           var data = response.data;
           window.localStorage.setItem("st", new Date());
-          console.log(data);
+
           window.localStorage.setItem(
             "username",
             encryption(data.Table[0].UserName, "enc")
@@ -343,7 +330,7 @@ class Login extends React.Component {
           );
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
-          debugger;
+
           var userType = response.data.Table;
           var userTypeName = userType[0].UserType;
 
@@ -359,7 +346,6 @@ class Login extends React.Component {
           //window.location.href = "./user-agreement";
         })
         .catch(error => {
-          debugger;
           this.setState({ loading: false });
           var temperror = error.response.data;
           var err = temperror.split(":");
@@ -513,7 +499,6 @@ class Login extends React.Component {
 }
 
 function GenerateToken(username, password) {
-  debugger;
   var details = {
     username: username,
     password: password,
@@ -536,21 +521,15 @@ function GenerateToken(username, password) {
   };
   return fetch(`${appSettings.APIURL}/token`, requestOptions)
     .then(TokenhandleResponse)
-    .catch(error => {
-      console.log(error);
-    });
+    .catch(error => {});
 }
 
 function TokenhandleResponse(response) {
-  debugger;
-  console.log(response);
-
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
-      debugger;
       window.localStorage.setItem(
         "token",
         encryption(data.access_token, "enc")
