@@ -371,6 +371,7 @@ class RateTable extends Component {
   }
 
   toggleRow(rateID, rowData) {
+    debugger;
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
     this.setState({
@@ -387,7 +388,7 @@ class RateTable extends Component {
       if (newSelected[rateID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
-            this.state.selectedDataRow[i].rateID === rowData._original.rateID
+            this.state.containerLoadType =="LCL" ?  this.state.selectedDataRow[i].RateLineID === rowData._original.RateLineID : this.state.selectedDataRow[i].rateID === rowData._original.rateID
           ) {
             selectedRow.splice(i, 1);
 
@@ -2237,7 +2238,7 @@ class RateTable extends Component {
   }
   render() {
     var i = 0;
-
+    var containerLoadType = this.props.location.state.containerLoadType
     return (
       <div>
         <Headers />
@@ -2508,11 +2509,11 @@ class RateTable extends Component {
                                           // }
                                           checked={
                                             this.state.cSelectedRow[
-                                              original.rateID
+                                              containerLoadType == "LCL" ? original.RateLineID : original.rateID
                                             ] === true
                                           }
                                           onChange={e =>
-                                            this.toggleRow(original.rateID, row)
+                                            this.toggleRow(containerLoadType == "LCL" ? original.RateLineID : original.rateID, row)
                                           }
                                         />
                                         <label

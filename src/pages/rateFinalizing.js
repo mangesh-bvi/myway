@@ -903,7 +903,7 @@ if(Commoditypresent)
 
 }
 
-
+var containerLoadType = this.props.location.state.containerLoadType
     const { CargoDetailsArr } = this.state;
     return (
       <React.Fragment>
@@ -1178,7 +1178,12 @@ if(Commoditypresent)
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={this.state.rateSubDetails.filter(item => item.RateLineID == row.original.rateID)}
+                                data={this.props.location.state.containerLoadType == "LCL" ? this.state.rateSubDetails.filter(
+                                  item => item.RateLineID ==  row.original.RateLineID
+                                  ) :  this.state.rateSubDetails.filter(
+                                    item => item.RateLineID ==  row.original.rateID
+                                    )                                
+                                }
                                 columns={[
                                   {
                                     columns: [
