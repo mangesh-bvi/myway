@@ -9,6 +9,8 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import { encryption } from "../helpers/encryption";
+import maersk from "./../assets/img/maersk.png";
+import matchSorter from "match-sorter";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -89,9 +91,11 @@ class RateFinalizing extends Component {
       var CommodityID = this.props.location.state.CommodityID;
       var  destAddress = this.props.location.state.destAddress;
       var pickUpAddress = this.props.location.state.pickUpAddress;
+      var multiCBM = this.props.location.state.multiCBM;
 
       var CargoDetailsArr = [];
-
+      if(containerLoadType == "FCL")
+      {
       if(users != null)
       {
         if(users.length > 0)
@@ -135,6 +139,14 @@ class RateFinalizing extends Component {
           }
         }
       }
+    }
+    else if(containerLoadType == "LCL")
+    {
+      for(var i =0; i< multiCBM.length; i++)
+      {
+        CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+      }
+    }
 
       this.setState({
         rateDetails:rateDetails,
@@ -158,7 +170,8 @@ class RateFinalizing extends Component {
         CargoDetailsArr:CargoDetailsArr,
         CommodityID:CommodityID,
         destAddress:destAddress,
-        pickUpAddress:pickUpAddress
+        pickUpAddress:pickUpAddress,
+        multiCBM:multiCBM
       });
       
 
@@ -391,6 +404,8 @@ class RateFinalizing extends Component {
   SendRequest()
   {
     var txtRequestDiscount , txtRequestFreeTime, txtRequestComments = "";
+    txtRequestDiscount = 0;
+    var containerLoadType = this.state.containerLoadType;
     if(document.getElementById("txtRequestDiscount") != undefined)
     {
       txtRequestDiscount = document.getElementById("txtRequestDiscount").value;
@@ -429,14 +444,30 @@ class RateFinalizing extends Component {
 
     for(var i =0; i < rateDetailsarr.length; i++)
     {
+      if(this.state.containerLoadType == "FCL")
+      {
       FCLSQBaseFreight.push({RateID:rateDetailsarr[i].rateID,RateType:rateDetailsarr[i].TypeOfRate });
+      }
+      if(this.state.containerLoadType == "LCL")
+      { 
+        if(rateDetailsarr[i].RateLineID == undefined)
+        {
+          FCLSQBaseFreight.push({RateID:rateDetailsarr[i].RateLineId,RateType:rateDetailsarr[i].TypeOfRate });
+        }
+        else
+        {
+          FCLSQBaseFreight.push({RateID:rateDetailsarr[i].RateLineID,RateType:rateDetailsarr[i].TypeOfRate });
+        }
+      }
     }  
 
     var FCLSQCharges = [];
-
+debugger;
     for(var i =0; i < rateDetailsarr.length; i++)
     {
       for(var j = 0; j < rateSubDetailsarr.length; j++){
+        if(containerLoadType == "FCL")
+        {
         if(rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].rateID){
           FCLSQCharges.push({
             ChargeID: rateSubDetailsarr[j].ChargeID ,
@@ -450,9 +481,52 @@ class RateFinalizing extends Component {
             ChargeType: rateSubDetailsarr[j].ChargeType ,
             TotalAmount:rateSubDetailsarr[j].TotalAmount 
             });
+          }
+        }
+        if(containerLoadType == "LCL")
+        {
+          if(rateDetailsarr[i].RateLineID == undefined)
+          {
+            if(rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId){
+              FCLSQCharges.push({
+                ChargeID: rateSubDetailsarr[j].ChargeID ,
+                Rate :rateSubDetailsarr[j].Rate ,
+                Currency :rateSubDetailsarr[j].Currency ,
+                RateLineID:rateSubDetailsarr[j].RateLineID ,
+                ChargeCode :rateSubDetailsarr[j].ChargeCode ,
+                Tax:rateSubDetailsarr[j].Tax ,
+                ChargeItem :rateSubDetailsarr[j].ChargeItem ,
+                Exrate:rateSubDetailsarr[j].Exrate ,
+                ChargeType: rateSubDetailsarr[j].ChargeType ,
+                TotalAmount:rateSubDetailsarr[j].TotalAmount 
+                });
+              }
+            
+          }
+          else
+          {
+            if(rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID){
+              FCLSQCharges.push({
+                ChargeID: rateSubDetailsarr[j].ChargeID ,
+                Rate :rateSubDetailsarr[j].Rate ,
+                Currency :rateSubDetailsarr[j].Currency ,
+                RateLineID:rateSubDetailsarr[j].RateLineID ,
+                ChargeCode :rateSubDetailsarr[j].ChargeCode ,
+                Tax:rateSubDetailsarr[j].Tax ,
+                ChargeItem :rateSubDetailsarr[j].ChargeItem ,
+                Exrate:rateSubDetailsarr[j].Exrate ,
+                ChargeType: rateSubDetailsarr[j].ChargeType ,
+                TotalAmount:rateSubDetailsarr[j].TotalAmount 
+                });
+              }
+            }
+           
+          }
+          
         }
       }
-    }
+    
+    
 
     var chksurcharges = document.getElementsByName("surcharges");    
     for (var i = 0; i < chksurcharges.length; i++) {
@@ -477,6 +551,8 @@ var spacEqmtType = this.state.spacEqmtType;
 var referType = this.state.referType;
 var flattack_openTop = this.state.flattack_openTop;
 
+if(containerLoadType == "FCL")
+      {
   if(usesr != null)
       {
         if(usesr.length > 0)
@@ -520,6 +596,16 @@ var flattack_openTop = this.state.flattack_openTop;
           }
         }
       }
+    }
+    else if(containerLoadType == "LCL")
+    {
+      var multiCBM = this.state.multiCBM;
+      for(var i =0; i< multiCBM.length; i++)
+      {
+        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+        RateQueryDim.push({Quantity:multiCBM[i].Quantity ,Lengths:multiCBM[i].Lengths ,Width:multiCBM[i].Width ,Height:multiCBM[i].Height ,GrossWt:multiCBM[i].GrossWt, VolumeWeight:multiCBM[i].VolumeWeight, Volume:multiCBM[i].Volume, PackageType:multiCBM[i].PackageType})
+      }
+    }
 
       var PickUpAddress = "";
       var DestinationAddress = "";
@@ -576,24 +662,30 @@ debugger;
     Comments: txtRequestComments,
     FreeTime: txtRequestFreeTime,
     RateQueryDim:RateQueryDim,
-      MailBody:"Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here"
+      MailBody:"Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+      Commodity: this.state.CommodityID
   }
   
+  var url = "";
+
   if(this.state.containerLoadType == "FCL")
   {
     senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
     senrequestpara.FCLSQCharges = FCLSQCharges;
+    url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
   }
   else if(this.state.containerLoadType == "LCL")
   {
     senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
     senrequestpara.LCLSQCharges = FCLSQCharges;
+    url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
   }
   //return false;
 
+
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/FCLSalesQuoteInsertion`,
+      url: url,
       data: senrequestpara,
     headers: authHeader()
     }).then(function(response){
@@ -835,7 +927,7 @@ debugger;
     //   }
     // ];
 
-
+    var i = 0;
     const checkLocalCharges = this.state.arrLocalsCharges.map((item,index) => {
       let amtSign;
       if(item.Currency == 'INR')
@@ -903,7 +995,7 @@ if(Commoditypresent)
 
 }
 
-
+var containerLoadType = this.props.location.state.containerLoadType
     const { CargoDetailsArr } = this.state;
     return (
       <React.Fragment>
@@ -1020,7 +1112,7 @@ if(Commoditypresent)
                     <div className="title-border py-3">
                       <h3>Quotation Price</h3>
                     </div>
-                    <div className="react-rate-table">
+                    {/* <div className="react-rate-table">
                       <ReactTable
                         columns={[
                           {
@@ -1178,7 +1270,12 @@ if(Commoditypresent)
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={this.state.rateSubDetails.filter(item => item.RateLineID == row.original.rateID)}
+                                data={this.props.location.state.containerLoadType == "LCL" ? this.state.rateSubDetails.filter(
+                                  item => item.RateLineID ==  row.original.RateLineID
+                                  ) :  this.state.rateSubDetails.filter(
+                                    item => item.RateLineID ==  row.original.rateID
+                                    )                                
+                                }
                                 columns={[
                                   {
                                     columns: [
@@ -1248,7 +1345,317 @@ if(Commoditypresent)
                           );
                         }}
                       />
-                    </div>
+                    </div> */}
+                    <div className="react-rate-table react-rate-tab">
+                    <ReactTable
+                      columns={[
+                        {
+                          columns: [
+                            {
+                              Cell: ({ original, row }) => {
+                                i++;
+                                return (
+                                  <React.Fragment>
+                                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                      <div className="remember-forgot rat-img d-block m-0">
+                                        {/* <input
+                                          id={"maersk-logo" + i}
+                                          type="checkbox"
+                                          name={"rate-tab-check"}
+                                          // checked={
+                                          //   this.state.RateDetails[i - 1].checkbx
+                                          //     ? this.state.RateDetails[i - 1]
+                                          //         .checkbx
+                                          //     : false
+                                          // }
+                                          // checked={
+                                          //   this.state.cSelectedRow[
+                                          //     original.rateID
+                                          //   ] === true
+                                          // }
+                                          // onChange={e =>
+                                          //   this.toggleRow(original.rateID, row)
+                                          // }
+                                        /> */}
+                                        <label
+                                          htmlFor={"maersk-logo" + i}
+                                        ></label>
+                                      </div>
+                                    </div>
+                                    <div className="rate-tab-img">
+                                      <img src={maersk} alt="maersk icon" />
+                                    </div>
+                                  </React.Fragment>
+                                );
+                              },
+                              accessor: "lineName"
+                              // minWidth: 200
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POL</p>
+                                    <p
+                                      title={row.original.POLName}
+                                      className="details-para max2"
+                                    >
+                                      {row.original.POLName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "POLName",
+                              //  minWidth: 175
+                              filterable: true
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POD</p>
+                                    <p
+                                      title={row.original.PODName}
+                                      className="details-para max2"
+                                    >
+                                      {row.original.PODName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "PODName",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">S. Port</p>
+                                    <p className="details-para">
+                                      {row.original.TransshipmentPort}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "TransshipmentPort",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">F. Time</p>
+                                    <p className="details-para">
+                                      {row.original.freeTime}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "freeTime",
+                              filterable: true,
+                              minWidth: 80
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Container</p>
+                                    <p className="details-para">
+                                      {row.original.ContainerType}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "ContainerType",
+                              filterable: true
+                              //minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Expiry</p>
+                                    <p className="details-para">
+                                      {new Date(
+                                        row.original.expiryDate ||
+                                          row.original.ExpiryDate
+                                      ).toLocaleDateString("en-US")}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "expiryDate" || "ExpiryDate",
+                              filterable: true,
+                              minWidth: 90
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">TT</p>
+                                    <p className="details-para">
+                                      {row.original.TransitTime}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "TransitTime",
+                              minWidth: 60
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Price</p>
+                                    <p className="details-para">
+                                      {row.original.TotalAmount !== "" &&
+                                      row.original.TotalAmount !== null
+                                        ? row.original.TotalAmount +
+                                          " " +
+                                          row.original.BaseCurrency
+                                        : ""}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "baseFreightFee",
+                              filterable: true,
+                              minWidth: 80
+                            }
+                          ]
+                        },
+                        {
+                          show: false,
+                          Header: "All",
+                          id: "all",
+                          width: 0,
+                          resizable: false,
+                          sortable: false,
+                          filterAll: true,
+                          Filter: () => {},
+                          getProps: () => {
+                            return {
+                              // style: { padding: "0px"}
+                            };
+                          },
+                          filterMethod: (filter, rows) => {
+                            debugger;
+
+                            const result = matchSorter(rows, filter.value, {
+                              keys: ["commodities", "TransitTime"],
+                              threshold: matchSorter.rankings.WORD_STARTS_WITH
+                            });
+                            console.log(
+                              result,
+                              "---------------result---------------"
+                            );
+                            return result;
+                          }
+                        }
+                      ]}
+                      // onFilteredChange={this.onFilteredChange.bind(this)}
+                      // filtered={this.state.filtered}
+                      // defaultFilterMethod={(filter, row) =>
+                      //   String(row[filter.rateID]) === filter.value
+                      // }
+                      filterable
+                      // expanded={this.state.expanded}
+                      // onExpandedChange={(expand, event) => {
+                      //   this.setState({
+                      //     expanded: {
+                      //       [event]: {}
+                      //     }
+                      //   });
+                      // }}
+                      data={this.state.rateDetails}
+                      defaultPageSize={10}
+                      className="-striped -highlight"
+                      minRows={1}
+                      SubComponent={row => {
+                        return (
+                          <div style={{ padding: "20px 0" }}>
+                            <ReactTable
+                              minRows={1}
+                              data={ row.original.RateLineId == undefined ? this.state.rateSubDetails.filter(
+                                      d =>
+                                        d.RateLineID ===  row.original.RateLineID
+                                    ) :
+                                    this.state.rateSubDetails.filter(
+                                      d =>
+                                        d.RateLineID ===  row.original.RateLineId
+                                    )                             
+                              }
+                              columns={[
+                                {
+                                  columns: [
+                                    {
+                                      Header: "C. Type",
+                                      accessor: "ChargeType"
+                                    },
+                                    {
+                                      Header: "C. Name",
+                                      accessor: "ChargeCode"
+                                    },
+                                    {
+                                      Header: "Unit Price",
+                                      accessor: "Rate",
+                                      Cell: props => (
+                                        <React.Fragment>
+                                          {props.original.Rate}
+                                          &nbsp;
+                                          {props.original.Currency}
+                                        </React.Fragment>
+                                      )
+                                    },
+                                    {
+                                      Header: "Units",
+                                      accessor: "ChargeItem"
+                                    },
+                                    {
+                                      Header: "Tax",
+                                      accessor: "Tax"
+                                    },
+
+                                    {
+                                      Header: "Exrate",
+                                      accessor: "Exrate"
+                                    },
+
+                                    {
+                                      Cell: row => {
+                                        return (
+                                          <>
+                                            {row.original.TotalAmount !== "" &&
+                                            row.original.TotalAmount !== null
+                                              ? row.original.TotalAmount +
+                                                " " +
+                                                row.original.BaseCurrency
+                                              : ""}
+                                          </>
+                                        );
+                                      },
+                                      Header: "Final Payment",
+                                      accessor: "TotalAmount"
+                                    }
+                                  ]
+                                }
+                              ]}
+                              showPagination={true}
+                              defaultPageSize={5}
+                            />
+                          </div>
+                        );
+                      }}
+                    />
+                    {/* <ReactTable
+                    data={Data}
+                    columns={columns}
+                    defaultSorted={[{ id: "firstName", desc: false }]}
+                  /> */}
+                  </div>
+
                     <UncontrolledCollapse toggler="#toggler">
                       <div className="rate-final-contr p-0">
                         <div className="d-flex justify-content-between align-items-center title-border py-3">

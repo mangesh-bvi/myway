@@ -535,8 +535,7 @@ class RateTable extends Component {
       if (newSelected[RateLineID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
-            this.state.selectedDataRow[i].RateLineID ===
-            rowData._original.RateLineID
+            this.state.containerLoadType =="LCL" ?  this.state.selectedDataRow[i].RateLineID  === rowData._original.RateLineID == undefined ? rowData._original.RateLineId : rowData._original.RateLineID : this.state.selectedDataRow[i].rateID === rowData._original.rateID
           ) {
             selectedRow.splice(i, 1);
 
@@ -2512,7 +2511,7 @@ class RateTable extends Component {
   }
   render() {
     var i = 0;
-
+    var containerLoadType = this.props.location.state.containerLoadType
     return (
       <div>
         <Headers />
@@ -2796,14 +2795,11 @@ class RateTable extends Component {
                                           // }
                                           checked={
                                             this.state.cSelectedRow[
-                                              original.RateLineID
+                                               original.RateLineID == undefined ? original.RateLineId : original.RateLineID 
                                             ] === true
                                           }
                                           onChange={e =>
-                                            this.toggleRow(
-                                              original.RateLineID,
-                                              row
-                                            )
+                                            this.toggleRow( original.RateLineID == undefined ? original.RateLineId : original.RateLineID , row)
                                           }
                                         />
                                         <label
@@ -3005,16 +3001,15 @@ class RateTable extends Component {
                             <ReactTable
                               minRows={1}
                               data={
-                                this.props.location.state.containerLoadType ==
-                                "LCL"
-                                  ? this.state.RateSubDetails.filter(
+                                 row.original.RateLineId == undefined ? this.state.RateSubDetails.filter(
                                       d =>
-                                        d.RateLineID === row.original.RateLineID
-                                    )
-                                  : this.state.RateSubDetails.filter(
+                                        d.RateLineID ===  row.original.RateLineID
+                                    ) :
+                                    this.state.RateSubDetails.filter(
                                       d =>
-                                        d.RateLineID === row.original.RateLineID
+                                        d.RateLineID ===  row.original.RateLineId
                                     )
+                                  
                               }
                               columns={[
                                 {
