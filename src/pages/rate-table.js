@@ -535,7 +535,7 @@ class RateTable extends Component {
       if (newSelected[RateLineID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
-            this.state.selectedDataRow[i].RateLineID === rowData._original.RateLineID
+            this.state.containerLoadType =="LCL" ?  this.state.selectedDataRow[i].RateLineID  === rowData._original.RateLineID == undefined ? rowData._original.RateLineId : rowData._original.RateLineID : this.state.selectedDataRow[i].rateID === rowData._original.rateID
           ) {
             selectedRow.splice(i, 1);
 
@@ -549,7 +549,8 @@ class RateTable extends Component {
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
-            this.state.selectedDataRow[i].RateLineID === rowData._original.RateLineID
+            this.state.selectedDataRow[i].RateLineID ===
+            rowData._original.RateLineID
           ) {
             selectedRow = this.state.selectedDataRow;
             selectedRow.splice(i, 1);
@@ -1841,7 +1842,31 @@ class RateTable extends Component {
   HandleRangeSlider(value) {
     this.setState({ value });
     debugger;
-    this.filterAll(value, "R");
+    // this.filterAll(value, "R");
+    var filteredData = [];
+    var actualData = [
+      { test1: "20-22" },
+      { test1: "22-28" },
+      { test1: "25-28" }
+    ];
+
+    // var checkingValue = "22";
+
+    // for (var j = 0; j < actualData.length; j++) {
+    //   var colData = actualData[j].test1; //0-5
+    //   var tempData = colData.split("-");
+
+    //   for (var k = 0; k < tempData.length; k++) {
+    //     if (parseInt(tempData[k]) >= parseInt(checkingValue)) {
+    //       ///Casting
+
+    //       filteredData.push(actualData[j].test1);
+    //       break;
+    //     }else if(parseInt(tempData[k+1]) >= parseInt(checkingValue)){
+
+    //     }
+    //   }
+    // }
   }
 
   addClickTruckType() {
@@ -2486,7 +2511,7 @@ class RateTable extends Component {
   }
   render() {
     var i = 0;
-
+    var containerLoadType = this.props.location.state.containerLoadType
     return (
       <div>
         <Headers />
@@ -2505,7 +2530,11 @@ class RateTable extends Component {
                   <option>Select</option>
                   <option value="All">All</option>
                   {this.state.commodityData.map((item, i) => (
-                    <option key={i} value={item.id}>
+                    <option
+                      key={i}
+                      value={item.id}
+                      selected={item.Commodity === "FAK"}
+                    >
                       {item.Commodity}
                     </option>
                   ))}
@@ -2517,7 +2546,7 @@ class RateTable extends Component {
                 <InputRange
                   formatLabel={value => `${value} DAYS`}
                   maxValue={75}
-                  minValue={32}
+                  minValue={0}
                   value={this.state.value}
                   onChange={this.HandleRangeSlider.bind(this)}
                 />
@@ -2766,11 +2795,11 @@ class RateTable extends Component {
                                           // }
                                           checked={
                                             this.state.cSelectedRow[
-                                              original.RateLineID
+                                               original.RateLineID == undefined ? original.RateLineId : original.RateLineID 
                                             ] === true
                                           }
                                           onChange={e =>
-                                            this.toggleRow(original.RateLineID, row)
+                                            this.toggleRow( original.RateLineID == undefined ? original.RateLineId : original.RateLineID , row)
                                           }
                                         />
                                         <label
@@ -2943,7 +2972,7 @@ class RateTable extends Component {
                               keys: ["commodities", "TransitTime"],
                               threshold: matchSorter.rankings.WORD_STARTS_WITH
                             });
-                             
+
                             return result;
                           }
                         }
@@ -2972,15 +3001,15 @@ class RateTable extends Component {
                             <ReactTable
                               minRows={1}
                               data={
-                                this.props.location.state.containerLoadType ==
-                                "LCL"
-                                  ? this.state.RateSubDetails.filter(
+                                 row.original.RateLineId == undefined ? this.state.RateSubDetails.filter(
                                       d =>
-                                        d.RateLineID === row.original.RateLineID
+                                        d.RateLineID ===  row.original.RateLineID
+                                    ) :
+                                    this.state.RateSubDetails.filter(
+                                      d =>
+                                        d.RateLineID ===  row.original.RateLineId
                                     )
-                                  : this.state.RateSubDetails.filter(
-                                      d => d.RateLineID === row.original.RateLineID
-                                    )
+                                  
                               }
                               columns={[
                                 {

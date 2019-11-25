@@ -856,7 +856,7 @@ class ShippingDetails extends Component {
                     },
                     filterMethod: (filter, rows) => {
                       const result = matchSorter(rows, filter.value, {
-                        keys: ["BL/HBL", "Consignee", "ConsigneeID"],
+                        keys: ["BL/HBL", "Consignee", "ConsigneeID","Event","ETA","Status","POD","POL","Shipper","ModeOfTransport"],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH
                       });
 
