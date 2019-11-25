@@ -260,9 +260,9 @@ class RateFinalizingStillBooking extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    this.setState({
-      selectedFileName: event.target.files[0].name
-    });
+    debugger;
+    var fileName = event.target.files[0].name;
+    this.addClickTruckType(fileName);
   };
 
   ////change value of SelectType methiod
@@ -1104,6 +1104,20 @@ class RateFinalizingStillBooking extends Component {
   //// end methos of download file
 
   ////Create File element method
+  addClickTruckType(fileName) {
+    this.setState(prevState => ({
+      FileData: [
+        ...prevState.FileData,
+        {
+          BookingID: this.state.FileData[0].BookingID,
+          FilePath: "",
+          FileName: fileName,
+          DocumentID: "",
+          DocumentType: ""
+        }
+      ]
+    }));
+  }
 
   CreateFileElement() {
     debugger;

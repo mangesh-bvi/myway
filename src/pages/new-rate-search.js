@@ -205,7 +205,7 @@ class NewRateSearch extends Component {
       podfullAddData: {},
       commodityData: [],
       packageTypeData: [],
-      isSearch: false,
+      isSearch: true,
       currencyData: [],
       currencyCode: "USD",
       TruckType: [],
@@ -1858,7 +1858,7 @@ class NewRateSearch extends Component {
         podfullAddData: {},
         commodityData: [],
         // packageTypeData: [],
-        isSearch: false,
+       
         currencyData: [],
 
         testSelection: true
