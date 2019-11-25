@@ -23,6 +23,7 @@ import Eye from "./../assets/img/eye.png";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import { encryption } from "../helpers/encryption";
 
 class SpotRateTable extends Component {
   constructor(props) {
@@ -52,7 +53,7 @@ class SpotRateTable extends Component {
   HandleListSpotRateGrid() {
     debugger;
     let self = this;
-    var userid = window.localStorage.getItem("userid");
+    var userid = encryption(window.localStorage.getItem("userid"),"desc");
     var date = new Date();
     var fromDate = "01/01/" + date.getFullYear();
     var currentDate =
@@ -62,7 +63,7 @@ class SpotRateTable extends Component {
       method: "post",
       url: `${appSettings.APIURL}/SpotRateGridAPI`,
       data: {
-        UserId: 431,
+        UserId: userid,
         Fromdate: "01/01/2010", //fromDate, //"01/01/2019",
         ToDate: currentDate //"10/25/2019"
       },
@@ -115,7 +116,7 @@ class SpotRateTable extends Component {
             <div className="title-sect">
               <h2>Spot Rate</h2>
             </div>
-            <div className="ag-fresh">
+            <div className="ag-fresh">   
               <ReactTable
                 data={spotRateGrid}
                 noDataText="No Data Found"
@@ -134,16 +135,16 @@ class SpotRateTable extends Component {
 
                       {
                         Header: "Shipment Type",
-                        accessor: "Mode"
+                        accessor: "ShipmentType"
                       },
                       {
                         Header: "POL",
-                        accessor: "OriginPort_Name"
+                        accessor: "PickUpAddress"
                       },
 
                       {
                         Header: "POD",
-                        accessor: "DestinationPort_Name"
+                        accessor: "DestinationAddress"
                       },
                       {
                         Header: "Expiry Date",

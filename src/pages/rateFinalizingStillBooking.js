@@ -11,6 +11,8 @@ import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
 import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
+import Delete from "./../assets/img/red-delete-icon.png";
+import Download from "./../assets/img/csv.png";
 
 class RateFinalizingStillBooking extends Component {
   constructor(props) {
@@ -40,19 +42,40 @@ class RateFinalizingStillBooking extends Component {
       fields: {},
       Consignee: [],
       Shipper: [],
-      multiCBM: [],
+      FileData: [],
       packageTypeData: [],
-      userType: ""
+      userType: "",
+      NonCustomerData: [],
+      QuotationData: [],
+      QuotationSubData: [],
+      typeofMove: "",
+      cargoType: "",
+
+      //dynamic element
+      TruckTypeData: [
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: "",
+          TruckDesc: ""
+        }
+      ],
+      spacEqmtType: [],
+      multiCBM: [],
+      referType: [],
+      flattack_openTop: [],
+      eqmtType: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
-    this.toggleBook = this.toggleBook.bind(this);
+
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
+    this.BookigGridDetailsList = this.BookigGridDetailsList.bind(this);
+    this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
+    this.HandleTruckTypeData = this.HandleTruckTypeData.bind(this);
   }
   componentDidMount() {
-    debugger;
-
     if (
       typeof this.props.location.state.BookingNo != "undefined" &&
       typeof this.props.location.state.BookingNo != ""
@@ -64,9 +87,9 @@ class RateFinalizingStillBooking extends Component {
       var BookingNo = this.props.location.state.BookingNo;
       this.setState({ BookingNo, userType });
       setTimeout(() => {
-        this.HandleShipmentDetails();
         this.HandleCommodityDropdown();
         this.HandlePackgeTypeData();
+        this.BookigGridDetailsList();
       }, 100);
     }
   }
@@ -150,6 +173,23 @@ class RateFinalizingStillBooking extends Component {
     });
   }
 
+  ////this method for NonCustomerList bind
+  NonCustomerList = () => {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/NonCustomerList`,
+      data: {
+        MyWayUserID: 2679
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ NonCustomerData: data });
+    });
+  };
+
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
     let self = this;
@@ -166,12 +206,45 @@ class RateFinalizingStillBooking extends Component {
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
   }
+  ////Handel Update Booking Details
+  HandleBookingUpdate() {
+    var paramData = {
+      BookingNo: this.state.Booking[0].BookingNo,
+      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+      ShipperID: 2,
+      Shipper_Displayas: this.state.Booking[0].ShipperID,
+      Shipper_AddressID: this.state.Booking[0].Shipper_AddressID,
+      ShipperName: this.state.Booking[0].Shipper_Name,
+      ConsigneeID: this.state.Booking[0].Consignee,
+      ConsigneeName: this.state.Booking[0].Consignee_Name,
+      Consignee_AddressID: this.state.Booking[0].Consignee_AddressID,
+      Consignee_Displayas: this.state.Booking[0].Consignee_Displayas,
+      BuyerID: this.state.Booking[0].BuyerID,
+      Buyer_AddressID: this.state.Booking[0].Buyer_AddressID,
+      Buyer_Displayas: this.state.Booking[0].Buyer_Displayas,
+      BuyerName: this.state.Booking[0].Buyer_Name,
+      Mode: this.state.Booking[0].CargoType,
+      Commodity: this.state.Booking[0].Commodity,
+      saleQuoteID: this.state.Booking[0].saleQuoteID,
+      saleQuoteNo: this.state.Booking[0].saleQuoteNo,
+      saleQuoteLineID: this.state.Booking[0].saleQuoteLineID,
+      // DefaultEntityTypeID:this.state.Booking[0].,
+      BookingDocs: this.state.Booking3,
+      RateQueryDim: this.multiCBM,
+      NotifyID: this.state.Booking[0].NotifyID,
+      Notify_AddressID: this.state.Booking[0].Notify_AddressID,
+      Notify_Displayas: this.state.Booking[0].Notify_Displayas,
+      NotifyName: this.state.Booking[0].NotifyName
+    };
 
-  toggleBook(e) {
-    e.stopPropagation();
-    this.setState(prevState => ({
-      modalBook: !prevState.modalBook
-    }));
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookingUpdation`,
+      data: paramData,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
   }
 
   toggleProfit() {
@@ -192,8 +265,94 @@ class RateFinalizingStillBooking extends Component {
     });
   };
 
-  CreateMultiCBM() {
+  ////change value of SelectType methiod
+  HandleRadioBtn = e => {
     debugger;
+    var selectedType = e.target.value;
+    this.setState({ selectedType });
+  };
+
+  ////this methos for bookig details BookigGridDetailsList
+  BookigGridDetailsList() {
+    let self = this;
+    var bookingNo = self.state.BookingNo;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (bookingNo !== "" && bookingNo !== null) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookigGridDetailsList`,
+        data: {
+          UserID: 874654, //userId, //874654, ,
+          BookingID: 830651 // 830651 // bookingNo
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        var QuotationData = response.data.Table4;
+        var QuotationSubData = response.data.Table5;
+        var Booking = response.data.Table;
+        var CargoDetails = response.data.Table2;
+        var FileData = response.data.Table3;
+        var eqmtType = response.data.Table1;
+
+        if (typeof QuotationData !== "undefined") {
+          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
+            self.setState({ QuotationData, QuotationSubData, Booking });
+          }
+        }
+        if (typeof eqmtType !== "undefined") {
+          if (eqmtType.length > 0) {
+            self.setState({ eqmtType });
+          }
+        }
+        if (typeof Booking !== "undefined") {
+          if (Booking.length > 0) {
+            if (Booking[0].typeofMove === 1) {
+              self.setState({ typeofMove: "Port 2 Port" });
+            }
+            if (Booking[0].typeofMove === 2) {
+              self.setState({ typeofMove: "Door 2 Port" });
+            }
+            if (Booking[0].typeofMove === 3) {
+              self.setState({ typeofMove: " Port to Door" });
+            }
+            if (Booking[0].typeofMove === 4) {
+              self.setState({ typeofMove: " Door 2 Door" });
+            }
+
+            self.setState({
+              multiCBM: CargoDetails,
+              cargoType: Booking[0].CargoType,
+              selectedCommodity: Booking[0].Commodity,
+              fields: {
+                Consignee: Booking[0].Consignee_Name,
+                Shipper: Booking[0].Shipper_Name
+              }
+            });
+          }
+
+          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
+            self.setState({ FileData });
+          }
+        }
+      });
+    }
+  }
+  //// this method for Handle Change values of Consignee and shipper
+
+  HandleChangeCon_Ship = e => {
+    var type = e.target.name;
+    var value = e.target.name;
+    if (type === "Consignee") {
+      this.setState({ consigneeVal: value });
+    } else {
+      this.setState({ shiperVal: value });
+    }
+  };
+
+  //// start dynamic element for LCL-AIR-LTL
+
+  CreateMultiCBM() {
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -220,8 +379,8 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder="QTY"
               className="w-100"
-              name="PackageCount"
-              value={el.PackageCount || ""}
+              name="QTY"
+              value={"" + el.QTY || ""}
               //onKeyUp={this.cbmChange}
             />
           </div>
@@ -233,8 +392,8 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={"L (cm)"}
               className="w-100"
-              name="Lengths"
-              value={el.Lengths || ""}
+              name="Length"
+              value={"" + el.Length || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -247,7 +406,7 @@ class RateFinalizingStillBooking extends Component {
               placeholder={"W (cm)"}
               className="w-100"
               name="Width"
-              value={el.Width || ""}
+              value={"" + el.Width || ""}
               //onBlur={this.cbmChange}
             />
           </div>
@@ -260,7 +419,7 @@ class RateFinalizingStillBooking extends Component {
               placeholder="H (cm)"
               className="w-100"
               name="Height"
-              value={el.Height || ""}
+              value={"" + el.Height || ""}
               //onBlur={this.cbmChange}
             />
           </div>
@@ -271,9 +430,9 @@ class RateFinalizingStillBooking extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Weight === 0 ? "G W" : "G W"}
-              name="Weight"
-              value={el.Weight || ""}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="GrossWeight"
+              value={"" + el.GrossWeight || ""}
               className="w-100"
             />
           </div>
@@ -298,8 +457,8 @@ class RateFinalizingStillBooking extends Component {
               }
               value={
                 this.state.containerLoadType === "LCL"
-                  ? el.Volume
-                  : el.VolumeWeight || ""
+                  ? "" + el.Volume
+                  : "" + el.VolumeWeight || ""
               }
               className="w-100 weight-icon"
             />
@@ -315,8 +474,18 @@ class RateFinalizingStillBooking extends Component {
               ></i>
             </div>
           </div>
-        ) : null}
-        {this.state.multiCBM.length > 1 ? (
+        ) : (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this, i)}
+              ></i>
+            </div>
+          </div>
+        )}
+        {/* {this.state.multiCBM.length > 1 ? (
           <div className="">
             <div className="spe-equ">
               <i
@@ -326,7 +495,7 @@ class RateFinalizingStillBooking extends Component {
               ></i>
             </div>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     ));
   }
@@ -345,29 +514,38 @@ class RateFinalizingStillBooking extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: parseFloat(value)
+        [name]: value !== "" ? parseFloat(value) : ""
       };
     }
 
     this.setState({ multiCBM });
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        ((multiCBM[i].Quantity || 0) *
+          ((multiCBM[i].Lengths || 0) *
+            (multiCBM[i].Width || 0) *
+            (multiCBM[i].Height || 0))) /
         6000;
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["VolumeWeight"]: parseFloat(decVolumeWeight)
-      };
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
     } else {
       var decVolume =
-        multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
+        (multiCBM[i].Quantity || 0) *
+        (((multiCBM[i].Lengths || 0) / 100) *
+          ((multiCBM[i].Width || 0) / 100) *
+          ((multiCBM[i].Height || 0) / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: 2
+        ["Volume"]: parseFloat(decVolume)
       };
     }
 
@@ -375,124 +553,576 @@ class RateFinalizingStillBooking extends Component {
   }
   addMultiCBM() {
     this.setState(prevState => ({
-      multiCBM: [...prevState.multiCBM, ""]
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
     }));
   }
-  removeMultiCBM(i) {
+  removeMultiCBM(type, i) {
+    debugger;
     let multiCBM = [...this.state.multiCBM];
-    multiCBM.splice(i, 1);
+    multiCBM.splice(type, 1);
     this.setState({ multiCBM });
   }
 
-  ////change value of SelectType methiod
-  HandleRadioBtn = e => {
-    debugger;
-    var selectedType = e.target.value;
-    this.setState({ selectedType });
-  };
-  ////this method for get Booking details by ID
-  HandleShipmentDetails() {
-    let self = this;
-    var BookingNo = this.state.BookingNo;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookingShipmentSummaryDetails`,
-      data: {
-        BookingNo: BookingNo
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var Booking = response.data.Table;
-      var Booking1 = response.data.Table1;
-      var Booking2 = response.data.Table2;
-      var Booking3 = response.data.Table3;
-      var Booking4 = response.data.Table4;
-      var Booking5 = response.data.Table5;
-      self.setState({
-        Booking,
-        Booking1,
-        Booking2,
-        Booking3,
-        Booking4,
-        Booking5,
-        selectedCommodity: Booking2[0].Commodity,
-        selectedFilePath: Booking4[0].FTPLink,
-        selectedFileName: Booking4[0].DocumentName,
-        multiCBM: Booking2,
+  ////End dynamic element
 
-        fields: {
-          Consignee: Booking3[0].Consignee,
-          Shipper: Booking3[0].Shipper
+  //// start  spacEqmtType dyamanic element
+
+  addSpacEqmtType(optionVal) {
+    this.setState(prevState => ({
+      spacEqmtType: [
+        ...prevState.spacEqmtType,
+        {
+          TypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0
         }
-      });
+      ]
+    }));
+  }
+
+  createUIspacEqmtType() {
+    return this.state.spacEqmtType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
+          <label name="TypeName">
+            {el.TypeName} <span className="into-quant">X</span>
+          </label>
+          {/* <div className="spe-equ"> */}
+          <input
+            type="number"
+            name="Quantity"
+            min={1}
+            placeholder="QTY"
+            onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+            value={el.Quantity || ""}
+          />
+          {/* </div> */}
+          <i
+            className="fa fa-times"
+            onClick={this.removeClickSpacEqmtType.bind(this, i)}
+          ></i>
+        </div>
+      );
     });
   }
-  //// this method for Handle Change values of Consignee and shipper
 
-  HandleChangeCon_Ship = e => {
-    var type = e.target.name;
-    var value = e.target.name;
-    if (type === "Consignee") {
-      this.setState({ consigneeVal: value });
+  HandleChangeSpacEqmtType(i, e) {
+    const { name, value } = e.target;
+
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType[i] = {
+      ...spacEqmtType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ spacEqmtType });
+  }
+
+  removeClickSpacEqmtType(i) {
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType.splice(i, 1);
+    this.setState({ spacEqmtType });
+  }
+
+  //// end spacEqmtType dyamanic element
+
+  //// start refer type  dynamic element
+  addClickSpecial(optionVal) {
+    this.setState(prevState => ({
+      referType: [
+        ...prevState.referType,
+        {
+          Type: optionVal[0].ContainerName,
+          ProfileCodeID: optionVal[0].ProfileCodeID,
+          ContainerCode: optionVal[0].SpecialContainerCode,
+          ContainerQuantity: 0,
+          Temperature: 0,
+          TemperatureType: ""
+        }
+      ]
+    }));
+  }
+
+  createUISpecial() {
+    return this.state.referType.map((el, i) => {
+      return (
+        <div key={i} className="row cbm-space">
+          <div className="col-md">
+            <div className="spe-equ">
+              <label className="mt-2" name="ContainerCode">
+                {el.ContainerCode}
+              </label>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="ContainerQuantity"
+                placeholder="Quantity"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="Temperature"
+                placeholder="Temp"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md mt-2">
+            <div className="rate-radio-cntr">
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="exist-cust"
+                  value="C"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="exist-cust"
+                >
+                  Celcius
+                </label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="new-cust"
+                  value="F"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="new-cust"
+                >
+                  Farenheit
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              onClick={this.removeClickSpecial.bind(this, i)}
+            ></i>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  UISpecialChange(i, e) {
+    const { name, value } = e.target;
+
+    let referType = [...this.state.referType];
+    referType[i] = {
+      ...referType[i],
+      [name]: name === "TemperatureType" ? value : parseFloat(value)
+    };
+    this.setState({ referType });
+  }
+  removeClickSpecial(i) {
+    let referType = [...this.state.referType];
+    referType.splice(i, 1);
+    this.setState({ referType });
+  }
+
+  //// refer type end to dynamic element
+
+  //// start flattack type and openTop type dynamic elememnt
+
+  MultiCreateCBM() {
+    debugger;
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="Quantity"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="Gross_Weight"
+              value={el.Gross_Weight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+
+        <div className="">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              aria-hidden="true"
+              onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div>
+      </div>
+    ));
+  }
+
+  newMultiCBMHandleChange(i, e) {
+    const { name, value } = e.target;
+    debugger;
+    let flattack_openTop = [...this.state.flattack_openTop];
+    if (name === "PackageType") {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: value
+      };
     } else {
-      this.setState({ shiperVal: value });
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: parseFloat(value)
+      };
     }
-  };
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].width *
+          flattack_openTop[i].height)) /
+      6000;
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+  }
+  addClickMultiCBM(optionsVal) {
+    debugger;
+    this.setState(prevState => ({
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
+        {
+          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          PackageType: "",
+          length: "",
+          width: "",
+          height: "",
+          Quantity: "",
+          Gross_Weight: "",
+          total: ""
+        }
+      ]
+    }));
+  }
+  removeClickMultiCBM(i) {
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
+  }
+
+  ////end for flattack and openTop dynamic create elements
+  ////this for Equipment Type Dynamice Create Element
+  NewcreateUI() {
+    return this.state.eqmtType.map((el, i) => (
+      <>
+        {i === 0 ? (
+          <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+            <input type="hidden" name="BookingID" value={el.BookingID} />
+            <input
+              type="hidden"
+              name="ProfileCodeID"
+              value={el.ProfileCodeID}
+            />
+            <label>
+              {el.ContainerCode} <span className="into-quant">X</span>
+            </label>
+            <div className="spe-equ">
+              <input
+                type="number"
+                min={1}
+                placeholder="QTY"
+                name="ContainerCount"
+                value={el.ContainerCount || ""}
+                onChange={this.newhandleChange.bind(this, i)}
+              />
+            </div>
+            <span onClick={this.newremoveClick.bind(this, i)}>
+              <i className="fa fa-times" aria-hidden="true"></i>
+            </span>
+          </div>
+        ) : null}
+      </>
+    ));
+  }
+
+  newhandleChange(i, e) {
+    const { name, value } = e.target;
+    let eqmtType = [...this.state.eqmtType];
+    eqmtType[i] = {
+      ...eqmtType[i],
+      [name]: name === "ContainerCount" ? parseFloat(value) : 0
+    };
+    this.setState({ eqmtType });
+  }
+
+  newremoveClick(i) {
+    let eqmtType = [...this.state.eqmtType];
+    eqmtType.splice(i, 1);
+    this.setState({ eqmtType });
+  }
+  //// end For Equipment to create element
+
+  //// Create Trcuk Type dropdown dynamic element UI
+
+  addClickTruckType() {
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: "",
+          TruckDesc: ""
+        }
+      ]
+    }));
+  }
+
+  createUITruckType() {
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <div className="spe-equ">
+            <select
+              className="select-text mr-3"
+              name="TruckName"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            >
+              <option>Select</option>
+              {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              name="Quantity"
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            />
+          </div>
+          {i === 0 ? (
+            <div className="col-md">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addClickTruckType.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+          {this.state.TruckTypeData.length > 1 ? (
+            <div className="col-md">
+              <div className="spe-equ mt-2">
+                <i
+                  className="fa fa-minus"
+                  aria-hidden="true"
+                  onClick={this.removeClickTruckType.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      );
+    });
+  }
+
+  UITruckTypeChange(i, e) {
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData[i] = {
+      ...TruckTypeData[i],
+      [name]: name === "Quantity" ? parseInt(value) : value,
+      ["TruckDesc"]:
+        name === "TruckName"
+          ? e.target.options[e.target.selectedIndex].text
+          : TruckTypeData[i].TruckDesc
+    };
+    this.setState({ TruckTypeData });
+  }
+  removeClickTruckType(i) {
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
+
+  //// End Truck Tyep Dynamic element
+
+  //// Handle Truck Type Method
+
+  HandleTruckTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ TruckType: data });
+    });
+  }
+  //// end method
+
+  ////this method for remove document
+  HandleDocumentDelete(evt, row) {
+    debugger;
+    // var HblNo = row.original["HBL#"];
+    // this.setState({ modalDel: true });
+  }
+  ////end method of remove documents
+
+  //// this method for download file
+  HandleDocumentDownloadFile(evt, row) {
+    debugger;
+    //var filePath = row.original["HBL#"];
+  }
+
+  //// end methos of download file
+
+  ////Create File element method
+
+  CreateFileElement() {
+    debugger;
+    return this.state.FileData.map((el, i) => (
+      <div key={i}>
+        <a href={el.FilePath}>
+          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+        </a>
+      </div>
+    ));
+  }
 
   render() {
     const {
       Booking,
-      Booking1,
-      Booking2,
-      Booking3,
-      Booking4,
-      Booking5,
+
       selectedType
     } = this.state;
 
-    // Booking2.length > 0
-    //   ? this.setState({ selectedCommodity: Booking2[0].Commodity })
-    //   : null;
-
-    var data1 = [
-      {
-        POL: "Nhava Sheva (Jawaharlal Nehru)",
-        POD: "Marport",
-        SPort: "Piraeus",
-        FTime: "",
-        Container: "40 Standard Dry",
-        Expiry: "11/24/2019",
-        TT: "24-26",
-        Price: "0 INR"
-      }
-    ];
-    var data2 = [
-      {
-        ctype: "A23435",
-        cname: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        tax: "0",
-        finalPayment: "$45,986.00"
-      },
-      {
-        ctype: "A23435",
-        cname: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        tax: "0",
-        finalPayment: "$45,986.00"
-      },
-      {
-        ctype: "A23435",
-        cname: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        tax: "0",
-        finalPayment: "$45,986.00"
-      }
-    ];
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -598,12 +1228,10 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div className="react-rate-table">
                       <ReactTable
-                        columns={
-                          [
+                        columns={[
                           {
                             columns: [
                               {
-                               
                                 Cell: row => {
                                   i++;
                                   return (
@@ -623,10 +1251,12 @@ class RateFinalizingStillBooking extends Component {
                                         </div>
                                         <div>
                                           <p className="details-title">
-                                          <img src={maersk} alt="maersk icon" />
+                                            <img
+                                              src={maersk}
+                                              alt="maersk icon"
+                                            />
                                           </p>
                                         </div>
-                                        
                                       </div>
                                     </React.Fragment>
                                   );
@@ -659,79 +1289,44 @@ class RateFinalizingStillBooking extends Component {
                                   );
                                 }
                               },
+
                               {
-                                accessor: "SPort",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">S. Port</p>
-                                      <p className="details-para">
-                                        {row.original.SPort}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "FTime",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">F. Time</p>
-                                      <p className="details-para">
-                                        {row.original.FTime}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "Container",
+                                accessor: "ContainerType",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Container</p>
                                       <p className="details-para">
-                                        {row.original.Container}
+                                        {row.original.ContainerType}
                                       </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
                               {
-                                accessor: "Expiry",
+                                accessor: "ExpiryDate",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Expiry</p>
                                       <p className="details-para">
-                                        {row.original.Expiry}
+                                        {new Date(
+                                          row.original.ExpiryDate
+                                        ).toLocaleDateString("en-US")}
                                       </p>
                                     </React.Fragment>
                                   );
                                 }
                               },
+
                               {
-                                accessor: "TT",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">TT</p>
-                                      <p className="details-para">
-                                        {row.original.TT}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "Price",
+                                accessor: "Total",
                                 Cell: row => {
                                   return (
                                     <React.Fragment>
                                       <p className="details-title">Price</p>
                                       <p className="details-para">
-                                        {row.original.Price}
+                                        {row.original.Total}
                                       </p>
                                     </React.Fragment>
                                   );
@@ -740,7 +1335,7 @@ class RateFinalizingStillBooking extends Component {
                             ]
                           }
                         ]}
-                        data={data1}
+                        data={this.state.QuotationData}
                         minRows={0}
                         showPagination={false}
                         className="-striped -highlight"
@@ -748,29 +1343,29 @@ class RateFinalizingStillBooking extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={data2}
+                                data={this.state.QuotationSubData}
                                 columns={[
                                   {
                                     columns: [
                                       {
                                         Header: "C.Type",
-                                        accessor: "ctype"
+                                        accessor: "Type"
                                       },
                                       {
                                         Header: "C.Name",
-                                        accessor: "cname"
+                                        accessor: "ChargeCode"
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "units"
+                                        accessor: "Chargeitem"
                                       },
                                       {
                                         Header: "Unit Price",
-                                        accessor: "unitPrice"
+                                        accessor: "Amount"
                                       },
                                       {
                                         Header: "Final Payment",
-                                        accessor: "finalPayment"
+                                        accessor: "Total"
                                       }
                                     ]
                                   }
@@ -798,28 +1393,24 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
-                              {Booking5.length > 0
-                                ? Booking5[0].ModeOfTransport
+                              {Booking.length > 0
+                                ? Booking[0].ModeOfTransport
                                 : null}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
-                              {Booking5.length > 0
-                                ? Booking5[0].CargoType
-                                : null}
+                              {Booking.length > 0 ? Booking[0].CargoType : null}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para">20 DC</p>
+                            <p className="details-para"> </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
-                            <p className="details-para">
-                              Refer Type (20 degrees)
-                            </p>
+                            <p className="details-para"></p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
@@ -829,22 +1420,37 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
-                              {Booking5.length > 0
-                                ? Booking5[0].Incoterm
-                                : null}
+                              {Booking.length > 0 ? Booking[0].Incoterm : ""}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
-                            <p className="details-para">Port2Port</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].typeofMove === 1
+                                  ? "Port 2 Port"
+                                  : Booking[0].typeofMove === 2
+                                  ? "Door 2 Port"
+                                  : Booking[0].typeofMove === 3
+                                  ? "Port to Door"
+                                  : Booking[0].typeofMove === 4
+                                  ? "Door 2 Door"
+                                  : ""
+                                : null}
+                            </p>
                           </div>
+
                           <div className="col-md-4">
                             <p className="details-title">POL</p>
-                            <p className="details-para">Mumbai</p>
+                            <p className="details-para">
+                              {Booking.length > 0 ? Booking[0].POL : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">POD</p>
-                            <p className="details-para">Vadodra</p>
+                            <p className="details-para">
+                              {Booking.length > 0 ? Booking[0].POD : null}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">PU Address</p>
@@ -891,10 +1497,10 @@ class RateFinalizingStillBooking extends Component {
                             <p className="details-title">Account/Customer</p>
 
                             <p className="details-para">
-                              {this.state.selectedType === "Shipper"
-                                ? Booking3[0].Shipper
-                                : this.state.selectedType === "Consinee"
-                                ? Booking3[0].Consignee
+                              {selectedType === "Shipper"
+                                ? Booking[0].Shipper_Name
+                                : selectedType === "Consignee"
+                                ? Booking[0].Consignee_Name
                                 : null}
                             </p>
                           </div>
@@ -909,10 +1515,10 @@ class RateFinalizingStillBooking extends Component {
                                 ? Booking3[0].ConsigneeAddress
                                 : null} */}
 
-                              {this.state.selectedType === "Shipper"
-                                ? Booking3[0].ShipperAddress
-                                : this.state.selectedType === "Consinee"
-                                ? Booking3[0].ConsigneeAddress
+                              {selectedType === "Shipper"
+                                ? Booking[0].Shipper_Displayas
+                                : selectedType === "Consignee"
+                                ? Booking[0].Consignee_Displayas
                                 : null}
                             </p>
                           </div>
@@ -978,7 +1584,7 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Consignee Name</p>
-                            {this.state.userType === "Customer" ? (
+                            {this.state.userType !== "Customer" ? (
                               <input
                                 type="text"
                                 name="Consignee"
@@ -1024,8 +1630,8 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking3.length > 0
-                                ? Booking3[0].ConsigneeAddress
+                              {Booking.length > 0
+                                ? Booking[0].Consignee_Displayas
                                 : null}
                             </p>
                           </div>
@@ -1040,7 +1646,7 @@ class RateFinalizingStillBooking extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Shipper Name</p>
-                            {this.state.userType === "Customer" ? (
+                            {this.state.userType !== "Customer" ? (
                               <input
                                 type="text"
                                 name="Shipper"
@@ -1084,8 +1690,8 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking3.length > 0
-                                ? Booking3[0].ShipperAddress
+                              {Booking.length > 0
+                                ? Booking[0].Shipper_Displayas
                                 : null}
                             </p>
                           </div>
@@ -1102,7 +1708,7 @@ class RateFinalizingStillBooking extends Component {
                         >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity}>
+                            <option key={i} value={item.id}>
                               {item.Commodity}
                             </option>
                           ))}
@@ -1110,7 +1716,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
 
-                    <div className="row">
+                    {/* <div className="row">
                       <div className="col-md">
                         <div className="rename-cntr login-fields">
                           <label>Notify Party</label>
@@ -1122,6 +1728,57 @@ class RateFinalizingStillBooking extends Component {
                           </select>
                         </div>
                       </div>
+                      
+                    </div> */}
+                    <div>
+                      <div className="title-border py-3">
+                        <h3>Buyer Details</h3>
+                      </div>
+                      <div>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <p className="details-title">Buyer Name</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].Buyer_Name
+                                : null}
+                            </p>
+                          </div>
+                          <div className="col-md-6">
+                            <p className="details-title">Address</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].Buyer_Displayas
+                                : null}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="title-border py-3">
+                        <h3>Notify Party</h3>
+                      </div>
+                      <div>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <p className="details-title">Party Name</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].NotifyName
+                                : null}
+                            </p>
+                          </div>
+                          <div className="col-md-6">
+                            <p className="details-title">Address</p>
+                            <p className="details-para">
+                              {Booking.length > 0
+                                ? Booking[0].Notify_Displayas
+                                : null}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div className="row">
                       <div
@@ -1129,6 +1786,11 @@ class RateFinalizingStillBooking extends Component {
                         style={{ width: "100%" }}
                       >
                         <h3>Cargo Details</h3>
+                      </div>
+                      <div>
+                        {this.state.eqmtType.length > 0
+                          ? this.NewcreateUI()
+                          : null}
                       </div>
                       <div>
                         {this.state.multiCBM.length > 0
@@ -1188,7 +1850,56 @@ class RateFinalizingStillBooking extends Component {
                           </label>
                         </div>
                       </div>
-                      <a
+                      <br />
+                      {/* <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "File Name",
+                                accessor: "FileName"
+                              },
+
+                              {
+                                Header: "Action",
+                                sortable: false,
+                                accessor: "DocumentDescription",
+                                Cell: row => {
+                                  if (row.value == "No Data Found") {
+                                    return <div></div>;
+                                  } else {
+                                    return (
+                                      <div>
+                                        <img
+                                          className="actionicon"
+                                          src={Delete}
+                                          alt="delete-icon"
+                                          onClick={e =>
+                                            this.HandleDocumentDelete(e, row)
+                                          }
+                                        />
+                                        <img
+                                          className="actionicon"
+                                          src={Download}
+                                          alt="download-icon"
+                                          onClick={e =>
+                                            this.HandleDownloadFile(e, row)
+                                          }
+                                        />
+                                      </div>
+                                    );
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.FileData}
+                        minRows={0}
+                        showPagination={false}
+                      ></ReactTable> */}
+
+                      {/* <a
                         href={
                           "https://vizio.atafreight.com/WebVizio_3_0/" +
                           this.state.selectedFilePath
@@ -1197,11 +1908,14 @@ class RateFinalizingStillBooking extends Component {
                         <p className="file-name w-100 text-center mt-1">
                           {this.state.selectedFileName}
                         </p>
-                      </a>
+                      </a> */}
+                      {this.state.FileData.length > 0
+                        ? this.CreateFileElement()
+                        : null}
                     </div>
                     <center>
                       <button
-                        onClick={this.toggleBook}
+                        onClick={this.HandleBookingUpdate.bind(this)}
                         className="butn more-padd mt-4"
                       >
                         Update Booking

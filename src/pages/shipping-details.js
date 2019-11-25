@@ -40,6 +40,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import makeAnimated from "react-select/animated";
 import Select from "react-select";
 import Autocomplete from "react-autocomplete";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
 
 const animatedComponents = makeAnimated();
 const SourceIcon = () => (
@@ -504,11 +508,11 @@ class ShippingDetails extends Component {
 
     if (!fields["ModeOfTransport"]) {
       formIsValid = false;
-      alert("Please enter Mode Of Transport");
+      NotificationManager.error("Please enter Mode Of Transport");
     }
     if (!fields["ShipmentStage"]) {
       formIsValid = false;
-      alert("Please enter ShipmentStage");
+      NotificationManager.error("Please enter ShipmentStage");
     }
     return formIsValid;
   }
@@ -524,6 +528,7 @@ class ShippingDetails extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
+            <NotificationContainer />
             <div className="title-sect">
               <h2>Shipments</h2>
               <div className="d-flex align-items-center">
