@@ -2766,11 +2766,11 @@ class RateTable extends Component {
                                           // }
                                           checked={
                                             this.state.cSelectedRow[
-                                              containerLoadType == "LCL" ? original.RateLineID == undefined ? original.RateLineId : original.RateLineID : original.rateID
+                                               original.RateLineID == undefined ? original.RateLineId : original.RateLineID 
                                             ] === true
                                           }
                                           onChange={e =>
-                                            this.toggleRow(containerLoadType == "LCL" ? original.RateLineID == undefined ? original.RateLineId : original.RateLineID : original.rateID, row)
+                                            this.toggleRow( original.RateLineID == undefined ? original.RateLineId : original.RateLineID , row)
                                           }
                                         />
                                         <label
@@ -2972,9 +2972,7 @@ class RateTable extends Component {
                             <ReactTable
                               minRows={1}
                               data={
-                                this.props.location.state.containerLoadType ==
-                                "LCL"
-                                  ? row.original.RateLineId == undefined ? this.state.RateSubDetails.filter(
+                                 row.original.RateLineId == undefined ? this.state.RateSubDetails.filter(
                                       d =>
                                         d.RateLineID ===  row.original.RateLineID
                                     ) :
@@ -2982,9 +2980,7 @@ class RateTable extends Component {
                                       d =>
                                         d.RateLineID ===  row.original.RateLineId
                                     )
-                                  : this.state.RateSubDetails.filter(
-                                      d => d.RateLineID === row.original.rateID
-                                    )
+                                  
                               }
                               columns={[
                                 {

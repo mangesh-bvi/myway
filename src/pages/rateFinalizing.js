@@ -1578,16 +1578,14 @@ var containerLoadType = this.props.location.state.containerLoadType
                           <div style={{ padding: "20px 0" }}>
                             <ReactTable
                               minRows={1}
-                              data={this.props.location.state.containerLoadType == "LCL" ? row.original.RateLineId == undefined ? this.state.rateSubDetails.filter(
+                              data={ row.original.RateLineId == undefined ? this.state.rateSubDetails.filter(
                                       d =>
                                         d.RateLineID ===  row.original.RateLineID
                                     ) :
                                     this.state.rateSubDetails.filter(
                                       d =>
                                         d.RateLineID ===  row.original.RateLineId
-                                    ) :  this.state.rateSubDetails.filter(
-                                  item => item.RateLineID ==  row.original.rateID
-                                  )                                
+                                    )                             
                               }
                               columns={[
                                 {
