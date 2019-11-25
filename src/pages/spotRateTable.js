@@ -116,7 +116,7 @@ class SpotRateTable extends Component {
             <div className="title-sect">
               <h2>Spot Rate</h2>
             </div>
-            <div className="ag-fresh">
+            <div className="ag-fresh">   
               <ReactTable
                 data={spotRateGrid}
                 noDataText="No Data Found"

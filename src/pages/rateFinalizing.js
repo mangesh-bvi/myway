@@ -9,6 +9,8 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import { encryption } from "../helpers/encryption";
+import maersk from "./../assets/img/maersk.png";
+import matchSorter from "match-sorter";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -835,7 +837,7 @@ debugger;
     //   }
     // ];
 
-
+    var i = 0;
     const checkLocalCharges = this.state.arrLocalsCharges.map((item,index) => {
       let amtSign;
       if(item.Currency == 'INR')
@@ -1020,7 +1022,7 @@ if(Commoditypresent)
                     <div className="title-border py-3">
                       <h3>Quotation Price</h3>
                     </div>
-                    <div className="react-rate-table">
+                    {/* <div className="react-rate-table">
                       <ReactTable
                         columns={[
                           {
@@ -1248,7 +1250,309 @@ if(Commoditypresent)
                           );
                         }}
                       />
-                    </div>
+                    </div> */}
+                    <div className="react-rate-table react-rate-tab">
+                    <ReactTable
+                      columns={[
+                        {
+                          columns: [
+                            {
+                              Cell: ({ original, row }) => {
+                                i++;
+                                return (
+                                  <React.Fragment>
+                                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                      <div className="remember-forgot rat-img d-block m-0">
+                                        {/* <input
+                                          id={"maersk-logo" + i}
+                                          type="checkbox"
+                                          name={"rate-tab-check"}
+                                          // checked={
+                                          //   this.state.RateDetails[i - 1].checkbx
+                                          //     ? this.state.RateDetails[i - 1]
+                                          //         .checkbx
+                                          //     : false
+                                          // }
+                                          // checked={
+                                          //   this.state.cSelectedRow[
+                                          //     original.rateID
+                                          //   ] === true
+                                          // }
+                                          // onChange={e =>
+                                          //   this.toggleRow(original.rateID, row)
+                                          // }
+                                        /> */}
+                                        <label
+                                          htmlFor={"maersk-logo" + i}
+                                        ></label>
+                                      </div>
+                                    </div>
+                                    <div className="rate-tab-img">
+                                      <img src={maersk} alt="maersk icon" />
+                                    </div>
+                                  </React.Fragment>
+                                );
+                              },
+                              accessor: "lineName"
+                              // minWidth: 200
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POL</p>
+                                    <p
+                                      title={row.original.POLName}
+                                      className="details-para max2"
+                                    >
+                                      {row.original.POLName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "POLName",
+                              //  minWidth: 175
+                              filterable: true
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">POD</p>
+                                    <p
+                                      title={row.original.PODName}
+                                      className="details-para max2"
+                                    >
+                                      {row.original.PODName}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "PODName",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">S. Port</p>
+                                    <p className="details-para">
+                                      {row.original.TransshipmentPort}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "TransshipmentPort",
+                              filterable: true
+                              // minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">F. Time</p>
+                                    <p className="details-para">
+                                      {row.original.freeTime}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "freeTime",
+                              filterable: true,
+                              minWidth: 80
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Container</p>
+                                    <p className="details-para">
+                                      {row.original.ContainerType}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "ContainerType",
+                              filterable: true
+                              //minWidth: 175
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Expiry</p>
+                                    <p className="details-para">
+                                      {new Date(
+                                        row.original.expiryDate ||
+                                          row.original.ExpiryDate
+                                      ).toLocaleDateString("en-US")}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "expiryDate" || "ExpiryDate",
+                              filterable: true,
+                              minWidth: 90
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">TT</p>
+                                    <p className="details-para">
+                                      {row.original.TransitTime}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "TransitTime",
+                              minWidth: 60
+                            },
+                            {
+                              Cell: row => {
+                                return (
+                                  <>
+                                    <p className="details-title">Price</p>
+                                    <p className="details-para">
+                                      {row.original.TotalAmount !== "" &&
+                                      row.original.TotalAmount !== null
+                                        ? row.original.TotalAmount +
+                                          " " +
+                                          row.original.BaseCurrency
+                                        : ""}
+                                    </p>
+                                  </>
+                                );
+                              },
+                              accessor: "baseFreightFee",
+                              filterable: true,
+                              minWidth: 80
+                            }
+                          ]
+                        },
+                        {
+                          show: false,
+                          Header: "All",
+                          id: "all",
+                          width: 0,
+                          resizable: false,
+                          sortable: false,
+                          filterAll: true,
+                          Filter: () => {},
+                          getProps: () => {
+                            return {
+                              // style: { padding: "0px"}
+                            };
+                          },
+                          filterMethod: (filter, rows) => {
+                            debugger;
+
+                            const result = matchSorter(rows, filter.value, {
+                              keys: ["commodities", "TransitTime"],
+                              threshold: matchSorter.rankings.WORD_STARTS_WITH
+                            });
+                            console.log(
+                              result,
+                              "---------------result---------------"
+                            );
+                            return result;
+                          }
+                        }
+                      ]}
+                      // onFilteredChange={this.onFilteredChange.bind(this)}
+                      // filtered={this.state.filtered}
+                      // defaultFilterMethod={(filter, row) =>
+                      //   String(row[filter.rateID]) === filter.value
+                      // }
+                      filterable
+                      // expanded={this.state.expanded}
+                      // onExpandedChange={(expand, event) => {
+                      //   this.setState({
+                      //     expanded: {
+                      //       [event]: {}
+                      //     }
+                      //   });
+                      // }}
+                      data={this.state.rateDetails}
+                      defaultPageSize={10}
+                      className="-striped -highlight"
+                      minRows={1}
+                      SubComponent={row => {
+                        return (
+                          <div style={{ padding: "20px 0" }}>
+                            <ReactTable
+                              minRows={1}
+                              data={this.state.rateSubDetails.filter(item => item.RateLineID == row.original.rateID)}
+                              columns={[
+                                {
+                                  columns: [
+                                    {
+                                      Header: "C. Type",
+                                      accessor: "ChargeType"
+                                    },
+                                    {
+                                      Header: "C. Name",
+                                      accessor: "ChargeCode"
+                                    },
+                                    {
+                                      Header: "Unit Price",
+                                      accessor: "Rate",
+                                      Cell: props => (
+                                        <React.Fragment>
+                                          {props.original.Rate}
+                                          &nbsp;
+                                          {props.original.Currency}
+                                        </React.Fragment>
+                                      )
+                                    },
+                                    {
+                                      Header: "Units",
+                                      accessor: "ChargeItem"
+                                    },
+                                    {
+                                      Header: "Tax",
+                                      accessor: "Tax"
+                                    },
+
+                                    {
+                                      Header: "Exrate",
+                                      accessor: "Exrate"
+                                    },
+
+                                    {
+                                      Cell: row => {
+                                        return (
+                                          <>
+                                            {row.original.TotalAmount !== "" &&
+                                            row.original.TotalAmount !== null
+                                              ? row.original.TotalAmount +
+                                                " " +
+                                                row.original.BaseCurrency
+                                              : ""}
+                                          </>
+                                        );
+                                      },
+                                      Header: "Final Payment",
+                                      accessor: "TotalAmount"
+                                    }
+                                  ]
+                                }
+                              ]}
+                              showPagination={true}
+                              defaultPageSize={5}
+                            />
+                          </div>
+                        );
+                      }}
+                    />
+                    {/* <ReactTable
+                    data={Data}
+                    columns={columns}
+                    defaultSorted={[{ id: "firstName", desc: false }]}
+                  /> */}
+                  </div>
+
                     <UncontrolledCollapse toggler="#toggler">
                       <div className="rate-final-contr p-0">
                         <div className="d-flex justify-content-between align-items-center title-border py-3">

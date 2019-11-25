@@ -20,9 +20,9 @@ class SpotRateDetails extends Component {
       showContent: false,
       modalBook: false,
       spotrateresponseTbl: {},
-      spotrateresponseTbl1: {},
+      spotrateresponseTbl1: [],
       spotrateresponseTbl2: {},
-      spotrateresponseTbl3: {},
+      spotrateresponseTbl3: [],
       spotrateresponseTbl4: {},
       commodityData: [],
       historyModalData: [],
@@ -144,9 +144,9 @@ class SpotRateDetails extends Component {
     if (typeof this.props.location.state != "undefined") {
       var SpotRateID = this.props.location.state.detail[0];
       this.HandleShipmentDetails(SpotRateID);
-      setTimeout(() => {
+      // setTimeout(() => {
         this.HandleCommodityDropdown();
-      }, 100);
+      // }, 100);
     }
 
     this.HandlePackgeTypeData();
@@ -157,27 +157,6 @@ class SpotRateDetails extends Component {
   toggleSpotHistory() {
     this.setState({ historyModal: !this.state.historyModal });
   }
-  HandleCommodityDropdown() {
-    let self = this;
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/CommodityDropdown`,
-      data: {},
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-
-      var commodityData = response.data.Table;
-      self.setState({ commodityData }); ///problem not working setstat undefined
-    });
-  }
-
-  onDocumentChangeHandler = event => {
-    this.setState({
-      selectedFileName: event.target.files[0].name
-    });
-  };
 
   HandleShipmentDetails(SpotRateID) {
     var self = this;
@@ -196,6 +175,8 @@ class SpotRateDetails extends Component {
             debugger;
             //alert("Success")
             //self.s .spotrateresponse = response.data;
+            var spotrateresponseTbl1 = [];
+            spotrateresponseTbl1 = response.data.Table1
             if (response != null) {
               if (response.data != null) {
                 if (response.data.Table != null) {
@@ -208,7 +189,7 @@ class SpotRateDetails extends Component {
                 if (response.data.Table1 != null) {
                   if (response.data.Table1.length > 0) {
                     self.setState({
-                      spotrateresponseTbl1: response.data.Table1[0]
+                      spotrateresponseTbl1: spotrateresponseTbl1
                     });
                   }
                 }
@@ -246,6 +227,28 @@ class SpotRateDetails extends Component {
       }
     }
   }
+
+  HandleCommodityDropdown() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CommodityDropdown`,
+      data: {},
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      var commodityData = response.data.Table;
+      self.setState({ commodityData }); ///problem not working setstat undefined
+    });
+  }
+
+  onDocumentChangeHandler = event => {
+    this.setState({
+      selectedFileName: event.target.files[0].name
+    });
+  };
 
   
   HandleBindIncoTeamData() {
@@ -491,6 +494,7 @@ class SpotRateDetails extends Component {
     }
 
     var i = 0;
+    const { spotrateresponseTbl1, spotrateresponseTbl3 } = this.state;
 
     return (
       <React.Fragment>
@@ -649,10 +653,96 @@ class SpotRateDetails extends Component {
                             </option>
                           ))}
                         </select>
+                        
                       </div>
-                      <div className="col-md-6 login-fields">
+                      <div className="col-md-7 login-fields">
                         <p className="details-title">Cargo Details</p>
-                        <input type="text" value="Dummy" disabled />
+                        <div className="cls-rt">
+                          <div className="ag-fresh">
+                        {/* {(() => {
+                        if (spotrateresponseTbl1.length>0) {
+                 */}
+                        <ReactTable
+                          data={spotrateresponseTbl1}
+                          noDataText="No Data Found"
+                          filterable
+                          columns={[
+                            {
+                              columns: [
+                                {
+                                  Header: "Container",
+                                  accessor: "Container"
+                                },
+                                {
+                                  Header: "Quantity",
+                                  accessor: "ContainerQty"
+                                },
+
+                                {
+                                  Header: "Temperature",
+                                  accessor: "Container_Temperature"
+                                }
+                              ]
+                            }
+                          ]}
+                          className="-striped -highlight"
+                          defaultPageSize={10}
+                          minRows={1}
+                          //getTrProps={this.HandleRowClickEvt}
+                        />
+                        </div>
+                        <div className="ag-fresh">
+                        <ReactTable
+                          data={spotrateresponseTbl3}
+                          noDataText="No Data Found"
+                          filterable
+                          columns={[
+                            {
+                              columns: [
+                                // {
+                                //   Header: "Equipment Type",
+                                //   accessor: ""
+                                // },
+                                // {
+                                //   Header: "Package Type",
+                                //   accessor: ""
+                                // },
+                                {
+                                  Header: "Quantity",
+                                  accessor: "Quantity"
+                                },
+
+                                {
+                                  Header: "Length",
+                                  accessor: "Lengths"
+                                },
+
+                                {
+                                  Header: "Width",
+                                  accessor: "Width"
+                                },
+
+                                {
+                                  Header: "Gross Weight",
+                                  accessor: "GrossWt"
+                                },
+
+                                {
+                                  Header: "Volume Weight",
+                                  accessor: "VolumeWT"
+                                }
+                              ]
+                            }
+                          ]}
+                          className="-striped -highlight"
+                          defaultPageSize={10}
+                          minRows={1}
+                          //getTrProps={this.HandleRowClickEvt}
+                        />
+                        </div>
+                        {/* }})()} */}
+                        </div>
+                        {/* <input type="text" value="Dummy" disabled /> */}
                       </div>
                     </div>
                     <div>
