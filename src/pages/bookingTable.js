@@ -50,11 +50,29 @@ class BookingTable extends Component {
     }).then(function(response) {
       debugger;
       var data = [];
+      var pending = 0,
+        accepted = 0,
+        expired = 0,
+        rejected = 0;
       data = response.data;
       if (data.length > 0) {
         self.setState({ bookingData: data }); ///problem not working setstat undefined
       }
-      
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].Status === "Accepted") {
+          accepted = accepted + 1;
+        } else if (data[i].Status === "Pending") {
+          pending = pending + 1;
+        } else if (data[i].Status === "Expired") {
+          expired = expired + 1;
+        } else if (data[i].Status === "Rejected") {
+          rejected = rejected + 1;
+        }
+      }
+      window.localStorage.setItem("bookpending", pending);
+      window.localStorage.setItem("bookaccepted", accepted);
+      window.localStorage.setItem("bookexpired", expired);
+      window.localStorage.setItem("bookrejected", rejected);
     });
   }
 
