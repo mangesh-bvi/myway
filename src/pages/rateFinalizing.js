@@ -849,6 +849,7 @@ debugger;
 
     HandleLocalSearchCharges(e)
     {
+      debugger;
       var rateDetailsarr = this.state.rateDetails;
       if(e.target.checked)
       {
@@ -866,7 +867,7 @@ debugger;
             Currency: e.target.getAttribute('data-currency'),
             Exrate: 0,
             Rate: parseFloat(e.target.value),
-            RateLineID: this.state.rateDetails[i].rateID,
+            RateLineID: this.state.rateDetails[i].RateLineId,
             Tax: 0,
             TotalAmount:  parseFloat(e.target.getAttribute('data-amountinbasecurrency')),
             Extracharge:true

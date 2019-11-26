@@ -134,7 +134,8 @@ class Analytics extends Component {
     var FromDate = "";
     var ToDate = "";
     var ActiveFlag = "D";
-    var Mode = "A,O,I";
+    //var Mode = "A,O,I";
+    var Mode = "A,FCL,LCL,FTL,LTL";
     var period = document.getElementById("drp-period-shipment").value;
     var DatedBy = document.getElementById("Datedbydrp").value;
 
@@ -148,11 +149,32 @@ class Analytics extends Component {
         }
 
         var Modeele = document.getElementsByName("ship-way");
+        var modegetElementsByName = "";
         if (Modeele.length > 0) {
           for (var i = 0; i < Modeele.length; i++) {
             if (Modeele[i].checked) Mode = Modeele[i].value;
+
+            if(Mode == "O")
+            {
+              Mode = "FCL,LCL"
+              modegetElementsByName = "sea-opt";
+            }
+            
+            if(Mode == "I")
+            {
+              Mode = "FTL,LTL"
+              modegetElementsByName = "road-opt";
+            }
           }
         }
+//sea-opt
+        var ModeeleOther = document.getElementsByName(modegetElementsByName);
+        if (ModeeleOther.length > 0) {
+          for (var i = 0; i < ModeeleOther.length; i++) {
+            if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
+          }
+        }
+        
       }
     } else {
       //All
@@ -229,15 +251,19 @@ class Analytics extends Component {
         if (Segregatedby == "CountChart") {
           Table = response.data.Table;
           arrayAir = Table.filter(item => item.Modeoftransport == "Air");
-          arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
-          arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
-          volumeOptions.title.text = "Total no of shipment";
+          // arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
+          // arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
+          arrayOcean = Table.filter(item => item.Modeoftransport == "Fcl" || item.Modeoftransport == "Lcl");
+          arrayTruck = Table.filter(item => item.Modeoftransport == "Ftl" || item.Modeoftransport == "Ltl");
+          volumeOptions.title.text = "Total number of Shipments";
           volumeOptions.scales.yAxes[0].scaleLabel.labelString = "Count";
         } else if (Segregatedby == "VolumeChart") {
           Table = response.data.Table1;
           arrayAir = Table.filter(item => item.ModeOfTransport == "Air");
-          arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean");
-          arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland");
+          // arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean");
+          // arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland");
+          arrayOcean = Table.filter(item => item.ModeOfTransport == "Fcl" || item.ModeOfTransport == "Lcl");
+          arrayTruck = Table.filter(item => item.ModeOfTransport == "Ftl" || item.ModeOfTransport == "Ltl");
           volumeOptions.title.text = "Total volume of shipment";
           volumeOptions.scales.yAxes[0].scaleLabel.labelString = "KGS";
         }
@@ -420,11 +446,13 @@ class Analytics extends Component {
         toggleShipInv: true,
         toggleRoadInv: false
       });
+      
     } else if (e.target.id === "road-inv") {
       this.setState({
         toggleRoadInv: true,
         toggleShipInv: false
       });
+     
     } else if (e.target.id === "plane-inv") {
       this.setState({
         toggleRoadInv: false,
@@ -437,7 +465,8 @@ class Analytics extends Component {
     let self = this;
 
     var ActiveFlag = "D";
-    var Mode = "A,O";
+    //var Mode = "A,O,I";
+    var Mode = "A,FCL,LCL,FTL,LTL";
     var period = document.getElementById("drp-period-invoice").value;
 
     var FromDate = "";
@@ -486,6 +515,28 @@ class Analytics extends Component {
           if (Modeele[i].checked) Mode = Modeele[i].value;
         }
       }
+      var modegetElementsByName = "";
+      if(Mode == "O")
+      {
+        Mode = "FCL,LCL"
+        //sea-opt
+        modegetElementsByName = "sea-opt-invoice";
+      }
+      
+      if(Mode == "I")
+      {
+        //road-opt
+        Mode = "FTL,LTL"
+        modegetElementsByName = "road-opt-invoice";
+      }
+
+      var ModeeleOther = document.getElementsByName(modegetElementsByName);
+      if (ModeeleOther.length > 0) {
+        for (var i = 0; i < ModeeleOther.length; i++) {
+          if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
+        }
+      }
+
     } else {
       document.getElementById("delivered-inv").click();
     }
@@ -575,10 +626,10 @@ class Analytics extends Component {
           item => item.ModeOfTransport == "Air"
         );
         var arrayOcean = response.data.Table.filter(
-          item => item.ModeOfTransport == "Ocean"
+          item => item.ModeOfTransport == "Fcl" || item.ModeOfTransport == "Lcl"
         );
         var arrayTruck = response.data.Table.filter(
-          item => item.ModeOfTransport == "Inland"
+          item => item.ModeOfTransport == "Ftl" ||  item.ModeOfTransport == "Ltl"
         );
 
         if (arrayAir != null) {
@@ -627,8 +678,8 @@ class Analytics extends Component {
         self.setState({ graphdataset: graphdataset });
       })
       .catch(error => {
-        var temperror = error.response.data;
-        var err = temperror.split(":");
+        var temperror = error;
+       // var err = temperror.split(":");
        // alert(err[1].replace("}", ""));
         self.setState({ graphdataset: [] });
       });
@@ -812,11 +863,11 @@ class Analytics extends Component {
                     {this.state.toggleShipShip && (
                       <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="sea-opt" id="fcl-ship" />
+                          <input type="radio" name="sea-opt" value="FCL" id="fcl-ship" />
                           <label htmlFor="fcl-ship">FCL</label>
                         </div>
                         <div>
-                          <input type="radio" name="sea-opt" id="lcl-ship" />
+                          <input type="radio" name="sea-opt" value="LCL" id="lcl-ship" />
                           <label htmlFor="lcl-ship">LCL</label>
                         </div>
                       </div>
@@ -824,11 +875,11 @@ class Analytics extends Component {
                     {this.state.toggleRoadShip && (
                       <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="road-opt" id="ftl-ship" />
+                          <input type="radio" name="road-opt" value="FTL" id="ftl-ship" />
                           <label htmlFor="ftl-ship">FTL</label>
                         </div>
                         <div>
-                          <input type="radio" name="road-opt" id="ltl-ship" />
+                          <input type="radio" name="road-opt" value="LTL" id="ltl-ship" />
                           <label htmlFor="ltl-ship">LTL</label>
                         </div>
                       </div>
@@ -868,7 +919,7 @@ class Analytics extends Component {
                     <select id="SegregatedBydrp">
                       <option value="VolumeChart">Volume Chart</option>
                       <option value="CountChart">Count Chart</option>
-                      <option value="ValueChart">Value Chart</option>
+                      {/* <option value="ValueChart">Value Chart</option> */}
                     </select>
                   </div>
                 </div>
@@ -1072,6 +1123,7 @@ class Analytics extends Component {
                             type="radio"
                             name="sea-opt-invoice"
                             id="fcl-inv"
+                            value="FCL"
                           />
                           <label htmlFor="fcl-inv">FCL</label>
                         </div>
@@ -1080,6 +1132,7 @@ class Analytics extends Component {
                             type="radio"
                             name="sea-opt-invoice"
                             id="lcl-inv"
+                            value="LCL"
                           />
                           <label htmlFor="lcl-inv">LCL</label>
                         </div>
@@ -1092,6 +1145,7 @@ class Analytics extends Component {
                             type="radio"
                             name="road-opt-invoice"
                             id="ftl-inv"
+                            value="FTL"
                           />
                           <label htmlFor="ftl-inv">FTL</label>
                         </div>
@@ -1100,6 +1154,7 @@ class Analytics extends Component {
                             type="radio"
                             name="road-opt-invoice"
                             id="ltl-inv"
+                            value="LTL"
                           />
                           <label htmlFor="ltl-inv">LTL</label>
                         </div>

@@ -535,7 +535,7 @@ class RateTable extends Component {
       if (newSelected[RateLineID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
-            this.state.containerLoadType =="LCL" ?  this.state.selectedDataRow[i].RateLineID  === rowData._original.RateLineID == undefined ? rowData._original.RateLineId : rowData._original.RateLineID : this.state.selectedDataRow[i].rateID === rowData._original.rateID
+           this.state.selectedDataRow[i].RateLineID  === rowData._original.RateLineID == undefined ? rowData._original.RateLineId : rowData._original.RateLineID 
           ) {
             selectedRow.splice(i, 1);
 
