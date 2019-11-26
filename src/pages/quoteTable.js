@@ -54,11 +54,25 @@ class QuoteTable extends Component {
   }
 
   componentDidMount() {
-    this.HandleListShipmentSummey();
+    var url = window.location.href
+      .slice(window.location.href.indexOf("?") + 1)
+      .split("=")[1];
+    var quetype = "";
+    if (url != undefined) {
+      quetype = url;
+    }
+    this.HandleListShipmentSummey(quetype);
   }
 
-  HandleListShipmentSummey() {
+  HandleListShipmentSummey(quetype) {
     let self = this;
+    // localStorage.removeItem(
+    //   "quotepending",
+    //   "quotecurrent",
+    //   "quoteexpired",
+    //   "quoterejected",
+    //   "quoteapproved"
+    // );
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
@@ -73,27 +87,22 @@ class QuoteTable extends Component {
     }).then(function(response) {
       debugger;
       var data = [];
-      var pending = 0,
-        current = 0,
-        expired = 0,
-        rejected = 0,
-        approved = 0;
-      data = response.data.Table;
-      self.setState({ quotesData: data }); ///problem not working setstat undefined
 
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].Status === "Current") {
-          current = current + 1;
-        } else if (data[i].Status === "Pending") {
-          pending = pending + 1;
-        } else if (data[i].Status === "Expired") {
-          expired = expired + 1;
-        } else if (data[i].Status === "Rejected") {
-          rejected = rejected + 1;
-        } else if (data[i].Status === "Approved") {
-          approved = approved + 1;
+      var resData = response.data.Table;
+      var pending = resData.filter(x => x.Status == "Pending").length;
+      var current = resData.filter(x => x.Status == "Current").length;
+      var expired = resData.filter(x => x.Status == "Expired").length;
+      var rejected = resData.filter(x => x.Status == "Rejected").length;
+      var approved = resData.filter(x => x.Status == "Approved").length;
+
+      if (quetype != "") {
+        resData = resData.filter(item => item.Status === quetype);
+        if (resData.length === 0) {
+          resData = [{ type: "No record found" }];
         }
       }
+
+      self.setState({ quotesData: resData });
       window.localStorage.setItem("quotepending", pending);
       window.localStorage.setItem("quotecurrent", current);
       window.localStorage.setItem("quoteexpired", expired);
@@ -170,36 +179,45 @@ class QuoteTable extends Component {
                     Header: "Action",
                     sortable: false,
                     Cell: row => {
-                      return (
-                        <div className="action-cntr">
-                          {/* <a href="/rate-finalizing-still">
+                      if (row.original.type !== "No record found") {
+                        return (
+                          <div className="action-cntr">
+                            {/* <a href="/rate-finalizing-still">
                             <img
                               className="actionicon"
                               src={Eye}
                               alt="view-icon"
                             />
                           </a> */}
-                          {/* <span
+                            {/* <span
                             title="Create Booking"
                             onClick={this.toggleBook}
                           > */}
-                          <a title="Create Booking" href="/rate-finalizing">
-                            <img
-                              className="actionicon"
-                              src={Edit}
-                              alt="booking-icon"
-                            />
-                          </a>
-                          {/* </span> */}
-                          <a href="/rate-finalizing">
-                            <img
-                              className="actionicon"
-                              src={Copy}
-                              alt="view-icon"
-                            />
-                          </a>
-                        </div>
-                      );
+                            <a title="Create Booking" href="/rate-finalizing">
+                              <img
+                                className="actionicon"
+                                src={Edit}
+                                alt="booking-icon"
+                              />
+                            </a>
+                            {/* </span> */}
+                            <a href="/rate-finalizing">
+                              <img
+                                className="actionicon"
+                                src={Copy}
+                                alt="view-icon"
+                              />
+                            </a>
+                          </div>
+                        );
+                      }
+                      else
+                      {
+                        return(
+                          <div>
+                            </div>
+                        )
+                      }
                     }
                   }
                 ]}
