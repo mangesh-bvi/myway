@@ -947,7 +947,7 @@ class ShippingDetailsTwo extends Component {
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
-                <b>{team.Message}</b>
+                <p>{team.Message}</p>
                 <div class="d-flex justify-content-end">
                   {" "}
                   ({team.MessageCreationTime})

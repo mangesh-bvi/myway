@@ -31,7 +31,7 @@ class AdminSideMenu extends Component {
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />{" "}
-              View User
+              User Listing
             </a>
           </li>
           <li className="sidemenu-ul-li">

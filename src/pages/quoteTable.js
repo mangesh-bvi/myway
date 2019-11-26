@@ -73,8 +73,32 @@ class QuoteTable extends Component {
     }).then(function(response) {
       debugger;
       var data = [];
+      var pending = 0,
+        current = 0,
+        expired = 0,
+        rejected = 0,
+        approved = 0;
       data = response.data.Table;
       self.setState({ quotesData: data }); ///problem not working setstat undefined
+
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].Status === "Current") {
+          current = current + 1;
+        } else if (data[i].Status === "Pending") {
+          pending = pending + 1;
+        } else if (data[i].Status === "Expired") {
+          expired = expired + 1;
+        } else if (data[i].Status === "Rejected") {
+          rejected = rejected + 1;
+        } else if (data[i].Status === "Approved") {
+          approved = approved + 1;
+        }
+      }
+      window.localStorage.setItem("quotepending", pending);
+      window.localStorage.setItem("quotecurrent", current);
+      window.localStorage.setItem("quoteexpired", expired);
+      window.localStorage.setItem("quoterejected", rejected);
+      window.localStorage.setItem("quoteapproved", approved);
     });
   }
 
@@ -140,9 +164,8 @@ class QuoteTable extends Component {
                     accessor: "Notes"
                   },
                   {
-
-                    Header:"Status",
-                    accessor:"Status"
+                    Header: "Status",
+                    accessor: "Status"
                   },
                   {
                     Header: "Action",

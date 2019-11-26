@@ -117,14 +117,12 @@ class ShippingDetails extends Component {
   }
 
   componentDidMount() {
-
     var url = window.location.href
-    .slice(window.location.href.indexOf("?") + 1)
-    .split("=")[1];
+      .slice(window.location.href.indexOf("?") + 1)
+      .split("=")[1];
     var shiptype = "";
-    if(url != undefined)
-    {
-      shiptype  = url;
+    if (url != undefined) {
+      shiptype = url;
     }
     this.HandleListShipmentSummey(shiptype);
     this.HandleCountryDropDown();
@@ -182,21 +180,35 @@ class ShippingDetails extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      var air = response.data.Table[0].Count;
-      var ocean = response.data.Table[1].Count;
-      var inland = response.data.Table[2].Count;
-      window.localStorage.setItem("aircount", air);
-      window.localStorage.setItem("oceancount", ocean);
-      window.localStorage.setItem("inlandcount", inland);
+      // var air = 0,
+      //   ocean = 0,
+      //   inland = 0;
+      var inland = response.data.Table[0].Count;
+      var air = response.data.Table[1].Count;
+      var ocean = response.data.Table[2].Count;
+
       var data = [];
 
       //ModeOfTransport
       data = response.data.Table1;
-      if(shiptype != "")
-      {
-        data = data.filter(item => item.ModeOfTransport == shiptype)
+      if (shiptype != "") {
+        data = data.filter(item => item.ModeOfTransport == shiptype);
       }
-      
+
+      // for (let i = 0; i < data.length; i++) {
+      //   if (data[i].ModeOfTransport === "Ocean") {
+      //     ocean = ocean + 1;
+      //   } else if (data[i].ModeOfTransport === "Air") {
+      //     air = air + 1;
+      //   } else if (data[i].ModeOfTransport === "Inland") {
+      //     inland = inland + 1;
+      //   }
+      // }
+
+      window.localStorage.setItem("aircount", air);
+      window.localStorage.setItem("oceancount", ocean);
+      window.localStorage.setItem("inlandcount", inland);
+
       self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
     });
   }
@@ -260,34 +272,50 @@ class ShippingDetails extends Component {
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
-    debugger;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/CustomerList`,
-      data: {
-        CustomerName: e.target.value,
-        CustomerType: "Existing"
-      },
-      headers: authHeader()
-    }).then(function(response) {
-     
+
+    if (fields[field].length > 3) {
+      debugger;
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerList`,
+        data: {
+          CustomerName: e.target.value,
+          CustomerType: "Existing"
+        },
+        headers: authHeader()
+      })
+        .then(function(response) {
+          if (field == "Consignee") {
+            self.setState({
+              Consignee: response.data.Table,
+              fields
+            });
+          } else {
+            self.setState({
+              Shipper: response.data.Table,
+              fields
+            });
+          }
+        })
+        .catch(error => {
+          debugger;
+          var temperror = error.response.data;
+          var err = temperror.split(":");
+          //NotificationManager.error(err[1].replace("}", ""));
+        });
+    } else {
       if (field == "Consignee") {
         self.setState({
-          Consignee: response.data.Table,
+          //Consignee: response.data.Table,
           fields
         });
       } else {
         self.setState({
-          Shipper: response.data.Table,
+          //Shipper: response.data.Table,
           fields
         });
       }
-    }) .catch(error => {
-      debugger;
-      var temperror = error.response.data;
-      var err = temperror.split(":");
-      //NotificationManager.error(err[1].replace("}", ""));
-    });;
+    }
     // this.setState({
     //   value: this.state.value
     // });
@@ -338,33 +366,36 @@ class ShippingDetails extends Component {
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
-    self.setState({
-      POL: []
-    });
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/PolPodByCountry`,
-      data: {
-        Mode: this.state.fields["ModeOfTransport"],
-        Search: e.target.value,
-        CountryCode: "IN"
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      if (field == "POL") {
-        self.setState({
-          POL: response.data.Table
-        });
-      } else {
-        self.setState({
-          POD: response.data.Table
-        });
-      }
-    });
-    this.setState({
-      fields
-    });
+    if (fields[field].length > 3) {
+      self.setState({
+        POL: []
+      });
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/PolPodByCountry`,
+        data: {
+          Mode: this.state.fields["ModeOfTransport"],
+          Search: e.target.value,
+          CountryCode: "IN"
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        if (field == "POL") {
+          self.setState({
+            POL: response.data.Table
+          });
+        } else {
+          self.setState({
+            POD: response.data.Table
+          });
+        }
+      });
+      this.setState({
+        fields
+      });
+    } else {
+    }
   }
 
   handleSelectPOLPOD(field, value) {
@@ -438,11 +469,11 @@ class ShippingDetails extends Component {
         url: `${appSettings.APIURL}/TrackShipmentSearch`,
         data: {
           StageID:
-            this.state.fields["ShipmentStage"] == undefined
+            this.state.fields["ShipmentStage"] === undefined
               ? ""
               : parseInt(this.state.fields["ShipmentStage"]),
           ModeofTransport:
-            this.state.fields["ModeOfTransport"] == undefined
+            this.state.fields["ModeOfTransport"] === undefined
               ? ""
               : this.state.fields["ModeOfTransport"],
           UserID: userid,
@@ -451,19 +482,19 @@ class ShippingDetails extends Component {
           FromETDDate: FromETDDate,
           ToETDDate: ToETDDate,
           OriginCntry:
-            this.state.fields["OriginCountry"] == undefined
+            this.state.fields["OriginCountry"] === undefined
               ? ""
               : this.state.fields["OriginCountry"],
           DestCntry:
-            this.state.fields["DestinationCountry"] == undefined
+            this.state.fields["DestinationCountry"] === undefined
               ? ""
               : this.state.fields["DestinationCountry"],
           POL:
-            this.state.fields["POL"] == undefined
+            this.state.fields["POL"] === undefined
               ? ""
               : this.state.fields["POL"],
           POD:
-            this.state.fields["POD"] == undefined
+            this.state.fields["POD"] === undefined
               ? ""
               : this.state.fields["POD"],
           ShipperID: this.state.ShipperID,
@@ -843,7 +874,18 @@ class ShippingDetails extends Component {
                     },
                     filterMethod: (filter, rows) => {
                       const result = matchSorter(rows, filter.value, {
-                        keys: ["BL/HBL", "Consignee", "ConsigneeID"],
+                        keys: [
+                          "BL/HBL",
+                          "Consignee",
+                          "ConsigneeID",
+                          "Event",
+                          "ETA",
+                          "Status",
+                          "POD",
+                          "POL",
+                          "Shipper",
+                          "ModeOfTransport"
+                        ],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH
                       });
 
@@ -947,7 +989,7 @@ class ShippingDetails extends Component {
                               this,
                               "Consignee"
                             )}
-                            menuStyle={this.state.menuStyle}
+                            //menuStyle={this.state.menuStyle}
                             onSelect={this.handleSelectCon.bind(
                               this,
                               item => item.Company_ID,
@@ -1040,13 +1082,12 @@ class ShippingDetails extends Component {
                               this,
                               "Shipper"
                             )}
-                            menuStyle={this.state.menuStyle}
+                            //menuStyle={this.state.menuStyle}
                             onSelect={this.handleSelectCon.bind(
                               this,
                               item => item.Company_ID,
                               "Shipper"
                             )}
-                            isMulti
                           />
                         </div>
                         {/* </div> */}

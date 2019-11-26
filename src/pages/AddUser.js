@@ -956,12 +956,12 @@ if (this.state.selectedFile == null)
         headers: authHeader()
       }).then(function(response) {
         debugger;
-        alert(response.data[0].Message)
+        NotificationManager.success(response.data[0].Message)
         setTimeout(function(){ window.location.href="/add-user" }, 1000);
       }).catch(
         error =>{ 
           debugger;
-          alert(error.response.data.split("'")[1]);
+          NotificationManager.error(error.response.data.split("'")[1]);
           console.log(error.response)}
         )
   }
@@ -1161,14 +1161,14 @@ if (this.state.selectedFile == null)
         headers: authHeader()
       }).then(function(response) {
         debugger;
-        alert(response.data[0].Result)
+        NotificationManager.success(response.data[0].Result)
         var tempsucc=response.data[0].Result
         NotificationManager.error(tempsucc);
         setTimeout(function(){ window.location.href="/Add-user" }, 1000);
       }).catch(
         error => {
           debugger;
-          alert(error.response.data.split("'")[1]);
+          NotificationManager.error(error.response.data.split("'")[1]);
           console.log(error.response)
         })
   }
@@ -1298,6 +1298,7 @@ if (this.state.selectedFile == null)
             <AdminSideMenu />
           </div>
           <div className="cls-rt">
+            <NotificationContainer />
           <div>
           <div class="title-sect title-border">
             {(() => {if(this.props.location.state != undefined)
