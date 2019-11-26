@@ -102,8 +102,8 @@ class QuoteTable extends Component {
     });
   }
 
-  HandleChangeShipmentDetails(QuoteNo) {
-    var data = [QuoteNo, "Quotes"];
+  HandleChangeShipmentDetails(QuoteNo,Type) {
+    var data = {Quotes: QuoteNo, Type: Type};
     this.props.history.push({
       pathname: "rate-finalizing-still",
       state: { detail: data }
@@ -114,7 +114,8 @@ class QuoteTable extends Component {
     return {
       onClick: e => {
         var QuoteNo = column.original["Quote#"];
-        this.HandleChangeShipmentDetails(QuoteNo);
+        var Type = column.original["type"];
+        this.HandleChangeShipmentDetails(QuoteNo,Type);
       }
     };
   };

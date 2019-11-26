@@ -19,11 +19,11 @@ class SpotRateDetails extends Component {
       selectedFileName: "",
       showContent: false,
       modalBook: false,
-      spotrateresponseTbl: {},
+      spotrateresponseTbl: [],
       spotrateresponseTbl1: [],
-      spotrateresponseTbl2: {},
+      spotrateresponseTbl2: [],
       spotrateresponseTbl3: [],
-      spotrateresponseTbl4: {},
+      spotrateresponseTbl4: [],
       commodityData: [],
       historyModalData: [],
       historyModal: false,
@@ -130,7 +130,7 @@ class SpotRateDetails extends Component {
       podfullAddData: {},
       commodityData: [],
       packageTypeData: [],
-      isSearch: false,
+      isSearch: true,
       currencyData: [],
       currencyCode: "",
       TruckType: [],
@@ -361,20 +361,57 @@ class SpotRateDetails extends Component {
   toggleViewRate(){
     let self = this;
     let fields = this.state.fields;
+    let mapPositionPOD = this.state.mapPositionPOD;
+    let mapPositionPOL = this.state.mapPositionPOL;
+    let markerPositionPOD = this.state.markerPositionPOD;
     let podfullAddData = this.state.podfullAddData;
+    let polfullAddData = this.state.polfullAddData;
+    var selected = [];
+    var users = [];
     fields["pod"] = this.state.spotrateresponseTbl.DestinationAddress;
     fields["pol"] = this.state.spotrateresponseTbl.PickUpAddress;
+    mapPositionPOD["lat"] = 40.968456; mapPositionPOD["lng"] = 28.674417;
+    mapPositionPOL["lat"] = 18.950123; mapPositionPOL["lng"] = 72.950055;
+    markerPositionPOD["lat"] = 40.968456; markerPositionPOD["lng"] = 28.674417
     podfullAddData["GeoCoordinate"] = "40.968456,28.674417";
     podfullAddData["Location"] = "AMB";
     podfullAddData["NameWoDiacritics"] = "Ambarli";
     podfullAddData["OceanPortID"] = 6302;
     podfullAddData["OceanPortLongName"] = "Ambarli, Istanbul, Turkey";
     podfullAddData["UNECECode"] = "TRPAM";
+
+    polfullAddData["GeoCoordinate"] = "18.950123,72.950055";
+    polfullAddData["Location"] = "NSA";
+    polfullAddData["NameWoDiacritics"] = "Nhava Sheva (Jawaharlal Nehru)";
+    polfullAddData["OceanPortID"] = 1500;
+    polfullAddData["OceanPortLongName"] = "Nhava Sheva (Jawaharlal Nehru), Mahārāshtra, India";
+    podfullAddData["UNECECode"] = "INNSA";
+    
+    for(var i=0; i<this.state.spotrateresponseTbl1.length; i++)
+    {
+    selected.push({ContainerName:this.state.spotrateresponseTbl1[i].Container, ProfileCodeID:this.state.spotrateresponseTbl1[i].ContainerProfileCodeID,
+       StandardContainerCode:this.state.spotrateresponseTbl1[i].ContainerCode})
+    users.push({ContainerName:this.state.spotrateresponseTbl1[i].Container, ContainerQuantity:this.state.spotrateresponseTbl1[i].ContainerQty, 
+      ProfileCodeID:this.state.spotrateresponseTbl1[i].ContainerProfileCodeID, StandardContainerCode:this.state.spotrateresponseTbl1[i].ContainerCode, Temperature:this.state.spotrateresponseTbl1[i].Container_Temperature, TemperatureType:""})
+    }
+    this.state.selected = selected;
+    this.state.users = users;
+
+    const {spotrateresponseTbl} = this.state;
+    this.state.Custom_Clearance = spotrateresponseTbl.Custom_Clearance;
+    this.state.DeliveryCity = spotrateresponseTbl.DestinationAddress;
+    this.state.HazMat = spotrateresponseTbl.HAZMAT;
+    this.state.containerLoadType = spotrateresponseTbl.Trade_terms;
+    this.state.shipmentType = spotrateresponseTbl.ShipmentType;
+    this.state.incoTerms = spotrateresponseTbl.Trade_terms;
+    this.state.modeoftransport = "SEA";
+    this.state.typeofMove = 1;
+    this.state.typesofMove = "p2p";
     self.setState({
-      Custom_Clearance:this.state.spotrateresponseTbl.Custom_Clearance,
-      DeliveryCity: this.state.spotrateresponseTbl.DestinationAddress,
+      Custom_Clearance: this.state.Custom_Clearance,
+      DeliveryCity: this.state.DeliveryCity,
       DestGeoCordinate:"",
-      HazMat:this.state.spotrateresponseTbl.HAZMAT,
+      HazMat: this.state.HazMat,
       NonStackable: false,
       OriginGeoCordinates:"",
       PDAddress:"",
@@ -385,21 +422,21 @@ class SpotRateDetails extends Component {
       PickupCity: "",
       PortOfDischargeCode: "",
       PortOfLoadingCode: "",
-      containerLoadType:this.state.spotrateresponseTbl.Trade_terms,
-      currencyCode: "INR",
+      containerLoadType: this.state.containerLoadType,
+      typeofMove: this.state.typeofMove,
+      currencyCode: 'INR',
       fields,
-      incoTerms:'CIF',
+      incoTerms:this.state.incoTerms,
       isCustomClear: "No",
-      isSearch: true,
       isSpacialEqt: true,
       isSpecialEquipment: "0",
       isTypeofMove: "",
-      mapPositionPOD: {lat: 40.968456, lng: 28.674417},
-      mapPositionPOL: {lat: 18.950123, lng: 72.950055},
-      markerPositionPOD: {lat: 40.968456, lng: 28.674417},
+      mapPositionPOD,
+      mapPositionPOL,
+      markerPositionPOD,
       markerPositionPOL: {},
       modalPuAdd: false,
-      modeoftransport: "SEA",
+      modeoftransport: this.state.modeoftransport,
       multi: true,
      // multiCBM: [{…}]
       pod: "",
@@ -408,27 +445,14 @@ class SpotRateDetails extends Component {
       pol: "",
       polCountry: "",
       poladdress: "",
-      polfullAddData: {GeoCoordinate: "18.950123,72.950055",
-                      Location: "NSA",
-                      NameWoDiacritics: "Nhava Sheva (Jawaharlal Nehru)",
-                      OceanPortID: 1500,
-                      OceanPortLongName: "Nhava Sheva (Jawaharlal Nehru), Mahārāshtra, India",
-                      UNECECode: "INNSA"},
+      polfullAddData: polfullAddData,
       polpodData: [],
-      polpodDataAdd: [{GeoCoordinate: "40.968456,28.674417",
-                      Location: "AMB",
-                      NameWoDiacritics: "Ambarli",
-                      OceanPortID: 6302,
-                      OceanPortLongName: "Ambarli, Istanbul, Turkey",
-                      UNECECode: "TRPAM"}],
       puAdd: "",
       referType: [],
       refertypeSelect: false,
       searchTextPOD: "",
-      selected: [{ContainerName: "20 Standard Dry",
-                ProfileCodeID: 9,
-                StandardContainerCode: "20GP"}],
-      shipmentType: "Export",
+      selected: selected,
+      shipmentType: this.state.shipmentType,
       spEqtSelect: [],
       spacEqmtType: [],
       spacEqmtTypeSelect: false,
@@ -438,12 +462,7 @@ class SpotRateDetails extends Component {
       testSelection: true,
       totalQuantity: 0,
       typesofMove: "p2p",
-      users: [{ContainerName: "20 Standard Dry",
-              ContainerQuantity: 0,
-              ProfileCodeID: 9,
-              StandardContainerCode: "20GP",
-              Temperature: 0,
-              TemperatureType: ""}],
+      users: users,
       values: [],
       values1: [],
       zoomPOD: 0,

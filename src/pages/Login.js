@@ -202,13 +202,14 @@ class Login extends React.Component {
             associateCompData.value = cvId;
             associateCompData.label = cnName;
             salesPersonChildData.push(associateCompData);
-
+            
             ///Set checked Node
             if (bMapped === true);
             {
               var tData = cvId.toString();
               checkedNode.push(tData);
             }
+            
           }
         }
 
@@ -223,7 +224,7 @@ class Login extends React.Component {
 
       finalNode.push(salesPersonDataByComp);
     }
-
+    debugger;
     //self.setState({ nodes: finalNode, checked: ["352200103, 1337604146"] });
     // self.setState({ nodes: finalNode, checked: ["1420702123"] });
     //self.setState({ nodes: finalNode, checked: ["1420702123"] });
@@ -337,6 +338,7 @@ class Login extends React.Component {
           var ProfileTypen = userType[0].ProfileType;
           if (userTypeName === "Sales User" && ProfileTypen) {
             var sData = response.data.Table3;
+            debugger
             self.HandleDisplaySalesPersonData(sData);
             self.setState({
               modalSalesLogin: !self.state.modalSalesLogin

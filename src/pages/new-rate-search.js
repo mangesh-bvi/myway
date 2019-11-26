@@ -123,7 +123,7 @@ class NewRateSearch extends Component {
       multiCBM: [
         {
           PackageType: "",
-          Quantity: 0,
+          Quantity: 1,
           Lengths: 0,
           Width: 0,
           Height: 0,
@@ -141,7 +141,7 @@ class NewRateSearch extends Component {
         {
           TruckID: "",
           TruckName: "",
-          Quantity: "",
+          Quantity: "1",
           TruckDesc: ""
         }
       ],
@@ -323,7 +323,7 @@ class NewRateSearch extends Component {
         {
           TruckID: "",
           TruckName: "",
-          Quantity: "",
+          Quantity: "1",
           TruckDesc: ""
         }
       ]
@@ -772,7 +772,7 @@ class NewRateSearch extends Component {
         ...prevState.multiCBM,
         {
           PackageType: "",
-          Quantity: 0,
+          Quantity: 1,
           Lengths: 0,
           Width: 0,
           Height: 0,
@@ -799,7 +799,7 @@ class NewRateSearch extends Component {
         ...prevState.spacEqmtType,
         {
           TypeName: optionVal[0].SpecialContainerCode,
-          Quantity: 0
+          Quantity: 1
         }
       ]
     }));
@@ -852,6 +852,7 @@ class NewRateSearch extends Component {
 
   //// start refer type  dynamic element
   addClickSpecial(optionVal) {
+    debugger;
     this.setState(prevState => ({
       referType: [
         ...prevState.referType,
@@ -859,7 +860,7 @@ class NewRateSearch extends Component {
           Type: optionVal[0].ContainerName,
           ProfileCodeID: optionVal[0].ProfileCodeID,
           ContainerCode: optionVal[0].SpecialContainerCode,
-          ContainerQuantity: 0,
+          ContainerQuantity: 1,
           Temperature: 0,
           TemperatureType: ""
         }
@@ -868,6 +869,7 @@ class NewRateSearch extends Component {
   }
 
   createUISpecial() {
+    debugger;
     return this.state.referType.map((el, i) => {
       return (
         <div key={i} className="row cbm-space">
@@ -884,6 +886,7 @@ class NewRateSearch extends Component {
                 type="text"
                 name="ContainerQuantity"
                 placeholder="Quantity"
+                value={el.ContainerQuantity||""}
                 onChange={this.UISpecialChange.bind(this, i)}
               />
             </div>
@@ -894,6 +897,7 @@ class NewRateSearch extends Component {
                 type="text"
                 name="Temperature"
                 placeholder="Temp"
+                value={el.Temperature||""}
                 onChange={this.UISpecialChange.bind(this, i)}
               />
             </div>
@@ -1130,7 +1134,7 @@ class NewRateSearch extends Component {
           length: "",
           width: "",
           height: "",
-          Quantity: "",
+          Quantity: "1",
           Gross_Weight: "",
           total: ""
         }
@@ -1183,7 +1187,7 @@ class NewRateSearch extends Component {
                 ContainerName: option.option.ContainerName,
                 ProfileCodeID: option.option.ProfileCodeID,
                 StandardContainerCode: option.option.StandardContainerCode,
-                ContainerQuantity: 0,
+                ContainerQuantity: 1,
                 Temperature: 0,
                 TemperatureType: ""
               }
@@ -1207,7 +1211,7 @@ class NewRateSearch extends Component {
                   ContainerName: option.option.ContainerName,
                   ProfileCodeID: option.option.ProfileCodeID,
                   StandardContainerCode: option.option.StandardContainerCode,
-                  ContainerQuantity: 0
+                  ContainerQuantity: "1"
                 }
               ]
             }));
@@ -1370,7 +1374,7 @@ class NewRateSearch extends Component {
     var originGeoCordinates = latValue + "," + lngValue;
     this.setState({
       fullAddressPOL: this.state.fullAddressPOL,
-      PickupCity: city,
+      PickupCity: address,
       OriginGeoCordinates: originGeoCordinates
     });
 
@@ -1414,7 +1418,7 @@ class NewRateSearch extends Component {
     });
     this.setState({
       fullAddressPOD: this.state.fullAddressPOD,
-      DeliveryCity: city,
+      DeliveryCity: address,
       DestGeoCordinate: destGeoCordinate
     });
 
@@ -1858,7 +1862,7 @@ class NewRateSearch extends Component {
         podfullAddData: {},
         commodityData: [],
         // packageTypeData: [],
-       
+
         currencyData: [],
 
         testSelection: true
@@ -2478,7 +2482,6 @@ class NewRateSearch extends Component {
   // }
 
   render() {
-     
     let self = this;
 
     const optionsSpeEqu = [

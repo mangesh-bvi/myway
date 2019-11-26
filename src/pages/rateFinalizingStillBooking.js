@@ -64,7 +64,8 @@ class RateFinalizingStillBooking extends Component {
       multiCBM: [],
       referType: [],
       flattack_openTop: [],
-      eqmtType: []
+      eqmtType: [],
+      selectedFile: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -208,6 +209,12 @@ class RateFinalizingStillBooking extends Component {
   }
   ////Handel Update Booking Details
   HandleBookingUpdate() {
+    debugger;
+    const formData = new FormData();
+
+    for (let index = 0; index < this.state.selectedFile.length; index++) {
+      formData.append("file", this.state.selectedFile[index]);
+    }
     var paramData = {
       BookingNo: this.state.Booking[0].BookingNo,
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
@@ -229,7 +236,7 @@ class RateFinalizingStillBooking extends Component {
       saleQuoteNo: this.state.Booking[0].saleQuoteNo,
       saleQuoteLineID: this.state.Booking[0].saleQuoteLineID,
       // DefaultEntityTypeID:this.state.Booking[0].,
-      BookingDocs: this.state.Booking3,
+      BookingDocs: this.state.FileData,
       RateQueryDim: this.multiCBM,
       NotifyID: this.state.Booking[0].NotifyID,
       Notify_AddressID: this.state.Booking[0].Notify_AddressID,
@@ -240,8 +247,10 @@ class RateFinalizingStillBooking extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookingUpdation`,
-      data: paramData,
-      headers: authHeader()
+      formData, 
+      headers: authHeader(),
+      data: paramData,    
+     
     }).then(function(response) {
       debugger;
     });
@@ -261,8 +270,15 @@ class RateFinalizingStillBooking extends Component {
 
   onDocumentChangeHandler = event => {
     debugger;
-    var fileName = event.target.files[0].name;
-    this.addClickTruckType(fileName);
+    var FileData = event.target.files;
+    var filesArr = this.state.selectedFile;
+    for (let i = 0; i < FileData.length; i++) {
+      var selectedFile = event.target.files[i];
+      filesArr.push(selectedFile);
+      var fileName = event.target.files[i].name;
+      this.setState({ selectedFile: filesArr });
+      this.addClickTruckType(fileName);
+    }
   };
 
   ////change value of SelectType methiod
