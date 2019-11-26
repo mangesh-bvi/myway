@@ -1374,7 +1374,7 @@ class NewRateSearch extends Component {
     var originGeoCordinates = latValue + "," + lngValue;
     this.setState({
       fullAddressPOL: this.state.fullAddressPOL,
-      PickupCity: city,
+      PickupCity: address,
       OriginGeoCordinates: originGeoCordinates
     });
 
@@ -1418,7 +1418,7 @@ class NewRateSearch extends Component {
     });
     this.setState({
       fullAddressPOD: this.state.fullAddressPOD,
-      DeliveryCity: city,
+      DeliveryCity: address,
       DestGeoCordinate: destGeoCordinate
     });
 
