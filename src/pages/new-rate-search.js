@@ -645,7 +645,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
               name="GrossWt"
               value={el.GrossWt || ""}
               className="w-100"
