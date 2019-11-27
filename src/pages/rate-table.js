@@ -177,7 +177,7 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID: "",
+      CommodityID: "49",
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       pickUpAddress: [],
