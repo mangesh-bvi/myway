@@ -27,7 +27,9 @@ class RateFinalizingStill extends Component {
       showContent: false,
       modalBook: false,
       RateDetails: [],
-      SubRateDetails: []
+      SubRateDetails: [],
+      toggleCustomerType:true,
+      QuoteNumber:"",
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -38,19 +40,36 @@ class RateFinalizingStill extends Component {
   componentDidMount()
   {
     debugger;
+
+    if(encryption(window.localStorage.getItem("usertype"), "desc") != "Customer")
+    {
+     this.setState({toggleCustomerType:false});
+    }
+
     if (typeof this.props.location.state != undefined) {
       this.HandleSalesQuoteView(this.props.location.state.detail)
     }
+    
   }
 
   HandleSalesQuoteView(param){
     debugger
+   var  SalesQuoteNumber = param.Quotes;
+   // "SHA-SQFCL-NOV19-05020"
+    var SalesQuoteViewdata = {
+      Mode: param.Type,
+      //SalesQuoteNumber: param.Quotes,
+      SalesQuoteNumber: SalesQuoteNumber
+    }
+    this.setState({
+      QuoteNumber: SalesQuoteNumber
+    })
     let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
-      data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
-      //data:  {Mode:'FCL', SalesQuoteNumber:'MUM-SQFCL-SEP19-00320'},
+      // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
+      data:  SalesQuoteViewdata,
       headers: authHeader()
     })
       .then(function(response) {
@@ -115,7 +134,7 @@ class RateFinalizingStill extends Component {
   {
     var SalesQuoteNumber =  "";
     if (typeof this.props.location.state != "undefined") {
-      SalesQuoteNumber = this.props.location.state.detail[0];
+      SalesQuoteNumber = this.props.location.state.detail.Quotes;
     }
     
     var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
@@ -195,7 +214,7 @@ class RateFinalizingStill extends Component {
     }
     if (typeof this.props.location.state != "undefined") {
       var bookingNo = this.props.location.state.detail[0];
-      this.HandleShipmentDetails(bookingNo);
+     // this.HandleShipmentDetails(bookingNo);
     }
     var i = 0;
 
@@ -209,12 +228,12 @@ class RateFinalizingStill extends Component {
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
               {(() => {
-                debugger;
-                if (this.props.location.state.detail[1] == "Quotes") {
-                  return <h2>Quotes Details</h2>;
-                } else {
-                  return <h2>Booking Details</h2>;
-                }
+               // debugger;
+               // if (this.props.location.state.detail[1] == "Quotes") {
+              return <h2>Quotes Details {this.state.QuoteNumber}</h2>;
+               // } else {
+               //   return <h2>Booking Details</h2>;
+              //  }
               })()}
               {/* <h2>Rate Query Details</h2> */}
             </div>
@@ -300,7 +319,9 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
+                      {this.state.toggleCustomerType && (
                       <button className="butn m-0" onClick={this.AcceptQuotes.bind(this)}>Accept</button>
+                      )}
                     </div>
                     <div className="react-rate-table">
                       {/* <ReactTable
@@ -643,10 +664,7 @@ class RateFinalizingStill extends Component {
                             <ReactTable
                               minRows={1}
                               data={
-                                row.original.RateLineId == undefined ? this.state.SubRateDetails.filter(
-                                     d =>
-                                       d.saleQuoteLineID ===  row.original.saleQuoteLineID
-                                   ) :
+                               
                                    this.state.SubRateDetails.filter(
                                      d =>
                                        d.saleQuoteLineID ===  row.original.saleQuoteLineID
