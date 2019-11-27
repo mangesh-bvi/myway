@@ -178,7 +178,7 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID: "",
+      CommodityID: "49",
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       pickUpAddress: [],
@@ -669,13 +669,17 @@ class RateTable extends Component {
         TypeOfMove: rTypeofMove,
 
         PortOfDischargeCode:
-          podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
+          paramData.containerLoadType == 'AIR'? (podAddress.Location !== "" && podAddress.Location !== undefined
+          ? podAddress.Location
+          : ""): (podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
             ? podAddress.UNECECode
-            : "",
+            : ""),
         PortOfLoadingCode:
-          polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
+          paramData.containerLoadType == 'AIR'? (polAddress.Location !== "" && polAddress.Location !== undefined
+          ? polAddress.Location
+          : ""): (polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
             ? polAddress.UNECECode
-            : "",
+            : ""),
         Containerdetails: containerdetails,
         OriginGeoCordinates:
           polAddress.GeoCoordinate !== "" &&
@@ -698,10 +702,18 @@ class RateTable extends Component {
             ? podAddress.NameWoDiacritics
             : "",
         Currency: paramData.currencyCode,
-        ChargeableWeight: cmbvalue,
-        RateQueryDim: paramData.multiCBM,
+        //ChargeableWeight: cmbvalue,
+        //RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
+
+      if (cmbvalue!=null || cmbvalue!=0 || cmbvalue!= undefined || cmbvalue!= "") {
+        dataParameter.ChargeableWeight = cmbvalue
+      }
+      else{
+        dataParameter.ChargeableWeight = cmbvalue;
+        dataParameter.RateQueryDim = paramData.multiCBM;
+      }
 
       // if(paramData.typesofMove === "p2p")
       // {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
@@ -770,13 +782,17 @@ class RateTable extends Component {
         ModeOfTransport: rModeofTransport,
         TypeOfMove: rTypeofMove,
         PortOfDischargeCode:
-          podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
+          paramData.containerLoadType == 'AIR'? (podAddress.Location !== "" && podAddress.Location !== undefined
+          ? podAddress.Location
+          : ""): (podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
             ? podAddress.UNECECode
-            : "",
+            : ""),
         PortOfLoadingCode:
-          polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
+          paramData.containerLoadType == 'AIR'? (polAddress.Location !== "" && polAddress.Location !== undefined
+          ? polAddress.Location
+          : ""): (polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
             ? polAddress.UNECECode
-            : "",
+            : ""),
         Containerdetails: containerdetails,
         OriginGeoCordinates:
           polAddress.GeoCoordinate !== "" &&
@@ -797,7 +813,7 @@ class RateTable extends Component {
           podAddress.NameWoDiacritics !== "" &&
           podAddress.NameWoDiacritics !== undefined
             ? podAddress.NameWoDiacritics
-            : "",
+            : paramData.DeliveryCity,
         Currency: paramData.currencyCode,
         isSearch: paramData.isSearch,
         cbmVal: paramData.cbmVal
@@ -987,12 +1003,12 @@ class RateTable extends Component {
         <div key={index + 1} className="row">
           <div
             className={
-              this.state.typeofMove === 1 || this.state.typeofMove === 3
+              this.state.typeofMove === 1 || this.state.typeofMove === 2
                 ? "rename-cntr login-fields position-relative"
                 : ""
             }
           >
-            {this.state.typeofMove === 1 || this.state.typeofMove === 3 ? (
+            {this.state.typeofMove === 1 || this.state.typeofMove === 2 ? (
               <ReactAutocomplete
                 key={index + 1}
                 name={"POD" + (index + 1)}
@@ -1519,8 +1535,12 @@ class RateTable extends Component {
       spacEqmtType: [
         ...prevState.spacEqmtType,
         {
-          TypeName: optionVal.SpecialContainerCode,
-          Quantity: 0
+          ContainerName: optionVal[0].ContainerName,
+          ProfileCodeID: optionVal[0].ProfileCodeID,
+          StandardContainerCode: optionVal[0].SpecialContainerCode,
+          Quantity: 1,
+          Temperature: 0,
+          TemperatureType: ""
         }
       ]
     }));
@@ -1534,7 +1554,7 @@ class RateTable extends Component {
           className="equip-plus-cntr rate-tab-spot spec-inner-cntr w-auto"
         >
           <label name="TypeName">
-            {el.TypeName} <span className="into-quant">X</span>
+            {el.StandardContainerCode} <span className="into-quant">X</span>
           </label>
           {/* <div className="spe-equ"> */}
           <input
@@ -2240,6 +2260,19 @@ class RateTable extends Component {
         });
       }
     }
+
+    if (param.spacEqmtType.length !=0) {
+      for (var i = 0; i < param.spacEqmtType.length; i++) {
+        containerdetails.push({
+          ProfileCodeID: param.spacEqmtType[i].ProfileCodeID,
+          ContainerCode: param.spacEqmtType[i].StandardContainerCode,
+          Type: param.spacEqmtType[i].ContainerName,
+          ContainerQuantity: param.spacEqmtType[i].Quantity,
+          Temperature: param.spacEqmtType[i].Temperature
+        });
+      }
+    }
+
     if (param.typesofMove == "p2p") {
       // if(param.polfullAddData.length != 0)
       // {
@@ -2363,7 +2396,8 @@ class RateTable extends Component {
         CommodityID: parseInt(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
-        BaseCurrency: param.currencyCode
+        BaseCurrency: param.currencyCode,
+        NonStackable:0
       };
     }
     if (param.containerLoadType == "LTL" || param.containerLoadType == "LCL") {
@@ -2388,7 +2422,8 @@ class RateTable extends Component {
         CommodityID: parseInt(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
-        BaseCurrency: param.currencyCode
+        BaseCurrency: param.currencyCode,
+        NonStackable:1
       };
     }
     if (param.containerLoadType == "FTL") {
@@ -2414,7 +2449,8 @@ class RateTable extends Component {
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         FTLTruckDetails: truckTypeData,
-        BaseCurrency: param.currencyCode
+        BaseCurrency: param.currencyCode,
+        NonStackable:0
       };
     }
 
