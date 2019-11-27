@@ -2676,7 +2676,6 @@ class RateTable extends Component {
                           </div>
                           <span>100$</span>
                         </div> */}
-<<<<<<< HEAD
                           <div>
                             <div className="d-flex">
                               <input
@@ -2700,45 +2699,6 @@ class RateTable extends Component {
                               <label htmlFor="cont-trak">NonStackable</label>
                             </div>
                             {/* <span>150$</span> */}
-=======
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="insu"
-                              type="checkbox"
-                              name="HazMat"
-                              checked={this.state.HazMat}
-                            />
-                            <label htmlFor="insu">HazMat</label>
-                          </div>
-                          {/* <span>50$</span> */}
-                        </div>
-                        {(() => {
-                        if(this.state.containerLoadType!='FCL' && this.state.containerLoadType!='FTL'){
-                        return <div>                         
-                          <div className="d-flex">
-                            <input
-                              id="cont-trak"
-                              type="checkbox"
-                              name="NonStackable"
-                              checked={this.state.NonStackable}
-                            />
-                            <label htmlFor="cont-trak">NonStackable</label>
-                          </div>
-                          {/* <span>150$</span> */}
-                        </div>
-                        }})()}
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="cust-clear"
-                              type="checkbox"
-                              name="Custom_Clearance"
-                              checked={this.state.Custom_Clearance}
-                              onChange={this.custClearToggle}
-                            />
-                            <label htmlFor="cust-clear">Custom Clearance</label>
->>>>>>> a3dbd846d8f9c49de298bbd262add355ed4a2d07
                           </div>
                           <div>
                             <div className="d-flex">
@@ -2975,7 +2935,6 @@ class RateTable extends Component {
                                     </>
                                   );
                                 },
-<<<<<<< HEAD
                                 accessor: "PODName",
                                 filterable: true
                                 // minWidth: 175
@@ -3005,37 +2964,6 @@ class RateTable extends Component {
                                       </p>
                                     </>
                                   );
-=======
-                                {
-                                  Cell: row => {
-                                    return (
-                                      <>
-                                        <p className="details-title">Transshipment Port</p>
-                                        <p className="details-para">
-                                          {row.original.TransshipmentPort}
-                                        </p>
-                                      </>
-                                    );
-                                  },
-                                  accessor: "TransshipmentPort",
-                                  filterable: true,
-                                  minWidth: 114
-                                },
-                                {
-                                  Cell: row => {
-                                    return (
-                                      <>
-                                        <p className="details-title">Free Time</p>
-                                        <p className="details-para">
-                                          {row.original.freeTime}
-                                        </p>
-                                      </>
-                                    );
-                                  },
-                                  accessor: "freeTime",
-                                  filterable: true,
-                                  minWidth: 80
->>>>>>> a3dbd846d8f9c49de298bbd262add355ed4a2d07
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
@@ -3222,7 +3150,6 @@ class RateTable extends Component {
                                             </>
                                           );
                                         },
-<<<<<<< HEAD
                                         Header: "Final Payment",
                                         accessor: "TotalAmount"
                                       }
@@ -3237,38 +3164,6 @@ class RateTable extends Component {
                         }}
                       />
                       {/* <ReactTable
-=======
-
-                                        {
-                                          Cell: row => {
-                                            return (
-                                              <>
-                                                {row.original.TotalAmount !==
-                                                  "" &&
-                                                row.original.TotalAmount !==
-                                                  null
-                                                  ? row.original.TotalAmount +
-                                                    " " +
-                                                    row.original.BaseCurrency
-                                                  : ""}
-                                              </>
-                                            );
-                                          },
-                                          Header: "Final Payment",
-                                          accessor: "TotalAmount"
-                                        }
-                                      ]
-                                    }
-                                  ]}
-                                  showPagination={false}
-                                  defaultPageSize={20}
-                                />
-                              </div>
-                            );
-                          }}
-                        />
-                        {/* <ReactTable
->>>>>>> a3dbd846d8f9c49de298bbd262add355ed4a2d07
                     data={Data}
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}

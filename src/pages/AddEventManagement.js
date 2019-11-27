@@ -33,6 +33,7 @@ class AddEventManagement extends Component {
   }
 
   handleSubmit(e) {
+    debugger
     // const docData = new FormData();
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     var ActionModes = 0;
@@ -61,7 +62,8 @@ class AddEventManagement extends Component {
       })
         .then(function(response) {
           debugger;
-          alert(response.data[0].Column1);
+          NotificationManager.success(response.data[0].Column1);
+          window.location.href = "event-management";
           //    setTimeout(function(){ window.location.href="/add-event" }, 1000);
         })
         .catch(error => {
@@ -300,6 +302,7 @@ class AddEventManagement extends Component {
             </div>
           </div>
         </div>
+        <NotificationContainer />
       </div>
     );
   }
