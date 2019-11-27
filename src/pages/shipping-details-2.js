@@ -276,39 +276,43 @@ class ShippingDetailsTwo extends Component {
   }
 
   SendMessage = () => {
+    debugger;
     let self = this;
     var hbllNo = document.getElementById("popupHBLNO").value;
     var msgg = document.getElementById("addMess").value;
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/SendCommonMessage`,
-      data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        ReferenceNo: hbllNo,
-        // TypeOfMessage: drpshipment.value.trim(),
-        Message: msgg
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      if (response != null) {
-        if (response.data != null) {
-          if (response.data.length > 0) {
-            if (response.data[0] != null) {
-              var message = response.data[0].Result;
-              // self.setState({ MessagesActivityDetails });
-              if (response.data[0].Result === "Message Send Successfully") {
-                // setTimeout(() => {
-                // this.handleActivityList();
-                // }, 100);
-                alert(response.data[0].Result);
+    if (msgg === "" || msgg === null) {
+      NotificationManager.error("Please enter the message.");
+    } else {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/SendCommonMessage`,
+        data: {
+          UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+          ReferenceNo: hbllNo,
+          // TypeOfMessage: drpshipment.value.trim(),
+          Message: msgg
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.length > 0) {
+              if (response.data[0] != null) {
+                var message = response.data[0].Result;
+                // self.setState({ MessagesActivityDetails });
+                if (response.data[0].Result === "Message Send Successfully") {
+                  // setTimeout(() => {
+                  // this.handleActivityList();
+                  // }, 100);
+                  alert(response.data[0].Result);
+                }
+                self.handleActivityList();
               }
-              self.handleActivityList();
             }
           }
         }
-      }
-    });
+      });
+    }
   };
 
   handleClick = (marker, event) => {
@@ -674,6 +678,7 @@ class ShippingDetailsTwo extends Component {
     });
   };
   onDocumentClickHandler = () => {
+    debugger
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
     var docDesc = document.getElementById("docDesc").value;
@@ -751,6 +756,9 @@ class ShippingDetailsTwo extends Component {
   onEntered() {
     // this.setState({ status: "Opened" });
     console.log(1);
+  }
+  handleChangePage(){
+    window.history.back();
   }
 
   handleAddToWatchList = () => {
@@ -925,6 +933,9 @@ class ShippingDetailsTwo extends Component {
     if (this.state.ShipmentExistsInWatchList == 0) {
       Watchlist = (
         <>
+        <button onClick={this.handleChangePage.bind(this)} className="butn mt-0">
+            Back
+          </button>
           <button onClick={this.handleAddToWatchList} className="butn mt-0">
             Add Watchlist
           </button>
@@ -948,8 +959,19 @@ class ShippingDetailsTwo extends Component {
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
                 <p>{team.Message}</p>
+
                 <div class="d-flex justify-content-end">
-                  {" "}
+                  <div  >
+                    <span style={{marginRight:'269px'}}>
+                      Created by :-
+                      <b>
+                        {encryption(
+                          window.localStorage.getItem("username"),
+                          "desc"
+                        )}
+                      </b>
+                    </span>
+                  </div>
                   ({team.MessageCreationTime})
                 </div>
                 <hr />
@@ -979,7 +1001,6 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-md-7 p-0">
                   <div className="title-sect">
                     <h2>Details View</h2>
-
                     {Watchlist}
                   </div>
                   <ul className="nav cust-tabs" role="tablist">

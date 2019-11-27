@@ -29,7 +29,6 @@ class ChangePassword extends React.Component {
   handleSubmit(e) {
    debugger;
     //  e.preventDefault();
-
     var oldpwd =encryption(window.localStorage.getItem("password"),"desc");
     this.setState({ submitted: true });
     const { oldpassword, password, newpassword } = this.state;

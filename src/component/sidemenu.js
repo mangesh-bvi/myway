@@ -31,6 +31,14 @@ class SideMenu extends Component {
       window.location.href = "shipment-summary?stype=" + value;
     }
   }
+  clickQuetesType(e) {
+    var value = e.target.getAttribute("data-Quetye");
+    if(value === "" || value=== null ){
+      window.location.href="quote-table";
+    }else{
+      window.location.href="quote-table?Qtype=" + value;
+    }
+  }
 
   render() {
     var urlShipSum = window.location.pathname;
@@ -103,7 +111,11 @@ class SideMenu extends Component {
             >
               <Card>
                 <Card.Header>
-                  <Link to="/quote-table" style={{ display: "block" }}>
+                  <Link
+                    to="/quote-table"
+                    style={{ display: "block" }}
+                    onClick={this.clickQuetesType.bind(this)}
+                  >
                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
                       <img
                         src={QuotesIcon}
@@ -118,31 +130,61 @@ class SideMenu extends Component {
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
-                        <label className="shipment-ul-lilbl1">Current</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Current"
+                          onClick={this.clickQuetesType.bind(this)}
+                        >
+                          Current
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("quotecurrent")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Pending</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Pending"
+                          onClick={this.clickQuetesType.bind(this)}
+                        >
+                          Pending
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("quotepending")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Approved</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Approved"
+                          onClick={this.clickQuetesType.bind(this)}
+                        >
+                          Approved
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("quoteapproved")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Expired</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Expired"
+                          onClick={this.clickQuetesType.bind(this)}
+                        >
+                          Expired
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("quoteexpired")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Rejected</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Rejected"
+                          onClick={this.clickQuetesType.bind(this)}
+                        >
+                          Rejected
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("quoterejected")}
                         </label>
