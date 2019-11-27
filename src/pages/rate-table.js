@@ -2682,7 +2682,9 @@ class RateTable extends Component {
                           </div>
                           {/* <span>50$</span> */}
                         </div>
-                        <div>
+                        {(() => {
+                        if(this.state.containerLoadType!='FCL' && this.state.containerLoadType!='FTL'){
+                        return <div>                         
                           <div className="d-flex">
                             <input
                               id="cont-trak"
@@ -2694,6 +2696,7 @@ class RateTable extends Component {
                           </div>
                           {/* <span>150$</span> */}
                         </div>
+                        }})()}
                         <div>
                           <div className="d-flex">
                             <input
@@ -2921,7 +2924,7 @@ class RateTable extends Component {
                                   Cell: row => {
                                     return (
                                       <>
-                                        <p className="details-title">S. Port</p>
+                                        <p className="details-title">Transshipment Port</p>
                                         <p className="details-para">
                                           {row.original.TransshipmentPort}
                                         </p>
@@ -2929,14 +2932,14 @@ class RateTable extends Component {
                                     );
                                   },
                                   accessor: "TransshipmentPort",
-                                  filterable: true
-                                  // minWidth: 175
+                                  filterable: true,
+                                  minWidth: 114
                                 },
                                 {
                                   Cell: row => {
                                     return (
                                       <>
-                                        <p className="details-title">F. Time</p>
+                                        <p className="details-title">Free Time</p>
                                         <p className="details-para">
                                           {row.original.freeTime}
                                         </p>
@@ -3138,8 +3141,8 @@ class RateTable extends Component {
                                       ]
                                     }
                                   ]}
-                                  showPagination={true}
-                                  defaultPageSize={5}
+                                  showPagination={false}
+                                  defaultPageSize={20}
                                 />
                               </div>
                             );
