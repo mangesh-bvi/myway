@@ -190,7 +190,7 @@ class AddEventManagement extends Component {
                     onChange={this.handlechange.bind(this, "ContainerNo")}
                     placeholder="Container No"
                     value={this.state.fields["ContainerNo"]}
-                    disabled={this.state.disabled}
+                    // disabled={this.state.disabled}
                     onBlur={this.handleBlurContNo.bind(this, "username")}
                   />
                   <span style={{ color: "red" }}>

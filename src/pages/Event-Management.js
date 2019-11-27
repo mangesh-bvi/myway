@@ -106,7 +106,7 @@ class EventManagement extends Component {
                       },
                       {
                         Header: "Eve Status",
-                        accessor: "EventmanagementDayStatus"
+                        accessor: "EventmanagementStatus"
                       },
                       {
                         Header: "PTTP",
