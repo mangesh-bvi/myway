@@ -305,7 +305,7 @@ class RateFinalizingStillBooking extends Component {
         url: `${appSettings.APIURL}/BookigGridDetailsList`,
         data: {
           UserID: 874654, //userId, //874654, ,
-          BookingID: bookingNo//830651 // 830651 // bookingNo
+          BookingID: 830651//bookingNo//830651 // 830651 // bookingNo
         },
         headers: authHeader()
       }).then(function(response) {

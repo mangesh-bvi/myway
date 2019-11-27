@@ -311,6 +311,18 @@ class RateFinalizing extends Component {
       data: LocalChargeData,
       headers: authHeader()
     }).then(function(response) {
+      for(var i=0; i< response.data.Table.length; i++)
+      {
+          self.state.arrLocalsCharges.push({Amount:response.data.Table[i].Amount, AmountInBaseCurrency:response.data.Table[i].AmountInBaseCurrency,
+            ChargeCode:response.data.Table[i].ChargeCode, ChargeDesc:response.data.Table[i].ChargeDesc,
+            ChargeItem:response.data.Table[i].ChargeItem, ContainerType:response.data.Table[i].ContainerType,
+            Currency:response.data.Table[i].Currency,Exrate:response.data.Table[i].Exrate,LineName:response.data.Table[i].LineName, IsChecked:false})
+
+          self.state.fltLocalCharges.push({Amount:response.data.Table[i].Amount, AmountInBaseCurrency:response.data.Table[i].AmountInBaseCurrency,
+            ChargeCode:response.data.Table[i].ChargeCode, ChargeDesc:response.data.Table[i].ChargeDesc,
+            ChargeItem:response.data.Table[i].ChargeItem, ContainerType:response.data.Table[i].ContainerType,
+            Currency:response.data.Table[i].Currency,Exrate:response.data.Table[i].Exrate,LineName:response.data.Table[i].LineName, IsChecked:false})
+      }
       self.setState({
         arrLocalsCharges: response.data.Table,
         fltLocalCharges: response.data.Table
