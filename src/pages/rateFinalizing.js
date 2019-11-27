@@ -11,6 +11,7 @@ import { authHeader } from "../helpers/authHeader";
 import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
+import Copy from "./../assets/img/copy.png";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class RateFinalizing extends Component {
     this.state = {
       modalProfit: false,
       modalRequest: false,
+      modalEdit: false,
       modalNewConsignee: false,
       commoditySelect: "select",
       cargoSelect: "select",
@@ -62,6 +64,7 @@ class RateFinalizing extends Component {
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleNewConsignee = this.toggleNewConsignee.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
+    this.toggleEdit = this.toggleEdit.bind(this);
     this.SendRequest = this.SendRequest.bind(this);
     this.HandleLocalCharges = this.HandleLocalCharges.bind(this)
   }
@@ -93,6 +96,7 @@ class RateFinalizing extends Component {
       var pickUpAddress = this.props.location.state.pickUpAddress;
       var multiCBM = this.props.location.state.multiCBM;
       var TruckTypeData = this.props.location.state.TruckTypeData;
+      var cbmVal = this.props.location.state.cbmVal;
 
       var CargoDetailsArr = [];
       if(containerLoadType == "FCL")
@@ -114,7 +118,7 @@ class RateFinalizing extends Component {
         {
           for(var i = 0; i < spacEqmtType.length; i++)
           {
-            CargoDetailsArr.push({ContainerType: spacEqmtType[i].TypeName, "Packaging":"-", Quantity: spacEqmtType[i].Quantity, Lenght:"-",Width:"-",Height:"-",Weight:"-",Gross_Weight: "-",Temperature:"-"})
+            CargoDetailsArr.push({ContainerType: spacEqmtType[i].StandardContainerCode, "Packaging":"-", Quantity: spacEqmtType[i].Quantity, Lenght:"-",Width:"-",Height:"-",Weight:"-",Gross_Weight: "-",Temperature:"-"})
           }
         }
       }
@@ -169,6 +173,33 @@ class RateFinalizing extends Component {
         }
       }
     }
+    else if(containerLoadType == "AIR" )
+    {
+      if(multiCBM != null)
+      {
+        if(multiCBM.length > 0)
+        {
+          for(var i =0; i< multiCBM.length; i++)
+          {
+            if(multiCBM[i].PackageType != "" && multiCBM[i].PackageType != null)
+            {
+              CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+            }
+          }
+        }
+      }
+     
+      if(cbmVal != null)
+      {
+        if(cbmVal != "")
+        {
+          if(cbmVal != "0")
+          {
+            CargoDetailsArr.push({ContainerType: '-', "Packaging":"-", Quantity: '-', Lenght:"-", Width:"-", Height:"-", Weight:"-" , Gross_Weight: "-", Temperature: cbmVal})
+          }
+        }
+      }
+    }
 
       this.setState({
         rateDetails:rateDetails,
@@ -194,7 +225,8 @@ class RateFinalizing extends Component {
         destAddress:destAddress,
         pickUpAddress:pickUpAddress,
         multiCBM:multiCBM,
-        TruckTypeData: TruckTypeData
+        TruckTypeData: TruckTypeData,
+        cbmVal:cbmVal
       });
       
 
@@ -436,6 +468,12 @@ class RateFinalizing extends Component {
     }));
   }
 
+  toggleEdit() {
+    this.setState(prevState => ({
+      modalEdit: !prevState.modalEdit
+    }));
+  }
+
   SendRequest()
   {
     var txtRequestDiscount , txtRequestFreeTime, txtRequestComments = "";
@@ -502,6 +540,10 @@ class RateFinalizing extends Component {
       else if(containerLoadType == "FTL" || containerLoadType == "LTL")
       {
         FCLSQBaseFreight.push({RateID:rateDetailsarr[i].RateLineID,RateType:rateDetailsarr[i].TypeOfRate });
+      }
+      else if(containerLoadType == "AIR")
+      {
+        FCLSQBaseFreight.push({RateID:rateDetailsarr[i].RateLineId,RateType:rateDetailsarr[i].TypeOfRate });
       }
     }  
 
@@ -583,6 +625,23 @@ class RateFinalizing extends Component {
                 });
               }
           }
+          if(containerLoadType == "AIR")
+          {
+          if(rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId){
+            FCLSQCharges.push({
+              ChargeID: rateSubDetailsarr[j].ChargeID ,
+              Rate :rateSubDetailsarr[j].Rate ,
+              Currency :rateSubDetailsarr[j].Currency ,
+              RateLineID:rateSubDetailsarr[j].RateLineID ,
+              ChargeCode :rateSubDetailsarr[j].ChargeCode ,
+              Tax:rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+              ChargeItem :rateSubDetailsarr[j].ChargeItem ,
+              Exrate:rateSubDetailsarr[j].Exrate ,
+              ChargeType: rateSubDetailsarr[j].ChargeType ,
+              TotalAmount:rateSubDetailsarr[j].TotalAmount 
+              });
+            }
+          }
         }
       }
     
@@ -630,7 +689,7 @@ if(containerLoadType == "FCL")
         {
           for(var i = 0; i < spacEqmtType.length; i++)
           {
-            Containerdetails.push({ProfileCodeID:0, ContainerCode:spacEqmtType[i].TypeName, Type:'',ContainerQuantity:spacEqmtType[i].Quantity, Temperature:0})
+            Containerdetails.push({ProfileCodeID:spacEqmtType[i].ProfileCodeID, ContainerCode:spacEqmtType[i].StandardContainerCode, Type:spacEqmtType[i].ContainerName,ContainerQuantity:spacEqmtType[i].Quantity, Temperature:0})
           }
         }
       }
@@ -676,13 +735,34 @@ if(containerLoadType == "FCL")
       }
       //
     }
+    else if(containerLoadType == "AIR")
+    {
+      var multiCBM = this.state.multiCBM;
+      for(var i =0; i< multiCBM.length; i++)
+      {
+        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+        RateQueryDim.push({Quantity:multiCBM[i].Quantity ,Lengths:multiCBM[i].Lengths ,Width:multiCBM[i].Width ,Height:multiCBM[i].Height ,GrossWt:multiCBM[i].GrossWt, VolumeWeight:multiCBM[i].VolumeWeight, Volume:multiCBM[i].Volume, PackageType:multiCBM[i].PackageType})
+      }
+    var cbmVal = this.state.cbmVal;
+
+      if(cbmVal != null)
+      {
+        if(cbmVal != "")
+        {
+          if(cbmVal != "0")
+          {
+            RateQueryDim.push({Quantity:TruckTypeData[i].Quantity ,Lengths:0 ,Width:0 ,Height:0 ,GrossWt:0, VolumeWeight:0, Volume:0, PackageType:TruckTypeData[i].TruckDesc})
+          }
+        }
+      }
+    }
 
       var PickUpAddress = "";
       var DestinationAddress = "";
       var PickUpAddressDetails = {Street:'',Country:'',State:'',City:'',ZipCode:0}
       var DestinationAddressDetails = {Street:'',Country:'',State:'',City:'',ZipCode:0};
 
-
+debugger;
       if(this.state.typeofMove == 2 || this.state.typeofMove == 4 )
       {
         PickUpAddress = this.props.location.state.pickUpAddress[0].City
@@ -755,6 +835,12 @@ debugger;
     senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
     senrequestpara.InlandSQCharges = FCLSQCharges;
     url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
+  }
+  else if(this.state.containerLoadType == "AIR")
+  {
+    senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
+    senrequestpara.AirSQCharges = FCLSQCharges;
+    url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
   }
   //return false;
 
@@ -1078,7 +1164,7 @@ if(Commoditypresent)
 
 }
 
-var containerLoadType = this.props.location.state.containerLoadType
+var containerLoadType = this.props.location.state.containerLoadType;
     const { CargoDetailsArr } = this.state;
     return (
       <React.Fragment>
@@ -1624,7 +1710,7 @@ var containerLoadType = this.props.location.state.containerLoadType
                             };
                           },
                           filterMethod: (filter, rows) => {
-                            debugger;
+                         
 
                             const result = matchSorter(rows, filter.value, {
                               keys: ["commodities", "TransitTime"],
@@ -1656,6 +1742,7 @@ var containerLoadType = this.props.location.state.containerLoadType
                       defaultPageSize={10}
                       className="-striped -highlight"
                       minRows={1}
+                      showPagination = {false}
                       SubComponent={row => {
                         return (
                           <div style={{ padding: "20px 0" }}>
@@ -1725,7 +1812,7 @@ var containerLoadType = this.props.location.state.containerLoadType
                                   ]
                                 }
                               ]}
-                              showPagination={true}
+                              showPagination={false}
                               defaultPageSize={5}
                             />
                           </div>
@@ -1852,14 +1939,7 @@ var containerLoadType = this.props.location.state.containerLoadType
                             </button>
                           )}
                           </div>
-                          <div className="col-md-6 text-right">
-                            <button
-                              onClick={this.toggleRequest}
-                              className="butn more-padd m-0"
-                            >
-                              Request Change
-                            </button>
-                          </div>
+                          
                         </div>
                       </div>
                     </UncontrolledCollapse>
@@ -1876,19 +1956,30 @@ var containerLoadType = this.props.location.state.containerLoadType
                       </button>
                     </div>
                   </div>
-
+                  
                   <div className="rate-final-contr">
+                    <div className="text-center">
+                            <button
+                              onClick={this.toggleRequest}
+                              className="butn more-padd m-0"
+                            >
+                              Request Change
+                            </button>
+                    </div>
+
                     <div className="title-border py-3">
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="ag-fresh redirect-row">
+                     
                       <ReactTable
                         data={CargoDetailsArr}
                         filterable
                         minRows={1}
+                        
                         columns={[
                           {
-                            Header: "ContainerType",
+                            Header: "Cont.Type",
                             accessor: "ContainerType"
                           },
                           {
@@ -1909,13 +2000,38 @@ var containerLoadType = this.props.location.state.containerLoadType
                           },
                           {
                             Header: "Weight",
-                            accessor: "Weight"
+                            accessor: "Weight",
+                            //editable: this.state.containerLoadType == "Air" ? true : false
                           },
                           {
-
-                            Header:"Temperature",
-                            accessor:"Temperature"
+                           
+                            Header: containerLoadType == "AIR" ? "CBM" : "Temssp.",
+                            accessor: "Temperature",
+                            //show:  this.state.containerLoadType == "Air" ? false : true
                           },
+                          {
+                            Header: "Action",
+                            sortable: false,
+                            Cell: row => {
+                             
+                                return (
+                                  <div className="action-cntr">
+                                    {/* actionicon */}
+                                    <button  onClick={this.toggleEdit}>
+                                      <img
+                                        className=""
+                                        src={Edit}
+                                        alt="booking-icon"
+                                      />
+                                      
+                                    </button>
+        
+                                   
+                                  </div>
+                                );
+                              
+                            }
+                          }
                         ]}
                         className="-striped -highlight"
                         defaultPageSize={5}
@@ -2118,6 +2234,43 @@ var containerLoadType = this.props.location.state.containerLoadType
 
             <ModalBody>
               <h3 className="mb-4">Request Changes</h3>
+              {this.state.toggleAddProfitBtn && (
+              <div className="rename-cntr login-fields">
+                <label>Discount</label>
+                <input type="text" id="txtRequestDiscount" placeholder="Enter Discount" />
+              </div>
+              )}
+              {this.state.toggleAddProfitBtn && (
+              <div className="rename-cntr login-fields">
+                <label>Free Time</label>
+                <input type="text" id="txtRequestFreeTime" placeholder="Enter Time" maxLength="2" />
+              </div>
+              )}
+              <div className="rename-cntr login-fields mb-0">
+                <label>Comments</label>
+                <textarea
+                  className="txt-add"
+                  placeholder="Enter Comments"
+                  id="txtRequestComments"
+                ></textarea>
+              </div>
+              <div className="text-center">
+                <Button className="butn" onClick={this.SendRequest}>
+                  Request
+                </Button>
+              </div>
+            </ModalBody>
+          </Modal>
+
+          <Modal
+            className="delete-popup pol-pod-popup"
+            isOpen={this.state.modalEdit}
+            toggle={this.toggleEdit}
+            centered={true}
+          >
+
+            <ModalBody>
+              <h3 className="mb-4">Request Edit Changes</h3>
               {this.state.toggleAddProfitBtn && (
               <div className="rename-cntr login-fields">
                 <label>Discount</label>

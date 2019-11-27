@@ -11,7 +11,6 @@ import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
-import CancelImg from "./../assets/img/close.png";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 import Autocomplete from "react-google-autocomplete";
@@ -178,7 +177,7 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID: "49",
+      CommodityID: "",
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       pickUpAddress: [],
@@ -538,16 +537,14 @@ class RateTable extends Component {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           var thisrateid = this.state.selectedDataRow[i].RateLineID;
           var _originalrateid = rowData._original.RateLineID;
-          if (
-            this.state.containerLoadType == "FCL" ||
-            this.state.containerLoadType == "LCL"
-          ) {
+          if(this.state.containerLoadType == "FCL" || this.state.containerLoadType == "LCL" || this.state.containerLoadType == "AIR")
+          {
             thisrateid = this.state.selectedDataRow[i].RateLineId;
             _originalrateid = rowData._original.RateLineId;
           }
 
           if (
-            thisrateid == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID
+            thisrateid  == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID 
           ) {
             selectedRow.splice(i, 1);
 
@@ -669,17 +666,13 @@ class RateTable extends Component {
         TypeOfMove: rTypeofMove,
 
         PortOfDischargeCode:
-          paramData.containerLoadType == 'AIR'? (podAddress.Location !== "" && podAddress.Location !== undefined
-          ? podAddress.Location
-          : ""): (podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
+          podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
             ? podAddress.UNECECode
-            : ""),
+            : "",
         PortOfLoadingCode:
-          paramData.containerLoadType == 'AIR'? (polAddress.Location !== "" && polAddress.Location !== undefined
-          ? polAddress.Location
-          : ""): (polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
+          polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
             ? polAddress.UNECECode
-            : ""),
+            : "",
         Containerdetails: containerdetails,
         OriginGeoCordinates:
           polAddress.GeoCoordinate !== "" &&
@@ -695,19 +688,19 @@ class RateTable extends Component {
           polAddress.NameWoDiacritics !== "" &&
           polAddress.NameWoDiacritics !== undefined
             ? polAddress.NameWoDiacritics
-            : "",
+            : paramData.fullAddressPOL[0].City,
         DeliveryCity:
           podAddress.NameWoDiacritics !== "" &&
           podAddress.NameWoDiacritics !== undefined
             ? podAddress.NameWoDiacritics
-            : "",
+            : paramData.fullAddressPOD[0].City,
         Currency: paramData.currencyCode,
-        //ChargeableWeight: cmbvalue,
-        //RateQueryDim: paramData.multiCBM,
+        ChargeableWeight: cmbvalue,
+        RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      if (cmbvalue!=null || cmbvalue!=0 || cmbvalue!= undefined || cmbvalue!= "") {
+      if (cmbvalue!=null && cmbvalue!=0 && cmbvalue!= undefined && cmbvalue!= "") {
         dataParameter.ChargeableWeight = cmbvalue
       }
       else{
@@ -782,17 +775,13 @@ class RateTable extends Component {
         ModeOfTransport: rModeofTransport,
         TypeOfMove: rTypeofMove,
         PortOfDischargeCode:
-          paramData.containerLoadType == 'AIR'? (podAddress.Location !== "" && podAddress.Location !== undefined
-          ? podAddress.Location
-          : ""): (podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
+          podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
             ? podAddress.UNECECode
-            : ""),
+            : "",
         PortOfLoadingCode:
-          paramData.containerLoadType == 'AIR'? (polAddress.Location !== "" && polAddress.Location !== undefined
-          ? polAddress.Location
-          : ""): (polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
+          polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
             ? polAddress.UNECECode
-            : ""),
+            : "",
         Containerdetails: containerdetails,
         OriginGeoCordinates:
           polAddress.GeoCoordinate !== "" &&
@@ -813,7 +802,7 @@ class RateTable extends Component {
           podAddress.NameWoDiacritics !== "" &&
           podAddress.NameWoDiacritics !== undefined
             ? podAddress.NameWoDiacritics
-            : paramData.DeliveryCity,
+            : "",
         Currency: paramData.currencyCode,
         isSearch: paramData.isSearch,
         cbmVal: paramData.cbmVal
@@ -1003,12 +992,12 @@ class RateTable extends Component {
         <div key={index + 1} className="row">
           <div
             className={
-              this.state.typeofMove === 1 || this.state.typeofMove === 2
+              this.state.typeofMove === 1 || this.state.typeofMove === 3
                 ? "rename-cntr login-fields position-relative"
                 : ""
             }
           >
-            {this.state.typeofMove === 1 || this.state.typeofMove === 2 ? (
+            {this.state.typeofMove === 1 || this.state.typeofMove === 3 ? (
               <ReactAutocomplete
                 key={index + 1}
                 name={"POD" + (index + 1)}
@@ -1535,12 +1524,8 @@ class RateTable extends Component {
       spacEqmtType: [
         ...prevState.spacEqmtType,
         {
-          ContainerName: optionVal[0].ContainerName,
-          ProfileCodeID: optionVal[0].ProfileCodeID,
-          StandardContainerCode: optionVal[0].SpecialContainerCode,
-          Quantity: 1,
-          Temperature: 0,
-          TemperatureType: ""
+          TypeName: optionVal.SpecialContainerCode,
+          Quantity: 0
         }
       ]
     }));
@@ -1554,7 +1539,7 @@ class RateTable extends Component {
           className="equip-plus-cntr rate-tab-spot spec-inner-cntr w-auto"
         >
           <label name="TypeName">
-            {el.StandardContainerCode} <span className="into-quant">X</span>
+            {el.TypeName} <span className="into-quant">X</span>
           </label>
           {/* <div className="spe-equ"> */}
           <input
@@ -2260,19 +2245,6 @@ class RateTable extends Component {
         });
       }
     }
-
-    if (param.spacEqmtType.length !=0) {
-      for (var i = 0; i < param.spacEqmtType.length; i++) {
-        containerdetails.push({
-          ProfileCodeID: param.spacEqmtType[i].ProfileCodeID,
-          ContainerCode: param.spacEqmtType[i].StandardContainerCode,
-          Type: param.spacEqmtType[i].ContainerName,
-          ContainerQuantity: param.spacEqmtType[i].Quantity,
-          Temperature: param.spacEqmtType[i].Temperature
-        });
-      }
-    }
-
     if (param.typesofMove == "p2p") {
       // if(param.polfullAddData.length != 0)
       // {
@@ -2396,8 +2368,7 @@ class RateTable extends Component {
         CommodityID: parseInt(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
-        BaseCurrency: param.currencyCode,
-        NonStackable:0
+        BaseCurrency: param.currencyCode
       };
     }
     if (param.containerLoadType == "LTL" || param.containerLoadType == "LCL") {
@@ -2422,8 +2393,7 @@ class RateTable extends Component {
         CommodityID: parseInt(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
-        BaseCurrency: param.currencyCode,
-        NonStackable:1
+        BaseCurrency: param.currencyCode
       };
     }
     if (param.containerLoadType == "FTL") {
@@ -2449,8 +2419,7 @@ class RateTable extends Component {
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         FTLTruckDetails: truckTypeData,
-        BaseCurrency: param.currencyCode,
-        NonStackable:0
+        BaseCurrency: param.currencyCode
       };
     }
 
@@ -2566,7 +2535,7 @@ class RateTable extends Component {
   }
   render() {
     var i = 0;
-
+    
     return (
       <div>
         <Headers />
@@ -2574,49 +2543,46 @@ class RateTable extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          {this.state.loading === true ? (
-            <div className="loader-icon"></div>
-          ) : (
-            <div className="cls-rt no-bg min-hei-auto">
-              <NotificationContainer />
-              <div className="rate-table-header">
-                <div className="title-sect">
-                  <h2>Rate Table</h2>
-                </div>
-                <div className="login-fields mb-0 rate-tab-drop">
-                  <select onChange={this.filterAll}>
-                    <option>Select</option>
-                    <option value="All">All</option>
-                    {this.state.commodityData.map((item, i) => (
-                      <option
-                        key={i}
-                        value={item.id}
-                        selected={item.Commodity === "FAK"}
-                      >
-                        {item.Commodity}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="rate-table-range">
-                  <span className="cust-labl clr-green">Faster</span>
-                  <span className="cust-labl clr-red">Cheaper</span>
-                  <InputRange
-                    formatLabel={value => `${value} DAYS`}
-                    maxValue={75}
-                    minValue={0}
-                    value={this.state.value}
-                    onChange={this.HandleRangeSlider.bind(this)}
-                  />
-                </div>
-                <div className="rate-table-butn">
-                  <button
-                    onClick={this.handleCheck.bind(this)}
-                    className="blue-butn butn m-0"
-                  >
-                    Proceed
-                  </button>
-                  {/* <Link
+          <div className="cls-rt no-bg min-hei-auto">
+            <NotificationContainer />
+            <div className="rate-table-header">
+              <div className="title-sect">
+                <h2>Rate Table</h2>
+              </div>
+              <div className="login-fields mb-0 rate-tab-drop">
+                <select onChange={this.filterAll}>
+                  <option>Select</option>
+                  <option value="All">All</option>
+                  {this.state.commodityData.map((item, i) => (
+                    <option
+                      key={i}
+                      value={item.id}
+                      selected={item.Commodity === "FAK"}
+                    >
+                      {item.Commodity}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="rate-table-range">
+                <span className="cust-labl clr-green">Faster</span>
+                <span className="cust-labl clr-red">Cheaper</span>
+                <InputRange
+                  formatLabel={value => `${value} DAYS`}
+                  maxValue={75}
+                  minValue={0}
+                  value={this.state.value}
+                  onChange={this.HandleRangeSlider.bind(this)}
+                />
+              </div>
+              <div className="rate-table-butn">
+                <button
+                  onClick={this.handleCheck.bind(this)}
+                  className="blue-butn butn m-0"
+                >
+                  Proceed
+                </button>
+                {/* <Link
                   to={{
                     pathname: "/rate-finalizing"
                   }}
@@ -2624,37 +2590,37 @@ class RateTable extends Component {
                 >
                   Proceed
                 </Link> */}
-                </div>
               </div>
-              <div className="rate-table-below">
-                <div className="row">
-                  <div className="col-md-4 less-right-rate">
-                    <div className="rate-table-left">
-                      <div className="top-select d-flex justify-content-between">
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.shipmentType}
-                        </a>
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.modeoftransport}
-                        </a>
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.containerLoadType}
-                        </a>
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.typeofMove === 1
-                            ? "P2P"
-                            : this.state.typeofMove === 2
-                            ? "D2P"
-                            : this.state.typeofMove === 4
-                            ? "D2D"
-                            : this.state.typeofMove === 3
-                            ? "P2D"
-                            : ""}
-                        </a>
-                      </div>
-                      <div className="cont-costs">
-                        <div className="remember-forgot d-block m-0">
-                          {/* <div>
+            </div>
+            <div className="rate-table-below">
+              <div className="row">
+                <div className="col-md-4 less-right-rate">
+                  <div className="rate-table-left">
+                    <div className="top-select d-flex justify-content-between">
+                      <a href="new-rate-search" className="butn">
+                        {this.state.shipmentType}
+                      </a>
+                      <a href="new-rate-search" className="butn">
+                        {this.state.modeoftransport}
+                      </a>
+                      <a href="new-rate-search" className="butn">
+                        {this.state.containerLoadType}
+                      </a>
+                      <a href="new-rate-search" className="butn">
+                        {this.state.typeofMove === 1
+                          ? "P2P"
+                          : this.state.typeofMove === 2
+                          ? "D2P"
+                          : this.state.typeofMove === 4
+                          ? "D2D"
+                          : this.state.typeofMove === 3
+                          ? "P2D"
+                          : ""}
+                      </a>
+                    </div>
+                    <div className="cont-costs">
+                      <div className="remember-forgot d-block m-0">
+                        {/* <div>
                           <div className="d-flex">
                             <input
                               id="door"
@@ -2676,85 +2642,64 @@ class RateTable extends Component {
                           </div>
                           <span>100$</span>
                         </div> */}
-                          <div>
-                            <div className="d-flex">
-                              <input
-                                id="insu"
-                                type="checkbox"
-                                name="HazMat"
-                                checked={this.state.HazMat}
-                              />
-                              <label htmlFor="insu">HazMat</label>
-                            </div>
-                            {/* <span>50$</span> */}
+                        <div>
+                          <div className="d-flex">
+                            <input
+                              id="insu"
+                              type="checkbox"
+                              name="HazMat"
+                              checked={this.state.HazMat}
+                            />
+                            <label htmlFor="insu">HazMat</label>
                           </div>
-                          <div>
-                            <div className="d-flex">
-                              <input
-                                id="cont-trak"
-                                type="checkbox"
-                                name="NonStackable"
-                                checked={this.state.NonStackable}
-                              />
-                              <label htmlFor="cont-trak">NonStackable</label>
-                            </div>
-                            {/* <span>150$</span> */}
+                          {/* <span>50$</span> */}
+                        </div>
+                        <div>
+                          <div className="d-flex">
+                            <input
+                              id="cont-trak"
+                              type="checkbox"
+                              name="NonStackable"
+                              checked={this.state.NonStackable}
+                            />
+                            <label htmlFor="cont-trak">NonStackable</label>
                           </div>
-                          <div>
-                            <div className="d-flex">
+                          {/* <span>150$</span> */}
+                        </div>
+                        <div>
+                          <div className="d-flex">
+                            <input
+                              id="cust-clear"
+                              type="checkbox"
+                              name="Custom_Clearance"
+                              checked={this.state.Custom_Clearance}
+                              onChange={this.custClearToggle}
+                            />
+                            <label htmlFor="cust-clear">Custom Clearance</label>
+                          </div>
+                          {/* <span>900$</span> */}
+                        </div>
+                        <div className="pol-pod">
+                          <span>POL</span>
+                          {this.state.polFilterArray.map((mapPOL, index) => (
+                            <div className="d-flex" key={index}>
                               <input
-                                id="cust-clear"
+                                id={"pol" + (index + 1)}
                                 type="checkbox"
-                                name="Custom_Clearance"
-                                checked={this.state.Custom_Clearance}
-                                onChange={this.custClearToggle}
+                                name="address"
+                                defaultChecked={true}
+                                onChange={this.toggleChangePOLPOD.bind(
+                                  this,
+                                  index,
+                                  "POL"
+                                )}
                               />
-                              <label htmlFor="cust-clear">
-                                Custom Clearance
+                              <label htmlFor={"pol" + (index + 1)}>
+                                {mapPOL.Address}
                               </label>
                             </div>
-                            {/* <span>900$</span> */}
-                          </div>
-                          <div className="pol-pod">
-                            <span>POL</span>
-                            {this.state.polFilterArray.map((mapPOL, index) => (
-                              <div className="d-flex p-b-10" key={index}>
-                                <input
-                                  id={"pol" + (index + 1)}
-                                  type="checkbox"
-                                  name="address"
-                                  defaultChecked={true}
-                                  onChange={this.toggleChangePOLPOD.bind(
-                                    this,
-                                    index,
-                                    "POL"
-                                  )}
-                                />
-                                <label htmlFor={"pol" + (index + 1)}>
-                                  {mapPOL.Address}
-                                </label>
-                              </div>
-                            ))}
-                           <div className="pol-pod-maps">
-                          <span className="rate-map-ovrly map-pol-lbl">POL</span>
-                          <span
-                            onClick={this.togglePOLModal}
-                            className="rate-map-ovrly rate-map-plus"
-                          >
-                            +
-                          </span>
-
-                          <POLMaps
-                            markerPOLData={this.state.mapPositionPOL}
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                            containerElement={
-                              <div style={{ height: `100%`, width: "100%" }} />
-                            }
-                            mapElement={<div style={{ height: `100%` }} />}
-                            loadingElement={<div style={{ height: `100%` }} />}
-                          ></POLMaps>
-                        </div>
-                            {/* <div className="d-flex">
+                          ))}
+                          {/* <div className="d-flex">
                             <input
                               id="pol-pod"
                               type="checkbox"
@@ -2765,711 +2710,720 @@ class RateTable extends Component {
                               {this.state.selectaddress}
                             </label>
                           </div> */}
-                            {/* <span>900$</span> */}
-                          </div>
-                          <div className="pol-pod">
-                            <span>POD</span>
-                            {this.state.podFilterArray.map((mapPOD, index) => (
-                              <div className="d-flex">
-                                <input
-                                  id={"pod" + (index + 1)}
-                                  type="checkbox"
-                                  name="address"
-                                  defaultChecked={true}
-                                  onChange={this.toggleChangePOLPOD.bind(
-                                    this,
-                                    index,
-                                    "POD"
-                                  )}
-                                />
-                                <label htmlFor={"pod" + (index + 1)}>
-                                  {mapPOD.Address}
-                                </label>
-                              </div>
-                            ))}
-                            {/* <div className="d-flex">
-                            <input
-                              id="pol-pod"
-                              type="checkbox"
-                              name="address"
-                              checked={true}
-                            />
-                            <label htmlFor="pol-pod">
-                              {this.state.selectaddress}
-                            </label>
-                          </div> */}
-                            {/* <span>900$</span> */}
-                          </div>
+                          {/* <span>900$</span> */}
                         </div>
-                      </div>
-                      <div className="pol-pod-maps-cntr">
-                        {/* <div className="pol-pod-maps">
-                          <span className="rate-map-ovrly">POL</span>
-                          <span
-                            onClick={this.togglePOLModal}
-                            className="rate-map-ovrly rate-map-plus"
-                          >
-                            +
-                          </span>
-
-                          <POLMaps
-                            markerPOLData={this.state.mapPositionPOL}
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                            containerElement={
-                              <div style={{ height: `100%`, width: "100%" }} />
-                            }
-                            mapElement={<div style={{ height: `100%` }} />}
-                            loadingElement={<div style={{ height: `100%` }} />}
-                          ></POLMaps>
-                        </div> */}
-                        <div className="pol-pod-maps pod-maps">
-                          <span className="rate-map-ovrly">POD</span>
-                          <span
-                            onClick={this.togglePODModal}
-                            className="rate-map-ovrly rate-map-plus"
-                          >
-                            +
-                          </span>
-                          <PODMaps
-                            markerPODData={this.state.markerPositionPOD}
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                            containerElement={
-                              <div style={{ height: `100%`, width: "100%" }} />
-                            }
-                            mapElement={<div style={{ height: `100%` }} />}
-                            loadingElement={<div style={{ height: `100%` }} />}
-                          ></PODMaps>
-                        </div>
-                      </div>
-                      <button
-                        onClick={this.toggleQuant}
-                        className="butn white-butn w-100 mt-0"
-                      >
-                        Container Details
-                      </button>
-                    </div>
-                  </div>
-
-                  {this.state.RateDetails.length > 0 ? (
-                    <div className="col-md-8 react-rate-table react-rate-tab">
-                      <ReactTable
-                        columns={[
-                          {
-                            columns: [
-                              {
-                                Cell: ({ original, row }) => {
-                                  i++;
-                                  return (
-                                    <React.Fragment>
-                                      <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                        <div className="remember-forgot rat-img d-block m-0">
-                                          <input
-                                            id={"maersk-logo" + i}
-                                            type="checkbox"
-                                            name={"rate-tab-check"}
-                                            // checked={
-                                            //   this.state.RateDetails[i - 1].checkbx
-                                            //     ? this.state.RateDetails[i - 1]
-                                            //         .checkbx
-                                            //     : false
-                                            // }
-                                            checked={
-                                              this.state.cSelectedRow[
-                                                original.RateLineID == undefined
-                                                  ? original.RateLineId
-                                                  : original.RateLineID
-                                              ] === true
-                                            }
-                                            onChange={e =>
-                                              this.toggleRow(
-                                                original.RateLineID == undefined
-                                                  ? original.RateLineId
-                                                  : original.RateLineID,
-                                                row
-                                              )
-                                            }
-                                          />
-                                          <label
-                                            htmlFor={"maersk-logo" + i}
-                                          ></label>
-                                        </div>
-                                      </div>
-                                      <div className="rate-tab-img">
-                                        <img src={maersk} alt="maersk icon" />
-                                      </div>
-                                    </React.Fragment>
-                                  );
-                                },
-                                accessor: "lineName"
-                                // minWidth: 200
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">POL</p>
-                                      <p
-                                        title={row.original.POLName}
-                                        className="details-para max2"
-                                      >
-                                        {row.original.POLName}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "POLName",
-                                //  minWidth: 175
-                                filterable: true
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">POD</p>
-                                      <p
-                                        title={row.original.PODName}
-                                        className="details-para max2"
-                                      >
-                                        {row.original.PODName}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "PODName",
-                                filterable: true
-                                // minWidth: 175
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">S. Port</p>
-                                      <p className="details-para">
-                                        {row.original.TransshipmentPort}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "TransshipmentPort",
-                                filterable: true
-                                // minWidth: 175
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">F. Time</p>
-                                      <p className="details-para">
-                                        {row.original.freeTime}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "freeTime",
-                                filterable: true,
-                                minWidth: 80
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Container</p>
-                                      <p className="details-para">
-                                        {row.original.ContainerType}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "ContainerType",
-                                filterable: true
-                                //minWidth: 175
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Expiry</p>
-                                      <p className="details-para">
-                                        {new Date(
-                                          row.original.expiryDate ||
-                                            row.original.ExpiryDate
-                                        ).toLocaleDateString("en-US")}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "expiryDate" || "ExpiryDate",
-                                filterable: true,
-                                minWidth: 90
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">TT</p>
-                                      <p className="details-para">
-                                        {row.original.TransitTime}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "TransitTime",
-                                minWidth: 60
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Price</p>
-                                      <p className="details-para">
-                                        {row.original.TotalAmount !== "" &&
-                                        row.original.TotalAmount !== null
-                                          ? row.original.TotalAmount +
-                                            " " +
-                                            row.original.BaseCurrency
-                                          : ""}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "baseFreightFee",
-                                filterable: true,
-                                minWidth: 80
-                              }
-                            ]
-                          },
-                          {
-                            show: false,
-                            Header: "All",
-                            id: "all",
-                            width: 0,
-                            resizable: false,
-                            sortable: false,
-                            filterAll: true,
-                            Filter: () => {},
-                            getProps: () => {
-                              return {
-                                // style: { padding: "0px"}
-                              };
-                            },
-                            filterMethod: (filter, rows) => {
-                              debugger;
-
-                              const result = matchSorter(rows, filter.value, {
-                                keys: ["commodities", "TransitTime"],
-                                threshold: matchSorter.rankings.WORD_STARTS_WITH
-                              });
-
-                              return result;
-                            }
-                          }
-                        ]}
-                        onFilteredChange={this.onFilteredChange.bind(this)}
-                        filtered={this.state.filtered}
-                        defaultFilterMethod={(filter, row) =>
-                          String(row[filter.RateLineID]) === filter.value
-                        }
-                        filterable
-                        // expanded={this.state.expanded}
-                        // onExpandedChange={(expand, event) => {
-                        //   this.setState({
-                        //     expanded: {
-                        //       [event]: {}
-                        //     }
-                        //   });
-                        // }}
-                        data={this.state.tempRateDetails}
-                        defaultPageSize={10}
-                        className="-striped -highlight"
-                        minRows={1}
-                        SubComponent={row => {
-                          return (
-                            <div style={{ padding: "20px 0" }}>
-                              <ReactTable
-                                minRows={1}
-                                data={
-                                  row.original.RateLineId === undefined
-                                    ? this.state.RateSubDetails.filter(
-                                        d =>
-                                          d.RateLineID ===
-                                          row.original.RateLineID
-                                      )
-                                    : this.state.RateSubDetails.filter(
-                                        d =>
-                                          d.RateLineID ===
-                                          row.original.RateLineId
-                                      )
-                                }
-                                columns={[
-                                  {
-                                    columns: [
-                                      {
-                                        Header: "C. Type",
-                                        accessor: "ChargeType"
-                                      },
-                                      {
-                                        Header: "C. Name",
-                                        accessor: "ChargeCode"
-                                      },
-                                      {
-                                        Header: "Unit Price",
-                                        accessor: "Rate",
-                                        Cell: props => (
-                                          <React.Fragment>
-                                            {props.original.Rate}
-                                            &nbsp;
-                                            {props.original.Currency}
-                                          </React.Fragment>
-                                        )
-                                      },
-                                      {
-                                        Header: "Units",
-                                        accessor: "ChargeItem"
-                                      },
-                                      {
-                                        Header: "Tax",
-                                        accessor: "Tax"
-                                      },
-
-                                      {
-                                        Header: "Exrate",
-                                        accessor: "Exrate"
-                                      },
-
-                                      {
-                                        Cell: row => {
-                                          return (
-                                            <>
-                                              {row.original.TotalAmount !==
-                                                "" &&
-                                              row.original.TotalAmount !== null
-                                                ? row.original.TotalAmount +
-                                                  " " +
-                                                  row.original.BaseCurrency
-                                                : ""}
-                                            </>
-                                          );
-                                        },
-                                        Header: "Final Payment",
-                                        accessor: "TotalAmount"
-                                      }
-                                    ]
-                                  }
-                                ]}
-                                showPagination={true}
-                                defaultPageSize={5}
+                        <div className="pol-pod">
+                          <span>POD</span>
+                          {this.state.podFilterArray.map((mapPOD, index) => (
+                            <div className="d-flex">
+                              <input
+                                id={"pod" + (index + 1)}
+                                type="checkbox"
+                                name="address"
+                                defaultChecked={true}
+                                onChange={this.toggleChangePOLPOD.bind(
+                                  this,
+                                  index,
+                                  "POD"
+                                )}
                               />
+                              <label htmlFor={"pod" + (index + 1)}>
+                                {mapPOD.Address}
+                              </label>
                             </div>
-                          );
-                        }}
-                      />
-                      {/* <ReactTable
+                          ))}
+                          {/* <div className="d-flex">
+                            <input
+                              id="pol-pod"
+                              type="checkbox"
+                              name="address"
+                              checked={true}
+                            />
+                            <label htmlFor="pol-pod">
+                              {this.state.selectaddress}
+                            </label>
+                          </div> */}
+                          {/* <span>900$</span> */}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pol-pod-maps-cntr">
+                      <div className="pol-pod-maps">
+                        <span className="rate-map-ovrly">POL</span>
+                        <span
+                          onClick={this.togglePOLModal}
+                          className="rate-map-ovrly rate-map-plus"
+                        >
+                          +
+                        </span>
+
+                        <POLMaps
+                          markerPOLData={this.state.mapPositionPOL}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                          containerElement={
+                            <div style={{ height: `100%`, width: "100%" }} />
+                          }
+                          mapElement={<div style={{ height: `100%` }} />}
+                          loadingElement={<div style={{ height: `100%` }} />}
+                        ></POLMaps>
+                      </div>
+                      <div className="pol-pod-maps pod-maps">
+                        <span className="rate-map-ovrly">POD</span>
+                        <span
+                          onClick={this.togglePODModal}
+                          className="rate-map-ovrly rate-map-plus"
+                        >
+                          +
+                        </span>
+                        <PODMaps
+                          markerPODData={this.state.markerPositionPOD}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                          containerElement={
+                            <div style={{ height: `100%`, width: "100%" }} />
+                          }
+                          mapElement={<div style={{ height: `100%` }} />}
+                          loadingElement={<div style={{ height: `100%` }} />}
+                        ></PODMaps>
+                      </div>
+                    </div>
+                    <button
+                      onClick={this.toggleQuant}
+                      className="butn white-butn w-100 mt-0"
+                    >
+                      Quantity
+                    </button>
+                  </div>
+                </div>
+                {this.state.loading === true ? (
+                  <div className="loader-icon"></div>
+                ) : (
+                  <>
+                    {this.state.RateDetails.length > 0 ? (
+                      <div className="col-md-8 react-rate-table react-rate-tab">
+                        <ReactTable
+                          columns={[
+                            {
+                              columns: [
+                                {
+                                  Cell: ({ original, row }) => {
+                                    i++;
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              // checked={
+                                              //   this.state.RateDetails[i - 1].checkbx
+                                              //     ? this.state.RateDetails[i - 1]
+                                              //         .checkbx
+                                              //     : false
+                                              // }
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  original.RateLineID ==
+                                                  undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  original.RateLineID ==
+                                                    undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID,
+                                                  row
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
+                                        <div className="rate-tab-img">
+                                          <img src={maersk} alt="maersk icon" />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  },
+                                  accessor: "lineName"
+                                  // minWidth: 200
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">POL</p>
+                                        <p
+                                          title={row.original.POLName}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.POLName}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "POLName",
+                                  //  minWidth: 175
+                                  filterable: true
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">POD</p>
+                                        <p
+                                          title={row.original.PODName}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.PODName}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "PODName",
+                                  filterable: true
+                                  // minWidth: 175
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">S. Port</p>
+                                        <p className="details-para">
+                                          {row.original.TransshipmentPort}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "TransshipmentPort",
+                                  filterable: true
+                                  // minWidth: 175
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">F. Time</p>
+                                        <p className="details-para">
+                                          {row.original.freeTime}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "freeTime",
+                                  filterable: true,
+                                  minWidth: 80
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">
+                                          Container
+                                        </p>
+                                        <p className="details-para">
+                                          {row.original.ContainerType}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "ContainerType",
+                                  filterable: true
+                                  //minWidth: 175
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">Expiry</p>
+                                        <p className="details-para">
+                                          {new Date(
+                                            row.original.expiryDate ||
+                                              row.original.ExpiryDate
+                                          ).toLocaleDateString("en-US")}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "expiryDate" || "ExpiryDate",
+                                  filterable: true,
+                                  minWidth: 90
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">TT</p>
+                                        <p className="details-para">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "TransitTime",
+                                  minWidth: 60
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.TotalAmount !== "" &&
+                                          row.original.TotalAmount !== null
+                                            ? row.original.TotalAmount +
+                                              " " +
+                                              row.original.BaseCurrency
+                                            : ""}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "baseFreightFee",
+                                  filterable: true,
+                                  minWidth: 80
+                                }
+                              ]
+                            },
+                            {
+                              show: false,
+                              Header: "All",
+                              id: "all",
+                              width: 0,
+                              resizable: false,
+                              sortable: false,
+                              filterAll: true,
+                              Filter: () => {},
+                              getProps: () => {
+                                return {
+                                  // style: { padding: "0px"}
+                                };
+                              },
+                              filterMethod: (filter, rows) => {
+                                debugger;
+
+                                const result = matchSorter(rows, filter.value, {
+                                  keys: ["commodities", "TransitTime"],
+                                  threshold:
+                                    matchSorter.rankings.WORD_STARTS_WITH
+                                });
+
+                                return result;
+                              }
+                            }
+                          ]}
+                          onFilteredChange={this.onFilteredChange.bind(this)}
+                          filtered={this.state.filtered}
+                          defaultFilterMethod={(filter, row) =>
+                            String(row[filter.RateLineID]) === filter.value
+                          }
+                          filterable
+                          // expanded={this.state.expanded}
+                          // onExpandedChange={(expand, event) => {
+                          //   this.setState({
+                          //     expanded: {
+                          //       [event]: {}
+                          //     }
+                          //   });
+                          // }}
+                          data={this.state.tempRateDetails}
+                          defaultPageSize={10}
+                          className="-striped -highlight"
+                          minRows={1}
+                          SubComponent={row => {
+                            return (
+                              <div style={{ padding: "20px 0" }}>
+                                <ReactTable
+                                  minRows={1}
+                                  data={
+                                    row.original.RateLineId === undefined
+                                      ? this.state.RateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineID
+                                        )
+                                      : this.state.RateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineId
+                                        )
+                                  }
+                                  columns={[
+                                    {
+                                      columns: [
+                                        {
+                                          Header: "C. Type",
+                                          accessor: "ChargeType"
+                                        },
+                                        {
+                                          Header: "C. Name",
+                                          accessor: "ChargeCode"
+                                        },
+                                        {
+                                          Header: "Unit Price",
+                                          accessor: "Rate",
+                                          Cell: props => (
+                                            <React.Fragment>
+                                              {props.original.Rate}
+                                              &nbsp;
+                                              {props.original.Currency}
+                                            </React.Fragment>
+                                          )
+                                        },
+                                        {
+                                          Header: "Units",
+                                          accessor: "ChargeItem"
+                                        },
+                                        {
+                                          Header: "Tax",
+                                          accessor: "Tax"
+                                        },
+
+                                        {
+                                          Header: "Exrate",
+                                          accessor: "Exrate"
+                                        },
+
+                                        {
+                                          Cell: row => {
+                                            return (
+                                              <>
+                                                {row.original.TotalAmount !==
+                                                  "" &&
+                                                row.original.TotalAmount !==
+                                                  null
+                                                  ? row.original.TotalAmount +
+                                                    " " +
+                                                    row.original.BaseCurrency
+                                                  : ""}
+                                              </>
+                                            );
+                                          },
+                                          Header: "Final Payment",
+                                          accessor: "TotalAmount"
+                                        }
+                                      ]
+                                    }
+                                  ]}
+                                  showPagination={true}
+                                  defaultPageSize={5}
+                                />
+                              </div>
+                            );
+                          }}
+                        />
+                        {/* <ReactTable
                     data={Data}
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}
                   /> */}
-                      <p className="bottom-profit">
-                        Profit -------$ Customer Segment A Profit Margin %15
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="col-md-8 less-left-rate">
-                      <div className="spot-rate">
-                        <div className="no-rate">
-                          <p>No Rates Found, Ask for Spot Rates</p>
+                        <p className="bottom-profit">
+                          Profit -------$ Customer Segment A Profit Margin %15
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="col-md-8 less-left-rate">
+                        <div className="spot-rate">
+                          <div className="no-rate">
+                            <p>No Rates Found, Ask for Spot Rates</p>
+                          </div>
+                          <button onClick={this.toggleSpot} className="butn">
+                            Spot Rate
+                          </button>
                         </div>
-                        <button onClick={this.toggleSpot} className="butn">
-                          Spot Rate
-                        </button>
+                        <p className="bottom-profit">
+                          Profit -------$ Customer Segment A Profit Margin %15
+                        </p>
                       </div>
-                      <p className="bottom-profit">
-                        Profit -------$ Customer Segment A Profit Margin %15
-                      </p>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </>
+                )}
               </div>
-              {/*  --------------------------EquipmentType  Modal ---------------------*/}
+            </div>
+            {/*  --------------------------EquipmentType  Modal ---------------------*/}
 
-              <Modal
-                className="delete-popup text-left"
-                isOpen={this.state.modalQuant}
-                centered={true}
-              >
-                <ModalBody>
-                  <img src={CancelImg} alt="Cancel" className="cancelImgBtn" onClick={this.toggleQuant}/>
-                  <h3 className="mb-4 text-center">Equipment Types</h3>
-                  <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                    <Select
-                      className="rate-dropdown"
-                      getOptionLabel={option => option.StandardContainerCode}
-                      getOptionValue={option => option.StandardContainerCode}
-                      isMulti
-                      options={this.state.EquipmentType}
-                      // onChange={this.equipChange.bind(this)}
-                      onChange={this.newaddClick.bind(this)}
-                      value={this.state.selected}
-                      showNewOptionAtTop={false}
-                    />
-                  </div>
-                  <div className="d-flex flex-wrap justify-content-center">
-                    {this.NewcreateUI()}
-                  </div>
-                  <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                    <input
-                      id="Special-equType"
-                      type="checkbox"
-                      className="d-none"
-                      name={"Special-equType"}
-                      // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                    />
-                    {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                  </div>
-                  {this.state.specialEquipment === true ? (
-                    <div className="">
-                      {/* spe-equ mt-0 */}
-                      <div className="equip-plus-cntr w-100">
-                        <Select
-                          className="rate-dropdown"
-                          getOptionLabel={option => option.SpecialContainerCode}
-                          getOptionValue={option => option.SpecialContainerCode}
-                          options={this.state.SpacialEqmt}
-                          placeholder="Select Kind of Special Equipment"
-                          onChange={this.specEquipChange}
-                          // value={thi.state.spEqtSelect}
-                          showNewOptionAtTop={false}
-                        />
-                      </div>
-                      <div id="cbmInner">
-                        {this.state.specialEqtSelect === true ? (
-                          this.state.flattack_openTop.length > 0 ? (
-                            <>{this.MultiCreateCBM()}</>
-                          ) : null
-                        ) : null}
-
-                        {this.state.refertypeSelect === true ? (
-                          this.state.referType.length > 0 ? (
-                            <>{this.createUISpecial()}</>
-                          ) : null
-                        ) : null}
-
-                        {this.state.spacEqmtTypeSelect === true ? (
-                          this.state.spacEqmtType.length > 0 ? (
-                            <>
-                              <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                {this.createUIspacEqmtType()}
-                              </div>
-                            </>
-                          ) : null
-                        ) : null}
-                      </div>
+            <Modal
+              className="delete-popup text-left"
+              isOpen={this.state.modalQuant}
+              centered={true}
+            >
+              <ModalBody>
+                <h3 className="mb-4 text-center">Equipment Types</h3>
+                <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                  <Select
+                    className="rate-dropdown"
+                    getOptionLabel={option => option.StandardContainerCode}
+                    getOptionValue={option => option.StandardContainerCode}
+                    isMulti
+                    options={this.state.EquipmentType}
+                    // onChange={this.equipChange.bind(this)}
+                    onChange={this.newaddClick.bind(this)}
+                    value={this.state.selected}
+                    showNewOptionAtTop={false}
+                  />
+                </div>
+                <div className="d-flex flex-wrap justify-content-center">
+                  {this.NewcreateUI()}
+                </div>
+                <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                  <input
+                    id="Special-equType"
+                    type="checkbox"
+                    className="d-none"
+                    name={"Special-equType"}
+                    // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                  />
+                  {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                </div>
+                {this.state.specialEquipment === true ? (
+                  <div className="">
+                    {/* spe-equ mt-0 */}
+                    <div className="equip-plus-cntr w-100">
+                      <Select
+                        className="rate-dropdown"
+                        getOptionLabel={option => option.SpecialContainerCode}
+                        getOptionValue={option => option.SpecialContainerCode}
+                        options={this.state.SpacialEqmt}
+                        placeholder="Select Kind of Special Equipment"
+                        onChange={this.specEquipChange}
+                        // value={thi.state.spEqtSelect}
+                        showNewOptionAtTop={false}
+                      />
                     </div>
-                  ) : null}
-                  <div className="text-center">
-                    <Button
-                      className="butn"
-                      onClick={() => {
-                        this.toggleQuantQuantity(this.state);
-                      }}
-                    >
-                      Done
-                    </Button>
-                    <Button
-                      className="butn cancel-butn"
-                      onClick={this.toggleQuant}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </ModalBody>
-              </Modal>
-              {/* {-------------------------End Equipment Type Modal---------------------------} */}
-              {/* -----------------------Mutiple POL Modal  ------------------*/}
+                    <div id="cbmInner">
+                      {this.state.specialEqtSelect === true ? (
+                        this.state.flattack_openTop.length > 0 ? (
+                          <>{this.MultiCreateCBM()}</>
+                        ) : null
+                      ) : null}
 
-              <Modal
-                className="delete-popup pol-pod-popup"
-                isOpen={this.state.modalPOL}
-                toggle={this.togglePOLModal}
-                centered={true}
-              >
-                <ModalBody>
-                  <div className="pol-mar">
-                    {/* <div className="rename-cntr login-fields position-relative"> */}
-                    {this.createUIPOL()}
+                      {this.state.refertypeSelect === true ? (
+                        this.state.referType.length > 0 ? (
+                          <>{this.createUISpecial()}</>
+                        ) : null
+                      ) : null}
 
-                    {/* </div> */}
-                  </div>
-                  <Button className="butn" onClick={this.toggleQuantPOLSave}>
-                    Done
-                  </Button>
-                  <Button
-                    className="butn cancel-butn"
-                    onClick={this.togglePOLModal}
-                  >
-                    Cancel
-                  </Button>
-                </ModalBody>
-              </Modal>
-              {/* {----------------------End Mutiple POL Modal-----------------------} */}
-              {/*-----------------------Mutiple POD Modal ------------------- */}
-
-              <Modal
-                className="delete-popup pol-pod-popup"
-                isOpen={this.state.modalPOD}
-                toggle={this.togglePODModal}
-                centered={true}
-              >
-                <ModalBody>
-                  <div className="pol-mar">
-                    <div>{this.createUIPOD()}</div>
-                  </div>
-                  <Button className="butn" onClick={this.toggleQuantPODSave}>
-                    Done
-                  </Button>
-                  <Button
-                    className="butn cancel-butn"
-                    onClick={this.togglePODModal}
-                  >
-                    Cancel
-                  </Button>
-                </ModalBody>
-              </Modal>
-              {/* {------------------------------End Mutliple POD Modal----------------------} */}
-              {/* {"-------------------------Spot Rate Modal-------------------"} */}
-              <Modal
-                className={
-                  this.state.containerLoadType === "FTL"
-                    ? "delete-popup text-left spot-rate-popup pol-pod-popup"
-                    : "delete-popup text-left spot-rate-popup big-popup pol-pod-popup"
-                }
-                isOpen={this.state.modalSpot}
-                toggle={this.toggleSpot}
-                centered={true}
-              >
-                <h3 className="text-center">Add Below Details</h3>
-                <ModalBody>
-                  <div className="rename-cntr login-fields">
-                    <label>Commodity</label>
-                    <select onChange={this.filterAll}>
-                      <option>Select</option>
-                      <option value="All">All</option>
-                      {this.state.commodityData.map((item, i) => (
-                        <option key={i} value={item.id}>
-                          {item.Commodity}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="rename-cntr login-fields align-items-start">
-                    <label>Cargo</label>
-                    <div className="w-100">
-                      {this.state.containerLoadType === "FTL" ? (
-                        this.createUITruckType()
-                      ) : this.state.containerLoadType === "FCL" ? (
-                        <>
-                          {" "}
-                          <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.StandardContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.StandardContainerCode
-                              }
-                              isMulti
-                              options={this.state.EquipmentType}
-                              // onChange={this.equipChange.bind(this)}
-                              onChange={this.newaddClick.bind(this)}
-                              value={this.state.selected}
-                              showNewOptionAtTop={false}
-                            />
-                          </div>
-                          <div className="d-flex flex-wrap justify-content-center">
-                            {this.NewcreateUI()}
-                          </div>
-                          <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                            <input
-                              id="Special-equType"
-                              type="checkbox"
-                              className="d-none"
-                              name={"Special-equType"}
-                              // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                            />
-                            {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                          </div>
-                          {this.state.specialEquipment === true ? (
-                            <div className="">
-                              {/* spe-equ mt-0 */}
-                              <div className="equip-plus-cntr w-100">
-                                <Select
-                                  className="rate-dropdown"
-                                  getOptionLabel={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  getOptionValue={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  options={this.state.SpacialEqmt}
-                                  placeholder="Select Kind of Special Equipment"
-                                  onChange={this.specEquipChange}
-                                  // value={thi.state.spEqtSelect}
-                                  showNewOptionAtTop={false}
-                                />
-                              </div>
-                              <div id="cbmInner">
-                                {this.state.specialEqtSelect === true ? (
-                                  this.state.flattack_openTop.length > 0 ? (
-                                    <>{this.MultiCreateCBM()}</>
-                                  ) : null
-                                ) : null}
-
-                                {this.state.refertypeSelect === true ? (
-                                  this.state.referType.length > 0 ? (
-                                    <>{this.createUISpecial()}</>
-                                  ) : null
-                                ) : null}
-
-                                {this.state.spacEqmtTypeSelect === true ? (
-                                  this.state.spacEqmtType.length > 0 ? (
-                                    <>
-                                      <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                        {this.createUIspacEqmtType()}
-                                      </div>
-                                    </>
-                                  ) : null
-                                ) : null}
-                              </div>
+                      {this.state.spacEqmtTypeSelect === true ? (
+                        this.state.spacEqmtType.length > 0 ? (
+                          <>
+                            <div className="d-flex flex-wrap justify-content-center align-items-center">
+                              {this.createUIspacEqmtType()}
                             </div>
-                          ) : null}
-                        </>
-                      ) : (
-                        this.CreateMultiCBM()
-                      )}
-                      {/* {this.createUITruckType()} */}
+                          </>
+                        ) : null
+                      ) : null}
                     </div>
-                    {/* <select>
+                  </div>
+                ) : null}
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    onClick={() => {
+                      this.toggleQuantQuantity(this.state);
+                    }}
+                  >
+                    Done
+                  </Button>
+                  <Button
+                    className="butn cancel-butn"
+                    onClick={this.toggleQuant}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </ModalBody>
+            </Modal>
+            {/* {-------------------------End Equipment Type Modal---------------------------} */}
+            {/* -----------------------Mutiple POL Modal  ------------------*/}
+
+            <Modal
+              className="delete-popup pol-pod-popup"
+              isOpen={this.state.modalPOL}
+              toggle={this.togglePOLModal}
+              centered={true}
+            >
+              <ModalBody>
+                <div className="pol-mar">
+                  {/* <div className="rename-cntr login-fields position-relative"> */}
+                  {this.createUIPOL()}
+
+                  {/* </div> */}
+                </div>
+                <Button className="butn" onClick={this.toggleQuantPOLSave}>
+                  Done
+                </Button>
+                <Button
+                  className="butn cancel-butn"
+                  onClick={this.togglePOLModal}
+                >
+                  Cancel
+                </Button>
+              </ModalBody>
+            </Modal>
+            {/* {----------------------End Mutiple POL Modal-----------------------} */}
+            {/*-----------------------Mutiple POD Modal ------------------- */}
+
+            <Modal
+              className="delete-popup pol-pod-popup"
+              isOpen={this.state.modalPOD}
+              toggle={this.togglePODModal}
+              centered={true}
+            >
+              <ModalBody>
+                <div className="pol-mar">
+                  <div>{this.createUIPOD()}</div>
+                </div>
+                <Button className="butn" onClick={this.toggleQuantPODSave}>
+                  Done
+                </Button>
+                <Button
+                  className="butn cancel-butn"
+                  onClick={this.togglePODModal}
+                >
+                  Cancel
+                </Button>
+              </ModalBody>
+            </Modal>
+            {/* {------------------------------End Mutliple POD Modal----------------------} */}
+            {/* {"-------------------------Spot Rate Modal-------------------"} */}
+            <Modal
+              className={
+                this.state.containerLoadType === "FTL"
+                  ? "delete-popup text-left spot-rate-popup pol-pod-popup"
+                  : "delete-popup text-left spot-rate-popup big-popup pol-pod-popup"
+              }
+              isOpen={this.state.modalSpot}
+              toggle={this.toggleSpot}
+              centered={true}
+            >
+              <h3 className="text-center">Add Below Details</h3>
+              <ModalBody>
+                <div className="rename-cntr login-fields">
+                  <label>Commodity</label>
+                  <select onChange={this.filterAll}>
+                    <option>Select</option>
+                    <option value="All">All</option>
+                    {this.state.commodityData.map((item, i) => (
+                      <option key={i} value={item.id}>
+                        {item.Commodity}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="rename-cntr login-fields align-items-start">
+                  <label>Cargo</label>
+                  <div className="w-100">
+                    {this.state.containerLoadType === "FTL" ? (
+                      this.createUITruckType()
+                    ) : this.state.containerLoadType === "FCL" ? (
+                      <>
+                        {" "}
+                        <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                          <Select
+                            className="rate-dropdown"
+                            getOptionLabel={option =>
+                              option.StandardContainerCode
+                            }
+                            getOptionValue={option =>
+                              option.StandardContainerCode
+                            }
+                            isMulti
+                            options={this.state.EquipmentType}
+                            // onChange={this.equipChange.bind(this)}
+                            onChange={this.newaddClick.bind(this)}
+                            value={this.state.selected}
+                            showNewOptionAtTop={false}
+                          />
+                        </div>
+                        <div className="d-flex flex-wrap justify-content-center">
+                          {this.NewcreateUI()}
+                        </div>
+                        <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                          <input
+                            id="Special-equType"
+                            type="checkbox"
+                            className="d-none"
+                            name={"Special-equType"}
+                            // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                          />
+                          {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                        </div>
+                        {this.state.specialEquipment === true ? (
+                          <div className="">
+                            {/* spe-equ mt-0 */}
+                            <div className="equip-plus-cntr w-100">
+                              <Select
+                                className="rate-dropdown"
+                                getOptionLabel={option =>
+                                  option.SpecialContainerCode
+                                }
+                                getOptionValue={option =>
+                                  option.SpecialContainerCode
+                                }
+                                options={this.state.SpacialEqmt}
+                                placeholder="Select Kind of Special Equipment"
+                                onChange={this.specEquipChange}
+                                // value={thi.state.spEqtSelect}
+                                showNewOptionAtTop={false}
+                              />
+                            </div>
+                            <div id="cbmInner">
+                              {this.state.specialEqtSelect === true ? (
+                                this.state.flattack_openTop.length > 0 ? (
+                                  <>{this.MultiCreateCBM()}</>
+                                ) : null
+                              ) : null}
+
+                              {this.state.refertypeSelect === true ? (
+                                this.state.referType.length > 0 ? (
+                                  <>{this.createUISpecial()}</>
+                                ) : null
+                              ) : null}
+
+                              {this.state.spacEqmtTypeSelect === true ? (
+                                this.state.spacEqmtType.length > 0 ? (
+                                  <>
+                                    <div className="d-flex flex-wrap justify-content-center align-items-center">
+                                      {this.createUIspacEqmtType()}
+                                    </div>
+                                  </>
+                                ) : null
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : null}
+                      </>
+                    ) : (
+                      this.CreateMultiCBM()
+                    )}
+                    {/* {this.createUITruckType()} */}
+                  </div>
+                  {/* <select>
                     <option>Select</option>
                     <option>Select</option>
                     <option>Select</option>
                   </select> */}
-                  </div>
-                  <div className="text-center">
-                    <Button
-                      className="butn"
-                      onClick={() => {
-                        this.spotRateSubmit(this.state);
-                        this.toggleSpot();
-                      }}
-                    >
-                      Send
-                    </Button>
-                  </div>
-                </ModalBody>
-              </Modal>
-              {/* {----------------------End Spot Rate Modal------------------} */}
-            </div>
-          )}
+                </div>
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    onClick={() => {
+                      this.spotRateSubmit(this.state);
+                      this.toggleSpot();
+                    }}
+                  >
+                    Send
+                  </Button>
+                </div>
+              </ModalBody>
+            </Modal>
+            {/* {----------------------End Spot Rate Modal------------------} */}
+          </div>
         </div>
       </div>
     );
