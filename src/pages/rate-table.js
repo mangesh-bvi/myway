@@ -520,7 +520,6 @@ class RateTable extends Component {
 
   toggleRow(RateLineID, rowData) {
     debugger;
-
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[RateLineID] = !this.state.cSelectedRow[RateLineID];
     this.setState({
@@ -538,16 +537,14 @@ class RateTable extends Component {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           var thisrateid = this.state.selectedDataRow[i].RateLineID;
           var _originalrateid = rowData._original.RateLineID;
-          if (
-            this.state.containerLoadType == "FCL" ||
-            this.state.containerLoadType == "LCL"
-          ) {
+          if(this.state.containerLoadType == "FCL" || this.state.containerLoadType == "LCL")
+          {
             thisrateid = this.state.selectedDataRow[i].RateLineId;
             _originalrateid = rowData._original.RateLineId;
           }
 
           if (
-            thisrateid == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID
+            thisrateid  == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID 
           ) {
             selectedRow.splice(i, 1);
 
@@ -1883,14 +1880,8 @@ class RateTable extends Component {
       ) {
         filteredData.push(actualData[j]);
       }
-    }
-    if (filteredData.length > 0) {
+
       this.setState({ tempRateDetails: filteredData });
-    } else {
-      this.setState({
-        tempRateDetails: [{ lineName: "No Recode Found" }],
-        RateSubDetails: [{ ChargeType: "No Recode Found" }]
-      });
     }
   }
 
@@ -2536,7 +2527,7 @@ class RateTable extends Component {
   }
   render() {
     var i = 0;
-
+    
     return (
       <div>
         <Headers />
@@ -2808,56 +2799,48 @@ class RateTable extends Component {
                                 {
                                   Cell: ({ original, row }) => {
                                     i++;
-                                    debugger;
-                                    if (row.lineName !== "No Recode Found") {
-                                      return (
-                                        <React.Fragment>
-                                          <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                            <div className="remember-forgot rat-img d-block m-0">
-                                              <input
-                                                id={"maersk-logo" + i}
-                                                type="checkbox"
-                                                name={"rate-tab-check"}
-                                                // checked={
-                                                //   this.state.RateDetails[i - 1].checkbx
-                                                //     ? this.state.RateDetails[i - 1]
-                                                //         .checkbx
-                                                //     : false
-                                                // }
-                                                checked={
-                                                  this.state.cSelectedRow[
-                                                    original.RateLineID ==
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              // checked={
+                                              //   this.state.RateDetails[i - 1].checkbx
+                                              //     ? this.state.RateDetails[i - 1]
+                                              //         .checkbx
+                                              //     : false
+                                              // }
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  original.RateLineID ==
+                                                  undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  original.RateLineID ==
                                                     undefined
-                                                      ? original.RateLineId
-                                                      : original.RateLineID
-                                                  ] === true
-                                                }
-                                                onChange={e =>
-                                                  this.toggleRow(
-                                                    original.RateLineID ==
-                                                      undefined
-                                                      ? original.RateLineId
-                                                      : original.RateLineID,
-                                                    row
-                                                  )
-                                                }
-                                              />
-                                              <label
-                                                htmlFor={"maersk-logo" + i}
-                                              ></label>
-                                            </div>
-                                          </div>
-                                          <div className="rate-tab-img">
-                                            <img
-                                              src={maersk}
-                                              alt="maersk icon"
+                                                    ? original.RateLineId
+                                                    : original.RateLineID,
+                                                  row
+                                                )
+                                              }
                                             />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
                                           </div>
-                                        </React.Fragment>
-                                      );
-                                    } else {
-                                      return <></>;
-                                    }
+                                        </div>
+                                        <div className="rate-tab-img">
+                                          <img src={maersk} alt="maersk icon" />
+                                        </div>
+                                      </React.Fragment>
+                                    );
                                   },
                                   accessor: "lineName"
                                   // minWidth: 200
@@ -2947,26 +2930,17 @@ class RateTable extends Component {
                                 },
                                 {
                                   Cell: row => {
-                                    if (
-                                      row.original.lineName !==
-                                      "No Recode Found"
-                                    ) {
-                                      return (
-                                        <>
-                                          <p className="details-title">
-                                            Expiry
-                                          </p>
-                                          <p className="details-para">
-                                            {new Date(
-                                              row.original.expiryDate ||
-                                                row.original.ExpiryDate
-                                            ).toLocaleDateString("en-US")}
-                                          </p>
-                                        </>
-                                      );
-                                    } else {
-                                      return <div></div>;
-                                    }
+                                    return (
+                                      <>
+                                        <p className="details-title">Expiry</p>
+                                        <p className="details-para">
+                                          {new Date(
+                                            row.original.expiryDate ||
+                                              row.original.ExpiryDate
+                                          ).toLocaleDateString("en-US")}
+                                        </p>
+                                      </>
+                                    );
                                   },
                                   accessor: "expiryDate" || "ExpiryDate",
                                   filterable: true,
@@ -2994,11 +2968,10 @@ class RateTable extends Component {
                                         <p className="details-para">
                                           {row.original.TotalAmount !== "" &&
                                           row.original.TotalAmount !== null
-                                            ? row.original.TotalAmount
-                                            : //+
-                                              //" " +
-                                              //row.original.BaseCurrency
-                                              ""}
+                                            ? row.original.TotalAmount +
+                                              " " +
+                                              row.original.BaseCurrency
+                                            : ""}
                                         </p>
                                       </>
                                     );
@@ -3060,19 +3033,17 @@ class RateTable extends Component {
                                 <ReactTable
                                   minRows={1}
                                   data={
-                                    row.original.lineName !== "No Recode Found"
-                                      ? row.original.RateLineId === undefined
-                                        ? this.state.RateSubDetails.filter(
-                                            d =>
-                                              d.RateLineID ===
-                                              row.original.RateLineID
-                                          )
-                                        : this.state.RateSubDetails.filter(
-                                            d =>
-                                              d.RateLineID ===
-                                              row.original.RateLineId
-                                          )
-                                      : this.state.RateSubDetails
+                                    row.original.RateLineId === undefined
+                                      ? this.state.RateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineID
+                                        )
+                                      : this.state.RateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineId
+                                        )
                                   }
                                   columns={[
                                     {
@@ -3102,28 +3073,8 @@ class RateTable extends Component {
                                         },
                                         {
                                           Header: "Tax",
-                                          accessor: "Tax",
-                                          Cell: row => {
-                                            if (row.original.Tax !== null) {
-                                              return (
-                                                <>
-                                                  {row.original.Tax}
-                                                  {/* &nbsp;
-                                                  {row.original.Currency} */}
-                                                </>
-                                              );
-                                            } else {
-                                              return <>{0}</>;
-                                            }
-                                          }
+                                          accessor: "Tax"
                                         },
-
-                                        //   <React.Fragment>
-                                        //     {props.original.Rate}
-                                        //     &nbsp;
-                                        //     {props.original.Currency}
-                                        //   </React.Fragment>
-                                        // )
 
                                         {
                                           Header: "Exrate",

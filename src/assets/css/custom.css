@@ -1308,7 +1308,7 @@ table tbody tr:last-child {
   font-family: "Regular Font";
   letter-spacing: 0.5px;
   border: 1px solid #959595;
-  padding: 5px 10px;
+  padding: 5px 0px 5px 5px;
 }
 .select-text {
   background: url("./../img/down-arrow.png") no-repeat right 10px center;
@@ -3107,7 +3107,7 @@ table tbody tr:last-child {
 .pol-pod span {
   padding-bottom: 5px;
   display: block;
-  margin-left: 13px;
+  /* margin-left: 13px; */
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
@@ -3301,3 +3301,23 @@ img {
 }
 
 /*-----myWayMessage Devesh CSS (End)-----*/
+/* rate-table css start by Shlok */
+.btn-sizeRate{
+  height: 38px;
+    margin-top: -4px;
+}
+.p-b-10{
+  padding-bottom: 10px !important;
+}
+.cancelImgBtn{
+  width: 18px;
+    float: right;
+    margin-top: -25px;
+    margin-right: -25px;
+}
+.map-pol-lbl{
+  color: #fff !important;
+    padding: 10px;
+}
+/* rate-table css End by Shlok */
+

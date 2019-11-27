@@ -368,25 +368,38 @@ class SpotRateDetails extends Component {
     let polfullAddData = this.state.polfullAddData;
     var selected = [];
     var users = [];
+    var multiCBM = [];
     fields["pod"] = this.state.spotrateresponseTbl.DestinationAddress;
     fields["pol"] = this.state.spotrateresponseTbl.PickUpAddress;
-    mapPositionPOD["lat"] = 40.968456; mapPositionPOD["lng"] = 28.674417;
-    mapPositionPOL["lat"] = 18.950123; mapPositionPOL["lng"] = 72.950055;
-    markerPositionPOD["lat"] = 40.968456; markerPositionPOD["lng"] = 28.674417
-    podfullAddData["GeoCoordinate"] = "40.968456,28.674417";
+    mapPositionPOD["lat"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[0]); 
+    //mapPositionPOD["lat"] = 40.968456;
+    mapPositionPOD["lng"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[1]);
+    //mapPositionPOD["lng"] = 28.674417;
+    mapPositionPOL["lat"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[0]);
+    //mapPositionPOL["lat"] = 18.950123; 
+    mapPositionPOL["lng"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[1]);
+    //mapPositionPOL["lng"] = 72.950055;
+    markerPositionPOD["lat"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[0]); 
+    markerPositionPOD["lat"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[0]); 
+    markerPositionPOD["lng"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[1])
+    markerPositionPOD["lng"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[1])
+    //podfullAddData["GeoCoordinate"] = "40.968456,28.674417";
+    podfullAddData["GeoCoordinate"] = this.state.spotrateresponseTbl.DeliveryGeoCordinate;
     podfullAddData["Location"] = "AMB";
-    podfullAddData["NameWoDiacritics"] = "Ambarli";
+    podfullAddData["NameWoDiacritics"] = this.state.spotrateresponseTbl1[0].DestinationPort_Name;
     podfullAddData["OceanPortID"] = 6302;
-    podfullAddData["OceanPortLongName"] = "Ambarli, Istanbul, Turkey";
-    podfullAddData["UNECECode"] = "TRPAM";
+    podfullAddData["OceanPortLongName"] = this.state.spotrateresponseTbl.DestinationAddress;
+    podfullAddData["UNECECode"] = this.state.spotrateresponseTbl1[0].DestinationPort_ID;
 
-    polfullAddData["GeoCoordinate"] = "18.950123,72.950055";
+    //polfullAddData["GeoCoordinate"] = "18.950123,72.950055";
+    polfullAddData["GeoCoordinate"] = this.state.spotrateresponseTbl.PickupGeoCordinate;
     polfullAddData["Location"] = "NSA";
-    polfullAddData["NameWoDiacritics"] = "Nhava Sheva (Jawaharlal Nehru)";
+    polfullAddData["NameWoDiacritics"] = this.state.spotrateresponseTbl1[0].OriginPort_Name;
     polfullAddData["OceanPortID"] = 1500;
-    polfullAddData["OceanPortLongName"] = "Nhava Sheva (Jawaharlal Nehru), Mahārāshtra, India";
-    podfullAddData["UNECECode"] = "INNSA";
+    polfullAddData["OceanPortLongName"] = this.state.spotrateresponseTbl.PickUpAddress;
+    podfullAddData["UNECECode"] = this.state.spotrateresponseTbl1[0].OriginPort_ID;
     
+    if (this.state.spotrateresponseTbl.Mode == "FCL") {  
     for(var i=0; i<this.state.spotrateresponseTbl1.length; i++)
     {
     selected.push({ContainerName:this.state.spotrateresponseTbl1[i].Container, ProfileCodeID:this.state.spotrateresponseTbl1[i].ContainerProfileCodeID,
@@ -394,25 +407,65 @@ class SpotRateDetails extends Component {
     users.push({ContainerName:this.state.spotrateresponseTbl1[i].Container, ContainerQuantity:this.state.spotrateresponseTbl1[i].ContainerQty, 
       ProfileCodeID:this.state.spotrateresponseTbl1[i].ContainerProfileCodeID, StandardContainerCode:this.state.spotrateresponseTbl1[i].ContainerCode, Temperature:this.state.spotrateresponseTbl1[i].Container_Temperature, TemperatureType:""})
     }
+   }
+
+    if (this.state.spotrateresponseTbl3.length != null) {
+      if (this.state.spotrateresponseTbl3.length > 0) {
+        for(var i=0; i<this.state.spotrateresponseTbl3.length; i++)
+       {
+        multiCBM.push({PackageType: this.state.spotrateresponseTbl3[i].PackageType, Quantity: this.state.spotrateresponseTbl3[i].Quantity, 
+          Lengths: this.state.spotrateresponseTbl3[i].Lengths, Width: this.state.spotrateresponseTbl3[i].Width, 
+          Height: this.state.spotrateresponseTbl3[i].Height, GrossWt: this.state.spotrateresponseTbl3[i].GrossWt, 
+          VolumeWeight: 0, Volume: this.state.spotrateresponseTbl3[i].Volume})
+       }
+      }      
+    }
     this.state.selected = selected;
     this.state.users = users;
+    this.state.multiCBM = multiCBM;
 
     const {spotrateresponseTbl} = this.state;
     this.state.Custom_Clearance = spotrateresponseTbl.Custom_Clearance;
+    this.state.puAdd = spotrateresponseTbl.PickUpAddress;
     this.state.DeliveryCity = spotrateresponseTbl.DestinationAddress;
     this.state.HazMat = spotrateresponseTbl.HAZMAT;
-    this.state.containerLoadType = spotrateresponseTbl.Trade_terms;
+    this.state.containerLoadType = spotrateresponseTbl.Mode;
     this.state.shipmentType = spotrateresponseTbl.ShipmentType;
     this.state.incoTerms = spotrateresponseTbl.Trade_terms;
-    this.state.modeoftransport = "SEA";
-    this.state.typeofMove = 1;
-    this.state.typesofMove = "p2p";
+    if (spotrateresponseTbl.Mode == "FCL" || spotrateresponseTbl.Mode == "LCL") {
+      this.state.modeoftransport = "SEA";
+    }
+    else if (spotrateresponseTbl.Mode == "AIR") {
+      this.state.modeoftransport = "AIR";
+    }
+    else {
+      this.state.modeoftransport = "ROAD";
+    }
+    
+    if (spotrateresponseTbl.TypeofMove == "Port To Port") {
+      this.state.typeofMove = 1;
+      this.state.typesofMove = "p2p";
+    }
+    else if(spotrateresponseTbl.TypeofMove == "Door To Port"){
+      this.state.typeofMove = 2;
+      this.state.typesofMove = "d2p";
+    }
+    else if(spotrateresponseTbl.TypeofMove == "Door To Door"){
+      this.state.typeofMove = 3;
+      this.state.typesofMove = "d2d";
+    }
+    else{
+      this.state.typeofMove = 4;
+      this.state.typesofMove = "p2d";
+    }
+    this.state.currencyCode = this.state.spotrateresponseTbl.BaseCurrency
+    this.state.NonStackable = this.state.spotrateresponseTbl.NonStackable
     self.setState({
       Custom_Clearance: this.state.Custom_Clearance,
       DeliveryCity: this.state.DeliveryCity,
       DestGeoCordinate:"",
       HazMat: this.state.HazMat,
-      NonStackable: false,
+      NonStackable: this.state.NonStackable,
       OriginGeoCordinates:"",
       PDAddress:"",
       POD: "",
@@ -424,7 +477,7 @@ class SpotRateDetails extends Component {
       PortOfLoadingCode: "",
       containerLoadType: this.state.containerLoadType,
       typeofMove: this.state.typeofMove,
-      currencyCode: 'INR',
+      currencyCode: this.state.currencyCode,
       fields,
       incoTerms:this.state.incoTerms,
       isCustomClear: "No",
@@ -438,7 +491,7 @@ class SpotRateDetails extends Component {
       modalPuAdd: false,
       modeoftransport: this.state.modeoftransport,
       multi: true,
-     // multiCBM: [{…}]
+      multiCBM: multiCBM,
       pod: "",
       podCountry: "",
       podfullAddData:podfullAddData,
@@ -461,7 +514,7 @@ class SpotRateDetails extends Component {
       tempratureEquipment: "",
       testSelection: true,
       totalQuantity: 0,
-      typesofMove: "p2p",
+      typesofMove: this.state.typesofMove,
       users: users,
       values: [],
       values1: [],
