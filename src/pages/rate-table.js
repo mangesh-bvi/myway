@@ -537,7 +537,7 @@ class RateTable extends Component {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           var thisrateid = this.state.selectedDataRow[i].RateLineID;
           var _originalrateid = rowData._original.RateLineID;
-          if(this.state.containerLoadType == "FCL" || this.state.containerLoadType == "LCL")
+          if(this.state.containerLoadType == "FCL" || this.state.containerLoadType == "LCL" || this.state.containerLoadType == "AIR")
           {
             thisrateid = this.state.selectedDataRow[i].RateLineId;
             _originalrateid = rowData._original.RateLineId;
@@ -692,19 +692,19 @@ class RateTable extends Component {
           polAddress.NameWoDiacritics !== "" &&
           polAddress.NameWoDiacritics !== undefined
             ? polAddress.NameWoDiacritics
-            : "",
+            : paramData.fullAddressPOL[0].City,
         DeliveryCity:
           podAddress.NameWoDiacritics !== "" &&
           podAddress.NameWoDiacritics !== undefined
             ? podAddress.NameWoDiacritics
-            : "",
+            : paramData.fullAddressPOD[0].City,
         Currency: paramData.currencyCode,
         //ChargeableWeight: cmbvalue,
         //RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      if (cmbvalue!=null || cmbvalue!=0 || cmbvalue!= undefined || cmbvalue!= "") {
+      if (cmbvalue!=null && cmbvalue!=0 && cmbvalue!= undefined && cmbvalue!= "") {
         dataParameter.ChargeableWeight = cmbvalue
       }
       else{
