@@ -798,8 +798,12 @@ class NewRateSearch extends Component {
       spacEqmtType: [
         ...prevState.spacEqmtType,
         {
-          TypeName: optionVal[0].SpecialContainerCode,
-          Quantity: 1
+          ContainerName: optionVal[0].ContainerName,
+          ProfileCodeID: optionVal[0].ProfileCodeID,
+          StandardContainerCode: optionVal[0].SpecialContainerCode,
+          Quantity: 1,
+          Temperature: 0,
+          TemperatureType: ""
         }
       ]
     }));
@@ -810,7 +814,7 @@ class NewRateSearch extends Component {
       return (
         <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
           <label name="TypeName">
-            {el.TypeName} <span className="into-quant">X</span>
+            {el.StandardContainerCode} <span className="into-quant">X</span>
           </label>
           {/* <div className="spe-equ"> */}
           <input
@@ -839,6 +843,7 @@ class NewRateSearch extends Component {
       ...spacEqmtType[i],
       [name]: parseFloat(value)
     };
+
     this.setState({ spacEqmtType });
   }
 

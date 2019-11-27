@@ -49,8 +49,8 @@ class RateFinalizingStill extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
-      // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
-      data:  {Mode:'FCL', SalesQuoteNumber:'MUM-SQFCL-SEP19-00320'},
+      data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
+      //data:  {Mode:'FCL', SalesQuoteNumber:'MUM-SQFCL-SEP19-00320'},
       headers: authHeader()
     })
       .then(function(response) {
