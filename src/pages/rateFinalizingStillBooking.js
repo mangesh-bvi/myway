@@ -9,7 +9,7 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
-import { encryption } from "../helpers/encryption";
+import { encryption, convertToPlain } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
@@ -65,7 +65,11 @@ class RateFinalizingStillBooking extends Component {
       referType: [],
       flattack_openTop: [],
       eqmtType: [],
-      selectedFile: []
+      selectedFile: [],
+      NotifyID: 0,
+      Notify_AddressID: 0,
+      Notify_Displayas: "",
+      NotifyName: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -75,6 +79,7 @@ class RateFinalizingStillBooking extends Component {
     this.BookigGridDetailsList = this.BookigGridDetailsList.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
     this.HandleTruckTypeData = this.HandleTruckTypeData.bind(this);
+    this.NonCustomerList = this.NonCustomerList.bind(this);
   }
   componentDidMount() {
     if (
@@ -91,6 +96,7 @@ class RateFinalizingStillBooking extends Component {
         this.HandleCommodityDropdown();
         this.HandlePackgeTypeData();
         this.BookigGridDetailsList();
+        this.NonCustomerList();
       }, 100);
     }
   }
@@ -175,9 +181,9 @@ class RateFinalizingStillBooking extends Component {
   }
 
   ////this method for NonCustomerList bind
-  NonCustomerList = () => {
+  NonCustomerList() {
     let self = this;
-
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/NonCustomerList`,
@@ -186,10 +192,11 @@ class RateFinalizingStillBooking extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var data = response.data.Table;
       self.setState({ NonCustomerData: data });
     });
-  };
+  }
 
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
@@ -237,20 +244,19 @@ class RateFinalizingStillBooking extends Component {
       saleQuoteLineID: this.state.Booking[0].saleQuoteLineID,
       // DefaultEntityTypeID:this.state.Booking[0].,
       BookingDocs: this.state.FileData,
-      RateQueryDim: this.multiCBM,
-      NotifyID: this.state.Booking[0].NotifyID,
-      Notify_AddressID: this.state.Booking[0].Notify_AddressID,
-      Notify_Displayas: this.state.Booking[0].Notify_Displayas,
-      NotifyName: this.state.Booking[0].NotifyName
+      RateQueryDim: this.state.multiCBM,
+      NotifyID: this.state.NotifyID,
+      Notify_AddressID: this.state.Notify_AddressID,
+      Notify_Displayas: this.state.Notify_Displayas,
+      NotifyName: this.state.NotifyName
     };
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookingUpdation`,
-      formData, 
+       
       headers: authHeader(),
-      data: paramData,    
-     
+      data: paramData
     }).then(function(response) {
       debugger;
     });
@@ -299,7 +305,7 @@ class RateFinalizingStillBooking extends Component {
         url: `${appSettings.APIURL}/BookigGridDetailsList`,
         data: {
           UserID: 874654, //userId, //874654, ,
-          BookingID: 830651 // 830651 // bookingNo
+          BookingID: bookingNo//830651 // 830651 // bookingNo
         },
         headers: authHeader()
       }).then(function(response) {
@@ -336,10 +342,18 @@ class RateFinalizingStillBooking extends Component {
               self.setState({ typeofMove: " Door 2 Door" });
             }
 
+            var NotifyID = Booking[0].NotifyID;
+            var Notify_AddressID = Booking[0].Notify_AddressID;
+            var Notify_Displayas = convertToPlain(Booking[0].Notify_Displayas);
+            var NotifyName = Booking[0].NotifyName;
             self.setState({
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
               selectedCommodity: Booking[0].Commodity,
+              NotifyID,
+              Notify_AddressID,
+              Notify_Displayas,
+              NotifyName,
               fields: {
                 Consignee: Booking[0].Consignee_Name,
                 Shipper: Booking[0].Shipper_Name
@@ -1134,7 +1148,7 @@ class RateFinalizingStillBooking extends Component {
       ]
     }));
   }
-
+  ////this method for multiple file element create
   CreateFileElement() {
     debugger;
     return this.state.FileData.map((el, i) => (
@@ -1144,6 +1158,30 @@ class RateFinalizingStillBooking extends Component {
         </a>
       </div>
     ));
+  }
+  ////end methos for multiple file element
+
+  ////this method for party change value
+
+  HandleChangeParty(e) {
+    debugger;
+    var NotifyName = e.target.selectedOptions[0].innerText;
+    if (NotifyName !== "select") {
+      var NotifyID = Number(e.target.selectedOptions[0].value);
+
+      var cutomerdata = this.state.NonCustomerData.filter(
+        x => x.Company_ID === NotifyID
+      );
+      var Notify_AddressID = cutomerdata[0].Company_AddressID;
+      var Notify_Displayas = convertToPlain(cutomerdata[0].Company_Address);
+
+      this.setState({
+        NotifyID,
+        NotifyName,
+        Notify_AddressID,
+        Notify_Displayas
+      });
+    }
   }
 
   render() {
@@ -1261,38 +1299,38 @@ class RateFinalizingStillBooking extends Component {
                         columns={[
                           {
                             columns: [
-                              {
-                                Cell: row => {
-                                  i++;
-                                  return (
-                                    <React.Fragment>
-                                      <div className="d-flex align-items-center">
-                                        <div className="cont-costs still-maersk rate-tab-check p-0">
-                                          <div className="remember-forgot d-block m-0">
-                                            <input
-                                              id={"maersk-logo" + i}
-                                              type="checkbox"
-                                              name={"rate-tab-check"}
-                                            />
-                                            <label
-                                              htmlFor={"maersk-logo" + i}
-                                            ></label>
-                                          </div>
-                                        </div>
-                                        <div>
-                                          <p className="details-title">
-                                            <img
-                                              src={maersk}
-                                              alt="maersk icon"
-                                            />
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </React.Fragment>
-                                  );
-                                },
-                                width: 200
-                              },
+                              // {
+                              //   Cell: row => {
+                              //     i++;
+                              //     return (
+                              //       <React.Fragment>
+                              //         <div className="d-flex align-items-center">
+                              //           <div className="cont-costs still-maersk rate-tab-check p-0">
+                              //             <div className="remember-forgot d-block m-0">
+                              //               <input
+                              //                 id={"maersk-logo" + i}
+                              //                 type="checkbox"
+                              //                 name={"rate-tab-check"}
+                              //               />
+                              //               <label
+                              //                 htmlFor={"maersk-logo" + i}
+                              //               ></label>
+                              //             </div>
+                              //           </div>
+                              //           <div>
+                              //             <p className="details-title">
+                              //               <img
+                              //                 src={maersk}
+                              //                 alt="maersk icon"
+                              //               />
+                              //             </p>
+                              //           </div>
+                              //         </div>
+                              //       </React.Fragment>
+                              //     );
+                              //   },
+                              //   width: 200
+                              // },
                               {
                                 accessor: "POL",
                                 Cell: row => {
@@ -1787,23 +1825,37 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div>
                       <div className="title-border py-3">
-                        <h3>Notify Party</h3>
+                        <h3>Notify Party Details</h3>
                       </div>
                       <div>
                         <div className="row">
                           <div className="col-md-6">
-                            <p className="details-title">Party Name</p>
+                            <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
-                              {Booking.length > 0
+                              <select
+                                style={{ width: "70%" }}
+                                onChange={this.HandleChangeParty.bind(this)}
+                              >
+                                <option selected>select</option>
+                                {this.state.NonCustomerData.map((item, i) => (
+                                  <option key={i} value={item.Company_ID}>
+                                    {item.Company_Name}
+                                  </option>
+                                ))}
+                              </select>
+                              {/* {Booking.length > 0
                                 ? Booking[0].NotifyName
-                                : null}
+                                : null} */}
                             </p>
                           </div>
                           <div className="col-md-6">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking.length > 0
+                              {/* {Booking.length > 0
                                 ? Booking[0].Notify_Displayas
+                                : null} */}
+                              {this.state.Notify_Displayas !== ""
+                                ? convertToPlain(this.state.Notify_Displayas)
                                 : null}
                             </p>
                           </div>
