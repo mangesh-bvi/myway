@@ -2773,7 +2773,7 @@ class RateTable extends Component {
                       onClick={this.toggleQuant}
                       className="butn white-butn w-100 mt-0"
                     >
-                      Quantity
+                      Container Details
                     </button>
                   </div>
                 </div>
