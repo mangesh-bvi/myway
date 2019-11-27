@@ -1532,9 +1532,9 @@ class RateTable extends Component {
       spacEqmtType: [
         ...prevState.spacEqmtType,
         {
-          ContainerName: optionVal[0].ContainerName,
-          ProfileCodeID: optionVal[0].ProfileCodeID,
-          StandardContainerCode: optionVal[0].SpecialContainerCode,
+          ContainerName: optionVal.ContainerName,
+          ProfileCodeID: optionVal.ProfileCodeID,
+          StandardContainerCode: optionVal.SpecialContainerCode,
           Quantity: 1,
           Temperature: 0,
           TemperatureType: ""
@@ -2025,7 +2025,7 @@ class RateTable extends Component {
               className="select-text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               name="PackageType"
-              value={parseInt(el.PackageType)}
+              value={el.PackageType}
             >
               <option selected>Select</option>
               {this.state.packageTypeData.map((item, i) => (
@@ -3179,12 +3179,15 @@ class RateTable extends Component {
             {/*  --------------------------EquipmentType  Modal ---------------------*/}
 
             <Modal
-              className="delete-popup text-left"
+              className={ this.state.containerLoadType === "FTL"
+              ? "delete-popup text-left"
+              : "delete-popup text-left big-popup"
+          }
               isOpen={this.state.modalQuant}
               centered={true}
             >
               <ModalBody>
-                <h3 className="mb-4 text-center">Equipment Types</h3>
+                <h3 className="mb-4 text-center">{ this.state.containerLoadType === "FCL"?"Equipment Types":"Cargo Details"}</h3>
                 {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                   <Select
                     className="rate-dropdown"
