@@ -65,7 +65,7 @@ class ShippingDetails extends Component {
       listDis: "none",
       mapDis: "block",
       copied: false,
-      shareLink: "http://localhost:3000/shipment-details?hblno=",
+      shareLink: "http://myway.demo.brainvire.net/shipment-details?hblno=",
       filterAll: "",
       filtered: [],
       modalAdvSearch: false,
@@ -117,6 +117,7 @@ class ShippingDetails extends Component {
   }
 
   componentDidMount() {
+    debugger;
     var url = window.location.href
       .slice(window.location.href.indexOf("?") + 1)
       .split("=")[1];
@@ -133,7 +134,7 @@ class ShippingDetails extends Component {
     this.setState(prevState => ({
       modalShare: !prevState.modalShare,
       copied: false,
-      shareLink: "http://localhost:3000/shipment-details?hblno="
+      shareLink: "http://myway.demo.brainvire.net/shipment-details?hblno="
     }));
   }
 
@@ -167,6 +168,7 @@ class ShippingDetails extends Component {
   }
 
   HandleListShipmentSummey(shiptype) {
+    debugger;
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -183,18 +185,19 @@ class ShippingDetails extends Component {
       // var air = 0,
       //   ocean = 0,
       //   inland = 0;
-      var inland = response.data.Table[0].Count;
-      var air = response.data.Table[1].Count;
-      var ocean = response.data.Table[2].Count;
-
-      var data = [];
-
+      var inland = response.data.Table[2].Count;
+      var air = response.data.Table[0].Count;
+      var ocean = response.data.Table[1].Count;
       //ModeOfTransport
-      data = response.data.Table1;
+
+      var data = response.data.Table1;
       if (shiptype != "") {
         data = data.filter(item => item.ModeOfTransport == shiptype);
+        if (data.length === 0) {
+          data = [{ POL: "No record found" }];
+        }
       }
-
+      self.setState({ shipmentSummary: data });
       // for (let i = 0; i < data.length; i++) {
       //   if (data[i].ModeOfTransport === "Ocean") {
       //     ocean = ocean + 1;
@@ -209,7 +212,7 @@ class ShippingDetails extends Component {
       window.localStorage.setItem("oceancount", ocean);
       window.localStorage.setItem("inlandcount", inland);
 
-      self.setState({ shipmentSummary: data }); ///problem not working setstat undefined
+      ///problem not working setstat undefined
     });
   }
 
@@ -253,6 +256,12 @@ class ShippingDetails extends Component {
       modalAdvSearch: !prevState.modalAdvSearch
     }));
   }
+  handleAdvanceSearchModalClose() {
+    this.setState({
+      modalAdvSearch: false,
+      fields: {}
+    });
+  }
 
   HandleChangeSelect(field, e) {
     let fields = this.state.fields;
@@ -269,6 +278,7 @@ class ShippingDetails extends Component {
   }
 
   HandleChangeCon(field, e) {
+    debugger;
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -289,6 +299,7 @@ class ShippingDetails extends Component {
             self.setState({
               Consignee: response.data.Table,
               fields
+              // ConsigneeID :
             });
           } else {
             self.setState({
@@ -322,6 +333,7 @@ class ShippingDetails extends Component {
   }
 
   handleSelectCon(e, field, value, id) {
+    debugger;
     let fields = this.state.fields;
     fields[field] = value;
     if (field == "Consignee") {
@@ -363,6 +375,7 @@ class ShippingDetails extends Component {
   }
 
   HandleChangePOLPOD(field, e) {
+    debugger;
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -375,8 +388,8 @@ class ShippingDetails extends Component {
         url: `${appSettings.APIURL}/PolPodByCountry`,
         data: {
           Mode: this.state.fields["ModeOfTransport"],
-          Search: e.target.value,
-          CountryCode: "IN"
+          Search: fields[field]
+          // CountryCode: "IN"
         },
         headers: authHeader()
       }).then(function(response) {
@@ -395,6 +408,9 @@ class ShippingDetails extends Component {
         fields
       });
     } else {
+      this.setState({
+        fields
+      });
     }
   }
 
@@ -532,7 +548,6 @@ class ShippingDetails extends Component {
   };
 
   handleValidation() {
-    debugger;
     let fields = this.state.fields;
     let errors = this.state.errors;
     let formIsValid = true;
@@ -668,7 +683,7 @@ class ShippingDetails extends Component {
                               </div>
                             );
                           } else {
-                            return row.value;
+                            return row.value||"";
                           }
                         },
                         Header: "Mode",
@@ -682,7 +697,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value}
+                              {row.value||""}
                             </span>
                           );
                         }
@@ -693,7 +708,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value}
+                              {row.value||""}
                             </span>
                           );
                         }
@@ -704,7 +719,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value}
+                              {row.value||""}
                             </span>
                           );
                         }
@@ -716,7 +731,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value}
+                              {row.value||""}
                             </span>
                           );
                         }
@@ -792,7 +807,7 @@ class ShippingDetails extends Component {
                           } else if (row.value == "DO Issued") {
                             return <div title="DO Issued">{row.value}</div>;
                           } else {
-                            return row.value;
+                            return row.value||"";
                           }
                         },
                         Header: "Status",
@@ -837,16 +852,13 @@ class ShippingDetails extends Component {
                               </div>
                             );
                           } else {
-                            return row.value;
+                            return row.value||"";
                           }
                         }
                       },
                       {
-                        Header: row => {
-                          return <span>&nbsp;</span>;
-                        },
-                        width: 40,
                         Cell: row => {
+                          if(row.original.POL !== "No record found"){
                           return (
                             <i
                               className="fa fa-share-alt shareicon"
@@ -855,7 +867,19 @@ class ShippingDetails extends Component {
                               aria-hidden="true"
                             ></i>
                           );
-                        }
+                          }
+                          else
+                          {
+                            return(
+                              <div>
+                                </div>
+                            )
+                          }
+                        },
+                        Header: row => {
+                          return <span>&nbsp;</span>;
+                        },
+                        width: 40
                       }
                     ]
                   },
@@ -1020,6 +1044,8 @@ class ShippingDetails extends Component {
                           <DatePicker
                             id="FrDepDate"
                             selected={this.state.FrDepDate}
+                            showMonthDropdown
+                            showYearDropdown
                             onChange={this.handleChange.bind(
                               this,
                               "FromDeparture"
@@ -1033,6 +1059,8 @@ class ShippingDetails extends Component {
                           <DatePicker
                             id="ToDepDate"
                             selected={this.state.ToDepDate}
+                            showMonthDropdown
+                            showYearDropdown
                             onChange={this.handleChange.bind(
                               this,
                               "ToDeparture"
@@ -1110,6 +1138,8 @@ class ShippingDetails extends Component {
                           <DatePicker
                             id="FrArrDate"
                             selected={this.state.FrArrDate}
+                            showMonthDropdown
+                            showYearDropdown
                             onChange={this.handleChange.bind(
                               this,
                               "FromArrival"
@@ -1123,6 +1153,8 @@ class ShippingDetails extends Component {
                           <DatePicker
                             id="ToArrDate"
                             selected={this.state.ToArrDate}
+                            showMonthDropdown
+                            showYearDropdown
                             onChange={this.handleChange.bind(this, "ToArrival")}
                           />
                         </div>
@@ -1273,7 +1305,9 @@ class ShippingDetails extends Component {
                           <button
                             type="button"
                             className="butn cancel-butn"
-                            onClick={this.toggleAdvSearch}
+                            onClick={this.handleAdvanceSearchModalClose.bind(
+                              this
+                            )}
                           >
                             Cancel
                           </button>

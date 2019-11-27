@@ -535,12 +535,16 @@ class RateTable extends Component {
     } else {
       if (newSelected[RateLineID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+          var thisrateid = this.state.selectedDataRow[i].RateLineID;
+          var _originalrateid = rowData._original.RateLineID;
+          if(this.state.containerLoadType == "FCL" || this.state.containerLoadType == "LCL")
+          {
+            thisrateid = this.state.selectedDataRow[i].RateLineId;
+            _originalrateid = rowData._original.RateLineId;
+          }
+
           if (
-            (this.state.selectedDataRow[i].RateLineID ===
-              rowData._original.RateLineID) ==
-            undefined
-              ? rowData._original.RateLineId
-              : rowData._original.RateLineID
+            thisrateid  == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID 
           ) {
             selectedRow.splice(i, 1);
 
@@ -2523,7 +2527,7 @@ class RateTable extends Component {
   }
   render() {
     var i = 0;
-    var containerLoadType = this.props.location.state.containerLoadType;
+    
     return (
       <div>
         <Headers />

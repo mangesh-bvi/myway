@@ -248,8 +248,22 @@ class Analytics extends Component {
         var arrayOcean = [];
         var arrayTruck = [];
 
+        function compare(a, b) {
+          // Use toUpperCase() to ignore character casing
+          const bandA = a.ShipmentPeriod.toUpperCase();
+          const bandB = b.ShipmentPeriod.toUpperCase();
+        
+          let comparison = 0;
+          if (bandA > bandB) {
+            comparison = 1;
+          } else if (bandA < bandB) {
+            comparison = -1;
+          }
+          return comparison;
+        }
+
         if (Segregatedby == "CountChart") {
-          Table = response.data.Table;
+          Table = response.data.Table.sort(compare);
           arrayAir = Table.filter(item => item.Modeoftransport == "Air");
           // arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
           // arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
@@ -358,6 +372,8 @@ class Analytics extends Component {
         self.setState({ graphShipmentdataset: [] });
       });
   }
+
+  
 
   handleChangeStart = e => {
     this.setState({
