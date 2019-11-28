@@ -35,7 +35,8 @@ class RateSearch extends Component {
         maxWidth: "300px",
         maxHeight: "100px" // TODO: don't cheat, let it flow to the bottom
       },
-      fields: {}
+      fields: {},
+      error: ""
     };
     this.HandleRadioBtn = this.HandleRadioBtn.bind(this);
   }
@@ -55,6 +56,7 @@ class RateSearch extends Component {
   HandleChangeCon(field, e) {
     debugger;
     let self = this;
+    self.state.error = "";
     var customertxtlen = e.target.value;
     if (customertxtlen == "") {
       document.getElementById("SearchRate").classList.add("disableRates");
@@ -73,17 +75,27 @@ class RateSearch extends Component {
         headers: authHeader()
       }).then(function(response) {
         debugger;
-        if (field == "CustomerList") {
-          self.setState({
-            customerData: response.data.Table,
-            fields
-          });
-        } else {
-          self.setState({
-            customerData: response.data.Table,
-            fields
-          });
+
+        if(response.data.Table.length != 0)
+        {
+          if (field == "CustomerList") {
+            self.setState({
+              customerData: response.data.Table,
+              fields
+            });
+          } else {
+            self.setState({
+              customerData: response.data.Table,
+              fields
+            });
+          }
         }
+        else{
+          self.state.error = "Please enter valid Consignee"      
+        }
+        self.setState({
+          error: self.state.error
+        });
       });
     } else {
       self.setState({
@@ -91,6 +103,7 @@ class RateSearch extends Component {
         fields
       });
     }
+
   }
   HandleChangeSelect(field, e) {
     debugger;
@@ -224,6 +237,10 @@ class RateSearch extends Component {
                       inputProps={{ placeholder: "Search Account/Consignee" }}
                     />
                   ) : null}
+
+                    <span style={{ color: "red" }}>
+                      {this.state.error}
+                    </span>
                 </div>
               </div>
               <button

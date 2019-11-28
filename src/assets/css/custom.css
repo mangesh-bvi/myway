@@ -3166,6 +3166,11 @@ font-family: "Regular Font";
   text-align: left;
   }
 
+  .equip-error{
+    color: red;
+    margin-left: auto;
+    margin-right: auto;
+  }
   /* .row1 {
     display: flex;
     margin-right: -15px;

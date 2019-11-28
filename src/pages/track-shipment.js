@@ -202,7 +202,7 @@ const MapWithAMakredInfoWindow = compose(
   </GoogleMap>
 ));
 
-class ShippingDetailsTwo extends Component {
+class TrackShipment extends Component {
   constructor(props) {
     super(props);
 
@@ -260,19 +260,19 @@ class ShippingDetailsTwo extends Component {
     var url = window.location.href
       .slice(window.location.href.indexOf("?") + 1)
       .split("=")[1];
-    if (url != "" && url != null) {
+    // if (url != "" && url != null) {
       self.HandleShipmentDetails(url);
       self.setState({
         addWat: url
       });
-    } else if (typeof this.props.location.state != "undefined") {
-      var hblno = this.props.location.state.detail;
+    // } else if (typeof this.props.location.state != "undefined") {
+      var hblno = "AQTYSHASE-014461";
       self.HandleShipmentDetails(hblno);
       //self.handleActivityList();
-      self.setState({ HblNo: hblno });
-    } else {
-      this.props.history.push("shipment-summary");
-    }
+      self.setState({ HblNo: "AQTYSHASE-014461" });
+    // } else {
+    //   this.props.history.push("shipment-summary");
+    // }
   }
 
   SendMessage = () => {
@@ -992,9 +992,9 @@ class ShippingDetailsTwo extends Component {
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          {/* <div className="cls-flside">
             <SideMenu />
-          </div>
+          </div> */}
           <div className="cls-rt">
             <div className="container-fluid">
               <div className="row">
@@ -1017,7 +1017,7 @@ class ShippingDetailsTwo extends Component {
                         Details
                       </a>
                     </li>
-                    <li>
+                    {/* <li>
                       <a
                         id="documents-tab"
                         data-toggle="tab"
@@ -1029,8 +1029,8 @@ class ShippingDetailsTwo extends Component {
                       >
                         Documents
                       </a>
-                    </li>
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <a
                         id="activity-tab"
                         data-toggle="tab"
@@ -1042,7 +1042,7 @@ class ShippingDetailsTwo extends Component {
                       >
                         Activity
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                   <div className="tab-content cust-tabs-content">
                     <div
@@ -1622,107 +1622,6 @@ class ShippingDetailsTwo extends Component {
                         })}
                       </div>
                     </div>
-                    <div
-                      className="tab-pane fade"
-                      id="documents"
-                      role="tabpanel"
-                      aria-labelledby="documents-tab"
-                    >
-                      <div className="add-docu-btn">
-                        <button onClick={this.toggleDocu} className="butn mt-0">
-                          Add Document
-                        </button>
-                      </div>
-                      <div className="table-scroll">
-                        <ReactTable
-                          data={documentData}
-                          showPagination={false}
-                          noDataText=""
-                          columns={[
-                            {
-                              columns: [
-                                {
-                                  Header: "Sr_No",
-                                  accessor: "sr_no"
-                                },
-
-                                {
-                                  Header: "Title",
-                                  accessor: "DocumentDescription"
-                                },
-                                {
-                                  Header: "Action",
-                                  sortable: false,
-                                  accessor: "DocumentDescription",
-                                  Cell: row => {
-                                    if (row.value == "No Data Found") {
-                                      return <div></div>;
-                                    } else {
-                                      return (
-                                        <div>
-                                          <img
-                                            className="actionicon"
-                                            src={Eye}
-                                            alt="view-icon"
-                                            onClick={e =>
-                                              this.HandleDocumentView(e, row)
-                                            }
-                                          />
-                                          <img
-                                            className="actionicon"
-                                            src={Delete}
-                                            alt="delete-icon"
-                                            onClick={e =>
-                                              this.HandleDocumentDelete(e, row)
-                                            }
-                                          />
-                                          <img
-                                            className="actionicon"
-                                            src={Download}
-                                            alt="download-icon"
-                                            onClick={e =>
-                                              this.HandleDownloadFile(e, row)
-                                            }
-                                          />
-                                        </div>
-                                      );
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          ]}
-                          // getTrProps={this.HandleDEDFile.bind(this)}
-                          defaultPageSize={5}
-                          className="-striped -highlight"
-                          minRows={1}
-                        />
-                      </div>
-                    </div>
-                    <div
-                      className="tab-pane fade"
-                      id="activity"
-                      role="tabpanel"
-                      aria-labelledby="activity-tab"
-                    >
-                      <div className="mb-4">
-                        <textarea
-                          className="txt-add"
-                          placeholder="Add Message"
-                          id="addMess"
-                        ></textarea>
-                        <div className="text-right">
-                          <a
-                            href="#!"
-                            onClick={this.SendMessage}
-                            className="butn"
-                          >
-                            Post
-                          </a>
-                        </div>
-                      </div>
-                      {MsgActivityTab}
-                    </div>
                   </div>
                 </div>
                 <div className="col-md-5">
@@ -2105,4 +2004,4 @@ class ShippingDetailsTwo extends Component {
   }
 }
 
-export default ShippingDetailsTwo;
+export default TrackShipment;
