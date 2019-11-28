@@ -272,9 +272,10 @@ class ShippingDetailsTwo extends Component {
     } else if (typeof this.props.location.state != "undefined") {
       debugger
       var hblno = this.props.location.state.detail;
+      self.setState({ HblNo: hblno });
       self.HandleShipmentDetails(hblno);
       //self.handleActivityList();
-      self.setState({ HblNo: hblno });
+      
     } else {
       this.props.history.push("shipment-summary");
     }
@@ -658,7 +659,7 @@ class ShippingDetailsTwo extends Component {
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
         UserId: encryption(window.localStorage.getItem("userid"), "desc"),
-        HBLNo: "AQTYPSE193178" //HblNo
+        HBLNo:HblNo
       },
       headers: authHeader()
     }).then(function(response) {
