@@ -1860,7 +1860,7 @@ class RateTable extends Component {
     if (typeof type !== "undefined" && type !== "" && type !== null) {
     } else {
       if (value !== "All") {
-        var filterData = this.state.tempRateDetails.filter(
+        var filterData = this.state.RateDetails.filter(
           x => x.commodities === filteval
         );
         if (filterData.length > 0) {
@@ -1871,8 +1871,8 @@ class RateTable extends Component {
           });
         } else {
           this.setState({
-            tempRateDetails: [{ lineName: "No Recode Found" }],
-            RateSubDetails: [{ ChargeType: "No Recode Found" }],
+            tempRateDetails: [{ lineName: "No Record Found" }],
+            RateSubDetails: [{ ChargeType: "No Record Found" }],
             
           });
         }
@@ -1918,8 +1918,8 @@ class RateTable extends Component {
       this.setState({ tempRateDetails: filteredData });
     } else {
       this.setState({
-        tempRateDetails: [{ lineName: "No Recode Found" }],
-        RateSubDetails: [{ ChargeType: "No Recode Found" }]
+        tempRateDetails: [{ lineName: "No Record Found" }],
+        RateSubDetails: [{ ChargeType: "No Record Found" }]
       });
     }
   }
@@ -2893,7 +2893,7 @@ class RateTable extends Component {
                                 Cell: ({ original, row }) => {
                                   i++;
                                   if (
-                                    row._original.lineName !== "No Recode Found"
+                                    row._original.lineName !== "No Record Found"
                                   ) {
                                     return (
                                       <React.Fragment>
@@ -2942,7 +2942,7 @@ class RateTable extends Component {
                                       <>
                                         <p className="details-title"></p>
                                         <p className="details-para max2">
-                                          No Recode Found
+                                        No Record Found
                                         </p>
                                       </>
                                     );
@@ -3035,7 +3035,7 @@ class RateTable extends Component {
                                 Cell: row => {
                                   debugger;
                                   if (
-                                    row.original.lineName !== "No Recode Found"
+                                    row.original.lineName !== "No Record Found"
                                   ) {
                                     return (
                                       <>
@@ -3143,7 +3143,7 @@ class RateTable extends Component {
                               <ReactTable
                                 minRows={1}
                                 data={
-                                  row.original.lineName !== "No Recode Found"
+                                  row.original.lineName !== "No Record Found"
                                     ? row.original.RateLineId === undefined
                                       ? this.state.RateSubDetails.filter(
                                           d =>
