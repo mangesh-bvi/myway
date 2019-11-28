@@ -129,7 +129,7 @@ class SideMenu extends Component {
                 <Accordion.Collapse eventKey="1">
                   <Card.Body>
                     <ul className="shipment-ul">
-                      <li>
+                      {/* <li>
                         <label
                           className="shipment-ul-lilbl1"
                           data-Quetye="Current"
@@ -140,7 +140,7 @@ class SideMenu extends Component {
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("quotecurrent")}
                         </label>
-                      </li>
+                      </li> */}
                       <li>
                         <label
                           className="shipment-ul-lilbl1"
@@ -150,6 +150,7 @@ class SideMenu extends Component {
                           Pending
                         </label>
                         <label className="shipment-ul-lilbl2">
+                          {/* {parseFloat(window.localStorage.getItem("quotepending")) + parseFloat(window.localStorage.getItem("quotecurrent"))} */}
                           {window.localStorage.getItem("quotepending")}
                         </label>
                       </li>
