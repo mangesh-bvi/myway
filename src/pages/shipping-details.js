@@ -185,12 +185,14 @@ class ShippingDetails extends Component {
       // var air = 0,
       //   ocean = 0,
       //   inland = 0;
-      var inland = response.data.Table[2].Count;
-      var air = response.data.Table[0].Count;
-      var ocean = response.data.Table[1].Count;
+    
       //ModeOfTransport
 
       var data = response.data.Table1;
+      var inland = data.filter(x=>x.ModeOfTransport==="Inland").length;
+      var air = data.filter(x=>x.ModeOfTransport === "Air").length;
+      var ocean =  data.filter(x=>x.ModeOfTransport === "Ocean").length;
+      
       if (shiptype != "") {
         data = data.filter(item => item.ModeOfTransport == shiptype);
         if (data.length === 0) {
@@ -588,14 +590,14 @@ class ShippingDetails extends Component {
                   onClick={this.toggleAdvSearch}
                   className="fa fa-search-plus advsearchicon"
                 ></button> */}
-                <a
+                {/* <a
                   href="#!"
                   onClick={this.toggleAdvSearch}
                   //style={{ display: this.state.mapDis }}
                   className="butnAdv"
                 >
                   +
-                </a>
+                </a> */}
                 {/* <i class="fa fa-search-plus advsearchicon" aria-hidden="true"></i> */}
                 <a
                   href="#!"
@@ -604,6 +606,14 @@ class ShippingDetails extends Component {
                   className="butn light-blue-butn mr-0"
                 >
                   List View
+                </a>
+                <a
+                  href="#!"
+                  onClick={this.toggleAdvSearch}
+                  style={{ marginLeft: "15px" }}
+                  className="butn"
+                >
+                  Advanced Search
                 </a>
                 <a
                   href="#!"
@@ -683,7 +693,7 @@ class ShippingDetails extends Component {
                               </div>
                             );
                           } else {
-                            return row.value||"";
+                            return row.value || "";
                           }
                         },
                         Header: "Mode",
@@ -697,7 +707,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value||""}
+                              {row.value || ""}
                             </span>
                           );
                         }
@@ -708,7 +718,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value||""}
+                              {row.value || ""}
                             </span>
                           );
                         }
@@ -719,7 +729,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value||""}
+                              {row.value || ""}
                             </span>
                           );
                         }
@@ -731,7 +741,7 @@ class ShippingDetails extends Component {
                         Cell: row => {
                           return (
                             <span title={row.value} className="max3">
-                              {row.value||""}
+                              {row.value || ""}
                             </span>
                           );
                         }
@@ -807,7 +817,7 @@ class ShippingDetails extends Component {
                           } else if (row.value == "DO Issued") {
                             return <div title="DO Issued">{row.value}</div>;
                           } else {
-                            return row.value||"";
+                            return row.value || "";
                           }
                         },
                         Header: "Status",
@@ -852,28 +862,23 @@ class ShippingDetails extends Component {
                               </div>
                             );
                           } else {
-                            return row.value||"";
+                            return row.value || "";
                           }
                         }
                       },
                       {
                         Cell: row => {
-                          if(row.original.POL !== "No record found"){
-                          return (
-                            <i
-                              className="fa fa-share-alt shareicon"
-                              // onClick={this.toggleShare}
-                              onClick={e => this.HandleDocumentView(e, row)}
-                              aria-hidden="true"
-                            ></i>
-                          );
-                          }
-                          else
-                          {
-                            return(
-                              <div>
-                                </div>
-                            )
+                          if (row.original.POL !== "No record found") {
+                            return (
+                              <i
+                                className="fa fa-share-alt shareicon"
+                                // onClick={this.toggleShare}
+                                onClick={e => this.HandleDocumentView(e, row)}
+                                aria-hidden="true"
+                              ></i>
+                            );
+                          } else {
+                            return <div></div>;
                           }
                         },
                         Header: row => {

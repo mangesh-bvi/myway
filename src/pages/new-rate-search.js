@@ -91,7 +91,7 @@ const Map2WithAMakredInfoWindow = compose(
     //zoom={props.zomePOL}
   >
     {/* {this.props.mapPositionPOD === null ? alert(1) : null} */}
-    <Marker position={props.mapPositionPOD} />
+    <Marker key={1} position={props.mapPositionPOD} />
   </GoogleMap>
 ));
 
@@ -442,6 +442,7 @@ class NewRateSearch extends Component {
 
   //// POL POD Autosearch Data
   HandleAddressDropdownPolSelect(e, field, value, id) {
+    debugger;
     let fields = this.state.fields;
     fields[field] = value;
 
@@ -460,7 +461,7 @@ class NewRateSearch extends Component {
     } else {
       if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
         var geoCoordinate = id.GeoCoordinate.split(",");
-        var mapPositionPOD = this.state.mapPositionPOD;
+        var mapPositionPOD = new Object();
         mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
         mapPositionPOD.lng = parseFloat(geoCoordinate[1]);
         this.setState({
@@ -891,7 +892,7 @@ class NewRateSearch extends Component {
                 type="text"
                 name="ContainerQuantity"
                 placeholder="Quantity"
-                value={el.ContainerQuantity||""}
+                value={el.ContainerQuantity || ""}
                 onChange={this.UISpecialChange.bind(this, i)}
               />
             </div>
@@ -902,7 +903,7 @@ class NewRateSearch extends Component {
                 type="text"
                 name="Temperature"
                 placeholder="Temp"
-                value={el.Temperature||""}
+                value={el.Temperature || ""}
                 onChange={this.UISpecialChange.bind(this, i)}
               />
             </div>

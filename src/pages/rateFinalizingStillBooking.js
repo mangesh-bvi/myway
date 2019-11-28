@@ -97,7 +97,7 @@ class RateFinalizingStillBooking extends Component {
         this.HandlePackgeTypeData();
         this.BookigGridDetailsList();
         this.NonCustomerList();
-      }, 100);
+      }, 300);
     }
   }
 
@@ -182,6 +182,7 @@ class RateFinalizingStillBooking extends Component {
 
   ////this method for NonCustomerList bind
   NonCustomerList() {
+    debugger;
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
@@ -223,38 +224,40 @@ class RateFinalizingStillBooking extends Component {
       formData.append("file", this.state.selectedFile[index]);
     }
     var paramData = {
-      BookingNo: this.state.Booking[0].BookingNo,
+      BookingNo: this.state.Booking[0].strBooking_No,
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
       ShipperID: 2,
-      Shipper_Displayas: this.state.Booking[0].ShipperID,
-      Shipper_AddressID: this.state.Booking[0].Shipper_AddressID,
+      Shipper_Displayas: parseInt(this.state.Booking[0].ShipperID),
+      Shipper_AddressID: parseInt(this.state.Booking[0].Shipper_AddressID),
       ShipperName: this.state.Booking[0].Shipper_Name,
-      ConsigneeID: this.state.Booking[0].Consignee,
+      ConsigneeID: parseInt(this.state.Booking[0].Consignee),
       ConsigneeName: this.state.Booking[0].Consignee_Name,
-      Consignee_AddressID: this.state.Booking[0].Consignee_AddressID,
+      Consignee_AddressID: parseInt(this.state.Booking[0].Consignee_AddressID),
       Consignee_Displayas: this.state.Booking[0].Consignee_Displayas,
-      BuyerID: this.state.Booking[0].BuyerID,
-      Buyer_AddressID: this.state.Booking[0].Buyer_AddressID,
+      BuyerID: parseInt(this.state.Booking[0].BuyerID),
+      Buyer_AddressID: parseInt(this.state.Booking[0].Buyer_AddressID),
       Buyer_Displayas: this.state.Booking[0].Buyer_Displayas,
       BuyerName: this.state.Booking[0].Buyer_Name,
       Mode: this.state.Booking[0].CargoType,
-      Commodity: this.state.Booking[0].Commodity,
-      saleQuoteID: this.state.Booking[0].saleQuoteID,
+      Commodity: parseInt(this.state.Booking[0].Commodity),
+      saleQuoteID: parseInt(this.state.Booking[0].saleQuoteID),
       saleQuoteNo: this.state.Booking[0].saleQuoteNo,
-      saleQuoteLineID: this.state.Booking[0].saleQuoteLineID,
+      saleQuoteLineID: parseInt(this.state.Booking[0].saleQuoteLineID),
       // DefaultEntityTypeID:this.state.Booking[0].,
-      BookingDocs: this.state.FileData,
-      RateQueryDim: this.state.multiCBM,
-      NotifyID: this.state.NotifyID,
+
+      NotifyID: Number(this.state.NotifyID),
       Notify_AddressID: this.state.Notify_AddressID,
       Notify_Displayas: this.state.Notify_Displayas,
-      NotifyName: this.state.NotifyName
+      NotifyName: this.state.NotifyName,
+
+      BookingDocs: this.state.FileData,
+      BookingDim: this.state.multiCBM
     };
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookingUpdation`,
-       
+
       headers: authHeader(),
       data: paramData
     }).then(function(response) {
@@ -297,15 +300,16 @@ class RateFinalizingStillBooking extends Component {
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
     let self = this;
-    var bookingNo = self.state.BookingNo;
+    debugger;
+    var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    if (bookingNo !== "" && bookingNo !== null) {
+    if (bookingId !== "" && bookingId !== null) {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/BookigGridDetailsList`,
         data: {
-          UserID: 874654, //userId, //874654, ,
-          BookingID: bookingNo//830651 // 830651 // bookingNo
+          UserID: userId, //874654, //userId, //874654, ,
+          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
         },
         headers: authHeader()
       }).then(function(response) {
@@ -344,7 +348,7 @@ class RateFinalizingStillBooking extends Component {
 
             var NotifyID = Booking[0].NotifyID;
             var Notify_AddressID = Booking[0].Notify_AddressID;
-            var Notify_Displayas = convertToPlain(Booking[0].Notify_Displayas);
+            var Notify_Displayas = Booking[0].Notify_Displayas;
             var NotifyName = Booking[0].NotifyName;
             self.setState({
               multiCBM: CargoDetails,
@@ -544,17 +548,15 @@ class RateFinalizingStillBooking extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: value !== "" ? parseFloat(value) : ""
+        [name]: value !== "" ? Number(value) : ""
       };
     }
 
     this.setState({ multiCBM });
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
-        ((multiCBM[i].Quantity || 0) *
-          ((multiCBM[i].Lengths || 0) *
-            (multiCBM[i].Width || 0) *
-            (multiCBM[i].Height || 0))) /
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
       if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
         multiCBM[i] = {
@@ -569,10 +571,10 @@ class RateFinalizingStillBooking extends Component {
       }
     } else {
       var decVolume =
-        (multiCBM[i].Quantity || 0) *
-        (((multiCBM[i].Lengths || 0) / 100) *
-          ((multiCBM[i].Width || 0) / 100) *
-          ((multiCBM[i].Height || 0) / 100));
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: parseFloat(decVolume)
@@ -586,6 +588,7 @@ class RateFinalizingStillBooking extends Component {
       multiCBM: [
         ...prevState.multiCBM,
         {
+          BookingPackID: parseInt(this.state.multiCBM[0].BookingPackID),
           PackageType: "",
           Quantity: 0,
           Lengths: 0,
@@ -1139,11 +1142,9 @@ class RateFinalizingStillBooking extends Component {
       FileData: [
         ...prevState.FileData,
         {
-          BookingID: this.state.FileData[0].BookingID,
-          FilePath: "",
-          FileName: fileName,
-          DocumentID: "",
-          DocumentType: ""
+          BookingID: parseInt(this.state.FileData[0].BookingID),
+          FTPFilePath: "",
+          DocumentID: parseInt(this.state.FileData[0].DocumentID)
         }
       ]
     }));
@@ -1173,7 +1174,7 @@ class RateFinalizingStillBooking extends Component {
         x => x.Company_ID === NotifyID
       );
       var Notify_AddressID = cutomerdata[0].Company_AddressID;
-      var Notify_Displayas = convertToPlain(cutomerdata[0].Company_Address);
+      var Notify_Displayas = cutomerdata[0].Company_Address;
 
       this.setState({
         NotifyID,
@@ -1855,7 +1856,7 @@ class RateFinalizingStillBooking extends Component {
                                 ? Booking[0].Notify_Displayas
                                 : null} */}
                               {this.state.Notify_Displayas !== ""
-                                ? convertToPlain(this.state.Notify_Displayas)
+                                ? this.state.Notify_Displayas
                                 : null}
                             </p>
                           </div>

@@ -83,7 +83,7 @@ class BookingTable extends Component {
 
   HandleDocumentView(evt, row) {
     debugger;
-    var BookingNo = row.original["BookingNo"];
+    var BookingNo = row.original["BookingID"];
     this.props.history.push({
       pathname: "rate-finalizing-still-booking",
       state: { BookingNo: BookingNo }

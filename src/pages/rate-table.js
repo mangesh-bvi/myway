@@ -538,10 +538,8 @@ class RateTable extends Component {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           var thisrateid = this.state.selectedDataRow[i].RateLineID;
           var _originalrateid = rowData._original.RateLineID;
-          if (
-            this.state.containerLoadType == "FCL" ||
-            this.state.containerLoadType == "LCL"
-          ) {
+          if(this.state.containerLoadType == "FCL" || this.state.containerLoadType == "LCL" || this.state.containerLoadType == "AIR")
+          {
             thisrateid = this.state.selectedDataRow[i].RateLineId;
             _originalrateid = rowData._original.RateLineId;
           }
@@ -669,17 +667,21 @@ class RateTable extends Component {
         TypeOfMove: rTypeofMove,
 
         PortOfDischargeCode:
-          paramData.containerLoadType == 'AIR'? (podAddress.Location !== "" && podAddress.Location !== undefined
-          ? podAddress.Location
-          : ""): (podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
+          paramData.containerLoadType == "AIR"
+            ? podAddress.Location !== "" && podAddress.Location !== undefined
+              ? podAddress.Location
+              : ""
+            : podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
             ? podAddress.UNECECode
-            : ""),
+            : "",
         PortOfLoadingCode:
-          paramData.containerLoadType == 'AIR'? (polAddress.Location !== "" && polAddress.Location !== undefined
-          ? polAddress.Location
-          : ""): (polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
+          paramData.containerLoadType == "AIR"
+            ? polAddress.Location !== "" && polAddress.Location !== undefined
+              ? polAddress.Location
+              : ""
+            : polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
             ? polAddress.UNECECode
-            : ""),
+            : "",
         Containerdetails: containerdetails,
         OriginGeoCordinates:
           polAddress.GeoCoordinate !== "" &&
@@ -695,19 +697,19 @@ class RateTable extends Component {
           polAddress.NameWoDiacritics !== "" &&
           polAddress.NameWoDiacritics !== undefined
             ? polAddress.NameWoDiacritics
-            : "",
+            : paramData.fullAddressPOL[0].City,
         DeliveryCity:
           podAddress.NameWoDiacritics !== "" &&
           podAddress.NameWoDiacritics !== undefined
             ? podAddress.NameWoDiacritics
-            : "",
+            : paramData.fullAddressPOD[0].City,
         Currency: paramData.currencyCode,
         //ChargeableWeight: cmbvalue,
         //RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      if (cmbvalue!=null || cmbvalue!=0 || cmbvalue!= undefined || cmbvalue!= "") {
+      if (cmbvalue!=null && cmbvalue!=0 && cmbvalue!= undefined && cmbvalue!= "") {
         dataParameter.ChargeableWeight = cmbvalue
       }
       else{
@@ -782,17 +784,21 @@ class RateTable extends Component {
         ModeOfTransport: rModeofTransport,
         TypeOfMove: rTypeofMove,
         PortOfDischargeCode:
-          paramData.containerLoadType == 'AIR'? (podAddress.Location !== "" && podAddress.Location !== undefined
-          ? podAddress.Location
-          : ""): (podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
+          paramData.containerLoadType == "AIR"
+            ? podAddress.Location !== "" && podAddress.Location !== undefined
+              ? podAddress.Location
+              : ""
+            : podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
             ? podAddress.UNECECode
-            : ""),
+            : "",
         PortOfLoadingCode:
-          paramData.containerLoadType == 'AIR'? (polAddress.Location !== "" && polAddress.Location !== undefined
-          ? polAddress.Location
-          : ""): (polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
+          paramData.containerLoadType == "AIR"
+            ? polAddress.Location !== "" && polAddress.Location !== undefined
+              ? polAddress.Location
+              : ""
+            : polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
             ? polAddress.UNECECode
-            : ""),
+            : "",
         Containerdetails: containerdetails,
         OriginGeoCordinates:
           polAddress.GeoCoordinate !== "" &&
@@ -1850,11 +1856,12 @@ class RateTable extends Component {
   filterAll(e, type) {
     debugger;
     const { value } = e.target;
+    var filteval = e.target.selectedOptions[0].innerText;
     if (typeof type !== "undefined" && type !== "" && type !== null) {
     } else {
       if (value !== "All") {
-        var filterData = this.state.tempRateDetails.filter(
-          x => x.commodities === value
+        var filterData = this.state.RateDetails.filter(
+          x => x.commodities === filteval
         );
         if (filterData.length > 0) {
           this.setState({
@@ -1864,7 +1871,9 @@ class RateTable extends Component {
           });
         } else {
           this.setState({
-            CommodityID: value
+            tempRateDetails: [{ lineName: "No Record Found" }],
+            RateSubDetails: [{ ChargeType: "No Record Found" }],
+            
           });
         }
       } else {
@@ -1903,8 +1912,15 @@ class RateTable extends Component {
       ) {
         filteredData.push(actualData[j]);
       }
+    }
 
+    if (filteredData.length > 0) {
       this.setState({ tempRateDetails: filteredData });
+    } else {
+      this.setState({
+        tempRateDetails: [{ lineName: "No Record Found" }],
+        RateSubDetails: [{ ChargeType: "No Record Found" }]
+      });
     }
   }
 
@@ -2261,7 +2277,7 @@ class RateTable extends Component {
       }
     }
 
-    if (param.spacEqmtType.length !=0) {
+    if (param.spacEqmtType.length != 0) {
       for (var i = 0; i < param.spacEqmtType.length; i++) {
         containerdetails.push({
           ProfileCodeID: param.spacEqmtType[i].ProfileCodeID,
@@ -2397,7 +2413,7 @@ class RateTable extends Component {
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         BaseCurrency: param.currencyCode,
-        NonStackable:0
+        NonStackable: 0
       };
     }
     if (param.containerLoadType == "LTL" || param.containerLoadType == "LCL") {
@@ -2423,7 +2439,7 @@ class RateTable extends Component {
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         BaseCurrency: param.currencyCode,
-        NonStackable:1
+        NonStackable: 1
       };
     }
     if (param.containerLoadType == "FTL") {
@@ -2450,7 +2466,7 @@ class RateTable extends Component {
         DestGeoCordinate: param.DestGeoCordinate,
         FTLTruckDetails: truckTypeData,
         BaseCurrency: param.currencyCode,
-        NonStackable:0
+        NonStackable: 0
       };
     }
 
@@ -2676,44 +2692,54 @@ class RateTable extends Component {
                           </div>
                           <span>100$</span>
                         </div> */}
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="insu"
-                              type="checkbox"
-                              name="HazMat"
-                              checked={this.state.HazMat}
-                            />
-                            <label htmlFor="insu">HazMat</label>
+                          <div>
+                            <div className="d-flex">
+                              <input
+                                id="insu"
+                                type="checkbox"
+                                name="HazMat"
+                                checked={this.state.HazMat}
+                              />
+                              <label htmlFor="insu">HazMat</label>
+                            </div>
+                            {/* <span>50$</span> */}
                           </div>
-                          {/* <span>50$</span> */}
-                        </div>
-                        {(() => {
-                        if(this.state.containerLoadType!='FCL' && this.state.containerLoadType!='FTL'){
-                        return <div>                         
-                          <div className="d-flex">
-                            <input
-                              id="cont-trak"
-                              type="checkbox"
-                              name="NonStackable"
-                              checked={this.state.NonStackable}
-                            />
-                            <label htmlFor="cont-trak">NonStackable</label>
-                          </div>
-                          {/* <span>150$</span> */}
-                        </div>
-                        }})()}
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="cust-clear"
-                              type="checkbox"
-                              name="Custom_Clearance"
-                              checked={this.state.Custom_Clearance}
-                              onChange={this.custClearToggle}
-                            />
-                            <label htmlFor="cust-clear">Custom Clearance</label>
-                          </div>
+                          {(() => {
+                            if (
+                              this.state.containerLoadType != "FCL" &&
+                              this.state.containerLoadType != "FTL"
+                            ) {
+                              return (
+                                <div>
+                                  <div className="d-flex">
+                                    <input
+                                      id="cont-trak"
+                                      type="checkbox"
+                                      name="NonStackable"
+                                      checked={this.state.NonStackable}
+                                    />
+                                    <label htmlFor="cont-trak">
+                                      NonStackable
+                                    </label>
+                                  </div>
+                                  {/* <span>150$</span> */}
+                                </div>
+                              );
+                            }
+                          })()}
+                          <div>
+                            <div className="d-flex">
+                              <input
+                                id="cust-clear"
+                                type="checkbox"
+                                name="Custom_Clearance"
+                                checked={this.state.Custom_Clearance}
+                                onChange={this.custClearToggle}
+                              />
+                              <label htmlFor="cust-clear">
+                                Custom Clearance
+                              </label>
+                            </div>
                             {/* <span>900$</span> */}
                           </div>
                           <div className="pol-pod">
@@ -2736,25 +2762,31 @@ class RateTable extends Component {
                                 </label>
                               </div>
                             ))}
-                           <div className="pol-pod-maps">
-                          <span className="rate-map-ovrly map-pol-lbl">POL</span>
-                          <span
-                            onClick={this.togglePOLModal}
-                            className="rate-map-ovrly rate-map-plus"
-                          >
-                            +
-                          </span>
+                            <div className="pol-pod-maps">
+                              <span className="rate-map-ovrly map-pol-lbl">
+                                POL
+                              </span>
+                              <span
+                                onClick={this.togglePOLModal}
+                                className="rate-map-ovrly rate-map-plus"
+                              >
+                                +
+                              </span>
 
-                          <POLMaps
-                            markerPOLData={this.state.mapPositionPOL}
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                            containerElement={
-                              <div style={{ height: `100%`, width: "100%" }} />
-                            }
-                            mapElement={<div style={{ height: `100%` }} />}
-                            loadingElement={<div style={{ height: `100%` }} />}
-                          ></POLMaps>
-                        </div>
+                              <POLMaps
+                                markerPOLData={this.state.mapPositionPOL}
+                                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                                containerElement={
+                                  <div
+                                    style={{ height: `100%`, width: "100%" }}
+                                  />
+                                }
+                                mapElement={<div style={{ height: `100%` }} />}
+                                loadingElement={
+                                  <div style={{ height: `100%` }} />
+                                }
+                              ></POLMaps>
+                            </div>
                             {/* <div className="d-flex">
                             <input
                               id="pol-pod"
@@ -2860,46 +2892,61 @@ class RateTable extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  return (
-                                    <React.Fragment>
-                                      <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                        <div className="remember-forgot rat-img d-block m-0">
-                                          <input
-                                            id={"maersk-logo" + i}
-                                            type="checkbox"
-                                            name={"rate-tab-check"}
-                                            // checked={
-                                            //   this.state.RateDetails[i - 1].checkbx
-                                            //     ? this.state.RateDetails[i - 1]
-                                            //         .checkbx
-                                            //     : false
-                                            // }
-                                            checked={
-                                              this.state.cSelectedRow[
-                                                original.RateLineID == undefined
-                                                  ? original.RateLineId
-                                                  : original.RateLineID
-                                              ] === true
-                                            }
-                                            onChange={e =>
-                                              this.toggleRow(
-                                                original.RateLineID == undefined
-                                                  ? original.RateLineId
-                                                  : original.RateLineID,
-                                                row
-                                              )
-                                            }
-                                          />
-                                          <label
-                                            htmlFor={"maersk-logo" + i}
-                                          ></label>
+                                  if (
+                                    row._original.lineName !== "No Record Found"
+                                  ) {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              // checked={
+                                              //   this.state.RateDetails[i - 1].checkbx
+                                              //     ? this.state.RateDetails[i - 1]
+                                              //         .checkbx
+                                              //     : false
+                                              // }
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  original.RateLineID ==
+                                                  undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  original.RateLineID ==
+                                                    undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID,
+                                                  row
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
                                         </div>
-                                      </div>
-                                      <div className="rate-tab-img">
-                                        <img src={maersk} alt="maersk icon" />
-                                      </div>
-                                    </React.Fragment>
-                                  );
+                                        <div className="rate-tab-img">
+                                          <img src={maersk} alt="maersk icon" />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <>
+                                        <p className="details-title"></p>
+                                        <p className="details-para max2">
+                                        No Record Found
+                                        </p>
+                                      </>
+                                    );
+                                  }
                                 },
                                 accessor: "lineName"
                                 // minWidth: 200
@@ -2935,37 +2982,40 @@ class RateTable extends Component {
                                       </p>
                                     </>
                                   );
-                                }},
-                                {
-                                  Cell: row => {
-                                    return (
-                                      <>
-                                        <p className="details-title">Transshipment Port</p>
-                                        <p className="details-para">
-                                          {row.original.TransshipmentPort}
-                                        </p>
-                                      </>
-                                    );
-                                  },
-                                  accessor: "TransshipmentPort",
-                                  filterable: true,
-                                  minWidth: 114
+                                }
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">
+                                        Transshipment Port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
+                                    </>
+                                  );
                                 },
-                                {
-                                  Cell: row => {
-                                    return (
-                                      <>
-                                        <p className="details-title">Free Time</p>
-                                        <p className="details-para">
-                                          {row.original.freeTime}
-                                        </p>
-                                      </>
-                                    );
-                                  },
-                                  accessor: "freeTime",
-                                  filterable: true,
-                                  minWidth: 80
+                                accessor: "TransshipmentPort",
+                                filterable: true,
+                                minWidth: 114
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Free Time</p>
+                                      <p className="details-para">
+                                        {row.original.freeTime}
+                                      </p>
+                                    </>
+                                  );
                                 },
+                                accessor: "freeTime",
+                                filterable: true,
+                                minWidth: 80
+                              },
                               {
                                 Cell: row => {
                                   return (
@@ -2983,17 +3033,24 @@ class RateTable extends Component {
                               },
                               {
                                 Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Expiry</p>
-                                      <p className="details-para">
-                                        {new Date(
-                                          row.original.expiryDate ||
-                                            row.original.ExpiryDate
-                                        ).toLocaleDateString("en-US")}
-                                      </p>
-                                    </>
-                                  );
+                                  debugger;
+                                  if (
+                                    row.original.lineName !== "No Record Found"
+                                  ) {
+                                    return (
+                                      <>
+                                        <p className="details-title">Expiry</p>
+                                        <p className="details-para">
+                                          {new Date(
+                                            row.original.expiryDate ||
+                                              row.original.ExpiryDate
+                                          ).toLocaleDateString("en-US")}
+                                        </p>
+                                      </>
+                                    );
+                                  } else {
+                                    return <></>;
+                                  }
                                 },
                                 accessor: "expiryDate" || "ExpiryDate",
                                 filterable: true,
@@ -3021,10 +3078,11 @@ class RateTable extends Component {
                                       <p className="details-para">
                                         {row.original.TotalAmount !== "" &&
                                         row.original.TotalAmount !== null
-                                          ? row.original.TotalAmount +
-                                            " " +
-                                            row.original.BaseCurrency
-                                          : ""}
+                                          ? row.original.TotalAmount
+                                          : //  +
+                                            //   " " +
+                                            //   row.original.BaseCurrency
+                                            ""}
                                       </p>
                                     </>
                                   );
@@ -3085,17 +3143,19 @@ class RateTable extends Component {
                               <ReactTable
                                 minRows={1}
                                 data={
-                                  row.original.RateLineId === undefined
-                                    ? this.state.RateSubDetails.filter(
-                                        d =>
-                                          d.RateLineID ===
-                                          row.original.RateLineID
-                                      )
-                                    : this.state.RateSubDetails.filter(
-                                        d =>
-                                          d.RateLineID ===
-                                          row.original.RateLineId
-                                      )
+                                  row.original.lineName !== "No Record Found"
+                                    ? row.original.RateLineId === undefined
+                                      ? this.state.RateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineID
+                                        )
+                                      : this.state.RateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineId
+                                        )
+                                    : this.state.RateSubDetails
                                 }
                                 columns={[
                                   {
@@ -3191,9 +3251,11 @@ class RateTable extends Component {
               {/*  --------------------------EquipmentType  Modal ---------------------*/}
 
               <Modal
-                className={this.state.containerLoadType === "FTL"
-                ? "delete-popup text-left"
-                : "delete-popup text-left big-popup"}
+                className={
+                  this.state.containerLoadType === "FTL"
+                    ? "delete-popup text-left"
+                    : "delete-popup text-left big-popup"
+                }
                 isOpen={this.state.modalQuant}
                 centered={true}
               >
