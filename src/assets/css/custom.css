@@ -3110,6 +3110,10 @@ table tbody tr:last-child {
   /* margin-left: 13px; */
 }
 
+.preview-popup{
+  max-width: 70%;
+}
+
 .preview-title{
   color: black;
   font-size: 19px;
@@ -3128,6 +3132,7 @@ font-family: "Regular Font";
   display: flex;
   align-items: center;
   margin-bottom: 13px;
+  margin-top: 20px;
 }
 
 .dv-sales{
@@ -3149,7 +3154,7 @@ font-family: "Regular Font";
 }
 
 .preview-para-con{
-  color:  black;
+  color: #39b54a;
   font-size: 15px;
   font-family: "Regular Font";
   text-align: left;
