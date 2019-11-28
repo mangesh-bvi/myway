@@ -3109,6 +3109,68 @@ table tbody tr:last-child {
   display: block;
   /* margin-left: 13px; */
 }
+
+.preview-popup{
+  max-width: 70%;
+}
+
+
+.plusImg-pdng{
+  color: #fff !important;
+  padding: 4px 12px !important;
+  font-size: 22px !important;
+  }
+.preview-title{
+  color: black;
+  font-size: 19px;
+  font-family: "Medium Font";
+  margin-bottom: 5px;
+  margin-right: 30px;
+}
+
+.preview-para{
+color:  black;
+font-size: 15px;
+font-family: "Regular Font";
+}
+
+.preview-popup .login-fields {
+  display: flex;
+  align-items: center;
+  margin-bottom: 13px;
+  margin-top: 20px;
+}
+
+.dv-sales{
+  margin-bottom: 30px;
+}
+
+/*
+.dv-cust{
+  margin-right: 630px;
+}
+*/
+
+.preview-title-con{
+  color: #002d73;
+  font-size: 19px;
+  font-family: "Medium Font";
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.preview-para-con{
+  color: #39b54a;
+  font-size: 15px;
+  font-family: "Regular Font";
+  text-align: left;
+  }
+
+  /* .row1 {
+    display: flex;
+    margin-right: -15px;
+    margin-left: -16px;
+} */
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/
