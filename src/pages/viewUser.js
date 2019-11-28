@@ -229,12 +229,15 @@ class ViewUser extends Component {
                         Cell: row => {
                           return (
                             <div>
+                              <span title="Edit">
                               <img
                                 className="actionicon"
                                 src={Pencil}
                                 alt="view-icon"
                                 onClick={e => this.HandleDocumentView(e, row)}
                               />
+                              </span>
+                              <span title={row.original.IsEnabled ? "Active": "Inactive"}>
                               <img
                                 style={{
                                   pointerEvents: row.original.IsEnabled
@@ -250,6 +253,7 @@ class ViewUser extends Component {
                                 alt="deactivate-icon"
                                 onClick={e => this.HandleDocumentDelete(e, row)}
                               />
+                              </span>
                             </div>
                           );
                         }

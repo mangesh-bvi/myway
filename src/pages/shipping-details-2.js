@@ -26,6 +26,8 @@ import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
+import Plane from "./../assets/img/plane.png";
+import Truck from "./../assets/img/truck.png";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import {
@@ -235,7 +237,8 @@ class ShippingDetailsTwo extends Component {
       packageViewMore: [],
       packageTable: [],
       MessagesActivityDetails: [],
-      iframeKey: 0
+      iframeKey: 0,
+      ModaType: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -573,7 +576,9 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
+
       var resdata = response.data;
+
       self.HandleMapDetailsData(resdata);
     });
   }
@@ -649,6 +654,7 @@ class ShippingDetailsTwo extends Component {
     }).then(function(response) {
       debugger;
       var shipmentdata = response.data;
+      var ModeType = response.data.Table[0].ModeOfTransport;
       self.setState({
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
@@ -658,8 +664,10 @@ class ShippingDetailsTwo extends Component {
         packageDetails: shipmentdata.Table7,
         ShipmentExistsInWatchList:
           shipmentdata.Table6[0].ShipmentExistsInWatchList,
-        packageViewMore: shipmentdata.Table8
+        packageViewMore: shipmentdata.Table8,
+        ModeType
       });
+
       var sid = shipmentdata.Table[0].ShipperId;
       var cid = shipmentdata.Table[0].ConsigneeID;
       self.HandleShipmentDetailsMap(sid, cid);
@@ -678,7 +686,7 @@ class ShippingDetailsTwo extends Component {
     });
   };
   onDocumentClickHandler = () => {
-    debugger
+    debugger;
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
     var docDesc = document.getElementById("docDesc").value;
@@ -757,7 +765,7 @@ class ShippingDetailsTwo extends Component {
     // this.setState({ status: "Opened" });
     console.log(1);
   }
-  handleChangePage(){
+  handleChangePage() {
     window.history.back();
   }
 
@@ -820,9 +828,9 @@ class ShippingDetailsTwo extends Component {
       });
     // }
   }
-  handleBackBtn =()=>{
+  handleBackBtn = () => {
     window.history.back();
-  }
+  };
   handleRemoveWatchList = () => {
     debugger;
     let self = this;
@@ -935,7 +943,10 @@ class ShippingDetailsTwo extends Component {
     if (this.state.ShipmentExistsInWatchList == 0) {
       Watchlist = (
         <>
-        <button onClick={this.handleChangePage.bind(this)} className="butn mt-0">
+          <button
+            onClick={this.handleChangePage.bind(this)}
+            className="butn mt-0"
+          >
             Back
           </button>
           <button onClick={this.handleAddToWatchList} className="butn mt-0">
@@ -946,7 +957,11 @@ class ShippingDetailsTwo extends Component {
     } else {
       Watchlist = (
         <>
-         <button onClick={this.handleBackBtn} className="butn mt-0" style={{marginLeft:'176px'}}>
+          <button
+            onClick={this.handleBackBtn}
+            className="butn mt-0"
+            style={{ marginLeft: "110px" }}
+          >
             Back
           </button>
           <button onClick={this.handleRemoveWatchList} className="butn mt-0">
@@ -966,8 +981,8 @@ class ShippingDetailsTwo extends Component {
                 <p>{team.Message}</p>
 
                 <div class="d-flex justify-content-end">
-                  <div  >
-                    <span style={{marginRight:'260px'}}>
+                  <div>
+                    <span style={{ marginRight: "195px" }}>
                       Created by :-
                       <b>
                         {encryption(
@@ -1202,12 +1217,12 @@ class ShippingDetailsTwo extends Component {
                         <div className="desti-places">
                           <span>
                             {containerData.length > 0
-                              ? containerData[0].DeparturePortName
+                              ? (containerData[0].DeparturePortName).split(",")[0]
                               : ""}
                           </span>
                           <span>
                             {containerData.length > 0
-                              ? containerData[0].DestinationPortName
+                              ? (containerData[0].DestinationPortName).split(",")[0]
                               : ""}
                           </span>
                         </div>
@@ -1765,7 +1780,13 @@ class ShippingDetailsTwo extends Component {
                         </div>
                         <div className="ship-white-cntr">
                           <div className="ship-white">
-                            <img src={ShipWhite} alt="ship icon" />
+                            {this.state.ModeType === "Air" ? (
+                              <img src={Plane} alt="Air icon" />
+                            ) : this.state.ModeType === "Ocean" ? (
+                              <img src={ShipWhite} alt="ship icon" />
+                            ) : this.state.ModeType === "Inland" ? (
+                              <img src={Truck} alt="Truck icon" />
+                            ) : null}
                           </div>
                         </div>
                       </div>

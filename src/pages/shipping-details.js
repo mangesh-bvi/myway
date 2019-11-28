@@ -185,12 +185,14 @@ class ShippingDetails extends Component {
       // var air = 0,
       //   ocean = 0,
       //   inland = 0;
-      var inland = response.data.Table[2].Count;
-      var air = response.data.Table[0].Count;
-      var ocean = response.data.Table[1].Count;
+    
       //ModeOfTransport
 
       var data = response.data.Table1;
+      var inland = data.filter(x=>x.ModeOfTransport==="Inland").length;
+      var air = data.filter(x=>x.ModeOfTransport === "Air").length;
+      var ocean =  data.filter(x=>x.ModeOfTransport === "Ocean").length;
+      
       if (shiptype != "") {
         data = data.filter(item => item.ModeOfTransport == shiptype);
         if (data.length === 0) {
