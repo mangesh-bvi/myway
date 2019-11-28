@@ -3134,23 +3134,25 @@ font-family: "Regular Font";
   margin-bottom: 30px;
 }
 
+/*
 .dv-cust{
   margin-right: 630px;
 }
+*/
 
 .preview-title-con{
   color: #002d73;
   font-size: 19px;
   font-family: "Medium Font";
   margin-bottom: 5px;
-  margin-right: 110px;
+  text-align: left;
 }
 
 .preview-para-con{
   color:  black;
   font-size: 15px;
   font-family: "Regular Font";
-  margin-left: -128px;
+  text-align: left;
   }
 
   /* .row1 {

@@ -3202,7 +3202,7 @@ class RateTable extends Component {
                   <h3 className="mb-4 text-center">{this.state.containerLoadType === "FCL"
                    ? "Equipment Types"
                    : "Cargo Details"}</h3>
-                  <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                  {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                     <Select
                       className="rate-dropdown"
                       getOptionLabel={option => option.StandardContainerCode}
@@ -3226,11 +3226,10 @@ class RateTable extends Component {
                       name={"Special-equType"}
                       // onChange={this.HandleSpecialEqtCheck.bind(this)}
                     />
-                    {/* <label htmlFor="Special-equType">Special Equipment</label> */}
                   </div>
                   {this.state.specialEquipment === true ? (
                     <div className="">
-                      {/* spe-equ mt-0 */}
+
                       <div className="equip-plus-cntr w-100">
                         <Select
                           className="rate-dropdown"
@@ -3267,7 +3266,90 @@ class RateTable extends Component {
                         ) : null}
                       </div>
                     </div>
-                  ) : null}
+                  ) : null} */}
+                  {this.state.containerLoadType === "FTL" ? (
+                        this.createUITruckType()
+                      ) : this.state.containerLoadType === "FCL" ? (
+                        <>
+                          {" "}
+                          <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                            <Select
+                              className="rate-dropdown"
+                              getOptionLabel={option =>
+                                option.StandardContainerCode
+                              }
+                              getOptionValue={option =>
+                                option.StandardContainerCode
+                              }
+                              isMulti
+                              options={this.state.EquipmentType}
+                              // onChange={this.equipChange.bind(this)}
+                              onChange={this.newaddClick.bind(this)}
+                              value={this.state.selected}
+                              showNewOptionAtTop={false}
+                            />
+                          </div>
+                          <div className="d-flex flex-wrap justify-content-center">
+                            {this.NewcreateUI()}
+                          </div>
+                          <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                            <input
+                              id="Special-equType"
+                              type="checkbox"
+                              className="d-none"
+                              name={"Special-equType"}
+                              // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                            />
+                            {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                          </div>
+                          {this.state.specialEquipment === true ? (
+                            <div className="">
+                              {/* spe-equ mt-0 */}
+                              <div className="equip-plus-cntr w-100">
+                                <Select
+                                  className="rate-dropdown"
+                                  getOptionLabel={option =>
+                                    option.SpecialContainerCode
+                                  }
+                                  getOptionValue={option =>
+                                    option.SpecialContainerCode
+                                  }
+                                  options={this.state.SpacialEqmt}
+                                  placeholder="Select Kind of Special Equipment"
+                                  onChange={this.specEquipChange}
+                                  // value={thi.state.spEqtSelect}
+                                  showNewOptionAtTop={false}
+                                />
+                              </div>
+                              <div id="cbmInner">
+                                {this.state.specialEqtSelect === true ? (
+                                  this.state.flattack_openTop.length > 0 ? (
+                                    <>{this.MultiCreateCBM()}</>
+                                  ) : null
+                                ) : null}
+
+                                {this.state.refertypeSelect === true ? (
+                                  this.state.referType.length > 0 ? (
+                                    <>{this.createUISpecial()}</>
+                                  ) : null
+                                ) : null}
+
+                                {this.state.spacEqmtTypeSelect === true ? (
+                                  this.state.spacEqmtType.length > 0 ? (
+                                    <>
+                                      <div className="d-flex flex-wrap justify-content-center align-items-center">
+                                        {this.createUIspacEqmtType()}
+                                      </div>
+                                    </>
+                                  ) : null
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : null}
+                        </>
+                      ) : (
+                        this.CreateMultiCBM()
+                      )}
                   <div className="text-center">
                     <Button
                       className="butn"
