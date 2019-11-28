@@ -25,7 +25,7 @@ class SideMenu extends Component {
   clickShipmentType(e) {
     var value = e.target.getAttribute("data-shptye");
     //  alert(value)
-    if (value == "" || value == null) {
+    if (value === "" || value === null) {
       window.location.href = "shipment-summary";
     } else {
       window.location.href = "shipment-summary?stype=" + value;
@@ -264,7 +264,7 @@ class SideMenu extends Component {
           </li>
           {(() => {
             if (
-              encryption(window.localStorage.getItem("usertype"), "desc") ==
+              encryption(window.localStorage.getItem("usertype"), "desc") ===
               "Customer"
             ) {
               return (
@@ -410,7 +410,7 @@ class SideMenu extends Component {
           </li>
           {(() => {
             if (
-              encryption(window.localStorage.getItem("usertype"), "desc") ==
+              encryption(window.localStorage.getItem("usertype"), "desc") ===
               "Customer"
             ) {
               return (
