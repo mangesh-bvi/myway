@@ -6,7 +6,7 @@ import BellIcon from "./../assets/img/bell.png";
 import ChatIcon from "./../assets/img/chat.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import PhoneIcon from "./../assets/img/phone.png";
-import QRCode from "../pages/QRCode";
+// import QRCode from "../pages/QRCode";
 import UserIcon from "./../assets/img/user.png";
 import ActivityLogIcon from "./../assets/img/activity-log.png";
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
@@ -19,8 +19,8 @@ import {Link} from 'react-router-dom';
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import { Progress, Button, Modal, ModalBody } from "reactstrap";
-import ModalHeader from "react-bootstrap/ModalHeader";
+import {  Button, Modal, ModalBody } from "reactstrap";
+// import ModalHeader from "react-bootstrap/ModalHeader";
 
 class Header extends Component {
   constructor(props) {

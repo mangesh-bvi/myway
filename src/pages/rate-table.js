@@ -865,19 +865,55 @@ class RateTable extends Component {
       });
   }
 
-  toggleChangePOLPOD(i, field, e) {
+  toggleChangePOLPOD(i, field, geoCoordinate, e) {
     debugger;
     if (field == "POL") {
-      this.state.polFilterArray[i].IsFilter = !this.state.enablePOL;
-      this.setState({
-        polFilterArray: this.state.polFilterArray,
-        enablePOL: !this.state.enablePOL
-      });
+      this.state.polFilterArray[i].IsFilter = !this.state.polFilterArray[i].IsFilter;
+      if(this.state.polFilterArray[i].IsFilter == true)
+      {
+        
+        this.state.mapPositionPOL.push({
+          lat: Number(geoCoordinate.split(',')[0]),
+          lng: Number(geoCoordinate.split(',')[1])
+        });      
+      }
+      else{
+        for(var j = 0;j<this.state.mapPositionPOL.length; j++)
+        {
+          var geocordinates = this.state.mapPositionPOL[j].lat + ',' + this.state.mapPositionPOL[j].lng
+          if (geocordinates == geoCoordinate) {
+            this.state.mapPositionPOL.splice(j, 1)
+          }
+        }
+      }
+        this.setState({
+          polFilterArray: this.state.polFilterArray,
+          enablePOL: !this.state.enablePOL,
+          mapPositionPOL: this.state.mapPositionPOL
+        });
+      
     } else {
-      this.state.podFilterArray[i].IsFilter = !this.state.enablePOD;
+      this.state.podFilterArray[i].IsFilter = !this.state.podFilterArray[i].IsFilter;
+      if(this.state.podFilterArray[i].IsFilter == true)
+      {
+        this.state.markerPositionPOD.push({
+          lat: Number(geoCoordinate.split(',')[0]),
+          lng: Number(geoCoordinate.split(',')[1])
+        });    
+      }
+      else{
+        for(var j = 0;j<this.state.markerPositionPOD.length; j++)
+        {
+          var geocordinates = this.state.markerPositionPOD[j].lat + ',' + this.state.markerPositionPOD[j].lng
+          if (geocordinates == geoCoordinate) {
+            this.state.markerPositionPOD.splice(j, 1)
+          }
+        }
+      }
       this.setState({
         podFilterArray: this.state.podFilterArray,
-        enablePOD: !this.state.enablePOD
+        enablePOD: !this.state.enablePOD,
+        markerPositionPOD: this.state.markerPositionPOD
       });
     }
 
@@ -2754,7 +2790,8 @@ class RateTable extends Component {
                                   onChange={this.toggleChangePOLPOD.bind(
                                     this,
                                     index,
-                                    "POL"
+                                    "POL",
+                                    mapPOL.POLGeoCordinate
                                   )}
                                 />
                                 <label htmlFor={"pol" + (index + 1)}>
@@ -2812,7 +2849,8 @@ class RateTable extends Component {
                                   onChange={this.toggleChangePOLPOD.bind(
                                     this,
                                     index,
-                                    "POD"
+                                    "POD",
+                                    mapPOD.PODGeoCordinate
                                   )}
                                 />
                                 <label htmlFor={"pod" + (index + 1)}>

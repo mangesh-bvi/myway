@@ -3110,6 +3110,10 @@ table tbody tr:last-child {
   /* margin-left: 13px; */
 }
 
+.preview-popup{
+  max-width: 70%;
+}
+
 
 .plusImg-pdng{
   color: #fff !important;
@@ -3134,6 +3138,7 @@ font-family: "Regular Font";
   display: flex;
   align-items: center;
   margin-bottom: 13px;
+  margin-top: 20px;
 }
 
 .dv-sales{
@@ -3155,12 +3160,17 @@ font-family: "Regular Font";
 }
 
 .preview-para-con{
-  color:  black;
+  color: #39b54a;
   font-size: 15px;
   font-family: "Regular Font";
   text-align: left;
   }
 
+  .equip-error{
+    color: red;
+    margin-left: auto;
+    margin-right: auto;
+  }
   /* .row1 {
     display: flex;
     margin-right: -15px;
@@ -3375,6 +3385,11 @@ img {
 .map-pol-lbl{
   color: #fff !important;
     padding: 10px;
+}
+.plusImg-pdng{
+  color: #fff !important;
+  padding: 4px 12px !important;
+  font-size: 22px !important;
 }
 /* rate-table css End by Shlok */
 

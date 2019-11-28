@@ -266,9 +266,11 @@ class ShippingDetailsTwo extends Component {
     if (url != "" && url != null) {
       self.HandleShipmentDetails(url);
       self.setState({
-        addWat: url
+        addWat: url,
+        HblNo: hblno
       });
     } else if (typeof this.props.location.state != "undefined") {
+      debugger
       var hblno = this.props.location.state.detail;
       self.HandleShipmentDetails(hblno);
       //self.handleActivityList();
@@ -552,6 +554,12 @@ class ShippingDetailsTwo extends Component {
     self.setState({ iframeKey: self.state.iframeKey + 1 });
   }
   HandleShipmentDetailsMap(sid, cid) {
+     localStorage.removeItem(
+      "AllLineData",
+      "FlagsData",
+      "BaloonData",
+      "GreenLineData"
+    );
     debugger;
     let self = this;
     var shipperId = sid;
@@ -636,7 +644,12 @@ class ShippingDetailsTwo extends Component {
   HandleShipmentDetails(hblno) {
     debugger;
     let self = this;
-
+    localStorage.removeItem(
+      "AllLineData",
+      "FlagsData",
+      "BaloonData",
+      "GreenLineData"
+    );
     var HblNo = hblno;
     axios({
       method: "post",
@@ -644,8 +657,8 @@ class ShippingDetailsTwo extends Component {
       data: {
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
-        UserId: 874588,
-        HBLNo: hblno //HblNo
+        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        HBLNo: "AQTYPSE193178" //HblNo
       },
       headers: authHeader()
     }).then(function(response) {
@@ -867,8 +880,7 @@ class ShippingDetailsTwo extends Component {
       packageViewMore,
       packageTable
     } = this.state;
-    debugger;
-    console.log(bookedStatus, "--------------------------bookistatus");
+     
     let bookingIsActive = "";
     let bookDate = "";
     let departedIsActive = "";

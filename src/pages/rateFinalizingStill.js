@@ -28,55 +28,79 @@ class RateFinalizingStill extends Component {
       modalBook: false,
       RateDetails: [],
       SubRateDetails: [],
-      toggleCustomerType:true,
-      QuoteNumber:"",
+      toggleCustomerType: true,
+      QuoteNumber: "",
+      selectedCommodity: "",
+      packageTypeData: [],
+      TruckTypeData: [
+        {
+        TruckID: "",
+        TruckName: "",
+        Quantity: "",
+        TruckDesc: ""
+        }
+        ],
+        spacEqmtType: [],
+        commodityData: [],
+        multiCBM: [],
+        referType: [],
+        flattack_openTop: [],
+        eqmtType: [],
+        selectedFile: [],
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
     this.toggleRequest = this.toggleRequest.bind(this);
     this.toggleBook = this.toggleBook.bind(this);
+    this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
+    this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
   }
 
-  componentDidMount()
-  {
+  componentDidMount() {
     debugger;
 
-    if(encryption(window.localStorage.getItem("usertype"), "desc") != "Customer")
-    {
-     this.setState({toggleCustomerType:false});
+    if (
+      encryption(window.localStorage.getItem("usertype"), "desc") != "Customer"
+    ) {
+      this.setState({ toggleCustomerType: false });
     }
 
-    if (typeof this.props.location.state != undefined) {
-      this.HandleSalesQuoteView(this.props.location.state.detail)
+    if (typeof this.props.location.state.detail != undefined) {
+      var qData=this.props.location.state;
+      this.HandleSalesQuoteView(qData);
+      this.HandlePackgeTypeData();
+      this.HandleCommodityDropdown();
     }
-    
+   
   }
 
-  HandleSalesQuoteView(param){
-    debugger
-   var  SalesQuoteNumber = param.Quotes;
-   // "SHA-SQFCL-NOV19-05020"
+  HandleSalesQuoteView(param) {
+    debugger;
+    var SalesQuoteNumber =param.detail.Quotes;
+    var type=param.detail.Type
+    // "SHA-SQFCL-NOV19-05020"
     var SalesQuoteViewdata = {
-      Mode: param.Type,
+      Mode: type,
       //SalesQuoteNumber: param.Quotes,
       SalesQuoteNumber: SalesQuoteNumber
-    }
+    };
     this.setState({
       QuoteNumber: SalesQuoteNumber
-    })
+    });
     let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
       // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
-      data:  SalesQuoteViewdata,
+      data: SalesQuoteViewdata,
       headers: authHeader()
     })
       .then(function(response) {
         debugger;
         self.setState({
           RateDetails: response.data.Table1,
-          SubRateDetails: response.data.Table2
+          SubRateDetails: response.data.Table2,
+          multiCBM:response.data.Table3,
         });
         //console.log(response);
       })
@@ -117,59 +141,58 @@ class RateFinalizingStill extends Component {
         BookingNo: bookingNo
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var shipmentdata = response.data;
-    }).catch(error => {
+    })
+      .then(function(response) {
+        debugger;
+        var shipmentdata = response.data;
+      })
+      .catch(error => {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
         //alert(err[1].replace("}", ""))
-       
+
         NotificationManager.error(err[1].replace("}", ""));
       });
   }
 
-  AcceptQuotes()
-  {
-    var SalesQuoteNumber =  "";
+  AcceptQuotes() {
+    var SalesQuoteNumber = "";
     if (typeof this.props.location.state != "undefined") {
       SalesQuoteNumber = this.props.location.state.detail.Quotes;
     }
-    
-    var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
 
-    this.SendMail(SalesQuoteNumber, Messagebody)
-    
+    var Messagebody =
+      "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
+
+    this.SendMail(SalesQuoteNumber, Messagebody);
   }
 
-  SendMail(SalesQuoteNumber, Messagebody)
-  {
+  SendMail(SalesQuoteNumber, Messagebody) {
     debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteMailAPI`,
       data: {
         CustomerID: 0,
-        SalesPersonID : 0,
+        SalesPersonID: 0,
         SalesQuoteNumber: SalesQuoteNumber,
         Body: Messagebody,
-        MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      if(response != null)
-      {
-        if(response.data != null)
-        {
-          if(response.data.length > 0)
-          {
-            NotificationManager.success(response.data[0].Result);
+    })
+      .then(function(response) {
+        debugger;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.length > 0) {
+              NotificationManager.success(response.data[0].Result);
+            }
           }
         }
-      }
-    }).catch(error => {
+      })
+      .catch(error => {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
@@ -177,6 +200,759 @@ class RateFinalizingStill extends Component {
         NotificationManager.error(err[1].replace("}", ""));
       });
   }
+
+// Shlok Start workingf
+
+  //// start dynamic element for LCL-AIR-LTL
+
+  CreateMultiCBM() {
+    debugger
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="QTY"
+              value={"" + el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Length"
+              value={"" + el.Length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={"" + el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="Height"
+              value={"" + el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.GrossWeight === 0 ? "G W" : "G W"}
+              name="GrossWeight"
+              value={"" + el.GrossWeight || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          {/* <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? "" + el.Volume
+                  : "" + el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div> */}
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this, i)}
+              ></i>
+            </div>
+          </div>
+        )}
+        {/* {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null} */}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value !== "" ? Number(value) : ""
+      };
+    }
+
+    this.setState({ multiCBM });
+    // if (this.state.containerLoadType !== "LCL") {
+    //   var decVolumeWeight =
+    //     (multiCBM[i].Quantity *
+    //       (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
+    //     6000;
+    //   if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+    //     multiCBM[i] = {
+    //       ...multiCBM[i],
+    //       ["VolumeWeight"]: multiCBM[i].GrossWt
+    //     };
+    //   } else {
+    //     multiCBM[i] = {
+    //       ...multiCBM[i],
+    //       ["VolumeWeight"]: parseFloat(decVolumeWeight)
+    //     };
+    //   }
+    // } else {
+    //   var decVolume =
+    //     multiCBM[i].Quantity *
+    //     ((multiCBM[i].Length / 100) *
+    //       (multiCBM[i].Width / 100) *
+    //       (multiCBM[i].height / 100));
+    //   multiCBM[i] = {
+    //     ...multiCBM[i],
+    //     ["Volume"]: parseFloat(decVolume)
+    //   };
+    // }
+
+    // this.setState({ multiCBM });
+  }
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          GrossWeight: 0,
+          Length: 0,
+          NetWeight: 0,
+          PackageType: null,
+          Quantity: 0,
+          SaleQuoteID: 0,
+          SaleQuoteIDLineID: 0,
+          Unit: "",
+          Width: 0,
+          height: 0,
+        }
+      ]
+    }));
+  }
+  removeMultiCBM(type, i) {
+    debugger;
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(type, 1);
+    this.setState({ multiCBM });
+  }
+
+  ////End dynamic element
+
+  ////this method for Commodity drop-down bind
+  HandleCommodityDropdown() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CommodityDropdown`,
+      data: {},
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      var commodityData = response.data.Table;
+      self.setState({ commodityData }); ///problem not working setstat undefined
+    });
+  }
+  HandlePackgeTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PackageTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
+  //// start  spacEqmtType dyamanic element
+
+  addSpacEqmtType(optionVal) {
+    this.setState(prevState => ({
+      spacEqmtType: [
+        ...prevState.spacEqmtType,
+        {
+          TypeName: optionVal[0].SpecialContainerCode,
+          Quantity: 0
+        }
+      ]
+    }));
+  }
+
+  createUIspacEqmtType() {
+    return this.state.spacEqmtType.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr spec-inner-cntr w-auto">
+          <label name="TypeName">
+            {el.TypeName} <span className="into-quant">X</span>
+          </label>
+          {/* <div className="spe-equ"> */}
+          <input
+            type="number"
+            name="Quantity"
+            min={1}
+            placeholder="QTY"
+            onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
+            value={el.Quantity || ""}
+          />
+          {/* </div> */}
+          <i
+            className="fa fa-times"
+            onClick={this.removeClickSpacEqmtType.bind(this, i)}
+          ></i>
+        </div>
+      );
+    });
+  }
+
+  HandleChangeSpacEqmtType(i, e) {
+    const { name, value } = e.target;
+
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType[i] = {
+      ...spacEqmtType[i],
+      [name]: parseFloat(value)
+    };
+    this.setState({ spacEqmtType });
+  }
+
+  removeClickSpacEqmtType(i) {
+    let spacEqmtType = [...this.state.spacEqmtType];
+    spacEqmtType.splice(i, 1);
+    this.setState({ spacEqmtType });
+  }
+
+  //// end spacEqmtType dyamanic element
+
+  //// start refer type  dynamic element
+  addClickSpecial(optionVal) {
+    this.setState(prevState => ({
+      referType: [
+        ...prevState.referType,
+        {
+          Type: optionVal[0].ContainerName,
+          ProfileCodeID: optionVal[0].ProfileCodeID,
+          ContainerCode: optionVal[0].SpecialContainerCode,
+          ContainerQuantity: 0,
+          Temperature: 0,
+          TemperatureType: ""
+        }
+      ]
+    }));
+  }
+
+  createUISpecial() {
+    return this.state.referType.map((el, i) => {
+      return (
+        <div key={i} className="row cbm-space">
+          <div className="col-md">
+            <div className="spe-equ">
+              <label className="mt-2" name="ContainerCode">
+                {el.ContainerCode}
+              </label>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="ContainerQuantity"
+                placeholder="Quantity"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                name="Temperature"
+                placeholder="Temp"
+                onChange={this.UISpecialChange.bind(this, i)}
+              />
+            </div>
+          </div>
+          <div className="col-md mt-2">
+            <div className="rate-radio-cntr">
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="exist-cust"
+                  value="C"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="exist-cust"
+                >
+                  Celcius
+                </label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="TemperatureType"
+                  id="new-cust"
+                  value="F"
+                  onChange={this.UISpecialChange.bind(this, i)}
+                />
+                <label
+                  className="d-flex flex-column align-items-center"
+                  htmlFor="new-cust"
+                >
+                  Farenheit
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              onClick={this.removeClickSpecial.bind(this, i)}
+            ></i>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  UISpecialChange(i, e) {
+    const { name, value } = e.target;
+
+    let referType = [...this.state.referType];
+    referType[i] = {
+      ...referType[i],
+      [name]: name === "TemperatureType" ? value : parseFloat(value)
+    };
+    this.setState({ referType });
+  }
+  removeClickSpecial(i) {
+    let referType = [...this.state.referType];
+    referType.splice(i, 1);
+    this.setState({ referType });
+  }
+
+  //// refer type end to dynamic element
+
+  //// start flattack type and openTop type dynamic elememnt
+
+  MultiCreateCBM() {
+    debugger;
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="Quantity"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.GrossWeight === 0 ? "G W" : "G W"}
+              name="Gross_Weight"
+              value={el.GrossWeight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+
+        <div className="">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              aria-hidden="true"
+              onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div>
+      </div>
+    ));
+  }
+
+  newMultiCBMHandleChange(i, e) {
+    const { name, value } = e.target;
+    debugger;
+    let flattack_openTop = [...this.state.flattack_openTop];
+    if (name === "PackageType") {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: value
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: parseFloat(value)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].Width *
+          flattack_openTop[i].height)) /
+      6000;
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].GrossWeight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].GrossWeight)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+  }
+  addClickMultiCBM(optionsVal) {
+    debugger;
+    this.setState(prevState => ({
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
+        {
+          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          PackageType: "",
+          length: "",
+          Width: "",
+          height: "",
+          Quantity: "",
+          GrossWeight: "",
+          total: ""
+        }
+      ]
+    }));
+  }
+  removeClickMultiCBM(i) {
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
+  }
+
+  ////end for flattack and openTop dynamic create elements
+  ////this for Equipment Type Dynamice Create Element
+  NewcreateUI() {
+    return this.state.eqmtType.map((el, i) => (
+      <>
+        {i === 0 ? (
+          <div className="equip-plus-cntr spec-inner-cntr w-auto" key={i}>
+            <input type="hidden" name="BookingID" value={el.BookingID} />
+            <input
+              type="hidden"
+              name="ProfileCodeID"
+              value={el.ProfileCodeID}
+            />
+            <label>
+              {el.ContainerCode} <span className="into-quant">X</span>
+            </label>
+            <div className="spe-equ">
+              <input
+                type="number"
+                min={1}
+                placeholder="QTY"
+                name="ContainerCount"
+                value={el.ContainerCount || ""}
+                onChange={this.newhandleChange.bind(this, i)}
+              />
+            </div>
+            <span onClick={this.newremoveClick.bind(this, i)}>
+              <i className="fa fa-times" aria-hidden="true"></i>
+            </span>
+          </div>
+        ) : null}
+      </>
+    ));
+  }
+
+  newhandleChange(i, e) {
+    const { name, value } = e.target;
+    let eqmtType = [...this.state.eqmtType];
+    eqmtType[i] = {
+      ...eqmtType[i],
+      [name]: name === "ContainerCount" ? parseFloat(value) : 0
+    };
+    this.setState({ eqmtType });
+  }
+
+  newremoveClick(i) {
+    let eqmtType = [...this.state.eqmtType];
+    eqmtType.splice(i, 1);
+    this.setState({ eqmtType });
+  }
+  //// end For Equipment to create element
+
+  //// Create Trcuk Type dropdown dynamic element UI
+
+  addClickTruckType() {
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: "",
+          TruckDesc: ""
+        }
+      ]
+    }));
+  }
+
+  createUITruckType() {
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <div className="spe-equ">
+            <select
+              className="select-text mr-3"
+              name="TruckName"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            >
+              <option>Select</option>
+              {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              name="Quantity"
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            />
+          </div>
+          {i === 0 ? (
+            <div className="col-md">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addClickTruckType.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+          {this.state.TruckTypeData.length > 1 ? (
+            <div className="col-md">
+              <div className="spe-equ mt-2">
+                <i
+                  className="fa fa-minus"
+                  aria-hidden="true"
+                  onClick={this.removeClickTruckType.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      );
+    });
+  }
+
+  UITruckTypeChange(i, e) {
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData[i] = {
+      ...TruckTypeData[i],
+      [name]: name === "Quantity" ? parseInt(value) : value,
+      ["TruckDesc"]:
+        name === "TruckName"
+          ? e.target.options[e.target.selectedIndex].text
+          : TruckTypeData[i].TruckDesc
+    };
+    this.setState({ TruckTypeData });
+  }
+  removeClickTruckType(i) {
+                            let TruckTypeData = [...this.state.TruckTypeData];
+                            TruckTypeData.splice(i, 1);
+                            this.setState({ TruckTypeData });
+                          }
+
+  //// End Truck Tyep Dynamic element
+// Shlok End working 
 
   render() {
     var data1 = [
@@ -214,7 +990,7 @@ class RateFinalizingStill extends Component {
     }
     if (typeof this.props.location.state != "undefined") {
       var bookingNo = this.props.location.state.detail[0];
-     // this.HandleShipmentDetails(bookingNo);
+      // this.HandleShipmentDetails(bookingNo);
     }
     var i = 0;
 
@@ -228,12 +1004,12 @@ class RateFinalizingStill extends Component {
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
               {(() => {
-               // debugger;
-               // if (this.props.location.state.detail[1] == "Quotes") {
-              return <h2>Quotes Details {this.state.QuoteNumber}</h2>;
-               // } else {
-               //   return <h2>Booking Details</h2>;
-              //  }
+                // debugger;
+                // if (this.props.location.state.detail[1] == "Quotes") {
+                return <h2>Quotes Details {this.state.QuoteNumber}</h2>;
+                // } else {
+                //   return <h2>Booking Details</h2>;
+                //  }
               })()}
               {/* <h2>Rate Query Details</h2> */}
             </div>
@@ -320,7 +1096,12 @@ class RateFinalizingStill extends Component {
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
                       {this.state.toggleCustomerType && (
-                      <button className="butn m-0" onClick={this.AcceptQuotes.bind(this)}>Accept</button>
+                        <button
+                          className="butn m-0"
+                          onClick={this.AcceptQuotes.bind(this)}
+                        >
+                          Accept
+                        </button>
                       )}
                     </div>
                     <div className="react-rate-table">
@@ -438,17 +1219,17 @@ class RateFinalizingStill extends Component {
                         }}
                       /> */}
                       <ReactTable
-                      columns={[
-                        {
-                          columns: [
-                            {
-                              Cell: ({ original, row }) => {
-                                i++;
-                                return (
-                                  <React.Fragment>
-                                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                      <div className="remember-forgot rat-img d-block m-0">
-                                        {/* <input
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Cell: ({ original, row }) => {
+                                  i++;
+                                  return (
+                                    <React.Fragment>
+                                      <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                        <div className="remember-forgot rat-img d-block m-0">
+                                          {/* <input
                                           id={"maersk-logo" + i}
                                           type="checkbox"
                                           name={"rate-tab-check"}
@@ -467,268 +1248,265 @@ class RateFinalizingStill extends Component {
                                             this.toggleRow( original.RateLineID == undefined ? original.RateLineId : original.RateLineID , row)
                                           }
                                         /> */}
-                                        <label
-                                          htmlFor={"maersk-logo" + i}
-                                        ></label>
+                                          <label
+                                            htmlFor={"maersk-logo" + i}
+                                          ></label>
+                                        </div>
                                       </div>
-                                    </div>
-                                    <div className="rate-tab-img">
-                                      <img src={maersk} alt="maersk icon" />
-                                    </div>
-                                  </React.Fragment>
-                                );
+                                      <div className="rate-tab-img">
+                                        <img src={maersk} alt="maersk icon" />
+                                      </div>
+                                    </React.Fragment>
+                                  );
+                                },
+                                accessor: "lineName"
+                                // minWidth: 200
                               },
-                              accessor: "lineName"
-                              // minWidth: 200
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">POL</p>
-                                    <p
-                                      title={row.original.POL}
-                                      className="details-para max2"
-                                    >
-                                      {row.original.POL}
-                                    </p>
-                                  </>
-                                );
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">POL</p>
+                                      <p
+                                        title={row.original.POL}
+                                        className="details-para max2"
+                                      >
+                                        {row.original.POL}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "POLName",
+                                //  minWidth: 175
+                                filterable: true
                               },
-                              accessor: "POLName",
-                              //  minWidth: 175
-                              filterable: true
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">POD</p>
-                                    <p
-                                      title={row.original.POD}
-                                      className="details-para max2"
-                                    >
-                                      {row.original.POD}
-                                    </p>
-                                  </>
-                                );
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">POD</p>
+                                      <p
+                                        title={row.original.POD}
+                                        className="details-para max2"
+                                      >
+                                        {row.original.POD}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "PODName",
+                                filterable: true
+                                // minWidth: 175
                               },
-                              accessor: "PODName",
-                              filterable: true
-                              // minWidth: 175
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">S. Port</p>
-                                    <p className="details-para">
-                                      
-                                    </p>
-                                  </>
-                                );
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">S. Port</p>
+                                      <p className="details-para"></p>
+                                    </>
+                                  );
+                                },
+                                accessor: "TransshipmentPort",
+                                filterable: true
+                                // minWidth: 175
                               },
-                              accessor: "TransshipmentPort",
-                              filterable: true
-                              // minWidth: 175
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">F. Time</p>
-                                    <p className="details-para">
-                                      
-                                    </p>
-                                  </>
-                                );
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">F. Time</p>
+                                      <p className="details-para"></p>
+                                    </>
+                                  );
+                                },
+                                accessor: "freeTime",
+                                filterable: true,
+                                minWidth: 80
                               },
-                              accessor: "freeTime",
-                              filterable: true,
-                              minWidth: 80
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">Container</p>
-                                    <p className="details-para">
-                                      {row.original.ContainerType}
-                                    </p>
-                                  </>
-                                );
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Container</p>
+                                      <p className="details-para">
+                                        {row.original.ContainerType}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "ContainerType",
+                                filterable: true
+                                //minWidth: 175
                               },
-                              accessor: "ContainerType",
-                              filterable: true
-                              //minWidth: 175
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">Expiry</p>
-                                    <p className="details-para">
-                                      {new Date(
-                                        row.original.expiryDate ||
-                                          row.original.ExpiryDate
-                                      ).toLocaleDateString("en-US")}
-                                    </p>
-                                  </>
-                                );
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Expiry</p>
+                                      <p className="details-para">
+                                        {new Date(
+                                          row.original.expiryDate ||
+                                            row.original.ExpiryDate
+                                        ).toLocaleDateString("en-US")}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "expiryDate" || "ExpiryDate",
+                                filterable: true,
+                                minWidth: 90
                               },
-                              accessor: "expiryDate" || "ExpiryDate",
-                              filterable: true,
-                              minWidth: 90
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">TT</p>
-                                    <p className="details-para">
-                                      {/* {row.original.TransitTime} */}
-                                    </p>
-                                  </>
-                                );
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">TT</p>
+                                      <p className="details-para">
+                                        {/* {row.original.TransitTime} */}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "TransitTime",
+                                minWidth: 60
                               },
-                              accessor: "TransitTime",
-                              minWidth: 60
-                            },
-                            {
-                              Cell: row => {
-                                return (
-                                  <>
-                                    <p className="details-title">Price</p>
-                                    <p className="details-para">
-                                      {row.original.Total !== "" &&
-                                      row.original.Total !== null
-                                        ? row.original.Total      
-                                        : ""}
-                                    </p>
-                                  </>
-                                );
-                              },
-                              accessor: "baseFreightFee",
-                              filterable: true,
-                              minWidth: 80
-                            }
-                          ]
-                        }
-                        // {
-                        //   show: false,
-                        //   Header: "All",
-                        //   id: "all",
-                        //   width: 0,
-                        //   resizable: false,
-                        //   sortable: false,
-                        //   filterAll: true,
-                        //   Filter: () => {},
-                        //   getProps: () => {
-                        //     return {
-                        //       // style: { padding: "0px"}
-                        //     };
-                        //   },
-                        //   filterMethod: (filter, rows) => {
-                        //     debugger;
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Price</p>
+                                      <p className="details-para">
+                                        {row.original.Total !== "" &&
+                                        row.original.Total !== null
+                                          ? row.original.Total
+                                          : ""}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "baseFreightFee",
+                                filterable: true,
+                                minWidth: 80
+                              }
+                            ]
+                          }
+                          // {
+                          //   show: false,
+                          //   Header: "All",
+                          //   id: "all",
+                          //   width: 0,
+                          //   resizable: false,
+                          //   sortable: false,
+                          //   filterAll: true,
+                          //   Filter: () => {},
+                          //   getProps: () => {
+                          //     return {
+                          //       // style: { padding: "0px"}
+                          //     };
+                          //   },
+                          //   filterMethod: (filter, rows) => {
+                          //     debugger;
 
-                        //     const result = matchSorter(rows, filter.value, {
-                        //       keys: ["commodities", "TransitTime"],
-                        //       threshold: matchSorter.rankings.WORD_STARTS_WITH
-                        //     });
-                             
-                        //     return result;
-                        //   }
+                          //     const result = matchSorter(rows, filter.value, {
+                          //       keys: ["commodities", "TransitTime"],
+                          //       threshold: matchSorter.rankings.WORD_STARTS_WITH
+                          //     });
+
+                          //     return result;
+                          //   }
+                          // }
+                        ]}
+                        // onFilteredChange={this.onFilteredChange.bind(this)}
+                        // filtered={this.state.filtered}
+                        // defaultFilterMethod={(filter, row) =>
+                        //   String(row[filter.RateLineID]) === filter.value
                         // }
-                      ]}
-                      // onFilteredChange={this.onFilteredChange.bind(this)}
-                      // filtered={this.state.filtered}
-                      // defaultFilterMethod={(filter, row) =>
-                      //   String(row[filter.RateLineID]) === filter.value
-                      // }
-                      filterable
-                      // expanded={this.state.expanded}
-                      // onExpandedChange={(expand, event) => {
-                      //   this.setState({
-                      //     expanded: {
-                      //       [event]: {}
-                      //     }
-                      //   });
-                      // }}
-                      data={this.state.RateDetails}
-                      defaultPageSize={10}
-                      className="-striped -highlight"
-                      minRows={1}
-                      SubComponent={row => {
-                        return (
-                          <div style={{ padding: "20px 0" }}>
-                            <ReactTable
-                              minRows={1}
-                              data={
-                               
-                                   this.state.SubRateDetails.filter(
-                                     d =>
-                                       d.saleQuoteLineID ===  row.original.saleQuoteLineID
-                                   )
-                                 
-                             }
-                              columns={[
-                                {
-                                  columns: [
-                                    {
-                                      Header: "C. Type",
-                                      accessor: "Type"
-                                    },
-                                    {
-                                      Header: "C. Name",
-                                      accessor: "Column1"
-                                    },
-                                    {
-                                      Header: "Unit Price",
-                                      accessor: "Amount",
-                                      Cell: props => (
-                                        <React.Fragment>
-                                          {props.original.Amount}
-                                        </React.Fragment>
-                                      )
-                                    },
-                                    {
-                                      Header: "Units",
-                                      accessor: "Column2"
-                                    },
-                                    // {
-                                    //   Header: "Tax",
-                                    //   accessor: 0
-                                    // },
-
-                                    // {
-                                    //   Header: "Exrate",
-                                    //   accessor: 1
-                                    // },
-
-                                    {
-                                      Cell: row => {
-                                        return (
-                                          <>
-                                            {row.original.Total !== "" &&
-                                            row.original.Total !== null
-                                              ? row.original.Total
-                                              : ""}
-                                          </>
-                                        );
+                        filterable
+                        // expanded={this.state.expanded}
+                        // onExpandedChange={(expand, event) => {
+                        //   this.setState({
+                        //     expanded: {
+                        //       [event]: {}
+                        //     }
+                        //   });
+                        // }}
+                        data={this.state.RateDetails}
+                        defaultPageSize={10}
+                        className="-striped -highlight"
+                        minRows={1}
+                        SubComponent={row => {
+                          return (
+                            <div style={{ padding: "20px 0" }}>
+                              <ReactTable
+                                minRows={1}
+                                data={this.state.SubRateDetails.filter(
+                                  d =>
+                                    d.saleQuoteLineID ===
+                                    row.original.saleQuoteLineID
+                                )}
+                                columns={[
+                                  {
+                                    columns: [
+                                      {
+                                        Header: "C. Type",
+                                        accessor: "Type"
                                       },
-                                      Header: "Final Payment",
-                                      accessor: "Total"
-                                    }
-                                  ]
-                                }
-                              ]}
-                              showPagination={true}
-                              defaultPageSize={5}
-                            />
-                          </div>
-                        );
-                      }}
-                    />
+                                      {
+                                        Header: "C. Name",
+                                        accessor: "ChargeCode"
+                                      },
+                                      {
+                                        Header: "Units",
+                                        accessor: "ChargeItem"
+                                      },
+                                      {
+                                        Header: "Unit Price",
+                                        accessor: "Amount",
+                                        Cell: row => {
+                                          debugger;
+                                          if (row.original.Amount !== null) {
+                                            return <>{row.original.Amount}</>;
+                                          } else {
+                                            return <>0</>;
+                                          }
+                                        }
+                                      },
+                                     
+                                      // {
+                                      //   Header: "Tax",
+                                      //   accessor: 0
+                                      // },
+
+                                      // {
+                                      //   Header: "Exrate",
+                                      //   accessor: 1
+                                      // },
+
+                                      {
+                                        Cell: row => {
+                                          return (
+                                            <>
+                                              {row.original.Total !== "" &&
+                                              row.original.Total !== null
+                                                ? row.original.Total
+                                                : ""}
+                                            </>
+                                          );
+                                        },
+                                        Header: "Final Payment",
+                                        accessor: "Total"
+                                      }
+                                    ]
+                                  }
+                                ]}
+                                showPagination={true}
+                                defaultPageSize={5}
+                              />
+                            </div>
+                          );
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="rate-final-contr">
@@ -837,16 +1615,36 @@ class RateFinalizingStill extends Component {
                         </div>
                       </div>
                     </div>
-                    <div className="row">
+                    {/* <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
                         <input type="text" value="Dummy" disabled />
                       </div>
-                      <div className="col-md-6 login-fields">
+                      {/* <div className="col-md-6 login-fields">
                         <p className="details-title">Cargo Details</p>
                         <input type="text" value="Dummy" disabled />
+                      </div>  
+                    </div> */}
+                      <div className="row">
+                      <div className="col-md-6 login-fields">
+                        <p className="details-title">Commodity</p>
+                        <select
+                          disabled={true}
+                          value={this.state.selectedCommodity}
+                        >
+                          <option>Select</option>
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.id}>
+                              {item.Commodity}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
+                    <div className="title-border py-3">
+                      <h3>Cargo Details</h3>
+                    </div>
+                    {this.CreateMultiCBM()}
                     {/* <div className="text-right">
                       <a href="quote-table" className="butn">
                         Send
