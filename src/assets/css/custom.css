@@ -3109,6 +3109,13 @@ table tbody tr:last-child {
   display: block;
   /* margin-left: 13px; */
 }
+
+
+.plusImg-pdng{
+  color: #fff !important;
+  padding: 4px 12px !important;
+  font-size: 22px !important;
+  }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/

@@ -219,6 +219,8 @@ class RateFinalizingStillBooking extends Component {
   HandleBookingUpdate() {
     debugger;
     const formData = new FormData();
+    var fData = this.state.FileData;
+    var cData = this.state.multiCBM;
 
     for (let index = 0; index < this.state.selectedFile.length; index++) {
       formData.append("file", this.state.selectedFile[index]);
@@ -426,8 +428,8 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={"L (cm)"}
               className="w-100"
-              name="Length"
-              value={"" + el.Length || ""}
+              name="Lengths"
+              value={"" + el.Lengths || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -555,29 +557,29 @@ class RateFinalizingStillBooking extends Component {
     this.setState({ multiCBM });
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        (Number(multiCBM[i].QTY||0) *
+          (Number(multiCBM[i].Lengths||0) * Number(multiCBM[i].Width||0) *Number( multiCBM[i].Height||0))) /
         6000;
-      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+      if (Number(multiCBM[i].GrossWt||0) > Number(decVolumeWeight)) {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWt
+          ["VolumeWeight"]: Number(multiCBM[i].GrossWt)
         };
       } else {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+          ["VolumeWeight"]: Number(decVolumeWeight).toFixed(2)
         };
       }
     } else {
       var decVolume =
-        multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
+        Number(multiCBM[i].QTY||0) *
+        ((Number(multiCBM[i].Lengths||0) / 100) *
+          (Number(multiCBM[i].Width||0) / 100) *
+          (Number(multiCBM[i].Height||0) / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
+        ["Volume"]: Number(decVolume).toFixed(2)
       };
     }
 
@@ -590,7 +592,7 @@ class RateFinalizingStillBooking extends Component {
         {
           BookingPackID: parseInt(this.state.multiCBM[0].BookingPackID),
           PackageType: "",
-          Quantity: 0,
+          QTY: 0,
           Lengths: 0,
           Width: 0,
           Height: 0,
@@ -1151,7 +1153,6 @@ class RateFinalizingStillBooking extends Component {
   }
   ////this method for multiple file element create
   CreateFileElement() {
-    debugger;
     return this.state.FileData.map((el, i) => (
       <div key={i}>
         <a href={el.FilePath}>

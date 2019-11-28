@@ -2768,7 +2768,7 @@ class RateTable extends Component {
                               </span>
                               <span
                                 onClick={this.togglePOLModal}
-                                className="rate-map-ovrly rate-map-plus"
+                                className="rate-map-ovrly rate-map-plus plusImg-pdng"
                               >
                                 +
                               </span>
