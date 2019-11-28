@@ -820,7 +820,9 @@ class ShippingDetailsTwo extends Component {
       });
     // }
   }
-
+  handleBackBtn =()=>{
+    window.history.back();
+  }
   handleRemoveWatchList = () => {
     debugger;
     let self = this;
@@ -944,6 +946,9 @@ class ShippingDetailsTwo extends Component {
     } else {
       Watchlist = (
         <>
+         <button onClick={this.handleBackBtn} className="butn mt-0" style={{marginLeft:'176px'}}>
+            Back
+          </button>
           <button onClick={this.handleRemoveWatchList} className="butn mt-0">
             Remove Watchlist
           </button>
@@ -962,7 +967,7 @@ class ShippingDetailsTwo extends Component {
 
                 <div class="d-flex justify-content-end">
                   <div  >
-                    <span style={{marginRight:'269px'}}>
+                    <span style={{marginRight:'260px'}}>
                       Created by :-
                       <b>
                         {encryption(
