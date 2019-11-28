@@ -2847,7 +2847,9 @@ class NewRateSearch extends Component {
                           <div className="col-md-4 m-auto">
                             <div className="spe-equ">
                               <input
-                                type="text"
+                                type="number"
+                                minLength={1}
+                                
                                 onChange={this.HandleCMBtextChange.bind(this)}
                                 placeholder={
                                   this.state.modeoftransport != "AIR"
