@@ -3160,6 +3160,7 @@ class RateTable extends Component {
                               </div>
                             );
                           }}
+                          expandedRows={ true }
                         />
                         {/* <ReactTable
                     data={Data}
@@ -3279,8 +3280,7 @@ class RateTable extends Component {
                     <Button
                       className="butn cancel-butn"
                       onClick={this.toggleQuant}
-                    >
-                      Cancel
+                    >Cancel
                     </Button>
                   </div>
                 </ModalBody>
