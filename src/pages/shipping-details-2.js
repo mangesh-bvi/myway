@@ -258,7 +258,7 @@ class ShippingDetailsTwo extends Component {
       "FlagsData",
       "BaloonData",
       "GreenLineData"
-    );
+      );
     let self = this;
     var url = window.location.href
       .slice(window.location.href.indexOf("?") + 1)
@@ -544,9 +544,6 @@ class ShippingDetailsTwo extends Component {
 
       //mainLineData = allLineData;
     }
-    localStorage.removeItem("BaloonData");
-    localStorage.removeItem("FlagsData");
-    localStorage.removeItem("AllLineData");
 
     debugger;
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
@@ -559,7 +556,7 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var shipperId = sid;
     var consigneeId = cid;
-    var hblno = this.state.HblNo;
+    var hblno = self.state.addWat || this.state.HblNo;
     var SwitchConsigneeID = 0;
     var SwitchShipperID = 0;
 
@@ -1217,12 +1214,14 @@ class ShippingDetailsTwo extends Component {
                         <div className="desti-places">
                           <span>
                             {containerData.length > 0
-                              ? (containerData[0].DeparturePortName).split(",")[0]
+                              ? containerData[(containerData.length)-1].DeparturePortName.split(",")[0]
                               : ""}
                           </span>
                           <span>
                             {containerData.length > 0
-                              ? (containerData[0].DestinationPortName).split(",")[0]
+                              ? containerData[(containerData.length)-1].DestinationPortName.split(
+                                  ","
+                                )[0]
                               : ""}
                           </span>
                         </div>

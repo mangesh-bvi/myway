@@ -81,6 +81,15 @@ class BookingTable extends Component {
     });
   }
 
+  HandleCopyClick(evt, row) {
+    debugger;
+    var BookingNo = row.original["BookingID"];
+    this.props.history.push({
+      pathname: "rate-finalizing-still-booking",
+      state: { BookingNo: BookingNo ,Copy:true}
+    });
+  }
+
   HandleDocumentView(evt, row) {
     debugger;
     var BookingNo = row.original["BookingID"];
@@ -158,13 +167,14 @@ class BookingTable extends Component {
                             onClick={e => this.HandleDocumentView(e, row)}
                           />
                           {/* </a> */}
-                          <a href="/rate-finalizing">
+                           
                             <img
                               className="actionicon"
                               src={Copy}
                               alt="view-icon"
+                              onClick={e => this.HandleCopyClick(e, row)}
                             />
-                          </a>
+                    
                         </div>
                       );
                     }

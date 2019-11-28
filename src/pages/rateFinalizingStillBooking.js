@@ -19,6 +19,7 @@ class RateFinalizingStillBooking extends Component {
     super(props);
 
     this.state = {
+      copy: false,
       modalProfit: false,
       modalRequest: false,
       selectedFileName: "",
@@ -82,22 +83,39 @@ class RateFinalizingStillBooking extends Component {
     this.NonCustomerList = this.NonCustomerList.bind(this);
   }
   componentDidMount() {
-    if (
-      typeof this.props.location.state.BookingNo != "undefined" &&
-      typeof this.props.location.state.BookingNo != ""
-    ) {
+    var rData = this.props.location.state;
+debugger;
+    if (rData.Copy === true) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
         "desc"
       );
       var BookingNo = this.props.location.state.BookingNo;
-      this.setState({ BookingNo, userType });
+      this.setState({ BookingNo, userType, copy: true });
       setTimeout(() => {
         this.HandleCommodityDropdown();
         this.HandlePackgeTypeData();
         this.BookigGridDetailsList();
         this.NonCustomerList();
       }, 300);
+    } else {
+      if (
+        typeof this.props.location.state.BookingNo != "undefined" &&
+        typeof this.props.location.state.BookingNo != ""
+      ) {
+        var userType = encryption(
+          window.localStorage.getItem("usertype"),
+          "desc"
+        );
+        var BookingNo = this.props.location.state.BookingNo;
+        this.setState({ BookingNo, userType });
+        setTimeout(() => {
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+          this.BookigGridDetailsList();
+          this.NonCustomerList();
+        }, 300);
+      }
     }
   }
 
@@ -298,6 +316,74 @@ class RateFinalizingStillBooking extends Component {
     var selectedType = e.target.value;
     this.setState({ selectedType });
   };
+
+  ////this methos for bookig details BookigGridDetailsList
+  HandleBookigClone() {
+    let self = this;
+    debugger;
+    var bookingId = self.state.BookingNo;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (bookingId !== "" && bookingId !== null) {
+
+      var paramData = {
+        MyWayUserID: userId,
+        ShipperID: 1,
+        Shipper_Displayas: "test shipper",
+        Shipper_AddressID: 0,
+        ShipperName: "test shipper",
+        ConsigneeID: 2,
+        ConsigneeName: "test consignee",
+        Consignee_AddressID: 0,
+        Consignee_Displayas: "test",
+        BuyerID: 2,
+        Buyer_AddressID: 22,
+        Buyer_Displayas: "test buyer",
+        BuyerName: "test",
+        Mode: "FCL",
+        Commodity: 1,
+        saleQuoteID: 2,
+        saleQuoteNo: "test SalesQuote",
+        saleQuoteLineID: 3,
+        DefaultEntityTypeID: 1,
+        BookingDocs: [
+          {
+            BookingID: 0,
+            DocumentID: 853256,
+            FTPFilePath: ""
+          }
+        ],
+        BookingDim: [
+          {
+            BookingPackID: 0,
+            PackageType: "Package",
+            Quantity: 1,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            GrossWt: 0,
+            VolumeWeight: 0,
+            Volume: 0
+          }
+        ],
+        NotifyID: 1,
+        Notify_AddressID: 1,
+        Notify_Displayas: "",
+        NotifyName: ""
+      };
+
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookingInsertion`,
+        data: paramData,
+
+        headers: authHeader()
+      }).then(function(response) {
+
+
+
+      });
+    }
+  }
 
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
@@ -557,10 +643,12 @@ class RateFinalizingStillBooking extends Component {
     this.setState({ multiCBM });
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
-        (Number(multiCBM[i].QTY||0) *
-          (Number(multiCBM[i].Lengths||0) * Number(multiCBM[i].Width||0) *Number( multiCBM[i].Height||0))) /
+        (Number(multiCBM[i].QTY || 0) *
+          (Number(multiCBM[i].Lengths || 0) *
+            Number(multiCBM[i].Width || 0) *
+            Number(multiCBM[i].Height || 0))) /
         6000;
-      if (Number(multiCBM[i].GrossWt||0) > Number(decVolumeWeight)) {
+      if (Number(multiCBM[i].GrossWt || 0) > Number(decVolumeWeight)) {
         multiCBM[i] = {
           ...multiCBM[i],
           ["VolumeWeight"]: Number(multiCBM[i].GrossWt)
@@ -573,10 +661,10 @@ class RateFinalizingStillBooking extends Component {
       }
     } else {
       var decVolume =
-        Number(multiCBM[i].QTY||0) *
-        ((Number(multiCBM[i].Lengths||0) / 100) *
-          (Number(multiCBM[i].Width||0) / 100) *
-          (Number(multiCBM[i].Height||0) / 100));
+        Number(multiCBM[i].QTY || 0) *
+        ((Number(multiCBM[i].Lengths || 0) / 100) *
+          (Number(multiCBM[i].Width || 0) / 100) *
+          (Number(multiCBM[i].Height || 0) / 100));
       multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: Number(decVolume).toFixed(2)
@@ -1211,7 +1299,11 @@ class RateFinalizingStillBooking extends Component {
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
-              <h2>Booking Details</h2>
+              <h2>
+                {this.state.copy === false
+                  ? "Booking Details"
+                  : "Booking Clone"}
+              </h2>
             </div>
             <div className="row">
               {/* <div className="col-md-4">
@@ -1999,10 +2091,16 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <center>
                       <button
-                        onClick={this.HandleBookingUpdate.bind(this)}
+                        onClick={
+                          this.state.copy === false
+                            ? this.HandleBookingUpdate.bind(this)
+                            : this.HandleBookigClone.bind(this)
+                        }
                         className="butn more-padd mt-4"
                       >
-                        Update Booking
+                        {this.state.copy === false
+                          ? "Update Booking"
+                          : "Booking Clone"}
                       </button>
                     </center>
                   </div>
