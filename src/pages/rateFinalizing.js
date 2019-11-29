@@ -59,6 +59,7 @@ class RateFinalizing extends Component {
       CommodityID: "",
       destAddress: [],
       pickUpAddress: [],
+      commodityData: [],
       modalPreview: false,
       packageTypeData:[],
       currentPackageType:"",
@@ -67,7 +68,8 @@ class RateFinalizing extends Component {
       valuewidth :"",
       valueheight :"",
       valueweight :"",
-      valuecbm :""
+      valuecbm :"",
+      selectedCommodity:""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -78,6 +80,7 @@ class RateFinalizing extends Component {
     this.HandleLocalCharges = this.HandleLocalCharges.bind(this);
     this.togglePreview = this.togglePreview.bind(this);
     this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this)
+    this.HandleCommodityDropdown=this.HandleCommodityDropdown.bind(this)
   }
 
   componentDidMount() {
@@ -248,6 +251,7 @@ class RateFinalizing extends Component {
 
       this.HandleLocalCharges();
       this.HandleSurCharges();
+      
 
 
 
@@ -255,6 +259,7 @@ class RateFinalizing extends Component {
         this.setState({ toggleAddProfitBtn: false });
       }
     }
+    this.HandleCommodityDropdown();
     // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
     // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
     // this.setState({
@@ -406,7 +411,7 @@ class RateFinalizing extends Component {
   commoditySelect(e) {
     this.setState({
       commoditySelect: e.target.value,
-      CommodityID: ""
+      CommodityID: e.target.value,
     });
 
   }
@@ -1060,6 +1065,23 @@ class RateFinalizing extends Component {
     }
 
   }
+  ////this method for Commodity drop-down bind
+  HandleCommodityDropdown() {
+    debugger
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CommodityDropdown`,
+      data: {},
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      var commodityData = response.data.Table;
+      self.setState({ commodityData }); ///problem not working setstat undefined
+    });
+  }
   newMultiCBMHandleChange(i, e) {
     const { name, value } = e.target;
 
@@ -1223,7 +1245,7 @@ class RateFinalizing extends Component {
 
     }
 
-    var containerLoadType = this.props.location.state.containerLoadType
+    // var containerLoadType = this.props.location.state.containerLoadType
     const { CargoDetailsArr } = this.state;
     return (
       <React.Fragment>
@@ -2159,14 +2181,14 @@ class RateFinalizing extends Component {
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select onChange={this.commoditySelect.bind(this)}>
+                        <select disabled={true}
+                          value={this.state.CommodityID} onChange={this.commoditySelect.bind(this)}>
                           <option value="select">Select</option>
-                          {/* {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity} >
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.id}>
                               {item.Commodity}
                             </option>
-                          ))} */}
-                          {commodityDatadrp}
+                          ))}
                         </select>
                       </div>
                       {/* <div className="col-md-6 login-fields">

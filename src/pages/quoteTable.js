@@ -111,8 +111,8 @@ class QuoteTable extends Component {
     });
   }
 
-  HandleChangeShipmentDetails(QuoteNo,Type) {
-    var data = {Quotes: QuoteNo, Type: Type};
+  HandleChangeShipmentDetails(QuoteNo,Type,Status) {
+    var data = {Quotes: QuoteNo, Type: Type, Status:Status};
     this.props.history.push({
       pathname: "rate-finalizing-still",
       state: { detail: data }
@@ -124,10 +124,17 @@ class QuoteTable extends Component {
       onClick: e => {
         var QuoteNo = column.original["Quote#"];
         var Type = column.original["type"];
-        this.HandleChangeShipmentDetails(QuoteNo,Type);
+        var Status = column.original["Status"];
+        this.HandleChangeShipmentDetails(QuoteNo,Type,Status);
       }
     };
   };
+
+  Editfinalizing(e)
+  {
+    alert(e.target.getAttribute('data-Quote'))
+//data-Quote data-type
+  }
 
   render() {
     const { quotesData } = this.state;
@@ -181,20 +188,45 @@ class QuoteTable extends Component {
                     sortable: false,
                     Cell: row => {
                       if (row.original.type !== "No record found") {
+                        if (row.original.Status === "Pending") {
+                          
+                          return (
+                            <div className="action-cntr">
+                              {/* <a href="/rate-finalizing-still">
+                              <img
+                                className="actionicon"
+                                src={Eye}
+                                alt="view-icon"
+                              />
+                            </a> */}
+                              {/* <span
+                              title="Create Booking"
+                              onClick={this.toggleBook} 
+                            > */}
+                              <a title="Create Booking"  onClick={this.Editfinalizing.bind(this)}>
+                                <img
+                                  className="actionicon"
+                                  src={Edit}
+                                  alt="booking-icon"
+                                  data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
+                                />
+                              </a>
+                              {/* </span> */}
+                              <a href="/rate-finalizing">
+                                <img
+                                  className="actionicon"
+                                  src={Copy}
+                                  alt="view-icon"
+                                />
+                              </a>
+                            </div>
+                          );
+                        }
+                        else
+                      {
                         return (
                           <div className="action-cntr">
-                            {/* <a href="/rate-finalizing-still">
-                            <img
-                              className="actionicon"
-                              src={Eye}
-                              alt="view-icon"
-                            />
-                          </a> */}
-                            {/* <span
-                            title="Create Booking"
-                            onClick={this.toggleBook}
-                          > */}
-                            <a title="Create Booking" href="/rate-finalizing">
+                            <a title="Create Booking" href="#">
                               <img
                                 className="actionicon"
                                 src={Edit}
@@ -202,7 +234,7 @@ class QuoteTable extends Component {
                               />
                             </a>
                             {/* </span> */}
-                            <a href="/rate-finalizing">
+                            <a href="#">
                               <img
                                 className="actionicon"
                                 src={Copy}
@@ -211,6 +243,7 @@ class QuoteTable extends Component {
                             </a>
                           </div>
                         );
+                      }
                       }
                       else
                       {
