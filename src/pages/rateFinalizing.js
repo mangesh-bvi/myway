@@ -1798,7 +1798,7 @@ class RateFinalizing extends Component {
                         //   });
                         // }}
                         data={this.state.rateDetails}
-                        defaultPageSize={10}
+                        defaultPageSize={1000}
                         className="-striped -highlight"
                         minRows={1}
                         showPagination={false}
@@ -1872,7 +1872,7 @@ class RateFinalizing extends Component {
                                   }
                                 ]}
                                 showPagination={false}
-                                defaultPageSize={5}
+                                defaultPageSize={1000}
                               />
                             </div>
                           );
