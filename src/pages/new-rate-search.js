@@ -268,6 +268,16 @@ class NewRateSearch extends Component {
       errors["equipmenttype"] = "Please select equipment type";
     }
 
+    if(Object.getOwnPropertyNames(this.state.polfullAddData).length == 0 && this.state.fullAddressPOL.length == 0){
+      formIsValid = false;
+      errors["POLAddress"] = "Please select source";
+    }
+
+    if(Object.getOwnPropertyNames(this.state.podfullAddData).length == 0 && this.state.fullAddressPOL.length == 0){
+      formIsValid = false;
+      errors["PODAddress"] = "Please select destination";
+    }
+
     this.setState({ errors: errors });
     return formIsValid;
   }
@@ -3322,7 +3332,11 @@ class NewRateSearch extends Component {
                         />
                       )}
                     </div>
+                    <span className="equip-error">
+                      {this.state.errors["POLAddress"]}
+                    </span>
                   </div>
+                  
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
                       {this.state.modeoftransport === "AIR" ? (
@@ -3423,6 +3437,9 @@ class NewRateSearch extends Component {
                         />
                       )}
                     </div>
+                    <span className="equip-error">
+                      {this.state.errors["PODAddress"]}
+                    </span>
                   </div>
                 </div>
               </div>

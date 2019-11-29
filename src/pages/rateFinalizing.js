@@ -2345,7 +2345,7 @@ class RateFinalizing extends Component {
               </div>
             </ModalBody>
           </Modal>
-          <Modal
+          {/* <Modal
             className="delete-popup preview-popup"
             isOpen={this.state.modalPreview}
             toggle={this.togglePreview}
@@ -2461,7 +2461,6 @@ class RateFinalizing extends Component {
                 </div>
               </div>
 
-              {/* <div className="row"> */}
               <div className="rename-cntr login-fields">
                 <p className="preview-title">Quote Details</p>
               </div>
@@ -2477,25 +2476,6 @@ class RateFinalizing extends Component {
                               <React.Fragment>
                                 <div className="cont-costs rate-tab-check p-0 d-inline-block">
                                   <div className="remember-forgot rat-img d-block m-0">
-                                    {/* <input
-                                          id={"maersk-logo" + i}
-                                          type="checkbox"
-                                          name={"rate-tab-check"}
-                                          // checked={
-                                          //   this.state.RateDetails[i - 1].checkbx
-                                          //     ? this.state.RateDetails[i - 1]
-                                          //         .checkbx
-                                          //     : false
-                                          // }
-                                          // checked={
-                                          //   this.state.cSelectedRow[
-                                          //     original.rateID
-                                          //   ] === true
-                                          // }
-                                          // onChange={e =>
-                                          //   this.toggleRow(original.rateID, row)
-                                          // }
-                                        /> */}
                                     <label
                                       htmlFor={"maersk-logo" + i}
                                     ></label>
@@ -2782,14 +2762,174 @@ class RateFinalizing extends Component {
                         </div>
                       </div>
                 </div>
-              {/* </div> */}
                 </ModalBody>
-          </Modal>
+          </Modal> */}
+          <Modal
+            className="popupbox"
+            isOpen={this.state.modalPreview}
+            toggle={this.togglePreview}
+          >
+
+            <ModalBody>
+          {/* <div className="modal popupbox" id="myModal">
+        <div className="modal-dialog">
+          <div className="modal-content">
+      
+            <div className="modal-body"> */}
+            <button type="button" className="close" data-dismiss="modal">&times;</button>
+                <div className="row">
+                    <div className="col-12 col-sm-6">
+                        <div className="firstbox">
+                            <h3>To, <span>Trustwater LLC</span></h3>
+                            <label>ATNN : <span>Deniz Egemen</span></label>
+                            <label>E-Mail : <span>edeniz@elamafarms.com</span></label>
+                            <label>Phone : <span></span></label>
+                            <label>Fax : <span></span></label>
+                            <label>&nbsp;<span></span></label>
+                        </div>
+                    </div>
+                    <div className="col-12 col-sm-6">
+                            <div className="firstbox">
+                                <h3>From, <span>ATA Freight Line</span></h3>
+                                <label>Sales Person : <span>Horst Percival</span></label>
+                                <label>E-Mail : <span>h.percival@atafreight.com</span></label>
+                                <label>Phone : <span>+1(718) 9953855 X</span></label>
+                                <label>Fax : <span>+1(718) 9954150 X</span></label>
+                                <label>Prepared By : <span>Patricia Poslett</span></label>
+                            </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                            <div className="secondbox">
+                                <h3>Service Details</h3>
+                                <hr />
+                                <div className="row">
+                                    <div className="col-12 col-sm-4">
+                                        <label>Type of Move : <span>Port to Port</span></label>
+                                        <label>POL : <span>Izmir, Turkey</span></label>
+                                        <label>POD : <span>Doha, Qatar</span></label>
+                                    </div>
+                                    <div className="col-12 col-sm-4">
+                                        <label>Service Type : <span>Direct</span></label>
+                                        <label>Inco Terms : <span>FOB</span></label>
+                                    </div>
+                                    <div className="col-12 col-sm-4">
+                                        <label>Liner : <span>APL</span></label>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div className="row">
+                                    <div className="col-12 col-sm-4">
+                                        <label>Transit Time From : <span>15</span></label>
+                                    </div>
+                                    <div className="col-12 col-sm-4">
+                                        <label>Transit Time To : <span>15</span></label>
+                                    </div>
+                                    <div className="col-12 col-sm-4">
+                                        <label>Free Time : <span>00</span></label>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row">
+                                    <div className="col-12">
+                                        <label>Valid Between : <span>09 / 12 / 2018 - 09 / 30 / 2018</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="thirdbox">
+                            <h3>40 Standard Dry</h3>
+                            <div className="table-responsive">
+                                <table className="table table-responsive">
+                                    <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Tax</th>
+                                        <th>Total(USD)</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>Ocean Freight</td>
+                                        <td>742.00 USD</td>
+                                        <td>0</td>
+                                        <td>742.00 USD</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="thirdbox">
+                            <h3>Documentation Charges</h3>
+                            <div className="table-responsive">
+                                <table className="table table-responsive">
+                                    <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Tax</th>
+                                        <th>Total(USD)</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>ams</td>
+                                        <td>40.00 USD</td>
+                                        <td>0</td>
+                                        <td>40.00 USD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Docs</td>
+                                        <td>50.00 USD</td>
+                                        <td>0</td>
+                                        <td>50.00 USD</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="thirdbox totalbox">
+                            <div className="table-responsive">
+                                <table className="table table-responsive">
+                                    <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th>2059.00 USD</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {/* </div>
+          </div>
+        </div>
+      </div> */}
                 {/* <ReactTable
                     data={Data}
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}
                   /> */}
+                  </ModalBody>
+                  </Modal>
                   <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalEdit}
