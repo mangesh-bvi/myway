@@ -3073,7 +3073,7 @@ class RateTable extends Component {
                               },
                               {
                                 Cell: row => {
-                                  debugger;
+                                  
                                   if (
                                     row.original.lineName !== "No Record Found"
                                   ) {
