@@ -289,9 +289,12 @@ class NewRateSearch extends Component {
 
   HandleCMBtextChange(e) {
     debugger;
-    var Textvalue = e.target.value;
+    const re = /^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/;
+    var Textvalue = re.test(e.target.value);
+    if(Textvalue ){
+      this.setState({ cbmVal: e.target.value });
+    }
 
-    this.setState({ cbmVal: Textvalue });
     document.getElementById("cbm").classList.add("cbm");
     document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
     document.getElementById("containerLoad").classList.add("less-padd");
@@ -2847,9 +2850,8 @@ class NewRateSearch extends Component {
                           <div className="col-md-4 m-auto">
                             <div className="spe-equ">
                               <input
-                                type="number"
+                                type="text"
                                 minLength={1}
-                                
                                 onChange={this.HandleCMBtextChange.bind(this)}
                                 placeholder={
                                   this.state.modeoftransport != "AIR"

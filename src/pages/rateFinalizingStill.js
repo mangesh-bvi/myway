@@ -69,8 +69,9 @@ class RateFinalizingStill extends Component {
       var qData=this.props.location.state;
       this.HandleSalesQuoteView(qData);
       this.HandlePackgeTypeData();
-      this.HandleCommodityDropdown();
+     
     }
+    this.HandleCommodityDropdown();
    
   }
 
@@ -433,6 +434,7 @@ class RateFinalizingStill extends Component {
 
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
+    debugger
     let self = this;
 
     axios({
