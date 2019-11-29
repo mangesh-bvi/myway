@@ -120,20 +120,24 @@ class QuoteTable extends Component {
   }
 
   HandleRowClickEvt = (rowInfo, column) => {
-    return {
-      onClick: e => {
+    debugger;
+ 
         var QuoteNo = column.original["Quote#"];
         var Type = column.original["type"];
         var Status = column.original["Status"];
         this.HandleChangeShipmentDetails(QuoteNo,Type,Status);
-      }
-    };
+   
   };
 
   Editfinalizing(e)
   {
-    alert(e.target.getAttribute('data-Quote'))
-//data-Quote data-type
+    var Quote = e.target.getAttribute('data-Quote')
+    var type = e.target.getAttribute('data-type')
+    this.props.history.push({
+      pathname: "rate-finalizing",
+      state: { Quote: Quote, type: type }
+    });
+
   }
 
   render() {
@@ -192,13 +196,14 @@ class QuoteTable extends Component {
                           
                           return (
                             <div className="action-cntr">
-                              {/* <a href="/rate-finalizing-still">
+                              <a onClick={e => this.HandleRowClickEvt(e, row)}>
                               <img
                                 className="actionicon"
                                 src={Eye}
                                 alt="view-icon"
                               />
-                            </a> */}
+                            </a>
+                            
                               {/* <span
                               title="Create Booking"
                               onClick={this.toggleBook} 
@@ -226,11 +231,19 @@ class QuoteTable extends Component {
                       {
                         return (
                           <div className="action-cntr">
-                            <a title="Create Booking" href="#">
+                            <a onClick={e => this.HandleRowClickEvt(e, row)}>
+                              <img
+                                className="actionicon"
+                                src={Eye}
+                                alt="view-icon"
+                              />
+                            </a>
+                            <a title={"It has been "+row.original.Status}  onClick={this.Editfinalizing.bind(this)}>
                               <img
                                 className="actionicon"
                                 src={Edit}
                                 alt="booking-icon"
+                                data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
                               />
                             </a>
                             {/* </span> */}
@@ -257,7 +270,7 @@ class QuoteTable extends Component {
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}
-                getTrProps={this.HandleRowClickEvt}
+               // getTrProps={this.HandleRowClickEvt}
                 minRows={1}
               />
             </div>
