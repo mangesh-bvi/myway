@@ -28,7 +28,24 @@ class RateFinalizingStill extends Component {
       modalBook: false,
       RateDetails: [],
       SubRateDetails: [],
-      toggleCustomerType: true,
+      toggleCustomerType:true,
+      QuoteStatus : true,
+      Bookingcreation : false,
+      QuoteNumber:"",
+      accountcustname:"",
+      custAddress:"",
+      custNotification:"",
+      ModeOfTransport:"",
+      ShipmentType:"",
+      ContainerLoad:"",
+      EquipmentTypes:"",
+      SpecialEquipment:"",
+      HazMatUnstackable:"",
+      IncoTerms:"",
+      TypeofMove:"",
+      CargoDetails:"",
+      Commodity:".FAK",
+      CargoDetailsArr:[],
       QuoteNumber: "",
       selectedCommodity: "",
       packageTypeData: [],
@@ -47,6 +64,7 @@ class RateFinalizingStill extends Component {
         flattack_openTop: [],
         eqmtType: [],
         selectedFile: [],
+        modalRejectPop: false,
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -69,17 +87,26 @@ class RateFinalizingStill extends Component {
       var qData=this.props.location.state;
       this.HandleSalesQuoteView(qData);
       this.HandlePackgeTypeData();
-     
+      this.HandleCommodityDropdown();
     }
-    this.HandleCommodityDropdown();
-   
   }
 
   HandleSalesQuoteView(param) {
     debugger;
     var SalesQuoteNumber =param.detail.Quotes;
     var type=param.detail.Type
+    //alert(param.detail.Status)
     // "SHA-SQFCL-NOV19-05020"
+
+    if (param.detail.Status != "Pending") 
+    {
+      this.setState({ QuoteStatus: false });
+    }
+    if (param.detail.Status == "Approved") 
+    {
+      this.setState({ Bookingcreation: true });
+    }
+
     var SalesQuoteViewdata = {
       Mode: type,
       //SalesQuoteNumber: param.Quotes,
@@ -98,11 +125,88 @@ class RateFinalizingStill extends Component {
     })
       .then(function(response) {
         debugger;
+
+        var  TypeofMove = "";
+        var IncoTerms =  "";
+        var CargoDetailsArr = [];
+        //accountcustname
+        if(response != null)
+        {
+          if(response.data != null)
+          {
+            if(response.data.Table != null)
+            {
+              if(response.data.Table.length > 0)
+              {
+                TypeofMove = response.data.Table[0].TypeOfMove;
+                IncoTerms = response.data.Table[0].IncoTerm;
+
+                self.setState({
+                  accountcustname : response.data.Table[0].CompanyName == undefined ? response.data.Table[0].company_name : response.data.Table[0].CompanyName,
+                  custAddress: response.data.Table[0].Company_Address,
+                  custNotification: response.data.Table[0].ContactName == undefined ? response.data.Table[0].contact_name : response.data.Table[0].ContactName,
+                  ModeOfTransport: response.data.Table[0].ModeOfTransport,
+                  ShipmentType:  response.data.Table[0].ShipmentType,
+                  ContainerLoad: param.detail.Type,
+                  EquipmentTypes:".20 DC",
+                  SpecialEquipment:".Refer Type (20 degrees)",
+                  HazMatUnstackable:".",
+                  TypeofMove:  TypeofMove,
+                  IncoTerms:  IncoTerms
+                });
+              }
+            }
+            if(response.data.Table1 != null)
+            {
+              if(response.data.Table1.length > 0)
+              {
+                if(TypeofMove == null || TypeofMove == "" || TypeofMove == undefined)
+                {
+                  TypeofMove = response.data.Table1[0].TypeOfMove;
+                }
+                if(IncoTerms == null || IncoTerms == "" || IncoTerms == undefined)
+                {
+                  IncoTerms = response.data.Table1[0].IncoTerm;
+                }
+
+                self.setState({
+                  IncoTerms: IncoTerms,
+                  TypeofMove: TypeofMove,
+                  //EquipmentTypes: response.data.Table1[0].ContainerCode,
+                  Commodity: response.data.Table1[0].Commodity,
+                  selectedCommodity: response.data.Table1[0].Commodity
+                });
+              }
+            }
+            if(response.data.Table3 != null)
+            {
+              if(response.data.Table3.length > 0)
+              {
+                var table = response.data.Table3;
+                for(var i = 0; i < table.length; i++)
+                {
+                  CargoDetailsArr.push({PackageType:table[i].PackageType, SpecialContainerCode: table[i].PackageType+"_"+i, ContainerType: table[i].PackageType, "Packaging": "-", Quantity: table[i].Quantity, Lenght: table[i].Length, Width: table[i].Width, Height: table[i].height, Weight: table[i].GrossWeight, Gross_Weight: "-", Temperature: "-", CBM: "-", Volume: "-", VolumeWeight: "-", Editable: true })
+                }
+                
+              }
+              else{
+                CargoDetailsArr.push({Width:"No Data Found"})
+              }
+            }
+            else{
+              CargoDetailsArr.push({Width:"No Data Found"})
+            }
+            self.setState({
+              CargoDetailsArr:CargoDetailsArr
+            })
+          }
+        }
         self.setState({
           RateDetails: response.data.Table1,
           SubRateDetails: response.data.Table2,
           multiCBM:response.data.Table3,
         });
+        self.forceUpdate();
         //console.log(response);
       })
       .catch(error => {
@@ -129,7 +233,8 @@ class RateFinalizingStill extends Component {
   }
   onDocumentChangeHandler = event => {
     this.setState({
-      selectedFileName: event.target.files[0].name
+      selectedFileName: event.target.files[0].name,
+      selectedFile: event.target.files[0]
     });
   };
 
@@ -158,15 +263,110 @@ class RateFinalizingStill extends Component {
   }
 
   AcceptQuotes() {
+    let self = this;
     var SalesQuoteNumber = "";
+    var QuoteType = "";
     if (typeof this.props.location.state != "undefined") {
       SalesQuoteNumber = this.props.location.state.detail.Quotes;
+      QuoteType = this.props.location.state.detail.Type
     }
+    else
+    {
+      return false;
+    }
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteApprove`,
+      data: {
+        Mode: QuoteType,
+        SalesQuoteNumber: SalesQuoteNumber,   
+        isApprove: 1,
+        MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                NotificationManager.success(response.data.Table[0].Message);
+               
+              }
+            }
+          }
+        }
 
-    var Messagebody =
-      "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
+        var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
 
-    this.SendMail(SalesQuoteNumber, Messagebody);
+        self.SendMail(SalesQuoteNumber, Messagebody)
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+        NotificationManager.error(err[1].replace("}", ""));
+      });
+
+  }
+
+  RejectQuotes()
+  {
+    let self = this;
+    var SalesQuoteNumber = "";
+    var QuoteType = "";
+    if (typeof this.props.location.state != "undefined") {
+      SalesQuoteNumber = this.props.location.state.detail.Quotes;
+      QuoteType = this.props.location.state.detail.Type
+    }
+    else
+    {
+      return false;
+    }
+    var RejectResontxt = document.getElementById("RejectResontxt").value;
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteReject`,
+      data: {
+        Mode: QuoteType,
+        SalesQuoteNumber: SalesQuoteNumber,   
+        isReject: 1,
+        RejectReason:RejectResontxt,
+        MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+
+        self.toggleRejectPop();
+        
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                NotificationManager.success(response.data.Table[0].Message);
+               
+              }
+            }
+          }
+        }
+
+        var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
+
+        self.SendMail(SalesQuoteNumber, Messagebody)
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+        NotificationManager.error(err[1].replace("}", ""));
+      });
   }
 
   SendMail(SalesQuoteNumber, Messagebody) {
@@ -434,7 +634,6 @@ class RateFinalizingStill extends Component {
 
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
-    debugger
     let self = this;
 
     axios({
@@ -473,6 +672,14 @@ class RateFinalizingStill extends Component {
           Quantity: 0
         }
       ]
+    }));
+  }
+
+  toggleRejectPop() {
+    debugger;
+
+    this.setState(prevState => ({
+      modalRejectPop: !prevState.modalRejectPop
     }));
   }
 
@@ -537,6 +744,36 @@ class RateFinalizingStill extends Component {
       ]
     }));
   }
+
+  onDocumentClickHandler = () => {
+    debugger;
+    const docData = new FormData();
+    var docName = this.state.selectedFileName;
+   
+    if (docName == "") {
+      NotificationManager.error("Please enter document name");
+      return false;
+    }
+   
+    debugger;
+    //docData.append();
+    docData.append("ShipmentNumber", "BCM2453770");
+    docData.append("HBLNo", "BCM23770");
+    docData.append("DocDescription", docName);
+    docData.append("name", docName);
+    docData.append("FileData", this.state.selectedFile);
+    // docData.append()
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/UploadShipmentDocument`,
+      data: docData,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      alert(response.data[0].Result);
+    });
+  };
 
   createUISpecial() {
     return this.state.referType.map((el, i) => {
@@ -995,7 +1232,7 @@ class RateFinalizingStill extends Component {
       // this.HandleShipmentDetails(bookingNo);
     }
     var i = 0;
-
+    const { CargoDetailsArr } = this.state;
     return (
       <React.Fragment>
         <Headers />
@@ -1097,12 +1334,23 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
-                      {this.state.toggleCustomerType && (
+                      {this.state.toggleCustomerType  && this.state.QuoteStatus  && (
+                        //QuoteStatus
                         <button
                           className="butn m-0"
                           onClick={this.AcceptQuotes.bind(this)}
                         >
                           Accept
+                        </button>
+                      )}
+                      {this.state.toggleCustomerType && this.state.QuoteStatus && (
+                        <button
+                          className="butn m-0"
+                         // onClick={this.RejectQuotes.bind(this)}
+                         onClick={this.toggleRejectPop.bind(this)}
+                         
+                        >
+                          Reject
                         </button>
                       )}
                     </div>
@@ -1243,7 +1491,7 @@ class RateFinalizingStill extends Component {
                                           // }
                                           checked={
                                             this.state.cSelectedRow[
-                                               original.RateLineID == undefined ? original.RateLineId : original.RateLineID 
+                                               original.RateLineID == undefined ? original.RateLineId : original.RateLineID
                                             ] === true
                                           }
                                           onChange={e =>
@@ -1434,9 +1682,10 @@ class RateFinalizingStill extends Component {
                         //   });
                         // }}
                         data={this.state.RateDetails}
-                        defaultPageSize={10}
+                        defaultPageSize={1000}
                         className="-striped -highlight"
                         minRows={1}
+                        showPagination={false}
                         SubComponent={row => {
                           return (
                             <div style={{ padding: "20px 0" }}>
@@ -1502,8 +1751,8 @@ class RateFinalizingStill extends Component {
                                     ]
                                   }
                                 ]}
-                                showPagination={true}
-                                defaultPageSize={5}
+                                showPagination={false}
+                                defaultPageSize={1000}
                               />
                             </div>
                           );
@@ -1520,40 +1769,43 @@ class RateFinalizingStill extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Shipment Type</p>
-                            <p className="details-para">Import</p>
+                            <p className="details-para">{this.state.ShipmentType}</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
-                            <p className="details-para">Air</p>
+                            <p className="details-para">{this.state.ModeOfTransport}</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
-                            <p className="details-para">FCL</p>
+                            <p className="details-para">{this.state.ContainerLoad}</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para">20 DC</p>
+                            <p className="details-para">{this.state.EquipmentTypes}</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
                             <p className="details-para">
-                              Refer Type (20 degrees)
+                            {this.state.SpecialEquipment}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
+                            <p className="details-para">
+                            {this.state.HazMatUnstackable}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
-                            <p className="details-para">Populated Data</p>
+                            <p className="details-para"> {this.state.IncoTerms}</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
-                            <p className="details-para">Port2Port</p>
+                            <p className="details-para">{this.state.TypeofMove}</p>
                           </div>
-                          <div className="col-md-4">
+                          {/* <div className="col-md-4">
                             <p className="details-title">POL</p>
                             <p className="details-para">Mumbai</p>
                           </div>
@@ -1572,7 +1824,7 @@ class RateFinalizingStill extends Component {
                             <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </Collapse>
@@ -1603,17 +1855,17 @@ class RateFinalizingStill extends Component {
                       <div className="row">
                         <div className="col-md-4">
                           <p className="details-title">Account/Customer</p>
-                          <p className="details-para">abcd</p>
+                          <p className="details-para">{this.state.accountcustname}</p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
                           <p className="details-para">
-                            Lotus Park, Goregaon (E), Mumbai : 400099
+                          {this.state.custAddress}
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
-                          <p className="details-para">Raj Mahlotra</p>
+                          <p className="details-para">{this.state.custNotification}</p>
                         </div>
                       </div>
                     </div>
@@ -1636,17 +1888,74 @@ class RateFinalizingStill extends Component {
                         >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.id}>
+                            <option key={i} value={item.Commodity}>
                               {item.Commodity}
                             </option>
                           ))}
                         </select>
                       </div>
+                    
                     </div>
-                    <div className="title-border py-3">
-                      <h3>Cargo Details</h3>
-                    </div>
-                    {this.CreateMultiCBM()}
+                    <div className="row">  <div className="col-md-12 login-fields">
+                        <p className="details-title">Cargo Details</p>
+                        <div className="ag-fresh redirect-row">
+                            <ReactTable
+                             data={CargoDetailsArr}
+                              filterable
+                              minRows={1}
+                              showPagination={false}
+                              columns={[
+                                {
+                                  Header: "Cont.Type",
+                                  accessor: "ContainerType"
+                                },
+                                {
+                                  Header: "Quantity",
+                                  accessor: "Quantity"
+                                },
+                                {
+                                  Header: "Lenght",
+                                  accessor: "Lenght"
+                                },
+                                {
+                                  Header: "Width",
+                                  accessor: "Width"
+                                },
+                                {
+                                  Header: "Height",
+                                  accessor: "Height"
+                                },
+                                {
+                                  Header: "Weight",
+                                  accessor: "Weight",
+                                  //editable: this.state.containerLoadType == "Air" ? true : false
+                                },
+                                {
+
+                                  Header: "Temp.",
+                                  accessor: "Temperature",
+                                  //show:  this.state.containerLoadType == "Air" ? false : true
+                                },
+                                {
+
+                                  Header: "CBM" ,
+                                  accessor: "CBM",
+                                  //show:  this.state.containerLoadType == "Air" ? false : true
+                                },
+                                {
+                                  Header: "Action",
+                                  sortable: false,
+                                  accessor:"Editable",
+                                  
+                                }
+                              ]}
+                              className="-striped -highlight"
+                              defaultPageSize={2000}
+                            //getTrProps={this.HandleRowClickEvt}
+                            //minRows={1}
+                            />
+                        </div>
+                      </div></div>
                     {/* <div className="text-right">
                       <a href="quote-table" className="butn">
                         Send
@@ -1678,12 +1987,24 @@ class RateFinalizingStill extends Component {
                       </p>
                     </div>
                     <center>
-                      <button
+                    {/* <Button
+                      className="butn"
+                      onClick={() => {
+                        this.onDocumentClickHandler();
+                      }}
+                    >
+                      Save File
+                    </Button> */}
+                    
+                    {this.state.toggleCustomerType && this.state.Bookingcreation && (
+                        <button
                         onClick={this.toggleBook}
                         className="butn more-padd mt-4"
                       >
                         Create Booking
                       </button>
+                      )}
+                      
                     </center>
                   </div>
                 </div>
@@ -1831,6 +2152,33 @@ class RateFinalizingStill extends Component {
           >
             <ModalBody>Popup will come</ModalBody>
           </Modal>
+
+          <Modal
+                  className="delete-popup package-popup"
+                  isOpen={this.state.modalRejectPop}
+                  toggle={this.toggleRejectPop.bind(this)}
+                >
+                  <ModalBody>
+                  <h3 className="mb-4">Reject Reason</h3>
+                  <div className="rename-cntr login-fields">
+                    {/* <label>Reject Reason</label> */}
+                    <input type="text" id="RejectResontxt"   />
+                  </div>
+                  <Button
+                      className="butn"
+                      onClick={this.RejectQuotes.bind(this)}
+                    >
+                      Submit
+                    </Button>
+                    <Button
+                      className="butn cancel-butn"
+                      onClick={this.toggleRejectPop.bind(this)}
+                    >
+                      Close
+                    </Button>
+                  </ModalBody>
+                </Modal>
+
         </div>
         <NotificationContainer />
       </React.Fragment>

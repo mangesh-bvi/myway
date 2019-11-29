@@ -68,7 +68,8 @@ class RateFinalizing extends Component {
       valuewidth :"",
       valueheight :"",
       valueweight :"",
-      valuecbm :""
+      valuecbm :"",
+      selectedCommodity:""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -410,7 +411,7 @@ class RateFinalizing extends Component {
   commoditySelect(e) {
     this.setState({
       commoditySelect: e.target.value,
-      CommodityID: ""
+      CommodityID: e.target.value,
     });
 
   }
@@ -1819,7 +1820,7 @@ class RateFinalizing extends Component {
                         //   });
                         // }}
                         data={this.state.rateDetails}
-                        defaultPageSize={10}
+                        defaultPageSize={1000}
                         className="-striped -highlight"
                         minRows={1}
                         showPagination={false}
@@ -1893,7 +1894,7 @@ class RateFinalizing extends Component {
                                   }
                                 ]}
                                 showPagination={false}
-                                defaultPageSize={5}
+                                defaultPageSize={1000}
                               />
                             </div>
                           );
@@ -2180,7 +2181,8 @@ class RateFinalizing extends Component {
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select onChange={this.commoditySelect.bind(this)}>
+                        <select disabled={true}
+                          value={this.state.CommodityID} onChange={this.commoditySelect.bind(this)}>
                           <option value="select">Select</option>
                           {this.state.commodityData.map((item, i) => (
                             <option key={i} value={item.id}>

@@ -349,9 +349,20 @@ class Login extends React.Component {
         })
         .catch(error => {
           this.setState({ loading: false });
-          var temperror = error.response.data;
-          var err = temperror.split(":");
+          var temperror = "";
+          if(error.response == undefined)
+          {
+            temperror = error.message;
+            NotificationManager.error(temperror);
+          }
+          else
+          {
+            temperror = error.response.data;
+            var err = temperror.split(":");
           NotificationManager.error(err[1].replace("}", ""));
+          }
+          
+          
           // this.state.usernamee = '';
           this.setState({ username: "", password: "" });
           setTimeout(5000);
