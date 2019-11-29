@@ -86,7 +86,7 @@ class BookingTable extends Component {
     var BookingNo = row.original["BookingID"];
     this.props.history.push({
       pathname: "rate-finalizing-still-booking",
-      state: { BookingNo: BookingNo ,Copy:true}
+      state: { BookingNo: BookingNo, Copy: true }
     });
   }
 
@@ -149,34 +149,67 @@ class BookingTable extends Component {
                     Header: "Action",
                     sortable: false,
                     Cell: row => {
-                      return (
-                        <div className="action-cntr">
-                          {/* <a> */}
-                          {/* <img
+                      if (row.original.Status === "Pending") {
+                        return (
+                          <div className="action-cntr">
+                            {/* <a> */}
+                            {/* <img
                             className="actionicon"
                             src={Eye}
                             alt="view-icon"
                             onClick={e => this.HandleRowClickEvt(e, row)}
                           /> */}
-                          {/* </a> */}
-                          {/* <a href="/rate-finalizing-still-booking"> */}
-                          <img
-                            className="actionicon"
-                            src={Edit}
-                            alt="view-icon"
-                            onClick={e => this.HandleDocumentView(e, row)}
-                          />
-                          {/* </a> */}
-                           
+                            {/* </a> */}
+                            {/* <a href="/rate-finalizing-still-booking"> */}
+                            <img
+                              className="actionicon"
+                              src={Edit}
+                              alt="view-icon"
+                              onClick={e => this.HandleDocumentView(e, row)}
+                            />
+                            {/* </a> */}
+
                             <img
                               className="actionicon"
                               src={Copy}
                               alt="view-icon"
                               onClick={e => this.HandleCopyClick(e, row)}
                             />
-                    
-                        </div>
-                      );
+                          </div>
+                        );
+                      }
+                      if (row.original.Status === "Approved") {
+                        return (
+                          <div className="action-cntr">
+                            {/* <a> */}
+                            {/* <img
+                            className="actionicon"
+                            src={Eye}
+                            alt="view-icon"
+                            onClick={e => this.HandleRowClickEvt(e, row)}
+                          /> */}
+                            {/* </a> */}
+                            {/* <a href="/rate-finalizing-still-booking"> */}
+                            <img
+                              className="actionicon"
+                              src={Edit}
+                              alt="view-icon"
+                              onClick={e => this.HandleDocumentView(e, row)}
+                            />
+                            {/* </a> */}
+
+                            <img
+                              className="actionicon"
+                              src={Copy}
+                              alt="view-icon"
+                              onClick={e => this.HandleCopyClick(e, row)}
+                            />
+                          </div>
+                        );
+                      }
+                      if (row.original.Status === "Rejected") {
+                        return <></>;
+                      }
                     }
                   }
                 ]}
