@@ -881,7 +881,8 @@ class RateTable extends Component {
         for(var j = 0;j<this.state.mapPositionPOL.length; j++)
         {
           var geocordinates = this.state.mapPositionPOL[j].lat + ',' + this.state.mapPositionPOL[j].lng
-          if (geocordinates == geoCoordinate) {
+          var cordinates = Number(geoCoordinate.split(',')[0]) + ',' + Number(geoCoordinate.split(',')[1])
+          if (geocordinates == cordinates) {
             this.state.mapPositionPOL.splice(j, 1)
           }
         }
@@ -905,7 +906,8 @@ class RateTable extends Component {
         for(var j = 0;j<this.state.markerPositionPOD.length; j++)
         {
           var geocordinates = this.state.markerPositionPOD[j].lat + ',' + this.state.markerPositionPOD[j].lng
-          if (geocordinates == geoCoordinate) {
+          var cordinates = Number(geoCoordinate.split(',')[0]) + ',' + Number(geoCoordinate.split(',')[1])
+          if (geocordinates == cordinates) {
             this.state.markerPositionPOD.splice(j, 1)
           }
         }
