@@ -3166,6 +3166,123 @@ font-family: "Regular Font";
   text-align: left;
   }
 
+  .equip-error{
+    color: red;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .popupbox .close {
+    position: absolute;
+      right: -8px;
+      top: -12px;
+      color: #333;
+      font-weight: normal;
+      background: #fff;
+      opacity: 1;
+      border-radius: 50%;
+      width: 25px;
+  }
+  .popupbox .modal-body {
+    background-color: #f1f2f2;
+    padding: 20px;
+    position: relative;
+    border-radius: 0;
+  }
+  .popupbox {
+    max-width: 800px;
+  }
+  .popupbox .modal-content {
+    border-radius: 0;
+    border: none;
+  }
+  .firstbox {
+    background: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .firstbox label {
+    display: block;
+    color: #8f8f8f;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  .firstbox h3 {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 15px;
+    background: transparent;
+    color: #333;
+  }
+  .firstbox h3 span {
+      color: #0042a9;
+  }
+  .firstbox label span {
+    color: #333333;
+  }
+  .secondbox {
+    background: #ffffff;
+      padding: 20px;
+    margin-bottom: 20px;
+  }
+  .secondbox label {
+    display: block;
+    color: #8f8f8f;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .secondbox h3 {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 15px;
+    background: transparent;
+    color: #333;
+}
+  .secondbox h3 span {
+      color: #0042a9;
+  }
+  .secondbox label span {
+    color: #333333;
+  }
+  .secondbox hr {
+  }
+  
+  .thirdbox {
+    background: #ffffff;
+    margin-bottom: 20px;
+  }
+  .thirdbox h3 {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 20px 20px 0;
+    margin-bottom: 15px;
+    color: #333;
+    background: transparent;
+}
+  .thirdbox .table-responsive {
+      display: table;
+  }
+  .thirdbox table thead {
+      background: #cbcbcb;
+      font-size: 12px;
+  }
+  .thirdbox table tbody {
+      font-size: 12px;
+  }
+  .totalbox {
+    margin-bottom: 0 !important;
+  }
+  .totalbox table {
+    margin-bottom: 0;
+  }
+  .totalbox table th {
+      font-size: 16px;
+      width: 50px;
+  }
   /* .row1 {
     display: flex;
     margin-right: -15px;
@@ -3380,6 +3497,11 @@ img {
 .map-pol-lbl{
   color: #fff !important;
     padding: 10px;
+}
+.plusImg-pdng{
+  color: #fff !important;
+  padding: 4px 12px !important;
+  font-size: 22px !important;
 }
 /* rate-table css End by Shlok */
 

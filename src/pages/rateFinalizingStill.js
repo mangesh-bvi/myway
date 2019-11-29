@@ -30,20 +30,6 @@ class RateFinalizingStill extends Component {
       SubRateDetails: [],
       toggleCustomerType:true,
       QuoteNumber:"",
-      accountcustname:"",
-      custAddress:"",
-      custNotification:"",
-      ModeOfTransport:"",
-      ShipmentType:"",
-      ContainerLoad:"",
-      EquipmentTypes:"",
-      SpecialEquipment:"",
-      HazMatUnstackable:"",
-      IncoTerms:"",
-      TypeofMove:"",
-      CargoDetails:"",
-      Commodity:".FAK",
-      CargoDetailsArr:[]
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -63,7 +49,7 @@ class RateFinalizingStill extends Component {
     if (typeof this.props.location.state != undefined) {
       this.HandleSalesQuoteView(this.props.location.state.detail)
     }
-
+    
   }
 
   HandleSalesQuoteView(param){
@@ -88,85 +74,9 @@ class RateFinalizingStill extends Component {
     })
       .then(function(response) {
         debugger;
-
-        var  TypeofMove = "";
-        var IncoTerms =  "";
-        var CargoDetailsArr = [];
-        //accountcustname
-        if(response != null)
-        {
-          if(response.data != null)
-          {
-            if(response.data.Table != null)
-            {
-              if(response.data.Table.length > 0)
-              {
-                TypeofMove = response.data.Table[0].TypeOfMove;
-                IncoTerms = response.data.Table[0].IncoTerm;
-
-                self.setState({
-                  accountcustname : response.data.Table[0].CompanyName == undefined ? response.data.Table[0].company_name : response.data.Table[0].CompanyName,
-                  custAddress: response.data.Table[0].Company_Address,
-                  custNotification: response.data.Table[0].ContactName == undefined ? response.data.Table[0].contact_name : response.data.Table[0].ContactName,
-                  ModeOfTransport: response.data.Table[0].ModeOfTransport,
-                  ShipmentType:  response.data.Table[0].ShipmentType,
-                  ContainerLoad: param.Type,
-                  //EquipmentTypes:".20 DC",
-                  SpecialEquipment:".Refer Type (20 degrees)",
-                  HazMatUnstackable:".",
-                  TypeofMove:  TypeofMove,
-                  IncoTerms:  IncoTerms
-                });
-              }
-            }
-            if(response.data.Table1 != null)
-            {
-              if(response.data.Table1.length > 0)
-              {
-                if(TypeofMove == null || TypeofMove == "" || TypeofMove == undefined)
-                {
-                  TypeofMove = response.data.Table1[0].TypeOfMove;
-                }
-                if(IncoTerms == null || IncoTerms == "" || IncoTerms == undefined)
-                {
-                  IncoTerms = response.data.Table1[0].IncoTerm;
-                }
-
-                self.setState({
-                  IncoTerms: IncoTerms,
-                  TypeofMove: TypeofMove,
-                  EquipmentTypes: response.data.Table1[0].ContainerCode,
-                  Commodity: response.data.Table1[0].Commodity
-                });
-              }
-            }
-            if(response.data.Table3 != null)
-            {
-              if(response.data.Table3.length > 0)
-              {
-                var table = response.data.Table3;
-                for(var i = 0; i < table.length; i++)
-                {
-                  CargoDetailsArr.push({PackageType:table[i].PackageType, SpecialContainerCode: table[i].PackageType+"_"+i, ContainerType: table[i].PackageType, "Packaging": "-", Quantity: table[i].Quantity, Lenght: table[i].Length, Width: table[i].Width, Height: table[i].height, Weight: table[i].GrossWeight, Gross_Weight: "-", Temperature: "-", CBM: "-", Volume: "-", VolumeWeight: "-", Editable: true })
-                }
-                
-              }
-              else{
-                CargoDetailsArr.push({Width:"No Data Found"})
-              }
-            }
-            else{
-              CargoDetailsArr.push({Width:"No Data Found"})
-            }
-            self.setState({
-              CargoDetailsArr:CargoDetailsArr
-            })
-          }
-        }
         self.setState({
           RateDetails: response.data.Table1,
           SubRateDetails: response.data.Table2
-
         });
         //console.log(response);
       })
@@ -215,7 +125,7 @@ class RateFinalizingStill extends Component {
         var temperror = error.response.data;
         var err = temperror.split(":");
         //alert(err[1].replace("}", ""))
-
+       
         NotificationManager.error(err[1].replace("}", ""));
       });
   }
@@ -226,11 +136,11 @@ class RateFinalizingStill extends Component {
     if (typeof this.props.location.state != "undefined") {
       SalesQuoteNumber = this.props.location.state.detail.Quotes;
     }
-
+    
     var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
 
     this.SendMail(SalesQuoteNumber, Messagebody)
-
+    
   }
 
   SendMail(SalesQuoteNumber, Messagebody)
@@ -307,7 +217,7 @@ class RateFinalizingStill extends Component {
      // this.HandleShipmentDetails(bookingNo);
     }
     var i = 0;
-    const { CargoDetailsArr } = this.state;
+
     return (
       <React.Fragment>
         <Headers />
@@ -550,7 +460,7 @@ class RateFinalizingStill extends Component {
                                           // }
                                           checked={
                                             this.state.cSelectedRow[
-                                               original.RateLineID == undefined ? original.RateLineId : original.RateLineID
+                                               original.RateLineID == undefined ? original.RateLineId : original.RateLineID 
                                             ] === true
                                           }
                                           onChange={e =>
@@ -613,7 +523,7 @@ class RateFinalizingStill extends Component {
                                   <>
                                     <p className="details-title">S. Port</p>
                                     <p className="details-para">
-
+                                      
                                     </p>
                                   </>
                                 );
@@ -628,7 +538,7 @@ class RateFinalizingStill extends Component {
                                   <>
                                     <p className="details-title">F. Time</p>
                                     <p className="details-para">
-
+                                      
                                     </p>
                                   </>
                                 );
@@ -692,7 +602,7 @@ class RateFinalizingStill extends Component {
                                     <p className="details-para">
                                       {row.original.Total !== "" &&
                                       row.original.Total !== null
-                                        ? row.original.Total
+                                        ? row.original.Total      
                                         : ""}
                                     </p>
                                   </>
@@ -725,7 +635,7 @@ class RateFinalizingStill extends Component {
                         //       keys: ["commodities", "TransitTime"],
                         //       threshold: matchSorter.rankings.WORD_STARTS_WITH
                         //     });
-
+                             
                         //     return result;
                         //   }
                         // }
@@ -745,22 +655,21 @@ class RateFinalizingStill extends Component {
                       //   });
                       // }}
                       data={this.state.RateDetails}
-                      defaultPageSize={100}
+                      defaultPageSize={10}
                       className="-striped -highlight"
                       minRows={1}
-                      showPagination={false}
                       SubComponent={row => {
                         return (
                           <div style={{ padding: "20px 0" }}>
                             <ReactTable
                               minRows={1}
                               data={
-
+                               
                                    this.state.SubRateDetails.filter(
                                      d =>
                                        d.saleQuoteLineID ===  row.original.saleQuoteLineID
                                    )
-
+                                 
                              }
                               columns={[
                                 {
@@ -813,8 +722,8 @@ class RateFinalizingStill extends Component {
                                   ]
                                 }
                               ]}
-                              showPagination={false}
-                              defaultPageSize={1000}
+                              showPagination={true}
+                              defaultPageSize={5}
                             />
                           </div>
                         );
@@ -831,43 +740,40 @@ class RateFinalizingStill extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Shipment Type</p>
-                            <p className="details-para">{this.state.ShipmentType}</p>
+                            <p className="details-para">Import</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
-                            <p className="details-para">{this.state.ModeOfTransport}</p>
+                            <p className="details-para">Air</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
-                            <p className="details-para">{this.state.ContainerLoad}</p>
+                            <p className="details-para">FCL</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para">{this.state.EquipmentTypes}</p>
+                            <p className="details-para">20 DC</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
                             <p className="details-para">
-                            {this.state.SpecialEquipment}
+                              Refer Type (20 degrees)
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
-                            <p className="details-para">
-                            {this.state.HazMatUnstackable}
-                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
-                            <p className="details-para"> {this.state.IncoTerms}</p>
+                            <p className="details-para">Populated Data</p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
-                            <p className="details-para">{this.state.TypeofMove}</p>
+                            <p className="details-para">Port2Port</p>
                           </div>
-                          {/* <div className="col-md-4">
+                          <div className="col-md-4">
                             <p className="details-title">POL</p>
                             <p className="details-para">Mumbai</p>
                           </div>
@@ -886,7 +792,7 @@ class RateFinalizingStill extends Component {
                             <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
                             </p>
-                          </div> */}
+                          </div>
                         </div>
                       </div>
                     </Collapse>
@@ -917,87 +823,30 @@ class RateFinalizingStill extends Component {
                       <div className="row">
                         <div className="col-md-4">
                           <p className="details-title">Account/Customer</p>
-                          <p className="details-para">{this.state.accountcustname}</p>
+                          <p className="details-para">abcd</p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
                           <p className="details-para">
-                          {this.state.custAddress}
+                            Lotus Park, Goregaon (E), Mumbai : 400099
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
-                          <p className="details-para">{this.state.custNotification}</p>
+                          <p className="details-para">Raj Mahlotra</p>
                         </div>
                       </div>
                     </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <input type="text" value={this.state.Commodity} disabled />
+                        <input type="text" value="Dummy" disabled />
                       </div>
-                    
-                    </div>
-                    <div className="row">  <div className="col-md-12 login-fields">
+                      <div className="col-md-6 login-fields">
                         <p className="details-title">Cargo Details</p>
-                        <div className="ag-fresh redirect-row">
-                            <ReactTable
-                             data={CargoDetailsArr}
-                              filterable
-                              minRows={1}
-                              showPagination={false}
-                              columns={[
-                                {
-                                  Header: "Cont.Type",
-                                  accessor: "ContainerType"
-                                },
-                                {
-                                  Header: "Quantity",
-                                  accessor: "Quantity"
-                                },
-                                {
-                                  Header: "Lenght",
-                                  accessor: "Lenght"
-                                },
-                                {
-                                  Header: "Width",
-                                  accessor: "Width"
-                                },
-                                {
-                                  Header: "Height",
-                                  accessor: "Height"
-                                },
-                                {
-                                  Header: "Weight",
-                                  accessor: "Weight",
-                                  //editable: this.state.containerLoadType == "Air" ? true : false
-                                },
-                                {
-
-                                  Header: "Temp.",
-                                  accessor: "Temperature",
-                                  //show:  this.state.containerLoadType == "Air" ? false : true
-                                },
-                                {
-
-                                  Header: "CBM" ,
-                                  accessor: "CBM",
-                                  //show:  this.state.containerLoadType == "Air" ? false : true
-                                },
-                                {
-                                  Header: "Action",
-                                  sortable: false,
-                                  accessor:"Editable",
-                                  
-                                }
-                              ]}
-                              className="-striped -highlight"
-                              defaultPageSize={2000}
-                            //getTrProps={this.HandleRowClickEvt}
-                            //minRows={1}
-                            />
-                        </div>
-                      </div></div>
+                        <input type="text" value="Dummy" disabled />
+                      </div>
+                    </div>
                     {/* <div className="text-right">
                       <a href="quote-table" className="butn">
                         Send

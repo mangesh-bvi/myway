@@ -261,7 +261,11 @@ class ShippingDetails extends Component {
   handleAdvanceSearchModalClose() {
     this.setState({
       modalAdvSearch: false,
-      fields: {}
+      fields: {},
+      originCountry:'',
+     destCountry:'',
+     ConsigneeID:'',
+     ShipperID:''
     });
   }
 
@@ -461,14 +465,16 @@ class ShippingDetails extends Component {
   }
 
   handleChangeCountry(text, e) {
+    debugger
     // this.state.originCountry.push(e)
+    var value=e.target.value;
     if (text == "OriginCountry") {
       this.setState({
-        originCountry: e
+        originCountry: value
       });
     } else {
       this.setState({
-        destCountry: e
+        destCountry: value
       });
     }
   }
@@ -480,43 +486,45 @@ class ShippingDetails extends Component {
     var ToETDDate = document.getElementById("ToDepDate").value;
     var FromETADate = document.getElementById("FrArrDate").value;
     var ToETADate = document.getElementById("ToArrDate").value;
+    var OriginCountry =this.state.originCountry;
+    var DestCntry =this.state.destCountry;
+    var Consignee= this.state.ConsigneeID;
+    var Shipper= this.state.ShipperID;
+    var pol= this.state.fields["POL"] || "";
+    var pod=this.state.fields["POD"]||"";
+    var ShipmentStage =this.state.fields["ShipmentStage"] || "";
+    var ModeOfTransport =this.state.fields["ModeOfTransport"] || "";
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    if (this.handleValidation()) {
+    
       axios({
         method: "post",
         url: `${appSettings.APIURL}/TrackShipmentSearch`,
         data: {
-          StageID:
-            this.state.fields["ShipmentStage"] === undefined
-              ? ""
-              : parseInt(this.state.fields["ShipmentStage"]),
-          ModeofTransport:
-            this.state.fields["ModeOfTransport"] === undefined
-              ? ""
-              : this.state.fields["ModeOfTransport"],
+          StageID:ShipmentStage,
+            // this.state.fields["ShipmentStage"] === undefined
+            //   ? ""
+            //   : parseInt(this.state.fields["ShipmentStage"]),
+          ModeofTransport:ModeOfTransport,
+            // this.state.fields["ModeOfTransport"] === undefined
+            //   ? ""
+            //   : this.state.fields["ModeOfTransport"],
           UserID: userid,
           FromETADate: FromETADate,
           ToETADate: ToETADate,
           FromETDDate: FromETDDate,
           ToETDDate: ToETDDate,
-          OriginCntry:
-            this.state.fields["OriginCountry"] === undefined
-              ? ""
-              : this.state.fields["OriginCountry"],
-          DestCntry:
-            this.state.fields["DestinationCountry"] === undefined
-              ? ""
-              : this.state.fields["DestinationCountry"],
-          POL:
-            this.state.fields["POL"] === undefined
-              ? ""
-              : this.state.fields["POL"],
-          POD:
-            this.state.fields["POD"] === undefined
-              ? ""
-              : this.state.fields["POD"],
-          ShipperID: this.state.ShipperID,
-          ConsigneeID: this.state.ConsigneeID
+          OriginCntry: OriginCountry,
+          DestCntry: DestCntry,
+          POL:pol,
+            // this.state.fields["POL"] === undefined
+            //   ? ""
+            //   : this.state.fields["POL"],
+          POD:pod,
+            // this.state.fields["POD"] === undefined
+            //   ? ""
+            //   : this.state.fields["POD"],
+          ShipperID: Shipper,
+          ConsigneeID: Consignee
         },
         headers: authHeader()
       }).then(function(response) {
@@ -546,7 +554,7 @@ class ShippingDetails extends Component {
           shipmentSummary: self.state.shipmentSummary
         }));
       });
-    }
+  
   };
 
   handleValidation() {
@@ -556,11 +564,11 @@ class ShippingDetails extends Component {
 
     if (!fields["ModeOfTransport"]) {
       formIsValid = false;
-      NotificationManager.error("Please enter Mode Of Transport");
+      // NotificationManager.error("Please enter Mode Of Transport");
     }
     if (!fields["ShipmentStage"]) {
       formIsValid = false;
-      NotificationManager.error("Please enter ShipmentStage");
+      // NotificationManager.error("Please enter ShipmentStage");
     }
     return formIsValid;
   }
@@ -1045,7 +1053,7 @@ class ShippingDetails extends Component {
                             <label for="new-cust">ATD</label>
                         </div> */}
                         <div>
-                          <label>From Time Of Departure</label>
+                          <label>From Date Of Departure</label>
                           <DatePicker
                             id="FrDepDate"
                             selected={this.state.FrDepDate}
@@ -1060,7 +1068,7 @@ class ShippingDetails extends Component {
                       </div>
                       <div className="login-fields col-md-3">
                         <div>
-                          <label>To Time Of Departure</label>
+                          <label>To Date Of Departure</label>
                           <DatePicker
                             id="ToDepDate"
                             selected={this.state.ToDepDate}
@@ -1139,7 +1147,7 @@ class ShippingDetails extends Component {
                             <label for="new-cust">ATA</label>
                         </div> */}
                         <div>
-                          <label>From Time Of Arrival</label>
+                          <label>From Date Of Arrival</label>
                           <DatePicker
                             id="FrArrDate"
                             selected={this.state.FrArrDate}
@@ -1154,7 +1162,7 @@ class ShippingDetails extends Component {
                       </div>
                       <div className="login-fields col-md-3">
                         <div>
-                          <label>To Time Of Arrival</label>
+                          <label>To Date Of Arrival</label>
                           <DatePicker
                             id="ToArrDate"
                             selected={this.state.ToArrDate}

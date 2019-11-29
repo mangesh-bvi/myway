@@ -210,7 +210,8 @@ class NewRateSearch extends Component {
       currencyCode: "USD",
       TruckType: [],
       showCurr: false,
-      testSelection: false
+      testSelection: false,
+      errors: {}
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -257,16 +258,42 @@ class NewRateSearch extends Component {
   //     refertypeSelect: paramData.refertypeSelect
   //   });
   // }
+  handleValidation() {
+    debugger;
+    let errors = this.state.errors;
+    let formIsValid = true;
+
+    if (this.state.specialEquipment ==true && this.state.flattack_openTop.length == 0 && this.state.spacEqmtType.length == 0) {
+      formIsValid = false;
+      errors["equipmenttype"] = "Please select equipment type";
+    }
+
+    if(Object.getOwnPropertyNames(this.state.polfullAddData).length == 0 && this.state.fullAddressPOL.length == 0){
+      formIsValid = false;
+      errors["POLAddress"] = "Please select source";
+    }
+
+    if(Object.getOwnPropertyNames(this.state.podfullAddData).length == 0 && this.state.fullAddressPOL.length == 0){
+      formIsValid = false;
+      errors["PODAddress"] = "Please select destination";
+    }
+
+    this.setState({ errors: errors });
+    return formIsValid;
+  }
 
   HandleSearchButton() {
     let self = this;
-    if (this.state.currencyCode === "") {
-      this.setState({
-        showCurr: true
-      });
-    }
-    if (this.state.currencyCode !== "") {
-      this.props.history.push({ pathname: "rate-table", state: this.state });
+    if(this.handleValidation())
+    {
+      if (this.state.currencyCode === "") {
+        this.setState({
+          showCurr: true
+        });
+      }
+      if (this.state.currencyCode !== "") {
+        this.props.history.push({ pathname: "rate-table", state: this.state });
+      }
     }
   }
 
@@ -2830,7 +2857,9 @@ class NewRateSearch extends Component {
                           <div className="col-md-4 m-auto">
                             <div className="spe-equ">
                               <input
-                                type="text"
+                                type="number"
+                                minLength={1}
+                                
                                 onChange={this.HandleCMBtextChange.bind(this)}
                                 placeholder={
                                   this.state.modeoftransport != "AIR"
@@ -2927,6 +2956,7 @@ class NewRateSearch extends Component {
                         value={self.state.selected}
                         showNewOptionAtTop={false}
                       />
+                      
 
                       {/* <div className="spe-equ">
                       <input
@@ -2946,6 +2976,7 @@ class NewRateSearch extends Component {
                     <div id="equipAppend"></div>
 
                     {self.state.specialEquipment === true ? (
+                      <>
                       <div className="spe-equ mt-0">
                         <div className="equip-plus-cntr">
                           <Select
@@ -2966,7 +2997,14 @@ class NewRateSearch extends Component {
                             showNewOptionAtTop={false}
                           />
                         </div>
+                        
                       </div>
+                      <div className="spe-equ mt-0">
+                      <span className="equip-error">
+                      {this.state.errors["equipmenttype"]}
+                      </span>
+                      </div>
+                      </>
                     ) : null}
                     <div>
                       {/*  id="cbmInner" */}
@@ -3128,7 +3166,7 @@ class NewRateSearch extends Component {
 
               <div className="new-rate-cntr" id="address">
                 <div className="rate-title-cntr">
-                  <h3>Enter Addresses</h3>
+                  <h3>Source - Destination</h3>
                   <div className="iconSelection" id="addressIconCntr">
                     <p className="side-selection" id="addressName">
                       {/* {this.state.typesofMove} */}
@@ -3294,7 +3332,11 @@ class NewRateSearch extends Component {
                         />
                       )}
                     </div>
+                    <span className="equip-error">
+                      {this.state.errors["POLAddress"]}
+                    </span>
                   </div>
+                  
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
                       {this.state.modeoftransport === "AIR" ? (
@@ -3395,13 +3437,16 @@ class NewRateSearch extends Component {
                         />
                       )}
                     </div>
+                    <span className="equip-error">
+                      {this.state.errors["PODAddress"]}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="new-rate-cntr" id="location">
                 <div className="rate-title-cntr">
-                  <h3 className="mb-3">Select Location</h3>
+                  <h3 className="mb-3">Location</h3>
                   <div className="iconSelection" id="locationIconCntr">
                     <p className="side-selection" id="locationName">
                       {/* {this.state.typesofMove} */}
@@ -3456,6 +3501,7 @@ class NewRateSearch extends Component {
                 </div>
               </div>
               <div className="new-rate-cntr border-0">
+              <h3 className="mb-3">Currency</h3>
                 <Select
                   className="rate-dropdown mt-0"
                   closeMenuOnSelect={true}

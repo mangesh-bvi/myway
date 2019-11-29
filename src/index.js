@@ -48,6 +48,7 @@ import MyOrder from "./pages/MyOrder";
 import RateFinalizingStillBooking from "./pages/rateFinalizingStillBooking";
 import Reports from "./pages/reports";
 import ReportDetails from "./pages/report-details";
+import TrackShipment from "./pages/track-shipment";
 
 // import Exmaple from './pages/Example';
 
@@ -106,7 +107,7 @@ ReactDOM.render(
       path="/rate-finalizing-still-booking"
       component={RateFinalizingStillBooking}
     />
-
+    <Route exact path="/track-shipment" component={TrackShipment} />
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
   document.getElementById("root")

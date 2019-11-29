@@ -1456,7 +1456,7 @@ class AddUser extends React.Component {
           <div className="cls-rt">
             <NotificationContainer />
             <div>
-              <div class="title-sect title-border">
+              <div className="title-sect title-border">
                 {(() => {
                   if (this.props.location.state != undefined) {
                     return <h2>Edit User</h2>;
