@@ -707,6 +707,7 @@ class ShipmentPlanner extends Component {
   }
 
   companyChange = e => {
+    debugger;
     let self = this;
     document.getElementById("drpConsigneeCompany").selectedIndex = "0";
     let compArray = [];
@@ -728,6 +729,7 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       let optionItems = response.data.map(comp => (
         <option value={comp.MappingID}>{comp.MappedCompName}</option>
       ));
@@ -864,29 +866,23 @@ class ShipmentPlanner extends Component {
     });
   };
   toggleTransit() {
-    if(this.state.transitpopup != null)
-    {
-      if(this.state.transitpopup.length > 0)
-      {
+    if (this.state.transitpopup != null) {
+      if (this.state.transitpopup.length > 0) {
         this.setState(prevState => ({
           modalTransit: !prevState.modalTransit
         }));
       }
     }
-    
   }
   toggleDelivery() {
     debugger;
-    if(this.state.deliveryPopup != null)
-    {
-      if(this.state.deliveryPopup.length > 0)
-      {
+    if (this.state.deliveryPopup != null) {
+      if (this.state.deliveryPopup.length > 0) {
         this.setState(prevState => ({
           modalDelivery: !prevState.modalDelivery
         }));
       }
     }
-   
   }
   toggleVisual() {
     this.setState(prevState => ({
@@ -900,6 +896,7 @@ class ShipmentPlanner extends Component {
   }
 
   componentDidMount() {
+    debugger;
     let self = this;
     axios({
       method: "post",

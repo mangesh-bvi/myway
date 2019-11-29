@@ -237,49 +237,119 @@ class RateFinalizingStillBooking extends Component {
   HandleBookingUpdate() {
     debugger;
     const formData = new FormData();
-    var fData = this.state.FileData;
-    var cData = this.state.multiCBM;
+    var fData = [];
+    var cData = [];
 
-    for (let index = 0; index < this.state.selectedFile.length; index++) {
-      formData.append("file", this.state.selectedFile[index]);
+    for (let j = 0; j < this.state.FileData.length; j++) {
+      var fileObj = new Object();
+
+      fileObj.BookingID = this.state.FileData[j].BookingID;
+      fileObj.FTPFilePath = this.state.FileData[j].FilePath;
+      fileObj.DocumentID = this.state.FileData[j].DocumentID;
+
+      fData.push(fileObj);
     }
-    var paramData = {
-      BookingNo: this.state.Booking[0].strBooking_No,
-      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-      ShipperID: 2,
-      Shipper_Displayas: parseInt(this.state.Booking[0].ShipperID),
-      Shipper_AddressID: parseInt(this.state.Booking[0].Shipper_AddressID),
-      ShipperName: this.state.Booking[0].Shipper_Name,
-      ConsigneeID: parseInt(this.state.Booking[0].Consignee),
-      ConsigneeName: this.state.Booking[0].Consignee_Name,
-      Consignee_AddressID: parseInt(this.state.Booking[0].Consignee_AddressID),
-      Consignee_Displayas: this.state.Booking[0].Consignee_Displayas,
-      BuyerID: parseInt(this.state.Booking[0].BuyerID),
-      Buyer_AddressID: parseInt(this.state.Booking[0].Buyer_AddressID),
-      Buyer_Displayas: this.state.Booking[0].Buyer_Displayas,
-      BuyerName: this.state.Booking[0].Buyer_Name,
-      Mode: this.state.Booking[0].CargoType,
-      Commodity: parseInt(this.state.Booking[0].Commodity),
-      saleQuoteID: parseInt(this.state.Booking[0].saleQuoteID),
-      saleQuoteNo: this.state.Booking[0].saleQuoteNo,
-      saleQuoteLineID: parseInt(this.state.Booking[0].saleQuoteLineID),
-      // DefaultEntityTypeID:this.state.Booking[0].,
+    for (let j = 0; j < this.state.multiCBM.length; j++) {
+      var cargoObj = new Object();
 
-      NotifyID: Number(this.state.NotifyID),
-      Notify_AddressID: this.state.Notify_AddressID,
-      Notify_Displayas: this.state.Notify_Displayas,
-      NotifyName: this.state.NotifyName,
+      cargoObj.BookingPackID = this.state.multiCBM[j].BookingPackID;
+      cargoObj.PackageType = this.state.multiCBM[j].PackageType;
+      cargoObj.Quantity = this.state.multiCBM[j].QTY;
+      cargoObj.Lengths = this.state.multiCBM[j].Lengths;
+      cargoObj.Width = this.state.multiCBM[j].Width;
+      cargoObj.Height = this.state.multiCBM[j].Height;
+      cargoObj.GrossWt = this.state.multiCBM[j].GrossWeight;
+      cargoObj.VolumeWeight = this.state.multiCBM[j].VolumeWeight;
+      cargoObj.Volume = this.state.multiCBM[j].Volume;
 
-      BookingDocs: this.state.FileData,
-      BookingDim: this.state.multiCBM
-    };
+      cData.push(cargoObj);
+    }
+
+    // for (let index = 0; index < this.state.selectedFile.length; index++) {
+    //   formData.append("file", this.state.selectedFile[index]);
+    // }
+
+    formData.append("BookingNo", this.state.Booking[0].strBooking_No);
+    formData.append(
+      "MyWayUserID",
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
+    formData.append("ShipperID", parseInt(this.state.Booking[0].ShipperID));
+    formData.append(
+      "Shipper_Displayas",
+      parseInt(this.state.Booking[0].Shipper_Displayas)
+    );
+    formData.append(
+      "Shipper_AddressID",
+      parseInt(this.state.Booking[0].Shipper_AddressID)
+    );
+    formData.append("ShipperName", this.state.Booking[0].Shipper_Name);
+    formData.append("ConsigneID", parseInt(this.state.Booking[0].Consignee));
+    formData.append("ConsigneeName", this.state.Booking[0].Consignee_Name);
+    formData.append(
+      "Consignee_AddressID",
+      parseInt(this.state.Booking[0].Consignee_AddressID)
+    );
+    formData.append(
+      "Consignee_Displayas",
+      this.state.Booking[0].Consignee_Displayas
+    );
+    formData.append("BuyerID", parseInt(this.state.Booking[0].BuyerID));
+    formData.append(
+      "Buyer_AddressID",
+      parseInt(this.state.Booking[0].Buyer_AddressID)
+    );
+    formData.append("Buyer_Displayas", this.state.Booking[0].Buyer_Displayas);
+    formData.append("BuyerName", this.state.Booking[0].BuyerName);
+    formData.append("Mode", this.state.Booking[0].CargoType);
+    formData.append("Commodity", parseInt(this.state.Booking[0].Commodity));
+    formData.append("saleQuoteID", parseInt(this.state.Booking[0].saleQuoteID));
+    formData.append("saleQuoteNo", this.state.Booking[0].saleQuoteNo);
+    formData.append(
+      "saleQuoteLineID",
+      parseInt(this.state.Booking[0].saleQuoteLineID)
+    );
+    formData.append("NotifyID", parseInt(this.state.NotifyID));
+    formData.append("Notify_AddressID", this.state.Notify_AddressID);
+    formData.append("Notify_Displayas", this.state.Notify_Displayas);
+    formData.append("NotifyName", this.state.NotifyName);
+    formData.append("BookingDocs", fData);
+    formData.append("BookingDim", cData);
+    // var paramData = {
+    //   BookingNo: this.state.Booking[0].strBooking_No,
+    //   MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+    //   ShipperID: 2,
+    //   Shipper_Displayas: parseInt(this.state.Booking[0].ShipperID),
+    //   Shipper_AddressID: parseInt(this.state.Booking[0].Shipper_AddressID),
+    //   ShipperName: this.state.Booking[0].Shipper_Name,
+    //   ConsigneeID: parseInt(this.state.Booking[0].Consignee),
+    //   ConsigneeName: this.state.Booking[0].Consignee_Name,
+    //   Consignee_AddressID: parseInt(this.state.Booking[0].Consignee_AddressID),
+    //   Consignee_Displayas: this.state.Booking[0].Consignee_Displayas,
+    //   BuyerID: parseInt(this.state.Booking[0].BuyerID),
+    //   Buyer_AddressID: parseInt(this.state.Booking[0].Buyer_AddressID),
+    //   Buyer_Displayas: this.state.Booking[0].Buyer_Displayas,
+    //   BuyerName: this.state.Booking[0].BuyerName,
+    //   Mode: this.state.Booking[0].CargoType,
+    //   Commodity: parseInt(this.state.Booking[0].Commodity),
+    //   saleQuoteID: parseInt(this.state.Booking[0].saleQuoteID),
+    //   saleQuoteNo: this.state.Booking[0].saleQuoteNo,
+    //   saleQuoteLineID: parseInt(this.state.Booking[0].saleQuoteLineID),
+    //   NotifyID: parseInt(this.state.NotifyID),
+    //   Notify_AddressID: this.state.Notify_AddressID,
+    //   Notify_Displayas: this.state.Notify_Displayas,
+    //   NotifyName: this.state.NotifyName,
+
+    //   BookingDocs: fData,
+    //   BookingDim: cData
+    // };
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookingUpdation`,
 
       headers: authHeader(),
-      data: paramData
+      data: formData
     }).then(function(response) {
       debugger;
     });
@@ -325,98 +395,97 @@ class RateFinalizingStillBooking extends Component {
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     var bookingDetails = this.state.Booking;
 
-    if (bookingId !== "" && bookingId !== null) {
-
-      var DefaultEntityTypeID = 1;////ask to way it give parameter
-      var MyWayUserID = userId;
-      var ShipperID = Number(bookingDetails.ShipperID || 0);
-      var Shipper_Displayas = bookingDetails.Shipper_Displayas || "";
-      var Shipper_AddressID = Number(bookingDetails.Shipper_AddressID || 0);
-      var ShipperName = bookingDetails.Shipper_Name || "";
-      var ConsigneeID = Number(bookingDetails.Consignee || 0);
-      var ConsigneeName = bookingDetails.Consignee_Name || "";
-      var Consignee_AddressID = Number(bookingDetails.Consignee_AddressID || 0);
-      var Consignee_Displayas = bookingDetails.Consignee_Displayas || "";
-      var BuyerID = Number(bookingDetails.BuyerID || 0);
-      var Buyer_AddressID = Number(bookingDetails.Buyer_AddressID || 0);
-      var Buyer_Displayas = bookingDetails.Buyer_Displayas || "";
-      var BuyerName = bookingDetails.Buyer_Name || "";
-      var Mode = bookingDetails.CargoType || "";
-      var Commodity = Number(bookingDetails.Commodity || 0);
-      var saleQuoteID = Number(bookingDetails.saleQuoteID || 0);
-      var saleQuoteNo = bookingDetails.saleQuoteNo || "";
-      var saleQuoteLineID = Number(bookingDetails.saleQuoteLineID || 0);
-      var NotifyID = Number(bookingDetails.NotifyID || 0);
-      var Notify_AddressID = Number(bookingDetails.Notify_AddressID || 0);
-      var Notify_Displayas = bookingDetails.Notify_Displayas || "";
-      var NotifyName = bookingDetails.NotifyName || "";
-      var BookingDocs = [];
-      var BookingDim = [];
-      if (this.state.FileData.length > 0) {
-        for (let i = 0; i < this.state.FileData.length; i++) {
-          var fileObj = new Object();
-          fileObj.BookingID = bookingId;
-          fileObj.DocumentID = this.state.FileData[i].DocumentID;
-          fileObj.FTPFilePath = this.state.FileData[i].FilePath;
-          BookingDocs.push(fileObj);
-        }
+    var DefaultEntityTypeID = 1; ////ask to way it give parameter
+    var MyWayUserID = userId;
+    var ShipperID = Number(bookingDetails[0].ShipperID || 0);
+    var Shipper_Displayas = bookingDetails[0].Shipper_Displayas || "";
+    var Shipper_AddressID = Number(bookingDetails[0].Shipper_AddressID || 0);
+    var ShipperName = bookingDetails[0].Shipper_Name || "";
+    var ConsigneeID = Number(bookingDetails[0].Consignee || 0);
+    var ConsigneeName = bookingDetails[0].Consignee_Name || "";
+    var Consignee_AddressID = Number(
+      bookingDetails[0].Consignee_AddressID || 0
+    );
+    var Consignee_Displayas = bookingDetails[0].Consignee_Displayas || "";
+    var BuyerID = Number(bookingDetails[0].BuyerID || 0);
+    var Buyer_AddressID = Number(bookingDetails[0].Buyer_AddressID || 0);
+    var Buyer_Displayas = bookingDetails[0].Buyer_Displayas || "";
+    var BuyerName = bookingDetails[0].Buyer_Name || "";
+    var Mode = bookingDetails[0].CargoType;
+    var Commodity = Number(bookingDetails[0].Commodity || 0);
+    var saleQuoteID = Number(bookingDetails[0].saleQuoteID || 0);
+    var saleQuoteNo = bookingDetails[0].saleQuoteNo || "";
+    var saleQuoteLineID = Number(bookingDetails[0].saleQuoteLineID || 0);
+    var NotifyID = Number(bookingDetails[0].NotifyID || 0);
+    var Notify_AddressID = Number(bookingDetails[0].Notify_AddressID || 0);
+    var Notify_Displayas = bookingDetails[0].Notify_Displayas || "";
+    var NotifyName = bookingDetails[0].NotifyName || "";
+    var BookingDocs = [];
+    var BookingDim = [];
+    if (this.state.FileData.length > 0) {
+      for (let i = 0; i < this.state.FileData.length; i++) {
+        var fileObj = new Object();
+        fileObj.BookingID = bookingId;
+        fileObj.DocumentID = this.state.FileData[i].DocumentID;
+        fileObj.FTPFilePath = this.state.FileData[i].FilePath;
+        BookingDocs.push(fileObj);
       }
-      if (this.state.multiCBM.length > 0) {
-        for (let i = 0; i < this.state.multiCBM.length; i++) {
-          var cargoData = new Object();
-
-          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-          cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-          cargoData.Lengths = this.state.multiCBM[i].Lengths || 0;
-          cargoData.Width = this.state.multiCBM[i].Width || 0;
-          cargoData.Height = this.state.multiCBM[i].Height || 0;
-          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-
-          BookingDim.push(cargoData);
-        }
-      }
-
-      var paramData = {
-        MyWayUserID: MyWayUserID,
-        ShipperID: ShipperID,
-        Shipper_Displayas: Shipper_Displayas,
-        Shipper_AddressID: Shipper_AddressID,
-        ShipperName: ShipperName,
-        ConsigneeID: ConsigneeID,
-        ConsigneeName: ConsigneeName,
-        Consignee_AddressID: Consignee_AddressID,
-        Consignee_Displayas: Consignee_Displayas,
-        BuyerID: BuyerID,
-        Buyer_AddressID: Buyer_AddressID,
-        Buyer_Displayas: Buyer_Displayas,
-        BuyerName: BuyerName,
-        Mode: Mode,
-        Commodity: Commodity,
-        saleQuoteID: saleQuoteID,
-        saleQuoteNo: saleQuoteNo,
-        saleQuoteLineID: saleQuoteLineID,
-        DefaultEntityTypeID: DefaultEntityTypeID,
-        NotifyID: NotifyID,
-        Notify_AddressID: Notify_AddressID,
-        Notify_Displayas: Notify_Displayas,
-        NotifyName: NotifyName,
-        BookingDocs: BookingDocs,
-        BookingDim: BookingDim
-      };
-
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/BookingInsertion`,
-        data: paramData,
-
-        headers: authHeader()
-      }).then(function(response) {
-        debugger;
-      });
     }
+    if (this.state.multiCBM.length > 0) {
+      for (let i = 0; i < this.state.multiCBM.length; i++) {
+        var cargoData = new Object();
+
+        cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+        cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+        cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
+        cargoData.Lengths = this.state.multiCBM[i].Lengths || 0;
+        cargoData.Width = this.state.multiCBM[i].Width || 0;
+        cargoData.Height = this.state.multiCBM[i].Height || 0;
+        cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+        cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+        cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+
+        BookingDim.push(cargoData);
+      }
+    }
+
+    var paramData = {
+      MyWayUserID: MyWayUserID,
+      ShipperID: ShipperID,
+      Shipper_Displayas: Shipper_Displayas,
+      Shipper_AddressID: Shipper_AddressID,
+      ShipperName: ShipperName,
+      ConsigneeID: ConsigneeID,
+      ConsigneeName: ConsigneeName,
+      Consignee_AddressID: Consignee_AddressID,
+      Consignee_Displayas: Consignee_Displayas,
+      BuyerID: BuyerID,
+      Buyer_AddressID: Buyer_AddressID,
+      Buyer_Displayas: Buyer_Displayas,
+      BuyerName: BuyerName,
+      Mode: Mode,
+      Commodity: Commodity,
+      saleQuoteID: saleQuoteID,
+      saleQuoteNo: saleQuoteNo,
+      saleQuoteLineID: saleQuoteLineID,
+      DefaultEntityTypeID: DefaultEntityTypeID,
+      NotifyID: NotifyID,
+      Notify_AddressID: Notify_AddressID,
+      Notify_Displayas: Notify_Displayas,
+      NotifyName: NotifyName,
+      BookingDocs: BookingDocs,
+      BookingDim: BookingDim
+    };
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookingInsertion`,
+      data: paramData,
+
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
   }
 
   ////this methos for bookig details BookigGridDetailsList
@@ -620,27 +689,29 @@ class RateFinalizingStillBooking extends Component {
             />
           </div>
         </div>
-        {i === 0 ? (
-          <div className="">
-            <div className="spe-equ">
-              <i
-                className="fa fa-plus mt-2"
-                aria-hidden="true"
-                onClick={this.addMultiCBM.bind(this)}
-              ></i>
+        {this.state.copy === false ? (
+          i === 0 ? (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addMultiCBM.bind(this)}
+                ></i>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="">
-            <div className="spe-equ">
-              <i
-                className="fa fa-minus mt-2"
-                aria-hidden="true"
-                onClick={this.removeMultiCBM.bind(this, i)}
-              ></i>
+          ) : (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-minus mt-2"
+                  aria-hidden="true"
+                  onClick={this.removeMultiCBM.bind(this, i)}
+                ></i>
+              </div>
             </div>
-          </div>
-        )}
+          )
+        ) : null}
         {/* {this.state.multiCBM.length > 1 ? (
           <div className="">
             <div className="spe-equ">
@@ -1334,9 +1405,11 @@ class RateFinalizingStillBooking extends Component {
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
               <h2>
-                {this.state.copy === false
-                  ? "Booking Details"
-                  : "Booking Clone"}
+                {this.state.Booking.length > 0 && this.state.copy === false
+                  ? "Booking Details " + this.state.Booking[0].strBooking_No
+                  : this.state.Booking.length > 0 && this.state.copy === true
+                  ? "Booking Clone " + this.state.Booking[0].strBooking_No
+                  : ""}
               </h2>
             </div>
             <div className="row">
@@ -1427,38 +1500,39 @@ class RateFinalizingStillBooking extends Component {
                         columns={[
                           {
                             columns: [
-                              // {
-                              //   Cell: row => {
-                              //     i++;
-                              //     return (
-                              //       <React.Fragment>
-                              //         <div className="d-flex align-items-center">
-                              //           <div className="cont-costs still-maersk rate-tab-check p-0">
-                              //             <div className="remember-forgot d-block m-0">
-                              //               <input
-                              //                 id={"maersk-logo" + i}
-                              //                 type="checkbox"
-                              //                 name={"rate-tab-check"}
-                              //               />
-                              //               <label
-                              //                 htmlFor={"maersk-logo" + i}
-                              //               ></label>
-                              //             </div>
-                              //           </div>
-                              //           <div>
-                              //             <p className="details-title">
-                              //               <img
-                              //                 src={maersk}
-                              //                 alt="maersk icon"
-                              //               />
-                              //             </p>
-                              //           </div>
-                              //         </div>
-                              //       </React.Fragment>
-                              //     );
-                              //   },
-                              //   width: 200
-                              // },
+                              {
+                                Cell: row => {
+                                  i++;
+                                  return (
+                                    <React.Fragment>
+                                      <div className="d-flex align-items-center">
+                                        {/* <div className="cont-costs still-maersk rate-tab-check p-0">
+                                          <div className="remember-forgot d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div> */}
+                                        <div>
+                                          <p className="details-title">
+                                            <img
+                                              src={maersk}
+                                              alt="maersk icon"
+                                            />
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </React.Fragment>
+                                  );
+                                },
+                                accessor: "lineName",
+                                width: 200
+                              },
                               {
                                 accessor: "POL",
                                 Cell: row => {
