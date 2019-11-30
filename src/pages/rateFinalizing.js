@@ -70,14 +70,11 @@ class RateFinalizing extends Component {
       valueheight :"",
       valueweight :"",
       valuecbm :"",
-<<<<<<< HEAD
-      filterrateSubDetails:[]
-=======
+      filterrateSubDetails:[],
       selectedCommodity:"",
       accountcustname:"",
       toggleIsEdit:true,
       custNotification:""
->>>>>>> 820350d0a83097d5184142dec709de5c98c93ebb
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
