@@ -13,6 +13,7 @@ import { encryption, convertToPlain } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
+import Edit from "./../assets/img/pencil.png";
 
 class RateFinalizingStillBooking extends Component {
   constructor(props) {
@@ -119,6 +120,18 @@ class RateFinalizingStillBooking extends Component {
     }
   }
 
+  HandleFileUload() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookigFileUpload`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
   ////Package Type Dropdata DataBind Methos
 
   HandlePackgeTypeData() {
@@ -1393,8 +1406,7 @@ class RateFinalizingStillBooking extends Component {
       className = "butn m-0";
     }
 
-    var i = 0;
-
+    let i = 0;
     return (
       <React.Fragment>
         <Headers />
@@ -2063,23 +2075,131 @@ class RateFinalizingStillBooking extends Component {
                         </div>
                       </div>
                     </div>
-                    <div className="row">
+                    <div>
                       <div
                         className="title-border py-3"
                         style={{ width: "100%" }}
                       >
                         <h3>Cargo Details</h3>
                       </div>
-                      <div>
+                    </div>
+                    <div className="row ratefinalpgn">
+                      {/* <div>
                         {this.state.eqmtType.length > 0
                           ? this.NewcreateUI()
                           : null}
-                      </div>
-                      <div>
-                        {this.state.multiCBM.length > 0
+                      </div> */}
+                      <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              // {
+                              //   Header: "Booking Pack",
+                              //   accessor: "BookingPackID",
+                              //   width:120
+                              // },
+                              {
+                                Header: "Container Name",
+                                accessor: "ContainerName"
+                              },
+                              {
+                                Header: "ContainerCode",
+                                accessor: "ContainerCode"
+                              },
+
+                              {
+                                Header: "Container Count",
+                                accessor: "ContainerCount"
+                              },
+
+                              {
+                                Header: "Action",
+                                Cell: row => {
+                                  return (
+                                    <div className="action-cntr">
+                                      <img
+                                        className="actionicon"
+                                        src={Edit}
+                                        alt="view-icon"
+                                        // onClick={e => this.HandleDocumentView(e, row)}
+                                      />
+                                    </div>
+                                  );
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.eqmtType}
+                        minRows={0}
+                        showPagination={false}
+                        // className="-striped -highlight"
+                      />
+
+                      <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              // {
+                              //   Header: "Booking Pack",
+                              //   accessor: "BookingPackID",
+                              //   width:120
+                              // },
+                              {
+                                Header: "Package Type",
+                                accessor: "PackageType"
+                              },
+                              {
+                                Header: "Quantity",
+                                accessor: "QTY"
+                              },
+                              {
+                                Header: "Length",
+                                accessor: "Lengths"
+                              },
+                              {
+                                Header: "Width",
+                                accessor: "Width"
+                              },
+                              {
+                                Header: "Height",
+                                accessor: "Height"
+                              },
+                              {
+                                Header: "Gross Weight",
+                                accessor: "GrossWeight"
+                              },
+                              {
+                                Header: "Volume Weight",
+                                accessor: "VolumeWeight"
+                              },
+                              {
+                                Header: "Action",
+                                Cell: row => {
+                                  return (
+                                    <div className="action-cntr">
+                                      <img
+                                        className="actionicon"
+                                        src={Edit}
+                                        alt="view-icon"
+                                        // onClick={e => this.HandleDocumentView(e, row)}
+                                      />
+                                    </div>
+                                  );
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.multiCBM}
+                        minRows={0}
+                        showPagination={false}
+                        className="-striped -highlight"
+                      />
+
+                      {/* {this.state.multiCBM.length > 0
                           ? this.CreateMultiCBM()
-                          : null}
-                      </div>
+                          : null} */}
                     </div>
                     <div className="row cargodetailsB">
                       {/* <ReactTable
