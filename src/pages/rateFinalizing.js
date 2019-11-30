@@ -1892,17 +1892,15 @@ class RateFinalizing extends Component {
                                     <>
                                       <p className="details-title">Price</p>
                                       <p className="details-para">
-                                        {row.original.TotalAmount !== "" &&
-                                          row.original.TotalAmount !== null
-                                          ? row.original.TotalAmount +
-                                          " " +
-                                          row.original.BaseCurrency
-                                          : ""}
+                                        {row.original.Total !== "" &&
+                                          row.original.Total !== null && row.original.Total !=="undefined"
+                                          ? row.original.Total :
+                                          " "}
                                       </p>
                                     </>
                                   );
                                 },
-                                accessor: "baseFreightFee",
+                                accessor: "Total",
                                 filterable: true,
                                 minWidth: 80
                               }
@@ -2010,9 +2008,9 @@ class RateFinalizing extends Component {
                                         Cell: row => {
                                           return (
                                             <>
-                                              {row.original.TotalAmount !== "" &&
-                                                row.original.TotalAmount !== null
-                                                ? row.original.TotalAmount +
+                                              {row.original.Total !== "" &&
+                                                row.original.Total !== null
+                                                ? row.original.Total +
                                                 " " +
                                                 row.original.BaseCurrency
                                                 : ""}
@@ -2020,7 +2018,7 @@ class RateFinalizing extends Component {
                                           );
                                         },
                                         Header: "Final Payment",
-                                        accessor: "TotalAmount"
+                                        accessor: "Total"
                                       }
                                     ]
                                   }

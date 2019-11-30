@@ -1661,6 +1661,9 @@ class RateTable extends Component {
       modalSpot: !prevState.modalSpot
     }));
   }
+  toggleSpotCloseModal(){
+    this.setState({modalSpot:false});
+  }
 
   HandlePOLPODAutosearch(field, i, e) {
     let self = this;
@@ -3650,6 +3653,12 @@ class RateTable extends Component {
                     >
                       Send
                     </Button>
+                    <Button
+                    className="butn"
+                    onClick={this.toggleSpotCloseModal.bind(this)}
+                  >
+                    Cancel
+                  </Button>
                   </div>
                 </ModalBody>
               </Modal>
