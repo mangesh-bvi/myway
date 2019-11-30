@@ -3503,5 +3503,8 @@ img {
   padding: 4px 12px !important;
   font-size: 22px !important;
 }
+.spitDesign {
+  max-width: 800px;
+}
 /* rate-table css End by Shlok */
 

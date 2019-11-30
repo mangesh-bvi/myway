@@ -159,6 +159,7 @@ class SpotRateDetails extends Component {
   }
 
   HandleShipmentDetails(SpotRateID) {
+    debugger
     var self = this;
     if (SpotRateID != undefined) {
       if (SpotRateID != null) {
@@ -727,9 +728,9 @@ class SpotRateDetails extends Component {
                         </select>
                         
                       </div>
-                      <div className="col-md-7 login-fields">
+                      <div className="col-md-12 login-fields">
                         <p className="details-title">Cargo Details</p>
-                        <div className="cls-rt">
+                        <div className="cls-rt" style={{width:'100%'}}>
                           <div className="ag-fresh">
                         {/* {(() => {
                         if (spotrateresponseTbl1.length>0) {
@@ -841,7 +842,7 @@ class SpotRateDetails extends Component {
           {/* ----------------------Rate Query History Modal------------------- */}
 
           <Modal
-            className="amnt-popup"
+            className="amnt-popup spitDesign"
             isOpen={this.state.historyModal}
             toggle={this.toggleSpotHistory}
             centered={true}
