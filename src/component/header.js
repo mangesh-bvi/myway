@@ -40,6 +40,7 @@ class Header extends Component {
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
+    this.RedirectoShipment = this.RedirectoShipment.bind(this);
   }
 
   componentDidMount() {
@@ -129,14 +130,17 @@ class Header extends Component {
         if (response.data != null) {
           if (response.data.Table != null) {
             if (response.data.Table.length > 0) {
+          var date =  today.toJSON();
+          date = "2019-10-21";
               self.setState({
                 notificationData: response.data.Table.filter(
-                  item => item.ActivityDate > today.toJSON()
+                  item => item.ActivityDate > date
                 )
               });
 
               document.getElementById("Notificationcount").innerHTML =
                 self.state.notificationData.length;
+                self.forceUpdate();
             }
           }
         }
@@ -263,9 +267,21 @@ class Header extends Component {
     });
   }
 
+
+  RedirectoShipment(RefNo) {
+    debugger;
+    // this.props.history.push({
+    //   pathname: "shipment-details",
+    //   state: { detail: RefNo }
+    // });
+    window.location.href = "shipment-details?hblno="+RefNo;
+  }
+
   render() {
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
-      <div key={i}>
+      <div key={i}  onClick={() => {
+        this.RedirectoShipment(item.RefNo);
+      }} >
         <p>
           Shipment: <a> {item.Product}</a>
         </p>
@@ -366,6 +382,7 @@ class Header extends Component {
                           <option value="0">Select</option>
                           {/* <option value="Shipment">Shipment</option> */}
                           {optionItems}
+                          <option value="Subject">Subject</option>
                         </select>
                       </div>
                       <div className="rename-cntr login-fields">

@@ -135,7 +135,18 @@ class QuoteTable extends Component {
     var type = e.target.getAttribute('data-type')
     this.props.history.push({
       pathname: "rate-finalizing",
-      state: { Quote: Quote, type: type }
+      state: { Quote: Quote, type: type, isediting:true }
+    });
+
+  }
+
+  Copyfinalizing(e)
+  {
+    var Quote = e.target.getAttribute('data-Quote')
+    var type = e.target.getAttribute('data-type')
+    this.props.history.push({
+      pathname: "rate-finalizing",
+      state: { Quote: Quote, type: type, isediting:true , isCopy:true }
     });
 
   }
@@ -217,11 +228,12 @@ class QuoteTable extends Component {
                                 />
                               </a>
                               {/* </span> */}
-                              <a href="/rate-finalizing">
+                              <a  onClick={this.Copyfinalizing.bind(this)}>
                                 <img
                                   className="actionicon"
                                   src={Copy}
                                   alt="view-icon"
+                                  data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
                                 />
                               </a>
                             </div>
@@ -247,11 +259,12 @@ class QuoteTable extends Component {
                               />
                             </a>
                             {/* </span> */}
-                            <a href="#">
+                            <a onClick={this.Copyfinalizing.bind(this)}>
                               <img
                                 className="actionicon"
                                 src={Copy}
                                 alt="view-icon"
+                                data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
                               />
                             </a>
                           </div>
