@@ -709,35 +709,37 @@ class ShipmentPlanner extends Component {
   companyChange = e => {
     debugger;
     let self = this;
-    document.getElementById("drpConsigneeCompany").selectedIndex = "0";
-    let compArray = [];
+    var selectComp = document.getElementById("drpCompany").selectedIndex;
+    let compArray = this.state.companydrp[selectComp];
 
-    for (let index = 0; index < this.state.companydrp.length; index++) {
-      if (this.state.companydrp[index].MyCompID == e.target.value) {
-        compArray = this.state.companydrp[index];
-        break;
-      }
-    }
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/FetchConsigneeCompany`,
-      data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        MyCompID: compArray.MyCompID,
-        MyCompLocationID: compArray.MyCompLocationID,
-        MyCompLocationType: compArray.MyCompLocationType
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      let optionItems = response.data.map(comp => (
-        <option value={comp.MappingID}>{comp.MappedCompName}</option>
-      ));
-      self.setState({
-        consigneedrp: optionItems,
-        markerposition: { lat: 32.24165126, lng: 77.78319374 }
+    // for (let index = 0; index < this.state.companydrp.length; index++) {
+    //   if (this.state.companydrp[index].MyCompID == e.target.value) {
+    //     compArray = this.state.companydrp[index];
+    //     break;
+    //   }
+    // }
+    if (compArray!==null) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/FetchConsigneeCompany`,
+        data: {
+          UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+          MyCompID: compArray.MyCompID,
+          MyCompLocationID: compArray.MyCompLocationID,
+          MyCompLocationType: compArray.MyCompLocationType
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        let optionItems = response.data.map(comp => (
+          <option value={comp.MappingID}>{comp.MappedCompName}</option>
+        ));
+        self.setState({
+          consigneedrp: optionItems,
+          markerposition: { lat: 32.24165126, lng: 77.78319374 }
+        });
       });
-    });
+    }
   };
 
   consigneeChange = e => {
@@ -841,6 +843,7 @@ class ShipmentPlanner extends Component {
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
+      debugger
       var deliveryData = response.data.Table1;
       if (deliveryData != "undefined" && deliveryData != null) {
         self.setState({ deliveryPopup: deliveryData });
@@ -947,9 +950,9 @@ class ShipmentPlanner extends Component {
 
     function TransitionImage(props) {
       const imgType = props.imgType;
-      if (imgType == "Road") {
+      if (imgType === "Road") {
         return <img src={Truck}></img>;
-      } else if (imgType == "Air-Midnight Wonder") {
+      } else if (imgType === "Air-Midnight Wonder" ||imgType === "Air-Flash") {
         return <img src={Plane}></img>;
       } else {
         return <img src={Ship}></img>;
