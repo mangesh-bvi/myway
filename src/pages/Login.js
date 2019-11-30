@@ -276,7 +276,7 @@ class Login extends React.Component {
       console.log("axios" + new Date());
       axios({
         method: "post",
-        url: "http://vizio.atafreight.com/mywayapi/Login",
+        url: `${appSettings.APIURL}/Login`,
         data: {
           UserName: username,
           Password: password,
@@ -287,7 +287,7 @@ class Login extends React.Component {
       })
         .then(function(response) {
           debugger;
-          console.log(response.data, "--------------------login data");
+          
 
           var data = response.data;
           window.localStorage.setItem("st", new Date());
@@ -349,9 +349,20 @@ class Login extends React.Component {
         })
         .catch(error => {
           this.setState({ loading: false });
-          var temperror = error.response.data;
-          var err = temperror.split(":");
+          var temperror = "";
+          if(error.response == undefined)
+          {
+            temperror = error.message;
+            NotificationManager.error(temperror);
+          }
+          else
+          {
+            temperror = error.response.data;
+            var err = temperror.split(":");
           NotificationManager.error(err[1].replace("}", ""));
+          }
+          
+          
           // this.state.usernamee = '';
           this.setState({ username: "", password: "" });
           setTimeout(5000);

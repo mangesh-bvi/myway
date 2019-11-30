@@ -586,7 +586,7 @@ class AddUser extends React.Component {
     let formIsValid = true;
     axios({
       method: "post",
-      url: "http://vizio.atafreight.com/MyWayAPI/CheckEmailIDExists",
+      url: `${appSettings.APIURL}/CheckEmailIDExists`,
       data: {
         EmailID: this.state.fields["emailid"],
         ProfileType: 1
@@ -631,7 +631,7 @@ class AddUser extends React.Component {
     let formIsValid = true;
     axios({
       method: "post",
-      url: "http://vizio.atafreight.com/MyWayAPI/CheckUserNameExists",
+      url: `${appSettings.APIURL}/CheckUserNameExists`,
       data: {
         UserName: this.state.fields["username"]
       },
@@ -1077,7 +1077,7 @@ class AddUser extends React.Component {
     if (this.handleValidation()) {
       axios({
         method: "post",
-        url: "http://vizio.atafreight.com/MyWayAPI/CreateUserWithDoc",
+        url: `${appSettings.APIURL}/CreateUserWithDoc`,
         data: docData,
         // {
         //   UserName: this.state.fields["username"],
@@ -1282,7 +1282,7 @@ class AddUser extends React.Component {
     if (this.handleValidation()) {
       axios({
         method: "post",
-        url: "http://vizio.atafreight.com/MyWayAPI/UpdateUserWithDoc",
+        url: `${appSettings.APIURL}/UpdateUserWithDoc`,
         data: docData,
         // {
         //   UserID:userid,

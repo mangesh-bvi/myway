@@ -60,6 +60,7 @@ class RateFinalizing extends Component {
       CommodityID: "",
       destAddress: [],
       pickUpAddress: [],
+      commodityData: [],
       modalPreview: false,
       packageTypeData:[],
       currentPackageType:"",
@@ -69,7 +70,14 @@ class RateFinalizing extends Component {
       valueheight :"",
       valueweight :"",
       valuecbm :"",
+<<<<<<< HEAD
       filterrateSubDetails:[]
+=======
+      selectedCommodity:"",
+      accountcustname:"",
+      toggleIsEdit:true,
+      custNotification:""
+>>>>>>> 820350d0a83097d5184142dec709de5c98c93ebb
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -80,12 +88,17 @@ class RateFinalizing extends Component {
     this.HandleLocalCharges = this.HandleLocalCharges.bind(this);
     this.togglePreview = this.togglePreview.bind(this);
     this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this)
+    this.HandleCommodityDropdown=this.HandleCommodityDropdown.bind(this)
   }
 
   componentDidMount() {
     debugger;
 
     if (typeof this.props.location.state !== "undefined") {
+
+      if(this.props.location.state.Quote == undefined)
+      {
+
       var rateDetails = this.props.location.state.selectedDataRow;
       var rateSubDetails = this.props.location.state.RateSubDetails;
       var containerLoadType = this.props.location.state.containerLoadType;
@@ -248,24 +261,151 @@ class RateFinalizing extends Component {
       this.state.currencyCode = currencyCode;
       
 
-      this.HandleLocalCharges();
-      this.HandleSurCharges();
-
-
-
-      if (encryption(window.localStorage.getItem("usertype"), "desc") == "Customer") {
-        this.setState({ toggleAddProfitBtn: false });
-      }
+     
     }
+    else
+    {
+     
+      var qData = this.props.location.state;
+      this.HandleSalesQuoteView(qData);
+    }
+    this.HandleCommodityDropdown();
     // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
     // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
     // this.setState({
     //   rateDetails: rateDetails,
     //   rateSubDetails: rateSubDetails
     // });
+  }
+  
 
+  this.HandleLocalCharges();
+  this.HandleSurCharges();
+
+  if (encryption(window.localStorage.getItem("usertype"), "desc") == "Customer") {
+    this.setState({ toggleAddProfitBtn: false });
+  }
   }
 
+  HandleSalesQuoteView(param) {
+    debugger;
+    var SalesQuoteNumber =param.Quote;
+    var type=param.type;
+    var isediting = param.isediting;
+    //alert(param.detail.Status)
+    // "SHA-SQFCL-NOV19-05020"
+      this.setState({
+        toggleIsEdit:false
+      })
+    var SalesQuoteViewdata = {
+      Mode: type,
+      //SalesQuoteNumber: param.Quotes,
+      SalesQuoteNumber: SalesQuoteNumber
+    };
+    this.setState({
+      QuoteNumber: SalesQuoteNumber
+    });
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteView`,
+      // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
+      data: SalesQuoteViewdata,
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+
+        var  TypeofMove = "";
+        var IncoTerms =  "";
+        var CargoDetailsArr = [];
+        //accountcustname
+        if(response != null)
+        {
+          if(response.data != null)
+          {
+            if(response.data.Table != null)
+            {
+              if(response.data.Table.length > 0)
+              {
+                TypeofMove = response.data.Table[0].TypeOfMove;
+                IncoTerms = response.data.Table[0].IncoTerm;
+
+                self.setState({
+                  accountcustname : response.data.Table[0].CompanyName == undefined ? response.data.Table[0].company_name : response.data.Table[0].CompanyName,
+                  custAddress: response.data.Table[0].Company_Address,
+                  custNotification: response.data.Table[0].ContactName == undefined ? response.data.Table[0].contact_name : response.data.Table[0].ContactName,
+                  ModeOfTransport: response.data.Table[0].ModeOfTransport,
+                  shipmentType:  response.data.Table[0].ShipmentType,
+                  ContainerLoad: param.Type,
+                  EquipmentTypes:".20 DC",
+                  SpecialEquipment:".Refer Type (20 degrees)",
+                  HazMatUnstackable:".",
+                  modeoftransport:  TypeofMove,
+                  IncoTerms:  IncoTerms
+                });
+              }
+            }
+            if(response.data.Table1 != null)
+            {
+              if(response.data.Table1.length > 0)
+              {
+                if(TypeofMove == null || TypeofMove == "" || TypeofMove == undefined)
+                {
+                  TypeofMove = response.data.Table1[0].TypeOfMove;
+                }
+                if(IncoTerms == null || IncoTerms == "" || IncoTerms == undefined)
+                {
+                  IncoTerms = response.data.Table1[0].IncoTerm;
+                }
+
+                self.setState({
+                  IncoTerms: IncoTerms,
+                  modeoftransport: TypeofMove,
+                  //EquipmentTypes: response.data.Table1[0].ContainerCode,
+                  Commodity: response.data.Table1[0].Commodity,
+                  CommodityID:response.data.Table1[0].Commodity,
+                  selectedCommodity: response.data.Table1[0].Commodity
+                });
+              }
+            }
+            if(response.data.Table3 != null)
+            {
+              if(response.data.Table3.length > 0)
+              {
+                var table = response.data.Table3;
+                for(var i = 0; i < table.length; i++)
+                {
+                  CargoDetailsArr.push({PackageType:table[i].PackageType, SpecialContainerCode: table[i].PackageType+"_"+i, ContainerType: table[i].PackageType, "Packaging": "-", Quantity: table[i].Quantity, Lenght: table[i].Length, Width: table[i].Width, Height: table[i].height, Weight: table[i].GrossWeight, Gross_Weight: "-", Temperature: "-", CBM: "-", Volume: "-", VolumeWeight: "-", Editable: true })
+                }
+                
+              }
+              else{
+                CargoDetailsArr.push({Width:"No Data Found"})
+              }
+            }
+            else{
+              CargoDetailsArr.push({Width:"No Data Found"})
+            }
+            self.setState({
+              CargoDetailsArr:CargoDetailsArr
+            })
+          }
+        }
+        var rateDetails = response.data.Table1;
+        self.setState({
+          rateDetails: rateDetails,
+          rateSubDetails: response.data.Table2,
+          multiCBM:response.data.Table3,
+        });
+        self.forceUpdate();
+        //console.log(response);
+      })
+      .catch(error => {
+        debugger;
+        console.log(error.response);
+      });
+  }
 
   HandleLocalCharges() {
     let self = this;
@@ -408,7 +548,7 @@ class RateFinalizing extends Component {
   commoditySelect(e) {
     this.setState({
       commoditySelect: e.target.value,
-      CommodityID: ""
+      CommodityID: e.target.value,
     });
 
   }
@@ -1063,6 +1203,23 @@ class RateFinalizing extends Component {
     }
 
   }
+  ////this method for Commodity drop-down bind
+  HandleCommodityDropdown() {
+    debugger
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CommodityDropdown`,
+      data: {},
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+
+      var commodityData = response.data.Table;
+      self.setState({ commodityData }); ///problem not working setstat undefined
+    });
+  }
   newMultiCBMHandleChange(i, e) {
     const { name, value } = e.target;
 
@@ -1226,7 +1383,7 @@ class RateFinalizing extends Component {
 
     }
 
-    var containerLoadType = this.props.location.state.containerLoadType
+    // var containerLoadType = this.props.location.state.containerLoadType
     const { CargoDetailsArr } = this.state;
     return (
       <React.Fragment>
@@ -1801,7 +1958,7 @@ class RateFinalizing extends Component {
                         //   });
                         // }}
                         data={this.state.rateDetails}
-                        defaultPageSize={10}
+                        defaultPageSize={1000}
                         className="-striped -highlight"
                         minRows={1}
                         showPagination={false}
@@ -1875,7 +2032,7 @@ class RateFinalizing extends Component {
                                   }
                                 ]}
                                 showPagination={false}
-                                defaultPageSize={5}
+                                defaultPageSize={1000}
                               />
                             </div>
                           );
@@ -2021,12 +2178,14 @@ class RateFinalizing extends Component {
 
                   <div className="rate-final-contr">
                     <div className="text-center">
+                    {this.state.toggleIsEdit && (
                             <button
                               onClick={this.toggleRequest}
                               className="butn more-padd m-0"
                             >
                               Request Change
                             </button>
+                    )}
                     </div>
 
                     <div className="title-border py-3">
@@ -2131,7 +2290,7 @@ class RateFinalizing extends Component {
                         <div className="col-md-4">
                           <p className="details-title">Account/Customer</p>
                           {this.state.toggleAddProfitBtn && (
-                            <p className="details-para">abcd</p>
+                            <p className="details-para">{this.state.accountcustname}</p>
                           )}
                           {!this.state.toggleAddProfitBtn && (
                             <p className="details-para">{encryption(window.localStorage.getItem("username"), "desc")}</p>
@@ -2145,7 +2304,7 @@ class RateFinalizing extends Component {
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
-                          <p className="details-para">Raj Mahlotra</p>
+                          <p className="details-para">{this.state.custNotification}</p>
                         </div>
                       </div>
                     </div>
@@ -2162,14 +2321,14 @@ class RateFinalizing extends Component {
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select onChange={this.commoditySelect.bind(this)}>
+                        <select disabled={true}
+                          value={this.state.CommodityID} onChange={this.commoditySelect.bind(this)}>
                           <option value="select">Select</option>
-                          {/* {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity} >
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.id}>
                               {item.Commodity}
                             </option>
-                          ))} */}
-                          {commodityDatadrp}
+                          ))}
                         </select>
                       </div>
                       {/* <div className="col-md-6 login-fields">
