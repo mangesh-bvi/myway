@@ -8,6 +8,11 @@ import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class SpotRateDetails extends Component {
   constructor(props) {
@@ -223,7 +228,7 @@ class SpotRateDetails extends Component {
             debugger;
             var temperror = error.response.data;
             var err = temperror.split(":");
-            alert(err[1].replace("}", ""));
+            NotificationManager.error(err[1].replace("}", ""));
           });
       }
     }

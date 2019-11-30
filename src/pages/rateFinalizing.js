@@ -3,6 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
+import ATA from "./../assets/img/ATAFreight_console.png";
 import Dummy from "./../assets/dummy.pdf";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
@@ -13,6 +14,11 @@ import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
 import Copy from "./../assets/img/copy.png";
 import { thisExpression } from "@babel/types";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -1007,7 +1013,7 @@ class RateFinalizing extends Component {
         if (response.data != null) {
           if (response.data.Table != null) {
             if (response.data.Table.length > 0) {
-              alert(response.data.Table[0].Message)
+              NotificationManager.error(response.data.Table[0].Message)
               window.location.href = "quote-table";
             }
           }
@@ -2936,6 +2942,18 @@ class RateFinalizing extends Component {
       
             <div className="modal-body"> */}
             <button type="button" className="close" data-dismiss="modal">&times;</button>
+                    <div className="row" style={{margin:0}}>
+                  <div className="logohheader">
+                    <div className="row" style={{margin:0}}>
+                      <div className="col-12 col-md-6">
+                          <img src={ATA} alt="ATAFreight Console" />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="headerlabel">Hello</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="row">
                     <div className="col-12 col-sm-6">
                         <div className="firstbox">

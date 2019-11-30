@@ -282,7 +282,7 @@ class GreenCounter extends Component {
             <SideMenu />
           </div>
 
-          <div className="container">
+          <div className="container" style={{maxWidth: "100%" , margin: "0"}}>
             <div className="row grncuntr">
               <div className="col-md-6">
                 <div className="card carbonechart">

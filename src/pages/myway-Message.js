@@ -14,6 +14,7 @@ import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class myWayMessage extends Component {
   constructor(props) {
@@ -53,7 +54,7 @@ class myWayMessage extends Component {
       debugger;
       var temperror = error.response.data;
       var err = temperror.split(":");
-      alert(err[1].replace("}", ""))
+      NotificationManager.error(err[1].replace("}", ""))
       
       // var actData = [];
       // actData.push({
@@ -83,7 +84,7 @@ class myWayMessage extends Component {
       debugger;
       var temperror = error.response.data;
       var err = temperror.split(":");
-      alert(err[1].replace("}", ""))
+      NotificationManager.error(err[1].replace("}", ""))
       
       // var actData = [];
       // actData.push({
