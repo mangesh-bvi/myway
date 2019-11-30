@@ -3,6 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
+import ATA from "./../assets/img/ATAFreight_console.png";
 import Dummy from "./../assets/dummy.pdf";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
@@ -13,6 +14,13 @@ import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
 import Copy from "./../assets/img/copy.png";
 import Autocomplete from "react-autocomplete";
+import { thisExpression } from "@babel/types";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
+
 class RateFinalizing extends Component {
   constructor(props) {
     super(props);
@@ -69,6 +77,7 @@ class RateFinalizing extends Component {
       valueheight :"",
       valueweight :"",
       valuecbm :"",
+      filterrateSubDetails:[],
       selectedCommodity:"",
       accountcustname:"",
       toggleIsEdit:true,
@@ -685,6 +694,7 @@ class RateFinalizing extends Component {
       modalPreview: !prevState.modalPreview
     }));
   }
+  
 
 
   toggleEdit(e) {
@@ -1115,7 +1125,7 @@ class RateFinalizing extends Component {
         if (response.data != null) {
           if (response.data.Table != null) {
             if (response.data.Table.length > 0) {
-              alert(response.data.Table[0].Message)
+              NotificationManager.error(response.data.Table[0].Message)
               window.location.href = "quote-table";
             }
           }
@@ -2113,7 +2123,7 @@ class RateFinalizing extends Component {
                                     </>
                                   );
                                 },
-                                accessor: "baseFreightFee",
+                                accessor: "Total",
                                 filterable: true,
                                 minWidth: 80
                               }
@@ -2249,7 +2259,7 @@ class RateFinalizing extends Component {
                                           );
                                         },
                                         Header: "Final Payment",
-                                        accessor: "TotalAmount"
+                                        accessor: "Total"
                                       }
                                     ]
                                   }
@@ -3192,6 +3202,18 @@ class RateFinalizing extends Component {
 
             <div className="modal-body"> */}
             <button type="button" className="close" data-dismiss="modal">&times;</button>
+                    <div className="row" style={{margin:0}}>
+                  <div className="logohheader">
+                    <div className="row" style={{margin:0}}>
+                      <div className="col-12 col-md-6">
+                          <img src={ATA} alt="ATAFreight Console" />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="headerlabel">Hello</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="row">
                     <div className="col-12 col-sm-6">
                         <div className="firstbox">
@@ -3214,126 +3236,178 @@ class RateFinalizing extends Component {
                             </div>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-12">
-                            <div className="secondbox">
-                                <h3>Service Details</h3>
-                                <hr />
-                                <div className="row">
-                                    <div className="col-12 col-sm-4">
-                                        <label>Type of Move : <span>Port to Port</span></label>
-                                        <label>POL : <span>Izmir, Turkey</span></label>
-                                        <label>POD : <span>Doha, Qatar</span></label>
-                                    </div>
-                                    <div className="col-12 col-sm-4">
-                                        <label>Service Type : <span>Direct</span></label>
-                                        <label>Inco Terms : <span>FOB</span></label>
-                                    </div>
-                                    <div className="col-12 col-sm-4">
-                                        <label>Liner : <span>APL</span></label>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="row">
-                                    <div className="col-12 col-sm-4">
-                                        <label>Transit Time From : <span>15</span></label>
-                                    </div>
-                                    <div className="col-12 col-sm-4">
-                                        <label>Transit Time To : <span>15</span></label>
-                                    </div>
-                                    <div className="col-12 col-sm-4">
-                                        <label>Free Time : <span>00</span></label>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div class="row">
-                                    <div className="col-12">
-                                        <label>Valid Between : <span>09 / 12 / 2018 - 09 / 30 / 2018</span></label>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="thirdbox">
-                            <h3>40 Standard Dry</h3>
-                            <div className="table-responsive">
-                                <table className="table table-responsive">
-                                    <thead>
-                                    <tr>
-                                        <th>Description</th>
-                                        <th>Price</th>
-                                        <th>Tax</th>
-                                        <th>Total(USD)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>Ocean Freight</td>
-                                        <td>742.00 USD</td>
-                                        <td>0</td>
-                                        <td>742.00 USD</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="thirdbox">
-                            <h3>Documentation Charges</h3>
-                            <div className="table-responsive">
-                                <table className="table table-responsive">
-                                    <thead>
-                                    <tr>
-                                        <th>Description</th>
-                                        <th>Price</th>
-                                        <th>Tax</th>
-                                        <th>Total(USD)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>ams</td>
-                                        <td>40.00 USD</td>
-                                        <td>0</td>
-                                        <td>40.00 USD</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Docs</td>
-                                        <td>50.00 USD</td>
-                                        <td>0</td>
-                                        <td>50.00 USD</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="thirdbox totalbox">
-                            <div className="table-responsive">
-                                <table className="table table-responsive">
-                                    <thead>
-                                    <tr>
-                                        <th>Total</th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th>2059.00 USD</th>
-                                    </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {/* {(() => {
+                  for (let i = 0; i< this.state.rateDetails.length ; i++) { */}
+                  
+                {/* // return( */}
+                {this.state.rateDetails.map(item => (
+                  <>
+                  <div className="row">
+                      <div className="col-12">
+                              <div className="secondbox">
+                                  <h3>Service Details</h3>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-12 col-sm-4">
+                                          <label>Type of Move : 
+                                            <span>
+                                              {this.state.typeofMove === 1
+                                              ? "Port To Port"
+                                              : this.state.typeofMove === 2
+                                              ? "Door To Port"
+                                              : this.state.typeofMove === 4
+                                              ? "Door To Door"
+                                              : this.state.typeofMove === 3
+                                              ? "Port To Door"
+                                              : ""}
+                                            </span>
+                                          </label>
+                                          <label>POL : <span>Izmir, Turkey</span></label>
+                                          <label>POD : <span>Doha, Qatar</span></label>
+                                      </div>
+                                      <div className="col-12 col-sm-4">
+                                          <label>Service Type : <span>Direct</span></label>
+                                          <label>Inco Terms : <span>{this.state.incoTerm}</span></label>
+                                      </div>
+                                      <div className="col-12 col-sm-4">
+                                          <label>Liner : <span>{item.lineName}</span></label>
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-12 col-sm-4">
+                                          <label>Transit Time<span>{item.TransitTime}</span></label>
+                                      </div>
+                                      {/* <div className="col-12 col-sm-4">
+                                          <label>Transit Time To : <span>15</span></label>
+                                      </div> */}
+                                      <div className="col-12 col-sm-4">
+                                          <label>Free Time : <span>{item.	freeTime}</span></label>
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div class="row">
+                                      <div className="col-12">
+                                          <label>Expiry Date : <span>{item.expiryDate}</span></label>
+                                      </div>
+                                  </div>
+                              </div>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-12">
+                          <div className="thirdbox">
+                              <h3>{item.ContainerType}</h3>
+                              <div className="table-responsive">
+                                  <table className="table table-responsive">
+                                      {/* <thead>
+                                      <tr>
+                                          <th>Description</th>
+                                          <th>Quantity</th>
+                                          <th>Price</th>
+                                          <th>Tax</th>
+                                          <th>Total(USD)</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      <tr>
+                                          <td>{item.ContainerType}</td>
+                                          <td>{item.ContainerQuantity}</td>
+                                          <td>0</td>
+                                          <td>742.00 USD</td>
+                                      </tr>
+                                      
+                                      </tbody> */}
+                                      {(() => {this.state.filterrateSubDetails = this.state.rateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            item.RateLineId
+                                        )})()}
+                                      <thead>
+                                      <tr>
+                                          <th>Description</th>
+                                          <th>Price</th>
+                                          <th>Units</th>
+                                          <th>Tax</th>
+                                          <th>Total(USD)</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      {this.state.filterrateSubDetails.map(item1 => (
+                                      <tr>
+                                          <td>{item1.ChargeType}</td>
+                                          <td>{item1.Rate}</td>
+                                          <td>{item1.ChargeItem}</td>
+                                          <td>{item1.Tax}</td>
+                                          <td>{item1.TotalAmount + item1.BaseCurrency}</td>
+                                      </tr>
+                                      ))}
+                                      </tbody>
+                                     
+                                  </table>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-12">
+                          <div className="thirdbox">
+                              <h3>Documentation Charges</h3>
+                              <div className="table-responsive">
+                                  <table className="table table-responsive">
+                                      <thead>
+                                      <tr>
+                                          <th>Description</th>
+                                          <th>Price</th>
+                                          <th>Tax</th>
+                                          <th>Total(USD)</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      <tr>
+                                          <td>ams</td>
+                                          <td>40.00 USD</td>
+                                          <td>0</td>
+                                          <td>40.00 USD</td>
+                                      </tr>
+                                      <tr>
+                                          <td>Docs</td>
+                                          <td>50.00 USD</td>
+                                          <td>0</td>
+                                          <td>50.00 USD</td>
+                                      </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-12">
+                          <div className="thirdbox totalbox">
+                              <div className="table-responsive">
+                                  <table className="table table-responsive">
+                                      <thead>
+                                      <tr>
+                                          <th>Total</th>
+                                          <th></th>
+                                          <th></th>
+                                          <th></th>
+                                          <th></th>
+                                          <th>{this.state.rateDetails.reduce(
+                                          (sum, rateDetails) => sum + rateDetails.TotalAmount,
+                                            0
+                                          )}</th>
+                                      </tr>
+                                      </thead>
+                                  </table>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  </>
+                ))}
+                {/* }})()} */}
             {/* </div>
           </div>
         </div>

@@ -22,6 +22,12 @@ import { authHeader } from "../helpers/authHeader";
 import {  Button, Modal, ModalBody } from "reactstrap";
 // import ModalHeader from "react-bootstrap/ModalHeader";
 
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
+
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -180,17 +186,20 @@ class Header extends Component {
     var txtshipmentcomment = document.getElementById("txtshipmentcomment");
 
     if (drpshipment.value.trim() == "0") {
-      alert("Please select shipment type");
+      //alert("Please select shipment type");
+      NotificationManager.error("Please select shipment type");
       drpshipment.focus();
       return false;
     }
     if (txtShipmentNo.value.trim() == "") {
-      alert("Please enter shipment no.");
+      //alert("Please enter shipment no.");
+      NotificationManager.error("Please enter shipment no.");
       txtShipmentNo.focus();
       return false;
     }
     if (txtshipmentcomment.value.trim() == "") {
-      alert("Please enter shipment comment.");
+      //alert("Please enter shipment comment.");
+      NotificationManager.error("Please enter shipment comment.");
       txtshipmentcomment.focus();
       return false;
     }
@@ -243,7 +252,7 @@ class Header extends Component {
           if (response.data.length > 0) {
             if (response.data[0] != null) {
               var message = response.data[0].Result;
-              alert(response.data[0].Result);
+              NotificationManager.success(response.data[0].Result);
             }
           }
         }
@@ -330,14 +339,14 @@ class Header extends Component {
                   </li>
                 )}
                 <li>
-                  <div className="dropdown">
+                  <div className="dropdown" style={{position:"relative"}}>
                     <img
                       src={BellIcon}
                       alt="bell-icon"
                       className="header-bell-icon"
                       data-toggle="dropdown"
                     />
-                    <a id="Notificationcount">0</a>
+                    <a id="Notificationcount" className="notification">0</a>
                     <div className="dropdown-menu noti-drop-down">
                       {optionNotificationItems}
                       {/*<p>yuguhyuyg</p>*/}
@@ -640,6 +649,7 @@ class Header extends Component {
             </label>
           </PopoverBody>
         </UncontrolledPopover>
+        <NotificationContainer />
       </div>
     );
   }

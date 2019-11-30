@@ -2031,11 +2031,10 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6">
+                          <div className="col-md-6 login-fields">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
                               <select
-                                style={{ width: "70%" }}
                                 onChange={this.HandleChangeParty.bind(this)}
                               >
                                 <option selected>select</option>
