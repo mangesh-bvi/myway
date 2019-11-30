@@ -273,7 +273,7 @@ class NewRateSearch extends Component {
       errors["POLAddress"] = "Please select source";
     }
 
-    if(Object.getOwnPropertyNames(this.state.podfullAddData).length == 0 && this.state.fullAddressPOL.length == 0){
+    if(Object.getOwnPropertyNames(this.state.podfullAddData).length == 0 && this.state.fullAddressPOD.length == 0){
       formIsValid = false;
       errors["PODAddress"] = "Please select destination";
     }
@@ -373,13 +373,22 @@ class NewRateSearch extends Component {
                   {item.TruckName}
                 </option>
               ))}
+              <option value="others">Others</option>
             </select>
             <input
+              className="mr-3"
               type="text"
               name="Quantity"
               placeholder="Quantity"
               onChange={this.UITruckTypeChange.bind(this, i)}
             />
+             {el.TruckName === "others"?
+             <input
+              type="text"
+              name="TruckDesc"
+              placeholder="Other"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            />:null}
           </div>
           {i === 0 ? (
             <div className="col-md">
@@ -418,7 +427,7 @@ class NewRateSearch extends Component {
       ["TruckDesc"]:
         name === "TruckName"
           ? e.target.options[e.target.selectedIndex].text
-          : TruckTypeData[i].TruckDesc
+          : name === "Quantity"? TruckTypeData[i].TruckDesc:value,  
     };
     this.setState({ TruckTypeData });
     document.getElementById("cbm").classList.add("cbm");
@@ -2804,6 +2813,8 @@ class NewRateSearch extends Component {
                         ></i>
                       </div>
                     </div>
+                    {this.state.containerLoadType !== "FTL"?(
+                   
                     <div>
                       <div className="rate-radio-cntr justify-content-center">
                         <div>
@@ -2845,14 +2856,14 @@ class NewRateSearch extends Component {
                         </div>
                       </div>
                     </div>
+                    ):null}
                     <div id="cbmInner">
                       <div className="">
-                        {this.state.cmbTypeRadio === "ALL" ? (
-                          <>
-                            {this.state.containerLoadType === "FTL"
-                              ? this.createUITruckType()
-                              : this.CreateMultiCBM()}
-                          </>
+                      {this.state.containerLoadType !== "FTL"?(
+                        this.state.cmbTypeRadio === "ALL" ? (
+                    
+                            this.CreateMultiCBM()
+      
                         ) : this.state.cmbTypeRadio === "CBM" ? (
                           <div className="col-md-4 m-auto">
                             <div className="spe-equ">
@@ -2871,7 +2882,7 @@ class NewRateSearch extends Component {
                               />
                             </div>
                           </div>
-                        ) : null}
+                        ) : null):this.createUITruckType()}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input

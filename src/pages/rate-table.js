@@ -19,6 +19,7 @@ import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 import {
   withScriptjs,
   withGoogleMap,
@@ -41,6 +42,14 @@ const POLMaps = compose(
   <GoogleMap
     defaultZoom={2}
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
+    center={
+      props.markerPOLData
+        ? props.markerPOLData[props.markerPOLData.length - 1]
+        : { lat: parseFloat(32.24165126), lng: parseFloat(77.78319374) }
+    }
+    // defaultZoom={9}
+    // zoom={props.zomePOL}
+    // zoom={9}
   >
     {props.markerPOLData.map((marker, i) => {
       {
@@ -64,6 +73,11 @@ const PODMaps = compose(
   <GoogleMap
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={2}
+    center={
+      props.markerPODData
+        ? props.markerPODData[props.markerPODData.length - 1]
+        : { lat: 32.24165126, lng: 77.78319374 }
+    }
   >
     {props.markerPODData.map((marker, i) => {
       {
@@ -169,6 +183,7 @@ class RateTable extends Component {
       mapPositionPOL: [],
       markerPositionPOD: [],
       zoomPOL: 0,
+      zoomPOD: 0,
       filterAll: "",
       filtered: [],
       incoTerms: "",
@@ -513,10 +528,15 @@ class RateTable extends Component {
   }
 
   handleCheck() {
+    if (this.state.selectedDataRow.length != 0) {
     this.props.history.push({
       pathname: "rate-finalizing",
       state: this.state
     });
+  }
+  else{
+    NotificationManager.error("Please select atleast one Rate");
+  }
   }
 
   toggleRow(RateLineID, rowData) {
@@ -1008,6 +1028,7 @@ class RateTable extends Component {
               />
             ) : (
               <AutoCompletePOLMaps
+                zomePOL={this.state.zoomPOL}
                 onPlaceSelected={this.onPlaceSelected}
                 googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                 containerElement={
@@ -2813,6 +2834,7 @@ class RateTable extends Component {
                               </span>
 
                               <POLMaps
+                                //zomePOL={this.state.zoomPOL}
                                 markerPOLData={this.state.mapPositionPOL}
                                 googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                                 containerElement={
@@ -2904,6 +2926,7 @@ class RateTable extends Component {
                             +
                           </span>
                           <PODMaps
+                            //zomePOL={this.state.zoomPOD}
                             markerPODData={this.state.markerPositionPOD}
                             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                             containerElement={
