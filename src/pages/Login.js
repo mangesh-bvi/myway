@@ -86,6 +86,7 @@ class Login extends React.Component {
   }
 
   HandleDisplaySalesPersonData(sData) {
+    debugger;
     //get Companies
     let self = this;
     var mydata = sData; //JSON.parse(data);
@@ -134,6 +135,7 @@ class Login extends React.Component {
       //officeName
       //Company_Name
       //Company_ID
+      //debugger;
       var Company_Name = item.Company_Name;
       var Company_ID = item.Company_ID;
       var Company_Name = item.Company_Name;
@@ -164,7 +166,9 @@ class Login extends React.Component {
     var iAssocCompany = distinctAssociateComp.length;
 
     ////Company
-    for (var i = 0; i < iCompanies; i++) {
+      for (var i = 0; i < iCompanies; i++) {
+      //for (var i = 0; i < 15; i++) {
+      //debugger;
       var selectedoffId = distinctOffice[i]["OfficeID"];
 
       var salesPersonDataByComp = {};
@@ -204,12 +208,16 @@ class Login extends React.Component {
             salesPersonChildData.push(associateCompData);
             
             ///Set checked Node
-            if (bMapped === true);
+            //if(bMapped.toString() == "true")
+            if (bMapped === true)
             {
               var tData = cvId.toString();
               checkedNode.push(tData);
             }
-            
+            // else
+            // {
+            //     var a =0;
+            // }            
           }
         }
 
@@ -538,15 +546,29 @@ function GenerateToken(username, password) {
 }
 
 function TokenhandleResponse(response) {
+  debugger;
+  //alert(1);
   return response.text().then(text => {
+    debugger;
     const data = text && JSON.parse(text);
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
+
+      window.localStorage.removeItem(
+        "token");
       window.localStorage.setItem(
         "token",
         encryption(data.access_token, "enc")
       );
+
+      window.localStorage.removeItem(
+        "myToken");
+      window.localStorage.setItem(
+        "myToken",
+        data.access_token
+      );
+
       if (window.localStorage.getItem("IsEnabled") == "true") {
         if (
           encryption(window.localStorage.getItem("usertype"), "desc") ==

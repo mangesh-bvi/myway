@@ -45,7 +45,7 @@ const MapWithAMakredInfoWindow = compose(
   withGoogleMap
 )(props => (
   <GoogleMap defaultCenter={props.mapPosition} defaultZoom={props.zoom}>
-    {props.markers.map((marker,i) => {
+    {props.markers.map((marker, i) => {
       const onClick = props.onClick.bind(this, marker);
       let blueShip = new window.google.maps.MarkerImage(
         ShipBlue,
@@ -79,8 +79,7 @@ const MapWithAMakredInfoWindow = compose(
       if (marker.Pin == "Ocean") {
         return (
           <div key={i}>
-             
-             {/* <Marker
+            {/* <Marker
                   key={marker.index}
                   position={{ lat: marker.lat, lng: marker.lng }}
                 >
@@ -944,7 +943,8 @@ class Dashboard extends Component {
       mapPosition: {
         lat: 32.24165126,
         lng: 77.78319374
-      }
+      },
+      iframeKey: 0
     };
     this.BindMapData = this.BindMapData.bind(this);
     this.HandleShipmentPin = this.HandleShipmentPin.bind(this);
@@ -1025,12 +1025,12 @@ class Dashboard extends Component {
   componentDidMount() {
     debugger;
     let self = this;
-    this.BindMapData("All");
+    // this.BindMapData("All");
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();
     this.HandleWatchListData();
-
+    self.setState({ iframeKey: self.state.iframeKey + 1 });
     var checkMapview = this.props.location.state;
     if (typeof checkMapview != "undefined") {
       var mapviewHow = this.props.location.state.detail;
@@ -1428,7 +1428,7 @@ class Dashboard extends Component {
     });
     return (
       <div>
-        {this.state.loading === true ? <div className="loader-icon"></div> : ""}
+        {/* {this.state.loading === true ? <div className="loader-icon"></div> : ""} */}
         {/* {loading == true ? (
           <img src={LoadingImg} width="50" height="50" />
         ) : null} */}
@@ -1454,100 +1454,12 @@ class Dashboard extends Component {
                 <>
                   <div className="dash-map">
                     <div className="full-map">
-                      <MapWithAMakredInfoWindow
-                        searchData={this.state.searchData}
-                        markers={mapsData}
-                        onClick={this.handleClick}
-                        selectedMarker={selectedMarker}
-                        ModalData={ModalData}
-                        onPlaceSelected={this.onPlaceSelected}
-                        onChangeSearchBox={() => {
-                          this.onChangeSearchBox(this);
-                        }}
-                        mapPosition={this.state.mapPosition}
-                        zoom={this.state.zoom}
-                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                        containerElement={
-                          <div style={{ height: `100%`, width: "100%" }} />
-                        }
-                        mapElement={<div style={{ height: `100%` }} />}
-                        loadingElement={<div style={{ height: `100%` }} />}
-                      ></MapWithAMakredInfoWindow>
-
-                      <div className="map-filter">
-                        <div
-                          className="map-icon-cntr"
-                          onClick={this.handleHamb.bind(this)}
-                        >
-                          <i className="fa fa-bars" aria-hidden="true"></i>
-                        </div>
-                        <div
-                          className="map-icon-cntr rem-icon"
-                          title="Ocean"
-                          id="Ocean"
-                          onClick={() => self.HandleShipmentPin("Ocean")}
-                        >
-                          {/* <input
-                  id="Ocean"
-                  class="header-btn"
-                  type="button"
-                  value="Ocean-Shipment"
-                  name="search-rate"
-                  onClick={() => self.HandleShipmentPin("Ocean")}
-                /> */}
-                          <img src={HambShip} alt="ship icon" />
-                        </div>
-                        <div
-                          className="map-icon-cntr rem-icon"
-                          title="Air"
-                          id="Air"
-                          onClick={() => self.HandleShipmentPin("Air")}
-                        >
-                          {/* <input
-                id="Air"
-                class="header-btn"
-                type="button"
-                value="Air-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Air")}
-              /> */}
-                          <img src={HambPlane} alt="plane icon" />
-                        </div>
-                        <div
-                          className="map-icon-cntr rem-icon"
-                          id="Delay-Ocean"
-                          title="Delay Shipment"
-                          onClick={() => self.HandleShipmentPin("Delay-Ocean")}
-                        >
-                          {/* <input
-                    id="Delay-Ocean"
-                    class="header-btn"
-                    type="button"
-                    value="Delay-Ocean-Shipment"
-                    name="search-rate"
-                    onClick={() => self.HandleShipmentPin("Delay-Ocean")}
-                  /> */}
-                          <img src={DelayShip} alt="plane icon" />
-                        </div>
-                        <div
-                          className="map-icon-cntr rem-icon"
-                          id="Booking-Ocean"
-                          title="New Booking"
-                          onClick={() =>
-                            self.HandleShipmentPin("Booking-Ocean")
-                          }
-                        >
-                          {/* <input
-                    id="Booking-Ocean"
-                    class="header-btn"
-                    type="button"
-                    value="CurrentBooking-Shipment"
-                    name="search-rate"
-                    onClick={() => self.HandleShipmentPin("Booking-Ocean")}
-                  /> */}
-                          <img src={CurrBook} alt="plane icon" />
-                        </div>
-                      </div>
+                      <iframe
+                        key={this.state.iframeKey}
+                        src="/MapMarkerDashboard.html"
+                        className="mapIframe"
+                        //sandbox="allow-top-navigation"
+                      />
                     </div>
                   </div>
                   {/* <div
