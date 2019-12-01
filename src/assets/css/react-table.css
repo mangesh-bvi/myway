@@ -76,7 +76,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 7px 5px;
-  border-radius: 4px;
+  border-radius: 50px;
   transition: all 0.3s ease-in-out;
 }
 .ReactTable .-pagination .-btn:not([disabled]):hover {
