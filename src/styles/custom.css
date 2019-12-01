@@ -51,3 +51,12 @@
   background-color: #fff;
   min-height: calc(100vh - 90px);
 }
+
+.cls-rt-ts {
+  width: calc(100% - 40px);
+  /* height: 700px; */
+  float: right;
+  margin: 20px;
+  background-color: #fff;
+  min-height: calc(100vh - 90px);
+}

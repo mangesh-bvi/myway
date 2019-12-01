@@ -66,7 +66,7 @@ class ShippingDetails extends Component {
       mapDis: "block",
       copied: false,
       // shareLink: "http://myway.demo.brainvire.net/shipment-details?hblno=",
-      shareLink: "http://localhost:3000/shipment-details?hblno=",
+      shareLink: "http://localhost:3001/track-shipment2?",
       filterAll: "",
       filtered: [],
       modalAdvSearch: false,
@@ -135,14 +135,14 @@ class ShippingDetails extends Component {
     this.setState(prevState => ({
       modalShare: !prevState.modalShare,
       copied: false,
-      shareLink: "http://myway.demo.brainvire.net/shipment-details?hblno="
+      shareLink: "http://myway.demo.brainvire.net/track-shipment2?hblno="
     }));
   }
 
   HandleDocumentView(evt, row) {
     debugger;
     evt.stopPropagation();
-    var hblNo = row.original["HBL#"];
+    var hblNo = row.original["Encoding_HBl#"];
     this.setState(prevState => ({
       modalShare: !prevState.modalShare,
       shareLink: this.state.shareLink + hblNo

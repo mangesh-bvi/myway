@@ -263,7 +263,8 @@ class NewRateSearch extends Component {
     let errors = this.state.errors;
     let formIsValid = true;
 
-    if (this.state.specialEquipment ==true && this.state.flattack_openTop.length == 0 && this.state.spacEqmtType.length == 0) {
+    if (this.state.specialEquipment ==true && this.state.flattack_openTop.length == 0 
+      && this.state.spacEqmtType.length == 0 && this.state.referType == 0) {
       formIsValid = false;
       errors["equipmenttype"] = "Please select equipment type";
     }
@@ -1665,20 +1666,20 @@ class NewRateSearch extends Component {
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "No") {
-      if (typeofMove == "d2d" || typeofMove === "p2d") {
+      if (typeofMove == "d2d" || typeofMove === "d2p") {
         self.setState({ incoTerms: "ExWorks" });
       }
 
-      if (typeofMove === "d2p" || typeofMove === "p2p") {
+      if (typeofMove === "p2d" || typeofMove === "p2p") {
         self.setState({ incoTerms: "FOB" });
       }
     }
     if (shipmentType === "Import" && HasCustomClear === "Yes") {
-      if (typeofMove == "d2d" || typeofMove === "p2d") {
+      if (typeofMove == "d2d" || typeofMove === "d2p") {
         self.setState({ incoTerms: "ExWorks" });
       }
 
-      if (typeofMove === "d2p" || typeofMove === "p2p") {
+      if (typeofMove === "p2d" || typeofMove === "p2p") {
         self.setState({
           incoTerms: "FOB"
         });

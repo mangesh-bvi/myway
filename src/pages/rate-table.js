@@ -16,11 +16,6 @@ import Select from "react-select";
 import { Link } from "react-router-dom";
 import Autocomplete from "react-google-autocomplete";
 import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
-import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
@@ -33,6 +28,11 @@ import matchSorter from "match-sorter";
 import $ from "jquery";
 import { encryption } from "../helpers/encryption";
 import { parse } from "path";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const { compose } = require("recompose");
 const POLMaps = compose(
@@ -1738,6 +1738,7 @@ class RateTable extends Component {
         })
         .catch(error => {
           debugger;
+          multiFields[field] = "";
           var errorData = error.response.data;
           var err = errorData.split(":");
           var data = [{ OceanPortLongName: err[1].replace("}", "") }];
@@ -2111,7 +2112,7 @@ class RateTable extends Component {
   }
 
   CreateMultiCBM() {
-    return this.state.multiCBM.map((el, i) => (
+    return this.state.cbmVal==""? this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
           <div className="spe-equ">
@@ -2245,7 +2246,24 @@ class RateTable extends Component {
           </div>
         ) : null}
       </div>
-    ));
+    )):<div className="col-md-4 m-auto">
+    <div className="spe-equ">
+      <input
+        type="number"
+        minLength={1}
+        
+        //onChange={this.HandleCMBtextChange.bind(this)}
+        placeholder={
+          this.state.modeoftransport != "AIR"
+            ? "CBM"
+            : "KG"
+        }
+        className="w-100"
+        value={this.state.cbmVal}
+      />
+    </div>
+  </div>
+
   }
 
   HandleChangeMultiCBM(i, e) {
@@ -2289,6 +2307,12 @@ class RateTable extends Component {
     }
 
     this.setState({ multiCBM });
+  }
+
+  HandleCMBtextChange(e) {
+    var Textvalue = e.target.value;
+
+    this.setState({ cbmVal: Textvalue });
   }
 
   spotRateSubmit(param) {

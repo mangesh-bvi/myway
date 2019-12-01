@@ -49,7 +49,7 @@ import RateFinalizingStillBooking from "./pages/rateFinalizingStillBooking";
 import Reports from "./pages/reports";
 import ReportDetails from "./pages/report-details";
 import TrackShipment from "./pages/track-shipment";
-
+import TrackShipment2 from "./pages/track-shipment2";
 // import Exmaple from './pages/Example';
 
 // import Signin from './pages/Signin';
@@ -108,6 +108,7 @@ ReactDOM.render(
       component={RateFinalizingStillBooking}
     />
     <Route exact path="/track-shipment" component={TrackShipment} />
+    <Route exact path="/track-shipment2" component={TrackShipment2} />
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
   document.getElementById("root")
