@@ -737,6 +737,15 @@ class RateTable extends Component {
         dataParameter.RateQueryDim = paramData.multiCBM;
       }
 
+      var EquipmentType = [];
+      if(paramData.StandardContainerCode != undefined)
+      {
+        EquipmentType = paramData.StandardContainerCode
+      }
+      else{
+        EquipmentType = paramData.EquipmentType
+      }
+
       // if(paramData.typesofMove === "p2p")
       // {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
       // this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
@@ -772,7 +781,7 @@ class RateTable extends Component {
         NonStackable: paramData.NonStackable,
         Custom_Clearance: paramData.Custom_Clearance,
         SpacialEqmt: paramData.SpacialEqmt,
-        EquipmentType: paramData.StandardContainerCode,
+        EquipmentType: EquipmentType,
         spacEqmtType: paramData.spacEqmtType,
         referType: paramData.referType,
         flattack_openTop: paramData.flattack_openTop,
@@ -1190,6 +1199,7 @@ class RateTable extends Component {
                 name="ContainerQuantity"
                 placeholder="Quantity"
                 onChange={this.UISpecialChange.bind(this, i)}
+                value={el.ContainerQuantity}
               />
             </div>
           </div>
@@ -1200,6 +1210,7 @@ class RateTable extends Component {
                 name="Temperature"
                 placeholder="Temp"
                 onChange={this.UISpecialChange.bind(this, i)}
+                value={el.Temperature}
               />
             </div>
           </div>
@@ -1212,6 +1223,7 @@ class RateTable extends Component {
                   id="exist-cust"
                   value="C"
                   onChange={this.UISpecialChange.bind(this, i)}
+                  checked={el.TemperatureType==="C"?true:false}
                 />
                 <label
                   className="d-flex flex-column align-items-center"
@@ -1227,6 +1239,7 @@ class RateTable extends Component {
                   id="new-cust"
                   value="F"
                   onChange={this.UISpecialChange.bind(this, i)}
+                  checked={el.TemperatureType==="F"?true:false}
                 />
                 <label
                   className="d-flex flex-column align-items-center"

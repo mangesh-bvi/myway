@@ -255,10 +255,7 @@ class RateFinalizing extends Component {
       this.state.flattack_openTop = flattack_openTop;
       this.state.polfullAddData = polfullAddData;
       this.state.podfullAddData = podfullAddData;
-      this.state.currencyCode = currencyCode;
-      
-
-     
+      this.state.currencyCode = currencyCode;     
     }
     else
     {
@@ -1379,7 +1376,8 @@ class RateFinalizing extends Component {
       this.state.commoditySelect = self.state.CommodityID
 
     }
-
+    const filterDuplicateService = [];
+    var DocumentCharges = [];
     // var containerLoadType = this.props.location.state.containerLoadType
     const { CargoDetailsArr } = this.state;
     return (
@@ -2962,6 +2960,96 @@ class RateFinalizing extends Component {
                   for (let i = 0; i< this.state.rateDetails.length ; i++) { */}
                   
                 {/* // return( */}
+                
+                {/* {(() => 
+                { 
+                  debugger;
+                  if(filterDuplicateService.length == 0)
+                  {
+                    for (let i= 0; i < this.state.rateDetails.length; i++) {
+                      if (filterDuplicateService.length == 0) {
+                        filterDuplicateService.push(this.state.rateDetails[i])
+                      }
+                      else{
+                      for (let j= 0; j < filterDuplicateService.length; j++) {
+                        if (this.state.rateDetails[i].TransshipmentPort != filterDuplicateService[j].TransshipmentPort &&
+                          this.state.rateDetails[i].lineName != filterDuplicateService[j].lineName &&
+                          this.state.rateDetails[i].POLCode != filterDuplicateService[j].POLCode &&
+                          this.state.rateDetails[i].PODCode	 != filterDuplicateService[j].PODCode	 &&
+                          this.state.rateDetails[i].freeTime != filterDuplicateService[j].freeTime &&
+                          this.state.rateDetails[i].TransitTime != filterDuplicateService[j].TransitTime &&
+                          this.state.rateDetails[i].expiryDate != filterDuplicateService[j].expiryDate) 
+                        {
+                          filterDuplicateService.push(this.state.rateDetails[i])
+                        }                    
+                      }
+                      
+                    }
+                       
+                  }
+                }})()} */}
+                <div className="row">
+                      <div className="col-12">
+                          <div className="thirdbox">
+                          {this.state.containerLoadType === "LCL" || this.state.containerLoadType === "AIR" || this.state.containerLoadType === "LTL" ?(
+                              <>
+                            <h3>Dimensions</h3>
+                              <div className="table-responsive">
+                                  <table className="table table-responsive">
+                                      <thead>
+                                      <tr>
+                                          <th>Package Type</th>
+                                          <th>Quantity</th>
+                                          <th>Length</th>
+                                          <th>Width</th>
+                                          <th>Height</th>
+                                          <th>Gross Weight</th>
+                                          <th>{this.state.containerLoadType === "AIR" || this.state.containerLoadType === "LTL"?"Volume Weight":"CBM"}</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      {this.state.CargoDetailsArr.map(item1 => (
+                                      <tr>
+                                          <td>{item1.PackageType}</td>
+                                          <td>{item1.Quantity}</td>
+                                          <td>{item1.Lenght}</td>
+                                          <td>{item1.Width}</td>
+                                          <td>{item1.Height}</td>
+                                          <td>{item1.Weight}</td>
+                                          <td>{this.state.containerLoadType === "AIR" ? item1.VolumeWeight : item1.Volume}</td>
+                                      </tr>
+                                      ))}
+                                     </tbody>
+                                  </table>
+                              </div>
+                            </>
+                            ):this.state.containerLoadType === "FTL"?(
+                              <>
+                              <h3>Dimensions</h3>
+                              <div className="table-responsive">
+                                  <table className="table table-responsive">
+                                      <thead>
+                                      <tr>
+                                          <th>Truck Type</th>
+                                          <th>Quantity</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      {this.state.TruckTypeData.map(item1 => (
+                                      <tr>
+                                          <td>{item1.TruckDesc}</td>
+                                          <td>{item1.Quantity}</td>
+                                      </tr>
+                                      ))}
+                                     </tbody>
+                                  </table>
+                              </div>
+                              </>
+                            ):null}
+                          </div>
+                      </div>
+                  </div>
+
                 {this.state.rateDetails.map(item => (
                   <>
                   <div className="row">
@@ -2984,11 +3072,11 @@ class RateFinalizing extends Component {
                                               : ""}
                                             </span>
                                           </label>
-                                          <label>POL : <span>Izmir, Turkey</span></label>
-                                          <label>POD : <span>Doha, Qatar</span></label>
+                                          <label>POL : <span>{this.state.polfullAddData.OceanPortLongName}</span></label>
+                                          <label>POD : <span>{this.state.podfullAddData.OceanPortLongName}</span></label>
                                       </div>
                                       <div className="col-12 col-sm-4">
-                                          <label>Service Type : <span>Direct</span></label>
+                                          <label>Service Type : <span>{item.TransshipmentPort===null?"Direct":item.TransshipmentPort}</span></label>
                                           <label>Inco Terms : <span>{this.state.incoTerm}</span></label>
                                       </div>
                                       <div className="col-12 col-sm-4">
@@ -3016,10 +3104,60 @@ class RateFinalizing extends Component {
                               </div>
                       </div>
                   </div>
+                  {/* </>
+                  ))}
+                  {this.state.rateDetails.map(item => (
+                  <> */}
                   <div className="row">
                       <div className="col-12">
                           <div className="thirdbox">
-                              <h3>{item.ContainerType}</h3>
+                          {this.state.containerLoadType === "LCL" || this.state.containerLoadType === "Air" || item.containerLoadType === "LTL" ?(
+                              <>
+                            <h3>Cargo Details</h3>
+                              <div className="table-responsive">
+                                  <table className="table table-responsive">
+                                      <thead>
+                                      <tr>
+                                          <th>Package Type</th>
+                                          <th>Quantity</th>
+                                          <th>Length</th>
+                                          <th>Width</th>
+                                          <th>Height</th>
+                                          <th>Gross Weight</th>
+                                          <th>{this.state.containerLoadType === "Air" || this.state.containerLoadType === "LTL"?"Volume Weight":"CBM"}</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      {this.state.CargoDetailsArr.map(item1 => (
+                                      <tr>
+                                          <td>{item1.PackageType}</td>
+                                          <td>{item1.Quantity}</td>
+                                          <td>{item1.Lenght}</td>
+                                          <td>{item1.Width}</td>
+                                          <td>{item1.Height}</td>
+                                          <td>{item1.Weight}</td>
+                                          <td>{this.state.containerLoadType === "Air" ? item1.VolumeWeight : item1.Volume}</td>
+                                      </tr>
+                                      ))}
+                                     </tbody>
+                                  </table>
+                              </div>
+                            </>
+                            ):null}
+                          </div>
+                      </div>
+                  </div>
+                  <div className="row">
+                      <div className="col-12">
+                          <div className="thirdbox">
+                          
+                              <h3>{item.Type === "FCL"?item.ContainerType:
+                                  //  item.Type === "LCL"?this.state.CargoDetailsArr.map(cargo => (
+                                  //    cargo.PackageType
+                                  //  )):
+                                   null
+                              }</h3>
+                            
                               <div className="table-responsive">
                                   <table className="table table-responsive">
                                       {/* <thead>
@@ -3045,6 +3183,19 @@ class RateFinalizing extends Component {
                                             d.RateLineID ===
                                             item.RateLineId
                                         )})()}
+
+                                      {(() => {DocumentCharges = this.state.filterrateSubDetails.filter(
+                                          d =>
+                                            d.ChargeItem === "Per HBL" || d.ChargeItem === "Per BL" ||
+                                            d.ChargeItem === "Per Shipment" || d.ChargeItem === "Per Set"
+                                        )})()}
+
+                                      {(() => {this.state.filterrateSubDetails = this.state.filterrateSubDetails.filter(
+                                          d =>
+                                          d.ChargeItem !== "Per HBL" && d.ChargeItem !== "Per BL" &&
+                                          d.ChargeItem !== "Per Shipment" && d.ChargeItem !== "Per Set"
+                                        )})()}
+
                                       <thead>
                                       <tr>
                                           <th>Description</th>
@@ -3058,10 +3209,11 @@ class RateFinalizing extends Component {
                                       {this.state.filterrateSubDetails.map(item1 => (
                                       <tr>
                                           <td>{item1.ChargeType}</td>
-                                          <td>{item1.Rate}</td>
+                                          <td>{(item1.Rate===null?" ":item1.Rate+" ")+item1.Currency}</td>
                                           <td>{item1.ChargeItem}</td>
                                           <td>{item1.Tax}</td>
-                                          <td>{item1.TotalAmount + item1.BaseCurrency}</td>
+                                          <td>{(item1.TotalAmount===null?" ":item1.TotalAmount+" ")+ 
+                                          (item1.BaseCurrency===null?"":item1.BaseCurrency)}</td>
                                       </tr>
                                       ))}
                                       </tbody>
@@ -3074,39 +3226,6 @@ class RateFinalizing extends Component {
                   <div className="row">
                       <div className="col-12">
                           <div className="thirdbox">
-                              <h3>Documentation Charges</h3>
-                              <div className="table-responsive">
-                                  <table className="table table-responsive">
-                                      <thead>
-                                      <tr>
-                                          <th>Description</th>
-                                          <th>Price</th>
-                                          <th>Tax</th>
-                                          <th>Total(USD)</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                      <tr>
-                                          <td>ams</td>
-                                          <td>40.00 USD</td>
-                                          <td>0</td>
-                                          <td>40.00 USD</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Docs</td>
-                                          <td>50.00 USD</td>
-                                          <td>0</td>
-                                          <td>50.00 USD</td>
-                                      </tr>
-                                      </tbody>
-                                  </table>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="row">
-                      <div className="col-12">
-                          <div className="thirdbox totalbox">
                               <div className="table-responsive">
                                   <table className="table table-responsive">
                                       <thead>
@@ -3116,8 +3235,8 @@ class RateFinalizing extends Component {
                                           <th></th>
                                           <th></th>
                                           <th></th>
-                                          <th>{this.state.rateDetails.reduce(
-                                          (sum, rateDetails) => sum + rateDetails.TotalAmount,
+                                          <th>{this.state.filterrateSubDetails.reduce(
+                                          (sum, filterrateSubDetails) => sum + filterrateSubDetails.TotalAmount,
                                             0
                                           )}</th>
                                       </tr>
@@ -3127,7 +3246,40 @@ class RateFinalizing extends Component {
                           </div>
                       </div>
                   </div>
-                  </>
+
+                  <div className="row">
+                      <div className="col-12">
+                          <div className="thirdbox">
+                              <h3>Documentation Charges</h3>
+                              <div className="table-responsive">
+                                  <table className="table table-responsive">
+                                      <thead>
+                                      <tr>
+                                          <th>Description</th>
+                                          <th>Price</th>
+                                          <th>Units</th>
+                                          <th>Tax</th>
+                                          <th>Total(USD)</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                      {DocumentCharges.map(item => (
+                                      <tr>
+                                          <td>{item.ChargeType}</td>
+                                          <td>{(item.Rate===null?" ":item.Rate+" ")+item.Currency}</td>
+                                          <td>{item.ChargeItem}</td>
+                                          <td>{item.Tax}</td>
+                                          <td>{(item.TotalAmount===null?" ":item.TotalAmount+" ")+ 
+                                          (item.BaseCurrency===null?"":item.BaseCurrency)}</td>
+                                      </tr>
+                                      ))}
+                                     </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                                    </>
                 ))}
                 {/* }})()} */}
             {/* </div>
