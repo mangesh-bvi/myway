@@ -66,7 +66,7 @@ class ShippingDetails extends Component {
       mapDis: "block",
       copied: false,
       // shareLink: "http://myway.demo.brainvire.net/shipment-details?hblno=",
-      shareLink: "http://localhost:3001/track-shipment2?",
+      shareLink: "http://myway.demo.brainvire.net/track-shipment2?",
       filterAll: "",
       filtered: [],
       modalAdvSearch: false,
