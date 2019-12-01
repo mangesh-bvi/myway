@@ -53,7 +53,7 @@ class SpotRateTable extends Component {
   HandleListSpotRateGrid() {
     debugger;
     let self = this;
-    var userid = encryption(window.localStorage.getItem("userid"),"desc");
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     var date = new Date();
     var fromDate = "01/01/" + date.getFullYear();
     var currentDate =
@@ -79,7 +79,7 @@ class SpotRateTable extends Component {
           self.setState({ pageNo: 1 });
         }
       })
-      .catch()
+      .catch();
     {
       var actData = [];
       actData.push({
@@ -116,7 +116,7 @@ class SpotRateTable extends Component {
             <div className="title-sect">
               <h2>Spot Rate</h2>
             </div>
-            <div className="ag-fresh">   
+            <div className="ag-fresh">
               <ReactTable
                 data={spotRateGrid}
                 noDataText="No Data Found"

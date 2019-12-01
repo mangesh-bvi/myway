@@ -34,6 +34,7 @@ import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 import {
   withScriptjs,
   withGoogleMap,
@@ -309,7 +310,7 @@ class ShippingDetailsTwo extends Component {
                   // setTimeout(() => {
                   // this.handleActivityList();
                   // }, 100);
-                  alert(response.data[0].Result);
+                  NotificationManager.success(response.data[0].Result);
                 }
                 self.handleActivityList();
               }
@@ -725,7 +726,7 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      alert(response.data[0].Result);
+      NotificationManager.success(response.data[0].Result);
     });
   };
 
@@ -861,7 +862,7 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      NotificationManager.error(response.data[0].Result);
+      NotificationManager.success(response.data[0].Result);
       self.setState({ ShipmentExistsInWatchList: 0 });
     });
   };

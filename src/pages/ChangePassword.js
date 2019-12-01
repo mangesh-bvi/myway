@@ -3,6 +3,11 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
 import { encryption } from "../helpers/encryption";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class ChangePassword extends React.Component {
   constructor(props) {
@@ -33,13 +38,13 @@ class ChangePassword extends React.Component {
     this.setState({ submitted: true });
     const { oldpassword, password, newpassword } = this.state;
     if (oldpassword !== oldpwd) {
-      alert("Please enter correct old password");
+      NotificationManager.error("Please enter correct old password");
       return false;
     }
     if (password === newpassword) {
       ChangePasswordCheck(oldpwd, newpassword);
     } else {
-      alert("Confirmed password is not matched");
+      NotificationManager.error("Confirmed password is not matched");
     }
   }
   render() {
@@ -127,9 +132,9 @@ debugger;
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
-      alert("Internal Server error. Please contact administrator.");
+      NotificationManager.error("Internal Server error. Please contact administrator.");
     } else {
-      alert("Password change successfully");
+      NotificationManager.success("Password change successfully");
     }
 
     return data;

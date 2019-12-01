@@ -22,6 +22,12 @@ import { authHeader } from "../helpers/authHeader";
 import {  Button, Modal, ModalBody } from "reactstrap";
 // import ModalHeader from "react-bootstrap/ModalHeader";
 
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
+
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +46,7 @@ class Header extends Component {
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
+    this.RedirectoShipment = this.RedirectoShipment.bind(this);
   }
 
   componentDidMount() {
@@ -129,14 +136,17 @@ class Header extends Component {
         if (response.data != null) {
           if (response.data.Table != null) {
             if (response.data.Table.length > 0) {
+          var date =  today.toJSON();
+          date = "2019-10-21";
               self.setState({
                 notificationData: response.data.Table.filter(
-                  item => item.ActivityDate > today.toJSON()
+                  item => item.ActivityDate > date
                 )
               });
 
               document.getElementById("Notificationcount").innerHTML =
                 self.state.notificationData.length;
+                self.forceUpdate();
             }
           }
         }
@@ -176,17 +186,20 @@ class Header extends Component {
     var txtshipmentcomment = document.getElementById("txtshipmentcomment");
 
     if (drpshipment.value.trim() == "0") {
-      alert("Please select shipment type");
+      //alert("Please select shipment type");
+      NotificationManager.error("Please select shipment type");
       drpshipment.focus();
       return false;
     }
     if (txtShipmentNo.value.trim() == "") {
-      alert("Please enter shipment no.");
+      //alert("Please enter shipment no.");
+      NotificationManager.error("Please enter shipment no.");
       txtShipmentNo.focus();
       return false;
     }
     if (txtshipmentcomment.value.trim() == "") {
-      alert("Please enter shipment comment.");
+      //alert("Please enter shipment comment.");
+      NotificationManager.error("Please enter shipment comment.");
       txtshipmentcomment.focus();
       return false;
     }
@@ -239,7 +252,7 @@ class Header extends Component {
           if (response.data.length > 0) {
             if (response.data[0] != null) {
               var message = response.data[0].Result;
-              alert(response.data[0].Result);
+              NotificationManager.success(response.data[0].Result);
             }
           }
         }
@@ -263,9 +276,21 @@ class Header extends Component {
     });
   }
 
+
+  RedirectoShipment(RefNo) {
+    debugger;
+    // this.props.history.push({
+    //   pathname: "shipment-details",
+    //   state: { detail: RefNo }
+    // });
+    window.location.href = "shipment-details?hblno="+RefNo;
+  }
+
   render() {
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
-      <div key={i}>
+      <div key={i}  onClick={() => {
+        this.RedirectoShipment(item.RefNo);
+      }} >
         <p>
           Shipment: <a> {item.Product}</a>
         </p>
@@ -314,14 +339,14 @@ class Header extends Component {
                   </li>
                 )}
                 <li>
-                  <div className="dropdown">
+                  <div className="dropdown" style={{position:"relative"}}>
                     <img
                       src={BellIcon}
                       alt="bell-icon"
                       className="header-bell-icon"
                       data-toggle="dropdown"
                     />
-                    <a id="Notificationcount">0</a>
+                    <a id="Notificationcount" className="notification">0</a>
                     <div className="dropdown-menu noti-drop-down">
                       {optionNotificationItems}
                       {/*<p>yuguhyuyg</p>*/}
@@ -366,6 +391,7 @@ class Header extends Component {
                           <option value="0">Select</option>
                           {/* <option value="Shipment">Shipment</option> */}
                           {optionItems}
+                          <option value="Subject">Subject</option>
                         </select>
                       </div>
                       <div className="rename-cntr login-fields">
@@ -623,6 +649,7 @@ class Header extends Component {
             </label>
           </PopoverBody>
         </UncontrolledPopover>
+        <NotificationContainer />
       </div>
     );
   }

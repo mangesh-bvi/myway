@@ -15,6 +15,7 @@ import {
 import "react-notifications/lib/notifications.css";
 import { bool } from "prop-types";
 
+
 var string = "";
 class AddSalesUser extends React.Component {
   constructor(props) {
@@ -505,7 +506,7 @@ class AddSalesUser extends React.Component {
       })
         .then(function(response) {
           debugger;
-          alert(response.data[0].Message);
+          NotificationManager.success(response.data[0].Message);
         })
         .catch(error => console.log(error.response));
     } else {
@@ -612,7 +613,7 @@ class AddSalesUser extends React.Component {
       })
         .then(function(response) {
           debugger;
-          alert(response.data[0].Result);
+          NotificationManager.success(response.data[0].Result);
         })
         .catch(error => console.log(error.response));
     } else {

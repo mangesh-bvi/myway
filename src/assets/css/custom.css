@@ -97,7 +97,7 @@ h3 {
   letter-spacing: 0.5px;
   min-width: 120px;
   padding: 10px;
-  border-radius: 50px;
+  border-radius: 4px;
   margin-top: 30px;
   font-size: 14px;
   text-align: center;
@@ -193,10 +193,10 @@ h2 span {
 .login-fields select {
   width: 100%;
   border: 0;
-  /* font-size: 18px; */
+  font-size: 14px;
   letter-spacing: 0.5px;
   background-color: #ededed;
-  padding: 15px 25px;
+  padding:9px 15px;
   font-family: "Medium Font";
 }
 .login-fields select {
@@ -311,11 +311,19 @@ h2 span {
 
 /* shipping details starts */
 .title-sect {
-  padding: 15px 30px;
+  padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
+}
+.title-sect h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.title-sect h2 {
+  font-size: 18px;
+  font-weight: 600;
 }
 .list-map .butn {
   padding: 5px;
@@ -575,7 +583,7 @@ table tbody tr:last-child {
 }
 .details-title {
   color: #002d73;
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Medium Font";
   margin-bottom: 5px;
 }
@@ -1528,7 +1536,6 @@ table tbody tr:last-child {
   background-color: #fff;
   border-color: #d3d3d3;
   min-width: auto;
-  flex: 0 0 23%;
 }
 .top-select .butn:hover {
   background-color: #d3d3d3;
@@ -1576,7 +1583,7 @@ table tbody tr:last-child {
 .rate-map-ovrly {
   position: absolute;
   left: 0;
-  top: 0;
+  bottom: 0;
   z-index: 1;
   font-family: "Medium Font";
   color: #fff;
@@ -1968,10 +1975,10 @@ table tbody tr:last-child {
   top: 0;
   right: 0;
   left: 0;
+  height: 100vh;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5) url("../img/table-loader.gif") no-repeat center
-    center;
-  background-size: 80px;
+  background: rgba(0, 0, 0, 0.5) url("../img/loader.gif") no-repeat center center;
+  background-size: 60px;
   z-index: 5;
 }
 .dash-search-cntr {
@@ -2337,10 +2344,13 @@ table tbody tr:last-child {
   margin: 0;
   font-size: 12px;
   color: #999;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 7px;
   text-overflow: ellipsis;
+  max-width: 100px;
   overflow: hidden;
+  height: 20px;
+  display: block;
   white-space: nowrap;
 }
 
@@ -2380,13 +2390,25 @@ table tbody tr:last-child {
 }
 
 .cls-flside {
-  width: 16%;
+  width: 250px;
   float: left;
   height: auto;
   background-color: #0142aa;
   border: none;
 }
-
+.notification {
+  background: red;
+  color: #fff !important;
+  font-size: 12px;
+  padding: 0px 5px 1px 6px;
+  border-radius: 50%;
+  position: absolute;
+  right: 3px;
+  box-shadow: none;
+  top: 5px;
+  opacity: 1;
+  margin: 0;
+}
 .header-phone-li {
   padding: 10px;
 }
@@ -2396,7 +2418,7 @@ table tbody tr:last-child {
   cursor: pointer;
 }
 .sidemenu-ul-li {
-  padding: 15px;
+  padding: 6px 10px;
   border-bottom: 0.5px solid #265eb5;
   color: white;
   font-weight: 400;
@@ -2406,7 +2428,7 @@ table tbody tr:last-child {
 .sidemenu-ul {
   padding: 0;
   list-style: none;
-  margin-bottom: 50px;
+  margin-bottom: 100px;
 }
 .header-greencounter-icon {
   height: 30px;
@@ -2519,9 +2541,6 @@ table tbody tr:last-child {
 .lbl-cursor {
   cursor: pointer;
 }
-.shipmentli {
-  padding: 1px;
-}
 .shipmentli .card {
   border: 0;
   border-radius: 0;
@@ -2531,7 +2550,7 @@ table tbody tr:last-child {
   border: none;
   background-color: #0142aa;
   color: white;
-  padding: 10px 0px 0px;
+  padding: 0px;
   border-radius: 0;
 }
 .shipmentli .card .collapsing {
@@ -2540,7 +2559,7 @@ table tbody tr:last-child {
 
 .shipmentli .card .card-header button {
   color: white;
-  padding-bottom: 10px;
+  padding: 0px;
   width: 100%;
   text-align: left;
 }
@@ -2549,7 +2568,7 @@ table tbody tr:last-child {
 }
 .shipmentli .card .collapse .card-body {
   background-color: #0142aa;
-  padding: 0px 0px 0px 55px;
+  padding: 0px 0px 0px 10px;
   color: #8fb7f7;
 }
 .shipment-ul {
@@ -2561,6 +2580,10 @@ table tbody tr:last-child {
 }
 .shipment-ul li {
   padding: 5px;
+  border-bottom: 1px solid;
+}
+.shipment-ul li:last-child {
+  border-bottom: none;
 }
 .shipmentli .card .show {
   background-color: #0142aa;
@@ -3093,9 +3116,6 @@ table tbody tr:last-child {
   padding-right: 10px !important;
   padding-left: 10px !important;
 }
-.less-right-rate {
-  padding-right: 5px;
-}
 .less-left-rate {
   padding-left: 5px;
 }
@@ -3166,126 +3186,142 @@ table tbody tr:last-child {
   font-size: 15px;
   font-family: "Regular Font";
   text-align: left;
-}
+  }
 
-.equip-error {
-  color: red;
-  margin-left: auto;
-  margin-right: auto;
-}
+  .equip-error{
+    color: red;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-.popupbox .close {
-  position: absolute;
-  right: -8px;
-  top: -12px;
-  color: #333;
-  font-weight: normal;
-  background: #fff;
-  opacity: 1;
-  border-radius: 50%;
-  width: 25px;
+  .popupbox .close {
+    position: absolute;
+      right: -8px;
+      top: -12px;
+      color: #333;
+      font-weight: normal;
+      background: #fff;
+      opacity: 1;
+      border-radius: 50%;
+      width: 25px;
+  }
+  .popupbox .modal-body {
+    background-color: #f1f2f2;
+    padding: 20px;
+    position: relative;
+    border-radius: 0;
+  }
+  .popupbox {
+    max-width: 800px;
+  }
+  .popupbox .modal-content {
+    border-radius: 0;
+    border: none;
+  }
+  .logohheader {
+    background: white;
+    margin-bottom: 20px;
+    padding: 5px;
+    width: 100%;
 }
-.popupbox .modal-body {
-  background-color: #f1f2f2;
-  padding: 20px;
-  position: relative;
-  border-radius: 0;
+.logohheader img {
+  width: 200px;
 }
-.popupbox {
-  max-width: 800px;
-}
-.popupbox .modal-content {
-  border-radius: 0;
-  border: none;
-}
-.firstbox {
-  background: #ffffff;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.firstbox label {
+.headerlabel {
+  text-align: left;
   display: block;
-  color: #8f8f8f;
   font-weight: 600;
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-.firstbox h3 {
   font-size: 18px;
-  font-weight: 600;
-  padding: 0;
-  margin-bottom: 15px;
-  background: transparent;
-  color: #333;
+  padding: 20px 0;
 }
-.firstbox h3 span {
-  color: #0042a9;
+  .firstbox {
+    background: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .firstbox label {
+    display: block;
+    color: #8f8f8f;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  .firstbox h3 {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 15px;
+    background: transparent;
+    color: #333;
+  }
+  .firstbox h3 span {
+      color: #0042a9;
+  }
+  .firstbox label span {
+    color: #333333;
+  }
+  .secondbox {
+    background: #ffffff;
+      padding: 20px;
+    margin-bottom: 20px;
+  }
+  .secondbox label {
+    display: block;
+    color: #8f8f8f;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .secondbox h3 {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 15px;
+    background: transparent;
+    color: #333;
 }
-.firstbox label span {
-  color: #333333;
+  .secondbox h3 span {
+      color: #0042a9;
+  }
+  .secondbox label span {
+    color: #333333;
+  }
+  .secondbox hr {
+  }
+  
+  .thirdbox {
+    background: #ffffff;
+    margin-bottom: 20px;
+  }
+  .thirdbox h3 {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 20px 20px 0;
+    margin-bottom: 15px;
+    color: #333;
+    background: transparent;
 }
-.secondbox {
-  background: #ffffff;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.secondbox label {
-  display: block;
-  color: #8f8f8f;
-  margin-bottom: 5px;
-  font-weight: 600;
-  font-size: 14px;
-}
-.secondbox h3 {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 0;
-  margin-bottom: 15px;
-  background: transparent;
-  color: #333;
-}
-.secondbox h3 span {
-  color: #0042a9;
-}
-.secondbox label span {
-  color: #333333;
-}
-.secondbox hr {
-}
-
-.thirdbox {
-  background: #ffffff;
-  margin-bottom: 20px;
-}
-.thirdbox h3 {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 20px 20px 0;
-  margin-bottom: 15px;
-  color: #333;
-  background: transparent;
-}
-.thirdbox .table-responsive {
-  display: table;
-}
-.thirdbox table thead {
-  background: #cbcbcb;
-  font-size: 12px;
-}
-.thirdbox table tbody {
-  font-size: 12px;
-}
-.totalbox {
-  margin-bottom: 0 !important;
-}
-.totalbox table {
-  margin-bottom: 0;
-}
-.totalbox table th {
-  font-size: 16px;
-  width: 50px;
-}
-/* .row1 {
+  .thirdbox .table-responsive {
+      display: table;
+  }
+  .thirdbox table thead {
+      background: #cbcbcb;
+      font-size: 12px;
+  }
+  .thirdbox table tbody {
+      font-size: 12px;
+  }
+  .totalbox {
+    margin-bottom: 0 !important;
+  }
+  .totalbox table {
+    margin-bottom: 0;
+  }
+  .totalbox table th {
+      font-size: 16px;
+      width: 50px;
+  }
+  /* .row1 {
     display: flex;
     margin-right: -15px;
     margin-left: -16px;
@@ -3483,9 +3519,11 @@ img {
 
 /*-----myWayMessage Devesh CSS (End)-----*/
 /* rate-table css start by Shlok */
-.btn-sizeRate {
-  height: 38px;
-  margin-top: -4px;
+.btn-sizeRate{
+  height: auto;
+    padding: 4px;
+    width: 24%;
+    font-size: 12px;
 }
 .p-b-10 {
   padding-bottom: 10px !important;
@@ -3504,5 +3542,8 @@ img {
   color: #fff !important;
   padding: 4px 12px !important;
   font-size: 22px !important;
+}
+.spitDesign {
+  max-width: 800px;
 }
 /* rate-table css End by Shlok */

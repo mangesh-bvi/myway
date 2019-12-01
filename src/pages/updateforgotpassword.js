@@ -2,6 +2,11 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class Updateforgotpassword extends React.Component {
   constructor(props) {
@@ -27,7 +32,7 @@ class Updateforgotpassword extends React.Component {
     } else {
       // var error= username===''?'Please enter the username\n':'';
       //     error+=password===''?'Please enter the passowrd':'';
-      alert("error");
+      NotificationManager.error("error");
     }
   }
   render() {
@@ -99,9 +104,9 @@ function handleResponse(response) {
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
-      alert("Oops! error occured");
+      NotificationManager.error("Oops! error occured");
     } else {
-      alert("Password has been updated successfully");
+      NotificationManager.success("Password has been updated successfully");
       window.location.href = "./login";
     }
 
