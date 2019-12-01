@@ -1428,6 +1428,7 @@ class Dashboard extends Component {
     });
     return (
       <div>
+        {this.state.loading === true ? <div className="loader-icon"></div> : ""}
         {/* {loading == true ? (
           <img src={LoadingImg} width="50" height="50" />
         ) : null} */}
@@ -1472,12 +1473,6 @@ class Dashboard extends Component {
                         mapElement={<div style={{ height: `100%` }} />}
                         loadingElement={<div style={{ height: `100%` }} />}
                       ></MapWithAMakredInfoWindow>
-
-                      {this.state.loading === true ? (
-                        <div className="loader-icon"></div>
-                      ) : (
-                        ""
-                      )}
 
                       <div className="map-filter">
                         <div

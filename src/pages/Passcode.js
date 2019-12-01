@@ -3,6 +3,11 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
 import { encryption } from "../helpers/encryption";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class Passcode extends React.Component {
   constructor(props) {
@@ -30,7 +35,7 @@ class Passcode extends React.Component {
     } else {
       // var error= username===''?'Please enter the username\n':'';
       //     error+=password===''?'Please enter the passowrd':'';
-      alert("error");
+      NotificationManager.error("error");
     }
   }
   render() {

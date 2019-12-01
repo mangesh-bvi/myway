@@ -8,6 +8,11 @@ import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class SpotRateDetails extends Component {
   constructor(props) {
@@ -145,7 +150,7 @@ class SpotRateDetails extends Component {
       var SpotRateID = this.props.location.state.detail[0];
       this.HandleShipmentDetails(SpotRateID);
       // setTimeout(() => {
-        this.HandleCommodityDropdown();
+      this.HandleCommodityDropdown();
       // }, 100);
     }
 
@@ -159,7 +164,7 @@ class SpotRateDetails extends Component {
   }
 
   HandleShipmentDetails(SpotRateID) {
-    debugger
+    debugger;
     var self = this;
     if (SpotRateID != undefined) {
       if (SpotRateID != null) {
@@ -177,7 +182,7 @@ class SpotRateDetails extends Component {
             //alert("Success")
             //self.s .spotrateresponse = response.data;
             var spotrateresponseTbl1 = [];
-            spotrateresponseTbl1 = response.data.Table1
+            var spotrateresponseTbl1 = response.data.Table1;
             if (response != null) {
               if (response.data != null) {
                 if (response.data.Table != null) {
@@ -223,7 +228,7 @@ class SpotRateDetails extends Component {
             debugger;
             var temperror = error.response.data;
             var err = temperror.split(":");
-            alert(err[1].replace("}", ""));
+            NotificationManager.error(err[1].replace("}", ""));
           });
       }
     }
@@ -251,7 +256,6 @@ class SpotRateDetails extends Component {
     });
   };
 
-  
   HandleBindIncoTeamData() {
     let self = this;
     axios({
@@ -359,7 +363,7 @@ class SpotRateDetails extends Component {
     }
   }
 
-  toggleViewRate(){
+  toggleViewRate() {
     let self = this;
     let fields = this.state.fields;
     let mapPositionPOD = this.state.mapPositionPOD;
@@ -372,60 +376,109 @@ class SpotRateDetails extends Component {
     var multiCBM = [];
     fields["pod"] = this.state.spotrateresponseTbl.DestinationAddress;
     fields["pol"] = this.state.spotrateresponseTbl.PickUpAddress;
-    mapPositionPOD["lat"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[0]); 
+    mapPositionPOD["lat"] = parseFloat(
+      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
+    );
     //mapPositionPOD["lat"] = 40.968456;
-    mapPositionPOD["lng"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[1]);
+    mapPositionPOD["lng"] = parseFloat(
+      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[1]
+    );
     //mapPositionPOD["lng"] = 28.674417;
-    mapPositionPOL["lat"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[0]);
-    //mapPositionPOL["lat"] = 18.950123; 
-    mapPositionPOL["lng"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[1]);
+    mapPositionPOL["lat"] = parseFloat(
+      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[0]
+    );
+    //mapPositionPOL["lat"] = 18.950123;
+    mapPositionPOL["lng"] = parseFloat(
+      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
+    );
     //mapPositionPOL["lng"] = 72.950055;
-    markerPositionPOD["lat"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[0]); 
-    markerPositionPOD["lat"] = parseFloat(this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(',')[0]); 
-    markerPositionPOD["lng"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[1])
-    markerPositionPOD["lng"] = parseFloat(this.state.spotrateresponseTbl.PickupGeoCordinate.split(',')[1])
+    markerPositionPOD["lat"] = parseFloat(
+      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
+    );
+    markerPositionPOD["lat"] = parseFloat(
+      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
+    );
+    markerPositionPOD["lng"] = parseFloat(
+      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
+    );
+    markerPositionPOD["lng"] = parseFloat(
+      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
+    );
     //podfullAddData["GeoCoordinate"] = "40.968456,28.674417";
-    podfullAddData["GeoCoordinate"] = this.state.spotrateresponseTbl.DeliveryGeoCordinate;
+    podfullAddData[
+      "GeoCoordinate"
+    ] = this.state.spotrateresponseTbl.DeliveryGeoCordinate;
     podfullAddData["Location"] = "AMB";
-    podfullAddData["NameWoDiacritics"] = this.state.spotrateresponseTbl1[0].DestinationPort_Name;
+    podfullAddData[
+      "NameWoDiacritics"
+    ] = this.state.spotrateresponseTbl1[0].DestinationPort_Name;
     podfullAddData["OceanPortID"] = 6302;
-    podfullAddData["OceanPortLongName"] = this.state.spotrateresponseTbl.DestinationAddress;
-    podfullAddData["UNECECode"] = this.state.spotrateresponseTbl1[0].DestinationPort_ID;
+    podfullAddData[
+      "OceanPortLongName"
+    ] = this.state.spotrateresponseTbl.DestinationAddress;
+    podfullAddData[
+      "UNECECode"
+    ] = this.state.spotrateresponseTbl1[0].DestinationPort_ID;
 
     //polfullAddData["GeoCoordinate"] = "18.950123,72.950055";
-    polfullAddData["GeoCoordinate"] = this.state.spotrateresponseTbl.PickupGeoCordinate;
+    polfullAddData[
+      "GeoCoordinate"
+    ] = this.state.spotrateresponseTbl.PickupGeoCordinate;
     polfullAddData["Location"] = "NSA";
-    polfullAddData["NameWoDiacritics"] = this.state.spotrateresponseTbl1[0].OriginPort_Name;
+    polfullAddData[
+      "NameWoDiacritics"
+    ] = this.state.spotrateresponseTbl1[0].OriginPort_Name;
     polfullAddData["OceanPortID"] = 1500;
-    polfullAddData["OceanPortLongName"] = this.state.spotrateresponseTbl.PickUpAddress;
-    podfullAddData["UNECECode"] = this.state.spotrateresponseTbl1[0].OriginPort_ID;
-    
-    if (this.state.spotrateresponseTbl.Mode == "FCL") {  
-    for(var i=0; i<this.state.spotrateresponseTbl1.length; i++)
-    {
-    selected.push({ContainerName:this.state.spotrateresponseTbl1[i].Container, ProfileCodeID:this.state.spotrateresponseTbl1[i].ContainerProfileCodeID,
-       StandardContainerCode:this.state.spotrateresponseTbl1[i].ContainerCode})
-    users.push({ContainerName:this.state.spotrateresponseTbl1[i].Container, ContainerQuantity:this.state.spotrateresponseTbl1[i].ContainerQty, 
-      ProfileCodeID:this.state.spotrateresponseTbl1[i].ContainerProfileCodeID, StandardContainerCode:this.state.spotrateresponseTbl1[i].ContainerCode, Temperature:this.state.spotrateresponseTbl1[i].Container_Temperature, TemperatureType:""})
+    polfullAddData[
+      "OceanPortLongName"
+    ] = this.state.spotrateresponseTbl.PickUpAddress;
+    podfullAddData[
+      "UNECECode"
+    ] = this.state.spotrateresponseTbl1[0].OriginPort_ID;
+
+    if (this.state.spotrateresponseTbl.Mode == "FCL") {
+      for (var i = 0; i < this.state.spotrateresponseTbl1.length; i++) {
+        selected.push({
+          ContainerName: this.state.spotrateresponseTbl1[i].Container,
+          ProfileCodeID: this.state.spotrateresponseTbl1[i]
+            .ContainerProfileCodeID,
+          StandardContainerCode: this.state.spotrateresponseTbl1[i]
+            .ContainerCode
+        });
+        users.push({
+          ContainerName: this.state.spotrateresponseTbl1[i].Container,
+          ContainerQuantity: this.state.spotrateresponseTbl1[i].ContainerQty,
+          ProfileCodeID: this.state.spotrateresponseTbl1[i]
+            .ContainerProfileCodeID,
+          StandardContainerCode: this.state.spotrateresponseTbl1[i]
+            .ContainerCode,
+          Temperature: this.state.spotrateresponseTbl1[i].Container_Temperature,
+          TemperatureType: ""
+        });
+      }
     }
-   }
 
     if (this.state.spotrateresponseTbl3.length != null) {
       if (this.state.spotrateresponseTbl3.length > 0) {
-        for(var i=0; i<this.state.spotrateresponseTbl3.length; i++)
-       {
-        multiCBM.push({PackageType: this.state.spotrateresponseTbl3[i].PackageType, Quantity: this.state.spotrateresponseTbl3[i].Quantity, 
-          Lengths: this.state.spotrateresponseTbl3[i].Lengths, Width: this.state.spotrateresponseTbl3[i].Width, 
-          Height: this.state.spotrateresponseTbl3[i].Height, GrossWt: this.state.spotrateresponseTbl3[i].GrossWt, 
-          VolumeWeight: 0, Volume: this.state.spotrateresponseTbl3[i].Volume})
-       }
-      }      
+        for (var i = 0; i < this.state.spotrateresponseTbl3.length; i++) {
+          multiCBM.push({
+            PackageType: this.state.spotrateresponseTbl3[i].PackageType,
+            Quantity: this.state.spotrateresponseTbl3[i].Quantity,
+            Lengths: this.state.spotrateresponseTbl3[i].Lengths,
+            Width: this.state.spotrateresponseTbl3[i].Width,
+            Height: this.state.spotrateresponseTbl3[i].Height,
+            GrossWt: this.state.spotrateresponseTbl3[i].GrossWt,
+            VolumeWeight: 0,
+            Volume: this.state.spotrateresponseTbl3[i].Volume
+          });
+        }
+      }
     }
     this.state.selected = selected;
     this.state.users = users;
     this.state.multiCBM = multiCBM;
 
-    const {spotrateresponseTbl} = this.state;
+    const { spotrateresponseTbl } = this.state;
     this.state.Custom_Clearance = spotrateresponseTbl.Custom_Clearance;
     this.state.puAdd = spotrateresponseTbl.PickUpAddress;
     this.state.DeliveryCity = spotrateresponseTbl.DestinationAddress;
@@ -433,45 +486,43 @@ class SpotRateDetails extends Component {
     this.state.containerLoadType = spotrateresponseTbl.Mode;
     this.state.shipmentType = spotrateresponseTbl.ShipmentType;
     this.state.incoTerms = spotrateresponseTbl.Trade_terms;
-    if (spotrateresponseTbl.Mode == "FCL" || spotrateresponseTbl.Mode == "LCL") {
+    if (
+      spotrateresponseTbl.Mode == "FCL" ||
+      spotrateresponseTbl.Mode == "LCL"
+    ) {
       this.state.modeoftransport = "SEA";
-    }
-    else if (spotrateresponseTbl.Mode == "AIR") {
+    } else if (spotrateresponseTbl.Mode == "AIR") {
       this.state.modeoftransport = "AIR";
-    }
-    else {
+    } else {
       this.state.modeoftransport = "ROAD";
     }
-    
+
     if (spotrateresponseTbl.TypeofMove == "Port To Port") {
       this.state.typeofMove = 1;
       this.state.typesofMove = "p2p";
-    }
-    else if(spotrateresponseTbl.TypeofMove == "Door To Port"){
+    } else if (spotrateresponseTbl.TypeofMove == "Door To Port") {
       this.state.typeofMove = 2;
       this.state.typesofMove = "d2p";
-    }
-    else if(spotrateresponseTbl.TypeofMove == "Door To Door"){
+    } else if (spotrateresponseTbl.TypeofMove == "Door To Door") {
       this.state.typeofMove = 3;
       this.state.typesofMove = "d2d";
-    }
-    else{
+    } else {
       this.state.typeofMove = 4;
       this.state.typesofMove = "p2d";
     }
-    this.state.currencyCode = this.state.spotrateresponseTbl.BaseCurrency
-    this.state.NonStackable = this.state.spotrateresponseTbl.NonStackable
+    this.state.currencyCode = this.state.spotrateresponseTbl.BaseCurrency;
+    this.state.NonStackable = this.state.spotrateresponseTbl.NonStackable;
     self.setState({
       Custom_Clearance: this.state.Custom_Clearance,
       DeliveryCity: this.state.DeliveryCity,
-      DestGeoCordinate:"",
+      DestGeoCordinate: "",
       HazMat: this.state.HazMat,
       NonStackable: this.state.NonStackable,
-      OriginGeoCordinates:"",
-      PDAddress:"",
+      OriginGeoCordinates: "",
+      PDAddress: "",
       POD: "",
-      PODData:[],
-      POL:"",
+      PODData: [],
+      POL: "",
       PUAddress: "",
       PickupCity: "",
       PortOfDischargeCode: "",
@@ -480,7 +531,7 @@ class SpotRateDetails extends Component {
       typeofMove: this.state.typeofMove,
       currencyCode: this.state.currencyCode,
       fields,
-      incoTerms:this.state.incoTerms,
+      incoTerms: this.state.incoTerms,
       isCustomClear: "No",
       isSpacialEqt: true,
       isSpecialEquipment: "0",
@@ -495,7 +546,7 @@ class SpotRateDetails extends Component {
       multiCBM: multiCBM,
       pod: "",
       podCountry: "",
-      podfullAddData:podfullAddData,
+      podfullAddData: podfullAddData,
       pol: "",
       polCountry: "",
       poladdress: "",
@@ -520,14 +571,12 @@ class SpotRateDetails extends Component {
       values: [],
       values1: [],
       zoomPOD: 0,
-      zoomPOL: 0   
-    })
+      zoomPOL: 0
+    });
     this.HandleViewRateData();
-    
   }
 
-  HandleViewRateData()
-  {
+  HandleViewRateData() {
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
@@ -616,14 +665,17 @@ class SpotRateDetails extends Component {
                             {this.state.spotrateresponseTbl.Trade_terms}
                           </p>
                         </div>
-                        <div className="col-md-4">
+                        {/* <div className="col-md-4">
                           <p className="details-title">Equipment Types</p>
-                          <p className="details-para"></p>
-                        </div>
-                        <div className="col-md-4">
+                          <p className="details-para">
+                          {spotrateresponseTbl1.length > 0 ?
+                          spotrateresponseTbl1[0].ContainerCode : ""}
+                          </p>
+                        </div> */}
+                        {/* <div className="col-md-4">
                           <p className="details-title">Special Equipment</p>
                           <p className="details-para"></p>
-                        </div>
+                        </div> */}
                         <div className="col-md-4">
                           <p className="details-title">
                             HazMat &amp; Unstackable
@@ -639,7 +691,6 @@ class SpotRateDetails extends Component {
                         <div className="col-md-4">
                           <p className="details-title">Custom Clearance</p>
                           <p className="details-para">
-                            {" "}
                             {this.state.spotrateresponseTbl
                               .Customs_Clearance && (
                               <p className="details-para">Yes</p>
@@ -665,25 +716,30 @@ class SpotRateDetails extends Component {
                         <div className="col-md-4">
                           <p className="details-title">POL</p>
                           <p className="details-para">
-                            {this.state.spotrateresponseTbl1.OriginPort_Name}
+                            {spotrateresponseTbl1.length > 0
+                              ? spotrateresponseTbl1[0].OriginPort_Name
+                              : ""}
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">POD</p>
                           <p className="details-para">
-                            {
-                              this.state.spotrateresponseTbl1
-                                .DestinationPort_Name
-                            }
+                            {spotrateresponseTbl1.length > 0
+                              ? spotrateresponseTbl1[0].DestinationPort_Name
+                              : ""}
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">PU Address</p>
-                          <p className="details-para"></p>
+                          <p className="details-para">
+                            {this.state.spotrateresponseTbl.PickUpAddress}
+                          </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Delivery Address</p>
-                          <p className="details-para"></p>
+                          <p className="details-para">
+                            {this.state.spotrateresponseTbl.DestinationAddress}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -726,106 +782,108 @@ class SpotRateDetails extends Component {
                             </option>
                           ))}
                         </select>
-                        
                       </div>
                       <div className="col-md-12 login-fields">
                         <p className="details-title">Cargo Details</p>
-                        <div className="cls-rt" style={{width:'100%'}}>
+                        <div className="cls-rt" style={{ width: "100%" }}>
                           <div className="ag-fresh">
-                        {/* {(() => {
+                            {/* {(() => {
                         if (spotrateresponseTbl1.length>0) {
                  */}
-                        <ReactTable
-                          data={spotrateresponseTbl1}
-                          noDataText="No Data Found"
-                          filterable
-                          columns={[
-                            {
-                              columns: [
+                            <ReactTable
+                              data={spotrateresponseTbl1}
+                              noDataText="No Data Found"
+                              filterable
+                              columns={[
                                 {
-                                  Header: "Container",
-                                  accessor: "Container"
-                                },
-                                {
-                                  Header: "Quantity",
-                                  accessor: "ContainerQty"
-                                },
+                                  columns: [
+                                    {
+                                      Header: "Container",
+                                      accessor: "Container"
+                                    },
+                                    {
+                                      Header: "Quantity",
+                                      accessor: "ContainerQty"
+                                    },
 
-                                {
-                                  Header: "Temperature",
-                                  accessor: "Container_Temperature"
+                                    {
+                                      Header: "Temperature",
+                                      accessor: "Container_Temperature"
+                                    }
+                                  ]
                                 }
-                              ]
-                            }
-                          ]}
-                          className="-striped -highlight"
-                          defaultPageSize={10}
-                          minRows={1}
-                          //getTrProps={this.HandleRowClickEvt}
-                        />
-                        </div>
-                        <div className="ag-fresh">
-                        <ReactTable
-                          data={spotrateresponseTbl3}
-                          noDataText="No Data Found"
-                          filterable
-                          columns={[
-                            {
-                              columns: [
-                                // {
-                                //   Header: "Equipment Type",
-                                //   accessor: ""
-                                // },
-                                // {
-                                //   Header: "Package Type",
-                                //   accessor: ""
-                                // },
+                              ]}
+                              className="-striped -highlight"
+                              defaultPageSize={10}
+                              minRows={1}
+                              //getTrProps={this.HandleRowClickEvt}
+                            />
+                          </div>
+                          <div className="ag-fresh">
+                            <ReactTable
+                              data={spotrateresponseTbl3}
+                              noDataText="No Data Found"
+                              filterable
+                              columns={[
                                 {
-                                  Header: "Quantity",
-                                  accessor: "Quantity"
-                                },
+                                  columns: [
+                                    // {
+                                    //   Header: "Equipment Type",
+                                    //   accessor: ""
+                                    // },
+                                    // {
+                                    //   Header: "Package Type",
+                                    //   accessor: ""
+                                    // },
+                                    {
+                                      Header: "Quantity",
+                                      accessor: "Quantity"
+                                    },
 
-                                {
-                                  Header: "Length",
-                                  accessor: "Lengths"
-                                },
+                                    {
+                                      Header: "Length",
+                                      accessor: "Lengths"
+                                    },
+                                    {
+                                      Header: "Height",
+                                      accessor: "Height"
+                                    },
+                                    {
+                                      Header: "Width",
+                                      accessor: "Width"
+                                    },
 
-                                {
-                                  Header: "Width",
-                                  accessor: "Width"
-                                },
+                                    {
+                                      Header: "Gross Weight",
+                                      accessor: "GrossWt"
+                                    },
 
-                                {
-                                  Header: "Gross Weight",
-                                  accessor: "GrossWt"
-                                },
-
-                                {
-                                  Header: "Volume Weight",
-                                  accessor: "VolumeWT"
+                                    {
+                                      Header: "Volume Weight",
+                                      accessor: "VolumeWT"
+                                    }
+                                  ]
                                 }
-                              ]
-                            }
-                          ]}
-                          className="-striped -highlight"
-                          defaultPageSize={10}
-                          minRows={1}
-                          //getTrProps={this.HandleRowClickEvt}
-                        />
-                        </div>
-                        {/* }})()} */}
+                              ]}
+                              className="-striped -highlight"
+                              defaultPageSize={10}
+                              minRows={1}
+                              //getTrProps={this.HandleRowClickEvt}
+                            />
+                          </div>
+                          {/* }})()} */}
                         </div>
                         {/* <input type="text" value="Dummy" disabled /> */}
                       </div>
                     </div>
                     <div>
-                    <button
-                    onClick={this.toggleViewRate}
-                    className="butn more-padd"
-                    >
-                    View Rate
-                     </button>
-                     </div>
+                      <button
+                        onClick={this.toggleViewRate}
+                        className="butn more-padd"
+                      >
+                        View Rate
+                      </button>
+                    </div>
                     {/* <center>
                       <button
                         onClick={this.toggleBook}

@@ -12,9 +12,11 @@ import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
+
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -771,7 +773,7 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      alert(response.data[0].Result);
+      NotificationManager.success(response.data[0].Result);
     });
   };
 

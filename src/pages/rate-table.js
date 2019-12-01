@@ -1695,6 +1695,9 @@ class RateTable extends Component {
       modalSpot: !prevState.modalSpot
     }));
   }
+  toggleSpotCloseModal(){
+    this.setState({modalSpot:false});
+  }
 
   HandlePOLPODAutosearch(field, i, e) {
     let self = this;
@@ -2716,7 +2719,7 @@ class RateTable extends Component {
               </div>
               <div className="rate-table-below">
                 <div className="row">
-                  <div className="col-md-4 less-right-rate">
+                  <div className="col-md-3 less-right-rate">
                     <div className="rate-table-left">
                       <div className="top-select d-flex justify-content-between">
                         <a href="new-rate-search" className="butn btn-sizeRate">
@@ -2960,7 +2963,7 @@ class RateTable extends Component {
                   </div>
 
                   {this.state.RateDetails.length > 0 ? (
-                    <div className="col-md-8 react-rate-table react-rate-tab">
+                    <div className="col-md-9 react-rate-table react-rate-tab">
                       <ReactTable
                         columns={[
                           {
@@ -3308,7 +3311,7 @@ class RateTable extends Component {
                       </p>
                     </div>
                   ) : (
-                    <div className="col-md-8 less-left-rate">
+                    <div className="col-md-9 less-left-rate">
                       <div className="spot-rate">
                         <div className="no-rate">
                           <p>No Rates Found, Ask for Spot Rates</p>
@@ -3686,6 +3689,12 @@ class RateTable extends Component {
                     >
                       Send
                     </Button>
+                    <Button
+                    className="butn"
+                    onClick={this.toggleSpotCloseModal.bind(this)}
+                  >
+                    Cancel
+                  </Button>
                   </div>
                 </ModalBody>
               </Modal>

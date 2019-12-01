@@ -3,6 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
+import ATA from "./../assets/img/ATAFreight_console.png";
 import Dummy from "./../assets/dummy.pdf";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
@@ -12,7 +13,13 @@ import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
 import Copy from "./../assets/img/copy.png";
+import Autocomplete from "react-autocomplete";
 import { thisExpression } from "@babel/types";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -57,7 +64,7 @@ class RateFinalizing extends Component {
       users: [],
       referType: [],
       CargoDetailsArr: [],
-      CommodityID: "",
+      CommodityID: "49",
       destAddress: [],
       pickUpAddress: [],
       commodityData: [],
@@ -74,7 +81,28 @@ class RateFinalizing extends Component {
       selectedCommodity:"",
       accountcustname:"",
       toggleIsEdit:true,
-      custNotification:""
+      custNotification:"",
+      isediting:false,
+      isCopy:false,
+      CustAddress:"",
+      menuStyle: {
+        textAlign: "left",
+        borderRadius: "3px",
+        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.1)",
+        background: "rgba(255, 255, 255, 0.9)",
+        padding: "2px 0 0 10px",
+        fontSize: "90%",
+        position: "absolute",
+        top: "100%",
+        left: "0",
+        overflow: "auto",
+        zIndex: "1",
+        maxWidth: "300px",
+        maxHeight: "100px" // TODO: don't cheat, let it flow to the bottom
+      },
+      customerData: [],
+      fields: {},
+      CompanyID:"1457295703"
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -157,11 +185,11 @@ class RateFinalizing extends Component {
             }
           }
         }
-      
+
     }
       else if (containerLoadType == "LCL") {
         for (var i = 0; i < multiCBM.length; i++) {
-          CargoDetailsArr.push({PackageType:multiCBM[i].PackageType, SpecialContainerCode: multiCBM[i].PackageType+"_"+i, ContainerType: multiCBM[i].PackageType, "Packaging": "-", Quantity: multiCBM[i].Quantity, Lenght: multiCBM[i].Lengths, Width: multiCBM[i].Width, Height: multiCBM[i].Height, Weight: multiCBM[i].GrossWt, Gross_Weight: "-", Temperature: "-", CBM: "-", Volume: multiCBM[i].Volume, VolumeWeight: multiCBM[i].VolumeWeight, Editable: true })
+          CargoDetailsArr.push({PackageType:multiCBM[i].PackageType, SpecialContainerCode: multiCBM[i].PackageType+"_"+i, ContainerType: multiCBM[i].PackageType, "Packaging": "-", Quantity: multiCBM[i].Quantity, Lenght: multiCBM[i].Lengths, Width: multiCBM[i].Width, Height: multiCBM[i].Height, Weight: multiCBM[i].GrossWt, Gross_Weight: "-", Temperature: "-", CBM: multiCBM[i].Volume, Volume: multiCBM[i].Volume, VolumeWeight: multiCBM[i].VolumeWeight, Editable: true })
         }
       }
       else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
@@ -181,7 +209,7 @@ class RateFinalizing extends Component {
           }
         }
       }
-    
+
     else if(containerLoadType == "AIR" )
     {
       if(multiCBM != null)
@@ -192,7 +220,7 @@ class RateFinalizing extends Component {
           {
             if(multiCBM[i].PackageType != "" && multiCBM[i].PackageType != null)
             {
-              CargoDetailsArr.push({PackageType:multiCBM[i].PackageType, SpecialContainerCode: multiCBM[i].PackageType+"_"+i,ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-", CBM: "-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight, Editable: true})
+              CargoDetailsArr.push({PackageType:multiCBM[i].PackageType, SpecialContainerCode: multiCBM[i].PackageType+"_"+i,ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-", CBM: multiCBM[i].VolumeWeight,Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight, Editable: true})
             }
           }
         }
@@ -259,9 +287,10 @@ class RateFinalizing extends Component {
     }
     else
     {
-     
+
       var qData = this.props.location.state;
       this.HandleSalesQuoteView(qData);
+      this.HandlePackgeTypeData();
     }
     this.HandleCommodityDropdown();
     // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
@@ -271,7 +300,7 @@ class RateFinalizing extends Component {
     //   rateSubDetails: rateSubDetails
     // });
   }
-  
+
 
   this.HandleLocalCharges();
   this.HandleSurCharges();
@@ -286,10 +315,13 @@ class RateFinalizing extends Component {
     var SalesQuoteNumber =param.Quote;
     var type=param.type;
     var isediting = param.isediting;
+    var isCopy = param.isCopy;
     //alert(param.detail.Status)
     // "SHA-SQFCL-NOV19-05020"
       this.setState({
-        toggleIsEdit:false
+        toggleIsEdit:false,
+        isediting:isediting,
+        isCopy:isCopy
       })
     var SalesQuoteViewdata = {
       Mode: type,
@@ -327,16 +359,18 @@ class RateFinalizing extends Component {
 
                 self.setState({
                   accountcustname : response.data.Table[0].CompanyName == undefined ? response.data.Table[0].company_name : response.data.Table[0].CompanyName,
-                  custAddress: response.data.Table[0].Company_Address,
+                  CustAddress: response.data.Table[0].Company_Address,
                   custNotification: response.data.Table[0].ContactName == undefined ? response.data.Table[0].contact_name : response.data.Table[0].ContactName,
                   ModeOfTransport: response.data.Table[0].ModeOfTransport,
-                  shipmentType:  response.data.Table[0].ShipmentType,
-                  ContainerLoad: param.Type,
-                  EquipmentTypes:".20 DC",
-                  SpecialEquipment:".Refer Type (20 degrees)",
-                  HazMatUnstackable:".",
-                  modeoftransport:  TypeofMove,
-                  IncoTerms:  IncoTerms
+                  shipmentType:  response.data.Table[0].ShipmentType == null ? param.type == "LCL" || param.type == "FCL" ? "Ocean" : param.type == "AIR" ? "AIR" : param.type == "Inland" ? "Inland" : param.type : response.data.Table[0].ShipmentType,
+                  containerLoadType: param.type,
+                  StandardContainerCode:".20 DC",
+                  SpecialContainerCode:".Refer Type (20 degrees)",
+                  HazMat:false,
+                  modeoftransport: response.data.Table[0].ModeOfTransport,
+                  incoTerms:  IncoTerms,
+                  incoTerm:IncoTerms,
+                  currencyCode:"USD"
                 });
               }
             }
@@ -355,14 +389,43 @@ class RateFinalizing extends Component {
 
                 self.setState({
                   IncoTerms: IncoTerms,
-                  modeoftransport: TypeofMove,
+                  incoTerms:IncoTerms,
+                  incoTerm:IncoTerms,
                   //EquipmentTypes: response.data.Table1[0].ContainerCode,
                   Commodity: response.data.Table1[0].Commodity,
-                  CommodityID:response.data.Table1[0].Commodity,
+                  //CommodityID:response.data.Table1[0].Commodity,
                   selectedCommodity: response.data.Table1[0].Commodity
                 });
               }
             }
+            if(TypeofMove != null || TypeofMove != "" || TypeofMove != undefined)
+            {
+              if(TypeofMove == "Port To Port")
+              {
+                self.setState({
+                  typeofMove:1
+                });
+              }
+              else if(TypeofMove == "Door To Port")
+              {
+                self.setState({
+                  typeofMove:2
+                });
+              }
+              else if(TypeofMove == "Port To Door")
+              {
+                self.setState({
+                  typeofMove:3
+                });
+              }
+              else if(TypeofMove == "Door To Door")
+              {
+                self.setState({
+                  typeofMove:4
+                });
+              }
+            }
+
             if(response.data.Table3 != null)
             {
               if(response.data.Table3.length > 0)
@@ -372,7 +435,7 @@ class RateFinalizing extends Component {
                 {
                   CargoDetailsArr.push({PackageType:table[i].PackageType, SpecialContainerCode: table[i].PackageType+"_"+i, ContainerType: table[i].PackageType, "Packaging": "-", Quantity: table[i].Quantity, Lenght: table[i].Length, Width: table[i].Width, Height: table[i].height, Weight: table[i].GrossWeight, Gross_Weight: "-", Temperature: "-", CBM: "-", Volume: "-", VolumeWeight: "-", Editable: true })
                 }
-                
+
               }
               else{
                 CargoDetailsArr.push({Width:"No Data Found"})
@@ -400,6 +463,22 @@ class RateFinalizing extends Component {
         console.log(error.response);
       });
   }
+
+  HandlePackgeTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PackageTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
+
+
 
   HandleLocalCharges() {
     let self = this;
@@ -444,6 +523,7 @@ class RateFinalizing extends Component {
       data: LocalChargeData,
       headers: authHeader()
     }).then(function (response) {
+      debugger;
       for (var i = 0; i < response.data.Table.length; i++) {
         self.state.arrLocalsCharges.push({
           Amount: response.data.Table[i].Amount, AmountInBaseCurrency: response.data.Table[i].AmountInBaseCurrency,
@@ -616,7 +696,7 @@ class RateFinalizing extends Component {
 
   toggleEdit(e) {
     debugger;
-   
+
     if(!this.state.modalEdit)
     {
       var valuetype = e.target.getAttribute('data-valuetype')
@@ -645,8 +725,8 @@ class RateFinalizing extends Component {
       modalEdit: !prevState.modalEdit,
     }));
 
-   
-    
+
+
   }
 
   SendRequest()
@@ -699,7 +779,15 @@ class RateFinalizing extends Component {
       }
       if (containerLoadType == "LCL") {
         if (rateDetailsarr[i].RateLineID == undefined) {
-          FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].RateLineId, RateType: rateDetailsarr[i].TypeOfRate });
+          if(rateDetailsarr[i].SaleQuoteIDLineID != undefined)
+          {
+            FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].SaleQuoteIDLineID, RateType: "RateQuery" });
+          }
+          else
+          {
+            FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].RateLineId, RateType: rateDetailsarr[i].TypeOfRate });
+          }
+          
         }
         else {
           FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].RateLineID, RateType: rateDetailsarr[i].TypeOfRate });
@@ -736,10 +824,29 @@ class RateFinalizing extends Component {
         }
         if (containerLoadType == "LCL") {
           if (rateDetailsarr[i].RateLineID == undefined) {
+            if(rateSubDetailsarr[j].SaleQuoteIDLineID != undefined)
+            {
+              if (rateSubDetailsarr[j].SaleQuoteIDLineID == rateDetailsarr[i].SaleQuoteIDLineID) {
+                FCLSQCharges.push({
+                  ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
+                  Rate: rateSubDetailsarr[j].Rate == null ? 0 : rateSubDetailsarr[j].Rate,
+                  Currency: "USD",
+                  RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                  Tax: rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+                  ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                  Exrate: rateSubDetailsarr[j].Exrate == undefined ? "" : rateSubDetailsarr[j].Exrate,
+                  ChargeType: rateSubDetailsarr[j].Type,
+                  TotalAmount: rateSubDetailsarr[j].Total == null  ? 0 : rateSubDetailsarr[j].Total.split(" ")[0]
+                });
+              }
+            }
+            else
+            {
             if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
               FCLSQCharges.push({
                 ChargeID: rateSubDetailsarr[j].ChargeID,
-                Rate: rateSubDetailsarr[j].Rate,
+                Rate: rateSubDetailsarr[j].Rate == null ? 0 : rateSubDetailsarr[j].Rate,
                 Currency: rateSubDetailsarr[j].Currency,
                 RateLineID: rateSubDetailsarr[j].RateLineID,
                 ChargeCode: rateSubDetailsarr[j].ChargeCode,
@@ -747,9 +854,10 @@ class RateFinalizing extends Component {
                 ChargeItem: rateSubDetailsarr[j].ChargeItem,
                 Exrate: rateSubDetailsarr[j].Exrate,
                 ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount: rateSubDetailsarr[j].TotalAmount
+                TotalAmount: rateSubDetailsarr[j].TotalAmount == null  ? 0 : rateSubDetailsarr[j].TotalAmount
               });
             }
+          }
 
           }
           else {
@@ -802,7 +910,7 @@ class RateFinalizing extends Component {
               TotalAmount:rateSubDetailsarr[j].TotalAmount
               });
             }
-          
+
         }
       }
     }
@@ -871,9 +979,19 @@ class RateFinalizing extends Component {
     }
     else if (containerLoadType == "LCL") {
       var multiCBM = this.state.multiCBM;
-      for (var i = 0; i < multiCBM.length; i++) {
-        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({ Quantity: multiCBM[i].Quantity, Lengths: multiCBM[i].Lengths, Width: multiCBM[i].Width, Height: multiCBM[i].Height, GrossWt: multiCBM[i].GrossWt, VolumeWeight: multiCBM[i].VolumeWeight, Volume: multiCBM[i].Volume, PackageType: multiCBM[i].PackageType })
+      if(this.state.isediting)
+      {
+        for (var i = 0; i < multiCBM.length; i++) {
+          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+          RateQueryDim.push({ Quantity: multiCBM[i].Quantity, Lengths: multiCBM[i].Length, Width: multiCBM[i].Width, Height: multiCBM[i].height, GrossWt: multiCBM[i].GrossWeight, VolumeWeight: 0, Volume: 0, PackageType: multiCBM[i].PackageType })
+        }
+      }
+      else
+      {
+        for (var i = 0; i < multiCBM.length; i++) {
+          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+          RateQueryDim.push({ Quantity: multiCBM[i].Quantity, Lengths: multiCBM[i].Lengths, Width: multiCBM[i].Width, Height: multiCBM[i].Height, GrossWt: multiCBM[i].GrossWt, VolumeWeight: multiCBM[i].VolumeWeight, Volume: multiCBM[i].Volume, PackageType: multiCBM[i].PackageType })
+        }
       }
     }
     else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
@@ -949,7 +1067,7 @@ class RateFinalizing extends Component {
       PickUpAddressDetails: PickUpAddressDetails,
       DestinationAddressDetails: DestinationAddressDetails,
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-      CompanyID: 1457295703,
+      CompanyID: this.state.CompanyID,
       BaseCurrency: this.state.currencyCode,
       MywayProfit: this.state.Addedprofit,
       MywayDiscount: txtRequestDiscount,
@@ -1004,7 +1122,7 @@ class RateFinalizing extends Component {
         if (response.data != null) {
           if (response.data.Table != null) {
             if (response.data.Table.length > 0) {
-              alert(response.data.Table[0].Message)
+              NotificationManager.error(response.data.Table[0].Message)
               window.location.href = "quote-table";
             }
           }
@@ -1018,7 +1136,7 @@ class RateFinalizing extends Component {
 
   }
 
- 
+
   SendQuote() {
 
   }
@@ -1149,13 +1267,33 @@ class RateFinalizing extends Component {
     this.forceUpdate()
   }
 
+ processText(inputText) {
+    var output = [];
+    var json = inputText.toString().split(' ');
+    // json.forEach(function (item) {
+    //     output.push(item.replace(/\'/g, '').split(/(\d+)/).filter(Boolean));
+    // });
+    return json;
+}
+
   HandleLocalSearchCharges(e) {
     debugger;
     var rateDetailsarr = this.state.rateDetails;
     if (e.target.checked) {
 
       for (var i = 0; i < rateDetailsarr.length; i++) {
-        this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount) + parseFloat(e.target.value)
+      //  this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount) + parseFloat(e.target.value)
+
+        // if(this.state.rateDetails[i].TotalAmount == undefined && this.state.rateDetails[i].TotalAmount == null)
+        // {
+        //   var amount = this.processText(this.state.rateDetails[i].Total)
+        //   this.state.rateDetails[i].Total = (parseFloat(amount[0]) + parseFloat(e.target.value) ).toString() +" "+ amount[1]
+        // }
+        // else
+        // {
+          this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount == null ? 0 : this.state.rateDetails[i].TotalAmount) + parseFloat(e.target.value)
+       // }
+
 
         var newrateSubDetails = {
           BaseCurrency: e.target.getAttribute('data-currency'),
@@ -1167,6 +1305,7 @@ class RateFinalizing extends Component {
           Exrate: 0,
           Rate: parseFloat(e.target.value),
           RateLineID: this.state.rateDetails[i].RateLineId,
+          SaleQuoteIDLineID:this.state.rateDetails[i].SaleQuoteIDLineID,
           Tax: 0,
           TotalAmount: parseFloat(e.target.getAttribute('data-amountinbasecurrency')),
           Extracharge: true
@@ -1185,7 +1324,17 @@ class RateFinalizing extends Component {
     if (!e.target.checked) {
 
       for (var i = 0; i < rateDetailsarr.length; i++) {
-        this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount) - parseFloat(e.target.value)
+        if(this.state.rateDetails[i].TotalAmount == undefined)
+        {
+          var amount = this.processText(this.state.rateDetails[i].Total)
+
+          this.state.rateDetails[i].Total = parseFloat(amount[0]) - parseFloat(e.target.value) + " " + amount[1]
+        }
+        else
+        {
+          this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount) - parseFloat(e.target.value)
+        }
+
 
         for (var i = 0; i <= this.state.rateSubDetails.length - 1; i++) {
           if (this.state.rateSubDetails[i]["ChargeCode"] == e.target.getAttribute('data-chargedesc')) {
@@ -1256,7 +1405,7 @@ class RateFinalizing extends Component {
         flattack_openTop : flattack_openTop,
       })
     }
-   
+
 
     let CargoDetailsArr =  [...this.state.CargoDetailsArr];
 
@@ -1284,6 +1433,71 @@ class RateFinalizing extends Component {
 
     this.forceUpdate();
     this.toggleEdit()
+  }
+
+  HandleChangeCon(field, e) {
+    debugger;
+    let self = this;
+    self.state.error = "";
+    var customertxtlen = e.target.value;
+    if (customertxtlen == "") {
+      document.getElementById("SearchRate").classList.add("disableRates");
+    }
+
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+    if (fields[field].length >= 3) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerList`,
+        data: {
+          CustomerName: e.target.value,
+          CustomerType: "Existing"
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+
+        if(response.data.Table.length != 0)
+        {
+          if (field == "CustomerList") {
+            self.setState({
+              customerData: response.data.Table,
+              fields
+            });
+          } else {
+            self.setState({
+              customerData: response.data.Table,
+              fields
+            });
+          }
+        }
+        else{
+          self.state.error = "Please enter valid Consignee"      
+        }
+        self.setState({
+          error: self.state.error
+        });
+      });
+    } else {
+      self.setState({
+        customerData: [],
+        fields
+      });
+    }
+
+  }
+
+  handleSelectCon(field, value, e) {
+    debugger;
+    let fields = this.state.fields;
+    fields[field] = value;
+    var compId = e.Company_ID;
+    this.setState({
+      fields,
+      CompanyID: compId
+    });
+    //document.getElementById("SearchRate").classList.remove("disableRates");
   }
 
   render() {
@@ -1780,10 +1994,10 @@ class RateFinalizing extends Component {
                                     <>
                                       <p className="details-title">POL</p>
                                       <p
-                                        title={row.original.POLName}
+                                        title={row.original.POLName == undefined ? row.original.POL : row.original.POLName}
                                         className="details-para max2"
                                       >
-                                        {row.original.POLName}
+                                        {row.original.POLName == undefined ? row.original.POL : row.original.POLName}
                                       </p>
                                     </>
                                   );
@@ -1798,10 +2012,10 @@ class RateFinalizing extends Component {
                                     <>
                                       <p className="details-title">POD</p>
                                       <p
-                                        title={row.original.PODName}
+                                        title={row.original.PODName == undefined ? row.original.POD : row.original.PODName}
                                         className="details-para max2"
                                       >
-                                        {row.original.PODName}
+                                        {row.original.PODName  == undefined ? row.original.POD : row.original.PODName}
                                       </p>
                                     </>
                                   );
@@ -1893,17 +2107,21 @@ class RateFinalizing extends Component {
                                     <>
                                       <p className="details-title">Price</p>
                                       <p className="details-para">
-                                        {row.original.TotalAmount !== "" &&
+                                        {
+                                        row.original.TotalAmount !== undefined ?
+                                        row.original.TotalAmount !== "" &&
                                           row.original.TotalAmount !== null
                                           ? row.original.TotalAmount +
-                                          " " +
+                                        0 +
                                           row.original.BaseCurrency
-                                          : ""}
+                                          : 0
+                                        : row.original.Total === undefined ? 0 : row.original.Total
+                                        }
                                       </p>
                                     </>
                                   );
                                 },
-                                accessor: "baseFreightFee",
+                                accessor: "Total",
                                 filterable: true,
                                 minWidth: 80
                               }
@@ -1962,7 +2180,9 @@ class RateFinalizing extends Component {
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
                                 minRows={1}
-                                data={row.original.RateLineId == undefined ? this.state.rateSubDetails.filter(
+                                data={
+                                  row.original.SaleQuoteIDLineID == undefined ?
+                                  row.original.RateLineId == undefined ? this.state.rateSubDetails.filter(
                                   d =>
                                     d.RateLineID === row.original.RateLineID
                                 ) :
@@ -1970,13 +2190,26 @@ class RateFinalizing extends Component {
                                     d =>
                                       d.RateLineID === row.original.RateLineId
                                   )
+                                  :
+                                  this.state.rateSubDetails.filter(
+                                    d =>
+                                      d.SaleQuoteIDLineID === row.original.SaleQuoteIDLineID
+                                  )
                                 }
                                 columns={[
                                   {
                                     columns: [
                                       {
                                         Header: "C. Type",
-                                        accessor: "ChargeType"
+                                        accessor: "ChargeType",
+                                        Cell: row => {
+                                          return (
+                                            <>
+                                             {row.original.ChargeType != undefined ?
+                                                 row.original.ChargeType
+                                                : row.original.Type }
+                                            </>
+                                        );}
                                       },
                                       {
                                         Header: "C. Name",
@@ -1987,9 +2220,10 @@ class RateFinalizing extends Component {
                                         accessor: "Rate",
                                         Cell: props => (
                                           <React.Fragment>
-                                            {props.original.Rate}
+
+                                            { row.original.Rate != undefined ? props.original.Rate : props.original.Amount == null ? "0" : props.original.Amount }
                                             &nbsp;
-                                          {props.original.Currency}
+                                          { row.original.Currency != undefined ? props.original.Currency : ""}
                                           </React.Fragment>
                                         )
                                       },
@@ -2011,17 +2245,19 @@ class RateFinalizing extends Component {
                                         Cell: row => {
                                           return (
                                             <>
-                                              {row.original.TotalAmount !== "" &&
+                                              {row.original.TotalAmount != undefined ?
+                                              row.original.TotalAmount !== "" &&
                                                 row.original.TotalAmount !== null
                                                 ? row.original.TotalAmount +
-                                                " " +
+                                                "" +
                                                 row.original.BaseCurrency
-                                                : ""}
+                                                : ""
+                                                : row.original.Total}
                                             </>
                                           );
                                         },
                                         Header: "Final Payment",
-                                        accessor: "TotalAmount"
+                                        accessor: "Total"
                                       }
                                     ]
                                   }
@@ -2120,14 +2356,19 @@ class RateFinalizing extends Component {
                                       : ""}
                             </p>
                           </div>
+                          {this.state.isediting && (
                           <div className="col-md-4">
                             <p className="details-title">POL</p>
                             <p className="details-para">{this.state.polfullAddData.NameWoDiacritics}</p>
                           </div>
+                           )}
+                          {this.state.isediting && (
                           <div className="col-md-4">
                             <p className="details-title">POD</p>
                             <p className="details-para">{this.state.podfullAddData.NameWoDiacritics}</p>
                           </div>
+                           )}
+                           {this.state.isediting && (
                           <div className="col-md-4">
                             <p className="details-title">PU Address</p>
                             <p className="details-para">
@@ -2135,12 +2376,15 @@ class RateFinalizing extends Component {
                               {this.state.polfullAddData.OceanPortLongName}
                             </p>
                           </div>
+                           )}
+                           {this.state.isediting && (
                           <div className="col-md-4">
                             <p className="details-title">Delivery Address</p>
                             <p className="details-para">
                               {this.state.podfullAddData.OceanPortLongName}
                             </p>
                           </div>
+                          )}
                         </div>
                         <div className="row">
                           <div className="col-md-6 d-flex align-items-center">
@@ -2220,13 +2464,13 @@ class RateFinalizing extends Component {
                             //editable: this.state.containerLoadType == "Air" ? true : false
                           },
                           {
-                           
+
                             Header: "Temp.",
                             accessor: "Temperature",
                             //show:  this.state.containerLoadType == "Air" ? false : true
                           },
                           {
-                           
+
                             Header: "CBM" ,
                             accessor: "CBM",
                             //show:  this.state.containerLoadType == "Air" ? false : true
@@ -2240,7 +2484,7 @@ class RateFinalizing extends Component {
                               if(row.original.Editable)
                               {
                                 return (
-                                 
+
                                   <div className="action-cntr">
                                     {/* actionicon */}
                                     <button  onClick={this.toggleEdit}>
@@ -2287,14 +2531,36 @@ class RateFinalizing extends Component {
                           {this.state.toggleAddProfitBtn && (
                             <p className="details-para">{this.state.accountcustname}</p>
                           )}
-                          {!this.state.toggleAddProfitBtn && (
+                          {!this.state.toggleAddProfitBtn || !this.state.isCopy && (
                             <p className="details-para">{encryption(window.localStorage.getItem("username"), "desc")}</p>
+                          )}
+                          {this.state.isCopy && (
+                           <Autocomplete
+                            id="searchtxt"
+                            getItemValue={item => item.Company_Name}
+                            items={this.state.customerData}
+                            renderItem={(item, isHighlighted) => (
+                              <div
+                                style={{
+                                  background: isHighlighted ? "lightgray" : "white"
+                                }}
+                              >
+                                {item.Company_Name}
+                              </div>
+                            )}
+                            value={this.state.fields["Company_Name"]}
+                            onChange={this.HandleChangeCon.bind(this, "Company_Name")}
+                            menuStyle={this.state.menuStyle}
+                            onSelect={this.handleSelectCon.bind(this, "Company_Name")}
+                            inputProps={{ placeholder: "Search Account/Consignee" }}
+                         />
                           )}
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
                           <p className="details-para">
-                            Lotus Park, Goregaon (E), Mumbai : 400099
+                            {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
+                            {this.state.CustAddress}
                           </p>
                         </div>
                         <div className="col-md-4">
@@ -2905,7 +3171,7 @@ class RateFinalizing extends Component {
                       </div>
                     );
                   }}
-                  
+
                 />
                 <div className="title-border" style={{ marginBottom: "20px" }}>
                   <div>
@@ -2931,9 +3197,21 @@ class RateFinalizing extends Component {
           {/* <div className="modal popupbox" id="myModal">
         <div className="modal-dialog">
           <div className="modal-content">
-      
+
             <div className="modal-body"> */}
             <button type="button" className="close" data-dismiss="modal">&times;</button>
+                    <div className="row" style={{margin:0}}>
+                  <div className="logohheader">
+                    <div className="row" style={{margin:0}}>
+                      <div className="col-12 col-md-6">
+                          <img src={ATA} alt="ATAFreight Console" />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="headerlabel">Hello</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="row">
                     <div className="col-12 col-sm-6">
                         <div className="firstbox">
@@ -3301,7 +3579,7 @@ class RateFinalizing extends Component {
           >
                    <ModalBody>
               <h3 className="mb-4">Edit Cargo Details</h3>
-              
+
               <div className="rename-cntr login-fields">
                 <select
                 className="select-text"
@@ -3322,12 +3600,12 @@ class RateFinalizing extends Component {
                 <label>Quantity</label>
                 <input type="text" value={this.state.valuequantity} id="txtRequestFreeTime" placeholder="Quantity" />
               </div>
-              
+
               <div className="rename-cntr login-fields">
                 <label>Lenght</label>
                 <input type="text" value={this.state.valuelenght} id="txtRequestFreeTime" placeholder="Lenght" />
               </div>
-               
+
               <div className="rename-cntr login-fields">
                 <label>Width</label>
                 <input type="text" value={this.state.valuewidth} id="txtRequestFreeTime" placeholder="Width" />
@@ -3347,7 +3625,7 @@ class RateFinalizing extends Component {
                 <label>CBM</label>
                 <input type="text" value={this.state.valuecbm} id="txtRequestFreeTime" placeholder="CBM" />
               </div>
-             
+
               <div className="text-center">
                 <Button className="butn" data-valuespecialsontainersode={this.state.valuespecialsontainersode} onClick={this.SubmitCargoDetails.bind()}>
                   Submit
