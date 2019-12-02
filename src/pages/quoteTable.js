@@ -24,7 +24,7 @@ import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
 import Eye from "./../assets/img/eye.png";
-
+import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -34,11 +34,14 @@ class QuoteTable extends Component {
     this.state = {
       modalDel: false,
       modalBook: false,
+      filterAll: "",
       quotesData: []
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleBook = this.toggleBook.bind(this);
+    this.filterAll = this.filterAll.bind(this);
+    this.onFilteredChange = this.onFilteredChange.bind(this);
   }
 
   toggleDel() {
@@ -111,8 +114,26 @@ class QuoteTable extends Component {
     });
   }
 
-  HandleChangeShipmentDetails(QuoteNo,Type,Status) {
-    var data = {Quotes: QuoteNo, Type: Type, Status:Status};
+  onFilteredChange(filtered) {
+    if (filtered.length > 1 && this.state.filterAll.length) {
+      const filterAll = "";
+      this.setState({
+        filtered: filtered.filter(item => item.id != "all"),
+        filterAll
+      });
+    } else this.setState({ filtered });
+  }
+
+  filterAll(e) {
+    const { value } = e.target;
+    const filterAll = value;
+    const filtered = [{ id: "all", value: filterAll }];
+
+    this.setState({ filterAll, filtered });
+  }
+
+  HandleChangeShipmentDetails(QuoteNo, Type, Status) {
+    var data = { Quotes: QuoteNo, Type: Type, Status: Status };
     this.props.history.push({
       pathname: "rate-finalizing-still",
       state: { detail: data }
@@ -121,34 +142,29 @@ class QuoteTable extends Component {
 
   HandleRowClickEvt = (rowInfo, column) => {
     debugger;
- 
-        var QuoteNo = column.original["Quote#"];
-        var Type = column.original["type"];
-        var Status = column.original["Status"];
-        this.HandleChangeShipmentDetails(QuoteNo,Type,Status);
-   
+
+    var QuoteNo = column.original["Quote#"];
+    var Type = column.original["type"];
+    var Status = column.original["Status"];
+    this.HandleChangeShipmentDetails(QuoteNo, Type, Status);
   };
 
-  Editfinalizing(e)
-  {
-    var Quote = e.target.getAttribute('data-Quote')
-    var type = e.target.getAttribute('data-type')
+  Editfinalizing(e) {
+    var Quote = e.target.getAttribute("data-Quote");
+    var type = e.target.getAttribute("data-type");
     this.props.history.push({
       pathname: "rate-finalizing",
-      state: { Quote: Quote, type: type, isediting:true }
+      state: { Quote: Quote, type: type, isediting: true }
     });
-
   }
 
-  Copyfinalizing(e)
-  {
-    var Quote = e.target.getAttribute('data-Quote')
-    var type = e.target.getAttribute('data-type')
+  Copyfinalizing(e) {
+    var Quote = e.target.getAttribute("data-Quote");
+    var type = e.target.getAttribute("data-type");
     this.props.history.push({
       pathname: "rate-finalizing",
-      state: { Quote: Quote, type: type, isediting:true , isCopy:true }
+      state: { Quote: Quote, type: type, isediting: true, isCopy: true }
     });
-
   }
 
   render() {
@@ -164,126 +180,193 @@ class QuoteTable extends Component {
             <div className="title-sect">
               <h2>Quote Table</h2>
             </div>
+            <div className="">
+              <input
+                type="search"
+                className="quote-txt-srch"
+                placeholder="Search here"
+                value={this.state.filterAll}
+                onChange={this.filterAll}
+              />
+            </div>
             <div className="ag-fresh redirect-row">
               <ReactTable
                 data={quotesData}
-                filterable
-                minRows={1}
+                noDataText=""
+                onFilteredChange={this.onFilteredChange.bind(this)}
+                filtered={this.state.filtered}
+                defaultFilterMethod={(filter, row) =>
+                  String(row[filter.id]) === filter.value
+                }
                 columns={[
                   {
-                    Header: "Quote No",
-                    accessor: "Quote#"
-                  },
-                  {
-                    Header: "Company",
-                    accessor: "Company"
-                  },
-                  {
-                    Header: "Contact",
-                    accessor: "Contact"
-                  },
-                  {
-                    Header: "Type",
-                    accessor: "type"
-                  },
-                  {
-                    Header: "POD",
-                    accessor: "POD"
-                  },
-                  {
-                    Header: "Notes",
-                    accessor: "Notes"
-                  },
-                  {
-                    Header: "Status",
-                    accessor: "Status"
-                  },
-                  {
-                    Header: "Action",
-                    sortable: false,
-                    Cell: row => {
-                      if (row.original.type !== "No record found") {
-                        if (row.original.Status === "Pending") {
-                          
-                          return (
-                            <div className="action-cntr">
-                              <a onClick={e => this.HandleRowClickEvt(e, row)}>
-                              <img
-                                className="actionicon"
-                                src={Eye}
-                                alt="view-icon"
-                              />
-                            </a>
-                            
-                              {/* <span
+                    columns: [
+                      {
+                        Header: "Quote No",
+                        accessor: "Quote#"
+                      },
+                      {
+                        Header: "Company",
+                        accessor: "Company",
+                        filterable: true
+                      },
+                      {
+                        Header: "POL",
+                        accessor: "POL"
+                      },
+                      {
+                        Header: "POD",
+                        accessor: "POD"
+                      },
+                      {
+                        Header: "Type",
+                        accessor: "type"
+                      },
+                      {
+                        Header: "Notes",
+                        accessor: "Notes"
+                      },
+                      {
+                        Header: "Status",
+                        accessor: "Status"
+                      },
+                      {
+                        Header: "Action",
+                        sortable: false,
+                        Cell: row => {
+                          if (row.original.type !== "No record found") {
+                            if (row.original.Status === "Pending") {
+                              return (
+                                <div className="action-cntr">
+                                  <a
+                                    onClick={e =>
+                                      this.HandleRowClickEvt(e, row)
+                                    }
+                                  >
+                                    <img
+                                      className="actionicon"
+                                      src={Eye}
+                                      alt="view-icon"
+                                    />
+                                  </a>
+
+                                  {/* <span
                               title="Create Booking"
                               onClick={this.toggleBook} 
                             > */}
-                              <a title="Create Booking"  onClick={this.Editfinalizing.bind(this)}>
-                                <img
-                                  className="actionicon"
-                                  src={Edit}
-                                  alt="booking-icon"
-                                  data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
-                                />
-                              </a>
-                              {/* </span> */}
-                              <a  onClick={this.Copyfinalizing.bind(this)}>
-                                <img
-                                  className="actionicon"
-                                  src={Copy}
-                                  alt="view-icon"
-                                  data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
-                                />
-                              </a>
-                            </div>
-                          );
+                                  <a
+                                    title="Create Booking"
+                                    onClick={this.Editfinalizing.bind(this)}
+                                  >
+                                    <img
+                                      className="actionicon"
+                                      src={Edit}
+                                      alt="booking-icon"
+                                      data-Quote={
+                                        row.original.QUOTE_ID_Revisions
+                                      }
+                                      data-type={row.original.type}
+                                    />
+                                  </a>
+                                  {/* </span> */}
+                                  <a onClick={this.Copyfinalizing.bind(this)}>
+                                    <img
+                                      className="actionicon"
+                                      src={Copy}
+                                      alt="view-icon"
+                                      data-Quote={
+                                        row.original.QUOTE_ID_Revisions
+                                      }
+                                      data-type={row.original.type}
+                                    />
+                                  </a>
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div className="action-cntr">
+                                  <a
+                                    onClick={e =>
+                                      this.HandleRowClickEvt(e, row)
+                                    }
+                                  >
+                                    <img
+                                      className="actionicon"
+                                      src={Eye}
+                                      alt="view-icon"
+                                    />
+                                  </a>
+                                  <a
+                                    title={"It has been " + row.original.Status}
+                                    onClick={this.Editfinalizing.bind(this)}
+                                  >
+                                    <img
+                                      className="actionicon"
+                                      src={Edit}
+                                      alt="booking-icon"
+                                      data-Quote={
+                                        row.original.QUOTE_ID_Revisions
+                                      }
+                                      data-type={row.original.type}
+                                    />
+                                  </a>
+                                  {/* </span> */}
+                                  <a onClick={this.Copyfinalizing.bind(this)}>
+                                    <img
+                                      className="actionicon"
+                                      src={Copy}
+                                      alt="view-icon"
+                                      data-Quote={
+                                        row.original.QUOTE_ID_Revisions
+                                      }
+                                      data-type={row.original.type}
+                                    />
+                                  </a>
+                                </div>
+                              );
+                            }
+                          } else {
+                            return <div></div>;
+                          }
                         }
-                        else
-                      {
-                        return (
-                          <div className="action-cntr">
-                            <a onClick={e => this.HandleRowClickEvt(e, row)}>
-                              <img
-                                className="actionicon"
-                                src={Eye}
-                                alt="view-icon"
-                              />
-                            </a>
-                            <a title={"It has been "+row.original.Status}  onClick={this.Editfinalizing.bind(this)}>
-                              <img
-                                className="actionicon"
-                                src={Edit}
-                                alt="booking-icon"
-                                data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
-                              />
-                            </a>
-                            {/* </span> */}
-                            <a onClick={this.Copyfinalizing.bind(this)}>
-                              <img
-                                className="actionicon"
-                                src={Copy}
-                                alt="view-icon"
-                                data-Quote={row.original.QUOTE_ID_Revisions} data-type={row.original.type}
-                              />
-                            </a>
-                          </div>
-                        );
                       }
-                      }
-                      else
-                      {
-                        return(
-                          <div>
-                            </div>
-                        )
-                      }
-                    }
+                    ]
+                  },
+                  {
+                    show: false,
+                    Header: "All",
+                    id: "all",
+                    width: 0,
+                    resizable: false,
+                    sortable: false,
+                    Filter: () => {},
+                    getProps: () => {
+                      return {
+                        // style: { padding: "0px"}
+                      };
+                    },
+                    filterMethod: (filter, rows) => {
+                      const result = matchSorter(rows, filter.value, {
+                        keys: [
+                          "Quote#",
+                          "Company",
+                          "Contact",
+                          "type",
+                          "POD",
+                          "Notes",
+                          "Status"
+                        ],
+                        threshold: matchSorter.rankings.WORD_STARTS_WITH
+                      });
+
+                      return result;
+                    },
+                    filterAll: true
                   }
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}
-               // getTrProps={this.HandleRowClickEvt}
+                // getTrProps={this.HandleRowClickEvt}
                 minRows={1}
               />
             </div>

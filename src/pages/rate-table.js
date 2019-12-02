@@ -426,7 +426,6 @@ class RateTable extends Component {
       polFilterArray: this.state.polFilterArray
       //modalQuant: !prevState.modalQuant
     }));
-
     this.HandleMultiPOLPODFilter();
   }
 
@@ -3592,7 +3591,7 @@ class RateTable extends Component {
                     className="butn cancel-butn"
                     onClick={this.togglePOLModal}
                   >
-                    Cancel
+                    Close
                   </Button>
                 </ModalBody>
               </Modal>
@@ -3619,7 +3618,7 @@ class RateTable extends Component {
                     className="butn cancel-butn"
                     onClick={this.togglePODModal}
                   >
-                    Cancel
+                    Close
                   </Button>
                 </ModalBody>
               </Modal>
