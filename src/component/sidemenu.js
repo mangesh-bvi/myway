@@ -33,10 +33,10 @@ class SideMenu extends Component {
   }
   clickQuetesType(e) {
     var value = e.target.getAttribute("data-Quetye");
-    if(value === "" || value=== null ){
-      window.location.href="quote-table";
-    }else{
-      window.location.href="quote-table?Qtype=" + value;
+    if (value === "" || value === null) {
+      window.location.href = "quote-table";
+    } else {
+      window.location.href = "quote-table?Qtype=" + value;
     }
   }
 
@@ -428,16 +428,27 @@ class SideMenu extends Component {
               );
             }
           })()}
-          <li className="sidemenu-ul-li">
-            <Link to="/add-user">
-              <img
-                src={GreenCounterIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Admin
-            </Link>
-          </li>
+          {(() => {
+            if (
+              encryption(window.localStorage.getItem("usertype"), "desc") !==
+                "Customer" &&
+              encryption(window.localStorage.getItem("usertype"), "desc") !==
+                "Sales User"
+            ) {
+              return (
+                <li className="sidemenu-ul-li">
+                  <Link to="/add-user">
+                    <img
+                      src={GreenCounterIcon}
+                      alt="green-counter-icon"
+                      className="header-greencounter-icon"
+                    />
+                    Admin
+                  </Link>
+                </li>
+              );
+            }
+          })()}
         </ul>
         <ul className="sidemenu-ul2 m-0">
           <li style={{ width: "50%" }}>
