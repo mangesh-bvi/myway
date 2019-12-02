@@ -919,13 +919,13 @@ class SpotRateDetails extends Component {
                         Header: "CreatedBy",
                         accessor: "CreatedBy"
                       },
+                      // {
+                      //   Header: "CreatedDate(GMT)",
+                      //   accessor: "CreatedDate"
+                      // },
                       {
-                        Header: "CreatedDate(GMT)",
+                        Header: "CreatedDate",
                         accessor: "CreatedDate"
-                      },
-                      {
-                        Header: "CreatedDate (Local)",
-                        accessor: "CreatedDateLocal"
                       }
                     ]
                   }

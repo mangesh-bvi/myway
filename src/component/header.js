@@ -6,7 +6,7 @@ import BellIcon from "./../assets/img/bell.png";
 import ChatIcon from "./../assets/img/chat.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import PhoneIcon from "./../assets/img/phone.png";
-// import QRCode from "../pages/QRCode";
+import QRCode from "../pages/QRCode";
 import UserIcon from "./../assets/img/user.png";
 import ActivityLogIcon from "./../assets/img/activity-log.png";
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
@@ -331,13 +331,19 @@ class Header extends Component {
             </div>
             <div className="col-xs col-sm-6 col-md-9">
               <ul className="header-ul">
-                {this.state.searchButn && (
+              {encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User"?(this.state.searchButn && (
                   <li>
                     <a href="/rate-search" className="header-btn">
                       SEARCH RATES
                     </a>
                   </li>
-                )}
+                )):(this.state.searchButn && (
+                  <li>
+                    <a href="/new-rate-search" className="header-btn">
+                      SEARCH RATES
+                    </a>
+                  </li>
+                ))}
                 <li>
                   <div className="dropdown" style={{position:"relative"}}>
                     <img
@@ -530,7 +536,7 @@ class Header extends Component {
                           </a>
                         </li>
                         <li className="profile-setting-li">
-                          <a href="">
+                          {/* <a href=""> */}
                             <img
                               className="header-phone-icon dropdown-toggle"
                               data-toggle="dropdown"
@@ -539,7 +545,10 @@ class Header extends Component {
                               alt="mobile-icon"
                             />
                             Mobile App
-                          </a>
+                          {/* </a> */}
+                          <div className="dropdown-menu qr-code-dropdown">
+                              <QRCode />
+                          </div>
                         </li>
                         <li
                           className="logout-li"

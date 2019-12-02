@@ -20,7 +20,7 @@ import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
 import Eye from "./../assets/img/eye.png";
-
+import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { encryption } from "../helpers/encryption";
@@ -30,10 +30,13 @@ class SpotRateTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
+      filterAll: "",
       spotRateGrid: [],
       pageNo: 10
     };
     this.HandleListSpotRateGrid = this.HandleListSpotRateGrid.bind(this);
+    this.filterAll = this.filterAll.bind(this);
+    this.onFilteredChange = this.onFilteredChange.bind(this);
     //this.toggleDel = this.toggleDel.bind(this);
   }
 
@@ -92,7 +95,23 @@ class SpotRateTable extends Component {
   HandleChangeSpotRateDetails(RateQueryId) {
     // alert(RateQueryId)
   }
+  onFilteredChange(filtered) {
+    if (filtered.length > 1 && this.state.filterAll.length) {
+      const filterAll = "";
+      this.setState({
+        filtered: filtered.filter(item => item.id != "all"),
+        filterAll
+      });
+    } else this.setState({ filtered });
+  }
 
+  filterAll(e) {
+    const { value } = e.target;
+    const filterAll = value;
+    const filtered = [{ id: "all", value: filterAll }];
+
+    this.setState({ filterAll, filtered });
+  }
   HandleRowClickEvt = (rowInfo, column) => {
     return {
       onClick: e => {
@@ -116,11 +135,24 @@ class SpotRateTable extends Component {
             <div className="title-sect">
               <h2>Spot Rate</h2>
             </div>
+            <div className="">
+              <input
+                type="search"
+                className="quote-txt-srch"
+                placeholder="Search here"
+                value={this.state.filterAll}
+                onChange={this.filterAll}
+              />
+            </div>
             <div className="ag-fresh">
               <ReactTable
                 data={spotRateGrid}
                 noDataText="No Data Found"
-                filterable
+                onFilteredChange={this.onFilteredChange.bind(this)}
+                filtered={this.state.filtered}
+                defaultFilterMethod={(filter, row) =>
+                  String(row[filter.id]) === filter.value
+                }
                 columns={[
                   {
                     columns: [
@@ -135,7 +167,8 @@ class SpotRateTable extends Component {
 
                       {
                         Header: "Shipment Type",
-                        accessor: "ShipmentType"
+                        accessor: "ShipmentType",
+                        filterable: true
                       },
                       {
                         Header: "POL",
@@ -181,6 +214,37 @@ class SpotRateTable extends Component {
                         sortable: false
                       }
                     ]
+                  },
+                  {
+                    show: false,
+                    Header: "All",
+                    id: "all",
+                    width: 0,
+                    resizable: false,
+                    sortable: false,
+                    Filter: () => {},
+                    getProps: () => {
+                      return {
+                        // style: { padding: "0px"}
+                      };
+                    },
+                    filterMethod: (filter, rows) => {
+                      const result = matchSorter(rows, filter.value, {
+                        keys: [
+                          "RateQueryId",
+                          "ShipperName",
+                          "ShipmentType",
+                          "PickUpAddress",
+                          "DestinationAddress",
+                          "ExpiryDate",
+                          "Status"
+                        ],
+                        threshold: matchSorter.rankings.WORD_STARTS_WITH
+                      });
+
+                      return result;
+                    },
+                    filterAll: true
                   }
                 ]}
                 className="-striped -highlight"

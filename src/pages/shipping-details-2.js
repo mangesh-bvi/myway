@@ -893,6 +893,16 @@ class ShippingDetailsTwo extends Component {
     let inlandDate = "";
     let deliveredIsActive = "";
     let deliverDate = "";
+    let destinationPortName = "";
+
+    if (containerData.length === 2) {
+      destinationPortName =
+        containerData[0].DestinationPortName ===
+        containerData[1].DeparturePortName
+          ? containerData[0].DestinationPortName.split(",")[0]
+          : null;
+      // console.log(destinationPortName, "-------------destinationPortName");
+    }
     for (let index = 0; index < bookedStatus.length; index++) {
       if (bookedStatus[index].Status == "Booked") {
         bookingIsActive =
@@ -947,8 +957,8 @@ class ShippingDetailsTwo extends Component {
       }
     }
     // console.log(bookDate, "book");
-    console.log(departedDate, "---------------departure");
-    console.log(departedIsActive, "-------------departedIsActive");
+    // console.log(departedDate, "---------------departure");
+    // console.log(departedIsActive, "-------------departedIsActive");
 
     // console.log(arrivedDate, "arrived");
     // console.log(deliverDate, "deliver");
@@ -1223,10 +1233,22 @@ class ShippingDetailsTwo extends Component {
                         <div className="desti-places">
                           <span>
                             {containerData.length > 0
-                              ? containerData[
-                                  containerData.length - 1
-                                ].DeparturePortName.split(",")[0]
+                              ? containerData[0].DeparturePortName.split(",")[0]
                               : ""}
+                            {/* {containerData.length > 0
+                              ? containerData[0].DeparturePortName !==
+                                containerData[1].DeparturePortName
+                                ? containerData[0].DeparturePortName.split(
+                                    ","
+                                  )[0]
+                                : containerData[1].DeparturePortName.split(
+                                    ","
+                                  )[1]
+                              : null} */}
+                          </span>
+
+                          <span>
+                           {destinationPortName}
                           </span>
                           <span>
                             {containerData.length > 0
