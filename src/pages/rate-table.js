@@ -1046,6 +1046,7 @@ class RateTable extends Component {
                 }
                 mapElement={<div />}
                 loadingElement={<div style={{ height: `100%` }} />}
+                id={"POL" + (index + 1)}
               ></AutoCompletePOLMaps>
             )}
 
@@ -1839,8 +1840,14 @@ class RateTable extends Component {
 
   onPlaceSelected = place => {
     console.log("plc", place);
+    var arrPOL = "";
+    for (let i = 0; i < this.state.polArray.length; i++) {
+      arrPOL += this.state.polArray[i].Address + ",";
+    }
+    if (!arrPOL.includes(place.formatted_address)) {
     const address = place.formatted_address,
       addressArray = place.address_components,
+ 
       // city = this.getCity(addressArray),
       // area = this.getArea(addressArray),
       // state = this.getState(addressArray),
@@ -1890,10 +1897,22 @@ class RateTable extends Component {
       // }
     });
     //this.addressChange("puAdd", address);
+  }else{
+    //multiFields[field] = "";
+    this.state.errorPOL = place.formatted_address+" already exist";
+    this.setState({
+      errorPOL:this.state.errorPOL
+    });
+  }
   };
 
   onPlaceSelectedPOD = place => {
     console.log("plc", place);
+    var arrPOD = "";
+    for (let i = 0; i < this.state.podArray.length; i++) {
+      arrPOD += this.state.podArray[i].Address + ",";
+    }
+    if (!arrPOD.includes(place.formatted_address)) {
     const address = place.formatted_address,
       addressArray = place.address_components,
       // city = this.getCity(addressArray),
@@ -1946,6 +1965,13 @@ class RateTable extends Component {
       //   lng: Number(lngValue)
       // }
     });
+    }
+    else{
+      this.state.errorPOD = place.formatted_address+" already exist";
+      this.setState({
+        errorPOD:this.state.errorPOD
+      });
+    }
     //this.addressChange("", address);
   };
 
