@@ -3285,8 +3285,8 @@ table tbody tr:last-child {
   .secondbox label span {
     color: #333333;
   }
-  .secondbox hr {
-  }
+  /* .secondbox hr {
+  } */
   
   .thirdbox {
     background: #ffffff;
@@ -3546,3 +3546,18 @@ img {
   max-width: 800px;
 }
 /* rate-table css End by Shlok */
+/* Quote css start by Shlok */
+.quote-txt-srch{
+  border: 0;
+    letter-spacing: 0.5px;
+    background-color: #f1f2f2;
+    padding: 8px 15px;
+    font-family: "Medium Font";
+    font-size: 14px;
+    width: 250px;
+    display: inline-block;
+    float: right;
+    margin-top: -45px;
+    margin-right: 15px;
+}
+/* Quote css end by Shlok */

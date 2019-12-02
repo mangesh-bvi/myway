@@ -10,7 +10,7 @@ import SideMenu from "../component/sidemenu";
 import Eye from "./../assets/img/eye.png";
 import Copy from "./../assets/img/copy.png";
 import Edit from "./../assets/img/pencil.png";
-
+import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { encryption } from "../helpers/encryption";
@@ -20,10 +20,13 @@ class BookingTable extends Component {
     super(props);
     this.state = {
       modalDel: false,
+      filterAll: "",
       bookingData: []
     };
     this.HandleBookingList = this.HandleBookingList.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
+    this.filterAll = this.filterAll.bind(this);
+    this.onFilteredChange = this.onFilteredChange.bind(this);
   }
 
   toggleDel() {
@@ -80,7 +83,23 @@ class BookingTable extends Component {
       state: { detail: BookingNo }
     });
   }
+  onFilteredChange(filtered) {
+    if (filtered.length > 1 && this.state.filterAll.length) {
+      const filterAll = "";
+      this.setState({
+        filtered: filtered.filter(item => item.id != "all"),
+        filterAll
+      });
+    } else this.setState({ filtered });
+  }
 
+  filterAll(e) {
+    const { value } = e.target;
+    const filterAll = value;
+    const filtered = [{ id: "all", value: filterAll }];
+
+    this.setState({ filterAll, filtered });
+  }
   HandleCopyClick(evt, row) {
     debugger;
     var BookingNo = row.original["BookingID"];
@@ -111,106 +130,155 @@ class BookingTable extends Component {
             <div className="title-sect">
               <h2>Booking Table</h2>
             </div>
+            <div className="">
+              <input
+                type="search"
+                className="quote-txt-srch"
+                placeholder="Search here"
+                value={this.state.filterAll}
+                onChange={this.filterAll}
+              />
+            </div>
             <div className="ag-fresh">
               <ReactTable
                 data={bookingData}
                 noDataText=""
-                filterable
+                onFilteredChange={this.onFilteredChange.bind(this)}
+                filtered={this.state.filtered}
+                defaultFilterMethod={(filter, row) =>
+                  String(row[filter.id]) === filter.value
+                }
                 columns={[
                   {
-                    Header: "No.",
-                    accessor: "BookingNo"
+                    columns: [
+                      {
+                        Header: "No.",
+                        accessor: "BookingNo"
+                      },
+                      {
+                        Header: "Consignee",
+                        accessor: "Consignee_Name"
+                      },
+                      {
+                        Header: "Shipper",
+                        accessor: "Shipper_Name",
+                        filterable: true
+                      },
+                      {
+                        Header: "POL",
+                        accessor: "POL"
+                      },
+                      {
+                        Header: "POD",
+                        accessor: "POD"
+                      },
+                      {
+                        Header: "Commodity",
+                        accessor: "Commodity"
+                      },
+                      {
+                        Header: "Status",
+                        accessor: "Status"
+                      },
+                      {
+                        Header: "Action",
+                        sortable: false,
+                        Cell: row => {
+                          if (row.original.Status === "Pending") {
+                            return (
+                              <div className="action-cntr">
+                                {/* <a> */}
+                                {/* <img
+                            className="actionicon"
+                            src={Eye}
+                            alt="view-icon"
+                            onClick={e => this.HandleRowClickEvt(e, row)}
+                          /> */}
+                                {/* </a> */}
+                                {/* <a href="/rate-finalizing-still-booking"> */}
+                                <img
+                                  className="actionicon"
+                                  src={Edit}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleDocumentView(e, row)}
+                                />
+                                {/* </a> */}
+
+                                <img
+                                  className="actionicon"
+                                  src={Copy}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleCopyClick(e, row)}
+                                />
+                              </div>
+                            );
+                          }
+                          if (row.original.Status === "Approved") {
+                            return (
+                              <div className="action-cntr">
+                                {/* <a> */}
+                                {/* <img
+                            className="actionicon"
+                            src={Eye}
+                            alt="view-icon"
+                            onClick={e => this.HandleRowClickEvt(e, row)}
+                          /> */}
+                                {/* </a> */}
+                                {/* <a href="/rate-finalizing-still-booking"> */}
+                                <img
+                                  className="actionicon"
+                                  src={Edit}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleDocumentView(e, row)}
+                                />
+                                {/* </a> */}
+
+                                <img
+                                  className="actionicon"
+                                  src={Copy}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleCopyClick(e, row)}
+                                />
+                              </div>
+                            );
+                          }
+                          if (row.original.Status === "Rejected") {
+                            return <></>;
+                          }
+                        }
+                      }
+                    ]
                   },
                   {
-                    Header: "Consignee",
-                    accessor: "Consignee_Name"
-                  },
-                  {
-                    Header: "Shipper",
-                    accessor: "Shipper_Name"
-                  },
-                  {
-                    Header: "POL",
-                    accessor: "POL"
-                  },
-                  {
-                    Header: "POD",
-                    accessor: "POD"
-                  },
-                  {
-                    Header: "Commodity",
-                    accessor: "Commodity"
-                  },
-                  {
-                    Header: "Status",
-                    accessor: "Status"
-                  },
-                  {
-                    Header: "Action",
+                    show: false,
+                    Header: "All",
+                    id: "all",
+                    width: 0,
+                    resizable: false,
                     sortable: false,
-                    Cell: row => {
-                      if (row.original.Status === "Pending") {
-                        return (
-                          <div className="action-cntr">
-                            {/* <a> */}
-                            {/* <img
-                            className="actionicon"
-                            src={Eye}
-                            alt="view-icon"
-                            onClick={e => this.HandleRowClickEvt(e, row)}
-                          /> */}
-                            {/* </a> */}
-                            {/* <a href="/rate-finalizing-still-booking"> */}
-                            <img
-                              className="actionicon"
-                              src={Edit}
-                              alt="view-icon"
-                              onClick={e => this.HandleDocumentView(e, row)}
-                            />
-                            {/* </a> */}
+                    Filter: () => {},
+                    getProps: () => {
+                      return {
+                        // style: { padding: "0px"}
+                      };
+                    },
+                    filterMethod: (filter, rows) => {
+                      const result = matchSorter(rows, filter.value, {
+                        keys: [
+                          "BookingNo",
+                          "Consignee_Name",
+                          "Shipper_Name",
+                          "POL",
+                          "POD",
+                          "Commodity",
+                          "Status"
+                        ],
+                        threshold: matchSorter.rankings.WORD_STARTS_WITH
+                      });
 
-                            <img
-                              className="actionicon"
-                              src={Copy}
-                              alt="view-icon"
-                              onClick={e => this.HandleCopyClick(e, row)}
-                            />
-                          </div>
-                        );
-                      }
-                      if (row.original.Status === "Approved") {
-                        return (
-                          <div className="action-cntr">
-                            {/* <a> */}
-                            {/* <img
-                            className="actionicon"
-                            src={Eye}
-                            alt="view-icon"
-                            onClick={e => this.HandleRowClickEvt(e, row)}
-                          /> */}
-                            {/* </a> */}
-                            {/* <a href="/rate-finalizing-still-booking"> */}
-                            <img
-                              className="actionicon"
-                              src={Edit}
-                              alt="view-icon"
-                              onClick={e => this.HandleDocumentView(e, row)}
-                            />
-                            {/* </a> */}
-
-                            <img
-                              className="actionicon"
-                              src={Copy}
-                              alt="view-icon"
-                              onClick={e => this.HandleCopyClick(e, row)}
-                            />
-                          </div>
-                        );
-                      }
-                      if (row.original.Status === "Rejected") {
-                        return <></>;
-                      }
-                    }
+                      return result;
+                    },
+                    filterAll: true
                   }
                 ]}
                 className="-striped -highlight"

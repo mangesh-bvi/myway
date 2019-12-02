@@ -161,6 +161,7 @@ class ShippingDetails extends Component {
     } else this.setState({ filtered });
   }
   filterAll(e) {
+    debugger
     const { value } = e.target;
     const filterAll = value;
     const filtered = [{ id: "all", value: filterAll }];
@@ -555,7 +556,7 @@ class ShippingDetails extends Component {
           shipmentSummary: self.state.shipmentSummary
         }));
       });
-  
+  this.handleAdvanceSearchModalClose();
   };
 
   handleValidation() {
