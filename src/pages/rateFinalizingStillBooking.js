@@ -72,14 +72,22 @@ class RateFinalizingStillBooking extends Component {
       Notify_AddressID: 0,
       Notify_Displayas: "",
       NotifyName: "",
+
+      BuyerID: 0,
+      Buyer_AddressID: 0,
+      Buyer_Displayas: "",
+      BuyerName: "",
+
       consineeData: {},
       shipperData: {},
+      buyerId: 0,
 
       //---------------sales quotation details
       ContainerLoad: "",
       salesQuotaNo: "",
       isInsert: false,
-      nPartyID: 0
+      nPartyID: 0,
+      isView: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -94,8 +102,13 @@ class RateFinalizingStillBooking extends Component {
   }
   componentDidMount() {
     var rData = this.props.location.state;
-
-    if (typeof rData.ContainerLoad !== "" && typeof rData.salesQuotaNo !== "") {
+    debugger;
+    if (
+      // typeof rData.ContainerLoad !== "" &&
+      // typeof rData.salesQuotaNo !== "" &&
+      rData.ContainerLoad !== undefined &&
+      rData.salesQuotaNo !== undefined
+    ) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
         "desc"
@@ -114,7 +127,6 @@ class RateFinalizingStillBooking extends Component {
       }, 100);
     }
 
-    debugger;
     if (rData.Copy === true) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -131,21 +143,32 @@ class RateFinalizingStillBooking extends Component {
     }
 
     if (
-      typeof this.props.location.state.BookingNo != "undefined" &&
-      typeof this.props.location.state.BookingNo != ""
+      this.props.location.state.BookingNo != "" &&
+      this.props.location.state.BookingNo != undefined
     ) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
         "desc"
       );
       var BookingNo = this.props.location.state.BookingNo;
-      this.setState({ BookingNo, userType });
-      setTimeout(() => {
-        this.HandleCommodityDropdown();
-        this.HandlePackgeTypeData();
-        this.BookigGridDetailsList();
-        this.NonCustomerList();
-      }, 300);
+      var isView = this.props.location.state.isView;
+      if (isView) {
+        this.setState({ BookingNo, userType, isView: true });
+        setTimeout(() => {
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+          this.BookigGridDetailsList();
+          this.NonCustomerList();
+        }, 300);
+      } else {
+        this.setState({ BookingNo, userType });
+        setTimeout(() => {
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+          this.BookigGridDetailsList();
+          this.NonCustomerList();
+        }, 300);
+      }
     }
   }
 
@@ -385,82 +408,43 @@ class RateFinalizingStillBooking extends Component {
       cData.push(cargoObj);
     }
 
-    // for (let index = 0; index < this.state.selectedFile.length; index++) {
-    //   formData.append("file", this.state.selectedFile[index]);
-    // }
-
-    // formData.append("BookingNo", this.state.Booking[0].strBooking_No);
-    // formData.append(
-    //   "MyWayUserID",
-    //   encryption(window.localStorage.getItem("userid"), "desc")
-    // );
-    // formData.append("ShipperID", parseInt(this.state.Booking[0].ShipperID));
-    // formData.append(
-    //   "Shipper_Displayas",
-    //   parseInt(this.state.Booking[0].Shipper_Displayas)
-    // );
-    // formData.append(
-    //   "Shipper_AddressID",
-    //   parseInt(this.state.Booking[0].Shipper_AddressID)
-    // );
-    // formData.append("ShipperName", this.state.Booking[0].Shipper_Name);
-    // formData.append("ConsigneID", parseInt(this.state.Booking[0].Consignee));
-    // formData.append("ConsigneeName", this.state.Booking[0].Consignee_Name);
-    // formData.append(
-    //   "Consignee_AddressID",
-    //   parseInt(this.state.Booking[0].Consignee_AddressID)
-    // );
-    // formData.append(
-    //   "Consignee_Displayas",
-    //   this.state.Booking[0].Consignee_Displayas
-    // );
-    // formData.append("BuyerID", parseInt(this.state.Booking[0].BuyerID));
-    // formData.append(
-    //   "Buyer_AddressID",
-    //   parseInt(this.state.Booking[0].Buyer_AddressID)
-    // );
-    // formData.append("Buyer_Displayas", this.state.Booking[0].Buyer_Displayas);
-    // formData.append("BuyerName", this.state.Booking[0].BuyerName);
-    // formData.append("Mode", this.state.Booking[0].CargoType);
-    // formData.append("Commodity", parseInt(this.state.Booking[0].Commodity));
-    // formData.append("saleQuoteID", parseInt(this.state.Booking[0].saleQuoteID));
-    // formData.append("saleQuoteNo", this.state.Booking[0].saleQuoteNo);
-    // formData.append(
-    //   "saleQuoteLineID",
-    //   parseInt(this.state.Booking[0].saleQuoteLineID)
-    // );
-    // formData.append("NotifyID", parseInt(this.state.NotifyID));
-    // formData.append("Notify_AddressID", this.state.Notify_AddressID);
-    // formData.append("Notify_Displayas", this.state.Notify_Displayas);
-    // formData.append("NotifyName", this.state.NotifyName);
-    // formData.append("BookingDocs", fData);
-    // formData.append("BookingDim", cData);
-
-    var BookingID = 0;
-    var DocumentID = 0;
-    var BookingDoc = this.state.selectedFile;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-
+    if (this.state.FileData.length > 0) {
+      var BookingID = this.state.FileData[0].BookingID;
+      var DocumentID = this.state.FileData[0].DocumentID;
+      var BookingDoc = this.state.selectedFile;
+      var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    } else {
+      var BookingID = 0;
+      var DocumentID = 0;
+      var BookingDoc = null;
+      var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    }
     var paramData = {
       BookingNo: this.state.Booking[0].strBooking_No,
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-      ShipperID: 2,
-      Shipper_Displayas: parseInt(this.state.Booking[0].ShipperID),
-      Shipper_AddressID: parseInt(this.state.Booking[0].Shipper_AddressID),
-      ShipperName: this.state.Booking[0].Shipper_Name,
-      ConsigneeID: parseInt(this.state.Booking[0].Consignee),
-      ConsigneeName: this.state.Booking[0].Consignee_Name,
-      Consignee_AddressID: parseInt(this.state.Booking[0].Consignee_AddressID),
-      Consignee_Displayas: this.state.Booking[0].Consignee_Displayas,
+
+      ShipperID: parseInt(this.state.shipperData.Company_ID),
+      Shipper_Displayas: this.state.shipperData.CompanyAddress,
+      Shipper_AddressID: parseInt(this.state.shipperData.AddressID),
+      ShipperName: this.state.shipperData.Company_Name,
+
+      ConsigneeID: parseInt(this.state.consineeData.Company_ID),
+      ConsigneeName: this.state.consineeData.Company_Name,
+      Consignee_AddressID: parseInt(this.state.consineeData.AddressID),
+      Consignee_Displayas: this.state.consineeData.Company_Name,
+
       BuyerID: parseInt(this.state.Booking[0].BuyerID),
       Buyer_AddressID: parseInt(this.state.Booking[0].Buyer_AddressID),
       Buyer_Displayas: this.state.Booking[0].Buyer_Displayas,
       BuyerName: this.state.Booking[0].BuyerName,
+
       Mode: this.state.Booking[0].CargoType,
       Commodity: parseInt(this.state.Booking[0].Commodity),
+
       saleQuoteID: parseInt(this.state.Booking[0].saleQuoteID),
       saleQuoteNo: this.state.Booking[0].saleQuoteNo,
       saleQuoteLineID: parseInt(this.state.Booking[0].saleQuoteLineID),
+
       NotifyID: parseInt(this.state.NotifyID),
       Notify_AddressID: this.state.Notify_AddressID,
       Notify_Displayas: this.state.Notify_Displayas,
@@ -571,10 +555,10 @@ class RateFinalizingStillBooking extends Component {
     var Consignee_AddressID = Number(this.state.consineeData.AddressID || 0);
     var Consignee_Displayas = this.state.consineeData.CompanyAddress;
 
-    var BuyerID = 0; //Number(bookingDetails[0].BuyerID || 0);
-    var Buyer_AddressID = 0; //Number(bookingDetails[0].Buyer_AddressID || 0);
-    var Buyer_Displayas = ""; //bookingDetails[0].Buyer_Displayas || "";
-    var BuyerName = ""; //bookingDetails[0].Buyer_Name || "";
+    var BuyerID = this.state.BuyerID;
+    var Buyer_AddressID = this.state.Buyer_AddressID;
+    var Buyer_Displayas = this.state.Buyer_Displayas;
+    var BuyerName = this.state.BuyerName;
 
     var Mode = this.state.ContainerLoad;
 
@@ -638,8 +622,8 @@ class RateFinalizingStillBooking extends Component {
     //   }
     // }
 
-    var BookingID = this.state.FileData.BookingID;
-    var DocumentID = this.state.FileData.DocumentID;
+    var BookingID = this.state.FileData.BookingID || 0;
+    var DocumentID = this.state.FileData.DocumentID || 0;
     var BookingDoc = this.state.selectedFile;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -832,9 +816,14 @@ class RateFinalizingStillBooking extends Component {
               QuotationSubData,
               Booking,
               nPartyID
+              // fields: {
+              //   Consignee: Booking[0].Consignee_Name,
+              //   Shipper: Booking[0].Shipper_Name
+              // }
               // selectedCommodity
             });
           }
+          // HandleChangeCon();
         }
         if (typeof eqmtType !== "undefined") {
           if (eqmtType.length > 0) {
@@ -1695,6 +1684,27 @@ class RateFinalizingStillBooking extends Component {
   }
   ////end methos for multiple file element
 
+  HandleChangeBuyer(e) {
+    debugger;
+    var BuyerName = e.target.selectedOptions[0].innerText;
+    if (BuyerName !== "select") {
+      var BuyerID = Number(e.target.selectedOptions[0].value);
+
+      var cutomerdata = this.state.NonCustomerData.filter(
+        x => x.Company_ID === BuyerID
+      );
+      var Buyer_AddressID = cutomerdata[0].Company_AddressID;
+      var Buyer_Displayas = cutomerdata[0].Company_Address;
+
+      this.setState({
+        BuyerID,
+        BuyerName,
+        Buyer_AddressID,
+        Buyer_Displayas
+      });
+    }
+  }
+
   ////this method for party change value
 
   HandleChangeParty(e) {
@@ -1724,6 +1734,10 @@ class RateFinalizingStillBooking extends Component {
 
       selectedType
     } = this.state;
+    var bNumber = "";
+    if (Booking.length > 0) {
+      bNumber = Booking[0].strBooking_No;
+    }
     var selectedCommodity = "";
     let className = "butn m-0";
     if (this.state.showContent == true) {
@@ -1732,13 +1746,23 @@ class RateFinalizingStillBooking extends Component {
       className = "butn m-0";
     }
 
-    if (this.state.commodityData.length > 0 && this.state.Booking.length > 0) {
-      selectedCommodity = this.state.commodityData.filter(
-        x => x.id === this.state.Booking[0].Commodity
-      )[0].Commodity;
+    if (
+      this.state.commodityData.length > 0 && this.state.salesQuotaNo === ""
+        ? this.state.QuotationData.length > 0
+        : this.state.Booking.length > 0
+    ) {
+      debugger;
+      if (this.state.salesQuotaNo === "") {
+        selectedCommodity = this.state.commodityData.filter(
+          x => x.id === this.state.Booking[0].Commodity
+        )[0].Commodity;
+      } else {
+        selectedCommodity = this.state.QuotationData[0].Commodity;
+      }
     }
 
     let i = 0;
+
     return (
       <React.Fragment>
         <Headers />
@@ -1753,8 +1777,10 @@ class RateFinalizingStillBooking extends Component {
                   ? "Clone Booking "
                   : this.state.isInsert === true
                   ? "Create Booking"
-                  : this.stateBookingNo !== ""
+                  : this.state.BookingNo !== "" && this.state.isView === false
                   ? "Update Booking"
+                  : this.state.BookingNo !== "" && this.state.isView === true
+                  ? "Booking Details " + bNumber
                   : ""}
               </h2>
             </div>
@@ -2161,7 +2187,7 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div className=" ">
+                      {this.state.isInsert === true ? (
                         <div className="rate-radio-cntr">
                           <div>
                             <input
@@ -2204,7 +2230,7 @@ class RateFinalizingStillBooking extends Component {
                             </label>
                           </div>
                         </div>
-                      </div>
+                      ) : null}
                     </div>
                     <div>
                       <div className="title-border py-3">
@@ -2227,6 +2253,7 @@ class RateFinalizingStillBooking extends Component {
                                 renderItem={(item, isHighlighted) => (
                                   <div
                                     style={{
+                                      // width:"100%",
                                       background: isHighlighted
                                         ? "lightgray"
                                         : "white"
@@ -2260,9 +2287,9 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking.length > 0
+                              {/* {Booking.length > 0
                                 ? Booking[0].Consignee_Displayas
-                                : null}
+                                : null} */}
                               {this.state.consineeData !== null
                                 ? this.state.consineeData.CompanyAddress
                                 : ""}
@@ -2323,9 +2350,9 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking.length > 0
+                              {/* {Booking.length > 0
                                 ? Booking[0].Shipper_Displayas
-                                : null}
+                                : null} */}
                               {this.state.shipperData !== null
                                 ? this.state.shipperData.CompanyAddress
                                 : ""}
@@ -2376,19 +2403,34 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6">
+                          <div className="col-md-6 login-fields">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
-                              {Booking.length > 0
+                              {/* {Booking.length > 0
                                 ? Booking[0].Buyer_Name
-                                : null}
+                                : null} */}
+
+                              <select
+                                onChange={this.HandleChangeBuyer.bind(this)}
+                                value={this.state.BuyerID}
+                              >
+                                <option selected>select</option>
+                                {this.state.NonCustomerData.map((item, i) => (
+                                  <option key={i} value={item.Company_ID}>
+                                    {item.Company_Name}
+                                  </option>
+                                ))}
+                              </select>
                             </p>
                           </div>
                           <div className="col-md-6">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {Booking.length > 0
+                              {/* {Booking.length > 0
                                 ? Booking[0].Buyer_Displayas
+                                : null} */}
+                              {this.state.Buyer_Displayas !== ""
+                                ? this.state.Buyer_Displayas
                                 : null}
                             </p>
                           </div>
@@ -2448,116 +2490,118 @@ class RateFinalizingStillBooking extends Component {
                           ? this.NewcreateUI()
                           : null}
                       </div> */}
-                      <ReactTable
-                        columns={[
-                          {
-                            columns: [
-                              // {
-                              //   Header: "Booking Pack",
-                              //   accessor: "BookingPackID",
-                              //   width:120
-                              // },
-                              {
-                                Header: "Container Name",
-                                accessor: "ContainerName"
-                              },
-                              {
-                                Header: "ContainerCode",
-                                accessor: "ContainerCode"
-                              },
+                      {this.state.eqmtType.length > 0 ? (
+                        <ReactTable
+                          columns={[
+                            {
+                              columns: [
+                                // {
+                                //   Header: "Booking Pack",
+                                //   accessor: "BookingPackID",
+                                //   width:120
+                                // },
+                                {
+                                  Header: "Container Name",
+                                  accessor: "ContainerName"
+                                },
+                                {
+                                  Header: "ContainerCode",
+                                  accessor: "ContainerCode"
+                                },
 
-                              {
-                                Header: "Container Count",
-                                accessor: "ContainerCount"
-                              },
-
-                              {
-                                Header: "Action",
-                                Cell: row => {
-                                  return (
-                                    <div className="action-cntr">
-                                      <img
-                                        className="actionicon"
-                                        src={Edit}
-                                        alt="view-icon"
-                                        //onClick={e => this.HandleDocumentView(e, row)}
-                                      />
-                                    </div>
-                                  );
+                                {
+                                  Header: "Container Count",
+                                  accessor: "ContainerCount"
                                 }
-                              }
-                            ]
-                          }
-                        ]}
-                        data={this.state.eqmtType}
-                        minRows={0}
-                        showPagination={false}
-                        // className="-striped -highlight"
-                      />
 
-                      <ReactTable
-                        columns={[
-                          {
-                            columns: [
-                              // {
-                              //   Header: "Booking Pack",
-                              //   accessor: "BookingPackID",
-                              //   width:120
-                              // },
-                              {
-                                Header: "Package Type",
-                                accessor: "PackageType"
-                              },
-                              {
-                                Header: "Quantity",
-                                accessor: "QTY"
-                              },
-                              {
-                                Header: "Length",
-                                accessor: "Lengths"
-                              },
-                              {
-                                Header: "Width",
-                                accessor: "Width"
-                              },
-                              {
-                                Header: "Height",
-                                accessor: "Height"
-                              },
-                              {
-                                Header: "Gross Weight",
-                                accessor: "GrossWeight"
-                              },
-                              {
-                                Header: "Volume Weight",
-                                accessor: "VolumeWeight"
-                              },
-                              {
-                                Header: "Action",
-                                Cell: row => {
-                                  return (
-                                    <div className="action-cntr">
-                                      <img
-                                        className="actionicon"
-                                        src={Edit}
-                                        alt="view-icon"
-                                        onClick={e =>
-                                          this.HandleDocumentView(e, row)
-                                        }
-                                      />
-                                    </div>
-                                  );
+                                // {
+                                //   Header: "Action",
+                                //   Cell: row => {
+                                //     return (
+                                //       <div className="action-cntr">
+                                //         <img
+                                //           className="actionicon"
+                                //           src={Edit}
+                                //           alt="view-icon"
+                                //           //onClick={e => this.HandleDocumentView(e, row)}
+                                //         />
+                                //       </div>
+                                //     );
+                                //   }
+                                // }
+                              ]
+                            }
+                          ]}
+                          data={this.state.eqmtType}
+                          minRows={0}
+                          showPagination={false}
+                          // className="-striped -highlight"
+                        />
+                      ) : null}
+                      {this.state.multiCBM.length > 0 ? (
+                        <ReactTable
+                          columns={[
+                            {
+                              columns: [
+                                // {
+                                //   Header: "Booking Pack",
+                                //   accessor: "BookingPackID",
+                                //   width:120
+                                // },
+                                {
+                                  Header: "Package Type",
+                                  accessor: "PackageType"
+                                },
+                                {
+                                  Header: "Quantity",
+                                  accessor: "QTY"
+                                },
+                                {
+                                  Header: "Length",
+                                  accessor: "Lengths"
+                                },
+                                {
+                                  Header: "Width",
+                                  accessor: "Width"
+                                },
+                                {
+                                  Header: "Height",
+                                  accessor: "Height"
+                                },
+                                {
+                                  Header: "Gross Weight",
+                                  accessor: "GrossWeight"
+                                },
+                                {
+                                  Header: "Volume Weight",
+                                  accessor: "VolumeWeight"
                                 }
-                              }
-                            ]
-                          }
-                        ]}
-                        data={this.state.multiCBM}
-                        minRows={0}
-                        showPagination={false}
-                        className="-striped -highlight"
-                      />
-
+                                // {
+                                //   Header: "Action",
+                                //   Cell: row => {
+                                //     return (
+                                //       <div className="action-cntr">
+                                //         <img
+                                //           className="actionicon"
+                                //           src={Edit}
+                                //           alt="view-icon"
+                                //           onClick={e =>
+                                //             this.HandleDocumentView(e, row)
+                                //           }
+                                //         />
+                                //       </div>
+                                //     );
+                                //   }
+                                // }
+                              ]
+                            }
+                          ]}
+                          data={this.state.multiCBM}
+                          minRows={0}
+                          showPagination={false}
+                          className="-striped -highlight"
+                        />
+                      ) : null}
                       {/* {this.state.multiCBM.length > 0
                           ? this.CreateMultiCBM()
                           : null} */}
@@ -2677,29 +2721,33 @@ class RateFinalizingStillBooking extends Component {
                         ? this.CreateFileElement()
                         : null}
                     </div>
-                    <center>
-                      <button
-                        onClick={
-                          this.state.copy === true
-                            ? this.HandleBookigClone.bind(this)
+                    {this.state.isView === false ? (
+                      <center>
+                        <button
+                          onClick={
+                            this.state.copy === true
+                              ? this.HandleBookigClone.bind(this)
+                              : this.state.isInsert === true
+                              ? this.HandleBookigInsert.bind(this)
+                              : this.HandleBookingUpdate.bind(this)
+                          }
+                          className="butn more-padd mt-4"
+                        >
+                          {this.state.copy === true
+                            ? "Booking Clone"
                             : this.state.isInsert === true
-                            ? this.HandleBookigInsert.bind(this)
-                            : this.HandleBookingUpdate.bind(this)
-                        }
-                        className="butn more-padd mt-4"
-                      >
-                        {this.state.copy === true
-                          ? "Booking Clone"
-                          : this.state.isInsert === true
-                          ? "Create Booking"
-                          : this.state.BookingNo !== ""
-                          ? "Update Booking"
-                          : ""}
-                        {/* {this.state.salesQuotaNo !== ""
+                            ? "Create Booking"
+                            : this.state.BookingNo !== ""
+                            ? "Update Booking"
+                            : ""}
+                          {/* {this.state.salesQuotaNo !== ""
                           ? "Create Booking"
                           : "Update Booking"} */}
-                      </button>
-                    </center>
+                        </button>
+                      </center>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
               </div>

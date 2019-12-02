@@ -90,6 +90,14 @@ class BookingTable extends Component {
     });
   }
 
+  HandleRowClickEvt(evt, row) {
+    debugger;
+    var BookingNo = row.original["BookingID"];
+    this.props.history.push({
+      pathname: "rate-finalizing-still-booking",
+      state: { BookingNo: BookingNo ,isView:true}
+    });
+  }
   HandleDocumentView(evt, row) {
     debugger;
     var BookingNo = row.original["BookingID"];
@@ -153,12 +161,12 @@ class BookingTable extends Component {
                         return (
                           <div className="action-cntr">
                             {/* <a> */}
-                            {/* <img
+                            <img
                             className="actionicon"
                             src={Eye}
                             alt="view-icon"
                             onClick={e => this.HandleRowClickEvt(e, row)}
-                          /> */}
+                          />
                             {/* </a> */}
                             {/* <a href="/rate-finalizing-still-booking"> */}
                             <img
@@ -182,12 +190,12 @@ class BookingTable extends Component {
                         return (
                           <div className="action-cntr">
                             {/* <a> */}
-                            {/* <img
+                            <img
                             className="actionicon"
                             src={Eye}
                             alt="view-icon"
                             onClick={e => this.HandleRowClickEvt(e, row)}
-                          /> */}
+                          />
                             {/* </a> */}
                             {/* <a href="/rate-finalizing-still-booking"> */}
                             <img
@@ -216,7 +224,7 @@ class BookingTable extends Component {
                 className="-striped -highlight"
                 defaultPageSize={5}
                 minRows={1}
-                getTrProps={this.HandleRowClickEvt}
+                // getTrProps={this.HandleRowClickEvt}
               />
             </div>
           </div>

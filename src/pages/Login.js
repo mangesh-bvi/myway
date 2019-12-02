@@ -166,7 +166,7 @@ class Login extends React.Component {
     var iAssocCompany = distinctAssociateComp.length;
 
     ////Company
-      for (var i = 0; i < iCompanies; i++) {
+    for (var i = 0; i < iCompanies; i++) {
       //for (var i = 0; i < 15; i++) {
       //debugger;
       var selectedoffId = distinctOffice[i]["OfficeID"];
@@ -206,18 +206,17 @@ class Login extends React.Component {
             associateCompData.value = cvId;
             associateCompData.label = cnName;
             salesPersonChildData.push(associateCompData);
-            
+
             ///Set checked Node
             //if(bMapped.toString() == "true")
-            if (bMapped === true)
-            {
+            if (bMapped === true) {
               var tData = cvId.toString();
               checkedNode.push(tData);
             }
             // else
             // {
             //     var a =0;
-            // }            
+            // }
           }
         }
 
@@ -295,7 +294,6 @@ class Login extends React.Component {
       })
         .then(function(response) {
           debugger;
-          
 
           var data = response.data;
           window.localStorage.setItem("st", new Date());
@@ -325,6 +323,12 @@ class Login extends React.Component {
             "userid",
             encryption(data.Table[0].UserId, "enc")
           );
+
+          window.localStorage.removeItem("myUserId");
+          window.localStorage.setItem("myUserId", data.Table[0].UserId);
+
+          window.localStorage.removeItem("APIUrl");
+          window.localStorage.setItem("APIUrl", `${appSettings.APIURL}`);
           window.localStorage.setItem(
             "usertype",
             encryption(data.Table[0].UserType, "enc")
@@ -346,7 +350,7 @@ class Login extends React.Component {
           var ProfileTypen = userType[0].ProfileType;
           if (userTypeName === "Sales User" && ProfileTypen) {
             var sData = response.data.Table3;
-            debugger
+            debugger;
             self.HandleDisplaySalesPersonData(sData);
             self.setState({
               modalSalesLogin: !self.state.modalSalesLogin
@@ -358,19 +362,15 @@ class Login extends React.Component {
         .catch(error => {
           this.setState({ loading: false });
           var temperror = "";
-          if(error.response == undefined)
-          {
+          if (error.response == undefined) {
             temperror = error.message;
             NotificationManager.error(temperror);
-          }
-          else
-          {
+          } else {
             temperror = error.response.data;
             var err = temperror.split(":");
-          NotificationManager.error(err[1].replace("}", ""));
+            NotificationManager.error(err[1].replace("}", ""));
           }
-          
-          
+
           // this.state.usernamee = '';
           this.setState({ username: "", password: "" });
           setTimeout(5000);
@@ -407,6 +407,12 @@ class Login extends React.Component {
         <div className="login-sect">
           <div className="logo">
             <img src={Logo} alt="logo" />
+            <br/>
+            <br/>
+            
+            {/* <img src="./../assets/img/ATAFreight_console.png" alt="logo" /> */}
+
+
           </div>
           <form onSubmit={this.handleSubmit}>
             <div className="login-cntr">
@@ -554,20 +560,14 @@ function TokenhandleResponse(response) {
     if (!response.ok) {
       //alert('oops!error occured');
     } else {
-
-      window.localStorage.removeItem(
-        "token");
+      window.localStorage.removeItem("token");
       window.localStorage.setItem(
         "token",
         encryption(data.access_token, "enc")
       );
 
-      window.localStorage.removeItem(
-        "myToken");
-      window.localStorage.setItem(
-        "myToken",
-        data.access_token
-      );
+      window.localStorage.removeItem("myToken");
+      window.localStorage.setItem("myToken", data.access_token);
 
       if (window.localStorage.getItem("IsEnabled") == "true") {
         if (
