@@ -1,0 +1,605 @@
+<!--..This one-->
+
+<html>
+<head>
+    <style type="text/css">
+        html {
+            height: 100%
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+
+        #map_canvas {
+            height: 100%
+        }
+
+        .dash-search-cntr2 {
+  position: absolute;
+  top: 85px;
+  left: 10px;
+  z-index: 1;
+}
+.dash-search-cntr2 input {
+    height: 40px;
+    padding-left: 16px;
+    border: 0px;
+    border-radius: 50px;
+    padding-right: 45px;
+}
+.dash-search-cntr2 .fa-search {
+  background: #002d73;
+  border-radius: 50%;
+  height: 30px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  text-align: center;
+  line-height: 28px;
+  color: #fff;
+  cursor: pointer;
+}
+.map-filter {
+  position: absolute;
+  top: 10px;
+  right: 60px;
+}
+.map-filter .map-icon-cntr:first-child {
+  position: relative;
+  z-index: 1;
+  line-height: 28px;
+}
+.map-filter .map-icon-cntr:nth-child(5) {
+  left: -50px;
+}
+.map-filter .map-icon-cntr:nth-child(4) {
+  left: -100px;
+}
+.map-filter .map-icon-cntr:nth-child(3) {
+  left: -150px;
+}
+.map-filter .map-icon-cntr:nth-child(2) {
+  left: -200px;
+}
+.map-icon-cntr {
+  width: 45px;
+  height: 45px;
+  background: #0142aa;
+  padding: 10px;
+  border-radius: 50%;
+  line-height: 1;
+  display: inline-block;
+  text-align: center;
+  position: absolute;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.map-icon-cntr img {
+    width: 100%;
+    
+}
+.map-icon-cntr .fa-bars {
+  color: #fff;
+  padding-top: 3px;
+  font-size: 21px;
+}
+.rem-icon {
+  left: 0 !important;
+}
+    </style>
+    <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&callback=initMap"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
+    <link rel="stylesheet" href="js/bootstrap.min.css" /> 
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/1f83612583.js" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        var globalContent = "";
+        var shippingLocations = [];
+
+        var myOptions; var map;
+        var blueShip, bluePlane, bookingBlue, delayBlue;
+
+        var locations = [
+            ['loan A', 19.090405, 72.86875, 'address A', 'Ocean'],
+            ['loan 1', 33.890542, 151.274856, 'address 1'],
+            ['loan 2', 33.923036, 151.259052, 'address 2'],
+            ['loan 3', 34.028249, 151.157507, 'address 3'],
+            ['loan 4', 33.80010128657071, 151.28747820854187, 'address 4'],
+            ['loan 5', 33.950198, 151.259302, 'address 5']
+        ];
+
+        //var locations = [
+        //    ['loan A', 19.090405, 72.86875, 'address A', 'Ocean'],
+        //    ['loan 1', 50.037690, 8.562438, 'address 1', 'Air'],
+        //    ['loan 2', 18.950123, 72.950055, 'address 2', 'Booking'],
+        //    ['loan 3', 38.915090, 122.094300, 'address 3', 'Booking-Ocean'],
+        //    ['loan 4', -22.395400, -40.771910, 'Delay-Ocean'],
+        //    ['loan 5', -31.042430, -71.915370, 'Delay-Ocean']
+        //];
+
+        /////Read token from local storage 
+        var token = "";
+        token = localStorage.getItem("myToken");
+       // alert(token);
+        debugger;
+        if (token == "") {
+            token = "Bearer U2FsdGVkX18++8bfj5phBV/VV5z0lJkprpfPExiQMPmCk+4wWIvuGhHv5VKt5vz2kwXO4aWoeAbrbugCxXcs5Da7thdiR3JMxaIQJ/L7bqnZHgfG6F2BSX7v7bufzEFWCKI4FBuLYo9xGrBpn1KPDe+J4huu1o76fr+TvTWHqJyrUKIq2xSMRB2JScJ3V5MXSNJ8dPeCuBdS14TPP+ppII0TVgjl9M1a4caG3grgp+nEssiUniEDeXBxxrAz23Y/Q+p9c6qXz8moHUtoVeSuNZIL+w0++erBN6g20WdhwJ769XqNn+aA1Icgtu5KMDOX";
+        } else {
+            //token = "Bearer U2FsdGVkX18++8bfj5phBV/VV5z0lJkprpfPExiQMPmCk+4wWIvuGhHv5VKt5vz2kwXO4aWoeAbrbugCxXcs5Da7thdiR3JMxaIQJ/L7bqnZHgfG6F2BSX7v7bufzEFWCKI4FBuLYo9xGrBpn1KPDe+J4huu1o76fr+TvTWHqJyrUKIq2xSMRB2JScJ3V5MXSNJ8dPeCuBdS14TPP+ppII0TVgjl9M1a4caG3grgp+nEssiUniEDeXBxxrAz23Y/Q+p9c6qXz8moHUtoVeSuNZIL+w0++erBN6g20WdhwJ769XqNn+aA1Icgtu5KMDOX"; 
+            token = "Bearer " + token; 
+        }
+
+        function initMap() {
+
+            myOptions = {
+                center: new google.maps.LatLng(32.24165126, 77.78319374),
+                zoom: 2,
+                //mapTypeId: google.maps.MapTypeId.ROADMAP
+
+            };
+            map = new google.maps.Map(document.getElementById("default"),
+                myOptions);
+
+            blueShip = new google.maps.MarkerImage(
+                "img/blue-ship.png",
+                null /* size is determined at runtime */,
+                null /* origin is 0,0 */,
+                null /* anchor is bottom center of the scaled image */,
+                new google.maps.Size(32, 32)
+            );
+
+            bluePlane = new google.maps.MarkerImage(
+                "img/blue-plane.png",
+                null /* size is determined at runtime */,
+                null /* origin is 0,0 */,
+                null /* anchor is bottom center of the scaled image */,
+                new google.maps.Size(32, 32)
+            );
+
+            bookingBlue = new google.maps.MarkerImage(
+                "img/blue-booking.png",
+                null /* size is determined at runtime */,
+                null /* origin is 0,0 */,
+                null /* anchor is bottom center of the scaled image */,
+                new google.maps.Size(32, 32)
+            );
+
+            delayBlue = new google.maps.MarkerImage(
+                "blue-delay.png",
+                null /* size is determined at runtime */,
+                null /* origin is 0,0 */,
+                null /* anchor is bottom center of the scaled image */,
+                new google.maps.Size(32, 32)
+            );
+
+            //setMarkers(map, locations)
+
+            debugger;
+            /////This bind all the marker data
+            getDashboardMarkerData(map);
+        }
+
+        function setMarkers(map, locations) {
+            debugger;
+            var marker, i
+
+            for (i = 0; i < locations.length; i++) {
+
+                var Vessel = locations[i][0];
+                var lat = locations[i][1];
+                var lng = locations[i][2];
+                var contentData = locations[i][3];
+                var shipmentType = locations[i][4];
+                debugger;
+                var image = blueShip;
+                if (shipmentType == 'Ocean')
+                    image = blueShip;
+                if (shipmentType == 'Air')
+                    image = bluePlane;
+                if (shipmentType == 'Booking')
+                    image = bookingBlue;
+                if (shipmentType == 'Booking-Ocean')
+                    image = bookingBlue;
+                if (shipmentType == 'Delay-Ocean')
+                    image = delayBlue;
+
+                var latlngset = new google.maps.LatLng(lat, lng);
+
+                var marker = new google.maps.Marker({
+                    map: map, title: Vessel, position: latlngset, icon: image
+                });
+
+                var content = contentData;
+
+                var infowindow = new google.maps.InfoWindow()
+
+                google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
+                    return function () {
+                        debugger;
+                        ////////Ajax call to get content data //////////////
+                        content = "";
+                        var selectedLat = marker.getPosition().lat();
+                        var selectedLong = marker.getPosition().lng();
+
+                        /////Second Ajax Call
+                        $.ajax({
+                            type: "POST",
+                            async: false,
+                            url: "http://vizio.atafreight.com/MyWayAPI/ShipmentIConAPI",
+                            data: {
+                                //"lat": selectedLat,
+                                //"lng": selectedLong,
+                                "lat": 17.692650,
+                                "lng": 83.299995,
+                                "UserID": 874588
+                            },
+                            headers: {
+                                "Authorization": token
+                            },
+                            success: function (data) {
+                                debugger;
+                                //alert('Success-2');
+                                debugger;
+                                var datas = data.Table1;
+                                if (datas.length > 0) {
+                                    console.log(datas.length);
+                                    var marketContent = "<div id='rootElement'>";
+                                    var marketInnerContent = "";
+                                    for (var i = 0; i < datas.length; i++) {
+                                        var HBLNum = datas[i]["HBL#"];
+                                        var ContainerNo = datas[i]["ContainerNo"];
+                                        var invoiceIds = datas[i]["InvoiceNumber/Productid"];
+
+                                        //////Actual Content
+                                        var innerContentDatas = "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                                        innerContentDatas = innerContentDatas + "<div role='button' data-toggle='collapse' href='#" + ContainerNo + "' aria-expanded='false' aria-controls='" + ContainerNo + "'>";
+                                        innerContentDatas = innerContentDatas + "<a href='shipment-details?hblno=" + HBLNum + "' target='_parent'><p title='Container No.' class='mapcontainerno'>" + ContainerNo + "</p></a></div></h5></div>";
+                                        innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                                        innerContentDatas = innerContentDatas + "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" + HBLNum + "'>";
+                                        innerContentDatas = innerContentDatas + "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" + HBLNum + "' target='_parent'>" + HBLNum + " </a>";
+                                        innerContentDatas = innerContentDatas + "<div><p title='MyWay No.' class='mapinvoice ml-2'> " + invoiceIds + ",</p> </div> </p></div></h5></div></div></div></div></div>"
+
+                                        marketInnerContent = marketInnerContent + innerContentDatas;
+                                    }
+                                    marketContent = marketContent + marketInnerContent + "</div>";
+
+                                    //alert(marketContent);
+                                    content = marketContent;
+                                }
+                            }
+                        });
+
+                        ///////////////////////////////////////////////////
+
+                        infowindow.setContent(content);
+                        infowindow.open(map, marker);
+                    };
+                })(marker, content, infowindow));
+
+            }
+        }
+
+        ///When click on the text box got the info window
+        function ShowMarker() {
+
+            //alert('Method call on search text and button click');
+            debugger;
+
+            var enteredHBLNum = $("#dataNumber").val();
+            ///Clear input AQTY158984
+            $("#dataNumber").val("");
+
+            var loan = locations[4][0];
+            var lat = locations[4][1];
+            var long = locations[4][2];
+            var add = locations[4][3];
+            var shipmentType = locations[4][4];
+            var content = "";
+
+            var image = blueShip;
+            if (shipmentType == 'Ocean')
+                image = blueShip;
+            if (shipmentType == 'Air')
+                image = bluePlane;
+            if (shipmentType == 'Booking')
+                image = bookingBlue;
+            if (shipmentType == 'Booking-Ocean')
+                image = bookingBlue;
+            if (shipmentType == 'Delay-Ocean')
+                image = delayBlue;
+
+            ////////Get Lat long from the Enter text ////////////////////
+            /////////////////////////////////////////////////////////////
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: " http://vizio.atafreight.com/MyWayAPI/MyWaySearchGeoCoOrdinate",
+                data: {
+                    "UserID": "874588",
+                    "Search": enteredHBLNum
+                },
+                headers: {
+                    "Authorization": token
+                },
+                success: function (data) {
+                    debugger;
+                    //alert('Success-Receive Lat:' + data.Table[0].LastLocation_Lat + ' | long:' + data.Table[0].LastLocation_Lon);
+
+                    var lat = data.Table[0].LastLocation_Lat;
+                    var lng = data.Table[0].LastLocation_Lon;
+
+                    console.log("lat:" + lat);
+                    console.log("log:" + lng);
+                    ////////////////////////////////////////////////////////////
+                    latlngset = new google.maps.LatLng(lat, lng);
+                    var marker = new google.maps.Marker({
+                        map: map, title: loan, position: latlngset, icon: image
+                    });
+                    ///////////////////////////////////////////////////////////////////////////
+
+                    /////Second Ajax Call/////////////
+                    ////Based on receive lat long get the content
+
+                    /////Second Ajax Call
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: "http://vizio.atafreight.com/MyWayAPI/ShipmentIConAPI",
+                        data: {
+                            "lat": lat,
+                            "lng": lng,
+                            //"lat": 17.692650,
+                            //"lng": 83.299995,
+                            "UserID": 874588
+                        },
+                        headers: {
+                            "Authorization": token
+                        },
+                        success: function (data) {
+                            debugger;
+                            //alert('Success - Receive content on search');
+                            debugger;
+                            var datas = data.Table1;
+                            if (datas.length > 0) {
+                                var marketContent = "<div id='rootElement'>";
+                                var marketInnerContent = "";
+                                for (var i = 0; i < datas.length; i++) {
+                                    var HBLNum = datas[i]["HBL#"];
+                                    var ContainerNo = datas[i]["ContainerNo"];
+                                    var invoiceIds = datas[i]["InvoiceNumber/Productid"];
+
+                                    //////Actual Content
+                                    var innerContentDatas = "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                                    innerContentDatas = innerContentDatas + "<div role='button' data-toggle='collapse' href='#" + ContainerNo + "' aria-expanded='false' aria-controls='" + ContainerNo + "'>";
+                                    innerContentDatas = innerContentDatas + "<a href='shipment-details?hblno=" + HBLNum + "' target='_parent'><p title='Container No.' class='mapcontainerno'>" + ContainerNo + "</p></a></div></h5></div>";
+                                    //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                                    if (HBLNum == enteredHBLNum) {
+                                        debugger;
+                                        innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
+                                    }
+                                    else {
+                                        innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                                    }
+
+                                    innerContentDatas = innerContentDatas + "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" + HBLNum + "' >";
+                                    innerContentDatas = innerContentDatas + "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" + HBLNum + "' target='_parent'>" + HBLNum + " </a>";
+                                    innerContentDatas = innerContentDatas + "<div><p title='MyWay No.' class='mapinvoice ml-2'> " + invoiceIds + ",</p> </div> </p></div></h5></div></div></div></div></div>"
+
+                                    marketInnerContent = marketInnerContent + innerContentDatas;
+                                }
+                                marketContent = marketContent + marketInnerContent + "</div>";
+
+                                //alert(marketContent);
+                                content = marketContent;
+                            }
+                        }
+                    });
+
+                    debugger;
+                    var infowindow = new google.maps.InfoWindow({
+                        content: content
+                    });
+
+                    infowindow.open(map, marker);
+                    google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
+                        return function () {
+                            //alert('Me-234');
+                            infowindow.setContent(content);
+                            infowindow.open(map, marker);
+                        };
+                    })(marker, content, infowindow));
+
+
+
+
+
+
+                    /////////////////////////////////////////////////////////////////////////
+
+
+
+
+                }
+
+            });
+
+
+            //var selectedLat = marker.getPosition().lat();
+            //var selectedLong = marker.getPosition().lng();
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////////
+            debugger;
+
+        }
+
+        ////Get Dashboard Marker Data on load
+        function getDashboardMarkerData(map) {
+
+            if (1 == 1) {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "http://vizio.atafreight.com/MyWayAPI/ShipmentLatLongAPI",
+                    data: {
+                        "UserID": "874588"
+                    },
+                    headers: {
+                        "Authorization": token
+                    },
+                    success: function (response) {
+                        debugger;
+
+                        if (response.length > 0) {
+                            var arrarSelectPin = ["Ocean", "Air", "Booking-Ocean", "Delay-Ocean"];
+
+                            for (var i = 0; i < response.length; i++)
+                            //for (var i = 0; i < 6; i++)
+                            {
+                                var shipMarkerData = [];
+                                shipMarkerData.push(response[i]["Vessel"], Number(response[i]["LastLocation_Lat"]), Number(response[i]["LastLocation_Lon"]), "", response[i]["Pin"]);
+                                shippingLocations.push(shipMarkerData);
+                            }
+                            debugger;
+                            setMarkers(map, shippingLocations)
+                        }
+                    }
+                });
+
+            }
+        }
+
+        var isOceanOn = 1, isAirOn = 1; isDelayShipment = 1; isNewBooking = 1;
+        function toggleMapdata(toogleData) {
+            debugger;
+
+            ////alert(1);
+            if (toogleData === 'Ocean') {
+                if (isOceanOn === 1) { isOceanOn = 0; } else { isOceanOn = 1; }
+
+                if (toogleData === 'Ocean' && isOceanOn === 0) {
+                    $("div > img[src='img/hamb-ship.png']").hide();
+                    $("#mapOcean").css('opacity', '0.5');
+                } else {
+                    $("div > img[src='img/hamb-ship.png']").show();
+                    $("#mapOcean").css('opacity', '1');
+                }
+
+            }
+
+            if (toogleData === 'Air') {
+                if (isAirOn === 1) { isAirOn = 0; } else { isAirOn = 1; }
+
+                if (toogleData === 'Air' && isAirOn === 0) {
+                    $("div > img[src='img/hamb-plane.png']").hide();
+                    $("#mapAir").css('opacity', '0.5');
+                } else {
+                    $("div > img[src='img/hamb-plane.png']").show();
+                    $("#mapAir").css('opacity', '1');
+                }
+
+            }
+
+            if (toogleData === 'DelayShipment') {
+                if (isDelayShipment === 1) { isDelayShipment = 0; } else { isDelayShipment = 1; }
+
+                if (toogleData === 'DelayShipment' && isDelayShipment === 0) {
+                    $("div > img[src='img/delay-shipment.png']").hide();
+                    $("#mapDelay").css('opacity', '0.5');
+                } else {
+                    $("div > img[src='img/delay-shipment.png']").show();
+                    $("#mapDelay").css('opacity', '1');
+                }
+            }
+
+            if (toogleData === 'NewBooking') {
+                if (isNewBooking === 1) { isNewBooking = 0; } else { isNewBooking = 1; }
+
+                if (toogleData === 'NewBooking' && isNewBooking === 0) {
+                    $("div > img[src='img/current-booking.png']").hide();
+                    $("#mapBooking").css('opacity', '0.5');
+                } else {
+                    $("div > img[src='img/current-booking.png']").show();
+                    $("#mapBooking").css('opacity', '1');
+                }
+            }
+
+            $("#mapOcean").show();
+            $("#mapAir").show();
+            $("#mapDelay").show();
+            $("#mapBooking").show();
+        }
+
+
+        function togglehandleHamb() {
+    if (document.getElementById("Ocean").classList.contains("rem-icon")) {
+      document.getElementById("Ocean").classList.remove("rem-icon");
+    } else {
+      document.getElementById("Ocean").classList.add("rem-icon");
+    }
+    if (document.getElementById("Air").classList.contains("rem-icon")) {
+      document.getElementById("Air").classList.remove("rem-icon");
+    } else {
+      document.getElementById("Air").classList.add("rem-icon");
+    }
+    if (document.getElementById("Delay-Ocean").classList.contains("rem-icon")) {
+      document.getElementById("Delay-Ocean").classList.remove("rem-icon");
+    } else {
+      document.getElementById("Delay-Ocean").classList.add("rem-icon");
+    }
+    if (
+      document.getElementById("Booking-Ocean").classList.contains("rem-icon")
+    ) {
+      document.getElementById("Booking-Ocean").classList.remove("rem-icon");
+    } else {
+      document.getElementById("Booking-Ocean").classList.add("rem-icon");
+    }
+  }
+
+    </script>
+
+</head>
+<body>
+       
+    <div style="position: relative;">
+            <div class="dash-search-cntr2">
+                    <input type="text" id="dataNumber" placeholder="Enter a location" value="AQTY158984" />
+                    <i
+                      class="fa fa-search"
+                      aria-hidden="true"
+                      id="testId" onclick="ShowMarker();"
+                    ></i>
+                  </div>
+        <div class="map-filter" onclick="togglehandleHamb();">
+            <div class="map-icon-cntr" onclick="toggleMapdata();">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+            <div class="map-icon-cntr rem-icon" title="Ocean" id="Ocean" onclick="toggleMapdata('Ocean');">
+                <img Id="mapOcean" src="img/hamb-ship.png" alt="ship icon" style="height: auto;">
+            </div>
+            <div class="map-icon-cntr rem-icon" title="Air" id="Air" onclick="toggleMapdata('Air');">
+                <img Id="mapAir" src="img/hamb-plane.png" alt="plane icon" style="height: auto;">
+            </div>
+            <div class="map-icon-cntr rem-icon" id="Delay-Ocean" title="Delay Shipment" onclick="toggleMapdata('DelayShipment');">
+                <img Id="mapDelay" src="img/delay-shipment.png" alt="delay icon" style="height: auto;">
+            </div>
+            <div class="map-icon-cntr rem-icon" id="Booking-Ocean" title="New Booking" onclick="toggleMapdata('NewBooking');">
+                <img Id="mapBooking" src="img/current-booking.png" alt="booking icon" style="height: auto;">
+             </div>
+        </div>
+
+
+    </div>
+
+    <div id="default" style="width:100%; height:100%"></div>
+</body>
+</html>

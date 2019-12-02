@@ -17,7 +17,6 @@ import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
 
-
 class RateFinalizingStill extends Component {
   constructor(props) {
     super(props);
@@ -30,43 +29,43 @@ class RateFinalizingStill extends Component {
       modalBook: false,
       RateDetails: [],
       SubRateDetails: [],
-      toggleCustomerType:true,
-      QuoteStatus : true,
-      Bookingcreation : false,
-      QuoteNumber:"",
-      accountcustname:"",
-      custAddress:"",
-      custNotification:"",
-      ModeOfTransport:"",
-      ShipmentType:"",
-      ContainerLoad:"",
-      EquipmentTypes:"",
-      SpecialEquipment:"",
-      HazMatUnstackable:"",
-      IncoTerms:"",
-      TypeofMove:"",
-      CargoDetails:"",
-      Commodity:".FAK",
-      CargoDetailsArr:[],
+      toggleCustomerType: true,
+      QuoteStatus: true,
+      Bookingcreation: false,
+      QuoteNumber: "",
+      accountcustname: "",
+      custAddress: "",
+      custNotification: "",
+      ModeOfTransport: "",
+      ShipmentType: "",
+      ContainerLoad: "",
+      EquipmentTypes: "",
+      SpecialEquipment: "",
+      HazMatUnstackable: "",
+      IncoTerms: "",
+      TypeofMove: "",
+      CargoDetails: "",
+      Commodity: ".FAK",
+      CargoDetailsArr: [],
       QuoteNumber: "",
       selectedCommodity: "",
       packageTypeData: [],
       TruckTypeData: [
         {
-        TruckID: "",
-        TruckName: "",
-        Quantity: "",
-        TruckDesc: ""
+          TruckID: "",
+          TruckName: "",
+          Quantity: "",
+          TruckDesc: ""
         }
-        ],
-        spacEqmtType: [],
-        commodityData: [],
-        multiCBM: [],
-        referType: [],
-        flattack_openTop: [],
-        eqmtType: [],
-        selectedFile: [],
-        modalRejectPop: false,
+      ],
+      spacEqmtType: [],
+      commodityData: [],
+      multiCBM: [],
+      referType: [],
+      flattack_openTop: [],
+      eqmtType: [],
+      selectedFile: [],
+      modalRejectPop: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -86,7 +85,7 @@ class RateFinalizingStill extends Component {
     }
 
     if (typeof this.props.location.state.detail != undefined) {
-      var qData=this.props.location.state;
+      var qData = this.props.location.state;
       this.HandleSalesQuoteView(qData);
       this.HandlePackgeTypeData();
       this.HandleCommodityDropdown();
@@ -95,17 +94,15 @@ class RateFinalizingStill extends Component {
 
   HandleSalesQuoteView(param) {
     debugger;
-    var SalesQuoteNumber =param.detail.Quotes;
-    var type=param.detail.Type
+    var SalesQuoteNumber = param.detail.Quotes;
+    var type = param.detail.Type;
     //alert(param.detail.Status)
     // "SHA-SQFCL-NOV19-05020"
 
-    if (param.detail.Status != "Pending") 
-    {
+    if (param.detail.Status != "Pending") {
       this.setState({ QuoteStatus: false });
     }
-    if (param.detail.Status == "Approved") 
-    {
+    if (param.detail.Status == "Approved") {
       this.setState({ Bookingcreation: true });
     }
 
@@ -128,46 +125,52 @@ class RateFinalizingStill extends Component {
       .then(function(response) {
         debugger;
 
-        var  TypeofMove = "";
-        var IncoTerms =  "";
+        var TypeofMove = "";
+        var IncoTerms = "";
         var CargoDetailsArr = [];
         //accountcustname
-        if(response != null)
-        {
-          if(response.data != null)
-          {
-            if(response.data.Table != null)
-            {
-              if(response.data.Table.length > 0)
-              {
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
                 TypeofMove = response.data.Table[0].TypeOfMove;
                 IncoTerms = response.data.Table[0].IncoTerm;
 
                 self.setState({
-                  accountcustname : response.data.Table[0].CompanyName == undefined ? response.data.Table[0].company_name : response.data.Table[0].CompanyName,
+                  accountcustname:
+                    response.data.Table[0].CompanyName == undefined
+                      ? response.data.Table[0].company_name
+                      : response.data.Table[0].CompanyName,
                   custAddress: response.data.Table[0].Company_Address,
-                  custNotification: response.data.Table[0].ContactName == undefined ? response.data.Table[0].contact_name : response.data.Table[0].ContactName,
+                  custNotification:
+                    response.data.Table[0].ContactName == undefined
+                      ? response.data.Table[0].contact_name
+                      : response.data.Table[0].ContactName,
                   ModeOfTransport: response.data.Table[0].ModeOfTransport,
-                  ShipmentType:  response.data.Table[0].ShipmentType,
+                  ShipmentType: response.data.Table[0].ShipmentType,
                   ContainerLoad: param.detail.Type,
-                  EquipmentTypes:".20 DC",
-                  SpecialEquipment:".Refer Type (20 degrees)",
-                  HazMatUnstackable:".",
-                  TypeofMove:  TypeofMove,
-                  IncoTerms:  IncoTerms
+                  EquipmentTypes: ".20 DC",
+                  SpecialEquipment: ".Refer Type (20 degrees)",
+                  HazMatUnstackable: ".",
+                  TypeofMove: TypeofMove,
+                  IncoTerms: IncoTerms
                 });
               }
             }
-            if(response.data.Table1 != null)
-            {
-              if(response.data.Table1.length > 0)
-              {
-                if(TypeofMove == null || TypeofMove == "" || TypeofMove == undefined)
-                {
+            if (response.data.Table1 != null) {
+              if (response.data.Table1.length > 0) {
+                if (
+                  TypeofMove == null ||
+                  TypeofMove == "" ||
+                  TypeofMove == undefined
+                ) {
                   TypeofMove = response.data.Table1[0].TypeOfMove;
                 }
-                if(IncoTerms == null || IncoTerms == "" || IncoTerms == undefined)
-                {
+                if (
+                  IncoTerms == null ||
+                  IncoTerms == "" ||
+                  IncoTerms == undefined
+                ) {
                   IncoTerms = response.data.Table1[0].IncoTerm;
                 }
 
@@ -180,33 +183,43 @@ class RateFinalizingStill extends Component {
                 });
               }
             }
-            if(response.data.Table3 != null)
-            {
-              if(response.data.Table3.length > 0)
-              {
+            if (response.data.Table3 != null) {
+              if (response.data.Table3.length > 0) {
                 var table = response.data.Table3;
-                for(var i = 0; i < table.length; i++)
-                {
-                  CargoDetailsArr.push({PackageType:table[i].PackageType, SpecialContainerCode: table[i].PackageType+"_"+i, ContainerType: table[i].PackageType, "Packaging": "-", Quantity: table[i].Quantity, Lenght: table[i].Length, Width: table[i].Width, Height: table[i].height, Weight: table[i].GrossWeight, Gross_Weight: "-", Temperature: "-", CBM: "-", Volume: "-", VolumeWeight: "-", Editable: true })
+                for (var i = 0; i < table.length; i++) {
+                  CargoDetailsArr.push({
+                    PackageType: table[i].PackageType,
+                    SpecialContainerCode: table[i].PackageType + "_" + i,
+                    ContainerType: table[i].PackageType,
+                    Packaging: "-",
+                    Quantity: table[i].Quantity,
+                    Lenght: table[i].Length,
+                    Width: table[i].Width,
+                    Height: table[i].height,
+                    Weight: table[i].GrossWeight,
+                    Gross_Weight: "-",
+                    Temperature: "-",
+                    CBM: "-",
+                    Volume: "-",
+                    VolumeWeight: "-",
+                    Editable: true
+                  });
                 }
-                
+              } else {
+                CargoDetailsArr.push({ Width: "No Data Found" });
               }
-              else{
-                CargoDetailsArr.push({Width:"No Data Found"})
-              }
-            }
-            else{
-              CargoDetailsArr.push({Width:"No Data Found"})
+            } else {
+              CargoDetailsArr.push({ Width: "No Data Found" });
             }
             self.setState({
-              CargoDetailsArr:CargoDetailsArr
-            })
+              CargoDetailsArr: CargoDetailsArr
+            });
           }
         }
         self.setState({
           RateDetails: response.data.Table1,
           SubRateDetails: response.data.Table2,
-          multiCBM:response.data.Table3,
+          multiCBM: response.data.Table3
         });
         self.forceUpdate();
         //console.log(response);
@@ -219,9 +232,16 @@ class RateFinalizingStill extends Component {
 
   toggleBook(e) {
     e.stopPropagation();
-    this.setState(prevState => ({
-      modalBook: !prevState.modalBook
-    }));
+    // this.setState(prevState => ({
+    //   modalBook: !prevState.modalBook
+    // }));
+    this.props.history.push({
+      pathname: "/rate-finalizing-still-booking",
+      state: {
+        ContainerLoad: this.state.ContainerLoad,
+        salesQuotaNo: this.state.QuoteNumber
+      }
+    });
   }
   toggleProfit() {
     this.setState(prevState => ({
@@ -270,10 +290,8 @@ class RateFinalizingStill extends Component {
     var QuoteType = "";
     if (typeof this.props.location.state != "undefined") {
       SalesQuoteNumber = this.props.location.state.detail.Quotes;
-      QuoteType = this.props.location.state.detail.Type
-    }
-    else
-    {
+      QuoteType = this.props.location.state.detail.Type;
+    } else {
       return false;
     }
     debugger;
@@ -282,7 +300,7 @@ class RateFinalizingStill extends Component {
       url: `${appSettings.APIURL}/SalesQuoteApprove`,
       data: {
         Mode: QuoteType,
-        SalesQuoteNumber: SalesQuoteNumber,   
+        SalesQuoteNumber: SalesQuoteNumber,
         isApprove: 1,
         MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
@@ -295,15 +313,15 @@ class RateFinalizingStill extends Component {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
-               
               }
             }
           }
         }
 
-        var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
+        var Messagebody =
+          "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
 
-        self.SendMail(SalesQuoteNumber, Messagebody)
+        self.SendMail(SalesQuoteNumber, Messagebody);
       })
       .catch(error => {
         debugger;
@@ -312,20 +330,16 @@ class RateFinalizingStill extends Component {
         //alert(err[1].replace("}", ""))
         NotificationManager.error(err[1].replace("}", ""));
       });
-
   }
 
-  RejectQuotes()
-  {
+  RejectQuotes() {
     let self = this;
     var SalesQuoteNumber = "";
     var QuoteType = "";
     if (typeof this.props.location.state != "undefined") {
       SalesQuoteNumber = this.props.location.state.detail.Quotes;
-      QuoteType = this.props.location.state.detail.Type
-    }
-    else
-    {
+      QuoteType = this.props.location.state.detail.Type;
+    } else {
       return false;
     }
     var RejectResontxt = document.getElementById("RejectResontxt").value;
@@ -335,9 +349,9 @@ class RateFinalizingStill extends Component {
       url: `${appSettings.APIURL}/SalesQuoteReject`,
       data: {
         Mode: QuoteType,
-        SalesQuoteNumber: SalesQuoteNumber,   
+        SalesQuoteNumber: SalesQuoteNumber,
         isReject: 1,
-        RejectReason:RejectResontxt,
+        RejectReason: RejectResontxt,
         MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
@@ -346,21 +360,21 @@ class RateFinalizingStill extends Component {
         debugger;
 
         self.toggleRejectPop();
-        
+
         if (response != null) {
           if (response.data != null) {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
-               
               }
             }
           }
         }
 
-        var Messagebody = "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
+        var Messagebody =
+          "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
 
-        self.SendMail(SalesQuoteNumber, Messagebody)
+        self.SendMail(SalesQuoteNumber, Messagebody);
       })
       .catch(error => {
         debugger;
@@ -404,12 +418,12 @@ class RateFinalizingStill extends Component {
       });
   }
 
-// Shlok Start workingf
+  // Shlok Start workingf
 
   //// start dynamic element for LCL-AIR-LTL
 
   CreateMultiCBM() {
-    debugger
+    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -620,7 +634,7 @@ class RateFinalizingStill extends Component {
           SaleQuoteIDLineID: 0,
           Unit: "",
           Width: 0,
-          height: 0,
+          height: 0
         }
       ]
     }));
@@ -751,12 +765,12 @@ class RateFinalizingStill extends Component {
     debugger;
     const docData = new FormData();
     var docName = this.state.selectedFileName;
-   
+
     if (docName == "") {
       NotificationManager.error("Please enter document name");
       return false;
     }
-   
+
     debugger;
     //docData.append();
     docData.append("ShipmentNumber", "BCM2453770");
@@ -1187,13 +1201,13 @@ class RateFinalizingStill extends Component {
     this.setState({ TruckTypeData });
   }
   removeClickTruckType(i) {
-                            let TruckTypeData = [...this.state.TruckTypeData];
-                            TruckTypeData.splice(i, 1);
-                            this.setState({ TruckTypeData });
-                          }
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
 
   //// End Truck Tyep Dynamic element
-// Shlok End working 
+  // Shlok End working
 
   render() {
     var data1 = [
@@ -1336,7 +1350,7 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
-                      {this.state.toggleCustomerType  && this.state.QuoteStatus  && (
+                      {this.state.toggleCustomerType && this.state.QuoteStatus && (
                         //QuoteStatus
                         <button
                           className="butn m-0"
@@ -1348,9 +1362,8 @@ class RateFinalizingStill extends Component {
                       {this.state.toggleCustomerType && this.state.QuoteStatus && (
                         <button
                           className="butn m-0"
-                         // onClick={this.RejectQuotes.bind(this)}
-                         onClick={this.toggleRejectPop.bind(this)}
-                         
+                          // onClick={this.RejectQuotes.bind(this)}
+                          onClick={this.toggleRejectPop.bind(this)}
                         >
                           Reject
                         </button>
@@ -1725,7 +1738,7 @@ class RateFinalizingStill extends Component {
                                           }
                                         }
                                       },
-                                     
+
                                       // {
                                       //   Header: "Tax",
                                       //   accessor: 0
@@ -1771,24 +1784,32 @@ class RateFinalizingStill extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Shipment Type</p>
-                            <p className="details-para">{this.state.ShipmentType}</p>
+                            <p className="details-para">
+                              {this.state.ShipmentType}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
-                            <p className="details-para">{this.state.ModeOfTransport}</p>
+                            <p className="details-para">
+                              {this.state.ModeOfTransport}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
-                            <p className="details-para">{this.state.ContainerLoad}</p>
+                            <p className="details-para">
+                              {this.state.ContainerLoad}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para">{this.state.EquipmentTypes}</p>
+                            <p className="details-para">
+                              {this.state.EquipmentTypes}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
                             <p className="details-para">
-                            {this.state.SpecialEquipment}
+                              {this.state.SpecialEquipment}
                             </p>
                           </div>
                           <div className="col-md-4">
@@ -1796,16 +1817,21 @@ class RateFinalizingStill extends Component {
                               HazMat &amp; Unstackable
                             </p>
                             <p className="details-para">
-                            {this.state.HazMatUnstackable}
+                              {this.state.HazMatUnstackable}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
-                            <p className="details-para"> {this.state.IncoTerms}</p>
+                            <p className="details-para">
+                              {" "}
+                              {this.state.IncoTerms}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
-                            <p className="details-para">{this.state.TypeofMove}</p>
+                            <p className="details-para">
+                              {this.state.TypeofMove}
+                            </p>
                           </div>
                           {/* <div className="col-md-4">
                             <p className="details-title">POL</p>
@@ -1857,17 +1883,21 @@ class RateFinalizingStill extends Component {
                       <div className="row">
                         <div className="col-md-4">
                           <p className="details-title">Account/Customer</p>
-                          <p className="details-para">{this.state.accountcustname}</p>
+                          <p className="details-para">
+                            {this.state.accountcustname}
+                          </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
                           <p className="details-para">
-                          {this.state.custAddress}
+                            {this.state.custAddress}
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
-                          <p className="details-para">{this.state.custNotification}</p>
+                          <p className="details-para">
+                            {this.state.custNotification}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1881,7 +1911,7 @@ class RateFinalizingStill extends Component {
                         <input type="text" value="Dummy" disabled />
                       </div>  
                     </div> */}
-                      <div className="row">
+                    <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
@@ -1896,68 +1926,67 @@ class RateFinalizingStill extends Component {
                           ))}
                         </select>
                       </div>
-                    
                     </div>
-                    <div className="row">  <div className="col-md-12 login-fields">
+                    <div className="row">
+                      {" "}
+                      <div className="col-md-12 login-fields">
                         <p className="details-title">Cargo Details</p>
                         <div className="ag-fresh redirect-row">
-                            <ReactTable
-                             data={CargoDetailsArr}
-                              filterable
-                              minRows={1}
-                              showPagination={false}
-                              columns={[
-                                {
-                                  Header: "Cont.Type",
-                                  accessor: "ContainerType"
-                                },
-                                {
-                                  Header: "Quantity",
-                                  accessor: "Quantity"
-                                },
-                                {
-                                  Header: "Lenght",
-                                  accessor: "Lenght"
-                                },
-                                {
-                                  Header: "Width",
-                                  accessor: "Width"
-                                },
-                                {
-                                  Header: "Height",
-                                  accessor: "Height"
-                                },
-                                {
-                                  Header: "Weight",
-                                  accessor: "Weight",
-                                  //editable: this.state.containerLoadType == "Air" ? true : false
-                                },
-                                {
-
-                                  Header: "Temp.",
-                                  accessor: "Temperature",
-                                  //show:  this.state.containerLoadType == "Air" ? false : true
-                                },
-                                {
-
-                                  Header: "CBM" ,
-                                  accessor: "CBM",
-                                  //show:  this.state.containerLoadType == "Air" ? false : true
-                                },
-                                {
-                                  Header: "Action",
-                                  sortable: false,
-                                  accessor:"Editable",
-                                  
-                                }
-                              ]}
-                              className="-striped -highlight"
-                              defaultPageSize={2000}
+                          <ReactTable
+                            data={CargoDetailsArr}
+                            filterable
+                            minRows={1}
+                            showPagination={false}
+                            columns={[
+                              {
+                                Header: "Cont.Type",
+                                accessor: "ContainerType"
+                              },
+                              {
+                                Header: "Quantity",
+                                accessor: "Quantity"
+                              },
+                              {
+                                Header: "Lenght",
+                                accessor: "Lenght"
+                              },
+                              {
+                                Header: "Width",
+                                accessor: "Width"
+                              },
+                              {
+                                Header: "Height",
+                                accessor: "Height"
+                              },
+                              {
+                                Header: "Weight",
+                                accessor: "Weight"
+                                //editable: this.state.containerLoadType == "Air" ? true : false
+                              },
+                              {
+                                Header: "Temp.",
+                                accessor: "Temperature"
+                                //show:  this.state.containerLoadType == "Air" ? false : true
+                              },
+                              {
+                                Header: "CBM",
+                                accessor: "CBM"
+                                //show:  this.state.containerLoadType == "Air" ? false : true
+                              },
+                              {
+                                Header: "Action",
+                                sortable: false,
+                                accessor: "Editable"
+                              }
+                            ]}
+                            className="-striped -highlight"
+                            defaultPageSize={2000}
                             //getTrProps={this.HandleRowClickEvt}
                             //minRows={1}
-                            />
+                          />
                         </div>
-                      </div></div>
+                      </div>
+                    </div>
                     {/* <div className="text-right">
                       <a href="quote-table" className="butn">
                         Send
@@ -1989,7 +2018,7 @@ class RateFinalizingStill extends Component {
                       </p>
                     </div>
                     <center>
-                    {/* <Button
+                      {/* <Button
                       className="butn"
                       onClick={() => {
                         this.onDocumentClickHandler();
@@ -1997,16 +2026,16 @@ class RateFinalizingStill extends Component {
                     >
                       Save File
                     </Button> */}
-                    
-                    {this.state.toggleCustomerType && this.state.Bookingcreation && (
-                        <button
-                        onClick={this.toggleBook}
-                        className="butn more-padd mt-4"
-                      >
-                        Create Booking
-                      </button>
-                      )}
-                      
+
+                      {this.state.toggleCustomerType &&
+                        this.state.Bookingcreation && (
+                          <button
+                            onClick={this.toggleBook}
+                            className="butn more-padd mt-4"
+                          >
+                            Create Booking
+                          </button>
+                        )}
                     </center>
                   </div>
                 </div>
@@ -2156,31 +2185,27 @@ class RateFinalizingStill extends Component {
           </Modal>
 
           <Modal
-                  className="delete-popup package-popup"
-                  isOpen={this.state.modalRejectPop}
-                  toggle={this.toggleRejectPop.bind(this)}
-                >
-                  <ModalBody>
-                  <h3 className="mb-4">Reject Reason</h3>
-                  <div className="rename-cntr login-fields">
-                    {/* <label>Reject Reason</label> */}
-                    <input type="text" id="RejectResontxt"   />
-                  </div>
-                  <Button
-                      className="butn"
-                      onClick={this.RejectQuotes.bind(this)}
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      className="butn cancel-butn"
-                      onClick={this.toggleRejectPop.bind(this)}
-                    >
-                      Close
-                    </Button>
-                  </ModalBody>
-                </Modal>
-
+            className="delete-popup package-popup"
+            isOpen={this.state.modalRejectPop}
+            toggle={this.toggleRejectPop.bind(this)}
+          >
+            <ModalBody>
+              <h3 className="mb-4">Reject Reason</h3>
+              <div className="rename-cntr login-fields">
+                {/* <label>Reject Reason</label> */}
+                <input type="text" id="RejectResontxt" />
+              </div>
+              <Button className="butn" onClick={this.RejectQuotes.bind(this)}>
+                Submit
+              </Button>
+              <Button
+                className="butn cancel-butn"
+                onClick={this.toggleRejectPop.bind(this)}
+              >
+                Close
+              </Button>
+            </ModalBody>
+          </Modal>
         </div>
         <NotificationContainer />
       </React.Fragment>
