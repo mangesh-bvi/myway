@@ -536,7 +536,8 @@ class RateTable extends Component {
     });
   }
   else{
-    NotificationManager.error("Please select atleast one Rate");
+    //NotificationManager.error("Please select atleast one Rate");
+    alert("Please select atleast one Rate");
   }
   }
 
