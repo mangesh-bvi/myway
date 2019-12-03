@@ -1567,27 +1567,31 @@ class RateFinalizingStill extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">S. Port</p>
-                                      <p className="details-para"></p>
+                                      <p className="details-title">
+                                        TransShipment Port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
                                     </>
                                   );
                                 },
                                 accessor: "TransshipmentPort",
-                                filterable: true
-                                // minWidth: 175
+                                filterable: true,
+                                minWidth: 160
                               },
                               {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">F. Time</p>
+                                      <p className="details-title">Free Time</p>
                                       <p className="details-para"></p>
                                     </>
                                   );
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
-                                minWidth: 80
+                                minWidth: 100
                               },
                               {
                                 Cell: row => {
@@ -1628,13 +1632,13 @@ class RateFinalizingStill extends Component {
                                     <>
                                       <p className="details-title">TT</p>
                                       <p className="details-para">
-                                        {/* {row.original.TransitTime} */}
+                                        {row.original.TransitTime}
                                       </p>
                                     </>
                                   );
                                 },
-                                accessor: "TransitTime",
-                                minWidth: 60
+                                accessor: "TransitTime"
+                                // minWidth: 60
                               },
                               {
                                 Cell: row => {
@@ -1698,7 +1702,7 @@ class RateFinalizingStill extends Component {
                         // }}
                         data={this.state.RateDetails}
                         defaultPageSize={1000}
-                        className="-striped -highlight"
+                        className="-striped -highlight no-mid-align"
                         minRows={1}
                         showPagination={false}
                         SubComponent={row => {
@@ -1912,7 +1916,7 @@ class RateFinalizingStill extends Component {
                       </div>  
                     </div> */}
                     <div className="row">
-                      <div className="col-md-6 login-fields">
+                      <div className="col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
                           disabled={true}
@@ -1939,7 +1943,7 @@ class RateFinalizingStill extends Component {
                             showPagination={false}
                             columns={[
                               {
-                                Header: "Cont.Type",
+                                Header: "Pack.Type",
                                 accessor: "ContainerType"
                               },
                               {
@@ -1959,15 +1963,14 @@ class RateFinalizingStill extends Component {
                                 accessor: "Height"
                               },
                               {
-                                Header: "Weight",
+                                Header: "Gross Weight",
                                 accessor: "Weight"
                                 //editable: this.state.containerLoadType == "Air" ? true : false
                               },
-                              {
-                                Header: "Temp.",
-                                accessor: "Temperature"
-                                //show:  this.state.containerLoadType == "Air" ? false : true
-                              },
+                              // {
+                              //   Header: "Temp.",
+                              //   accessor: "Temperature"
+                              // },
                               {
                                 Header: "CBM",
                                 accessor: "CBM"

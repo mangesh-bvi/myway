@@ -69,22 +69,22 @@ class RateFinalizing extends Component {
       pickUpAddress: [],
       commodityData: [],
       modalPreview: false,
-      packageTypeData:[],
-      currentPackageType:"",
-      valuequantity:"",
-      valuelenght :"",
-      valuewidth :"",
-      valueheight :"",
-      valueweight :"",
-      valuecbm :"",
-      filterrateSubDetails:[],
-      selectedCommodity:"",
-      accountcustname:"",
-      toggleIsEdit:true,
-      custNotification:"",
-      isediting:false,
-      isCopy:false,
-      CustAddress:"",
+      packageTypeData: [],
+      currentPackageType: "",
+      valuequantity: "",
+      valuelenght: "",
+      valuewidth: "",
+      valueheight: "",
+      valueweight: "",
+      valuecbm: "",
+      filterrateSubDetails: [],
+      selectedCommodity: "",
+      accountcustname: "",
+      toggleIsEdit: true,
+      custNotification: "",
+      isediting: false,
+      isCopy: false,
+      CustAddress: "",
       menuStyle: {
         textAlign: "left",
         borderRadius: "3px",
@@ -102,8 +102,9 @@ class RateFinalizing extends Component {
       },
       customerData: [],
       fields: {},
-      CompanyID:0,
-      companyName:""
+      CompanyID: 0,
+      companyName: "",
+      CompanyAddress: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -113,223 +114,320 @@ class RateFinalizing extends Component {
     this.SendRequest = this.SendRequest.bind(this);
     this.HandleLocalCharges = this.HandleLocalCharges.bind(this);
     this.togglePreview = this.togglePreview.bind(this);
-    this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this)
-    this.HandleCommodityDropdown=this.HandleCommodityDropdown.bind(this)
+    this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this);
+    this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
   }
 
   componentDidMount() {
     debugger;
 
     if (typeof this.props.location.state !== "undefined") {
+      if (this.props.location.state.Quote == undefined) {
+        var rateDetails = this.props.location.state.selectedDataRow;
+        var rateSubDetails = this.props.location.state.RateSubDetails;
+        var containerLoadType = this.props.location.state.containerLoadType;
+        var modeoftransport = this.props.location.state.modeoftransport;
+        var shipmentType = this.props.location.state.shipmentType;
+        var HazMat = this.props.location.state.HazMat;
+        var NonStackable = this.props.location.state.NonStackablel;
+        var typeofMove = this.props.location.state.typeofMove;
+        var incoTerms = this.props.location.state.incoTerms;
+        var commodityData = this.props.location.state.commodityData;
+        var selected = this.props.location.state.selected;
+        var spacEqmtType = this.props.location.state.spacEqmtType;
+        var flattack_openTop = this.props.location.state.flattack_openTop;
+        var polfullAddData = this.props.location.state.polfullAddData;
+        var podfullAddData = this.props.location.state.podfullAddData;
+        var currencyCode = this.props.location.state.currencyCode;
+        var users = this.props.location.state.users;
+        var referType = this.props.location.state.referType;
+        var CommodityID = this.props.location.state.CommodityID;
+        var destAddress = this.props.location.state.destAddress;
+        var pickUpAddress = this.props.location.state.pickUpAddress;
+        var multiCBM = this.props.location.state.multiCBM;
+        var TruckTypeData = this.props.location.state.TruckTypeData;
+        var cbmVal = this.props.location.state.cbmVal;
+        var packageTypeData = this.props.location.state.packageTypeData;
+        var companyID = this.props.location.state.companyID;
+        var companyName = this.props.location.state.companyName;
+        var companyAddress = this.props.location.state.companyAddress;
 
-      if(this.props.location.state.Quote == undefined)
-      {
+        var CargoDetailsArr = [];
+        if (containerLoadType == "FCL") {
+          if (users != null) {
+            if (users.length > 0) {
+              for (var i = 0; i < users.length; i++) {
+                CargoDetailsArr.push({
+                  ContainerType: users[i].StandardContainerCode,
+                  Packaging: "-",
+                  Quantity: users[i].ContainerQuantity,
+                  Lenght: "-",
+                  Width: "-",
+                  Height: "-",
+                  Weight: "-",
+                  Gross_Weight: "-",
+                  Temperature: "-",
+                  CBM: "-",
+                  Editable: false
+                });
+              }
+            }
+          }
 
-      var rateDetails = this.props.location.state.selectedDataRow;
-      var rateSubDetails = this.props.location.state.RateSubDetails;
-      var containerLoadType = this.props.location.state.containerLoadType;
-      var modeoftransport = this.props.location.state.modeoftransport;
-      var shipmentType = this.props.location.state.shipmentType;
-      var HazMat = this.props.location.state.HazMat;
-      var NonStackable = this.props.location.state.NonStackablel;
-      var typeofMove = this.props.location.state.typeofMove;
-      var incoTerms = this.props.location.state.incoTerms;
-      var commodityData = this.props.location.state.commodityData;
-      var selected = this.props.location.state.selected;
-      var spacEqmtType = this.props.location.state.spacEqmtType;
-      var flattack_openTop = this.props.location.state.flattack_openTop;
-      var polfullAddData = this.props.location.state.polfullAddData;
-      var podfullAddData = this.props.location.state.podfullAddData;
-      var currencyCode = this.props.location.state.currencyCode;
-      var users = this.props.location.state.users;
-      var referType = this.props.location.state.referType;
-      var CommodityID = this.props.location.state.CommodityID;
-      var destAddress = this.props.location.state.destAddress;
-      var pickUpAddress = this.props.location.state.pickUpAddress;
-      var multiCBM = this.props.location.state.multiCBM;
-      var TruckTypeData = this.props.location.state.TruckTypeData;
-      var cbmVal = this.props.location.state.cbmVal;
-      var packageTypeData = this.props.location.state.packageTypeData;
-      var companyID = this.props.location.state.companyID;
-      var companyName = this.props.location.state.companyName;
-      var companyAddress = this.props.location.state.companyAddress;
+          if (spacEqmtType != null) {
+            if (spacEqmtType.length > 0) {
+              for (var i = 0; i < spacEqmtType.length; i++) {
+                CargoDetailsArr.push({
+                  ContainerType: spacEqmtType[i].StandardContainerCode,
+                  Packaging: "-",
+                  Quantity: spacEqmtType[i].Quantity,
+                  Lenght: "-",
+                  Width: "-",
+                  Height: "-",
+                  Weight: "-",
+                  Gross_Weight: "-",
+                  Temperature: "-",
+                  CBM: "-",
+                  Editable: false
+                });
+              }
+            }
+          }
+          if (referType != null) {
+            if (referType.length > 0) {
+              for (var i = 0; i < referType.length; i++) {
+                CargoDetailsArr.push({
+                  ContainerType: referType[i].ContainerCode,
+                  Packaging: "-",
+                  Quantity: referType[i].ContainerQuantity,
+                  Lenght: "-",
+                  Width: "-",
+                  Height: "-",
+                  Weight: "-",
+                  Gross_Weight: "-",
+                  Temperature:
+                    referType[i].Temperature +
+                    " " +
+                    referType[i].TemperatureType,
+                  CBM: "-",
+                  Editable: false
+                });
+              }
+            }
+          }
 
-      var CargoDetailsArr = [];
-      if (containerLoadType == "FCL") {
-        if (users != null) {
-          if (users.length > 0) {
-            for (var i = 0; i < users.length; i++) {
-              CargoDetailsArr.push({ ContainerType: users[i].StandardContainerCode, "Packaging": "-", Quantity: users[i].ContainerQuantity, Lenght: "-", Width: "-", Height: "-", Weight: "-", Gross_Weight: "-", Temperature: "-", CBM: "-", Editable: false })
+          if (flattack_openTop != null) {
+            if (flattack_openTop.length > 0) {
+              for (var i = 0; i < flattack_openTop.length; i++) {
+                CargoDetailsArr.push({
+                  PackageType: flattack_openTop[i].PackageType,
+                  SpecialContainerCode:
+                    flattack_openTop[i].SpecialContainerCode,
+                  ContainerType:
+                    flattack_openTop[i].PackageType +
+                    " (" +
+                    flattack_openTop[i].SpecialContainerCode +
+                    ")",
+                  Packaging: "-",
+                  Quantity: flattack_openTop[i].Quantity,
+                  Lenght: flattack_openTop[i].length,
+                  Width: flattack_openTop[i].width,
+                  Height: flattack_openTop[i].height,
+                  Weight: flattack_openTop[i].Gross_Weight,
+                  Gross_Weight: "-",
+                  Temperature: "-",
+                  CBM: "-",
+                  Editable: true
+                });
+              }
+            }
+          }
+        } else if (containerLoadType == "LCL") {
+          for (var i = 0; i < multiCBM.length; i++) {
+            CargoDetailsArr.push({
+              PackageType: multiCBM[i].PackageType,
+              SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+              ContainerType: multiCBM[i].PackageType,
+              Packaging: "-",
+              Quantity: multiCBM[i].Quantity,
+              Lenght: multiCBM[i].Lengths,
+              Width: multiCBM[i].Width,
+              Height: multiCBM[i].Height,
+              Weight: multiCBM[i].GrossWt,
+              Gross_Weight: "-",
+              Temperature: "-",
+              CBM: multiCBM[i].Volume,
+              Volume: multiCBM[i].Volume,
+              VolumeWeight: multiCBM[i].VolumeWeight,
+              Editable: true
+            });
+          }
+        } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+          // var cSelectedRow = this.props.location.state.selectedDataRow;
+
+          // var AllrateDetails = this.props.location.state.RateDetails;
+
+          // for(var i = 0; i < cSelectedRow.length; i++)
+          // {
+          //   rateDetails = rateDetails.concat(AllrateDetails.filter(item => item.RateLineID == cSelectedRow[i].RateLineID))
+          // }
+          if (TruckTypeData != null) {
+            if (TruckTypeData.length > 0) {
+              for (var i = 0; i < TruckTypeData.length; i++) {
+                CargoDetailsArr.push({
+                  PackageType: TruckTypeData[i].PackageType,
+                  SpecialContainerCode: TruckTypeData[i].SpecialContainerCode,
+                  ContainerType: TruckTypeData[i].TruckDesc,
+                  Packaging: "-",
+                  Quantity: TruckTypeData[i].Quantity,
+                  Lenght: "-",
+                  Width: "-",
+                  Height: "-",
+                  Weight: "-",
+                  Gross_Weight: "-",
+                  Temperature: "-",
+                  CBM: "-"
+                });
+              }
+            }
+          }
+        } else if (containerLoadType == "AIR") {
+          if (multiCBM != null) {
+            if (multiCBM.length > 0) {
+              for (var i = 0; i < multiCBM.length; i++) {
+                if (
+                  multiCBM[i].PackageType != "" &&
+                  multiCBM[i].PackageType != null
+                ) {
+                  CargoDetailsArr.push({
+                    PackageType: multiCBM[i].PackageType,
+                    SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+                    ContainerType: multiCBM[i].PackageType,
+                    Packaging: "-",
+                    Quantity: multiCBM[i].Quantity,
+                    Lenght: multiCBM[i].Lengths,
+                    Width: multiCBM[i].Width,
+                    Height: multiCBM[i].Height,
+                    Weight: multiCBM[i].GrossWt,
+                    Gross_Weight: "-",
+                    Temperature: "-",
+                    CBM: multiCBM[i].VolumeWeight,
+                    Volume: multiCBM[i].Volume,
+                    VolumeWeight: multiCBM[i].VolumeWeight,
+                    Editable: true
+                  });
+                }
+              }
+            }
+          }
+
+          if (cbmVal != null) {
+            if (cbmVal != "") {
+              if (cbmVal != "0") {
+                CargoDetailsArr.push({
+                  PackageType: "",
+                  SpecialContainerCode: "",
+                  ContainerType: "-",
+                  Packaging: "-",
+                  Quantity: "-",
+                  Lenght: "-",
+                  Width: "-",
+                  Height: "-",
+                  Weight: "-",
+                  Gross_Weight: "-",
+                  Temperature: "-",
+                  CBM: cbmVal
+                });
+              }
             }
           }
         }
 
-      if(spacEqmtType != null)
-      {
-        if(spacEqmtType.length > 0)
-        {
-          for(var i = 0; i < spacEqmtType.length; i++)
-          {
-            CargoDetailsArr.push({ContainerType: spacEqmtType[i].StandardContainerCode, "Packaging":"-", Quantity: spacEqmtType[i].Quantity, Lenght:"-",Width:"-",Height:"-",Weight:"-",Gross_Weight: "-",Temperature:"-", CBM: "-", Editable: false})
-          }
-        }
+        this.setState({
+          rateDetails: rateDetails,
+          rateSubDetails: rateSubDetails,
+          HazMat: HazMat,
+          shipmentType: shipmentType,
+          modeoftransport: modeoftransport,
+          containerLoadType: containerLoadType,
+          typeofMove: typeofMove,
+          NonStackable: NonStackable,
+          incoTerm: incoTerms,
+          commodityData: commodityData,
+          selected: selected,
+          spacEqmtType: spacEqmtType,
+          flattack_openTop: flattack_openTop,
+          polfullAddData: polfullAddData,
+          podfullAddData: podfullAddData,
+          currencyCode: currencyCode,
+          users: users,
+          referType: referType,
+          CargoDetailsArr: CargoDetailsArr,
+          CommodityID: CommodityID,
+          destAddress: destAddress,
+          pickUpAddress: pickUpAddress,
+          multiCBM: multiCBM,
+          TruckTypeData: TruckTypeData,
+          cbmVal: cbmVal,
+          packageTypeData: packageTypeData,
+          CompanyID: companyID,
+          CompanyName: companyName,
+          CompanyAddress: companyAddress
+        });
+
+        this.state.rateDetails = rateDetails;
+        this.state.rateSubDetails = rateSubDetails;
+        this.state.HazMat = HazMat;
+        this.state.shipmentType = shipmentType;
+        this.state.modeoftransport = modeoftransport;
+        this.state.containerLoadType = containerLoadType;
+        this.state.typeofMove = typeofMove;
+        this.state.NonStackable = NonStackable;
+        this.state.incoTerm = incoTerms;
+        this.state.commodityData = commodityData;
+        this.state.selected = selected;
+        this.state.spacEqmtType = spacEqmtType;
+        this.state.flattack_openTop = flattack_openTop;
+        this.state.polfullAddData = polfullAddData;
+        this.state.podfullAddData = podfullAddData;
+        this.state.currencyCode = currencyCode;
+      } else {
+        var qData = this.props.location.state;
+        this.HandleSalesQuoteView(qData);
+        this.HandlePackgeTypeData();
       }
-        if (referType != null) {
-          if (referType.length > 0) {
-            for (var i = 0; i < referType.length; i++) {
-              CargoDetailsArr.push({ ContainerType: referType[i].ContainerCode, "Packaging": "-", Quantity: referType[i].ContainerQuantity, Lenght: "-", Width: "-", Height: "-", Weight: "-", Gross_Weight: "-", Temperature: referType[i].Temperature + " " + referType[i].TemperatureType, CBM: "-", Editable: false })
-            }
-          }
-        }
-
-        if (flattack_openTop != null) {
-          if (flattack_openTop.length > 0) {
-            for (var i = 0; i < flattack_openTop.length; i++) {
-              CargoDetailsArr.push({PackageType:flattack_openTop[i].PackageType, SpecialContainerCode: flattack_openTop[i].SpecialContainerCode, ContainerType: flattack_openTop[i].PackageType + " (" + flattack_openTop[i].SpecialContainerCode + ")", "Packaging": "-", Quantity: flattack_openTop[i].Quantity, Lenght: flattack_openTop[i].length, Width: flattack_openTop[i].width, Height: flattack_openTop[i].height, Weight: flattack_openTop[i].Gross_Weight, Gross_Weight: "-", Temperature: "-", CBM: "-", Editable: true })
-            }
-          }
-        }
-
+      this.HandleCommodityDropdown();
+      // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
+      // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
+      // this.setState({
+      //   rateDetails: rateDetails,
+      //   rateSubDetails: rateSubDetails
+      // });
     }
-      else if (containerLoadType == "LCL") {
-        for (var i = 0; i < multiCBM.length; i++) {
-          CargoDetailsArr.push({PackageType:multiCBM[i].PackageType, SpecialContainerCode: multiCBM[i].PackageType+"_"+i, ContainerType: multiCBM[i].PackageType, "Packaging": "-", Quantity: multiCBM[i].Quantity, Lenght: multiCBM[i].Lengths, Width: multiCBM[i].Width, Height: multiCBM[i].Height, Weight: multiCBM[i].GrossWt, Gross_Weight: "-", Temperature: "-", CBM: multiCBM[i].Volume, Volume: multiCBM[i].Volume, VolumeWeight: multiCBM[i].VolumeWeight, Editable: true })
-        }
-      }
-      else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
-        // var cSelectedRow = this.props.location.state.selectedDataRow;
 
-        // var AllrateDetails = this.props.location.state.RateDetails;
+    this.HandleLocalCharges();
+    this.HandleSurCharges();
 
-        // for(var i = 0; i < cSelectedRow.length; i++)
-        // {
-        //   rateDetails = rateDetails.concat(AllrateDetails.filter(item => item.RateLineID == cSelectedRow[i].RateLineID))
-        // }
-        if (TruckTypeData != null) {
-          if (TruckTypeData.length > 0) {
-            for (var i = 0; i < TruckTypeData.length; i++) {
-              CargoDetailsArr.push({PackageType:TruckTypeData[i].PackageType, SpecialContainerCode: TruckTypeData[i].SpecialContainerCode, ContainerType: TruckTypeData[i].TruckDesc, "Packaging": "-", Quantity: TruckTypeData[i].Quantity, Lenght: "-", Width: "-", Height: "-", Weight: "-", Gross_Weight: "-", Temperature: "-", CBM: "-" })
-            }
-          }
-        }
-      }
-
-    else if(containerLoadType == "AIR" )
-    {
-      if(multiCBM != null)
-      {
-        if(multiCBM.length > 0)
-        {
-          for(var i =0; i< multiCBM.length; i++)
-          {
-            if(multiCBM[i].PackageType != "" && multiCBM[i].PackageType != null)
-            {
-              CargoDetailsArr.push({PackageType:multiCBM[i].PackageType, SpecialContainerCode: multiCBM[i].PackageType+"_"+i,ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-", CBM: multiCBM[i].VolumeWeight,Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight, Editable: true})
-            }
-          }
-        }
-      }
-
-      if(cbmVal != null)
-      {
-        if(cbmVal != "")
-        {
-          if(cbmVal != "0")
-          {
-            CargoDetailsArr.push({PackageType:"", SpecialContainerCode: "",ContainerType: '-', "Packaging":"-", Quantity: '-', Lenght:"-", Width:"-", Height:"-", Weight:"-" , Gross_Weight: "-", Temperature: "-", CBM: cbmVal})
-          }
-        }
-      }
+    if (
+      encryption(window.localStorage.getItem("usertype"), "desc") == "Customer"
+    ) {
+      this.setState({ toggleAddProfitBtn: false });
     }
-
-      this.setState({
-        rateDetails:rateDetails,
-        rateSubDetails:rateSubDetails,
-        HazMat:HazMat,
-        shipmentType:shipmentType,
-        modeoftransport:modeoftransport,
-        containerLoadType:containerLoadType,
-        typeofMove:typeofMove,
-        NonStackable:NonStackable,
-        incoTerm:incoTerms,
-        commodityData:commodityData,
-        selected:selected,
-        spacEqmtType:spacEqmtType,
-        flattack_openTop:flattack_openTop,
-        polfullAddData:polfullAddData,
-        podfullAddData:podfullAddData,
-        currencyCode:currencyCode,
-        users:users,
-        referType:referType,
-        CargoDetailsArr:CargoDetailsArr,
-        CommodityID:CommodityID,
-        destAddress:destAddress,
-        pickUpAddress:pickUpAddress,
-        multiCBM:multiCBM,
-        TruckTypeData: TruckTypeData,
-        cbmVal:cbmVal,
-        packageTypeData:packageTypeData,
-        CompanyID:companyID,
-        CompanyName:companyName,
-        CompanyAddress:companyAddress
-      });
-
-
-      this.state.rateDetails = rateDetails;
-      this.state.rateSubDetails = rateSubDetails;
-      this.state.HazMat = HazMat;
-      this.state.shipmentType = shipmentType;
-      this.state.modeoftransport = modeoftransport;
-      this.state.containerLoadType = containerLoadType;
-      this.state.typeofMove = typeofMove;
-      this.state.NonStackable = NonStackable;
-      this.state.incoTerm = incoTerms;
-      this.state.commodityData = commodityData;
-      this.state.selected = selected;
-      this.state.spacEqmtType = spacEqmtType;
-      this.state.flattack_openTop = flattack_openTop;
-      this.state.polfullAddData = polfullAddData;
-      this.state.podfullAddData = podfullAddData;
-      this.state.currencyCode = currencyCode;     
-    }
-    else
-    {
-
-      var qData = this.props.location.state;
-      this.HandleSalesQuoteView(qData);
-      this.HandlePackgeTypeData();
-    }
-    this.HandleCommodityDropdown();
-    // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
-    // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
-    // this.setState({
-    //   rateDetails: rateDetails,
-    //   rateSubDetails: rateSubDetails
-    // });
-  }
-
-
-  this.HandleLocalCharges();
-  this.HandleSurCharges();
-
-  if (encryption(window.localStorage.getItem("usertype"), "desc") == "Customer") {
-    this.setState({ toggleAddProfitBtn: false });
-  }
   }
 
   HandleSalesQuoteView(param) {
     debugger;
-    var SalesQuoteNumber =param.Quote;
-    var type=param.type;
+    var SalesQuoteNumber = param.Quote;
+    var type = param.type;
     var isediting = param.isediting;
     var isCopy = param.isCopy;
     //alert(param.detail.Status)
     // "SHA-SQFCL-NOV19-05020"
-      this.setState({
-        toggleIsEdit:false,
-        isediting:isediting,
-        isCopy:isCopy
-      })
+    this.setState({
+      toggleIsEdit: false,
+      isediting: isediting,
+      isCopy: isCopy
+    });
     var SalesQuoteViewdata = {
       Mode: type,
       //SalesQuoteNumber: param.Quotes,
@@ -349,55 +447,70 @@ class RateFinalizing extends Component {
       .then(function(response) {
         debugger;
 
-        var  TypeofMove = "";
-        var IncoTerms =  "";
+        var TypeofMove = "";
+        var IncoTerms = "";
         var CargoDetailsArr = [];
         //accountcustname
-        if(response != null)
-        {
-          if(response.data != null)
-          {
-            if(response.data.Table != null)
-            {
-              if(response.data.Table.length > 0)
-              {
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
                 TypeofMove = response.data.Table[0].TypeOfMove;
                 IncoTerms = response.data.Table[0].IncoTerm;
 
                 self.setState({
-                  accountcustname : response.data.Table[0].CompanyName == undefined ? response.data.Table[0].company_name : response.data.Table[0].CompanyName,
+                  accountcustname:
+                    response.data.Table[0].CompanyName == undefined
+                      ? response.data.Table[0].company_name
+                      : response.data.Table[0].CompanyName,
                   CustAddress: response.data.Table[0].Company_Address,
-                  custNotification: response.data.Table[0].ContactName == undefined ? response.data.Table[0].contact_name : response.data.Table[0].ContactName,
+                  custNotification:
+                    response.data.Table[0].ContactName == undefined
+                      ? response.data.Table[0].contact_name
+                      : response.data.Table[0].ContactName,
                   ModeOfTransport: response.data.Table[0].ModeOfTransport,
-                  shipmentType:  response.data.Table[0].ShipmentType == null ? param.type == "LCL" || param.type == "FCL" ? "Ocean" : param.type == "AIR" ? "AIR" : param.type == "Inland" ? "Inland" : param.type : response.data.Table[0].ShipmentType,
+                  shipmentType:
+                    response.data.Table[0].ShipmentType == null
+                      ? param.type == "LCL" || param.type == "FCL"
+                        ? "Ocean"
+                        : param.type == "AIR"
+                        ? "AIR"
+                        : param.type == "Inland"
+                        ? "Inland"
+                        : param.type
+                      : response.data.Table[0].ShipmentType,
                   containerLoadType: param.type,
-                  StandardContainerCode:".20 DC",
-                  SpecialContainerCode:".Refer Type (20 degrees)",
-                  HazMat:false,
+                  StandardContainerCode: ".20 DC",
+                  SpecialContainerCode: ".Refer Type (20 degrees)",
+                  HazMat: false,
                   modeoftransport: response.data.Table[0].ModeOfTransport,
-                  incoTerms:  IncoTerms,
-                  incoTerm:IncoTerms,
-                  currencyCode:"USD"
+                  incoTerms: IncoTerms,
+                  incoTerm: IncoTerms,
+                  currencyCode: "USD"
                 });
               }
             }
-            if(response.data.Table1 != null)
-            {
-              if(response.data.Table1.length > 0)
-              {
-                if(TypeofMove == null || TypeofMove == "" || TypeofMove == undefined)
-                {
+            if (response.data.Table1 != null) {
+              if (response.data.Table1.length > 0) {
+                if (
+                  TypeofMove == null ||
+                  TypeofMove == "" ||
+                  TypeofMove == undefined
+                ) {
                   TypeofMove = response.data.Table1[0].TypeOfMove;
                 }
-                if(IncoTerms == null || IncoTerms == "" || IncoTerms == undefined)
-                {
+                if (
+                  IncoTerms == null ||
+                  IncoTerms == "" ||
+                  IncoTerms == undefined
+                ) {
                   IncoTerms = response.data.Table1[0].IncoTerm;
                 }
 
                 self.setState({
                   IncoTerms: IncoTerms,
-                  incoTerms:IncoTerms,
-                  incoTerm:IncoTerms,
+                  incoTerms: IncoTerms,
+                  incoTerm: IncoTerms,
                   //EquipmentTypes: response.data.Table1[0].ContainerCode,
                   Commodity: response.data.Table1[0].Commodity,
                   //CommodityID:response.data.Table1[0].Commodity,
@@ -405,62 +518,68 @@ class RateFinalizing extends Component {
                 });
               }
             }
-            if(TypeofMove != null || TypeofMove != "" || TypeofMove != undefined)
-            {
-              if(TypeofMove == "Port To Port")
-              {
+            if (
+              TypeofMove != null ||
+              TypeofMove != "" ||
+              TypeofMove != undefined
+            ) {
+              if (TypeofMove == "Port To Port") {
                 self.setState({
-                  typeofMove:1
+                  typeofMove: 1
                 });
-              }
-              else if(TypeofMove == "Door To Port")
-              {
+              } else if (TypeofMove == "Door To Port") {
                 self.setState({
-                  typeofMove:2
+                  typeofMove: 2
                 });
-              }
-              else if(TypeofMove == "Port To Door")
-              {
+              } else if (TypeofMove == "Port To Door") {
                 self.setState({
-                  typeofMove:3
+                  typeofMove: 3
                 });
-              }
-              else if(TypeofMove == "Door To Door")
-              {
+              } else if (TypeofMove == "Door To Door") {
                 self.setState({
-                  typeofMove:4
+                  typeofMove: 4
                 });
               }
             }
 
-            if(response.data.Table3 != null)
-            {
-              if(response.data.Table3.length > 0)
-              {
+            if (response.data.Table3 != null) {
+              if (response.data.Table3.length > 0) {
                 var table = response.data.Table3;
-                for(var i = 0; i < table.length; i++)
-                {
-                  CargoDetailsArr.push({PackageType:table[i].PackageType, SpecialContainerCode: table[i].PackageType+"_"+i, ContainerType: table[i].PackageType, "Packaging": "-", Quantity: table[i].Quantity, Lenght: table[i].Length, Width: table[i].Width, Height: table[i].height, Weight: table[i].GrossWeight, Gross_Weight: "-", Temperature: "-", CBM: "-", Volume: "-", VolumeWeight: "-", Editable: true })
+                for (var i = 0; i < table.length; i++) {
+                  CargoDetailsArr.push({
+                    PackageType: table[i].PackageType,
+                    SpecialContainerCode: table[i].PackageType + "_" + i,
+                    ContainerType: table[i].PackageType,
+                    Packaging: "-",
+                    Quantity: table[i].Quantity,
+                    Lenght: table[i].Length,
+                    Width: table[i].Width,
+                    Height: table[i].height,
+                    Weight: table[i].GrossWeight,
+                    Gross_Weight: "-",
+                    Temperature: "-",
+                    CBM: "-",
+                    Volume: "-",
+                    VolumeWeight: "-",
+                    Editable: true
+                  });
                 }
-
+              } else {
+                CargoDetailsArr.push({ Width: "No Data Found" });
               }
-              else{
-                CargoDetailsArr.push({Width:"No Data Found"})
-              }
-            }
-            else{
-              CargoDetailsArr.push({Width:"No Data Found"})
+            } else {
+              CargoDetailsArr.push({ Width: "No Data Found" });
             }
             self.setState({
-              CargoDetailsArr:CargoDetailsArr
-            })
+              CargoDetailsArr: CargoDetailsArr
+            });
           }
         }
         var rateDetails = response.data.Table1;
         self.setState({
           rateDetails: rateDetails,
           rateSubDetails: response.data.Table2,
-          multiCBM:response.data.Table3,
+          multiCBM: response.data.Table3
         });
         self.forceUpdate();
         //console.log(response);
@@ -485,8 +604,6 @@ class RateFinalizing extends Component {
     });
   }
 
-
-
   HandleLocalCharges() {
     let self = this;
 
@@ -496,64 +613,86 @@ class RateFinalizing extends Component {
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
-      Containerdetails: [{
-        ProfileCodeID: this.state.selected.ProfileCodeID,
-        ContainerCode: this.state.selected.StandardContainerCode,
-        Type: '', ContainerQuantity: 2,
-        Temperature: 0,
-        TemperatureType: ''
-      }],
+      Containerdetails: [
+        {
+          ProfileCodeID: this.state.selected.ProfileCodeID,
+          ContainerCode: this.state.selected.StandardContainerCode,
+          Type: "",
+          ContainerQuantity: 2,
+          Temperature: 0,
+          TemperatureType: ""
+        }
+      ],
       Currency: self.state.currencyCode,
       // MultiplePOLPOD:[
       // {POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
       // {POL:'INBOM',POD:'TRPAM',POLGeoCordinate:'19.078682,72.879144',PODGeoCordinate:'40.968456,28.674417'}],
-      MultiplePOLPOD:
-        [
-          {
-            POL: this.state.polfullAddData.UNECECode,
-            POD: this.state.podfullAddData.UNECECode,
-            POLGeoCordinate: this.state.polfullAddData.GeoCoordinate,
-            PODGeoCordinate: this.state.podfullAddData.GeoCoordinate
-          }
-        ],
-      RateQueryDim: [{
-        Quantity: 0, Lengths: 0, Width: 0, Height: 0, GrossWt: 0,
-        VolumeWeight: 0, Volume: 0
-      }],
+      MultiplePOLPOD: [
+        {
+          POL: this.state.polfullAddData.UNECECode,
+          POD: this.state.podfullAddData.UNECECode,
+          POLGeoCordinate: this.state.polfullAddData.GeoCoordinate,
+          PODGeoCordinate: this.state.podfullAddData.GeoCoordinate
+        }
+      ],
+      RateQueryDim: [
+        {
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ],
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-
-    }
+    };
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/LocalChargesSalesQuote`,
       data: LocalChargeData,
       headers: authHeader()
-    }).then(function (response) {
-      debugger;
-      for (var i = 0; i < response.data.Table.length; i++) {
-        self.state.arrLocalsCharges.push({
-          Amount: response.data.Table[i].Amount, AmountInBaseCurrency: response.data.Table[i].AmountInBaseCurrency,
-          ChargeCode: response.data.Table[i].ChargeCode, ChargeDesc: response.data.Table[i].ChargeDesc,
-          ChargeItem: response.data.Table[i].ChargeItem, ContainerType: response.data.Table[i].ContainerType,
-          Currency: response.data.Table[i].Currency, Exrate: response.data.Table[i].Exrate, LineName: response.data.Table[i].LineName, IsChecked: false
-        })
+    })
+      .then(function(response) {
+        debugger;
+        for (var i = 0; i < response.data.Table.length; i++) {
+          self.state.arrLocalsCharges.push({
+            Amount: response.data.Table[i].Amount,
+            AmountInBaseCurrency: response.data.Table[i].AmountInBaseCurrency,
+            ChargeCode: response.data.Table[i].ChargeCode,
+            ChargeDesc: response.data.Table[i].ChargeDesc,
+            ChargeItem: response.data.Table[i].ChargeItem,
+            ContainerType: response.data.Table[i].ContainerType,
+            Currency: response.data.Table[i].Currency,
+            Exrate: response.data.Table[i].Exrate,
+            LineName: response.data.Table[i].LineName,
+            IsChecked: false
+          });
 
-        self.state.fltLocalCharges.push({
-          Amount: response.data.Table[i].Amount, AmountInBaseCurrency: response.data.Table[i].AmountInBaseCurrency,
-          ChargeCode: response.data.Table[i].ChargeCode, ChargeDesc: response.data.Table[i].ChargeDesc,
-          ChargeItem: response.data.Table[i].ChargeItem, ContainerType: response.data.Table[i].ContainerType,
-          Currency: response.data.Table[i].Currency, Exrate: response.data.Table[i].Exrate, LineName: response.data.Table[i].LineName, IsChecked: false
-        })
-      }
-      self.setState({
-        arrLocalsCharges: response.data.Table,
-        fltLocalCharges: response.data.Table
+          self.state.fltLocalCharges.push({
+            Amount: response.data.Table[i].Amount,
+            AmountInBaseCurrency: response.data.Table[i].AmountInBaseCurrency,
+            ChargeCode: response.data.Table[i].ChargeCode,
+            ChargeDesc: response.data.Table[i].ChargeDesc,
+            ChargeItem: response.data.Table[i].ChargeItem,
+            ContainerType: response.data.Table[i].ContainerType,
+            Currency: response.data.Table[i].Currency,
+            Exrate: response.data.Table[i].Exrate,
+            LineName: response.data.Table[i].LineName,
+            IsChecked: false
+          });
+        }
+        self.setState({
+          arrLocalsCharges: response.data.Table,
+          fltLocalCharges: response.data.Table
+        });
       })
-    }).catch(error => {
-      debugger;
-      console.log(error.response)
-    });
+      .catch(error => {
+        debugger;
+        console.log(error.response);
+      });
   }
 
   HandleSurCharges() {
@@ -576,28 +715,51 @@ class RateFinalizing extends Component {
         Type: this.state.shipmentType,
         TypeOfMove: this.state.typeofMove,
         ChargeableWeight: 0,
-        Containerdetails: [{
-          ProfileCodeID: this.state.selected.ProfileCodeID, ContainerCode: this.state.selected.StandardContainerCode, Type: '', ContainerQuantity: 2, Temperature: 0, TemperatureType: ''
-        }],
-        Currency: 'INR',
-        MultiplePOLPOD: [{ POL: 'INNSA', POD: 'TRPAM', POLGeoCordinate: '18.950123,72.950055', PODGeoCordinate: '40.968456,28.674417' },
-        {
-          POL: 'INBOM', POD: 'TRPAM', POLGeoCordinate: '19.078682,72.879144',
-          PODGeoCordinate: '40.968456,28.674417'
-        }],
-        RateQueryDim: [{
-          Quantity: 0, Lengths: 0, Width: 0, Height: 0, GrossWt: 0,
-          VolumeWeight: 0, Volume: 0
-        }], MyWayUserID: 874588
-
+        Containerdetails: [
+          {
+            ProfileCodeID: this.state.selected.ProfileCodeID,
+            ContainerCode: this.state.selected.StandardContainerCode,
+            Type: "",
+            ContainerQuantity: 2,
+            Temperature: 0,
+            TemperatureType: ""
+          }
+        ],
+        Currency: "INR",
+        MultiplePOLPOD: [
+          {
+            POL: "INNSA",
+            POD: "TRPAM",
+            POLGeoCordinate: "18.950123,72.950055",
+            PODGeoCordinate: "40.968456,28.674417"
+          },
+          {
+            POL: "INBOM",
+            POD: "TRPAM",
+            POLGeoCordinate: "19.078682,72.879144",
+            PODGeoCordinate: "40.968456,28.674417"
+          }
+        ],
+        RateQueryDim: [
+          {
+            Quantity: 0,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            GrossWt: 0,
+            VolumeWeight: 0,
+            Volume: 0
+          }
+        ],
+        MyWayUserID: 874588
       },
       headers: authHeader()
-    }).then(function (response) {
+    }).then(function(response) {
       debugger;
       self.setState({
         arrSurCharges: response.data.Table,
         fltSurCharges: response.data.Table
-      })
+      });
 
       // var data = [];
       // data = response.data;
@@ -623,15 +785,17 @@ class RateFinalizing extends Component {
   }
 
   newOpen() {
-    window.open("https://org242240bd.crm.dynamics.com/main.aspx?etn=lead&pagetype=entityrecord", "_blank");
+    window.open(
+      "https://org242240bd.crm.dynamics.com/main.aspx?etn=lead&pagetype=entityrecord",
+      "_blank"
+    );
   }
 
   commoditySelect(e) {
     this.setState({
       commoditySelect: e.target.value,
-      CommodityID: e.target.value,
+      CommodityID: e.target.value
     });
-
   }
   cargoSelect(e) {
     this.setState({
@@ -698,47 +862,44 @@ class RateFinalizing extends Component {
       modalPreview: !prevState.modalPreview
     }));
   }
-  
-
 
   toggleEdit(e) {
     debugger;
 
-    if(!this.state.modalEdit)
-    {
-      var valuetype = e.target.getAttribute('data-valuetype')
-      var valuequantity = e.target.getAttribute('data-valuequantity')
-      var valuelenght = e.target.getAttribute('data-valuelenght')
-      var valuewidth = e.target.getAttribute('data-valuewidth')
-      var valueheight = e.target.getAttribute('data-valueheight')
-      var valueweight = e.target.getAttribute('data-valueweight')
-      var valuecbm = e.target.getAttribute('data-valuecbm')
-      var valuespecialsontainersode = e.target.getAttribute('data-valuespecialsontainersode')
+    if (!this.state.modalEdit) {
+      var valuetype = e.target.getAttribute("data-valuetype");
+      var valuequantity = e.target.getAttribute("data-valuequantity");
+      var valuelenght = e.target.getAttribute("data-valuelenght");
+      var valuewidth = e.target.getAttribute("data-valuewidth");
+      var valueheight = e.target.getAttribute("data-valueheight");
+      var valueweight = e.target.getAttribute("data-valueweight");
+      var valuecbm = e.target.getAttribute("data-valuecbm");
+      var valuespecialsontainersode = e.target.getAttribute(
+        "data-valuespecialsontainersode"
+      );
 
       this.setState(prevState => ({
-        currentPackageType:valuetype,
-        valuequantity:valuequantity,
-        valuelenght :valuelenght,
-        valuewidth :valuewidth,
-        valueheight :valueheight,
-        valueweight :valueweight,
-        valuecbm :valuecbm,
-        valuespecialsontainersode:valuespecialsontainersode
+        currentPackageType: valuetype,
+        valuequantity: valuequantity,
+        valuelenght: valuelenght,
+        valuewidth: valuewidth,
+        valueheight: valueheight,
+        valueweight: valueweight,
+        valuecbm: valuecbm,
+        valuespecialsontainersode: valuespecialsontainersode
       }));
       this.forceUpdate();
     }
 
     this.setState(prevState => ({
-      modalEdit: !prevState.modalEdit,
+      modalEdit: !prevState.modalEdit
     }));
-
-
-
   }
 
-  SendRequest()
-  {
-    var txtRequestDiscount , txtRequestFreeTime, txtRequestComments = "";
+  SendRequest() {
+    var txtRequestDiscount,
+      txtRequestFreeTime,
+      txtRequestComments = "";
     txtRequestDiscount = 0;
     txtRequestFreeTime = 0;
     var containerLoadType = this.state.containerLoadType;
@@ -751,7 +912,6 @@ class RateFinalizing extends Component {
 
     if (document.getElementById("txtRequestComments") != undefined) {
       txtRequestComments = document.getElementById("txtRequestComments").value;
-
     }
 
     //alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
@@ -765,7 +925,8 @@ class RateFinalizing extends Component {
         FCLSQLocalChargesarr.push({
           LocalChargeID: 0,
           Description: chkslocalcharge[0].attributes["data-chargedesc"].value,
-          Amount: chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
+          Amount:
+            chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
           Currency: chkslocalcharge[0].attributes["data-currency"].value,
           Minimum: 0,
           Tax: 0,
@@ -782,30 +943,40 @@ class RateFinalizing extends Component {
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
       if (containerLoadType == "FCL") {
-        FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].RateLineId, RateType: rateDetailsarr[i].TypeOfRate });
+        FCLSQBaseFreight.push({
+          RateID: rateDetailsarr[i].RateLineId,
+          RateType: rateDetailsarr[i].TypeOfRate
+        });
       }
       if (containerLoadType == "LCL") {
         if (rateDetailsarr[i].RateLineID == undefined) {
-          if(rateDetailsarr[i].SaleQuoteIDLineID != undefined)
-          {
-            FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].SaleQuoteIDLineID, RateType: "RateQuery" });
+          if (rateDetailsarr[i].SaleQuoteIDLineID != undefined) {
+            FCLSQBaseFreight.push({
+              RateID: rateDetailsarr[i].SaleQuoteIDLineID,
+              RateType: "RateQuery"
+            });
+          } else {
+            FCLSQBaseFreight.push({
+              RateID: rateDetailsarr[i].RateLineId,
+              RateType: rateDetailsarr[i].TypeOfRate
+            });
           }
-          else
-          {
-            FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].RateLineId, RateType: rateDetailsarr[i].TypeOfRate });
-          }
-          
+        } else {
+          FCLSQBaseFreight.push({
+            RateID: rateDetailsarr[i].RateLineID,
+            RateType: rateDetailsarr[i].TypeOfRate
+          });
         }
-        else {
-          FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].RateLineID, RateType: rateDetailsarr[i].TypeOfRate });
-        }
-      }
-      else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
-        FCLSQBaseFreight.push({ RateID: rateDetailsarr[i].RateLineID, RateType: rateDetailsarr[i].TypeOfRate });
-      }
-      else if(containerLoadType == "AIR")
-      {
-        FCLSQBaseFreight.push({RateID:rateDetailsarr[i].RateLineId,RateType:rateDetailsarr[i].TypeOfRate });
+      } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+        FCLSQBaseFreight.push({
+          RateID: rateDetailsarr[i].RateLineID,
+          RateType: rateDetailsarr[i].TypeOfRate
+        });
+      } else if (containerLoadType == "AIR") {
+        FCLSQBaseFreight.push({
+          RateID: rateDetailsarr[i].RateLineId,
+          RateType: rateDetailsarr[i].TypeOfRate
+        });
       }
     }
 
@@ -821,7 +992,8 @@ class RateFinalizing extends Component {
               Currency: rateSubDetailsarr[j].Currency,
               RateLineID: rateSubDetailsarr[j].RateLineID,
               ChargeCode: rateSubDetailsarr[j].ChargeCode,
-              Tax: rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+              Tax:
+                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
               ChargeItem: rateSubDetailsarr[j].ChargeItem,
               Exrate: rateSubDetailsarr[j].Exrate,
               ChargeType: rateSubDetailsarr[j].ChargeType,
@@ -831,51 +1003,77 @@ class RateFinalizing extends Component {
         }
         if (containerLoadType == "LCL") {
           if (rateDetailsarr[i].RateLineID == undefined) {
-            if(rateSubDetailsarr[j].SaleQuoteIDLineID != undefined)
-            {
-              if (rateSubDetailsarr[j].SaleQuoteIDLineID == rateDetailsarr[i].SaleQuoteIDLineID) {
+            if (rateSubDetailsarr[j].SaleQuoteIDLineID != undefined) {
+              if (
+                rateSubDetailsarr[j].SaleQuoteIDLineID ==
+                rateDetailsarr[i].SaleQuoteIDLineID
+              ) {
                 FCLSQCharges.push({
                   ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
-                  Rate: rateSubDetailsarr[j].Rate == null ? 0 : rateSubDetailsarr[j].Rate,
+                  Rate:
+                    rateSubDetailsarr[j].Rate == null
+                      ? 0
+                      : rateSubDetailsarr[j].Rate,
                   Currency: "USD",
                   RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
                   ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                  Tax: rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+                  Tax:
+                    rateSubDetailsarr[j].Tax == null
+                      ? 0
+                      : rateSubDetailsarr[j].Tax,
                   ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                  Exrate: rateSubDetailsarr[j].Exrate == undefined ? "" : rateSubDetailsarr[j].Exrate,
+                  Exrate:
+                    rateSubDetailsarr[j].Exrate == undefined
+                      ? ""
+                      : rateSubDetailsarr[j].Exrate,
                   ChargeType: rateSubDetailsarr[j].Type,
-                  TotalAmount: rateSubDetailsarr[j].Total == null  ? 0 : rateSubDetailsarr[j].Total.split(" ")[0]
+                  TotalAmount:
+                    rateSubDetailsarr[j].Total == null
+                      ? 0
+                      : rateSubDetailsarr[j].Total.split(" ")[0]
+                });
+              }
+            } else {
+              if (
+                rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
+              ) {
+                FCLSQCharges.push({
+                  ChargeID: rateSubDetailsarr[j].ChargeID,
+                  Rate:
+                    rateSubDetailsarr[j].Rate == null
+                      ? 0
+                      : rateSubDetailsarr[j].Rate,
+                  Currency: rateSubDetailsarr[j].Currency,
+                  RateLineID: rateSubDetailsarr[j].RateLineID,
+                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                  Tax:
+                    rateSubDetailsarr[j].Tax == null
+                      ? 0
+                      : rateSubDetailsarr[j].Tax,
+                  ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                  Exrate: rateSubDetailsarr[j].Exrate,
+                  ChargeType: rateSubDetailsarr[j].ChargeType,
+                  TotalAmount:
+                    rateSubDetailsarr[j].TotalAmount == null
+                      ? 0
+                      : rateSubDetailsarr[j].TotalAmount
                 });
               }
             }
-            else
-            {
-            if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
-              FCLSQCharges.push({
-                ChargeID: rateSubDetailsarr[j].ChargeID,
-                Rate: rateSubDetailsarr[j].Rate == null ? 0 : rateSubDetailsarr[j].Rate,
-                Currency: rateSubDetailsarr[j].Currency,
-                RateLineID: rateSubDetailsarr[j].RateLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                Tax: rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
-                ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                Exrate: rateSubDetailsarr[j].Exrate,
-                ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount: rateSubDetailsarr[j].TotalAmount == null  ? 0 : rateSubDetailsarr[j].TotalAmount
-              });
-            }
-          }
-
-          }
-          else {
-            if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
+          } else {
+            if (
+              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
+            ) {
               FCLSQCharges.push({
                 ChargeID: rateSubDetailsarr[j].ChargeID,
                 Rate: rateSubDetailsarr[j].Rate,
                 Currency: rateSubDetailsarr[j].Currency,
                 RateLineID: rateSubDetailsarr[j].RateLineID,
                 ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                Tax: rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+                Tax:
+                  rateSubDetailsarr[j].Tax == null
+                    ? 0
+                    : rateSubDetailsarr[j].Tax,
                 ChargeItem: rateSubDetailsarr[j].ChargeItem,
                 Exrate: rateSubDetailsarr[j].Exrate,
                 ChargeType: rateSubDetailsarr[j].ChargeType,
@@ -883,7 +1081,6 @@ class RateFinalizing extends Component {
               });
             }
           }
-
         }
         if (containerLoadType == "FTL" || containerLoadType == "LTL") {
           if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
@@ -893,7 +1090,8 @@ class RateFinalizing extends Component {
               Currency: rateSubDetailsarr[j].Currency,
               RateLineID: rateSubDetailsarr[j].RateLineID,
               ChargeCode: rateSubDetailsarr[j].ChargeCode,
-              Tax: rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+              Tax:
+                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
               ChargeItem: rateSubDetailsarr[j].ChargeItem,
               Exrate: rateSubDetailsarr[j].Exrate,
               ChargeType: rateSubDetailsarr[j].ChargeType,
@@ -901,28 +1099,25 @@ class RateFinalizing extends Component {
             });
           }
         }
-          if(containerLoadType == "AIR")
-          {
-          if(rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId){
+        if (containerLoadType == "AIR") {
+          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
             FCLSQCharges.push({
-              ChargeID: rateSubDetailsarr[j].ChargeID ,
-              Rate :rateSubDetailsarr[j].Rate ,
-              Currency :rateSubDetailsarr[j].Currency ,
-              RateLineID:rateSubDetailsarr[j].RateLineID ,
-              ChargeCode :rateSubDetailsarr[j].ChargeCode ,
-              Tax:rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
-              ChargeItem :rateSubDetailsarr[j].ChargeItem ,
-              Exrate:rateSubDetailsarr[j].Exrate ,
-              ChargeType: rateSubDetailsarr[j].ChargeType ,
-              TotalAmount:rateSubDetailsarr[j].TotalAmount
-              });
-            }
-
+              ChargeID: rateSubDetailsarr[j].ChargeID,
+              Rate: rateSubDetailsarr[j].Rate,
+              Currency: rateSubDetailsarr[j].Currency,
+              RateLineID: rateSubDetailsarr[j].RateLineID,
+              ChargeCode: rateSubDetailsarr[j].ChargeCode,
+              Tax:
+                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+              ChargeItem: rateSubDetailsarr[j].ChargeItem,
+              Exrate: rateSubDetailsarr[j].Exrate,
+              ChargeType: rateSubDetailsarr[j].ChargeType,
+              TotalAmount: rateSubDetailsarr[j].TotalAmount
+            });
+          }
         }
       }
     }
-
-
 
     var chksurcharges = document.getElementsByName("surcharges");
     for (var i = 0; i < chksurcharges.length; i++) {
@@ -930,7 +1125,8 @@ class RateFinalizing extends Component {
         FCLSQSurChargesarr.push({
           SurchargeID: 0,
           ChargeCode: chksurcharges[0].attributes["data-chargedesc"].value,
-          Amount: chksurcharges[0].attributes["data-amountinbasecurrency"].value,
+          Amount:
+            chksurcharges[0].attributes["data-amountinbasecurrency"].value,
           Currency: chksurcharges[0].attributes["data-currency"].value,
           Tax: 0,
           ChargeItem: chksurcharges[0].attributes["data-chargeitem"].value,
@@ -952,18 +1148,28 @@ class RateFinalizing extends Component {
       if (usesr != null) {
         if (usesr.length > 0) {
           for (var i = 0; i < usesr.length; i++) {
-            Containerdetails.push({ ProfileCodeID: usesr[i].ProfileCodeID, ContainerCode: usesr[i].StandardContainerCode, Type: usesr[i].ContainerName, ContainerQuantity: usesr[i].ContainerQuantity, Temperature: usesr[i].Temperature == undefined ? 0 : usesr[i].Temperature })
+            Containerdetails.push({
+              ProfileCodeID: usesr[i].ProfileCodeID,
+              ContainerCode: usesr[i].StandardContainerCode,
+              Type: usesr[i].ContainerName,
+              ContainerQuantity: usesr[i].ContainerQuantity,
+              Temperature:
+                usesr[i].Temperature == undefined ? 0 : usesr[i].Temperature
+            });
           }
         }
       }
 
-      if(spacEqmtType != null)
-      {
-        if(spacEqmtType.length > 0)
-        {
-          for(var i = 0; i < spacEqmtType.length; i++)
-          {
-            Containerdetails.push({ProfileCodeID:spacEqmtType[i].ProfileCodeID, ContainerCode:spacEqmtType[i].StandardContainerCode, Type:spacEqmtType[i].ContainerName,ContainerQuantity:spacEqmtType[i].Quantity, Temperature:0})
+      if (spacEqmtType != null) {
+        if (spacEqmtType.length > 0) {
+          for (var i = 0; i < spacEqmtType.length; i++) {
+            Containerdetails.push({
+              ProfileCodeID: spacEqmtType[i].ProfileCodeID,
+              ContainerCode: spacEqmtType[i].StandardContainerCode,
+              Type: spacEqmtType[i].ContainerName,
+              ContainerQuantity: spacEqmtType[i].Quantity,
+              Temperature: 0
+            });
           }
         }
       }
@@ -971,7 +1177,13 @@ class RateFinalizing extends Component {
       if (referType != null) {
         if (referType.length > 0) {
           for (var i = 0; i < referType.length; i++) {
-            Containerdetails.push({ ProfileCodeID: referType[i].ProfileCodeID, ContainerCode: referType[i].ContainerCode, Type: referType[i].Type, ContainerQuantity: referType[i].ContainerQuantity, Temperature: referType[i].Temperature })
+            Containerdetails.push({
+              ProfileCodeID: referType[i].ProfileCodeID,
+              ContainerCode: referType[i].ContainerCode,
+              Type: referType[i].Type,
+              ContainerQuantity: referType[i].ContainerQuantity,
+              Temperature: referType[i].Temperature
+            });
           }
         }
       }
@@ -979,53 +1191,99 @@ class RateFinalizing extends Component {
       if (flattack_openTop != null) {
         if (flattack_openTop.length > 0) {
           for (var i = 0; i < flattack_openTop.length; i++) {
-            RateQueryDim.push({ Quantity: flattack_openTop[i].Quantity, Lengths: flattack_openTop[i].length, Width: flattack_openTop[i].width, Height: flattack_openTop[i].height, GrossWt: flattack_openTop[i].Gross_Weight, VolumeWeight: 0, Volume: 0, PackageType: flattack_openTop[i].PackageType == undefined ? "" : flattack_openTop[i].PackageType })
+            RateQueryDim.push({
+              Quantity: flattack_openTop[i].Quantity,
+              Lengths: flattack_openTop[i].length,
+              Width: flattack_openTop[i].width,
+              Height: flattack_openTop[i].height,
+              GrossWt: flattack_openTop[i].Gross_Weight,
+              VolumeWeight: 0,
+              Volume: 0,
+              PackageType:
+                flattack_openTop[i].PackageType == undefined
+                  ? ""
+                  : flattack_openTop[i].PackageType
+            });
           }
         }
       }
-    }
-    else if (containerLoadType == "LCL") {
+    } else if (containerLoadType == "LCL") {
       var multiCBM = this.state.multiCBM;
-      if(this.state.isediting)
-      {
+      if (this.state.isediting) {
         for (var i = 0; i < multiCBM.length; i++) {
           //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-          RateQueryDim.push({ Quantity: multiCBM[i].Quantity, Lengths: multiCBM[i].Length, Width: multiCBM[i].Width, Height: multiCBM[i].height, GrossWt: multiCBM[i].GrossWeight, VolumeWeight: 0, Volume: 0, PackageType: multiCBM[i].PackageType })
+          RateQueryDim.push({
+            Quantity: multiCBM[i].Quantity,
+            Lengths: multiCBM[i].Length,
+            Width: multiCBM[i].Width,
+            Height: multiCBM[i].height,
+            GrossWt: multiCBM[i].GrossWeight,
+            VolumeWeight: 0,
+            Volume: 0,
+            PackageType: multiCBM[i].PackageType
+          });
         }
-      }
-      else
-      {
+      } else {
         for (var i = 0; i < multiCBM.length; i++) {
           //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-          RateQueryDim.push({ Quantity: multiCBM[i].Quantity, Lengths: multiCBM[i].Lengths, Width: multiCBM[i].Width, Height: multiCBM[i].Height, GrossWt: multiCBM[i].GrossWt, VolumeWeight: multiCBM[i].VolumeWeight, Volume: multiCBM[i].Volume, PackageType: multiCBM[i].PackageType })
+          RateQueryDim.push({
+            Quantity: multiCBM[i].Quantity,
+            Lengths: multiCBM[i].Lengths,
+            Width: multiCBM[i].Width,
+            Height: multiCBM[i].Height,
+            GrossWt: multiCBM[i].GrossWt,
+            VolumeWeight: multiCBM[i].VolumeWeight,
+            Volume: multiCBM[i].Volume,
+            PackageType: multiCBM[i].PackageType
+          });
         }
       }
-    }
-    else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+    } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
       var TruckTypeData = this.state.TruckTypeData;
       for (var i = 0; i < TruckTypeData.length; i++) {
         //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({ Quantity: TruckTypeData[i].Quantity, Lengths: 0, Width: 0, Height: 0, GrossWt: 0, VolumeWeight: 0, Volume: 0, PackageType: TruckTypeData[i].TruckDesc })
+        RateQueryDim.push({
+          Quantity: TruckTypeData[i].Quantity,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: 0,
+          PackageType: TruckTypeData[i].TruckDesc
+        });
       }
       //
-    }
-    else if(containerLoadType == "AIR")
-    {
+    } else if (containerLoadType == "AIR") {
       var multiCBM = this.state.multiCBM;
-      for(var i =0; i< multiCBM.length; i++)
-      {
+      for (var i = 0; i < multiCBM.length; i++) {
         //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({Quantity:multiCBM[i].Quantity ,Lengths:multiCBM[i].Lengths ,Width:multiCBM[i].Width ,Height:multiCBM[i].Height ,GrossWt:multiCBM[i].GrossWt, VolumeWeight:multiCBM[i].VolumeWeight, Volume:multiCBM[i].Volume, PackageType:multiCBM[i].PackageType})
+        RateQueryDim.push({
+          Quantity: multiCBM[i].Quantity,
+          Lengths: multiCBM[i].Lengths,
+          Width: multiCBM[i].Width,
+          Height: multiCBM[i].Height,
+          GrossWt: multiCBM[i].GrossWt,
+          VolumeWeight: multiCBM[i].VolumeWeight,
+          Volume: multiCBM[i].Volume,
+          PackageType: multiCBM[i].PackageType
+        });
       }
-    var cbmVal = this.state.cbmVal;
+      var cbmVal = this.state.cbmVal;
 
-      if(cbmVal != null)
-      {
-        if(cbmVal != "")
-        {
-          if(cbmVal != "0")
-          {
-            RateQueryDim.push({Quantity:TruckTypeData[i].Quantity ,Lengths:0 ,Width:0 ,Height:0 ,GrossWt:0, VolumeWeight:0, Volume:0, PackageType:TruckTypeData[i].TruckDesc})
+      if (cbmVal != null) {
+        if (cbmVal != "") {
+          if (cbmVal != "0") {
+            RateQueryDim.push({
+              Quantity: TruckTypeData[i].Quantity,
+              Lengths: 0,
+              Width: 0,
+              Height: 0,
+              GrossWt: 0,
+              VolumeWeight: 0,
+              Volume: 0,
+              PackageType: TruckTypeData[i].TruckDesc
+            });
           }
         }
       }
@@ -1033,33 +1291,42 @@ class RateFinalizing extends Component {
 
     var PickUpAddress = "";
     var DestinationAddress = "";
-    var PickUpAddressDetails = { Street: '', Country: '', State: '', City: '', ZipCode: 0 }
-    var DestinationAddressDetails = { Street: '', Country: '', State: '', City: '', ZipCode: 0 };
-
+    var PickUpAddressDetails = {
+      Street: "",
+      Country: "",
+      State: "",
+      City: "",
+      ZipCode: 0
+    };
+    var DestinationAddressDetails = {
+      Street: "",
+      Country: "",
+      State: "",
+      City: "",
+      ZipCode: 0
+    };
 
     if (this.state.typeofMove == 2 || this.state.typeofMove == 4) {
-      PickUpAddress = this.props.location.state.pickUpAddress[0].City
+      PickUpAddress = this.props.location.state.pickUpAddress[0].City;
       PickUpAddressDetails = {
         Street: this.props.location.state.pickUpAddress[0].Area,
         Country: this.props.location.state.pickUpAddress[0].Country,
         State: this.props.location.state.pickUpAddress[0].State,
         City: this.props.location.state.pickUpAddress[0].City,
         ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
-      }
+      };
     }
 
     if (this.state.typeofMove == 3 || this.state.typeofMove == 4) {
-      DestinationAddress = this.props.location.state.destAddress[0].City
+      DestinationAddress = this.props.location.state.destAddress[0].City;
       DestinationAddressDetails = {
         Street: this.props.location.state.destAddress[0].Area,
         Country: this.props.location.state.destAddress[0].Country,
         State: this.props.location.state.destAddress[0].State,
         City: this.props.location.state.destAddress[0].City,
         ZipCode: this.props.location.state.destAddress[0].ZipCode
-      }
+      };
     }
-
-
 
     debugger;
     var senrequestpara = {
@@ -1085,68 +1352,62 @@ class RateFinalizing extends Component {
       Comments: txtRequestComments,
       FreeTime: txtRequestFreeTime,
       RateQueryDim: RateQueryDim,
-      MailBody: "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+      MailBody:
+        "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
       Commodity: this.state.CommodityID
-  }
+    };
 
-  var url = "";
+    var url = "";
 
-  if(this.state.containerLoadType == "FCL")
-  {
-    senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
-    senrequestpara.FCLSQCharges = FCLSQCharges;
-    url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
-  }
-  else if(this.state.containerLoadType == "LCL")
-  {
-    senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
-    senrequestpara.LCLSQCharges = FCLSQCharges;
-    url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
-  }
-  else if(this.state.containerLoadType == "FTL" || this.state.containerLoadType == "LTL")
-  {
-    senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
-    senrequestpara.InlandSQCharges = FCLSQCharges;
-    url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
-  }
-  else if(this.state.containerLoadType == "AIR")
-  {
-    senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
-    senrequestpara.AirSQCharges = FCLSQCharges;
-    url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
-  }
-  //return false;
-
+    if (this.state.containerLoadType == "FCL") {
+      senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
+      senrequestpara.FCLSQCharges = FCLSQCharges;
+      url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
+    } else if (this.state.containerLoadType == "LCL") {
+      senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
+      senrequestpara.LCLSQCharges = FCLSQCharges;
+      url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
+    } else if (
+      this.state.containerLoadType == "FTL" ||
+      this.state.containerLoadType == "LTL"
+    ) {
+      senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
+      senrequestpara.InlandSQCharges = FCLSQCharges;
+      url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
+    } else if (this.state.containerLoadType == "AIR") {
+      senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
+      senrequestpara.AirSQCharges = FCLSQCharges;
+      url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
+    }
+    //return false;
 
     axios({
       method: "post",
       url: url,
       data: senrequestpara,
       headers: authHeader()
-    }).then(function (response) {
-      debugger;
-      if (response != null) {
-        if (response.data != null) {
-          if (response.data.Table != null) {
-            if (response.data.Table.length > 0) {
-              NotificationManager.error(response.data.Table[0].Message)
-              window.location.href = "quote-table";
+    })
+      .then(function(response) {
+        debugger;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                NotificationManager.error(response.data.Table[0].Message);
+                window.location.href = "quote-table";
+              }
             }
           }
         }
-      }
-      //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
-    }).catch(error => {
-      debugger;
-      console.log(error.response)
-    })
-
+        //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+      })
+      .catch(error => {
+        debugger;
+        console.log(error.response);
+      });
   }
 
-
-  SendQuote() {
-
-  }
+  SendQuote() {}
 
   // SendMail()
   // {
@@ -1160,7 +1421,6 @@ class RateFinalizing extends Component {
   //     },
   //     headers: authHeader()
   //   }).then(function(response) {
-
 
   //    self.bindMyWayMessageById();
   //   }).catch(error => {
@@ -1176,15 +1436,13 @@ class RateFinalizing extends Component {
     if (localcharge != "") {
       this.state.arrLocalsCharges = [];
       this.state.fltLocalCharges.map((item, index) => {
-
         if (item.ChargeDesc.toLowerCase().includes(localcharge)) {
-          this.state.arrLocalsCharges.push(this.state.fltLocalCharges[index])
+          this.state.arrLocalsCharges.push(this.state.fltLocalCharges[index]);
         }
-      })
-    }
-    else {
+      });
+    } else {
       this.state.arrLocalsCharges = [];
-      this.state.arrLocalsCharges = this.state.fltLocalCharges
+      this.state.arrLocalsCharges = this.state.fltLocalCharges;
     }
     this.setState({
       arrLocalsCharges: this.state.arrLocalsCharges
@@ -1196,36 +1454,33 @@ class RateFinalizing extends Component {
     if (surcharge != "") {
       this.state.arrSurCharges = [];
       this.state.fltSurCharges.map((item, index) => {
-
         if (item.ChargeDesc.toLowerCase().includes(surcharge)) {
-          this.state.arrSurCharges.push(this.state.fltSurCharges[index])
+          this.state.arrSurCharges.push(this.state.fltSurCharges[index]);
         }
-      })
-    }
-    else {
+      });
+    } else {
       this.state.arrSurCharges = [];
-      this.state.arrSurCharges = this.state.fltSurCharges
+      this.state.arrSurCharges = this.state.fltSurCharges;
     }
     this.setState({
       arrSurCharges: this.state.arrSurCharges
     });
   };
 
-
   hanleProfitAmountChange(e) {
     const re = /^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/;
-    if (e.target.value === '' || re.test(e.target.value)) {
-      this.setState({ ProfitAmount: e.target.value })
+    if (e.target.value === "" || re.test(e.target.value)) {
+      this.setState({ ProfitAmount: e.target.value });
     }
   }
 
   hanleProfitAmountSubmit() {
-
     var rateDetailsarr = this.state.rateDetails;
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
-      rateDetailsarr[i].TotalAmount = parseFloat(rateDetailsarr[i].TotalAmount) + parseFloat(this.state.ProfitAmount)
-
+      rateDetailsarr[i].TotalAmount =
+        parseFloat(rateDetailsarr[i].TotalAmount) +
+        parseFloat(this.state.ProfitAmount);
     }
     this.setState(prevState => ({
       modalProfit: false
@@ -1235,9 +1490,9 @@ class RateFinalizing extends Component {
 
     for (var i = 0; i <= rateSubDetailsarr.length - 1; i++) {
       if (rateSubDetailsarr[i].ChargeCode == "Freight") {
-
-        rateSubDetailsarr[i].TotalAmount = parseFloat(rateSubDetailsarr[i].TotalAmount) + parseFloat(this.state.ProfitAmount)
-
+        rateSubDetailsarr[i].TotalAmount =
+          parseFloat(rateSubDetailsarr[i].TotalAmount) +
+          parseFloat(this.state.ProfitAmount);
       }
     }
 
@@ -1245,15 +1500,16 @@ class RateFinalizing extends Component {
       toggleProfitRemoveBtn: true,
       Addedprofit: this.state.ProfitAmount
     });
-    this.forceUpdate()
+    this.forceUpdate();
   }
 
   hanleProfitAmountRemove() {
     var rateDetailsarr = this.state.rateDetails;
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
-      rateDetailsarr[i].TotalAmount = parseFloat(rateDetailsarr[i].TotalAmount) - parseFloat(this.state.Addedprofit)
-
+      rateDetailsarr[i].TotalAmount =
+        parseFloat(rateDetailsarr[i].TotalAmount) -
+        parseFloat(this.state.Addedprofit);
     }
     this.setState(prevState => ({
       modalProfit: false
@@ -1263,7 +1519,9 @@ class RateFinalizing extends Component {
 
     for (var i = 0; i <= rateSubDetailsarr.length - 1; i++) {
       if (rateSubDetailsarr[i].ChargeCode == "Freight") {
-        rateSubDetailsarr[i].TotalAmount = parseFloat(rateSubDetailsarr[i].TotalAmount) - parseFloat(this.state.Addedprofit)
+        rateSubDetailsarr[i].TotalAmount =
+          parseFloat(rateSubDetailsarr[i].TotalAmount) -
+          parseFloat(this.state.Addedprofit);
       }
     }
 
@@ -1271,25 +1529,24 @@ class RateFinalizing extends Component {
       toggleProfitRemoveBtn: false,
       Addedprofit: ""
     });
-    this.forceUpdate()
+    this.forceUpdate();
   }
 
- processText(inputText) {
+  processText(inputText) {
     var output = [];
-    var json = inputText.toString().split(' ');
+    var json = inputText.toString().split(" ");
     // json.forEach(function (item) {
     //     output.push(item.replace(/\'/g, '').split(/(\d+)/).filter(Boolean));
     // });
     return json;
-}
+  }
 
   HandleLocalSearchCharges(e) {
     debugger;
     var rateDetailsarr = this.state.rateDetails;
     if (e.target.checked) {
-
       for (var i = 0; i < rateDetailsarr.length; i++) {
-      //  this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount) + parseFloat(e.target.value)
+        //  this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount) + parseFloat(e.target.value)
 
         // if(this.state.rateDetails[i].TotalAmount == undefined && this.state.rateDetails[i].TotalAmount == null)
         // {
@@ -1298,27 +1555,36 @@ class RateFinalizing extends Component {
         // }
         // else
         // {
-          this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount == null ? 0 : this.state.rateDetails[i].TotalAmount) + parseFloat(e.target.value)
-       // }
-
+        this.state.rateDetails[i].TotalAmount =
+          parseFloat(
+            this.state.rateDetails[i].TotalAmount == null
+              ? 0
+              : this.state.rateDetails[i].TotalAmount
+          ) + parseFloat(e.target.value);
+        // }
 
         var newrateSubDetails = {
-          BaseCurrency: e.target.getAttribute('data-currency'),
-          ChargeCode: e.target.getAttribute('data-chargedesc'),
+          BaseCurrency: e.target.getAttribute("data-currency"),
+          ChargeCode: e.target.getAttribute("data-chargedesc"),
           ChargeID: 0,
-          ChargeItem: e.target.getAttribute('data-chargeitem'),
-          ChargeType: e.target.getAttribute('data-chargetype'),
-          Currency: e.target.getAttribute('data-currency'),
+          ChargeItem: e.target.getAttribute("data-chargeitem"),
+          ChargeType: e.target.getAttribute("data-chargetype"),
+          Currency: e.target.getAttribute("data-currency"),
           Exrate: 0,
           Rate: parseFloat(e.target.value),
           RateLineID: this.state.rateDetails[i].RateLineId,
-          SaleQuoteIDLineID:this.state.rateDetails[i].SaleQuoteIDLineID,
+          SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
           Tax: 0,
-          TotalAmount: parseFloat(e.target.getAttribute('data-amountinbasecurrency')),
+          TotalAmount: parseFloat(
+            e.target.getAttribute("data-amountinbasecurrency")
+          ),
           Extracharge: true
-        }
+        };
 
-        if (this.state.containerLoadType == "FTL" || this.state.containerLoadType == "LTL") {
+        if (
+          this.state.containerLoadType == "FTL" ||
+          this.state.containerLoadType == "LTL"
+        ) {
           newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
         }
 
@@ -1326,36 +1592,39 @@ class RateFinalizing extends Component {
           newrateSubDetails
         );
       }
-      this.forceUpdate()
+      this.forceUpdate();
     }
     if (!e.target.checked) {
-
       for (var i = 0; i < rateDetailsarr.length; i++) {
-        if(this.state.rateDetails[i].TotalAmount == undefined)
-        {
-          var amount = this.processText(this.state.rateDetails[i].Total)
+        if (this.state.rateDetails[i].TotalAmount == undefined) {
+          var amount = this.processText(this.state.rateDetails[i].Total);
 
-          this.state.rateDetails[i].Total = parseFloat(amount[0]) - parseFloat(e.target.value) + " " + amount[1]
+          this.state.rateDetails[i].Total =
+            parseFloat(amount[0]) -
+            parseFloat(e.target.value) +
+            " " +
+            amount[1];
+        } else {
+          this.state.rateDetails[i].TotalAmount =
+            parseFloat(this.state.rateDetails[i].TotalAmount) -
+            parseFloat(e.target.value);
         }
-        else
-        {
-          this.state.rateDetails[i].TotalAmount = parseFloat(this.state.rateDetails[i].TotalAmount) - parseFloat(e.target.value)
-        }
-
 
         for (var i = 0; i <= this.state.rateSubDetails.length - 1; i++) {
-          if (this.state.rateSubDetails[i]["ChargeCode"] == e.target.getAttribute('data-chargedesc')) {
+          if (
+            this.state.rateSubDetails[i]["ChargeCode"] ==
+            e.target.getAttribute("data-chargedesc")
+          ) {
             this.state.rateSubDetails.splice(i--, 1);
           }
         }
       }
-      this.forceUpdate()
+      this.forceUpdate();
     }
-
   }
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
-    debugger
+    debugger;
     let self = this;
 
     axios({
@@ -1374,72 +1643,76 @@ class RateFinalizing extends Component {
     const { name, value } = e.target;
 
     this.setState({
-      currentPackageType:value
-    })
+      currentPackageType: value
+    });
     this.forceUpdate();
-
   }
-  SubmitCargoDetails(e)
-  {
+  SubmitCargoDetails(e) {
     debugger;
-    if(this.state.containerLoadType == "AIR" || this.state.containerLoadType == "LCL")
-    {
+    if (
+      this.state.containerLoadType == "AIR" ||
+      this.state.containerLoadType == "LCL"
+    ) {
       let multiCBM = [...this.state.multiCBM];
-      for(var i = 0; i < multiCBM.length; i++)
-      {
-        if(multiCBM[i].PackageType+"_"+i == e.target.getAttribute("data-valuespecialsontainersode"))
-        {
+      for (var i = 0; i < multiCBM.length; i++) {
+        if (
+          multiCBM[i].PackageType + "_" + i ==
+          e.target.getAttribute("data-valuespecialsontainersode")
+        ) {
           multiCBM[i].PackageType = this.state.currentPackageType;
         }
       }
 
       this.setState({
-        multiCBM : multiCBM,
-      })
-    }
-    else
-    {
+        multiCBM: multiCBM
+      });
+    } else {
       let flattack_openTop = [...this.state.flattack_openTop];
-      for(var i = 0; i < flattack_openTop.length; i++)
-      {
-        if(flattack_openTop[i].SpecialContainerCode == e.target.getAttribute("data-valuespecialsontainersode"))
-        {
+      for (var i = 0; i < flattack_openTop.length; i++) {
+        if (
+          flattack_openTop[i].SpecialContainerCode ==
+          e.target.getAttribute("data-valuespecialsontainersode")
+        ) {
           flattack_openTop[i].PackageType = this.state.currentPackageType;
         }
       }
 
       this.setState({
-        flattack_openTop : flattack_openTop,
-      })
+        flattack_openTop: flattack_openTop
+      });
     }
 
+    let CargoDetailsArr = [...this.state.CargoDetailsArr];
 
-    let CargoDetailsArr =  [...this.state.CargoDetailsArr];
-
-    for(var i = 0; i < CargoDetailsArr.length; i++)
-    {
-      if(CargoDetailsArr[i].SpecialContainerCode == e.target.getAttribute("data-valuespecialsontainersode"))
-      {
+    for (var i = 0; i < CargoDetailsArr.length; i++) {
+      if (
+        CargoDetailsArr[i].SpecialContainerCode ==
+        e.target.getAttribute("data-valuespecialsontainersode")
+      ) {
         CargoDetailsArr[i].PackageType = this.state.currentPackageType;
-        if(this.state.containerLoadType == "AIR" || this.state.containerLoadType == "LCL")
-        {
-          CargoDetailsArr[i].ContainerType= this.state.currentPackageType ;
-        }
-        else
-        {
-          CargoDetailsArr[i].ContainerType= this.state.currentPackageType + " (" + CargoDetailsArr[i].SpecialContainerCode + ")" ;
+        if (
+          this.state.containerLoadType == "AIR" ||
+          this.state.containerLoadType == "LCL"
+        ) {
+          CargoDetailsArr[i].ContainerType = this.state.currentPackageType;
+        } else {
+          CargoDetailsArr[i].ContainerType =
+            this.state.currentPackageType +
+            " (" +
+            CargoDetailsArr[i].SpecialContainerCode +
+            ")";
         }
       }
     }
 
     this.setState({
-      CargoDetailsArr:CargoDetailsArr
-    })
+      CargoDetailsArr: CargoDetailsArr
+    });
 
-   // this.props.location.state.flattack_openTop = flattack_openTop;
+    // this.props.location.state.flattack_openTop = flattack_openTop;
 
     this.forceUpdate();
-    this.toggleEdit()
+    this.toggleEdit();
   }
 
   HandleChangeCon(field, e) {
@@ -1447,9 +1720,9 @@ class RateFinalizing extends Component {
     let self = this;
     self.state.error = "";
     var customertxtlen = e.target.value;
-    if (customertxtlen == "") {
-      document.getElementById("SearchRate").classList.add("disableRates");
-    }
+    // if (customertxtlen == "") {
+    //   document.getElementById("SearchRate").classList.add("disableRates");
+    // }
 
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -1465,8 +1738,7 @@ class RateFinalizing extends Component {
       }).then(function(response) {
         debugger;
 
-        if(response.data.Table.length != 0)
-        {
+        if (response.data.Table.length != 0) {
           if (field == "CustomerList") {
             self.setState({
               customerData: response.data.Table,
@@ -1478,9 +1750,8 @@ class RateFinalizing extends Component {
               fields
             });
           }
-        }
-        else{
-          self.state.error = "Please enter valid Consignee"      
+        } else {
+          self.state.error = "Please enter valid Consignee";
         }
         self.setState({
           error: self.state.error
@@ -1492,7 +1763,6 @@ class RateFinalizing extends Component {
         fields
       });
     }
-
   }
 
   handleSelectCon(field, value, e) {
@@ -1500,9 +1770,13 @@ class RateFinalizing extends Component {
     let fields = this.state.fields;
     fields[field] = value;
     var compId = e.Company_ID;
+    var compName = e.Company_Name;
+    var companyAddress = e.CompanyAddress;
     this.setState({
       fields,
-      CompanyID: compId
+      CompanyID: compId,
+      //CompanyName: compName,
+      CompanyAddress: companyAddress
     });
     //document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -1539,63 +1813,93 @@ class RateFinalizing extends Component {
     var i = 0;
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
       let amtSign;
-      if (item.Currency == 'INR') {
-        amtSign = ''
+      if (item.Currency == "INR") {
+        amtSign = "";
+      } else if (item.Currency == "USD") {
+        amtSign = "$";
       }
-      else if (item.Currency == 'USD') { amtSign = '$' }
       return (
         <div>
           <div className="d-flex">
-            <input id={"local" + (index + 1)} value={item.Amount} type="checkbox" name={"localCharge"} data-chargeitem={item.ChargeItem} data-chargedesc={item.ChargeDesc} data-currency={item.Currency} data-amountinbasecurrency={item.AmountInBaseCurrency} data-chargetype="Localcharge" onChange={this.HandleLocalSearchCharges.bind(this)} />
+            <input
+              id={"local" + (index + 1)}
+              value={item.Amount}
+              type="checkbox"
+              name={"localCharge"}
+              data-chargeitem={item.ChargeItem}
+              data-chargedesc={item.ChargeDesc}
+              data-currency={item.Currency}
+              data-amountinbasecurrency={item.AmountInBaseCurrency}
+              data-chargetype="Localcharge"
+              onChange={this.HandleLocalSearchCharges.bind(this)}
+            />
             <label htmlFor={"local" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
-          <span>{item.Amount}{amtSign}</span>
+          <span>
+            {item.Amount}
+            {amtSign}
+          </span>
         </div>
-      )
-    })
+      );
+    });
 
     const checkSurCharges = this.state.arrSurCharges.map((item, index) => {
       let amtSign;
-      if (item.Currency == 'INR') {
-        amtSign = ''
+      if (item.Currency == "INR") {
+        amtSign = "";
+      } else if (item.Currency == "USD") {
+        amtSign = "$";
       }
-      else if (item.Currency == 'USD') { amtSign = '$' }
       return (
         <div>
           <div className="d-flex">
-            <input id={"Sur" + (index + 1)} type="checkbox" name={"surcharges"} value={item.Amount} data-chargeitem={item.ChargeItem} data-chargedesc={item.ChargeDesc} data-currency={item.Currency} data-amountinbasecurrency={item.AmountInBaseCurrency} data-chargetype="surcharge" onChange={this.HandleLocalSearchCharges.bind(this)} />
+            <input
+              id={"Sur" + (index + 1)}
+              type="checkbox"
+              name={"surcharges"}
+              value={item.Amount}
+              data-chargeitem={item.ChargeItem}
+              data-chargedesc={item.ChargeDesc}
+              data-currency={item.Currency}
+              data-amountinbasecurrency={item.AmountInBaseCurrency}
+              data-chargetype="surcharge"
+              onChange={this.HandleLocalSearchCharges.bind(this)}
+            />
             <label htmlFor={"Sur" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
-          <span>{item.Amount}{amtSign}</span>
+          <span>
+            {item.Amount}
+            {amtSign}
+          </span>
         </div>
-      )
-    })
+      );
+    });
     var self = this;
 
     var Commoditypresent = false;
     const commodityDatadrp = this.state.commodityData.map((item, i) => {
-
       if (item.id == self.state.CommodityID) {
         Commoditypresent = true;
-        return (<option key={i} value={item.id} selected>
-          {item.Commodity}
-        </option>)
-      }
-      else {
+        return (
+          <option key={i} value={item.id} selected>
+            {item.Commodity}
+          </option>
+        );
+      } else {
         if (!Commoditypresent) {
           Commoditypresent = false;
         }
 
-        return (<option key={i} value={item.id} >
-          {item.Commodity}
-        </option>)
+        return (
+          <option key={i} value={item.id}>
+            {item.Commodity}
+          </option>
+        );
       }
-
-    })
+    });
 
     if (Commoditypresent) {
-      this.state.commoditySelect = self.state.CommodityID
-
+      this.state.commoditySelect = self.state.CommodityID;
     }
     const filterDuplicateService = [];
     var DocumentCharges = [];
@@ -2047,7 +2351,9 @@ class RateFinalizing extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">S. Port</p>
+                                      <p className="details-title">
+                                        Transshipment Port
+                                      </p>
                                       <p className="details-para">
                                         {row.original.TransshipmentPort}
                                       </p>
@@ -2055,14 +2361,14 @@ class RateFinalizing extends Component {
                                   );
                                 },
                                 accessor: "TransshipmentPort",
-                                filterable: true
-                                // minWidth: 175
+                                filterable: true,
+                                minWidth: 150
                               },
                               {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">F. Time</p>
+                                      <p className="details-title">Free Time</p>
                                       <p className="details-para">
                                         {row.original.freeTime}
                                       </p>
@@ -2071,7 +2377,7 @@ class RateFinalizing extends Component {
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
-                                minWidth: 80
+                                minWidth: 100
                               },
                               {
                                 Cell: row => {
@@ -2191,7 +2497,7 @@ class RateFinalizing extends Component {
                         // }}
                         data={this.state.rateDetails}
                         defaultPageSize={1000}
-                        className="-striped -highlight"
+                        className="-striped -highlight no-mid-align"
                         minRows={1}
                         showPagination={false}
                         SubComponent={row => {
@@ -2243,17 +2549,22 @@ class RateFinalizing extends Component {
                                         Header: "Unit Price",
                                         accessor: "Rate",
                                         Cell: props => (
+                                          // <React.Fragment>
+                                          //   {row.original.Rate != undefined
+                                          //     ? props.original.Rate
+                                          //     : props.original.Amount == null
+                                          //     ? "0"
+                                          //     : props.original.Amount}
+                                          //   &nbsp;
+                                          //   {row.original.Currency != undefined
+                                          //     ? props.original.Currency
+                                          //     : ""}
+                                          // </React.Fragment>
                                           <React.Fragment>
-                                            {row.original.Rate != undefined
-                                              ? props.original.Rate
-                                              : props.original.Amount == null
-                                              ? "0"
-                                              : props.original.Amount}
-                                            &nbsp;
-                                            {row.original.Currency != undefined
-                                              ? props.original.Currency
-                                              : ""}
-                                          </React.Fragment>
+                                          {props.original.Rate}
+                                          &nbsp;
+                                          {props.original.Currency}
+                                        </React.Fragment>
                                         )
                                       },
                                       {
@@ -2277,11 +2588,11 @@ class RateFinalizing extends Component {
                                               {row.original.TotalAmount !=
                                               undefined
                                                 ? row.original.TotalAmount !==
-                                                    "" &&
+                                                    " " &&
                                                   row.original.TotalAmount !==
                                                     null
                                                   ? row.original.TotalAmount +
-                                                    "" +
+                                                    " " +
                                                     row.original.BaseCurrency
                                                   : ""
                                                 : row.original.Total}
@@ -2358,25 +2669,24 @@ class RateFinalizing extends Component {
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
-                              HazMat &amp; Unstackable
+                              HazMat
                             </p>
                             <p className="details-para">
-                              {typeof this.state.HazMat !== undefined
-                                ? this.state.HazMat === true
-                                  ? "True "
-                                  : "False"
-                                : ""}
-                              {typeof this.state.NonStackable !== undefined
-                                ? this.state.NonStackable === true
-                                  ? "True"
-                                  : "False"
-                                : ""}
+                              {this.state.HazMat === true ? "Yes " : "No"}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Non Stackable</p>
+                            <p className="details-para">
+                            {this.state.NonStackable === true
+                                ? "Yes"
+                                : "No"}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
-                              {this.state.incoTerms}
+                              {this.state.incoTerm}
                             </p>
                           </div>
                           <div className="col-md-4">
@@ -2478,8 +2788,9 @@ class RateFinalizing extends Component {
                         showPagination={false}
                         columns={[
                           {
-                            Header: "Cont.Type",
-                            accessor: "ContainerType"
+                            Header: "Pack.Type",
+                            accessor: "ContainerType",
+                            minWidth: 110
                           },
                           {
                             Header: "Quantity",
@@ -2498,17 +2809,17 @@ class RateFinalizing extends Component {
                             accessor: "Height"
                           },
                           {
-                            Header: "Weight",
-                            accessor: "Weight"
+                            Header: "Gross Weight",
+                            accessor: "Weight",
+                            minWidth: 140
                             //editable: this.state.containerLoadType == "Air" ? true : false
                           },
+                          // {
+                          //   Header: "Temp.",
+                          //   accessor: "Temperature"
+                          // },
                           {
-                            Header: "Temp.",
-                            accessor: "Temperature"
-                            //show:  this.state.containerLoadType == "Air" ? false : true
-                          },
-                          {
-                            Header: "CBM",
+                            Header: this.state.containerLoadType.toUpperCase() == "LCL"?"CBM":"Chargable Weight",
                             accessor: "CBM"
                             //show:  this.state.containerLoadType == "Air" ? false : true
                           },
@@ -2571,16 +2882,15 @@ class RateFinalizing extends Component {
                               {this.state.CompanyName}
                             </p>
                           )}
-                          {!this.state.toggleAddProfitBtn ||
-                            (!this.state.isCopy && (
-                              <p className="details-para">
-                                {encryption(
-                                  window.localStorage.getItem("username"),
-                                  "desc"
-                                )}
-                              </p>
-                            ))}
-                          {this.state.isCopy && (
+                          {!this.state.toggleAddProfitBtn && (
+                            <p className="details-para">
+                              {encryption(
+                                window.localStorage.getItem("username"),
+                                "desc"
+                              )}
+                            </p>
+                          )}
+                          {this.state.CompanyName == "" || this.state.isCopy ? (
                             <Autocomplete
                               id="searchtxt"
                               getItemValue={item => item.Company_Name}
@@ -2610,7 +2920,7 @@ class RateFinalizing extends Component {
                                 placeholder: "Search Account/Consignee"
                               }}
                             />
-                          )}
+                          ) : null}
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
@@ -2631,7 +2941,11 @@ class RateFinalizing extends Component {
                     <div className="text-right">
                       {this.state.toggleAddProfitBtn && (
                         <button
-                          onClick={this.toggleNewConsignee}
+                          onClick={() => {
+                            this.toggleNewConsignee();
+                            this.newOpen();
+                          }}
+                          //onClick={this.toggleNewConsignee}
                           className="butn more-padd"
                         >
                           Create Customer
@@ -2745,7 +3059,7 @@ class RateFinalizing extends Component {
               </div>
             </ModalBody>
           </Modal>
-          <Modal
+          {/* <Modal
             className="amnt-popup"
             isOpen={this.state.modalNewConsignee}
             toggle={this.toggleNewConsignee}
@@ -2753,30 +3067,6 @@ class RateFinalizing extends Component {
           >
             <ModalBody>
               <div className="txt-cntr text-center">
-                {/* <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Consignee Name</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Address</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <textarea class="rate-address"></textarea>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Notification Person</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Email Id</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div> */}
                 <p>Do you want to save the Quote ?</p>
               </div>
               <div className="text-center">
@@ -2799,7 +3089,7 @@ class RateFinalizing extends Component {
                 </a>
               </div>
             </ModalBody>
-          </Modal>
+          </Modal> */}
           <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequest}

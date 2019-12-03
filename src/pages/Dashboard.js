@@ -1359,7 +1359,7 @@ class Dashboard extends Component {
             <p>
               <span style={{ color: "#000" }}>{book.BookingNo}</span>
               <span style={{ float: "right" }}>
-                {new Date(book.ETD).toLocaleDateString("en-US")}
+                {book.ETD!=="" || undefined || null?new Date(book.ETD).toLocaleDateString("en-US"):""}
               </span>
             </p>
             <p>
