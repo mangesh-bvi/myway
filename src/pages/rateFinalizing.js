@@ -103,7 +103,8 @@ class RateFinalizing extends Component {
       customerData: [],
       fields: {},
       CompanyID:0,
-      companyName:""
+      companyName:"",
+      CompanyAddress: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -1447,9 +1448,9 @@ class RateFinalizing extends Component {
     let self = this;
     self.state.error = "";
     var customertxtlen = e.target.value;
-    if (customertxtlen == "") {
-      document.getElementById("SearchRate").classList.add("disableRates");
-    }
+    // if (customertxtlen == "") {
+    //   document.getElementById("SearchRate").classList.add("disableRates");
+    // }
 
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -1500,9 +1501,13 @@ class RateFinalizing extends Component {
     let fields = this.state.fields;
     fields[field] = value;
     var compId = e.Company_ID;
+    var compName = e.Company_Name;
+    var companyAddress = e.CompanyAddress;
     this.setState({
       fields,
-      CompanyID: compId
+      CompanyID: compId,
+      //CompanyName: compName,
+      CompanyAddress: companyAddress
     });
     //document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -2035,7 +2040,7 @@ class RateFinalizing extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">S. Port</p>
+                                      <p className="details-title">Transshipment Port</p>
                                       <p className="details-para">
                                         {row.original.TransshipmentPort}
                                       </p>
@@ -2050,7 +2055,7 @@ class RateFinalizing extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">F. Time</p>
+                                      <p className="details-title">Free Time</p>
                                       <p className="details-para">
                                         {row.original.freeTime}
                                       </p>
@@ -2538,10 +2543,10 @@ class RateFinalizing extends Component {
                           {this.state.toggleAddProfitBtn && (
                             <p className="details-para">{this.state.CompanyName}</p>
                           )}
-                          {!this.state.toggleAddProfitBtn || !this.state.isCopy && (
+                          {!this.state.toggleAddProfitBtn && (
                             <p className="details-para">{encryption(window.localStorage.getItem("username"), "desc")}</p>
                           )}
-                          {this.state.isCopy && (
+                          {this.state.CompanyName=="" || this.state.isCopy ? (
                            <Autocomplete
                             id="searchtxt"
                             getItemValue={item => item.Company_Name}
@@ -2561,7 +2566,7 @@ class RateFinalizing extends Component {
                             onSelect={this.handleSelectCon.bind(this, "Company_Name")}
                             inputProps={{ placeholder: "Search Account/Consignee" }}
                          />
-                          )}
+                          ):null}
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
@@ -2580,7 +2585,11 @@ class RateFinalizing extends Component {
                     <div className="text-right">
                       {this.state.toggleAddProfitBtn && (
                         <button
-                          onClick={this.toggleNewConsignee}
+                          onClick={() => {
+                            this.toggleNewConsignee();
+                            this.newOpen();
+                          }}
+                          //onClick={this.toggleNewConsignee}
                           className="butn more-padd"
                         >
                           Create Customer
@@ -2685,7 +2694,7 @@ class RateFinalizing extends Component {
               </div>
             </ModalBody>
           </Modal>
-          <Modal
+          {/* <Modal
             className="amnt-popup"
             isOpen={this.state.modalNewConsignee}
             toggle={this.toggleNewConsignee}
@@ -2693,30 +2702,6 @@ class RateFinalizing extends Component {
           >
             <ModalBody>
               <div className="txt-cntr text-center">
-                {/* <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Consignee Name</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Address</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <textarea class="rate-address"></textarea>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Notification Person</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Email Id</p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input type="text" class="w-100" />
-                  </div>
-                </div> */}
                 <p>Do you want to save the Quote ?</p>
               </div>
               <div className="text-center">
@@ -2739,7 +2724,7 @@ class RateFinalizing extends Component {
                 </a>
               </div>
             </ModalBody>
-          </Modal>
+          </Modal> */}
           <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequest}
