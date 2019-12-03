@@ -111,7 +111,8 @@ class NewRateSearch extends Component {
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       companyId: 0,
-
+      companyName: "",
+      companyAddress: "",
       Containerdetails: [],
       PortOfDischargeCode: "",
       PortOfLoadingCode: "",
@@ -229,7 +230,7 @@ class NewRateSearch extends Component {
     if (typeof this.props.history.location.state !== "undefined") {
       var compId = this.props.history.location.state;
       if (compId !== null) {
-        this.setState({ companyId: compId.companyId });
+        this.setState({ companyId: compId.companyId, companyName: compId.companyName, companyAddress: compId.companyAddress});
       }
     }
     this.HandleCounterListBind();
@@ -1026,13 +1027,13 @@ class NewRateSearch extends Component {
     debugger;
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
-        <div className="col-md">
+        {/* <div className="col-md">
           <div className="spe-equ">
             <label className="mr-0 mt-2" name="SpecialContainerCode">
               {el.SpecialContainerCode}
             </label>
           </div>
-        </div>
+        </div> */}
         <div className="col-md">
           <div className="spe-equ">
             <select

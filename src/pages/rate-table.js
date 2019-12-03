@@ -226,7 +226,10 @@ class RateTable extends Component {
       RateQueryDim: [],
       cbmVal: "",
       errorPOL:"",
-      errorPOD:""
+      errorPOD:"",
+      companyId: 0,
+      companyName: "",
+      companyAddress: ""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -853,7 +856,10 @@ class RateTable extends Component {
             : paramData.DeliveryCity,
         Currency: paramData.currencyCode,
         isSearch: paramData.isSearch,
-        cbmVal: paramData.cbmVal
+        cbmVal: paramData.cbmVal,
+        companyId: paramData.companyId,
+        companyName: paramData.companyName,
+        companyAddress: paramData.companyAddress
       });
     }
 
@@ -1288,19 +1294,13 @@ class RateTable extends Component {
   MultiCreateCBM() {
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
-        <div className="col-md">
+        {/* <div className="col-md">
           <div className="spe-equ">
-            {/* <select
-              className="w-100 cmd-select"
-              onChange={this.newMultiCBMHandleChange.bind(this, i)}
-            >
-              <option>select</option>
-            </select> */}
             <label className="mr-0 mt-2" name="SpecialContainerCode">
               {el.SpecialContainerCode}
             </label>
           </div>
-        </div>
+        </div> */}
         <div className="col-md">
           <div className="spe-equ">
             <input
