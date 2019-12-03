@@ -1567,27 +1567,31 @@ class RateFinalizingStill extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">S. Port</p>
-                                      <p className="details-para"></p>
+                                      <p className="details-title">
+                                        TransShipment Port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
                                     </>
                                   );
                                 },
                                 accessor: "TransshipmentPort",
-                                filterable: true
-                                // minWidth: 175
+                                filterable: true,
+                                minWidth: 160
                               },
                               {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">F. Time</p>
+                                      <p className="details-title">Free Time</p>
                                       <p className="details-para"></p>
                                     </>
                                   );
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
-                                minWidth: 80
+                                minWidth: 100
                               },
                               {
                                 Cell: row => {
@@ -1628,13 +1632,13 @@ class RateFinalizingStill extends Component {
                                     <>
                                       <p className="details-title">TT</p>
                                       <p className="details-para">
-                                        {/* {row.original.TransitTime} */}
+                                        {row.original.TransitTime}
                                       </p>
                                     </>
                                   );
                                 },
-                                accessor: "TransitTime",
-                                minWidth: 60
+                                accessor: "TransitTime"
+                                // minWidth: 60
                               },
                               {
                                 Cell: row => {

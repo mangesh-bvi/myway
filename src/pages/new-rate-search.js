@@ -2807,7 +2807,8 @@ class NewRateSearch extends Component {
                         value="ui"
                         onClick={this.ContainerLoadTypeClick}
                         id="dummy-sea"
-                        checked={this.state.containerLoadType === "ui"}
+                        //checked={this.state.containerLoadType === "ui"}
+                        checked={this.state.testSelection}
                       />
                       <label htmlFor="dummy-sea">Dummy Sea</label>
                     </div> */}
@@ -2818,7 +2819,7 @@ class NewRateSearch extends Component {
                         value="FCL"
                         onClick={this.ContainerLoadTypeClick}
                         id="fcl"
-                        checked={this.state.containerLoadType === "FCL"}
+                        // checked={this.state.containerLoadType === "FCL"}
                       />
                       <label htmlFor="fcl">FCL</label>
                     </div>
@@ -2829,7 +2830,7 @@ class NewRateSearch extends Component {
                         onClick={this.ContainerLoadTypeClick}
                         name="cntr-load"
                         id="lcl"
-                        checked={this.state.containerLoadType === "LCL"}
+                        // checked={this.state.containerLoadType === "LCL"}
                       />
                       <label htmlFor="lcl">LCL</label>
                     </div>
