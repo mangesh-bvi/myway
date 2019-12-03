@@ -2361,8 +2361,8 @@ class RateFinalizing extends Component {
                                   );
                                 },
                                 accessor: "TransshipmentPort",
-                                filterable: true
-                                // minWidth: 175
+                                filterable: true,
+                                minWidth: 150
                               },
                               {
                                 Cell: row => {
@@ -2377,7 +2377,7 @@ class RateFinalizing extends Component {
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
-                                minWidth: 80
+                                minWidth: 100
                               },
                               {
                                 Cell: row => {
@@ -2778,8 +2778,9 @@ class RateFinalizing extends Component {
                         showPagination={false}
                         columns={[
                           {
-                            Header: "Cont.Type",
-                            accessor: "ContainerType"
+                            Header: "Pack.Type",
+                            accessor: "ContainerType",
+                            minWidth: 110
                           },
                           {
                             Header: "Quantity",
@@ -2798,15 +2799,15 @@ class RateFinalizing extends Component {
                             accessor: "Height"
                           },
                           {
-                            Header: "Weight",
-                            accessor: "Weight"
+                            Header: "Gross Weight",
+                            accessor: "Weight",
+                            minWidth: 140
                             //editable: this.state.containerLoadType == "Air" ? true : false
                           },
-                          {
-                            Header: "Temp.",
-                            accessor: "Temperature"
-                            //show:  this.state.containerLoadType == "Air" ? false : true
-                          },
+                          // {
+                          //   Header: "Temp.",
+                          //   accessor: "Temperature"
+                          // },
                           {
                             Header: "CBM",
                             accessor: "CBM"

@@ -1698,7 +1698,7 @@ class RateFinalizingStill extends Component {
                         // }}
                         data={this.state.RateDetails}
                         defaultPageSize={1000}
-                        className="-striped -highlight"
+                        className="-striped -highlight no-mid-align"
                         minRows={1}
                         showPagination={false}
                         SubComponent={row => {
@@ -1939,7 +1939,7 @@ class RateFinalizingStill extends Component {
                             showPagination={false}
                             columns={[
                               {
-                                Header: "Cont.Type",
+                                Header: "Pack.Type",
                                 accessor: "ContainerType"
                               },
                               {
@@ -1959,15 +1959,14 @@ class RateFinalizingStill extends Component {
                                 accessor: "Height"
                               },
                               {
-                                Header: "Weight",
+                                Header: "Gross Weight",
                                 accessor: "Weight"
                                 //editable: this.state.containerLoadType == "Air" ? true : false
                               },
-                              {
-                                Header: "Temp.",
-                                accessor: "Temperature"
-                                //show:  this.state.containerLoadType == "Air" ? false : true
-                              },
+                              // {
+                              //   Header: "Temp.",
+                              //   accessor: "Temperature"
+                              // },
                               {
                                 Header: "CBM",
                                 accessor: "CBM"

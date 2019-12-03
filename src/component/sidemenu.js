@@ -436,11 +436,11 @@ class SideMenu extends Component {
                             href="new-rate-search"
                             className={this.state.activeRateSearch}
                           >
-                            <img
+                            {/* <img
                               src={RatesIcon}
                               alt="green-counter-icon"
                               className="header-greencounter-icon"
-                            />
+                            /> */}
                             Rate Search
                           </a>
                         )}

@@ -230,7 +230,11 @@ class NewRateSearch extends Component {
     if (typeof this.props.history.location.state !== "undefined") {
       var compId = this.props.history.location.state;
       if (compId !== null) {
-        this.setState({ companyId: compId.companyId, companyName: compId.companyName, companyAddress: compId.companyAddress});
+        this.setState({
+          companyId: compId.companyId,
+          companyName: compId.companyName,
+          companyAddress: compId.companyAddress
+        });
       }
     }
     this.HandleCounterListBind();
@@ -1765,15 +1769,22 @@ class NewRateSearch extends Component {
     // next
     document.getElementById("modeTransport").classList.add("modeTransport");
     document.getElementById("shipmentType").classList.add("less-padd");
+    document.getElementById("containerLoad").classList.remove("less-padd");
     document
       .getElementById("shipmentTypeInner")
       .classList.add("remShipmentType");
+    document.getElementById("cntrLoadInner").classList.remove("cntrLoadType");
     document
       .getElementById("shipmentTypeIconCntr")
       .classList.add("shipmentTypeIconCntr");
     document.getElementById("shipmentTypeName").classList.remove("d-none");
+    document.getElementById("cntrLoadName").classList.add("d-none");
     document.getElementById("shipmentTypeMinusClick").classList.add("d-none");
+    document.getElementById("cntrLoadMinusClick").classList.remove("d-none");
     document.getElementById("shipmentTypePlusClick").classList.remove("d-none");
+    document.getElementById("cntrLoadPlusClick").classList.add("d-none");
+
+    // this.setState({ containerLoadType: "" });
 
     this.HandleShipmentStages(type);
     // this.HandlePOLPODAutosearch(type);
@@ -2743,9 +2754,21 @@ class NewRateSearch extends Component {
                       <input
                         type="radio"
                         name="cntr-load"
+                        value="ui"
+                        onClick={this.ContainerLoadTypeClick}
+                        id="dummy-sea"
+                        checked={this.state.containerLoadType === "ui"}
+                      />
+                      <label htmlFor="dummy-sea">Dummy Sea</label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="cntr-load"
                         value="FCL"
                         onClick={this.ContainerLoadTypeClick}
                         id="fcl"
+                        checked={this.state.containerLoadType === "FCL"}
                       />
                       <label htmlFor="fcl">FCL</label>
                     </div>
@@ -2756,6 +2779,7 @@ class NewRateSearch extends Component {
                         onClick={this.ContainerLoadTypeClick}
                         name="cntr-load"
                         id="lcl"
+                        checked={this.state.containerLoadType === "LCL"}
                       />
                       <label htmlFor="lcl">LCL</label>
                     </div>

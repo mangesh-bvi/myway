@@ -1902,8 +1902,8 @@ class RateFinalizingStillBooking extends Component {
                                     </React.Fragment>
                                   );
                                 },
-                                accessor: "lineName",
-                                width: 200
+                                accessor: "lineName"
+                                // width: 200
                               },
                               {
                                 accessor: "POL",
@@ -1980,7 +1980,7 @@ class RateFinalizingStillBooking extends Component {
                         data={this.state.QuotationData}
                         minRows={0}
                         showPagination={false}
-                        className="-striped -highlight"
+                        className="-striped -highlight no-mid-align"
                         SubComponent={row => {
                           return (
                             <div style={{ padding: "20px 0" }}>
