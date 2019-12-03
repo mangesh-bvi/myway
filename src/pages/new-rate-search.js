@@ -212,7 +212,8 @@ class NewRateSearch extends Component {
       TruckType: [],
       showCurr: false,
       testSelection: false,
-      errors: {}
+      errors: {},
+      heightData: []
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -325,7 +326,23 @@ class NewRateSearch extends Component {
     document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   toggleNonStackable() {
-    this.setState({ NonStackable: !this.state.NonStackable });
+    
+      for(var i=0; i<this.state.heightData.length; i++)
+      {        
+          if (this.state.heightData[i].Mode.toUpperCase() == this.state.containerLoadType.toUpperCase()) {
+            for(var j=0; j<this.state.multiCBM.length; j++)
+            {
+              if(!this.state.NonStackable)
+              {
+                this.state.multiCBM[j].Height = this.state.heightData[i].Height
+              }else{
+                this.state.multiCBM[j].Height = 0;
+              }
+            }
+        }
+        
+      }
+    this.setState({ NonStackable: !this.state.NonStackable, multiCBM: this.state.multiCBM});
   }
   toggleHazMat() {
     this.setState({ HazMat: !this.state.HazMat });
@@ -678,6 +695,7 @@ class NewRateSearch extends Component {
           </div>
         </div>
         <div className="col-md">
+          {(this.state.containerLoadType.toUpperCase() == "LCL"||"AIR"||"LTL") && this.state.NonStackable?(
           <div className="spe-equ">
             <input
               type="text"
@@ -686,9 +704,21 @@ class NewRateSearch extends Component {
               className="w-100"
               name="Height"
               value={el.Height || ""}
+              disabled
               //onBlur={this.cbmChange}
             />
           </div>
+          ):(<div className="spe-equ">
+          <input
+            type="text"
+            onChange={this.HandleChangeMultiCBM.bind(this, i)}
+            placeholder="H (cm)"
+            className="w-100"
+            name="Height"
+            value={el.Height || ""}
+            //onBlur={this.cbmChange}
+          />
+          </div>)}
         </div>
 
         <div className="col-md">
@@ -818,7 +848,18 @@ class NewRateSearch extends Component {
     document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   addMultiCBM() {
+    var Height = 0
+    for(var i=0; i<this.state.heightData.length; i++)
+      {      
+          if (this.state.heightData[i].Mode.toUpperCase() == this.state.containerLoadType.toUpperCase()) {      
+              if(this.state.NonStackable)
+              {
+                Height = this.state.heightData[i].Height
+              }
+          }
+      }
     this.setState(prevState => ({
+      
       multiCBM: [
         ...prevState.multiCBM,
         {
@@ -826,7 +867,7 @@ class NewRateSearch extends Component {
           Quantity: 1,
           Lengths: 0,
           Width: 0,
-          Height: 0,
+          Height: Height,
           Weight: 0,
           VolumeWeight: 0,
           Volume: 0
@@ -1526,9 +1567,11 @@ class NewRateSearch extends Component {
 
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var table1 = response.data.Table1;
       var table2 = response.data.Table2;
       var table4 = response.data.Table4;
+      var table5 = response.data.Table5;
       var finalArray = [];
       debugger;
       var standerEquipment = new Object();
@@ -1545,7 +1588,8 @@ class NewRateSearch extends Component {
       self.setState({
         StandardContainerCode: finalArray,
         SpacialEqmt: table2,
-        currencyData: table4
+        currencyData: table4,
+        heightData: table5
       });
     });
   }
