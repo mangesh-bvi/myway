@@ -239,7 +239,8 @@ class ShippingDetailsTwo extends Component {
       packageTable: [],
       MessagesActivityDetails: [],
       iframeKey: 0,
-      ModaType: ""
+      ModaType: "",
+      eve: "N/A"
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -273,6 +274,10 @@ class ShippingDetailsTwo extends Component {
     } else if (typeof this.props.location.state != "undefined") {
       debugger;
       var hblno = this.props.location.state.detail;
+      var event = this.props.location.state.event || "";
+      if (event !== "N/A") {
+        self.setState({ eve: event });
+      }
       self.setState({ HblNo: hblno });
       self.HandleShipmentDetails(hblno);
       //self.handleActivityList();
@@ -975,6 +980,17 @@ class ShippingDetailsTwo extends Component {
       perBooking = "100";
     }
 
+    var eventColor = "";
+    if (this.state.eve !== "") {
+      if (this.state.eve === "On Time") {
+        eventColor = "green";
+      } else if (this.state.eve === "Delay Risk") {
+        eventColor = "yellow";
+      } else if (this.state.eve === "Behind Schedule") {
+        eventColor = "red";
+      }
+    }
+
     let Watchlist = "";
     if (this.state.ShipmentExistsInWatchList == 0) {
       Watchlist = (
@@ -1210,13 +1226,13 @@ class ShippingDetailsTwo extends Component {
                         <div className="d-flex align-items-center">
                           <span className="clr-green">POL</span>
                           <div className="pol-pod-progress">
-                            <Progress value={perBooking} />
-                            <span
+                            <Progress color={eventColor} value={perBooking} />
+                            {/* <span
                               className="pol-pod-percent"
                               style={{ left: perBooking + "%" }}
                             >
                               {perBooking + "%"}
-                            </span>
+                            </span> */}
                           </div>
                           <span className="clr-green">POD</span>
                         </div>

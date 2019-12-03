@@ -263,18 +263,28 @@ class NewRateSearch extends Component {
     let errors = this.state.errors;
     let formIsValid = true;
 
-    if (this.state.specialEquipment ==true && this.state.flattack_openTop.length == 0 
-      && this.state.spacEqmtType.length == 0 && this.state.referType == 0) {
+    if (
+      this.state.specialEquipment == true &&
+      this.state.flattack_openTop.length == 0 &&
+      this.state.spacEqmtType.length == 0 &&
+      this.state.referType == 0
+    ) {
       formIsValid = false;
       errors["equipmenttype"] = "Please select equipment type";
     }
 
-    if(Object.getOwnPropertyNames(this.state.polfullAddData).length == 0 && this.state.fullAddressPOL.length == 0){
+    if (
+      Object.getOwnPropertyNames(this.state.polfullAddData).length == 0 &&
+      this.state.fullAddressPOL.length == 0
+    ) {
       formIsValid = false;
       errors["POLAddress"] = "Please select source";
     }
 
-    if(Object.getOwnPropertyNames(this.state.podfullAddData).length == 0 && this.state.fullAddressPOD.length == 0){
+    if (
+      Object.getOwnPropertyNames(this.state.podfullAddData).length == 0 &&
+      this.state.fullAddressPOD.length == 0
+    ) {
       formIsValid = false;
       errors["PODAddress"] = "Please select destination";
     }
@@ -285,8 +295,7 @@ class NewRateSearch extends Component {
 
   HandleSearchButton() {
     let self = this;
-    if(this.handleValidation())
-    {
+    if (this.handleValidation()) {
       if (this.state.currencyCode === "") {
         this.setState({
           showCurr: true
@@ -383,13 +392,14 @@ class NewRateSearch extends Component {
               placeholder="Quantity"
               onChange={this.UITruckTypeChange.bind(this, i)}
             />
-             {el.TruckName === "others"?
-             <input
-              type="text"
-              name="TruckDesc"
-              placeholder="Other"
-              onChange={this.UITruckTypeChange.bind(this, i)}
-            />:null}
+            {el.TruckName === "others" ? (
+              <input
+                type="text"
+                name="TruckDesc"
+                placeholder="Other"
+                onChange={this.UITruckTypeChange.bind(this, i)}
+              />
+            ) : null}
           </div>
           {i === 0 ? (
             <div className="col-md">
@@ -428,7 +438,9 @@ class NewRateSearch extends Component {
       ["TruckDesc"]:
         name === "TruckName"
           ? e.target.options[e.target.selectedIndex].text
-          : name === "Quantity"? TruckTypeData[i].TruckDesc:value,  
+          : name === "Quantity"
+          ? TruckTypeData[i].TruckDesc
+          : value
     };
     this.setState({ TruckTypeData });
     document.getElementById("cbm").classList.add("cbm");
@@ -2814,76 +2826,75 @@ class NewRateSearch extends Component {
                         ></i>
                       </div>
                     </div>
-                    {this.state.containerLoadType !== "FTL"?(
-                   
-                    <div>
-                      <div className="rate-radio-cntr justify-content-center">
-                        <div>
-                          <input
-                            type="radio"
-                            name="cmbTypeRadio"
-                            id="exist-cust"
-                            value="ALL"
-                            // onChange={
-                            //   this.state.containerLoadType !== "FTL"
-                            //     ? this.cmbTypeRadioChange.bind(this)
-                            //     : null
-                            // }
-                            onChange={this.cmbTypeRadioChange.bind(this)}
-                          />
-                          <label
-                            className="d-flex flex-column align-items-center"
-                            htmlFor="exist-cust"
-                          >
-                            ALL
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="cmbTypeRadio"
-                            id="new-cust"
-                            value="CBM"
-                            onChange={this.cmbTypeRadioChange.bind(this)}
-                          />
-                          <label
-                            className="d-flex flex-column align-items-center"
-                            htmlFor="new-cust"
-                          >
-                            {this.state.containerLoadType === "AIR"
-                              ? "Chargable Weight"
-                              : "CBM"}
-                          </label>
+                    {this.state.containerLoadType !== "FTL" ? (
+                      <div>
+                        <div className="rate-radio-cntr justify-content-center">
+                          <div>
+                            <input
+                              type="radio"
+                              name="cmbTypeRadio"
+                              id="exist-cust"
+                              value="ALL"
+                              // onChange={
+                              //   this.state.containerLoadType !== "FTL"
+                              //     ? this.cmbTypeRadioChange.bind(this)
+                              //     : null
+                              // }
+                              onChange={this.cmbTypeRadioChange.bind(this)}
+                            />
+                            <label
+                              className="d-flex flex-column align-items-center"
+                              htmlFor="exist-cust"
+                            >
+                              ALL
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              name="cmbTypeRadio"
+                              id="new-cust"
+                              value="CBM"
+                              onChange={this.cmbTypeRadioChange.bind(this)}
+                            />
+                            <label
+                              className="d-flex flex-column align-items-center"
+                              htmlFor="new-cust"
+                            >
+                              {this.state.containerLoadType === "AIR"
+                                ? "Chargable Weight"
+                                : "CBM"}
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    ):null}
+                    ) : null}
                     <div id="cbmInner">
                       <div className="">
-                      {this.state.containerLoadType !== "FTL"?(
-                        this.state.cmbTypeRadio === "ALL" ? (
-                    
+                        {this.state.containerLoadType !== "FTL" ? (
+                          this.state.cmbTypeRadio === "ALL" ? (
                             this.CreateMultiCBM()
-      
-                        ) : this.state.cmbTypeRadio === "CBM" ? (
-                          <div className="col-md-4 m-auto">
-                            <div className="spe-equ">
-                              <input
-                                type="number"
-                                minLength={1}
-                                
-                                onChange={this.HandleCMBtextChange.bind(this)}
-                                placeholder={
-                                  this.state.modeoftransport != "AIR"
-                                    ? "CBM"
-                                    : "KG"
-                                }
-                                className="w-100"
-                                value={this.state.cbmVal}
-                              />
+                          ) : this.state.cmbTypeRadio === "CBM" ? (
+                            <div className="col-md-4 m-auto">
+                              <div className="spe-equ">
+                                <input
+                                  type="number"
+                                  minLength={1}
+                                  onChange={this.HandleCMBtextChange.bind(this)}
+                                  placeholder={
+                                    this.state.modeoftransport != "AIR"
+                                      ? "CBM"
+                                      : "KG"
+                                  }
+                                  className="w-100"
+                                  value={this.state.cbmVal}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        ) : null):this.createUITruckType()}
+                          ) : null
+                        ) : (
+                          this.createUITruckType()
+                        )}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input
@@ -2968,7 +2979,6 @@ class NewRateSearch extends Component {
                         value={self.state.selected}
                         showNewOptionAtTop={false}
                       />
-                      
 
                       {/* <div className="spe-equ">
                       <input
@@ -2982,40 +2992,39 @@ class NewRateSearch extends Component {
                       onClick={this.addClick.bind(this)}
                     ></i> */}
                     </div>
-                    <div className="d-flex justify-content-center align-items-center">
+                    <div className="d-flex justify-content-center align-items-center flex-wrap">
                       {this.NewcreateUI()}
                     </div>
                     <div id="equipAppend"></div>
 
                     {self.state.specialEquipment === true ? (
                       <>
-                      <div className="spe-equ mt-0">
-                        <div className="equip-plus-cntr">
-                          <Select
-                            isDisabled={self.state.isSpacialEqt}
-                            className="rate-dropdown"
-                            getOptionLabel={option =>
-                              option.SpecialContainerCode
-                            }
-                            isMulti
-                            getOptionValue={option =>
-                              option.SpecialContainerCode
-                            }
-                            components={animatedComponents}
-                            options={self.state.SpacialEqmt}
-                            placeholder="Select Kind of Special Equipment"
-                            onChange={this.specEquipChange}
-                            value={self.state.spEqtSelect}
-                            showNewOptionAtTop={false}
-                          />
+                        <div className="spe-equ mt-0">
+                          <div className="equip-plus-cntr">
+                            <Select
+                              isDisabled={self.state.isSpacialEqt}
+                              className="rate-dropdown"
+                              getOptionLabel={option =>
+                                option.SpecialContainerCode
+                              }
+                              isMulti
+                              getOptionValue={option =>
+                                option.SpecialContainerCode
+                              }
+                              components={animatedComponents}
+                              options={self.state.SpacialEqmt}
+                              placeholder="Select Kind of Special Equipment"
+                              onChange={this.specEquipChange}
+                              value={self.state.spEqtSelect}
+                              showNewOptionAtTop={false}
+                            />
+                          </div>
                         </div>
-                        
-                      </div>
-                      <div className="spe-equ mt-0">
-                      <span className="equip-error">
-                      {this.state.errors["equipmenttype"]}
-                      </span>
-                      </div>
+                        <div className="spe-equ mt-0">
+                          <span className="equip-error">
+                            {this.state.errors["equipmenttype"]}
+                          </span>
+                        </div>
                       </>
                     ) : null}
                     <div>
@@ -3037,7 +3046,7 @@ class NewRateSearch extends Component {
                       self.state.spacEqmtTypeSelect === true ? (
                         self.state.spacEqmtType.length > 0 ? (
                           <>
-                            <div className="d-flex justify-content-center align-items-center">
+                            <div className="d-flex justify-content-center align-items-center flex-wrap">
                               {this.createUIspacEqmtType()}
                             </div>
                           </>
@@ -3348,7 +3357,7 @@ class NewRateSearch extends Component {
                       {this.state.errors["POLAddress"]}
                     </span>
                   </div>
-                  
+
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
                       {this.state.modeoftransport === "AIR" ? (
@@ -3513,7 +3522,7 @@ class NewRateSearch extends Component {
                 </div>
               </div>
               <div className="new-rate-cntr border-0">
-              <h3 className="mb-3">Currency</h3>
+                <h3 className="mb-3">Currency</h3>
                 <Select
                   className="rate-dropdown mt-0"
                   closeMenuOnSelect={true}
