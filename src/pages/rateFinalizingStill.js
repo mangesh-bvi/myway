@@ -1912,7 +1912,7 @@ class RateFinalizingStill extends Component {
                       </div>  
                     </div> */}
                     <div className="row">
-                      <div className="col-md-6 login-fields">
+                      <div className="col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
                           disabled={true}

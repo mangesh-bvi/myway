@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
 import Logo from "./../assets/img/logo.png";
+import Menubars from "./../assets/img/menubars.png";
 import "../assets/css/custom.css";
 import BellIcon from "./../assets/img/bell.png";
 import ChatIcon from "./../assets/img/chat.png";
@@ -328,6 +329,7 @@ class Header extends Component {
               <Link to="/Dashboard">
                 <img src={Logo} alt="log-icon" className="header-log" />
               </Link>
+              {/* <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" /> */}
             </div>
             <div className="col-xs col-sm-6 col-md-9">
               <ul className="header-ul">
@@ -663,5 +665,4 @@ class Header extends Component {
     );
   }
 }
-
 export default Header;
