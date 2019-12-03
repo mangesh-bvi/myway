@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8" />
+     
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // This example adds an animated symbol to a polyline.
+      //var locations = [
+      //{"title": 'loan 1',"lat":"49.24859","long":"8.887826","addr":'address 1'},
+      //{"title":'loan 2',"lat":"21.143956","long":"79.093453","addr":'address 2'}
+      //];
+      
+      var baloonData = localStorage.getItem("BaloonData");
+      var flagData = localStorage.getItem("FlagsData");
+      var linesData = localStorage.getItem("AllLineData");
+
+      var locations = JSON.parse(baloonData);
+      var beaches = JSON.parse(flagData);
+      var linesData = JSON.parse(linesData);
+      var greenRouteData = JSON.parse(localStorage.getItem("GreenLineData"));
+
+      //var beaches = [
+      //['1',49.24859,8.887826,'Falg 1'],
+      //['2',18.971783,72.833437,'Falg 2'],
+      //['3',19.73085,73.639905,'Falg 3']
+      //];
+
+      //  var beaches = [
+      //	{"title":'1',"Blat":"49.24859","Blong":"8.887826","baddr":'Falg 1'}
+      //];
+
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById("map"), {
+           
+          zoom: 1,
+          mapTypeId: "terrain",
+          gestureHandling: 'cooperative'
+        });
+
+        // Define the symbol, using one of the predefined paths ('CIRCLE')
+        // supplied by the Google Maps JavaScript API.
+        var lineSymbol = {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          scale: 5,
+          strokeColor: "#002d73",
+          strokeOpacity: 1.5
+        };
+
+        // Create the polyline and add the symbol to it via the 'icons' property.
+        // Create the polyline and add the symbol to it via the 'icons' property.
+        var line2 = new google.maps.Polyline({
+          path: greenRouteData,
+          strokeColor: "#0f0",
+          strokeWeight: 15,
+          map: map
+        });
+
+        // Create the polyline and add the symbol to it via the 'icons' property.
+        var line = new google.maps.Polyline({
+          path: linesData,
+          icons: [
+            {
+              icon: lineSymbol,
+              offset: "100%"
+            }
+          ],
+          scale: 2,
+          strokeColor: "#002d73",
+          strokeWeight: 4,
+          strokeOpacity: 1.5,
+          width: 8,
+          map: map
+        });
+
+        animateCircle(line);
+
+        //setMarkers(map);
+
+        NewsetMarkers(map, locations);
+
+        NewFlagMarkers(map, beaches);
+        /*
+         var beachMarker = new google.maps.Marker({
+         position: {lat:49.24859, lng: 8.887826},
+         map: map,
+         
+         });
+         
+         var beachMarker1 = new google.maps.Marker({
+         position: {lat: 21.143956, lng: 79.093453},
+         map: map,
+         });
+         */
+      }
+
+      // Use the DOM setInterval() function to change the offset of the symbol
+      // at fixed intervals.
+      function animateCircle(line) {
+        var count = 0;
+        window.setInterval(function() {
+          count = (count + 1) % 200;
+
+          var icons = line.get("icons");
+          icons[0].offset = count / 2 + "%";
+          line.set("icons", icons);
+        }, 20);
+      }
+
+      function setMarkers(map) {
+        // Adds markers to the map.
+
+        // Marker sizes are expressed as a Size of X,Y where the origin of the image
+        // (0,0) is located in the top left of the image.
+
+        // Origins, anchor positions and coordinates of the marker increase in the X
+        // direction to the right and in the Y direction down.
+        var image = {
+          url:
+            "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
+          // This marker is 20 pixels wide by 32 pixels high.
+          size: new google.maps.Size(20, 32),
+          // The origin for this image is (0, 0).
+          origin: new google.maps.Point(0, 0),
+          // The anchor for this image is the base of the flagpole at (0, 32).
+          anchor: new google.maps.Point(0, 32)
+        };
+        // Shapes define the clickable region of the icon. The type defines an HTML
+        // <area> element 'poly' which traces out a polygon as a series of X,Y points.
+        // The final coordinate closes the poly by connecting to the first coordinate.
+        var shape = {
+          coords: [1, 1, 1, 20, 18, 20, 18, 1],
+          type: "poly"
+        };
+        for (var i = 0; i < beaches.length; i++) {
+          var beach = beaches[i];
+          var marker = new google.maps.Marker({
+            position: { lat: beach[1], lng: beach[2] },
+            map: map,
+            icon: image,
+            shape: shape,
+            title: beach[0],
+            zIndex: beach[3]
+          });
+        }
+      }
+
+      function NewsetMarkers(map, locations) {
+        var marker, i;
+
+        for (i = 0; i < locations.length; i++) {
+          //var loan = locations[i][0]
+          //var lat = locations[i][1]
+          //var long = locations[i][2]
+          //var add = locations[i][3]
+
+          var loan = locations[i]["title"];
+          var lat = locations[i]["lat"];
+          var long = locations[i]["long"];
+          var add = locations[i]["addr"];
+
+          latlngset = new google.maps.LatLng(lat, long);
+
+          var marker = new google.maps.Marker({
+            map: map,
+            title: loan,
+            position: latlngset
+          });
+          map.setCenter(marker.getPosition());
+
+          var content = add; //"Loan Number: " + loan + '</h3>' + "Address: " + add
+
+          var infowindow = new google.maps.InfoWindow();
+
+          google.maps.event.addListener(
+            marker,
+            "click",
+            (function(marker, content, infowindow) {
+              return function() {
+                infowindow.setContent(content);
+                infowindow.open(map, marker);
+              };
+            })(marker, content, infowindow)
+          );
+        }
+      }
+
+      function NewFlagMarkers(map, locations) {
+        var image = {
+          url:
+            "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
+          // This marker is 20 pixels wide by 32 pixels high.
+          size: new google.maps.Size(20, 32),
+          // The origin for this image is (0, 0).
+          origin: new google.maps.Point(0, 0),
+          // The anchor for this image is the base of the flagpole at (0, 32).
+          anchor: new google.maps.Point(0, 32)
+        };
+
+        var marker, i;
+
+        for (i = 0; i < locations.length; i++) {
+          //var loan = locations[i][0]
+          //var lat = locations[i][1]
+          //var long = locations[i][2]
+          //var add = locations[i][3]
+
+          var loan = locations[i]["title"];
+          var lat = locations[i]["Blat"];
+          var long = locations[i]["Blong"];
+          var add = locations[i]["baddr"];
+
+          //{"title":'1',"Blat":"49.24859","Blong":"8.887826","baddr":'Falg 1'}
+
+          latlngset = new google.maps.LatLng(lat, long);
+
+          var marker = new google.maps.Marker({
+            map: map,
+            title: loan,
+            position: latlngset,
+            icon: image
+          });
+          map.setCenter(marker.getPosition());
+
+          var content = add; //"Loan Number: " + loan + '</h3>' + "Address: " + add
+
+          var infowindow = new google.maps.InfoWindow();
+
+          google.maps.event.addListener(
+            marker,
+            "click",
+            (function(marker, content, infowindow) {
+              return function() {
+                infowindow.setContent(content);
+                infowindow.open(map, marker);
+              };
+            })(marker, content, infowindow)
+          );
+        }
+      }
+    </script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&callback=initMap"
+    ></script>
+  </body>
+</html>

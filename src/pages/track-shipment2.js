@@ -990,7 +990,7 @@ class TrackShipment2 extends Component {
               <div className="row">
                 <div className="col-md-7 p-0">
                   <div className="title-sect">
-                    <h2>Details View</h2>
+                    <h2>Track Shipment - {detailsData.HBLNO}</h2>
                     {/* {Watchlist} */}
                   </div>
                   <ul className="nav cust-tabs" role="tablist">

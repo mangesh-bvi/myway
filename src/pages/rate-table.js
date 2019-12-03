@@ -13,7 +13,7 @@ import ReactTable from "react-table";
 import maersk from "./../assets/img/maersk.png";
 import CancelImg from "./../assets/img/close.png";
 import Select from "react-select";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import Autocomplete from "react-google-autocomplete";
 import {
   withScriptjs,
@@ -21,13 +21,13 @@ import {
   GoogleMap,
   Marker
 } from "react-google-maps";
-import GreenIcon from "./../assets/img/green-circle.png";
-import RedIcon from "./../assets/img/red-circle.png";
+// import GreenIcon from "./../assets/img/green-circle.png";
+// import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
-import $ from "jquery";
+// import $ from "jquery";
 import { encryption } from "../helpers/encryption";
-import { parse } from "path";
+// import { parse } from "path";
 import {
   NotificationContainer,
   NotificationManager
@@ -224,7 +224,9 @@ class RateTable extends Component {
       Currency: "",
       ChargeableWeight: 0,
       RateQueryDim: [],
-      cbmVal: ""
+      cbmVal: "",
+      errorPOL:"",
+      errorPOD:""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -424,7 +426,6 @@ class RateTable extends Component {
       polFilterArray: this.state.polFilterArray
       //modalQuant: !prevState.modalQuant
     }));
-
     this.HandleMultiPOLPODFilter();
   }
 
@@ -535,7 +536,8 @@ class RateTable extends Component {
     });
   }
   else{
-    NotificationManager.error("Please select atleast one Rate");
+    //NotificationManager.error("Please select atleast one Rate");
+    alert("Please select atleast one Rate");
   }
   }
 
@@ -1045,6 +1047,7 @@ class RateTable extends Component {
                 }
                 mapElement={<div />}
                 loadingElement={<div style={{ height: `100%` }} />}
+                id={"POL" + (index + 1)}
               ></AutoCompletePOLMaps>
             )}
 
@@ -1756,60 +1759,96 @@ class RateTable extends Component {
   HandleAddressDropdownPolSelect(e, field, i, value, id) {
     let multiFields = this.state.multiFields;
     multiFields[field] = value;
+    var arrPOL = "";
+    var arrPOD = "";
+    
     if (field === "pol" + i) {
-      if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
-        var geoCoordinate = id.GeoCoordinate.split(",");
-        var PositionPOL = new Object();
-        PositionPOL.lat = parseFloat(geoCoordinate[0]);
-        PositionPOL.lng = parseFloat(geoCoordinate[1]);
-        this.state.mapPositionPOL.push({
-          lat: PositionPOL.lat,
-          lng: PositionPOL.lng
-        });
-        this.state.polArray.push({
-          POL: id.UNECECode,
-          POLGeoCordinate: id.GeoCoordinate,
-          Address: value,
-          IsFilter: true
-        });
+      for (let i = 0; i < this.state.polArray.length; i++) {
+        arrPOL += this.state.polArray[i].Address + ",";
+      }
+      if (!arrPOL.includes(value)) {
+        if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+          var geoCoordinate = id.GeoCoordinate.split(",");
+          var PositionPOL = new Object();
+          PositionPOL.lat = parseFloat(geoCoordinate[0]);
+          PositionPOL.lng = parseFloat(geoCoordinate[1]);
+          this.state.mapPositionPOL.push({
+            lat: PositionPOL.lat,
+            lng: PositionPOL.lng
+          });
+          this.state.polArray.push({
+            POL: id.UNECECode,
+            POLGeoCordinate: id.GeoCoordinate,
+            Address: value,
+            IsFilter: true
+          });
+          this.setState({
+            polfullAddData: id,
+            multiFields,
+            mapPositionPOL: this.state.mapPositionPOL,
+            polArray: this.state.polArray
+          });
+        }
+      }
+      else{
+        multiFields[field] = "";
+        this.state.errorPOL = value+" already exist";
         this.setState({
-          polfullAddData: id,
           multiFields,
-          mapPositionPOL: this.state.mapPositionPOL,
-          polArray: this.state.polArray
+          errorPOL:this.state.errorPOL
         });
       }
     } else {
-      if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
-        var PositionPOD = [];
-        var geoCoordinate = id.GeoCoordinate.split(",");
-        var mapPositionPOD = new Object();
-        mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
-        mapPositionPOD.lng = parseFloat(geoCoordinate[1]);
-        this.state.markerPositionPOD.push({
-          lat: mapPositionPOD.lat,
-          lng: mapPositionPOD.lng
-        });
-        this.state.podArray.push({
-          POD: id.UNECECode,
-          PODGeoCordinate: id.GeoCoordinate,
-          Address: value,
-          IsFilter: true
-        });
+      for (let i = 0; i < this.state.podArray.length; i++) {
+        arrPOD += this.state.podArray[i].Address + ",";
+      }
+      if (!arrPOD.includes(value)) {
+        if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+          var PositionPOD = [];
+          var geoCoordinate = id.GeoCoordinate.split(",");
+          var mapPositionPOD = new Object();
+          mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
+          mapPositionPOD.lng = parseFloat(geoCoordinate[1]);
+          this.state.markerPositionPOD.push({
+            lat: mapPositionPOD.lat,
+            lng: mapPositionPOD.lng
+          });
+          this.state.podArray.push({
+            POD: id.UNECECode,
+            PODGeoCordinate: id.GeoCoordinate,
+            Address: value,
+            IsFilter: true
+          });
+          
+          this.setState({
+            podfullAddData: id,
+            multiFields,
+            markerPositionPOD: this.state.markerPositionPOD,
+            podArray: this.state.podArray
+          });
+        }
+      }else{
+        multiFields[field] = "";
+        this.state.errorPOD = value+" already exist";
         this.setState({
-          podfullAddData: id,
           multiFields,
-          markerPositionPOD: this.state.markerPositionPOD,
-          podArray: this.state.podArray
+          errorPOD:this.state.errorPOD
         });
       }
     }
   }
+  
 
   onPlaceSelected = place => {
     console.log("plc", place);
+    var arrPOL = "";
+    for (let i = 0; i < this.state.polArray.length; i++) {
+      arrPOL += this.state.polArray[i].Address + ",";
+    }
+    if (!arrPOL.includes(place.formatted_address)) {
     const address = place.formatted_address,
       addressArray = place.address_components,
+ 
       // city = this.getCity(addressArray),
       // area = this.getArea(addressArray),
       // state = this.getState(addressArray),
@@ -1859,10 +1898,22 @@ class RateTable extends Component {
       // }
     });
     //this.addressChange("puAdd", address);
+  }else{
+    //multiFields[field] = "";
+    this.state.errorPOL = place.formatted_address+" already exist";
+    this.setState({
+      errorPOL:this.state.errorPOL
+    });
+  }
   };
 
   onPlaceSelectedPOD = place => {
     console.log("plc", place);
+    var arrPOD = "";
+    for (let i = 0; i < this.state.podArray.length; i++) {
+      arrPOD += this.state.podArray[i].Address + ",";
+    }
+    if (!arrPOD.includes(place.formatted_address)) {
     const address = place.formatted_address,
       addressArray = place.address_components,
       // city = this.getCity(addressArray),
@@ -1915,6 +1966,13 @@ class RateTable extends Component {
       //   lng: Number(lngValue)
       // }
     });
+    }
+    else{
+      this.state.errorPOD = place.formatted_address+" already exist";
+      this.setState({
+        errorPOD:this.state.errorPOD
+      });
+    }
     //this.addressChange("", address);
   };
 
@@ -2689,11 +2747,11 @@ class RateTable extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
+          <NotificationContainer />
           {this.state.loading === true ? (
             <div className="loader-icon"></div>
           ) : (
             <div className="cls-rt no-bg min-hei-auto">
-              <NotificationContainer />
               <div className="rate-table-header">
                 <div className="title-sect">
                   <h2>Rate Table</h2>
@@ -2903,6 +2961,7 @@ class RateTable extends Component {
                           </div>
                           <div className="pol-pod">
                             <span>POD</span>
+                            
                             {this.state.podFilterArray.map((mapPOD, index) => (
                               <div className="d-flex">
                                 <input
@@ -2985,7 +3044,7 @@ class RateTable extends Component {
                       </button>
                     </div>
                   </div>
-
+                   
                   {this.state.RateDetails.length > 0 ? (
                     <div className="col-md-9 react-rate-table react-rate-tab">
                       <ReactTable
@@ -3543,6 +3602,10 @@ class RateTable extends Component {
               >
                 <ModalBody>
                   <div className="pol-mar">
+                  <span style={{ color: "red" }}>
+                      {this.state.errorPOL}
+                  </span>
+                  
                     {/* <div className="rename-cntr login-fields position-relative"> */}
                     {this.createUIPOL()}
 
@@ -3555,7 +3618,7 @@ class RateTable extends Component {
                     className="butn cancel-butn"
                     onClick={this.togglePOLModal}
                   >
-                    Cancel
+                    Close
                   </Button>
                 </ModalBody>
               </Modal>
@@ -3570,6 +3633,9 @@ class RateTable extends Component {
               >
                 <ModalBody>
                   <div className="pol-mar">
+                    <span style={{ color: "red" }}>
+                        {this.state.errorPOD}
+                    </span>
                     <div>{this.createUIPOD()}</div>
                   </div>
                   <Button className="butn" onClick={this.toggleQuantPODSave}>
@@ -3579,7 +3645,7 @@ class RateTable extends Component {
                     className="butn cancel-butn"
                     onClick={this.togglePODModal}
                   >
-                    Cancel
+                    Close
                   </Button>
                 </ModalBody>
               </Modal>

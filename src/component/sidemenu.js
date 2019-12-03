@@ -84,10 +84,14 @@ class SideMenu extends Component {
 
     var urlShipSum = window.location.pathname;
     window.localStorage.setItem("defActKey", "0");
-    if (urlShipSum === "/rate-search") {
+    if (encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User" && urlShipSum === "/rate-search") {
       window.localStorage.setItem("defActKey", "1");
       this.state.activeRateSearch = "rate-active";
-    } else if (urlShipSum === "/spot-rate-table") {
+    } 
+    else if (encryption(window.localStorage.getItem("usertype"), "desc")==="Customer" && urlShipSum === "/new-rate-search") {
+      window.localStorage.setItem("defActKey", "1");
+      this.state.activeRateSearch = "rate-active";
+    }else if (urlShipSum === "/spot-rate-table") {
       window.localStorage.setItem("defActKey", "1");
       this.state.activeSpotList = "rate-active";
     } else {
@@ -364,6 +368,7 @@ class SideMenu extends Component {
             >
               <Card>
                 <Card.Header>
+                {encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User"?(
                   <Link to="/rate-search" style={{ display: "block" }}>
                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
                       <img
@@ -373,14 +378,25 @@ class SideMenu extends Component {
                       />
                       Rates
                     </Accordion.Toggle>
-                  </Link>
+                  </Link>):(
+                  <Link to="/new-rate-search" style={{ display: "block" }}>
+                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                      <img
+                        src={RatesIcon}
+                        alt="green-counter-icon"
+                        className="header-greencounter-icon"
+                      />
+                      Rates
+                    </Accordion.Toggle>
+                  </Link>)}
                 </Card.Header>
                 <Accordion.Collapse eventKey="1">
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
                         {/* <label className="shipment-ul-lilbl1">Rate Search</label> */}
-                        <a
+                      {encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User"?
+                        (<a
                           href="rate-search"
                           className={this.state.activeRateSearch}
                         >
@@ -390,7 +406,20 @@ class SideMenu extends Component {
                             className="header-greencounter-icon"
                           /> */}
                           Rate Search
-                        </a>
+                        </a>):
+                        
+                          (<a
+                          href="new-rate-search"
+                          className={this.state.activeRateSearch}
+                        >
+                          <img
+                            src={RatesIcon}
+                            alt="green-counter-icon"
+                            className="header-greencounter-icon"
+                          />
+                          Rate Search
+                        </a>)}
+
                       </li>
                       <li>
                         <a

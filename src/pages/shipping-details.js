@@ -66,7 +66,8 @@ class ShippingDetails extends Component {
       mapDis: "block",
       copied: false,
       // shareLink: "http://myway.demo.brainvire.net/shipment-details?hblno=",
-      shareLink: "http://myway.demo.brainvire.net/track-shipment2?",
+      shareLink: "http://mywayqa.demo.brainvire.net/track-shipment2?",
+      //shareLink: "http://localhost:3000/track-shipment2?",
       filterAll: "",
       filtered: [],
       modalAdvSearch: false,
@@ -161,6 +162,7 @@ class ShippingDetails extends Component {
     } else this.setState({ filtered });
   }
   filterAll(e) {
+    debugger;
     const { value } = e.target;
     const filterAll = value;
     const filtered = [{ id: "all", value: filterAll }];
@@ -556,6 +558,7 @@ class ShippingDetails extends Component {
         shipmentSummary: self.state.shipmentSummary
       }));
     });
+    this.handleAdvanceSearchModalClose();
   };
 
   handleValidation() {
