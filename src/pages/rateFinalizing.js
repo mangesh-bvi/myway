@@ -2549,17 +2549,22 @@ class RateFinalizing extends Component {
                                         Header: "Unit Price",
                                         accessor: "Rate",
                                         Cell: props => (
+                                          // <React.Fragment>
+                                          //   {row.original.Rate != undefined
+                                          //     ? props.original.Rate
+                                          //     : props.original.Amount == null
+                                          //     ? "0"
+                                          //     : props.original.Amount}
+                                          //   &nbsp;
+                                          //   {row.original.Currency != undefined
+                                          //     ? props.original.Currency
+                                          //     : ""}
+                                          // </React.Fragment>
                                           <React.Fragment>
-                                            {row.original.Rate != undefined
-                                              ? props.original.Rate
-                                              : props.original.Amount == null
-                                              ? "0"
-                                              : props.original.Amount}
-                                            &nbsp;
-                                            {row.original.Currency != undefined
-                                              ? props.original.Currency
-                                              : ""}
-                                          </React.Fragment>
+                                          {props.original.Rate}
+                                          &nbsp;
+                                          {props.original.Currency}
+                                        </React.Fragment>
                                         )
                                       },
                                       {
@@ -2583,11 +2588,11 @@ class RateFinalizing extends Component {
                                               {row.original.TotalAmount !=
                                               undefined
                                                 ? row.original.TotalAmount !==
-                                                    "" &&
+                                                    " " &&
                                                   row.original.TotalAmount !==
                                                     null
                                                   ? row.original.TotalAmount +
-                                                    "" +
+                                                    " " +
                                                     row.original.BaseCurrency
                                                   : ""
                                                 : row.original.Total}
@@ -2664,19 +2669,24 @@ class RateFinalizing extends Component {
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
-                              HazMat &amp; Unstackable
+                              HazMat
                             </p>
                             <p className="details-para">
-                              {this.state.HazMat === true ? "True " : "False "}&{" "}
-                              {this.state.NonStackable === true
-                                ? "True"
-                                : "False"}
+                              {this.state.HazMat === true ? "Yes " : "No"}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Non Stackable</p>
+                            <p className="details-para">
+                            {this.state.NonStackable === true
+                                ? "Yes"
+                                : "No"}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
-                              {this.state.incoTerms}
+                              {this.state.incoTerm}
                             </p>
                           </div>
                           <div className="col-md-4">
@@ -2809,7 +2819,7 @@ class RateFinalizing extends Component {
                           //   accessor: "Temperature"
                           // },
                           {
-                            Header: "CBM",
+                            Header: this.state.containerLoadType.toUpperCase() == "LCL"?"CBM":"Chargable Weight",
                             accessor: "CBM"
                             //show:  this.state.containerLoadType == "Air" ? false : true
                           },

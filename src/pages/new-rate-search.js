@@ -2922,7 +2922,7 @@ class NewRateSearch extends Component {
                               className="d-flex flex-column align-items-center"
                               htmlFor="exist-cust"
                             >
-                              ALL
+                              Dimensions
                             </label>
                           </div>
                           <div>
@@ -3247,6 +3247,7 @@ class NewRateSearch extends Component {
                       </>
                     ) : null}
                   </div>
+                  {this.state.shipmentType.toLowerCase() != "domestic"?(
                   <div className="spe-equ justify-content-center">
                     <label>Inco Terms :</label>
                     <input
@@ -3257,7 +3258,7 @@ class NewRateSearch extends Component {
                       name="incoTerms"
                       value={self.state.incoTerms}
                     />
-                  </div>
+                  </div>):null}
                 </div>
               </div>
 
