@@ -3297,7 +3297,7 @@ class RateTable extends Component {
                         // }}
                         data={this.state.tempRateDetails}
                         defaultPageSize={10}
-                        className="-striped -highlight"
+                        className="-striped -highlight no-mid-align"
                         minRows={1}
                         SubComponent={row => {
                           return (

@@ -23,6 +23,8 @@ class SideMenu extends Component {
       activeRateSearch: "",
       activeSpotList: ""
     };
+
+    this.highlightClass = this.highlightClass.bind(this);
   }
 
   clickShipmentType(e) {
@@ -41,6 +43,7 @@ class SideMenu extends Component {
     } else {
       window.location.href = "quote-table?Qtype=" + value;
     }
+    // this.highlightClass();
   }
 
   highlightClass(e) {
@@ -84,14 +87,21 @@ class SideMenu extends Component {
 
     var urlShipSum = window.location.pathname;
     window.localStorage.setItem("defActKey", "0");
-    if (encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User" && urlShipSum === "/rate-search") {
+    if (
+      encryption(window.localStorage.getItem("usertype"), "desc") ===
+        "Sales User" &&
+      urlShipSum === "/rate-search"
+    ) {
       window.localStorage.setItem("defActKey", "1");
       this.state.activeRateSearch = "rate-active";
-    } 
-    else if (encryption(window.localStorage.getItem("usertype"), "desc")==="Customer" && urlShipSum === "/new-rate-search") {
+    } else if (
+      encryption(window.localStorage.getItem("usertype"), "desc") ===
+        "Customer" &&
+      urlShipSum === "/new-rate-search"
+    ) {
       window.localStorage.setItem("defActKey", "1");
       this.state.activeRateSearch = "rate-active";
-    }else if (urlShipSum === "/spot-rate-table") {
+    } else if (urlShipSum === "/spot-rate-table") {
       window.localStorage.setItem("defActKey", "1");
       this.state.activeSpotList = "rate-active";
     } else {
@@ -112,8 +122,8 @@ class SideMenu extends Component {
           <li className="sidemenu-ul-li">
             <Link
               to="/dashboard"
-              className="side-menus active-menu"
-              // onClick={this.highlightClass.bind(this)}
+              className="side-menus"
+              onClick={this.highlightClass.bind(this)}
             >
               <img
                 src={DashboardIcon}
@@ -123,7 +133,10 @@ class SideMenu extends Component {
               Dashboard
             </Link>
           </li>
-          <li className="sidemenu-ul-li shipmentli">
+          <li
+            className="sidemenu-ul-li shipmentli"
+            onClick={this.highlightClass.bind(this)}
+          >
             {/* <Link to="/quote-table">
               <img
                 src={QuotesIcon}
@@ -296,7 +309,10 @@ class SideMenu extends Component {
             ) {
               return (
                 <li className="sidemenu-ul-li">
-                  <Link to="/shipment-planner">
+                  <Link
+                    to="/shipment-planner"
+                    onClick={this.highlightClass.bind(this)}
+                  >
                     <img
                       src={ShipmentPlannerIcon}
                       alt="green-counter-icon"
@@ -368,58 +384,66 @@ class SideMenu extends Component {
             >
               <Card>
                 <Card.Header>
-                {encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User"?(
-                  <Link to="/rate-search" style={{ display: "block" }}>
-                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                      <img
-                        src={RatesIcon}
-                        alt="green-counter-icon"
-                        className="header-greencounter-icon"
-                      />
-                      Rates
-                    </Accordion.Toggle>
-                  </Link>):(
-                  <Link to="/new-rate-search" style={{ display: "block" }}>
-                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                      <img
-                        src={RatesIcon}
-                        alt="green-counter-icon"
-                        className="header-greencounter-icon"
-                      />
-                      Rates
-                    </Accordion.Toggle>
-                  </Link>)}
+                  {encryption(
+                    window.localStorage.getItem("usertype"),
+                    "desc"
+                  ) === "Sales User" ? (
+                    <Link to="/rate-search" style={{ display: "block" }}>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        <img
+                          src={RatesIcon}
+                          alt="green-counter-icon"
+                          className="header-greencounter-icon"
+                        />
+                        Rates
+                      </Accordion.Toggle>
+                    </Link>
+                  ) : (
+                    <Link to="/new-rate-search" style={{ display: "block" }}>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        <img
+                          src={RatesIcon}
+                          alt="green-counter-icon"
+                          className="header-greencounter-icon"
+                        />
+                        Rates
+                      </Accordion.Toggle>
+                    </Link>
+                  )}
                 </Card.Header>
                 <Accordion.Collapse eventKey="1">
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
                         {/* <label className="shipment-ul-lilbl1">Rate Search</label> */}
-                      {encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User"?
-                        (<a
-                          href="rate-search"
-                          className={this.state.activeRateSearch}
-                        >
-                          {/* <img
+                        {encryption(
+                          window.localStorage.getItem("usertype"),
+                          "desc"
+                        ) === "Sales User" ? (
+                          <a
+                            href="rate-search"
+                            className={this.state.activeRateSearch}
+                          >
+                            {/* <img
                             src={RatesIcon}
                             alt="green-counter-icon"
                             className="header-greencounter-icon"
                           /> */}
-                          Rate Search
-                        </a>):
-                        
-                          (<a
-                          href="new-rate-search"
-                          className={this.state.activeRateSearch}
-                        >
-                          <img
-                            src={RatesIcon}
-                            alt="green-counter-icon"
-                            className="header-greencounter-icon"
-                          />
-                          Rate Search
-                        </a>)}
-
+                            Rate Search
+                          </a>
+                        ) : (
+                          <a
+                            href="new-rate-search"
+                            className={this.state.activeRateSearch}
+                          >
+                            <img
+                              src={RatesIcon}
+                              alt="green-counter-icon"
+                              className="header-greencounter-icon"
+                            />
+                            Rate Search
+                          </a>
+                        )}
                       </li>
                       <li>
                         <a
@@ -444,7 +468,7 @@ class SideMenu extends Component {
             <Link
               to="/analytics"
               className="side-menus"
-              // onClick={this.highlightClass.bind(this)}
+              onClick={this.highlightClass.bind(this)}
             >
               <img
                 src={AnalyticsIcon}
