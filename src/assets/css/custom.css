@@ -1824,6 +1824,14 @@ table tbody tr:last-child {
 .pac-container {
   z-index: 9999;
 }
+.no-mid-align .rt-tr {
+  align-items: initial !important;
+}
+.no-mid-align .rt-tr .rt-td:first-child,
+.no-mid-align .rt-tr .rt-td.rt-expandable + .rt-td {
+  display: flex;
+  align-items: center;
+}
 /* rate table ends */
 
 /* spot rate starts */
@@ -2285,6 +2293,13 @@ table tbody tr:last-child {
 }
 /* reports ends */
 
+/* side menu starts */
+.active-menu {
+  background-color: #002d73 !important;
+  color: #4e87df !important;
+}
+/* side menu ends */
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
@@ -2444,7 +2459,7 @@ table tbody tr:last-child {
   cursor: pointer;
 }
 .sidemenu-ul-li {
-  padding: 6px 10px;
+  /* padding: 6px 10px; */
   border-bottom: 0.5px solid #265eb5;
   color: white;
   font-weight: 400;
@@ -2731,6 +2746,7 @@ table tbody tr:last-child {
   color: #fff;
   display: inline-block;
   width: 100%;
+  padding: 6px 10px;
 }
 
 .greenchart-img {
@@ -3261,94 +3277,94 @@ table tbody tr:last-child {
   font-size: 18px;
   padding: 20px 0;
 }
-  .firstbox {
-    background: #ffffff;
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  .firstbox label {
-    display: block;
-    color: #8f8f8f;
-    font-weight: 600;
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-  .firstbox h3 {
-    font-size: 18px;
-    font-weight: 600;
-    padding: 0;
-    margin-bottom: 15px;
-    background: transparent;
-    color: #333;
-  }
-  .firstbox h3 span {
-      color: #0042a9;
-  }
-  .firstbox label span {
-    color: #333333;
-  }
-  .secondbox {
-    background: #ffffff;
-      padding: 20px;
-    margin-bottom: 20px;
-  }
-  .secondbox label {
-    display: block;
-    color: #8f8f8f;
-    margin-bottom: 5px;
-    font-weight: 600;
-    font-size: 14px;
-  }
-  .secondbox h3 {
-    font-size: 18px;
-    font-weight: 600;
-    padding: 0;
-    margin-bottom: 15px;
-    background: transparent;
-    color: #333;
+.firstbox {
+  background: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
 }
-  .secondbox h3 span {
-      color: #0042a9;
-  }
-  .secondbox label span {
-    color: #333333;
-  }
-  /* .secondbox hr {
+.firstbox label {
+  display: block;
+  color: #8f8f8f;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+.firstbox h3 {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 15px;
+  background: transparent;
+  color: #333;
+}
+.firstbox h3 span {
+  color: #0042a9;
+}
+.firstbox label span {
+  color: #333333;
+}
+.secondbox {
+  background: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.secondbox label {
+  display: block;
+  color: #8f8f8f;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.secondbox h3 {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 15px;
+  background: transparent;
+  color: #333;
+}
+.secondbox h3 span {
+  color: #0042a9;
+}
+.secondbox label span {
+  color: #333333;
+}
+/* .secondbox hr {
   } */
-  
-  .thirdbox {
-    background: #ffffff;
-    margin-bottom: 20px;
-  }
-  .thirdbox h3 {
-    font-size: 18px;
-    font-weight: 600;
-    padding: 20px 20px 0;
-    margin-bottom: 15px;
-    color: #333;
-    background: transparent;
+
+.thirdbox {
+  background: #ffffff;
+  margin-bottom: 20px;
 }
-  .thirdbox .table-responsive {
-      display: table;
-  }
-  .thirdbox table thead {
-      background: #cbcbcb;
-      font-size: 12px;
-  }
-  .thirdbox table tbody {
-      font-size: 12px;
-  }
-  .totalbox {
-    margin-bottom: 0 !important;
-  }
-  .totalbox table {
-    margin-bottom: 0;
-  }
-  .totalbox table th {
-      font-size: 16px;
-      width: 50px;
-  }
-  /* .row1 {
+.thirdbox h3 {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 20px 20px 0;
+  margin-bottom: 15px;
+  color: #333;
+  background: transparent;
+}
+.thirdbox .table-responsive {
+  display: table;
+}
+.thirdbox table thead {
+  background: #cbcbcb;
+  font-size: 12px;
+}
+.thirdbox table tbody {
+  font-size: 12px;
+}
+.totalbox {
+  margin-bottom: 0 !important;
+}
+.totalbox table {
+  margin-bottom: 0;
+}
+.totalbox table th {
+  font-size: 16px;
+  width: 50px;
+}
+/* .row1 {
     display: flex;
     margin-right: -15px;
     margin-left: -16px;
@@ -3631,17 +3647,17 @@ img {
 }
 /* rate-table css End by Shlok */
 /* Quote css start by Shlok */
-.quote-txt-srch{
+.quote-txt-srch {
   border: 0;
-    letter-spacing: 0.5px;
-    background-color: #f1f2f2;
-    padding: 8px 15px;
-    font-family: "Medium Font";
-    font-size: 14px;
-    width: 250px;
-    display: inline-block;
-    float: right;
-    margin-top: -45px;
-    margin-right: 15px;
+  letter-spacing: 0.5px;
+  background-color: #f1f2f2;
+  padding: 8px 15px;
+  font-family: "Medium Font";
+  font-size: 14px;
+  width: 250px;
+  display: inline-block;
+  float: right;
+  margin-top: -45px;
+  margin-right: 15px;
 }
 /* Quote css end by Shlok */
