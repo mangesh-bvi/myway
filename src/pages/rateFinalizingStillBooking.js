@@ -87,7 +87,10 @@ class RateFinalizingStillBooking extends Component {
       salesQuotaNo: "",
       isInsert: false,
       nPartyID: 0,
-      isView: false
+      isView: false,
+      EquipmentTypes: "",
+      HazMat: "",
+      Unstackable: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -206,14 +209,15 @@ class RateFinalizingStillBooking extends Component {
       if (Booking[0].TypeOfMove === "Door To Door") {
         typeofMove = "Door To Door";
       }
-
+      var EquipmentTypes = QuotationData[0].ContainerCode || "";
       var selectedCommodity = QuotationData[0].Commodity;
       self.setState({
         QuotationData,
         QuotationSubData,
         Booking,
         typeofMove,
-        selectedCommodity
+        selectedCommodity,
+        EquipmentTypes
       });
     });
   }
@@ -810,20 +814,13 @@ class RateFinalizingStillBooking extends Component {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
             var nPartyID = QuotationData[0].NotifyID;
 
-            // var selectedCommodity = QuotationData[0].Commodity;
             self.setState({
               QuotationData,
               QuotationSubData,
               Booking,
               nPartyID
-              // fields: {
-              //   Consignee: Booking[0].Consignee_Name,
-              //   Shipper: Booking[0].Shipper_Name
-              // }
-              // selectedCommodity
             });
           }
-          // HandleChangeCon();
         }
         if (typeof eqmtType !== "undefined") {
           if (eqmtType.length > 0) {
@@ -2055,7 +2052,9 @@ class RateFinalizingStillBooking extends Component {
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para"> </p>
+                            <p className="details-para">
+                              {this.state.EquipmentTypes}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
@@ -2065,12 +2064,18 @@ class RateFinalizingStillBooking extends Component {
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
+                            <p className="details-para">
+                              {/* {this.state.EquipmentTypes} */}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].Incoterm : ""}
                               {Booking.length > 0 ? Booking[0].IncoTerm : ""}
+                              {this.state.QuotationData.length > 0
+                                ? this.state.QuotationData[0].IncoTerm
+                                : ""}
                             </p>
                           </div>
                           <div className="col-md-4">

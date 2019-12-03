@@ -2001,10 +2001,16 @@ class RateFinalizing extends Component {
                                     <>
                                       <p className="details-title">POL</p>
                                       <p
-                                        title={row.original.POLName == undefined ? row.original.POL : row.original.POLName}
+                                        title={
+                                          row.original.POLName == undefined
+                                            ? row.original.POL
+                                            : row.original.POLName
+                                        }
                                         className="details-para max2"
                                       >
-                                        {row.original.POLName == undefined ? row.original.POL : row.original.POLName}
+                                        {row.original.POLName == undefined
+                                          ? row.original.POL
+                                          : row.original.POLName}
                                       </p>
                                     </>
                                   );
@@ -2019,10 +2025,16 @@ class RateFinalizing extends Component {
                                     <>
                                       <p className="details-title">POD</p>
                                       <p
-                                        title={row.original.PODName == undefined ? row.original.POD : row.original.PODName}
+                                        title={
+                                          row.original.PODName == undefined
+                                            ? row.original.POD
+                                            : row.original.PODName
+                                        }
                                         className="details-para max2"
                                       >
-                                        {row.original.PODName  == undefined ? row.original.POD : row.original.PODName}
+                                        {row.original.PODName == undefined
+                                          ? row.original.POD
+                                          : row.original.PODName}
                                       </p>
                                     </>
                                   );
@@ -2084,7 +2096,7 @@ class RateFinalizing extends Component {
                                       <p className="details-para">
                                         {new Date(
                                           row.original.expiryDate ||
-                                          row.original.ExpiryDate
+                                            row.original.ExpiryDate
                                         ).toLocaleDateString("en-US")}
                                       </p>
                                     </>
@@ -2114,16 +2126,16 @@ class RateFinalizing extends Component {
                                     <>
                                       <p className="details-title">Price</p>
                                       <p className="details-para">
-                                        {
-                                        row.original.TotalAmount !== undefined ?
-                                        row.original.TotalAmount !== "" &&
-                                          row.original.TotalAmount !== null
-                                          ? row.original.TotalAmount +
-                                        0 +
-                                          row.original.BaseCurrency
-                                          : 0
-                                        : row.original.Total === undefined ? 0 : row.original.Total
-                                        }
+                                        {row.original.TotalAmount !== undefined
+                                          ? row.original.TotalAmount !== "" &&
+                                            row.original.TotalAmount !== null
+                                            ? row.original.TotalAmount +
+                                              0 +
+                                              row.original.BaseCurrency
+                                            : 0
+                                          : row.original.Total === undefined
+                                          ? 0
+                                          : row.original.Total}
                                       </p>
                                     </>
                                   );
@@ -2142,7 +2154,7 @@ class RateFinalizing extends Component {
                             resizable: false,
                             sortable: false,
                             filterAll: true,
-                            Filter: () => { },
+                            Filter: () => {},
                             getProps: () => {
                               return {
                                 // style: { padding: "0px"}
@@ -2188,20 +2200,23 @@ class RateFinalizing extends Component {
                               <ReactTable
                                 minRows={1}
                                 data={
-                                  row.original.SaleQuoteIDLineID == undefined ?
-                                  row.original.RateLineId == undefined ? this.state.rateSubDetails.filter(
-                                  d =>
-                                    d.RateLineID === row.original.RateLineID
-                                ) :
-                                  this.state.rateSubDetails.filter(
-                                    d =>
-                                      d.RateLineID === row.original.RateLineId
-                                  )
-                                  :
-                                  this.state.rateSubDetails.filter(
-                                    d =>
-                                      d.SaleQuoteIDLineID === row.original.SaleQuoteIDLineID
-                                  )
+                                  row.original.SaleQuoteIDLineID == undefined
+                                    ? row.original.RateLineId == undefined
+                                      ? this.state.rateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineID
+                                        )
+                                      : this.state.rateSubDetails.filter(
+                                          d =>
+                                            d.RateLineID ===
+                                            row.original.RateLineId
+                                        )
+                                    : this.state.rateSubDetails.filter(
+                                        d =>
+                                          d.SaleQuoteIDLineID ===
+                                          row.original.SaleQuoteIDLineID
+                                      )
                                 }
                                 columns={[
                                   {
@@ -2212,11 +2227,13 @@ class RateFinalizing extends Component {
                                         Cell: row => {
                                           return (
                                             <>
-                                             {row.original.ChargeType != undefined ?
-                                                 row.original.ChargeType
-                                                : row.original.Type }
+                                              {row.original.ChargeType !=
+                                              undefined
+                                                ? row.original.ChargeType
+                                                : row.original.Type}
                                             </>
-                                        );}
+                                          );
+                                        }
                                       },
                                       {
                                         Header: "C. Name",
@@ -2227,10 +2244,15 @@ class RateFinalizing extends Component {
                                         accessor: "Rate",
                                         Cell: props => (
                                           <React.Fragment>
-
-                                            { row.original.Rate != undefined ? props.original.Rate : props.original.Amount == null ? "0" : props.original.Amount }
+                                            {row.original.Rate != undefined
+                                              ? props.original.Rate
+                                              : props.original.Amount == null
+                                              ? "0"
+                                              : props.original.Amount}
                                             &nbsp;
-                                          { row.original.Currency != undefined ? props.original.Currency : ""}
+                                            {row.original.Currency != undefined
+                                              ? props.original.Currency
+                                              : ""}
                                           </React.Fragment>
                                         )
                                       },
@@ -2252,13 +2274,16 @@ class RateFinalizing extends Component {
                                         Cell: row => {
                                           return (
                                             <>
-                                              {row.original.TotalAmount != undefined ?
-                                              row.original.TotalAmount !== "" &&
-                                                row.original.TotalAmount !== null
-                                                ? row.original.TotalAmount +
-                                                "" +
-                                                row.original.BaseCurrency
-                                                : ""
+                                              {row.original.TotalAmount !=
+                                              undefined
+                                                ? row.original.TotalAmount !==
+                                                    "" &&
+                                                  row.original.TotalAmount !==
+                                                    null
+                                                  ? row.original.TotalAmount +
+                                                    "" +
+                                                    row.original.BaseCurrency
+                                                  : ""
                                                 : row.original.Total}
                                             </>
                                           );
@@ -2330,17 +2355,22 @@ class RateFinalizing extends Component {
                                 {item.TypeName}
                               </p>
                             ))}
-
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
                             <p className="details-para">
-                              {this.state.HazMat === true ? "True " : "False "}&{" "}
-                              {this.state.NonStackable === true
-                                ? "True"
-                                : "False"}
+                              {typeof this.state.HazMat !== undefined
+                                ? this.state.HazMat === true
+                                  ? "True "
+                                  : "False"
+                                : ""}
+                              {typeof this.state.NonStackable !== undefined
+                                ? this.state.NonStackable === true
+                                  ? "True"
+                                  : "False"
+                                : ""}
                             </p>
                           </div>
                           <div className="col-md-4">
@@ -2355,42 +2385,46 @@ class RateFinalizing extends Component {
                               {this.state.typeofMove === 1
                                 ? "Port 2 Port"
                                 : this.state.typeofMove === 2
-                                  ? "Door 2 Port"
-                                  : this.state.typeofMove === 3
-                                    ? "Port 2 Door"
-                                    : this.state.typeofMove === 4
-                                      ? "Door 2 Door"
-                                      : ""}
+                                ? "Door 2 Port"
+                                : this.state.typeofMove === 3
+                                ? "Port 2 Door"
+                                : this.state.typeofMove === 4
+                                ? "Door 2 Door"
+                                : ""}
                             </p>
                           </div>
                           {this.state.isediting && (
-                          <div className="col-md-4">
-                            <p className="details-title">POL</p>
-                            <p className="details-para">{this.state.polfullAddData.NameWoDiacritics}</p>
-                          </div>
-                           )}
+                            <div className="col-md-4">
+                              <p className="details-title">POL</p>
+                              <p className="details-para">
+                                {this.state.polfullAddData.NameWoDiacritics}
+                              </p>
+                            </div>
+                          )}
                           {this.state.isediting && (
-                          <div className="col-md-4">
-                            <p className="details-title">POD</p>
-                            <p className="details-para">{this.state.podfullAddData.NameWoDiacritics}</p>
-                          </div>
-                           )}
-                           {this.state.isediting && (
-                          <div className="col-md-4">
-                            <p className="details-title">PU Address</p>
-                            <p className="details-para">
-                              {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
-                              {this.state.polfullAddData.OceanPortLongName}
-                            </p>
-                          </div>
-                           )}
-                           {this.state.isediting && (
-                          <div className="col-md-4">
-                            <p className="details-title">Delivery Address</p>
-                            <p className="details-para">
-                              {this.state.podfullAddData.OceanPortLongName}
-                            </p>
-                          </div>
+                            <div className="col-md-4">
+                              <p className="details-title">POD</p>
+                              <p className="details-para">
+                                {this.state.podfullAddData.NameWoDiacritics}
+                              </p>
+                            </div>
+                          )}
+                          {this.state.isediting && (
+                            <div className="col-md-4">
+                              <p className="details-title">PU Address</p>
+                              <p className="details-para">
+                                {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
+                                {this.state.polfullAddData.OceanPortLongName}
+                              </p>
+                            </div>
+                          )}
+                          {this.state.isediting && (
+                            <div className="col-md-4">
+                              <p className="details-title">Delivery Address</p>
+                              <p className="details-para">
+                                {this.state.podfullAddData.OceanPortLongName}
+                              </p>
+                            </div>
                           )}
                         </div>
                         <div className="row">
@@ -2401,10 +2435,9 @@ class RateFinalizing extends Component {
                                 className="butn more-padd m-0"
                               >
                                 Add Profit
-                            </button>
+                              </button>
                             )}
                           </div>
-
                         </div>
                       </div>
                     </UncontrolledCollapse>
@@ -2424,21 +2457,20 @@ class RateFinalizing extends Component {
 
                   <div className="rate-final-contr">
                     <div className="text-center">
-                    {this.state.toggleIsEdit && (
-                            <button
-                              onClick={this.toggleRequest}
-                              className="butn more-padd m-0"
-                            >
-                              Request Change
-                            </button>
-                    )}
+                      {this.state.toggleIsEdit && (
+                        <button
+                          onClick={this.toggleRequest}
+                          className="butn more-padd m-0"
+                        >
+                          Request Change
+                        </button>
+                      )}
                     </div>
 
                     <div className="title-border py-3">
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="ag-fresh redirect-row">
-
                       <ReactTable
                         data={CargoDetailsArr}
                         filterable
@@ -2467,62 +2499,61 @@ class RateFinalizing extends Component {
                           },
                           {
                             Header: "Weight",
-                            accessor: "Weight",
+                            accessor: "Weight"
                             //editable: this.state.containerLoadType == "Air" ? true : false
                           },
                           {
-
                             Header: "Temp.",
-                            accessor: "Temperature",
+                            accessor: "Temperature"
                             //show:  this.state.containerLoadType == "Air" ? false : true
                           },
                           {
-
-                            Header: "CBM" ,
-                            accessor: "CBM",
+                            Header: "CBM",
+                            accessor: "CBM"
                             //show:  this.state.containerLoadType == "Air" ? false : true
                           },
                           {
                             Header: "Action",
                             sortable: false,
-                            accessor:"Editable",
+                            accessor: "Editable",
                             Cell: row => {
                               debugger;
-                              if(row.original.Editable)
-                              {
+                              if (row.original.Editable) {
                                 return (
-
                                   <div className="action-cntr">
                                     {/* actionicon */}
-                                    <button  onClick={this.toggleEdit}>
+                                    <button onClick={this.toggleEdit}>
                                       <img
                                         className=""
                                         src={Edit}
                                         alt="booking-icon"
-                                        data-valuetype={row.original.PackageType}
-                                        data-valuequantity={row.original.Quantity}
+                                        data-valuetype={
+                                          row.original.PackageType
+                                        }
+                                        data-valuequantity={
+                                          row.original.Quantity
+                                        }
                                         data-valuelenght={row.original.Lenght}
                                         data-valuewidth={row.original.Width}
                                         data-valueheight={row.original.Height}
                                         data-valueweight={row.original.Weight}
                                         data-valuecbm={row.original.CBM}
-                                        data-valuespecialsontainersode={row.original.SpecialContainerCode}
+                                        data-valuespecialsontainersode={
+                                          row.original.SpecialContainerCode
+                                        }
                                       />
-
                                     </button>
-
-
                                   </div>
                                 );
-                                }
-                                return(<div></div>)
+                              }
+                              return <div></div>;
                             }
                           }
                         ]}
                         className="-striped -highlight"
                         defaultPageSize={2000}
-                      //getTrProps={this.HandleRowClickEvt}
-                      //minRows={1}
+                        //getTrProps={this.HandleRowClickEvt}
+                        //minRows={1}
                       />
                     </div>
                   </div>
@@ -2536,31 +2567,49 @@ class RateFinalizing extends Component {
                         <div className="col-md-4">
                           <p className="details-title">Account/Customer</p>
                           {this.state.toggleAddProfitBtn && (
-                            <p className="details-para">{this.state.CompanyName}</p>
+                            <p className="details-para">
+                              {this.state.CompanyName}
+                            </p>
                           )}
-                          {!this.state.toggleAddProfitBtn || !this.state.isCopy && (
-                            <p className="details-para">{encryption(window.localStorage.getItem("username"), "desc")}</p>
-                          )}
+                          {!this.state.toggleAddProfitBtn ||
+                            (!this.state.isCopy && (
+                              <p className="details-para">
+                                {encryption(
+                                  window.localStorage.getItem("username"),
+                                  "desc"
+                                )}
+                              </p>
+                            ))}
                           {this.state.isCopy && (
-                           <Autocomplete
-                            id="searchtxt"
-                            getItemValue={item => item.Company_Name}
-                            items={this.state.customerData}
-                            renderItem={(item, isHighlighted) => (
-                              <div
-                                style={{
-                                  background: isHighlighted ? "lightgray" : "white"
-                                }}
-                              >
-                                {item.Company_Name}
-                              </div>
-                            )}
-                            value={this.state.fields["Company_Name"]}
-                            onChange={this.HandleChangeCon.bind(this, "Company_Name")}
-                            menuStyle={this.state.menuStyle}
-                            onSelect={this.handleSelectCon.bind(this, "Company_Name")}
-                            inputProps={{ placeholder: "Search Account/Consignee" }}
-                         />
+                            <Autocomplete
+                              id="searchtxt"
+                              getItemValue={item => item.Company_Name}
+                              items={this.state.customerData}
+                              renderItem={(item, isHighlighted) => (
+                                <div
+                                  style={{
+                                    background: isHighlighted
+                                      ? "lightgray"
+                                      : "white"
+                                  }}
+                                >
+                                  {item.Company_Name}
+                                </div>
+                              )}
+                              value={this.state.fields["Company_Name"]}
+                              onChange={this.HandleChangeCon.bind(
+                                this,
+                                "Company_Name"
+                              )}
+                              menuStyle={this.state.menuStyle}
+                              onSelect={this.handleSelectCon.bind(
+                                this,
+                                "Company_Name"
+                              )}
+                              inputProps={{
+                                placeholder: "Search Account/Consignee"
+                              }}
+                            />
                           )}
                         </div>
                         <div className="col-md-4">
@@ -2573,7 +2622,9 @@ class RateFinalizing extends Component {
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
-                          <p className="details-para">{this.state.custNotification}</p>
+                          <p className="details-para">
+                            {this.state.custNotification}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -2584,14 +2635,17 @@ class RateFinalizing extends Component {
                           className="butn more-padd"
                         >
                           Create Customer
-                      </button>
+                        </button>
                       )}
                     </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select disabled={true}
-                          value={this.state.CommodityID} onChange={this.commoditySelect.bind(this)}>
+                        <select
+                          disabled={true}
+                          value={this.state.CommodityID}
+                          onChange={this.commoditySelect.bind(this)}
+                        >
                           <option value="select">Select</option>
                           {this.state.commodityData.map((item, i) => (
                             <option key={i} value={item.id}>
@@ -2633,18 +2687,16 @@ class RateFinalizing extends Component {
                         // onClick={this.SendQuote}
                         onClick={this.SendRequest}
                         className={
-                          this.state.commoditySelect == "select"// ||
-                            // this.state.cargoSelect == "select"
-                            ? "butn cancel-butn no-butn"
+                          this.state.commoditySelect == "select" // ||
+                            ? // this.state.cargoSelect == "select"
+                              "butn cancel-butn no-butn"
                             : "butn"
                         }
                       >
                         Send
-                            </button>
+                      </button>
                     </div>
                   </div>
-
-
                 </div>
               </div>
             </div>
@@ -2658,7 +2710,9 @@ class RateFinalizing extends Component {
             <ModalBody>
               <div className="txt-cntr">
                 <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">Amount ({this.state.currencyCode})</p>
+                  <p className="details-title mr-3">
+                    Amount ({this.state.currencyCode})
+                  </p>
                   <div class="spe-equ d-block m-0 flex-grow-1">
                     <input
                       type="text"
@@ -2673,14 +2727,20 @@ class RateFinalizing extends Component {
               </div>
               <div className="text-center">
                 {!this.state.toggleProfitRemoveBtn && (
-                  <Button className="butn" onClick={this.hanleProfitAmountSubmit.bind(this)}>
+                  <Button
+                    className="butn"
+                    onClick={this.hanleProfitAmountSubmit.bind(this)}
+                  >
                     Add
-                </Button>
+                  </Button>
                 )}
                 {this.state.toggleProfitRemoveBtn && (
-                  <Button className="butn" onClick={this.hanleProfitAmountRemove.bind(this)}>
+                  <Button
+                    className="butn"
+                    onClick={this.hanleProfitAmountRemove.bind(this)}
+                  >
                     Remove
-                </Button>
+                  </Button>
                 )}
               </div>
             </ModalBody>
@@ -2746,19 +2806,27 @@ class RateFinalizing extends Component {
             toggle={this.toggleRequest}
             centered={true}
           >
-
             <ModalBody>
               <h3 className="mb-4">Request Changes</h3>
               {this.state.toggleAddProfitBtn && (
                 <div className="rename-cntr login-fields">
                   <label>Discount</label>
-                  <input type="text" id="txtRequestDiscount" placeholder="Enter Discount" />
+                  <input
+                    type="text"
+                    id="txtRequestDiscount"
+                    placeholder="Enter Discount"
+                  />
                 </div>
               )}
               {this.state.toggleAddProfitBtn && (
                 <div className="rename-cntr login-fields">
                   <label>Free Time</label>
-                  <input type="text" id="txtRequestFreeTime" placeholder="Enter Time" maxLength="2" />
+                  <input
+                    type="text"
+                    id="txtRequestFreeTime"
+                    placeholder="Enter Time"
+                    maxLength="2"
+                  />
                 </div>
               )}
               <div className="rename-cntr login-fields mb-0">
@@ -3200,54 +3268,79 @@ class RateFinalizing extends Component {
             isOpen={this.state.modalPreview}
             toggle={this.togglePreview}
           >
-
             <ModalBody>
-          {/* <div className="modal popupbox" id="myModal">
+              {/* <div className="modal popupbox" id="myModal">
         <div className="modal-dialog">
           <div className="modal-content">
 
             <div className="modal-body"> */}
-            <button type="button" className="close" data-dismiss="modal">&times;</button>
-                    <div className="row" style={{margin:0}}>
-                  <div className="logohheader">
-                    <div className="row" style={{margin:0}}>
-                      <div className="col-12 col-md-6">
-                          <img src={ATA} alt="ATAFreight Console" />
-                      </div>
-                      <div className="col-12 col-md-6">
-                        <label className="headerlabel">Hello</label>
-                      </div>
+              <button type="button" className="close" data-dismiss="modal">
+                &times;
+              </button>
+              <div className="row" style={{ margin: 0 }}>
+                <div className="logohheader">
+                  <div className="row" style={{ margin: 0 }}>
+                    <div className="col-12 col-md-6">
+                      <img src={ATA} alt="ATAFreight Console" />
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="headerlabel">Hello</label>
                     </div>
                   </div>
                 </div>
-                <div className="row">
-                    <div className="col-12 col-sm-6">
-                        <div className="firstbox">
-                            <h3>To, <span>Trustwater LLC</span></h3>
-                            <label>ATNN : <span>Deniz Egemen</span></label>
-                            <label>E-Mail : <span>edeniz@elamafarms.com</span></label>
-                            <label>Phone : <span></span></label>
-                            <label>Fax : <span></span></label>
-                            <label>&nbsp;<span></span></label>
-                        </div>
-                    </div>
-                    <div className="col-12 col-sm-6">
-                            <div className="firstbox">
-                                <h3>From, <span>ATA Freight Line</span></h3>
-                                <label>Sales Person : <span>Horst Percival</span></label>
-                                <label>E-Mail : <span>h.percival@atafreight.com</span></label>
-                                <label>Phone : <span>+1(718) 9953855 X</span></label>
-                                <label>Fax : <span>+1(718) 9954150 X</span></label>
-                                <label>Prepared By : <span>Patricia Poslett</span></label>
-                            </div>
-                    </div>
+              </div>
+              <div className="row">
+                <div className="col-12 col-sm-6">
+                  <div className="firstbox">
+                    <h3>
+                      To, <span>Trustwater LLC</span>
+                    </h3>
+                    <label>
+                      ATNN : <span>Deniz Egemen</span>
+                    </label>
+                    <label>
+                      E-Mail : <span>edeniz@elamafarms.com</span>
+                    </label>
+                    <label>
+                      Phone : <span></span>
+                    </label>
+                    <label>
+                      Fax : <span></span>
+                    </label>
+                    <label>
+                      &nbsp;<span></span>
+                    </label>
+                  </div>
                 </div>
-                {/* {(() => {
+                <div className="col-12 col-sm-6">
+                  <div className="firstbox">
+                    <h3>
+                      From, <span>ATA Freight Line</span>
+                    </h3>
+                    <label>
+                      Sales Person : <span>Horst Percival</span>
+                    </label>
+                    <label>
+                      E-Mail : <span>h.percival@atafreight.com</span>
+                    </label>
+                    <label>
+                      Phone : <span>+1(718) 9953855 X</span>
+                    </label>
+                    <label>
+                      Fax : <span>+1(718) 9954150 X</span>
+                    </label>
+                    <label>
+                      Prepared By : <span>Patricia Poslett</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              {/* {(() => {
                   for (let i = 0; i< this.state.rateDetails.length ; i++) { */}
-                  
-                {/* // return( */}
-                
-                {/* {(() => 
+
+              {/* // return( */}
+
+              {/* {(() => 
                 { 
                   debugger;
                   if(filterDuplicateService.length == 0)
@@ -3274,179 +3367,230 @@ class RateFinalizing extends Component {
                        
                   }
                 }})()} */}
-                <div className="row">
-                      <div className="col-12">
-                          <div className="thirdbox">
-                          {this.state.containerLoadType === "LCL" || this.state.containerLoadType === "AIR" || this.state.containerLoadType === "LTL" ?(
-                              <>
-                            <h3>Dimensions</h3>
-                              <div className="table-responsive">
-                                  <table className="table table-responsive">
-                                      <thead>
-                                      <tr>
-                                          <th>Package Type</th>
-                                          <th>Quantity</th>
-                                          <th>Length</th>
-                                          <th>Width</th>
-                                          <th>Height</th>
-                                          <th>Gross Weight</th>
-                                          <th>{this.state.containerLoadType === "AIR" || this.state.containerLoadType === "LTL"?"Volume Weight":"CBM"}</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                      {this.state.CargoDetailsArr.map(item1 => (
-                                      <tr>
-                                          <td>{item1.PackageType}</td>
-                                          <td>{item1.Quantity}</td>
-                                          <td>{item1.Lenght}</td>
-                                          <td>{item1.Width}</td>
-                                          <td>{item1.Height}</td>
-                                          <td>{item1.Weight}</td>
-                                          <td>{this.state.containerLoadType === "AIR" ? item1.VolumeWeight : item1.Volume}</td>
-                                      </tr>
-                                      ))}
-                                     </tbody>
-                                  </table>
-                              </div>
-                            </>
-                            ):this.state.containerLoadType === "FTL"?(
-                              <>
-                              <h3>Dimensions</h3>
-                              <div className="table-responsive">
-                                  <table className="table table-responsive">
-                                      <thead>
-                                      <tr>
-                                          <th>Truck Type</th>
-                                          <th>Quantity</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                      {this.state.TruckTypeData.map(item1 => (
-                                      <tr>
-                                          <td>{item1.TruckDesc}</td>
-                                          <td>{item1.Quantity}</td>
-                                      </tr>
-                                      ))}
-                                     </tbody>
-                                  </table>
-                              </div>
-                              </>
-                            ):null}
-                          </div>
-                      </div>
+              <div className="row">
+                <div className="col-12">
+                  <div className="thirdbox">
+                    {this.state.containerLoadType === "LCL" ||
+                    this.state.containerLoadType === "AIR" ||
+                    this.state.containerLoadType === "LTL" ? (
+                      <>
+                        <h3>Dimensions</h3>
+                        <div className="table-responsive">
+                          <table className="table table-responsive">
+                            <thead>
+                              <tr>
+                                <th>Package Type</th>
+                                <th>Quantity</th>
+                                <th>Length</th>
+                                <th>Width</th>
+                                <th>Height</th>
+                                <th>Gross Weight</th>
+                                <th>
+                                  {this.state.containerLoadType === "AIR" ||
+                                  this.state.containerLoadType === "LTL"
+                                    ? "Volume Weight"
+                                    : "CBM"}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {this.state.CargoDetailsArr.map(item1 => (
+                                <tr>
+                                  <td>{item1.PackageType}</td>
+                                  <td>{item1.Quantity}</td>
+                                  <td>{item1.Lenght}</td>
+                                  <td>{item1.Width}</td>
+                                  <td>{item1.Height}</td>
+                                  <td>{item1.Weight}</td>
+                                  <td>
+                                    {this.state.containerLoadType === "AIR"
+                                      ? item1.VolumeWeight
+                                      : item1.Volume}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    ) : this.state.containerLoadType === "FTL" ? (
+                      <>
+                        <h3>Dimensions</h3>
+                        <div className="table-responsive">
+                          <table className="table table-responsive">
+                            <thead>
+                              <tr>
+                                <th>Truck Type</th>
+                                <th>Quantity</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {this.state.TruckTypeData.map(item1 => (
+                                <tr>
+                                  <td>{item1.TruckDesc}</td>
+                                  <td>{item1.Quantity}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    ) : null}
                   </div>
+                </div>
+              </div>
 
-                {this.state.rateDetails.map(item => (
-                  <>
+              {this.state.rateDetails.map(item => (
+                <>
                   <div className="row">
-                      <div className="col-12">
-                              <div className="secondbox">
-                                  <h3>Service Details</h3>
-                                  <hr />
-                                  <div className="row">
-                                      <div className="col-12 col-sm-4">
-                                          <label>Type of Move : 
-                                            <span>
-                                              {this.state.typeofMove === 1
-                                              ? "Port To Port"
-                                              : this.state.typeofMove === 2
-                                              ? "Door To Port"
-                                              : this.state.typeofMove === 4
-                                              ? "Door To Door"
-                                              : this.state.typeofMove === 3
-                                              ? "Port To Door"
-                                              : ""}
-                                            </span>
-                                          </label>
-                                          <label>POL : <span>{this.state.polfullAddData.OceanPortLongName}</span></label>
-                                          <label>POD : <span>{this.state.podfullAddData.OceanPortLongName}</span></label>
-                                      </div>
-                                      <div className="col-12 col-sm-4">
-                                          <label>Service Type : <span>{item.TransshipmentPort===null?"Direct":item.TransshipmentPort}</span></label>
-                                          <label>Inco Terms : <span>{this.state.incoTerm}</span></label>
-                                      </div>
-                                      <div className="col-12 col-sm-4">
-                                          <label>Liner : <span>{item.lineName}</span></label>
-                                      </div>
-                                  </div>
-                                  <hr />
-                                  <div className="row">
-                                      <div className="col-12 col-sm-4">
-                                          <label>Transit Time<span>{item.TransitTime}</span></label>
-                                      </div>
-                                      {/* <div className="col-12 col-sm-4">
+                    <div className="col-12">
+                      <div className="secondbox">
+                        <h3>Service Details</h3>
+                        <hr />
+                        <div className="row">
+                          <div className="col-12 col-sm-4">
+                            <label>
+                              Type of Move :
+                              <span>
+                                {this.state.typeofMove === 1
+                                  ? "Port To Port"
+                                  : this.state.typeofMove === 2
+                                  ? "Door To Port"
+                                  : this.state.typeofMove === 4
+                                  ? "Door To Door"
+                                  : this.state.typeofMove === 3
+                                  ? "Port To Door"
+                                  : ""}
+                              </span>
+                            </label>
+                            <label>
+                              POL :{" "}
+                              <span>
+                                {this.state.polfullAddData.OceanPortLongName}
+                              </span>
+                            </label>
+                            <label>
+                              POD :{" "}
+                              <span>
+                                {this.state.podfullAddData.OceanPortLongName}
+                              </span>
+                            </label>
+                          </div>
+                          <div className="col-12 col-sm-4">
+                            <label>
+                              Service Type :{" "}
+                              <span>
+                                {item.TransshipmentPort === null
+                                  ? "Direct"
+                                  : item.TransshipmentPort}
+                              </span>
+                            </label>
+                            <label>
+                              Inco Terms : <span>{this.state.incoTerm}</span>
+                            </label>
+                          </div>
+                          <div className="col-12 col-sm-4">
+                            <label>
+                              Liner : <span>{item.lineName}</span>
+                            </label>
+                          </div>
+                        </div>
+                        <hr />
+                        <div className="row">
+                          <div className="col-12 col-sm-4">
+                            <label>
+                              Transit Time<span>{item.TransitTime}</span>
+                            </label>
+                          </div>
+                          {/* <div className="col-12 col-sm-4">
                                           <label>Transit Time To : <span>15</span></label>
                                       </div> */}
-                                      <div className="col-12 col-sm-4">
-                                          <label>Free Time : <span>{item.	freeTime}</span></label>
-                                      </div>
-                                  </div>
-                                  <hr />
-                                  <div class="row">
-                                      <div className="col-12">
-                                          <label>Expiry Date : <span>{item.expiryDate}</span></label>
-                                      </div>
-                                  </div>
-                              </div>
+                          <div className="col-12 col-sm-4">
+                            <label>
+                              Free Time : <span>{item.freeTime}</span>
+                            </label>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                          <div className="col-12">
+                            <label>
+                              Expiry Date : <span>{item.expiryDate}</span>
+                            </label>
+                          </div>
+                        </div>
                       </div>
+                    </div>
                   </div>
                   {/* </>
                   ))}
                   {this.state.rateDetails.map(item => (
                   <> */}
                   <div className="row">
-                      <div className="col-12">
-                          <div className="thirdbox">
-                          {this.state.containerLoadType === "LCL" || this.state.containerLoadType === "Air" || item.containerLoadType === "LTL" ?(
-                              <>
+                    <div className="col-12">
+                      <div className="thirdbox">
+                        {this.state.containerLoadType === "LCL" ||
+                        this.state.containerLoadType === "Air" ||
+                        item.containerLoadType === "LTL" ? (
+                          <>
                             <h3>Cargo Details</h3>
-                              <div className="table-responsive">
-                                  <table className="table table-responsive">
-                                      <thead>
-                                      <tr>
-                                          <th>Package Type</th>
-                                          <th>Quantity</th>
-                                          <th>Length</th>
-                                          <th>Width</th>
-                                          <th>Height</th>
-                                          <th>Gross Weight</th>
-                                          <th>{this.state.containerLoadType === "Air" || this.state.containerLoadType === "LTL"?"Volume Weight":"CBM"}</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                      {this.state.CargoDetailsArr.map(item1 => (
-                                      <tr>
-                                          <td>{item1.PackageType}</td>
-                                          <td>{item1.Quantity}</td>
-                                          <td>{item1.Lenght}</td>
-                                          <td>{item1.Width}</td>
-                                          <td>{item1.Height}</td>
-                                          <td>{item1.Weight}</td>
-                                          <td>{this.state.containerLoadType === "Air" ? item1.VolumeWeight : item1.Volume}</td>
-                                      </tr>
-                                      ))}
-                                     </tbody>
-                                  </table>
-                              </div>
-                            </>
-                            ):null}
-                          </div>
+                            <div className="table-responsive">
+                              <table className="table table-responsive">
+                                <thead>
+                                  <tr>
+                                    <th>Package Type</th>
+                                    <th>Quantity</th>
+                                    <th>Length</th>
+                                    <th>Width</th>
+                                    <th>Height</th>
+                                    <th>Gross Weight</th>
+                                    <th>
+                                      {this.state.containerLoadType === "Air" ||
+                                      this.state.containerLoadType === "LTL"
+                                        ? "Volume Weight"
+                                        : "CBM"}
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {this.state.CargoDetailsArr.map(item1 => (
+                                    <tr>
+                                      <td>{item1.PackageType}</td>
+                                      <td>{item1.Quantity}</td>
+                                      <td>{item1.Lenght}</td>
+                                      <td>{item1.Width}</td>
+                                      <td>{item1.Height}</td>
+                                      <td>{item1.Weight}</td>
+                                      <td>
+                                        {this.state.containerLoadType === "Air"
+                                          ? item1.VolumeWeight
+                                          : item1.Volume}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </>
+                        ) : null}
                       </div>
+                    </div>
                   </div>
                   <div className="row">
-                      <div className="col-12">
-                          <div className="thirdbox">
-                          
-                              <h3>{item.Type === "FCL"?item.ContainerType:
-                                  //  item.Type === "LCL"?this.state.CargoDetailsArr.map(cargo => (
-                                  //    cargo.PackageType
-                                  //  )):
-                                   null
-                              }</h3>
-                            
-                              <div className="table-responsive">
-                                  <table className="table table-responsive">
-                                      {/* <thead>
+                    <div className="col-12">
+                      <div className="thirdbox">
+                        <h3>
+                          {item.Type === "FCL"
+                            ? item.ContainerType
+                            : //  item.Type === "LCL"?this.state.CargoDetailsArr.map(cargo => (
+                              //    cargo.PackageType
+                              //  )):
+                              null}
+                        </h3>
+
+                        <div className="table-responsive">
+                          <table className="table table-responsive">
+                            {/* <thead>
                                       <tr>
                                           <th>Description</th>
                                           <th>Quantity</th>
@@ -3464,178 +3608,244 @@ class RateFinalizing extends Component {
                                       </tr>
                                       
                                       </tbody> */}
-                                      {(() => {this.state.filterrateSubDetails = this.state.rateSubDetails.filter(
-                                          d =>
-                                            d.RateLineID ===
-                                            item.RateLineId
-                                        )})()}
+                            {(() => {
+                              this.state.filterrateSubDetails = this.state.rateSubDetails.filter(
+                                d => d.RateLineID === item.RateLineId
+                              );
+                            })()}
 
-                                      {(() => {DocumentCharges = this.state.filterrateSubDetails.filter(
-                                          d =>
-                                            d.ChargeItem === "Per HBL" || d.ChargeItem === "Per BL" ||
-                                            d.ChargeItem === "Per Shipment" || d.ChargeItem === "Per Set"
-                                        )})()}
+                            {(() => {
+                              DocumentCharges = this.state.filterrateSubDetails.filter(
+                                d =>
+                                  d.ChargeItem === "Per HBL" ||
+                                  d.ChargeItem === "Per BL" ||
+                                  d.ChargeItem === "Per Shipment" ||
+                                  d.ChargeItem === "Per Set"
+                              );
+                            })()}
 
-                                      {(() => {this.state.filterrateSubDetails = this.state.filterrateSubDetails.filter(
-                                          d =>
-                                          d.ChargeItem !== "Per HBL" && d.ChargeItem !== "Per BL" &&
-                                          d.ChargeItem !== "Per Shipment" && d.ChargeItem !== "Per Set"
-                                        )})()}
+                            {(() => {
+                              this.state.filterrateSubDetails = this.state.filterrateSubDetails.filter(
+                                d =>
+                                  d.ChargeItem !== "Per HBL" &&
+                                  d.ChargeItem !== "Per BL" &&
+                                  d.ChargeItem !== "Per Shipment" &&
+                                  d.ChargeItem !== "Per Set"
+                              );
+                            })()}
 
-                                      <thead>
-                                      <tr>
-                                          <th>Description</th>
-                                          <th>Price</th>
-                                          <th>Units</th>
-                                          <th>Tax</th>
-                                          <th>Total(USD)</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                      {this.state.filterrateSubDetails.map(item1 => (
-                                      <tr>
-                                          <td>{item1.ChargeType}</td>
-                                          <td>{(item1.Rate===null?" ":item1.Rate+" ")+item1.Currency}</td>
-                                          <td>{item1.ChargeItem}</td>
-                                          <td>{item1.Tax}</td>
-                                          <td>{(item1.TotalAmount===null?" ":item1.TotalAmount+" ")+ 
-                                          (item1.BaseCurrency===null?"":item1.BaseCurrency)}</td>
-                                      </tr>
-                                      ))}
-                                      </tbody>
-                                     
-                                  </table>
-                              </div>
-                          </div>
+                            <thead>
+                              <tr>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Units</th>
+                                <th>Tax</th>
+                                <th>Total(USD)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {this.state.filterrateSubDetails.map(item1 => (
+                                <tr>
+                                  <td>{item1.ChargeType}</td>
+                                  <td>
+                                    {(item1.Rate === null
+                                      ? " "
+                                      : item1.Rate + " ") + item1.Currency}
+                                  </td>
+                                  <td>{item1.ChargeItem}</td>
+                                  <td>{item1.Tax}</td>
+                                  <td>
+                                    {(item1.TotalAmount === null
+                                      ? " "
+                                      : item1.TotalAmount + " ") +
+                                      (item1.BaseCurrency === null
+                                        ? ""
+                                        : item1.BaseCurrency)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
+                    </div>
                   </div>
                   <div className="row">
-                      <div className="col-12">
-                          <div className="thirdbox">
-                              <div className="table-responsive">
-                                  <table className="table table-responsive">
-                                      <thead>
-                                      <tr>
-                                          <th>Total</th>
-                                          <th></th>
-                                          <th></th>
-                                          <th></th>
-                                          <th></th>
-                                          <th>{this.state.filterrateSubDetails.reduce(
-                                          (sum, filterrateSubDetails) => sum + filterrateSubDetails.TotalAmount,
-                                            0
-                                          )}</th>
-                                      </tr>
-                                      </thead>
-                                  </table>
-                              </div>
-                          </div>
+                    <div className="col-12">
+                      <div className="thirdbox">
+                        <div className="table-responsive">
+                          <table className="table table-responsive">
+                            <thead>
+                              <tr>
+                                <th>Total</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>
+                                  {this.state.filterrateSubDetails.reduce(
+                                    (sum, filterrateSubDetails) =>
+                                      sum + filterrateSubDetails.TotalAmount,
+                                    0
+                                  )}
+                                </th>
+                              </tr>
+                            </thead>
+                          </table>
+                        </div>
                       </div>
+                    </div>
                   </div>
 
                   <div className="row">
-                      <div className="col-12">
-                          <div className="thirdbox">
-                              <h3>Documentation Charges</h3>
-                              <div className="table-responsive">
-                                  <table className="table table-responsive">
-                                      <thead>
-                                      <tr>
-                                          <th>Description</th>
-                                          <th>Price</th>
-                                          <th>Units</th>
-                                          <th>Tax</th>
-                                          <th>Total(USD)</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                      {DocumentCharges.map(item => (
-                                      <tr>
-                                          <td>{item.ChargeType}</td>
-                                          <td>{(item.Rate===null?" ":item.Rate+" ")+item.Currency}</td>
-                                          <td>{item.ChargeItem}</td>
-                                          <td>{item.Tax}</td>
-                                          <td>{(item.TotalAmount===null?" ":item.TotalAmount+" ")+ 
-                                          (item.BaseCurrency===null?"":item.BaseCurrency)}</td>
-                                      </tr>
-                                      ))}
-                                     </tbody>
-                                  </table>
-                              </div>
-                          </div>
+                    <div className="col-12">
+                      <div className="thirdbox">
+                        <h3>Documentation Charges</h3>
+                        <div className="table-responsive">
+                          <table className="table table-responsive">
+                            <thead>
+                              <tr>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Units</th>
+                                <th>Tax</th>
+                                <th>Total(USD)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {DocumentCharges.map(item => (
+                                <tr>
+                                  <td>{item.ChargeType}</td>
+                                  <td>
+                                    {(item.Rate === null
+                                      ? " "
+                                      : item.Rate + " ") + item.Currency}
+                                  </td>
+                                  <td>{item.ChargeItem}</td>
+                                  <td>{item.Tax}</td>
+                                  <td>
+                                    {(item.TotalAmount === null
+                                      ? " "
+                                      : item.TotalAmount + " ") +
+                                      (item.BaseCurrency === null
+                                        ? ""
+                                        : item.BaseCurrency)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
+                    </div>
                   </div>
-                                    </>
-                ))}
-                {/* }})()} */}
-            {/* </div>
+                </>
+              ))}
+              {/* }})()} */}
+              {/* </div>
           </div>
         </div>
       </div> */}
-                {/* <ReactTable
+              {/* <ReactTable
                     data={Data}
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}
                   /> */}
-                  </ModalBody>
-                  </Modal>
-                  <Modal
+            </ModalBody>
+          </Modal>
+          <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalEdit}
             toggle={this.toggleEdit}
             centered={true}
           >
-                   <ModalBody>
+            <ModalBody>
               <h3 className="mb-4">Edit Cargo Details</h3>
 
               <div className="rename-cntr login-fields">
                 <select
-                className="select-text"
-                onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                name="PackageType"
-                value={this.state.currentPackageType}
-              >
-                <option selected>Select</option>
-                {this.state.packageTypeData.map((item, i) => (
-                  <option key={i} value={item.PackageName}>
-                    {item.PackageName}
-                  </option>
-                ))}
-              </select>
+                  className="select-text"
+                  onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                  name="PackageType"
+                  value={this.state.currentPackageType}
+                >
+                  <option selected>Select</option>
+                  {this.state.packageTypeData.map((item, i) => (
+                    <option key={i} value={item.PackageName}>
+                      {item.PackageName}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-               <div className="rename-cntr login-fields">
+              <div className="rename-cntr login-fields">
                 <label>Quantity</label>
-                <input type="text" value={this.state.valuequantity} id="txtRequestFreeTime" placeholder="Quantity" />
+                <input
+                  type="text"
+                  value={this.state.valuequantity}
+                  id="txtRequestFreeTime"
+                  placeholder="Quantity"
+                />
               </div>
 
               <div className="rename-cntr login-fields">
                 <label>Lenght</label>
-                <input type="text" value={this.state.valuelenght} id="txtRequestFreeTime" placeholder="Lenght" />
+                <input
+                  type="text"
+                  value={this.state.valuelenght}
+                  id="txtRequestFreeTime"
+                  placeholder="Lenght"
+                />
               </div>
 
               <div className="rename-cntr login-fields">
                 <label>Width</label>
-                <input type="text" value={this.state.valuewidth} id="txtRequestFreeTime" placeholder="Width" />
+                <input
+                  type="text"
+                  value={this.state.valuewidth}
+                  id="txtRequestFreeTime"
+                  placeholder="Width"
+                />
               </div>
 
               <div className="rename-cntr login-fields">
                 <label>Height</label>
-                <input type="text" value={this.state.valueheight} id="txtRequestFreeTime" placeholder="Height" />
+                <input
+                  type="text"
+                  value={this.state.valueheight}
+                  id="txtRequestFreeTime"
+                  placeholder="Height"
+                />
               </div>
 
               <div className="rename-cntr login-fields">
                 <label>Weight</label>
-                <input type="text" value={this.state.valueweight} id="txtRequestFreeTime" placeholder="Weight" />
+                <input
+                  type="text"
+                  value={this.state.valueweight}
+                  id="txtRequestFreeTime"
+                  placeholder="Weight"
+                />
               </div>
 
               <div className="rename-cntr login-fields">
                 <label>CBM</label>
-                <input type="text" value={this.state.valuecbm} id="txtRequestFreeTime" placeholder="CBM" />
+                <input
+                  type="text"
+                  value={this.state.valuecbm}
+                  id="txtRequestFreeTime"
+                  placeholder="CBM"
+                />
               </div>
 
               <div className="text-center">
-                <Button className="butn" data-valuespecialsontainersode={this.state.valuespecialsontainersode} onClick={this.SubmitCargoDetails.bind()}>
+                <Button
+                  className="butn"
+                  data-valuespecialsontainersode={
+                    this.state.valuespecialsontainersode
+                  }
+                  onClick={this.SubmitCargoDetails.bind()}
+                >
                   Submit
                 </Button>
               </div>

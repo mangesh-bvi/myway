@@ -53,6 +53,8 @@ import TrackShipment2 from "./pages/track-shipment2";
 // import Exmaple from './pages/Example';
 
 // import Signin from './pages/Signin';
+
+import BookingView from './pages/BookingView'
  
 
 ReactDOM.render(
@@ -89,6 +91,7 @@ ReactDOM.render(
     <Route exact path="/add-sales-user" component={AddSalesUser} />
     <Route exact path="/analytics" component={Analytics} />
     <Route exact path="/rate-finalizing" component={RateFinalizing} />
+    <Route exact path="/booking-view" component={BookingView} />
     <Route
       exact
       path="/rate-finalizing-still"
