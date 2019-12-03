@@ -330,23 +330,24 @@ class NewRateSearch extends Component {
     document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   toggleNonStackable() {
-    
-      for(var i=0; i<this.state.heightData.length; i++)
-      {        
-          if (this.state.heightData[i].Mode.toUpperCase() == this.state.containerLoadType.toUpperCase()) {
-            for(var j=0; j<this.state.multiCBM.length; j++)
-            {
-              if(!this.state.NonStackable)
-              {
-                this.state.multiCBM[j].Height = this.state.heightData[i].Height
-              }else{
-                this.state.multiCBM[j].Height = 0;
-              }
-            }
+    for (var i = 0; i < this.state.heightData.length; i++) {
+      if (
+        this.state.heightData[i].Mode.toUpperCase() ==
+        this.state.containerLoadType.toUpperCase()
+      ) {
+        for (var j = 0; j < this.state.multiCBM.length; j++) {
+          if (!this.state.NonStackable) {
+            this.state.multiCBM[j].Height = this.state.heightData[i].Height;
+          } else {
+            this.state.multiCBM[j].Height = 0;
+          }
         }
-        
       }
-    this.setState({ NonStackable: !this.state.NonStackable, multiCBM: this.state.multiCBM});
+    }
+    this.setState({
+      NonStackable: !this.state.NonStackable,
+      multiCBM: this.state.multiCBM
+    });
   }
   toggleHazMat() {
     this.setState({ HazMat: !this.state.HazMat });
@@ -699,30 +700,35 @@ class NewRateSearch extends Component {
           </div>
         </div>
         <div className="col-md">
-          {(this.state.containerLoadType.toUpperCase() == "LCL"||"AIR"||"LTL") && this.state.NonStackable?(
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="H (cm)"
-              className="w-100"
-              name="Height"
-              value={el.Height || ""}
-              disabled
-              //onBlur={this.cbmChange}
-            />
-          </div>
-          ):(<div className="spe-equ">
-          <input
-            type="text"
-            onChange={this.HandleChangeMultiCBM.bind(this, i)}
-            placeholder="H (cm)"
-            className="w-100"
-            name="Height"
-            value={el.Height || ""}
-            //onBlur={this.cbmChange}
-          />
-          </div>)}
+          {(this.state.containerLoadType.toUpperCase() == "LCL" ||
+            "AIR" ||
+            "LTL") &&
+          this.state.NonStackable ? (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="Height"
+                value={el.Height || ""}
+                disabled
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          ) : (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="Height"
+                value={el.Height || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          )}
         </div>
 
         <div className="col-md">
@@ -852,18 +858,18 @@ class NewRateSearch extends Component {
     document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   addMultiCBM() {
-    var Height = 0
-    for(var i=0; i<this.state.heightData.length; i++)
-      {      
-          if (this.state.heightData[i].Mode.toUpperCase() == this.state.containerLoadType.toUpperCase()) {      
-              if(this.state.NonStackable)
-              {
-                Height = this.state.heightData[i].Height
-              }
-          }
+    var Height = 0;
+    for (var i = 0; i < this.state.heightData.length; i++) {
+      if (
+        this.state.heightData[i].Mode.toUpperCase() ==
+        this.state.containerLoadType.toUpperCase()
+      ) {
+        if (this.state.NonStackable) {
+          Height = this.state.heightData[i].Height;
+        }
       }
+    }
     this.setState(prevState => ({
-      
       multiCBM: [
         ...prevState.multiCBM,
         {
@@ -2794,7 +2800,7 @@ class NewRateSearch extends Component {
                     id="dvsea"
                     className="new-radio-rate-cntr new-radio-rate-cntr-hide cls-sea radio-light-blue"
                   >
-                    <div>
+                    {/* <div>
                       <input
                         type="radio"
                         name="cntr-load"
@@ -2804,7 +2810,7 @@ class NewRateSearch extends Component {
                         checked={this.state.containerLoadType === "ui"}
                       />
                       <label htmlFor="dummy-sea">Dummy Sea</label>
-                    </div>
+                    </div> */}
                     <div>
                       <input
                         type="radio"
