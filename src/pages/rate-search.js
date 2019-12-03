@@ -20,6 +20,8 @@ class RateSearch extends Component {
       customerName: "",
       customerType: true,
       companyId: 0,
+      companyName: "",
+      companyAddress: "",
       menuStyle: {
         textAlign: "left",
         borderRadius: "3px",
@@ -50,7 +52,7 @@ class RateSearch extends Component {
   HandelPageredireact() {
     this.props.history.push({
       pathname: "new-rate-search",
-      state: { companyId: this.state.companyId }
+      state: { companyId: this.state.companyId, companyName: this.state.companyName, companyAddress: this.state.companyAddress }
     });
   }
   HandleChangeCon(field, e) {
@@ -122,9 +124,13 @@ class RateSearch extends Component {
     let fields = this.state.fields;
     fields[field] = value;
     var compId = e.Company_ID;
+    var compName = e.Company_Name;
+    var companyAddress = e.CompanyAddress;
     this.setState({
       fields,
-      companyId: compId
+      companyId: compId,
+      companyName: compName,
+      companyAddress: companyAddress
     });
     document.getElementById("SearchRate").classList.remove("disableRates");
   }

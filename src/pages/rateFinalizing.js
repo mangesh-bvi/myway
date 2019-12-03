@@ -102,7 +102,8 @@ class RateFinalizing extends Component {
       },
       customerData: [],
       fields: {},
-      CompanyID:"1457295703"
+      CompanyID:0,
+      companyName:""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -149,6 +150,9 @@ class RateFinalizing extends Component {
       var TruckTypeData = this.props.location.state.TruckTypeData;
       var cbmVal = this.props.location.state.cbmVal;
       var packageTypeData = this.props.location.state.packageTypeData;
+      var companyID = this.props.location.state.companyID;
+      var companyName = this.props.location.state.companyName;
+      var companyAddress = this.props.location.state.companyAddress;
 
       var CargoDetailsArr = [];
       if (containerLoadType == "FCL") {
@@ -264,7 +268,10 @@ class RateFinalizing extends Component {
         multiCBM:multiCBM,
         TruckTypeData: TruckTypeData,
         cbmVal:cbmVal,
-        packageTypeData:packageTypeData
+        packageTypeData:packageTypeData,
+        CompanyID:companyID,
+        CompanyName:companyName,
+        CompanyAddress:companyAddress
       });
 
 
@@ -2529,7 +2536,7 @@ class RateFinalizing extends Component {
                         <div className="col-md-4">
                           <p className="details-title">Account/Customer</p>
                           {this.state.toggleAddProfitBtn && (
-                            <p className="details-para">{this.state.accountcustname}</p>
+                            <p className="details-para">{this.state.CompanyName}</p>
                           )}
                           {!this.state.toggleAddProfitBtn || !this.state.isCopy && (
                             <p className="details-para">{encryption(window.localStorage.getItem("username"), "desc")}</p>
@@ -2560,7 +2567,8 @@ class RateFinalizing extends Component {
                           <p className="details-title">Address</p>
                           <p className="details-para">
                             {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
-                            {this.state.CustAddress}
+                            {/* {this.state.CustAddress} */}
+                            {this.state.CompanyAddress}
                           </p>
                         </div>
                         <div className="col-md-4">
