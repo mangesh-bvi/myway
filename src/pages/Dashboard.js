@@ -1069,7 +1069,10 @@ class Dashboard extends Component {
       headers: authHeader()
     }).then(function(response) {
       var bookData = response.data.Table;
-      self.setState({ BookingData: bookData });
+      self.setState({
+        BookingData: bookData,
+        loading: false
+      });
     });
   }
 
@@ -1093,7 +1096,8 @@ class Dashboard extends Component {
       debugger;
       var invoicesData = response.data.Table1;
       selt.setState({
-        InvoicesData: invoicesData
+        InvoicesData: invoicesData,
+        loading: false
       });
     });
   }
@@ -1112,7 +1116,8 @@ class Dashboard extends Component {
       debugger;
       var activeshipment = response.data.Table;
       selt.setState({
-        ActiveShipmentData: activeshipment
+        ActiveShipmentData: activeshipment,
+        loading: false
       });
     });
   }
@@ -1128,7 +1133,10 @@ class Dashboard extends Component {
       headers: authHeader()
     }).then(function(response) {
       var quotesdata = response.data.Table;
-      selt.setState({ QuotesData: quotesdata });
+      selt.setState({
+        QuotesData: quotesdata,
+        loading: false
+      });
     });
   }
   handleClick = (marker, event) => {
@@ -1297,7 +1305,7 @@ class Dashboard extends Component {
                 onClick={() =>
                   self.HandleRediractPageShipmentDetails(addkey["HBL#"])
                 }
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", color: "#000" }}
                 title="HBL No"
               >
                 {addkey["HBL#"]}
@@ -1349,7 +1357,7 @@ class Dashboard extends Component {
         return (
           <div key={i}>
             <p>
-              <span>{book.BookingNo}</span>
+              <span style={{ color: "#000" }}>{book.BookingNo}</span>
               <span style={{ float: "right" }}>
                 {new Date(book.ETD).toLocaleDateString("en-US")}
               </span>
@@ -1414,7 +1422,9 @@ class Dashboard extends Component {
         return (
           <div key={i}>
             <p>
-              <span title="Shipment No">{invoice.InvoiceNumber}</span>
+              <span style={{ color: "#000" }} title="Shipment No">
+                {invoice.InvoiceNumber}
+              </span>
             </p>
             <p>
               <span title="Customer Name">{invoice.BillToName}</span>
@@ -1428,7 +1438,6 @@ class Dashboard extends Component {
     });
     return (
       <div>
-        {/* {this.state.loading === true ? <div className="loader-icon"></div> : ""} */}
         {/* {loading == true ? (
           <img src={LoadingImg} width="50" height="50" />
         ) : null} */}
@@ -1441,6 +1450,11 @@ class Dashboard extends Component {
           </div>
           <div className="cls-rt">
             <div className="dash-outer">
+              {this.state.loading === true ? (
+                <div className="loader-icon"></div>
+              ) : (
+                ""
+              )}
               {this.state.checkMapview == true ? (
                 ""
               ) : (

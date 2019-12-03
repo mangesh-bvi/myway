@@ -154,27 +154,24 @@ class Analytics extends Component {
           for (var i = 0; i < Modeele.length; i++) {
             if (Modeele[i].checked) Mode = Modeele[i].value;
 
-            if(Mode == "O")
-            {
-              Mode = "FCL,LCL"
+            if (Mode == "O") {
+              Mode = "FCL,LCL";
               modegetElementsByName = "sea-opt";
             }
-            
-            if(Mode == "I")
-            {
-              Mode = "FTL,LTL"
+
+            if (Mode == "I") {
+              Mode = "FTL,LTL";
               modegetElementsByName = "road-opt";
             }
           }
         }
-//sea-opt
+        //sea-opt
         var ModeeleOther = document.getElementsByName(modegetElementsByName);
         if (ModeeleOther.length > 0) {
           for (var i = 0; i < ModeeleOther.length; i++) {
             if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
           }
         }
-        
       }
     } else {
       //All
@@ -252,7 +249,7 @@ class Analytics extends Component {
           // Use toUpperCase() to ignore character casing
           const bandA = a.ShipmentPeriod.toUpperCase();
           const bandB = b.ShipmentPeriod.toUpperCase();
-        
+
           let comparison = 0;
           if (bandA > bandB) {
             comparison = 1;
@@ -267,8 +264,14 @@ class Analytics extends Component {
           arrayAir = Table.filter(item => item.Modeoftransport == "Air");
           // arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
           // arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
-          arrayOcean = Table.filter(item => item.Modeoftransport == "Fcl" || item.Modeoftransport == "Lcl");
-          arrayTruck = Table.filter(item => item.Modeoftransport == "Ftl" || item.Modeoftransport == "Ltl");
+          arrayOcean = Table.filter(
+            item =>
+              item.Modeoftransport == "Fcl" || item.Modeoftransport == "Lcl"
+          );
+          arrayTruck = Table.filter(
+            item =>
+              item.Modeoftransport == "Ftl" || item.Modeoftransport == "Ltl"
+          );
           volumeOptions.title.text = "Total number of Shipments";
           volumeOptions.scales.yAxes[0].scaleLabel.labelString = "Count";
         } else if (Segregatedby == "VolumeChart") {
@@ -276,8 +279,14 @@ class Analytics extends Component {
           arrayAir = Table.filter(item => item.ModeOfTransport == "Air");
           // arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean");
           // arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland");
-          arrayOcean = Table.filter(item => item.ModeOfTransport == "Fcl" || item.ModeOfTransport == "Lcl");
-          arrayTruck = Table.filter(item => item.ModeOfTransport == "Ftl" || item.ModeOfTransport == "Ltl");
+          arrayOcean = Table.filter(
+            item =>
+              item.ModeOfTransport == "Fcl" || item.ModeOfTransport == "Lcl"
+          );
+          arrayTruck = Table.filter(
+            item =>
+              item.ModeOfTransport == "Ftl" || item.ModeOfTransport == "Ltl"
+          );
           volumeOptions.title.text = "Total volume of shipment";
           volumeOptions.scales.yAxes[0].scaleLabel.labelString = "KGS";
         }
@@ -365,15 +374,13 @@ class Analytics extends Component {
           err = temperror;
         }
 
-       // alert(err);
-      //  volumeOptions.title.text = "No Data Found";
-      //  volumeOptions.scales.yAxes[0].scaleLabel.labelString = "";
-       NotificationManager.error(err);
+        // alert(err);
+        //  volumeOptions.title.text = "No Data Found";
+        //  volumeOptions.scales.yAxes[0].scaleLabel.labelString = "";
+        NotificationManager.error(err);
         self.setState({ graphShipmentdataset: [] });
       });
   }
-
-  
 
   handleChangeStart = e => {
     this.setState({
@@ -462,13 +469,11 @@ class Analytics extends Component {
         toggleShipInv: true,
         toggleRoadInv: false
       });
-      
     } else if (e.target.id === "road-inv") {
       this.setState({
         toggleRoadInv: true,
         toggleShipInv: false
       });
-     
     } else if (e.target.id === "plane-inv") {
       this.setState({
         toggleRoadInv: false,
@@ -532,17 +537,15 @@ class Analytics extends Component {
         }
       }
       var modegetElementsByName = "";
-      if(Mode == "O")
-      {
-        Mode = "FCL,LCL"
+      if (Mode == "O") {
+        Mode = "FCL,LCL";
         //sea-opt
         modegetElementsByName = "sea-opt-invoice";
       }
-      
-      if(Mode == "I")
-      {
+
+      if (Mode == "I") {
         //road-opt
-        Mode = "FTL,LTL"
+        Mode = "FTL,LTL";
         modegetElementsByName = "road-opt-invoice";
       }
 
@@ -552,7 +555,6 @@ class Analytics extends Component {
           if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
         }
       }
-
     } else {
       document.getElementById("delivered-inv").click();
     }
@@ -605,7 +607,7 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-       // alert(err[1].replace("}", ""));
+        // alert(err[1].replace("}", ""));
         self.setState({ setSupplierdrop: [] });
       });
   }
@@ -645,7 +647,7 @@ class Analytics extends Component {
           item => item.ModeOfTransport == "Fcl" || item.ModeOfTransport == "Lcl"
         );
         var arrayTruck = response.data.Table.filter(
-          item => item.ModeOfTransport == "Ftl" ||  item.ModeOfTransport == "Ltl"
+          item => item.ModeOfTransport == "Ftl" || item.ModeOfTransport == "Ltl"
         );
 
         if (arrayAir != null) {
@@ -695,8 +697,8 @@ class Analytics extends Component {
       })
       .catch(error => {
         var temperror = error;
-       // var err = temperror.split(":");
-       // alert(err[1].replace("}", ""));
+        // var err = temperror.split(":");
+        // alert(err[1].replace("}", ""));
         self.setState({ graphdataset: [] });
       });
   }
@@ -752,7 +754,7 @@ class Analytics extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-          <NotificationContainer />
+            <NotificationContainer />
             <ul className="nav cust-tabs pt-2" role="tablist">
               <li>
                 <a
@@ -879,11 +881,21 @@ class Analytics extends Component {
                     {this.state.toggleShipShip && (
                       <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="sea-opt" value="FCL" id="fcl-ship" />
+                          <input
+                            type="radio"
+                            name="sea-opt"
+                            value="FCL"
+                            id="fcl-ship"
+                          />
                           <label htmlFor="fcl-ship">FCL</label>
                         </div>
                         <div>
-                          <input type="radio" name="sea-opt" value="LCL" id="lcl-ship" />
+                          <input
+                            type="radio"
+                            name="sea-opt"
+                            value="LCL"
+                            id="lcl-ship"
+                          />
                           <label htmlFor="lcl-ship">LCL</label>
                         </div>
                       </div>
@@ -891,23 +903,38 @@ class Analytics extends Component {
                     {this.state.toggleRoadShip && (
                       <div className="fix-width-label analy-radio analy-radio-icons new-radio-rate-cntr radio-light-blue">
                         <div>
-                          <input type="radio" name="road-opt" value="FTL" id="ftl-ship" />
+                          <input
+                            type="radio"
+                            name="road-opt"
+                            value="FTL"
+                            id="ftl-ship"
+                          />
                           <label htmlFor="ftl-ship">FTL</label>
                         </div>
                         <div>
-                          <input type="radio" name="road-opt" value="LTL" id="ltl-ship" />
+                          <input
+                            type="radio"
+                            name="road-opt"
+                            value="LTL"
+                            id="ltl-ship"
+                          />
                           <label htmlFor="ltl-ship">LTL</label>
                         </div>
                       </div>
                     )}
                   </div>
-                  <button
-                    className="butn mt-0"
-                    onClick={this.handleAnalyticsShipment.bind(this)}
-                    id="shipment-view-btn"
-                  >
-                    view
-                  </button>
+                  <div className="ana-rep">
+                    <button
+                      className="butn mt-0"
+                      onClick={this.handleAnalyticsShipment.bind(this)}
+                      id="shipment-view-btn"
+                    >
+                      view
+                    </button>
+                    <a href="/reports" className="butn mt-0 blue-butn">
+                      Reports
+                    </a>
+                  </div>
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">
@@ -1177,13 +1204,18 @@ class Analytics extends Component {
                       </div>
                     )}
                   </div>
-                  <button
-                    className="butn mt-0"
-                    onClick={this.handleAnalyticsInvoice.bind(this)}
-                    id="invoices-view-btn"
-                  >
-                    view
-                  </button>
+                  <div className="ana-rep">
+                    <button
+                      className="butn mt-0"
+                      onClick={this.handleAnalyticsInvoice.bind(this)}
+                      id="invoices-view-btn"
+                    >
+                      view
+                    </button>
+                    <a href="/reports" className="butn mt-0 blue-butn">
+                      Reports
+                    </a>
+                  </div>
                 </div>
                 <div className="ana-radio-cntr">
                   <div className="login-fields mb-0">

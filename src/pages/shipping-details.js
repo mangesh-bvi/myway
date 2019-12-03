@@ -162,7 +162,7 @@ class ShippingDetails extends Component {
     } else this.setState({ filtered });
   }
   filterAll(e) {
-    debugger
+    debugger;
     const { value } = e.target;
     const filterAll = value;
     const filtered = [{ id: "all", value: filterAll }];
@@ -188,14 +188,14 @@ class ShippingDetails extends Component {
       // var air = 0,
       //   ocean = 0,
       //   inland = 0;
-    
+
       //ModeOfTransport
 
       var data = response.data.Table1;
-      var inland = data.filter(x=>x.ModeOfTransport==="Inland").length;
-      var air = data.filter(x=>x.ModeOfTransport === "Air").length;
-      var ocean =  data.filter(x=>x.ModeOfTransport === "Ocean").length;
-      
+      var inland = data.filter(x => x.ModeOfTransport === "Inland").length;
+      var air = data.filter(x => x.ModeOfTransport === "Air").length;
+      var ocean = data.filter(x => x.ModeOfTransport === "Ocean").length;
+
       if (shiptype != "") {
         data = data.filter(item => item.ModeOfTransport == shiptype);
         if (data.length === 0) {
@@ -221,10 +221,10 @@ class ShippingDetails extends Component {
     });
   }
 
-  HandleChangeShipmentDetails(HblNo) {
+  HandleChangeShipmentDetails(HblNo, eventManage) {
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: HblNo }
+      state: { detail: HblNo, event: eventManage }
     });
   }
 
@@ -232,7 +232,8 @@ class ShippingDetails extends Component {
     return {
       onClick: e => {
         var hblNo = column.original["HBL#"];
-        this.HandleChangeShipmentDetails(hblNo);
+        var eventManage = column.original["Event"];
+        this.HandleChangeShipmentDetails(hblNo, eventManage);
       }
     };
   };
@@ -265,10 +266,10 @@ class ShippingDetails extends Component {
     this.setState({
       modalAdvSearch: false,
       fields: {},
-      originCountry:'',
-     destCountry:'',
-     ConsigneeID:'',
-     ShipperID:''
+      originCountry: "",
+      destCountry: "",
+      ConsigneeID: "",
+      ShipperID: ""
     });
   }
 
@@ -468,9 +469,9 @@ class ShippingDetails extends Component {
   }
 
   handleChangeCountry(text, e) {
-    debugger
+    debugger;
     // this.state.originCountry.push(e)
-    var value=e.target.value;
+    var value = e.target.value;
     if (text == "OriginCountry") {
       this.setState({
         originCountry: value
@@ -489,75 +490,75 @@ class ShippingDetails extends Component {
     var ToETDDate = document.getElementById("ToDepDate").value;
     var FromETADate = document.getElementById("FrArrDate").value;
     var ToETADate = document.getElementById("ToArrDate").value;
-    var OriginCountry =this.state.originCountry;
-    var DestCntry =this.state.destCountry;
-    var Consignee= this.state.ConsigneeID;
-    var Shipper= this.state.ShipperID;
-    var pol= this.state.fields["POL"] || "";
-    var pod=this.state.fields["POD"]||"";
-    var ShipmentStage =this.state.fields["ShipmentStage"] || "";
-    var ModeOfTransport =this.state.fields["ModeOfTransport"] || "";
+    var OriginCountry = this.state.originCountry;
+    var DestCntry = this.state.destCountry;
+    var Consignee = this.state.ConsigneeID;
+    var Shipper = this.state.ShipperID;
+    var pol = this.state.fields["POL"] || "";
+    var pod = this.state.fields["POD"] || "";
+    var ShipmentStage = this.state.fields["ShipmentStage"] || "";
+    var ModeOfTransport = this.state.fields["ModeOfTransport"] || "";
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/TrackShipmentSearch`,
-        data: {
-          StageID:ShipmentStage,
-            // this.state.fields["ShipmentStage"] === undefined
-            //   ? ""
-            //   : parseInt(this.state.fields["ShipmentStage"]),
-          ModeofTransport:ModeOfTransport,
-            // this.state.fields["ModeOfTransport"] === undefined
-            //   ? ""
-            //   : this.state.fields["ModeOfTransport"],
-          UserID: userid,
-          FromETADate: FromETADate,
-          ToETADate: ToETADate,
-          FromETDDate: FromETDDate,
-          ToETDDate: ToETDDate,
-          OriginCntry: OriginCountry,
-          DestCntry: DestCntry,
-          POL:pol,
-            // this.state.fields["POL"] === undefined
-            //   ? ""
-            //   : this.state.fields["POL"],
-          POD:pod,
-            // this.state.fields["POD"] === undefined
-            //   ? ""
-            //   : this.state.fields["POD"],
-          ShipperID: Shipper,
-          ConsigneeID: Consignee
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        debugger;
-        self.setState({ shipmentSummary: [] });
-        for (let i = 0; i < response.data.Table.length; i++) {
-          self.state.shipmentSummary.push({
-            "BL/HBL": response.data.Table[0]["BL#/HBL#"],
-            Consignee: response.data.Table[i]["Consignee"],
-            ConsigneeID: response.data.Table[i]["ConsigneeID"],
-            ETA: response.data.Table[i]["ETA"],
-            ETD: response.data.Table[i]["ETD"],
-            Event: "N/A",
-            "HBL#": response.data.Table[i]["HBL#"],
-            ModeOfTransport: response.data.Table[i]["ModeOfTransport"],
-            POD: response.data.Table[i]["POD"],
-            POL: response.data.Table[i]["POL"],
-            SR_No: i + 1,
-            Shipper: response.data.Table[i]["Shipper"],
-            ShipperID: response.data.Table[i]["ShipperID"],
-            Status: response.data.Table[i]["Current_Status"]
-          });
-        }
-        // self.setState({  });
-        self.setState(prevState => ({
-          modalAdvSearch: !prevState.modalAdvSearch,
-          shipmentSummary: self.state.shipmentSummary
-        }));
-      });
-  this.handleAdvanceSearchModalClose();
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TrackShipmentSearch`,
+      data: {
+        StageID: ShipmentStage,
+        // this.state.fields["ShipmentStage"] === undefined
+        //   ? ""
+        //   : parseInt(this.state.fields["ShipmentStage"]),
+        ModeofTransport: ModeOfTransport,
+        // this.state.fields["ModeOfTransport"] === undefined
+        //   ? ""
+        //   : this.state.fields["ModeOfTransport"],
+        UserID: userid,
+        FromETADate: FromETADate,
+        ToETADate: ToETADate,
+        FromETDDate: FromETDDate,
+        ToETDDate: ToETDDate,
+        OriginCntry: OriginCountry,
+        DestCntry: DestCntry,
+        POL: pol,
+        // this.state.fields["POL"] === undefined
+        //   ? ""
+        //   : this.state.fields["POL"],
+        POD: pod,
+        // this.state.fields["POD"] === undefined
+        //   ? ""
+        //   : this.state.fields["POD"],
+        ShipperID: Shipper,
+        ConsigneeID: Consignee
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      self.setState({ shipmentSummary: [] });
+      for (let i = 0; i < response.data.Table.length; i++) {
+        self.state.shipmentSummary.push({
+          "BL/HBL": response.data.Table[0]["BL#/HBL#"],
+          Consignee: response.data.Table[i]["Consignee"],
+          ConsigneeID: response.data.Table[i]["ConsigneeID"],
+          ETA: response.data.Table[i]["ETA"],
+          ETD: response.data.Table[i]["ETD"],
+          Event: "N/A",
+          "HBL#": response.data.Table[i]["HBL#"],
+          ModeOfTransport: response.data.Table[i]["ModeOfTransport"],
+          POD: response.data.Table[i]["POD"],
+          POL: response.data.Table[i]["POL"],
+          SR_No: i + 1,
+          Shipper: response.data.Table[i]["Shipper"],
+          ShipperID: response.data.Table[i]["ShipperID"],
+          Status: response.data.Table[i]["Current_Status"]
+        });
+      }
+      // self.setState({  });
+      self.setState(prevState => ({
+        modalAdvSearch: !prevState.modalAdvSearch,
+        shipmentSummary: self.state.shipmentSummary
+      }));
+    });
+    this.handleAdvanceSearchModalClose();
   };
 
   handleValidation() {
@@ -856,7 +857,7 @@ class ShippingDetails extends Component {
                                 </label>
                               </div>
                             );
-                          } else if (row.value == "Behind Schedue") {
+                          } else if (row.value == "Behind Schedule") {
                             return (
                               <div>
                                 <label className="girdevtred">

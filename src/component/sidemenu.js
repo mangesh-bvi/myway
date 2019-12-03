@@ -2,12 +2,15 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../styles/custom.css";
 import { Accordion, Button, Card } from "react-bootstrap";
-import GreenCounterIcon from "./../assets/img/green-counter.png";
-import AnalyticsIcon from "./../assets/img/analytics.png";
-import RatesIcon from "./../assets/img/rates.png";
-import ShipmentsIcon from "./../assets/img/shipments.png";
-import DashboardIcon from "./../assets/img/dashboard.png";
-import QuotesIcon from "./../assets/img/quotes.png";
+import GreenCounterIcon from "./../assets/img/green-counter-side.png";
+import BookingsIcon from "./../assets/img/bookings-side.png";
+import AnalyticsIcon from "./../assets/img/analytics-side.png";
+import RatesIcon from "./../assets/img/rates-side.png";
+import AdminIcon from "./../assets/img/admin-side.png";
+import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
+import ShipmentsIcon from "./../assets/img/shipment-side.png";
+import DashboardIcon from "./../assets/img/dashboard-side.png";
+import QuotesIcon from "./../assets/img/quotes-side.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
 import { encryption } from "../helpers/encryption";
@@ -38,6 +41,21 @@ class SideMenu extends Component {
     } else {
       window.location.href = "quote-table?Qtype=" + value;
     }
+  }
+
+  highlightClass(e) {
+    debugger;
+    console.log(e.classList);
+
+    var elems = document.getElementsByClassName("side-menus");
+    // elems.forEach(element => {
+    //   debugger;
+    //   element.classList.remove("active-menu");
+    // });
+    for (let i = 0; i < elems.length; i++) {
+      elems[i].classList.remove("active-menu");
+    }
+    e.currentTarget.classList.add("active-menu");
   }
 
   render() {
@@ -92,7 +110,11 @@ class SideMenu extends Component {
       <div className="d-flex flex-column justify-content-between h-100">
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
-            <Link to="/dashboard">
+            <Link
+              to="/dashboard"
+              className="side-menus active-menu"
+              // onClick={this.highlightClass.bind(this)}
+            >
               <img
                 src={DashboardIcon}
                 alt="green-counter-icon"
@@ -276,7 +298,7 @@ class SideMenu extends Component {
                 <li className="sidemenu-ul-li">
                   <Link to="/shipment-planner">
                     <img
-                      src={RatesIcon}
+                      src={ShipmentPlannerIcon}
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
@@ -304,7 +326,7 @@ class SideMenu extends Component {
                   <Link to="/booking-table" style={{ display: "block" }}>
                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
                       <img
-                        src={GreenCounterIcon}
+                        src={BookingsIcon}
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
@@ -378,11 +400,11 @@ class SideMenu extends Component {
                           href="rate-search"
                           className={this.state.activeRateSearch}
                         >
-                          <img
+                          {/* <img
                             src={RatesIcon}
                             alt="green-counter-icon"
                             className="header-greencounter-icon"
-                          />
+                          /> */}
                           Rate Search
                         </a>):
                         
@@ -404,11 +426,11 @@ class SideMenu extends Component {
                           href="spot-rate-table"
                           className={this.state.activeSpotList}
                         >
-                          <img
+                          {/* <img
                             src={RatesIcon}
                             alt="green-counter-icon"
                             className="header-greencounter-icon"
-                          />
+                          /> */}
                           Spot Rate Listing
                         </a>
                       </li>
@@ -419,7 +441,11 @@ class SideMenu extends Component {
             </Accordion>
           </li>
           <li className="sidemenu-ul-li">
-            <Link to="/analytics">
+            <Link
+              to="/analytics"
+              className="side-menus"
+              // onClick={this.highlightClass.bind(this)}
+            >
               <img
                 src={AnalyticsIcon}
                 alt="green-counter-icon"
@@ -428,7 +454,7 @@ class SideMenu extends Component {
               Analytics
             </Link>
           </li>
-          <li className="sidemenu-ul-li">
+          {/* <li className="sidemenu-ul-li">
             <Link to="/reports">
               <img
                 src={AnalyticsIcon}
@@ -437,7 +463,7 @@ class SideMenu extends Component {
               />
               Reports
             </Link>
-          </li>
+          </li> */}
           {(() => {
             if (
               encryption(window.localStorage.getItem("usertype"), "desc") ===
@@ -468,7 +494,7 @@ class SideMenu extends Component {
                 <li className="sidemenu-ul-li">
                   <Link to="/add-user">
                     <img
-                      src={GreenCounterIcon}
+                      src={AdminIcon}
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
