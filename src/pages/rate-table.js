@@ -3460,11 +3460,10 @@ class RateTable extends Component {
                                       <p className="details-para">
                                         {row.original.TotalAmount !== "" &&
                                         row.original.TotalAmount !== null
-                                          ? row.original.TotalAmount
-                                          : //  +
-                                            //   " " +
-                                            //   row.original.BaseCurrency
-                                            ""}
+                                          ? row.original.TotalAmount +
+                                            " " +
+                                            row.original.BaseCurrency
+                                          : ""}
                                       </p>
                                     </>
                                   );

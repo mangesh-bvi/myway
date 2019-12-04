@@ -295,6 +295,19 @@ class NewRateSearch extends Component {
       errors["PODAddress"] = "Please select destination";
     }
 
+    if(this.state.cmbTypeRadio == "ALL")
+    {
+      for (let i = 0; i < multiCBM.length; i++) {
+        if (multiCBM[i].PackageType == "" || multiCBM[i].PackageType == "Select" || 
+        multiCBM[i].Quantity == 0 || multiCBM[i].Lengths == 0 || 
+        multiCBM[i].Width == 0 || multiCBM[i].Height == 0 || multiCBM[i].GrossWt == 0 
+        || multiCBM[i].GrossWt == undefined) {
+          
+        }
+        
+      }
+    }
+
     this.setState({ errors: errors });
     return formIsValid;
   }
