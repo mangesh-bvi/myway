@@ -1383,7 +1383,7 @@ class RateFinalizing extends Component {
     // usertype
 
     var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
-    let self=this;
+    let self = this;
     axios({
       method: "post",
       url: url,

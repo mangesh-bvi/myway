@@ -571,6 +571,7 @@ class BookingView extends Component {
                             columns: [
                               {
                                 Cell: row => {
+                                  debugger;
                                   i++;
                                   return (
                                     <React.Fragment>
