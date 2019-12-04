@@ -295,18 +295,37 @@ class NewRateSearch extends Component {
       errors["PODAddress"] = "Please select destination";
     }
 
-    // if(this.state.cmbTypeRadio == "ALL")
-    // {
-    //   var multiCBM = this.state.multiCBM;
-    //   for (let i = 0; i < multiCBM.length; i++) {
-    //     if (multiCBM[i].PackageType == "" || multiCBM[i].PackageType == "Select" || 
-    //     multiCBM[i].Quantity == 0 || multiCBM[i].Lengths == 0 || 
-    //     multiCBM[i].Width == 0 || multiCBM[i].Height == 0 || multiCBM[i].GrossWt == 0) {
-          
-    //     }
+    if(this.state.cmbTypeRadio == "ALL")
+    {
+      var multiCBM = this.state.multiCBM;
+      for (let i = 0; i < multiCBM.length; i++) {
+        if (multiCBM[i].PackageType == "" || multiCBM[i].PackageType == "Select" || 
+        multiCBM[i].Quantity == 0 || multiCBM[i].Lengths == 0 || 
+        multiCBM[i].Width == 0 || multiCBM[i].Height == 0 || multiCBM[i].GrossWt == 0) {
+          formIsValid = false;
+          errors["Dimensions"] = "Please enter dimensions"
+        }
         
-    //   }
-    // }
+      }
+    }
+    if (this.state.cmbTypeRadio == "CBM") {
+      if(this.state.cbmVal == ""){
+        formIsValid = false;
+        errors["CBM"] = "Please enter CBM"
+      }
+    }
+    if (this.state.cmbTypeRadio == "CBM") {
+      if(this.state.cbmVal == ""){
+        if(this.state.containerLoadType.toUpperCase()!= "AIR"){
+        formIsValid = false;
+        errors["CBM"] = "Please enter CBM"
+        }
+        else{
+          formIsValid = false;
+        errors["CBM"] = "Please enter Chargable Weight"
+        }
+      }
+    }
 
     this.setState({ errors: errors });
     return formIsValid;
@@ -2964,6 +2983,7 @@ class NewRateSearch extends Component {
                         {this.state.containerLoadType !== "FTL" ? (
                           this.state.cmbTypeRadio === "ALL" ? (
                             this.CreateMultiCBM()
+                            
                           ) : this.state.cmbTypeRadio === "CBM" ? (
                             <div className="col-md-4 m-auto">
                               <div className="spe-equ">
@@ -2980,11 +3000,20 @@ class NewRateSearch extends Component {
                                   value={this.state.cbmVal}
                                 />
                               </div>
+                              <span className="equip-error">
+                                {this.state.errors["CBM"]}
+                              </span>
                             </div>
                           ) : null
                         ) : (
                           this.createUITruckType()
                         )}
+                        {this.state.containerLoadType !== "FTL" ? (
+                          this.state.cmbTypeRadio === "ALL" ? (
+                          <span className="equip-error">
+                            {this.state.errors["Dimensions"]}
+                          </span> 
+                        ) : null):(null)}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input

@@ -462,14 +462,14 @@ class SpotRateDetails extends Component {
       if (this.state.spotrateresponseTbl3.length > 0) {
         for (var i = 0; i < this.state.spotrateresponseTbl3.length; i++) {
           multiCBM.push({
-            PackageType: this.state.spotrateresponseTbl3[i].PackageType,
+            PackageType: this.state.spotrateresponseTbl3[i].PackageType == null?"":this.state.spotrateresponseTbl3[i].PackageType,
             Quantity: this.state.spotrateresponseTbl3[i].Quantity,
             Lengths: this.state.spotrateresponseTbl3[i].Lengths,
             Width: this.state.spotrateresponseTbl3[i].Width,
             Height: this.state.spotrateresponseTbl3[i].Height,
             GrossWt: this.state.spotrateresponseTbl3[i].GrossWt,
             VolumeWeight: 0,
-            Volume: this.state.spotrateresponseTbl3[i].Volume
+            Volume: this.state.spotrateresponseTbl3[i].Volume == null?0:this.state.spotrateresponseTbl3[i].Volume
           });
         }
       }

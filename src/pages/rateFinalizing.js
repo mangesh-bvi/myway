@@ -1393,7 +1393,7 @@ class RateFinalizing extends Component {
           if (response.data != null) {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
-                NotificationManager.error(response.data.Table[0].Message);
+                NotificationManager.success(response.data.Table[0].Message);
                 window.location.href = "quote-table";
               }
             }
@@ -2890,7 +2890,11 @@ class RateFinalizing extends Component {
                               )}
                             </p>
                           )}
-                          {this.state.CompanyName == "" || this.state.isCopy ? (
+                          {(encryption(
+                                window.localStorage.getItem("usertype"),
+                                "desc"
+                              )) != "Customer"?(
+                          this.state.CompanyName == "" || this.state.isCopy ? (
                             <Autocomplete
                               id="searchtxt"
                               getItemValue={item => item.Company_Name}
@@ -2920,7 +2924,7 @@ class RateFinalizing extends Component {
                                 placeholder: "Search Account/Consignee"
                               }}
                             />
-                          ) : null}
+                          ) : null):null}
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>

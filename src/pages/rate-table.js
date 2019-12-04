@@ -2649,7 +2649,8 @@ class RateTable extends Component {
           ContainerCode: param.users[i].StandardContainerCode,
           Type: param.users[i].ContainerName,
           ContainerQuantity: param.users[i].ContainerQuantity,
-          Temperature: param.users[i].Temperature
+          Temperature: param.users[i].Temperature,
+          isSpecialEquipment:false
         });
       }
     }
@@ -2661,7 +2662,8 @@ class RateTable extends Component {
           ContainerCode: param.spacEqmtType[i].StandardContainerCode,
           Type: param.spacEqmtType[i].ContainerName,
           ContainerQuantity: param.spacEqmtType[i].Quantity,
-          Temperature: param.spacEqmtType[i].Temperature
+          Temperature: param.spacEqmtType[i].Temperature,
+          isSpecialEquipment:true
         });
       }
     }
