@@ -117,7 +117,7 @@ class BookingInsert extends Component {
       });
       if (rData.ContainerLoad === "LCL") {
         setTimeout(() => {
-          this.HandleGetSalesQuotaion();
+          this.HandleGetSalesQuotaionLCL();
           this.NonCustomerList();
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
