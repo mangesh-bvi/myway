@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../styles/custom.css";
-import { Accordion, Button, Card } from "react-bootstrap";
+import { Accordion, Button, Card, Modal, ModalBody } from "react-bootstrap";
 import GreenCounterIcon from "./../assets/img/green-counter-side.png";
 import BookingsIcon from "./../assets/img/bookings-side.png";
 import AnalyticsIcon from "./../assets/img/analytics-side.png";
@@ -10,10 +10,18 @@ import AdminIcon from "./../assets/img/admin-side.png";
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
 import DashboardIcon from "./../assets/img/dashboard-side.png";
+import PhoneIcon from "./../assets/img/phone.png";
+import QRCode from "../pages/QRCode";
+import UserIcon from "./../assets/img/user.png";
+import ActivityLogIcon from "./../assets/img/activity-log.png";
+import ProfileSettingIcon from "./../assets/img/profilesetting.png";
+import LogoutIcon from "./../assets/img/logout.png";
 import QuotesIcon from "./../assets/img/quotes-side.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
 import { encryption } from "../helpers/encryption";
+import FileUpload from "./../assets/img/file.png";
+import LoginActore from "./../assets/img/login-actore.jfif";
 
 class SideMenu extends Component {
   constructor(props) {
@@ -21,10 +29,12 @@ class SideMenu extends Component {
     this.state = {
       aircount: "0",
       activeRateSearch: "",
-      activeSpotList: ""
+      activeSpotList: "",
+      modalProfile: false
     };
 
     this.highlightClass = this.highlightClass.bind(this);
+    this.toggleProfile = this.toggleProfile.bind(this);
   }
 
   clickShipmentType(e) {
@@ -44,6 +54,12 @@ class SideMenu extends Component {
       window.location.href = "quote-table?Qtype=" + value;
     }
     // this.highlightClass();
+  }
+
+  toggleProfile() {
+    this.setState(prevState => ({
+      modalProfile: !prevState.modalProfile
+    }));
   }
 
   highlightClass(e) {
@@ -464,7 +480,7 @@ class SideMenu extends Component {
               );
             }
           })()}
-          
+
           <li className="sidemenu-ul-li">
             <Link
               to="/analytics"
@@ -530,14 +546,152 @@ class SideMenu extends Component {
             }
           })()}
         </ul>
-        <ul className="sidemenu-ul2 m-0">
-          <li style={{ width: "50%" }}>
-            <img src={InfoIcon} className="inofIcon" alt="info-icon" />
-          </li>
-          <li style={{ width: "50%" }}>
-            <img src={SettingIcon} className="settingIcon" alt="setting-icon" />
-          </li>
-        </ul>
+        <div class="dropdown">
+          <ul className="sidemenu-ul2 m-0">
+            <li style={{ width: "50%" }}>
+              <img src={InfoIcon} className="inofIcon" alt="info-icon" />
+            </li>
+            <li style={{ width: "50%" }} data-toggle="dropdown">
+              <img
+                src={SettingIcon}
+                className="settingIcon"
+                alt="setting-icon"
+              />
+            </li>
+            <div class="dropdown-menu">
+              <ul className="profile-ul">
+                <li className="profile-setting-li">
+                  <a href="mywayMessage">
+                    <img
+                      src={ProfileSettingIcon}
+                      alt="profile-icon"
+                      className="profilesetting-icon"
+                    />
+                    Messages
+                  </a>
+                </li>
+                {/* <li
+                  className="activitylog-li"
+                  // onClick={this.toggle.bind(this)}
+                  id="abcd"
+                >
+                  <img
+                    src={ActivityLogIcon}
+                    alt="activity-log"
+                    className="activitylog-icon"
+                  />
+                  Activity Log
+                </li> */}
+                {/* <li className="profile-setting-li">
+                  <a href="changePassword">
+                    <img
+                      src={ProfileSettingIcon}
+                      alt="profile-icon"
+                      className="profilesetting-icon"
+                    />
+                    Change Password
+                  </a>
+                </li> */}
+                {/* <li className="profile-setting-li" onClick={this.toggleProfile}>
+                  <a href="#!">
+                    <img
+                      src={ProfileSettingIcon}
+                      alt="profile-icon"
+                      className="profilesetting-icon"
+                    />
+                    Profile Settings
+                  </a>
+                </li> */}
+                {/* <li className="profile-setting-li">
+                  <img
+                    className="header-phone-icon dropdown-toggle"
+                    data-toggle="dropdown"
+                    id="qrCode"
+                    src={PhoneIcon}
+                    alt="mobile-icon"
+                  />
+                  Mobile App
+                  <div className="dropdown-menu qr-code-dropdown">
+                    <QRCode />
+                  </div>
+                </li> */}
+                {/* <li
+                  className="logout-li"
+                  // onClick={this.onLogout.bind(this)}
+                >
+                  <img
+                    src={LogoutIcon}
+                    alt="logout-icon"
+                    className="activitylog-icon"
+                  />
+                  Logout
+                </li> */}
+              </ul>
+            </div>
+          </ul>
+        </div>
+        <Modal
+          className="delete-popup pol-pod-popup"
+          isOpen={this.state.modalProfile}
+          toggle={this.toggleProfile}
+          centered={true}
+        >
+          <ModalBody>
+            <div className="d-flex align-items-center text-left">
+              <div className="prof-img">
+                <img src={LoginActore} />
+              </div>
+              <div className="pl-3">
+                <p className="prof-name">
+                  {encryption(window.localStorage.getItem("username"), "desc")}
+                </p>
+                <p className="prof-comp">
+                  {encryption(
+                    window.localStorage.getItem("companyname"),
+                    "desc"
+                  )}
+                </p>
+              </div>
+            </div>
+            <div className="rename-cntr login-fields d-block mt-4">
+              <div className="d-flex w-100 align-items-center">
+                <label>Change Image</label>
+                <div className="w-100">
+                  <input
+                    id="file-upload"
+                    className="file-upload d-none"
+                    type="file"
+                    onChange={this.onDocumentChangeHandler}
+                  />
+                  <label htmlFor="file-upload">
+                    <div className="file-icon">
+                      <img src={FileUpload} alt="file-upload" />
+                    </div>
+                    Upload Image
+                  </label>
+                </div>
+              </div>
+              <p className="file-name">{this.state.selectedFileName}</p>
+            </div>
+            <Button
+              className="butn"
+              onClick={() => {
+                this.toggleProfile();
+                // this.onDocumentClickHandler();
+              }}
+            >
+              Submit
+            </Button>
+            <Button
+              className="butn cancel-butn"
+              onClick={() => {
+                this.toggleProfile();
+              }}
+            >
+              Cancel
+            </Button>
+          </ModalBody>
+        </Modal>
       </div>
     );
   }

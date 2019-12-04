@@ -113,7 +113,7 @@ class BookingTable extends Component {
     debugger;
     var BookingNo = row.original["BookingID"];
     this.props.history.push({
-      pathname: "rate-finalizing-still-booking",
+      pathname: "booking-view",
       state: { BookingNo: BookingNo ,isView:true}
     });
   }
@@ -196,12 +196,12 @@ class BookingTable extends Component {
                             return (
                               <div className="action-cntr">
                                 {/* <a> */}
-                                {/* <img
+                                <img
                             className="actionicon"
                             src={Eye}
                             alt="view-icon"
                             onClick={e => this.HandleRowClickEvt(e, row)}
-                          /> */}
+                          />
                                 {/* </a> */}
                                 {/* <a href="/rate-finalizing-still-booking"> */}
                                 <img
@@ -225,12 +225,12 @@ class BookingTable extends Component {
                             return (
                               <div className="action-cntr">
                                 {/* <a> */}
-                                {/* <img
+                                <img
                             className="actionicon"
                             src={Eye}
                             alt="view-icon"
                             onClick={e => this.HandleRowClickEvt(e, row)}
-                          /> */}
+                          />
                                 {/* </a> */}
                                 {/* <a href="/rate-finalizing-still-booking"> */}
                                 <img

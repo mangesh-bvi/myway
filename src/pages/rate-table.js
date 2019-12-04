@@ -272,25 +272,49 @@ class RateTable extends Component {
           // var modeofTransport = this.props.location.state.containerLoadType;
           if (paramData.typesofMove === "p2p") {
             this.state.polArray.push({
-              POL: paramData.polfullAddData.UNECECode,
+              POL: paramData.containerLoadType == "AIR"
+              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
+                ? paramData.polfullAddData.Location
+                : ""
+              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
+              ? paramData.polfullAddData.UNECECode
+              : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
             });
             this.state.podArray.push({
-              POD: paramData.podfullAddData.UNECECode,
+              POD: paramData.containerLoadType == "AIR"
+              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
+                ? paramData.podfullAddData.Location
+                : ""
+              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
+              ? paramData.podfullAddData.UNECECode
+              : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
             });
             this.state.polFilterArray.push({
-              POL: paramData.polfullAddData.UNECECode,
+              POL: paramData.containerLoadType == "AIR"
+              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
+                ? paramData.polfullAddData.Location
+                : ""
+              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
+              ? paramData.polfullAddData.UNECECode
+              : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
             });
             this.state.podFilterArray.push({
-              POD: paramData.podfullAddData.UNECECode,
+              POD: paramData.containerLoadType == "AIR"
+              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
+                ? paramData.podfullAddData.Location
+                : ""
+              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
+              ? paramData.podfullAddData.UNECECode
+              : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
@@ -304,7 +328,13 @@ class RateTable extends Component {
               IsFilter: true
             });
             this.state.podArray.push({
-              POD: paramData.podfullAddData.UNECECode,
+              POD: paramData.containerLoadType == "AIR"
+              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
+                ? paramData.podfullAddData.Location
+                : ""
+              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
+              ? paramData.podfullAddData.UNECECode
+              : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
@@ -316,7 +346,13 @@ class RateTable extends Component {
               IsFilter: true
             });
             this.state.podFilterArray.push({
-              POD: paramData.podfullAddData.UNECECode,
+              POD: paramData.containerLoadType == "AIR"
+              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
+                ? paramData.podfullAddData.Location
+                : ""
+              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
+              ? paramData.podfullAddData.UNECECode
+              : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
@@ -350,7 +386,13 @@ class RateTable extends Component {
           }
           if (paramData.typesofMove === "p2d") {
             this.state.polArray.push({
-              POL: paramData.polfullAddData.UNECECode,
+              POL: paramData.containerLoadType == "AIR"
+              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
+                ? paramData.polfullAddData.Location
+                : ""
+              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
+              ? paramData.polfullAddData.UNECECode
+              : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
@@ -362,7 +404,13 @@ class RateTable extends Component {
               IsFilter: true
             });
             this.state.polFilterArray.push({
-              POL: paramData.polfullAddData.UNECECode,
+              POL: paramData.containerLoadType == "AIR"
+              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
+                ? paramData.polfullAddData.Location
+                : ""
+              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
+              ? paramData.polfullAddData.UNECECode
+              : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
@@ -993,7 +1041,93 @@ class RateTable extends Component {
   createUIPOL() {
     return this.state.valuesPOL.map((el, index) => {
       return (
+        this.state.modeoftransport === "AIR" ? (
+
         <div key={index + 1} className="row">
+          <div
+            className={
+              this.state.typeofMove === 1 || this.state.typeofMove === 3
+                ? "rename-cntr login-fields position-relative"
+                : ""
+            }
+          >
+            {this.state.typeofMove === 1 || this.state.typeofMove === 3 ? (
+              <ReactAutocomplete
+                key={index}
+                name={"POL" + (index + 1)}
+                getItemValue={item => item.AirportLongName}
+                items={this.state.polpodData}
+                renderItem={(item, isHighlighted) => (
+                  <div
+                    style={{
+                      background: isHighlighted ? "lightgray" : "white"
+                    }}
+                    value={item.AirPortID}
+                  >
+                    {item.AirportLongName}
+                  </div>
+                )}
+                renderInput={function(props) {
+                  return (
+                    <input
+                      id={"POLid" + (index + 1)}
+                      placeholder="Enter POL"
+                      className="w-100"
+                      type="text"
+                      {...props}
+                      //onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
+                    />
+                  );
+                }}
+                onChange={this.HandlePOLPODAutosearch.bind(
+                  this,
+                  "pol" + (index + 1),
+                  index + 1
+                )}
+                //menuStyle={this.state.menuStyle}
+                onSelect={this.HandleAddressDropdownPolSelect.bind(
+                  this,
+                  item => item.NameWoDiacritics,
+                  "pol" + (index + 1),
+                  index + 1
+                )}
+                value={this.state.multiFields["pol" + (index + 1)]}
+              />
+            ) : (
+              <AutoCompletePOLMaps
+                zomePOL={this.state.zoomPOL}
+                onPlaceSelected={this.onPlaceSelected}
+                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                containerElement={
+                  <div style={{ height: `100%`, width: "100%" }} />
+                }
+                mapElement={<div />}
+                loadingElement={<div style={{ height: `100%` }} />}
+                id={"POL" + (index + 1)}
+              ></AutoCompletePOLMaps>
+            )}
+
+            {index === 0 ? (
+              <i
+                className="fa fa-plus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.addClickPOL.bind(this, index)}
+              ></i>
+            ) : (
+              <i
+                className="fa fa-minus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.removeClickPOL.bind(this, index)}
+              ></i>
+            )}
+
+            {/* <div className="rename-cntr login-fields">
+            <textarea className="txt-add" placeholder="Enter POL"></textarea>
+          </div> */}
+          </div>
+        </div>
+        ): (
+          <div key={index + 1} className="row">
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 3
@@ -1075,14 +1209,15 @@ class RateTable extends Component {
             <textarea className="txt-add" placeholder="Enter POL"></textarea>
           </div> */}
           </div>
-        </div>
-      );
+        </div>)
+        );
     });
   }
 
   createUIPOD() {
     return this.state.valuesPOD.map((el, index) => {
       return (
+        this.state.modeoftransport === "AIR" ? (
         <div key={index + 1} className="row">
           <div
             className={
@@ -1095,7 +1230,7 @@ class RateTable extends Component {
               <ReactAutocomplete
                 key={index + 1}
                 name={"POD" + (index + 1)}
-                getItemValue={item => item.OceanPortLongName}
+                getItemValue={item => item.AirportLongName}
                 items={this.state.polpodDataAdd}
                 renderItem={(item, isHighlighted) => (
                   <div
@@ -1104,7 +1239,7 @@ class RateTable extends Component {
                     }}
                     value={item.AirPortID}
                   >
-                    {item.OceanPortLongName}
+                    {item.AirportLongName}
                   </div>
                 )}
                 renderInput={function(props) {
@@ -1156,6 +1291,79 @@ class RateTable extends Component {
             )}
           </div>
         </div>
+        ):(<div key={index + 1} className="row">
+        <div
+          className={
+            this.state.typeofMove === 1 || this.state.typeofMove === 2
+              ? "rename-cntr login-fields position-relative"
+              : ""
+          }
+        >
+          {this.state.typeofMove === 1 || this.state.typeofMove === 2 ? (
+            <ReactAutocomplete
+              key={index + 1}
+              name={"POD" + (index + 1)}
+              getItemValue={item => item.OceanPortLongName}
+              items={this.state.polpodDataAdd}
+              renderItem={(item, isHighlighted) => (
+                <div
+                  style={{
+                    background: isHighlighted ? "lightgray" : "white"
+                  }}
+                  value={item.AirPortID}
+                >
+                  {item.OceanPortLongName}
+                </div>
+              )}
+              renderInput={function(props) {
+                return (
+                  <input
+                    placeholder="Enter POD"
+                    className="w-100"
+                    type="text"
+                    {...props}
+                  />
+                );
+              }}
+              onChange={this.HandlePOLPODAutosearch.bind(
+                this,
+                "pod" + (index + 1),
+                index + 1
+              )}
+              //menuStyle={this.state.menuStyle}
+              onSelect={this.HandleAddressDropdownPolSelect.bind(
+                this,
+                item => item.NameWoDiacritics,
+                "pod" + (index + 1),
+                index + 1
+              )}
+              value={this.state.multiFields["pod" + (index + 1)]}
+            />
+          ) : (
+            <AutoCompletePODMaps
+              onPlaceSelected={this.onPlaceSelectedPOD}
+              googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+              containerElement={<div />}
+              mapElement={<div />}
+              loadingElement={<div />}
+            ></AutoCompletePODMaps>
+          )}
+
+          {index === 0 ? (
+            <i
+              className="fa fa-plus equip-plus"
+              id={"remove" + (index + 1)}
+              onClick={this.addClickPOD.bind(this, index)}
+            ></i>
+          ) : (
+            <i
+              className="fa fa-minus equip-plus"
+              id={"remove" + (index + 1)}
+              onClick={this.removeClickPOD.bind(this, index)}
+            ></i>
+          )}
+        </div>
+      </div>)
       );
     });
   }
@@ -1777,7 +1985,13 @@ class RateTable extends Component {
             lng: PositionPOL.lng
           });
           this.state.polArray.push({
-            POL: id.UNECECode,
+            POL: this.state.containerLoadType == "AIR"
+            ? id.Location !== "" && id.Location !== undefined
+              ? id.Location
+              : ""
+            : id.UNECECode !== "" && id.UNECECode !== undefined
+            ? id.UNECECode
+            : "",
             POLGeoCordinate: id.GeoCoordinate,
             Address: value,
             IsFilter: true
@@ -1814,7 +2028,13 @@ class RateTable extends Component {
             lng: mapPositionPOD.lng
           });
           this.state.podArray.push({
-            POD: id.UNECECode,
+            POD: this.state.containerLoadType == "AIR"
+            ? id.Location !== "" && id.Location !== undefined
+              ? id.Location
+              : ""
+            : id.UNECECode !== "" && id.UNECECode !== undefined
+            ? id.UNECECode
+            : "",
             PODGeoCordinate: id.GeoCoordinate,
             Address: value,
             IsFilter: true
@@ -3240,11 +3460,10 @@ class RateTable extends Component {
                                       <p className="details-para">
                                         {row.original.TotalAmount !== "" &&
                                         row.original.TotalAmount !== null
-                                          ? row.original.TotalAmount
-                                          : //  +
-                                            //   " " +
-                                            //   row.original.BaseCurrency
-                                            ""}
+                                          ? row.original.TotalAmount +
+                                            " " +
+                                            row.original.BaseCurrency
+                                          : ""}
                                       </p>
                                     </>
                                   );

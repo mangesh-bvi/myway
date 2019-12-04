@@ -14,13 +14,13 @@ import ProfileSettingIcon from "./../assets/img/profilesetting.png";
 import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
-import {Link} from 'react-router-dom'; 
+import { Link } from "react-router-dom";
 
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import {  Button, Modal, ModalBody } from "reactstrap";
+import { Button, Modal, ModalBody } from "reactstrap";
 // import ModalHeader from "react-bootstrap/ModalHeader";
 
 import {
@@ -137,8 +137,8 @@ class Header extends Component {
         if (response.data != null) {
           if (response.data.Table != null) {
             if (response.data.Table.length > 0) {
-          var date =  today.toJSON();
-          date = "2019-10-21";
+              var date = today.toJSON();
+              date = "2019-10-21";
               self.setState({
                 notificationData: response.data.Table.filter(
                   item => item.ActivityDate > date
@@ -147,7 +147,7 @@ class Header extends Component {
 
               document.getElementById("Notificationcount").innerHTML =
                 self.state.notificationData.length;
-                self.forceUpdate();
+              self.forceUpdate();
             }
           }
         }
@@ -244,7 +244,7 @@ class Header extends Component {
         //   month_names[month_index] +
         //   " " +
         //   year
-        Message:txtshipmentcomment.value.trim() 
+        Message: txtshipmentcomment.value.trim()
       },
       headers: authHeader()
     }).then(function(response) {
@@ -270,13 +270,11 @@ class Header extends Component {
     this.toggleDocu();
   };
 
-  onShipmentNoChangeHandler = event => 
-  {
+  onShipmentNoChangeHandler = event => {
     this.setState({
       popupHBLNO: event.target.value
     });
-  }
-
+  };
 
   RedirectoShipment(RefNo) {
     debugger;
@@ -284,14 +282,17 @@ class Header extends Component {
     //   pathname: "shipment-details",
     //   state: { detail: RefNo }
     // });
-    window.location.href = "shipment-details?hblno="+RefNo;
+    window.location.href = "shipment-details?hblno=" + RefNo;
   }
 
   render() {
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
-      <div key={i}  onClick={() => {
-        this.RedirectoShipment(item.RefNo);
-      }} >
+      <div
+        key={i}
+        onClick={() => {
+          this.RedirectoShipment(item.RefNo);
+        }}
+      >
         <p>
           Shipment: <a> {item.Product}</a>
         </p>
@@ -333,28 +334,33 @@ class Header extends Component {
             </div>
             <div className="col-xs col-sm-6 col-md-9">
               <ul className="header-ul">
-              {encryption(window.localStorage.getItem("usertype"), "desc")==="Sales User"?(this.state.searchButn && (
-                  <li>
-                    <a href="/rate-search" className="header-btn">
-                      SEARCH RATES
-                    </a>
-                  </li>
-                )):(this.state.searchButn && (
-                  <li>
-                    <a href="/new-rate-search" className="header-btn">
-                      SEARCH RATES
-                    </a>
-                  </li>
-                ))}
+                {encryption(window.localStorage.getItem("usertype"), "desc") ===
+                "Sales User"
+                  ? this.state.searchButn && (
+                      <li>
+                        <a href="/rate-search" className="header-btn">
+                          SEARCH RATES
+                        </a>
+                      </li>
+                    )
+                  : this.state.searchButn && (
+                      <li>
+                        <a href="/new-rate-search" className="header-btn">
+                          SEARCH RATES
+                        </a>
+                      </li>
+                    )}
                 <li>
-                  <div className="dropdown" style={{position:"relative"}}>
+                  <div className="dropdown" style={{ position: "relative" }}>
                     <img
                       src={BellIcon}
                       alt="bell-icon"
                       className="header-bell-icon"
                       data-toggle="dropdown"
                     />
-                    <a id="Notificationcount" className="notification">0</a>
+                    <a id="Notificationcount" className="notificationss">
+                      0
+                    </a>
                     <div className="dropdown-menu noti-drop-down">
                       {optionNotificationItems}
                       {/*<p>yuguhyuyg</p>*/}
@@ -539,17 +545,17 @@ class Header extends Component {
                         </li>
                         <li className="profile-setting-li">
                           {/* <a href=""> */}
-                            <img
-                              className="header-phone-icon dropdown-toggle"
-                              data-toggle="dropdown"
-                              id="qrCode"
-                              src={PhoneIcon}
-                              alt="mobile-icon"
-                            />
-                            Mobile App
+                          <img
+                            className="header-phone-icon dropdown-toggle"
+                            data-toggle="dropdown"
+                            id="qrCode"
+                            src={PhoneIcon}
+                            alt="mobile-icon"
+                          />
+                          Mobile App
                           {/* </a> */}
                           <div className="dropdown-menu qr-code-dropdown">
-                              <QRCode />
+                            <QRCode />
                           </div>
                         </li>
                         <li

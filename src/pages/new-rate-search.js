@@ -295,6 +295,19 @@ class NewRateSearch extends Component {
       errors["PODAddress"] = "Please select destination";
     }
 
+    // if(this.state.cmbTypeRadio == "ALL")
+    // {
+    //   var multiCBM = this.state.multiCBM;
+    //   for (let i = 0; i < multiCBM.length; i++) {
+    //     if (multiCBM[i].PackageType == "" || multiCBM[i].PackageType == "Select" || 
+    //     multiCBM[i].Quantity == 0 || multiCBM[i].Lengths == 0 || 
+    //     multiCBM[i].Width == 0 || multiCBM[i].Height == 0 || multiCBM[i].GrossWt == 0) {
+          
+    //     }
+        
+    //   }
+    // }
+
     this.setState({ errors: errors });
     return formIsValid;
   }
@@ -810,7 +823,7 @@ class NewRateSearch extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: parseFloat(value)
+        [name]: value===""?0:parseFloat(value)
       };
     }
 
@@ -878,6 +891,7 @@ class NewRateSearch extends Component {
           Lengths: 0,
           Width: 0,
           Height: Height,
+          GrossWt: 0,
           Weight: 0,
           VolumeWeight: 0,
           Volume: 0
@@ -2807,7 +2821,8 @@ class NewRateSearch extends Component {
                         value="ui"
                         onClick={this.ContainerLoadTypeClick}
                         id="dummy-sea"
-                        checked={this.state.containerLoadType === "ui"}
+                        //checked={this.state.containerLoadType === "ui"}
+                        checked={this.state.testSelection}
                       />
                       <label htmlFor="dummy-sea">Dummy Sea</label>
                     </div> */}
@@ -2818,7 +2833,7 @@ class NewRateSearch extends Component {
                         value="FCL"
                         onClick={this.ContainerLoadTypeClick}
                         id="fcl"
-                        checked={this.state.containerLoadType === "FCL"}
+                        // checked={this.state.containerLoadType === "FCL"}
                       />
                       <label htmlFor="fcl">FCL</label>
                     </div>
@@ -2829,7 +2844,7 @@ class NewRateSearch extends Component {
                         onClick={this.ContainerLoadTypeClick}
                         name="cntr-load"
                         id="lcl"
-                        checked={this.state.containerLoadType === "LCL"}
+                        // checked={this.state.containerLoadType === "LCL"}
                       />
                       <label htmlFor="lcl">LCL</label>
                     </div>
@@ -2921,7 +2936,7 @@ class NewRateSearch extends Component {
                               className="d-flex flex-column align-items-center"
                               htmlFor="exist-cust"
                             >
-                              ALL
+                              Dimensions
                             </label>
                           </div>
                           <div>
@@ -3246,6 +3261,7 @@ class NewRateSearch extends Component {
                       </>
                     ) : null}
                   </div>
+                  {this.state.shipmentType.toLowerCase() != "domestic"?(
                   <div className="spe-equ justify-content-center">
                     <label>Inco Terms :</label>
                     <input
@@ -3256,7 +3272,7 @@ class NewRateSearch extends Component {
                       name="incoTerms"
                       value={self.state.incoTerms}
                     />
-                  </div>
+                  </div>):null}
                 </div>
               </div>
 

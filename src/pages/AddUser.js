@@ -117,13 +117,20 @@ class AddUser extends React.Component {
                 {(() => {
                   if (i > 0) {
                     return (
-                      <input
-                        type="button"
-                        value="remove"
+                      // <input
+                      //   type="button"
+                      //   value="remove"
+                      //   id={"remove" + (index + 1)}
+                      //   className="dynamic-remove"
+                      //   onClick={this.removeClick.bind(this, index)}
+                      // />
+                      <button
                         id={"remove" + (index + 1)}
                         className="dynamic-remove"
                         onClick={this.removeClick.bind(this, index)}
-                      />
+                      >
+                        <img src={Delete} alt="delete icon" />
+                      </button>
                     );
                   }
                 })()}

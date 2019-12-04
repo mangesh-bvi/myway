@@ -2442,7 +2442,7 @@ table tbody tr:last-child {
 .cls-flside-close {
   transform: translate(-250px) !important;
 }
-.notification {
+.notificationss {
   background: red;
   color: #fff !important;
   font-size: 12px;
@@ -2649,7 +2649,7 @@ table tbody tr:last-child {
   color: white;
   border-top: 1px solid #265eb5;
 }
-.sidemenu-ul2 li {
+.sidemenu-ul2 > li {
   text-align: center;
   padding: 15px;
   border-right: 1px solid #265eb5;
@@ -3034,11 +3034,11 @@ table tbody tr:last-child {
 .dynamic-remove {
   position: absolute;
   left: 100%;
-  margin-left: 20px;
+  /* margin-left: 20px; */
   width: auto !important;
   background-color: #fff;
   border: 0;
-  margin-top: 12px;
+  margin-top: 5px;
 }
 .dynamic-remove img {
   width: 22px;
