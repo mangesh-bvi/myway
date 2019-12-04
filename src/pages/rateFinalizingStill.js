@@ -236,7 +236,7 @@ class RateFinalizingStill extends Component {
     //   modalBook: !prevState.modalBook
     // }));
     this.props.history.push({
-      pathname: "/rate-finalizing-still-booking",
+      pathname: "/booking-insert",
       state: {
         ContainerLoad: this.state.ContainerLoad,
         salesQuotaNo: this.state.QuoteNumber

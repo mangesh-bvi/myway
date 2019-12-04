@@ -150,7 +150,7 @@ class SideMenu extends Component {
               Dashboard
             </Link>
           </li>
-          <li className="sidemenu-ul-li shipmentli">
+          <li className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}>
             <Accordion
               defaultActiveKey={window.localStorage.getItem("defShipActKey")}
             >
@@ -217,7 +217,7 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          <li className="sidemenu-ul-li shipmentli">
+          <li className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}>
             <Accordion
               defaultActiveKey={window.localStorage.getItem("defActKey")}
               // defaultActiveKey={window.localStorage.getItem("defspotActKey")}
@@ -305,7 +305,7 @@ class SideMenu extends Component {
             </Accordion>
           </li>
           <li
-            className="sidemenu-ul-li shipmentli"
+            className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}
             onClick={this.highlightClass.bind(this)}
           >
             {/* <Link to="/quote-table">
