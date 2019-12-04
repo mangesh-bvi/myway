@@ -243,11 +243,11 @@
                 $.ajax({
                   type: "POST",
                   async: false,
-                  url: ApiUrl+"/ShipmentIConAPI",
+                  url: ApiUrl + "/ShipmentIConAPI",
                   data: {
-                    "lat": selectedLat,
-                    "lng": selectedLong,
-                   // lat: 17.69265,
+                    lat: selectedLat,
+                    lng: selectedLong,
+                    // lat: 17.69265,
                     // lng: 83.299995,
                     UserID: userId
                   },
@@ -317,13 +317,13 @@
                       //alert(marketContent);
                       content = marketContent;
                     }
+
+                    infowindow.setContent(content);
+                    infowindow.open(map, marker);
                   }
                 });
 
                 ///////////////////////////////////////////////////
-
-                infowindow.setContent(content);
-                infowindow.open(map, marker);
               };
             })(marker, content, infowindow)
           );
@@ -358,7 +358,7 @@
         $.ajax({
           type: "POST",
           async: false,
-          url: ApiUrl+"/MyWaySearchGeoCoOrdinate",
+          url: ApiUrl + "/MyWaySearchGeoCoOrdinate",
           data: {
             UserID: "874588",
             Search: enteredHBLNum
@@ -392,7 +392,7 @@
             $.ajax({
               type: "POST",
               async: false,
-              url: ApiUrl+"/ShipmentIConAPI",
+              url: ApiUrl + "/ShipmentIConAPI",
               data: {
                 lat: lat,
                 lng: lng,
@@ -512,7 +512,7 @@
           $.ajax({
             type: "POST",
             async: false,
-            url: ApiUrl+"/ShipmentLatLongAPI",
+            url: ApiUrl + "/ShipmentLatLongAPI",
             data: {
               UserID: userId
             },

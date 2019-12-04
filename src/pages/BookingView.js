@@ -29,7 +29,7 @@ class BookingView extends Component {
       shiperVal: "",
       consigneeval: "",
       commodityData: [],
-      selectedCommodity: "",
+      selectedCommodity: 0,
       selectedFilePath: "",
       selectedType: "",
       ConsigneeID: 0,
@@ -566,6 +566,7 @@ class BookingView extends Component {
                             columns: [
                               {
                                 Cell: row => {
+                                  debugger;
                                   i++;
                                   return (
                                     <React.Fragment>

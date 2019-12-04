@@ -9,9 +9,13 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
-
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
 import { encryption, convertToPlain } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
+
 
 class BookingInsert extends Component {
   constructor(props) {
@@ -457,7 +461,9 @@ class BookingInsert extends Component {
     }).then(function(response) {
       debugger;
       if (response.data.Table) {
+        
         var BookingNo = response.data.Table[0].BookingID;
+        NotificationManager.success(response.data.Table[0]);
         self.setState({ BookingNo });
         self.HandleFileUpload();
       }
@@ -483,6 +489,7 @@ class BookingInsert extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
+      NotificationManager.success(response.data.Table[0]);
     });
   }
   HandleCommodityDropdown() {
@@ -558,7 +565,7 @@ class BookingInsert extends Component {
     if (fields[field].length > 3) {
       axios({
         method: "post",
-        url: `${appSettings.APIURL}/CustomerList`,
+        url: `${appSettings.APIURL}/NonCustomerList`,
         data: {
           CustomerName: customerName,
           CustomerType: "Existing",
@@ -636,7 +643,7 @@ class BookingInsert extends Component {
       method: "post",
       url: `${appSettings.APIURL}/NonCustomerList`,
       data: {
-        MyWayUserID: 2679 //userId
+        MyWayUserID: userId,//2679 
       },
       headers: authHeader()
     }).then(function(response) {
@@ -804,7 +811,7 @@ class BookingInsert extends Component {
       className = "butn m-0";
     }
 
-    console.log(this.state.multiCBM, "-------------multiCBM");
+    
     return (
       <React.Fragment>
         <Headers />
@@ -1433,7 +1440,9 @@ class BookingInsert extends Component {
             </div>
           </div>
         </div>
+        <NotificationContainer/> 
       </React.Fragment>
+ 
     );
   }
 }

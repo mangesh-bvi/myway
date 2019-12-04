@@ -1383,7 +1383,7 @@ class RateFinalizing extends Component {
     // usertype
 
     var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
-    let self=this;
+    let self = this;
     axios({
       method: "post",
       url: url,
@@ -1396,7 +1396,8 @@ class RateFinalizing extends Component {
           if (response.data != null) {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
-                NotificationManager.error(response.data.Table[0].Message);
+                NotificationManager.success(response.data.Table[0].Message);
+                console.log(response.data.Table[0]);
                 window.location.href = "quote-table";
                 if (usertype !== "Sales User") {
                   self.AcceptQuotes();
