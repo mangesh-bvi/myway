@@ -488,9 +488,9 @@ class RateTable extends Component {
   }
 
   toggleQuantQuantity(paramData) {
-    // this.setState(prevState => ({
-    //   modalQuant: !prevState.modalQuant
-    // }));
+    this.setState(prevState => ({
+      modalQuant: !prevState.modalQuant
+    }));
     this.HandleRateDetailsFCL(paramData);
   }
 
