@@ -1866,6 +1866,18 @@ table tbody tr:last-child {
 .tab-icon-view {
   width: 20px;
 }
+
+.book-view-file {
+  cursor: pointer;
+  width: auto;
+  display: inline-block;
+  /* text-decoration: none;
+  transition: all 0.3s ease-in-out; */
+}
+.book-view-file:hover {
+  color: #0142aa;
+  text-decoration: underline;
+}
 /* booking table ends */
 
 /* dashboard starts */
@@ -2627,7 +2639,8 @@ table tbody tr:last-child {
 .shipment-ul li {
   padding: 5px;
 }
-.shipment-ul li:hover, .shipment-ul li:focus {
+.shipment-ul li:hover,
+.shipment-ul li:focus {
   cursor: pointer;
 }
 .shipment-ul li:last-child {
@@ -2756,7 +2769,8 @@ table tbody tr:last-child {
   width: 100%;
   padding: 6px 10px;
 }
-.sidemenu-ul-li a:hover, .sidemenu-ul-li a:focus {
+.sidemenu-ul-li a:hover,
+.sidemenu-ul-li a:focus {
   color: #fff;
   cursor: pointer;
   background-color: #012d74;
@@ -3675,8 +3689,8 @@ img {
 /* Quote css end by Shlok */
 .menubars {
   height: auto;
-    width: 20px;
-    float: right;
-    margin-top: 15px;
-    cursor: pointer;
+  width: 20px;
+  float: right;
+  margin-top: 15px;
+  cursor: pointer;
 }

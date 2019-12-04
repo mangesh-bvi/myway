@@ -29,7 +29,7 @@ class BookingView extends Component {
       shiperVal: "",
       consigneeval: "",
       commodityData: [],
-      selectedCommodity: "",
+      selectedCommodity: 0,
       selectedFilePath: "",
       selectedType: "",
       ConsigneeID: 0,
@@ -433,7 +433,7 @@ class BookingView extends Component {
         }
         self.setState({
           HazMat: "",
-          Unstackable: "",      
+          Unstackable: ""
         });
       });
     }
@@ -479,7 +479,7 @@ class BookingView extends Component {
             this.HandleFileOpen(el.FilePath);
           }}
         >
-          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+          <p className="file-name book-view-file mt-2">{el.FileName}</p>
         </span>
       </div>
     ));
@@ -531,8 +531,13 @@ class BookingView extends Component {
   }
 
   render() {
-   
-
+    var commodityName = "";
+    if (this.state.selectedCommodity !== 0) {
+      debugger;
+      commodityName = this.state.commodityData.filter(
+        x => x.id === this.state.selectedCommodity
+      )[0].Commodity;
+    }
     let i = 0;
     let className = "butn m-0";
     if (this.state.showContent == true) {
@@ -802,7 +807,6 @@ class BookingView extends Component {
                         <div className="row">
                           <div className="col-md-4">
                             <p className="details-title">Account/Customer</p>
-
                             <p className="details-para"></p>
                           </div>
                           <div className="col-md-4">
@@ -871,7 +875,10 @@ class BookingView extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Consignee Name</p>
-                            <Autocomplete
+                            <p className="details-para">
+                              {this.state.fields["Consignee"]}
+                            </p>
+                            {/* <Autocomplete
                               getItemValue={item => item.Company_Name}
                               items={this.state.Consignee}
                               renderItem={(item, isHighlighted) => (
@@ -899,7 +906,7 @@ class BookingView extends Component {
                               )}
                               value={this.state.fields["Consignee"]}
                               autoComplete="off"
-                            />
+                            /> */}
                           </div>
 
                           <div className="col-md-4">
@@ -919,7 +926,10 @@ class BookingView extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Shipper Name</p>
-                            <Autocomplete
+                            <p className="details-para">
+                              {this.state.fields["Shipper"]}
+                            </p>
+                            {/* <Autocomplete
                               getItemValue={item => item.Company_Name}
                               items={this.state.Shipper}
                               renderItem={(item, isHighlighted) => (
@@ -945,7 +955,7 @@ class BookingView extends Component {
                                 "Shipper"
                               )}
                               autoComplete="off"
-                            />
+                            /> */}
                           </div>
 
                           <div className="col-md-4">
@@ -961,7 +971,8 @@ class BookingView extends Component {
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
-                        <select
+                        <p className="details-para">{commodityName}</p>
+                        {/* <select
                           disabled={true}
                           value={this.state.selectedCommodity}
                         >
@@ -971,7 +982,7 @@ class BookingView extends Component {
                               {item.Commodity}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
                       </div>
                     </div>
 
@@ -984,11 +995,9 @@ class BookingView extends Component {
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
-                              {/* {Booking.length > 0
-                                ? Booking[0].Buyer_Name
-                                : null} */}
+                              {this.state.BuyerName}
 
-                              <select
+                              {/* <select
                                 onChange={this.HandleChangeBuyer.bind(this)}
                                 value={this.state.BuyerID}
                               >
@@ -998,7 +1007,7 @@ class BookingView extends Component {
                                     {item.Company_Name}
                                   </option>
                                 ))}
-                              </select>
+                              </select> */}
                             </p>
                           </div>
                           <div className="col-md-6">
@@ -1021,7 +1030,8 @@ class BookingView extends Component {
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
-                              <select
+                              {this.state.NotifyName}
+                              {/* <select
                                 onChange={this.HandleChangeParty.bind(this)}
                                 value={this.state.NotifyID}
                               >
@@ -1031,7 +1041,7 @@ class BookingView extends Component {
                                     {item.Company_Name}
                                   </option>
                                 ))}
-                              </select>
+                              </select> */}
                             </p>
                           </div>
                           <div className="col-md-6">
@@ -1125,8 +1135,16 @@ class BookingView extends Component {
                     </div>
                     <div className="row cargodetailsB"></div>
 
+                    <div>
+                      <div
+                        className="title-border py-3"
+                        style={{ width: "100%" }}
+                      >
+                        <h3>Documents</h3>
+                      </div>
+                    </div>
                     <div className="rename-cntr login-fields d-block">
-                      <div className="d-flex w-100 mt-4 align-items-center">
+                      {/* <div className="d-flex w-100 mt-4 align-items-center">
                         <div className="w-100">
                           <input
                             id="file-upload"
@@ -1142,7 +1160,7 @@ class BookingView extends Component {
                           </label>
                         </div>
                       </div>
-                      <br />
+                      <br /> */}
 
                       {this.state.FileData.length > 0
                         ? this.CreateFileElement()
