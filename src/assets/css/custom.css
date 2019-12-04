@@ -2649,7 +2649,7 @@ table tbody tr:last-child {
   color: white;
   border-top: 1px solid #265eb5;
 }
-.sidemenu-ul2 li {
+.sidemenu-ul2 > li {
   text-align: center;
   padding: 15px;
   border-right: 1px solid #265eb5;

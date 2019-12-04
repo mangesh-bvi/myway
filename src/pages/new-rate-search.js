@@ -295,6 +295,19 @@ class NewRateSearch extends Component {
       errors["PODAddress"] = "Please select destination";
     }
 
+    // if(this.state.cmbTypeRadio == "ALL")
+    // {
+    //   var multiCBM = this.state.multiCBM;
+    //   for (let i = 0; i < multiCBM.length; i++) {
+    //     if (multiCBM[i].PackageType == "" || multiCBM[i].PackageType == "Select" || 
+    //     multiCBM[i].Quantity == 0 || multiCBM[i].Lengths == 0 || 
+    //     multiCBM[i].Width == 0 || multiCBM[i].Height == 0 || multiCBM[i].GrossWt == 0) {
+          
+    //     }
+        
+    //   }
+    // }
+
     this.setState({ errors: errors });
     return formIsValid;
   }
@@ -810,7 +823,7 @@ class NewRateSearch extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: parseFloat(value)
+        [name]: value===""?0:parseFloat(value)
       };
     }
 
@@ -878,6 +891,7 @@ class NewRateSearch extends Component {
           Lengths: 0,
           Width: 0,
           Height: Height,
+          GrossWt: 0,
           Weight: 0,
           VolumeWeight: 0,
           Volume: 0
