@@ -713,34 +713,71 @@ class SpotRateDetails extends Component {
                             {this.state.spotrateresponseTbl.TypeofMove}
                           </p>
                         </div>
-                        <div className="col-md-4">
-                          <p className="details-title">POL</p>
-                          <p className="details-para">
-                            {spotrateresponseTbl1.length > 0
-                              ? spotrateresponseTbl1[0].OriginPort_Name
-                              : ""}
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">POD</p>
-                          <p className="details-para">
-                            {spotrateresponseTbl1.length > 0
-                              ? spotrateresponseTbl1[0].DestinationPort_Name
-                              : ""}
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">PU Address</p>
-                          <p className="details-para">
-                            {this.state.spotrateresponseTbl.PickUpAddress}
-                          </p>
-                        </div>
-                        <div className="col-md-4">
-                          <p className="details-title">Delivery Address</p>
-                          <p className="details-para">
-                            {this.state.spotrateresponseTbl.DestinationAddress}
-                          </p>
-                        </div>
+                        
+                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "port to port"?(
+                          <>
+                          <div className="col-md-4">
+                            <p className="details-title">POL</p>
+                            <p className="details-para">
+                                {this.state.spotrateresponseTbl.PickUpAddress}
+                            </p>                          
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">POD</p>
+                            <p className="details-para">
+                                {this.state.spotrateresponseTbl.DestinationAddress}
+                            </p>
+                          </div>
+                          </>
+                         ):null):""}
+                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to door"?(
+                          <>
+                          <div className="col-md-4">
+                            <p className="details-title">PU Address</p>
+                            <p className="details-para">
+                              {this.state.spotrateresponseTbl.PickUpAddress}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Delivery Address</p>
+                            <p className="details-para">
+                              {this.state.spotrateresponseTbl.DestinationAddress}
+                            </p>
+                          </div>
+                          </>
+                         ):null):""}
+                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "port to door"?(
+                          <>
+                          <div className="col-md-4">
+                            <p className="details-title">POL</p>
+                            <p className="details-para">
+                                {this.state.spotrateresponseTbl.PickUpAddress}
+                            </p>                          
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Delivery Address</p>
+                            <p className="details-para">
+                              {this.state.spotrateresponseTbl.DestinationAddress}
+                            </p>
+                          </div>
+                          </>
+                         ):null):""}
+                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to port"?(
+                          <>
+                          <div className="col-md-4">
+                            <p className="details-title">PU Address</p>
+                            <p className="details-para">
+                              {this.state.spotrateresponseTbl.PickUpAddress}
+                            </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">POD</p>
+                            <p className="details-para">
+                                {this.state.spotrateresponseTbl.DestinationAddress}
+                            </p>
+                          </div>
+                          </>
+                         ):null):""}
                       </div>
                     </div>
                   </div>
@@ -773,14 +810,17 @@ class SpotRateDetails extends Component {
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
                         {/* <input type="text" value="Dummy" disabled /> */}
-                        <select>
+                        <select
+                        value={this.state.spotrateresponseTbl.CommodityID}
+                        >
                           <option>Select</option>
                           <option>All</option>
                           {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity}>
+                            <option key={i} value={item.id}>
                               {item.Commodity}
                             </option>
                           ))}
+                          
                         </select>
                       </div>
                       <div className="col-md-12 login-fields">
@@ -788,8 +828,8 @@ class SpotRateDetails extends Component {
                         <div className="cls-rt" style={{ width: "100%" }}>
                           <div className="ag-fresh">
                             {/* {(() => {
-                        if (spotrateresponseTbl1.length>0) {
-                 */}
+                              if (spotrateresponseTbl1.length>0) {
+                          */}
                             <ReactTable
                               data={spotrateresponseTbl1}
                               noDataText="No Data Found"
