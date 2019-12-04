@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../styles/custom.css";
-import { Accordion, Button, Card, Modal, ModalBody } from "react-bootstrap";
+import { Accordion, Button, Card } from "react-bootstrap";
 import GreenCounterIcon from "./../assets/img/green-counter-side.png";
 import BookingsIcon from "./../assets/img/bookings-side.png";
 import AnalyticsIcon from "./../assets/img/analytics-side.png";
@@ -22,6 +22,7 @@ import SettingIcon from "./../assets/img/Settings.png";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
+import { Modal, ModalBody } from "reactstrap";
 
 class SideMenu extends Component {
   constructor(props) {
@@ -149,7 +150,7 @@ class SideMenu extends Component {
               Dashboard
             </Link>
           </li>
-          <li className="sidemenu-ul-li shipmentli">
+          <li className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}>
             <Accordion
               defaultActiveKey={window.localStorage.getItem("defShipActKey")}
             >
@@ -216,7 +217,7 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          <li className="sidemenu-ul-li shipmentli">
+          <li className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}>
             <Accordion
               defaultActiveKey={window.localStorage.getItem("defActKey")}
               // defaultActiveKey={window.localStorage.getItem("defspotActKey")}
@@ -304,7 +305,7 @@ class SideMenu extends Component {
             </Accordion>
           </li>
           <li
-            className="sidemenu-ul-li shipmentli"
+            className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}
             onClick={this.highlightClass.bind(this)}
           >
             {/* <Link to="/quote-table">
@@ -572,7 +573,7 @@ class SideMenu extends Component {
                 </li>
                 {/* <li
                   className="activitylog-li"
-                  // onClick={this.toggle.bind(this)}
+                  onClick={this.toggle.bind(this)}
                   id="abcd"
                 >
                   <img
@@ -582,7 +583,7 @@ class SideMenu extends Component {
                   />
                   Activity Log
                 </li> */}
-                {/* <li className="profile-setting-li">
+                <li className="profile-setting-li">
                   <a href="changePassword">
                     <img
                       src={ProfileSettingIcon}
@@ -591,8 +592,8 @@ class SideMenu extends Component {
                     />
                     Change Password
                   </a>
-                </li> */}
-                {/* <li className="profile-setting-li" onClick={this.toggleProfile}>
+                </li>
+                <li className="profile-setting-li" onClick={this.toggleProfile}>
                   <a href="#!">
                     <img
                       src={ProfileSettingIcon}
@@ -601,8 +602,9 @@ class SideMenu extends Component {
                     />
                     Profile Settings
                   </a>
-                </li> */}
-                {/* <li className="profile-setting-li">
+                </li>
+                <li className="profile-setting-li">
+                  {/* <a href=""> */}
                   <img
                     className="header-phone-icon dropdown-toggle"
                     data-toggle="dropdown"
@@ -611,21 +613,11 @@ class SideMenu extends Component {
                     alt="mobile-icon"
                   />
                   Mobile App
+                  {/* </a> */}
                   <div className="dropdown-menu qr-code-dropdown">
                     <QRCode />
                   </div>
-                </li> */}
-                {/* <li
-                  className="logout-li"
-                  // onClick={this.onLogout.bind(this)}
-                >
-                  <img
-                    src={LogoutIcon}
-                    alt="logout-icon"
-                    className="activitylog-icon"
-                  />
-                  Logout
-                </li> */}
+                </li>
               </ul>
             </div>
           </ul>

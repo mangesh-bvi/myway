@@ -1380,7 +1380,10 @@ class RateFinalizing extends Component {
       url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
     }
     //return false;
+    // usertype
 
+    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
+    let self=this;
     axios({
       method: "post",
       url: url,
@@ -1395,6 +1398,9 @@ class RateFinalizing extends Component {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
                 window.location.href = "quote-table";
+                if (usertype !== "Sales User") {
+                  self.AcceptQuotes();
+                }
               }
             }
           }
@@ -1780,6 +1786,91 @@ class RateFinalizing extends Component {
     });
     //document.getElementById("SearchRate").classList.remove("disableRates");
   }
+
+  // --------------------------------------------------------------//
+
+  AcceptQuotes() {
+    let self = this;
+    var SalesQuoteNumber = "";
+    var QuoteType = "";
+    if (typeof this.props.location.state != "undefined") {
+      SalesQuoteNumber = this.props.location.state.detail.Quotes;
+      QuoteType = this.props.location.state.detail.Type;
+    } else {
+      return false;
+    }
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteApprove`,
+      data: {
+        Mode: QuoteType,
+        SalesQuoteNumber: SalesQuoteNumber,
+        isApprove: 1,
+        MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                NotificationManager.success(response.data.Table[0].Message);
+              }
+            }
+          }
+        }
+
+        var Messagebody =
+          "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
+
+        self.SendMail(SalesQuoteNumber, Messagebody);
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+        NotificationManager.error(err[1].replace("}", ""));
+      });
+  }
+
+  SendMail(SalesQuoteNumber, Messagebody) {
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteMailAPI`,
+      data: {
+        CustomerID: 0,
+        SalesPersonID: 0,
+        SalesQuoteNumber: SalesQuoteNumber,
+        Body: Messagebody,
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.length > 0) {
+              NotificationManager.success(response.data[0].Result);
+            }
+          }
+        }
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+        NotificationManager.error(err[1].replace("}", ""));
+      });
+  }
+
+  //------------------------------------------------------------------//
 
   render() {
     // var data1 = [
@@ -2561,10 +2652,10 @@ class RateFinalizing extends Component {
                                           //     : ""}
                                           // </React.Fragment>
                                           <React.Fragment>
-                                          {props.original.Rate}
-                                          &nbsp;
-                                          {props.original.Currency}
-                                        </React.Fragment>
+                                            {props.original.Rate}
+                                            &nbsp;
+                                            {props.original.Currency}
+                                          </React.Fragment>
                                         )
                                       },
                                       {
@@ -2668,9 +2759,7 @@ class RateFinalizing extends Component {
                             ))}
                           </div>
                           <div className="col-md-4">
-                            <p className="details-title">
-                              HazMat
-                            </p>
+                            <p className="details-title">HazMat</p>
                             <p className="details-para">
                               {this.state.HazMat === true ? "Yes " : "No"}
                             </p>
@@ -2678,9 +2767,7 @@ class RateFinalizing extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Non Stackable</p>
                             <p className="details-para">
-                            {this.state.NonStackable === true
-                                ? "Yes"
-                                : "No"}
+                              {this.state.NonStackable === true ? "Yes" : "No"}
                             </p>
                           </div>
                           <div className="col-md-4">
@@ -2819,7 +2906,11 @@ class RateFinalizing extends Component {
                           //   accessor: "Temperature"
                           // },
                           {
-                            Header: this.state.containerLoadType.toUpperCase() == "LCL"?"CBM":"Chargable Weight",
+                            Header:
+                              this.state.containerLoadType.toUpperCase() ==
+                              "LCL"
+                                ? "CBM"
+                                : "Chargable Weight",
                             accessor: "CBM"
                             //show:  this.state.containerLoadType == "Air" ? false : true
                           },

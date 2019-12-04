@@ -3,7 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import FileUpload from "./../assets/img/file.png";
 import ReactTable from "react-table";
-import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
+
 import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -13,7 +13,7 @@ import Autocomplete from "react-autocomplete";
 import { encryption, convertToPlain } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 
-class BookingView extends Component {
+class BookingInsert extends Component {
   constructor(props) {
     super(props);
 
@@ -87,35 +87,404 @@ class BookingView extends Component {
       Shipper_Displayas: "",
       Shipper_Name: "",
       CargoType: "",
-      Incoterm: ""
+
+      Commodity: "",
+      companyID: 0,
+      company_name: "",
+      contact_name: "",
+      Company_Address: "",
+      FileDataArry: [],
+      ContainerCode: ""
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
   componentDidMount() {
+    var rData = this.props.location.state;
     if (
-      this.props.location.state.BookingNo != "" &&
-      this.props.location.state.BookingNo != undefined
+      // typeof rData.ContainerLoad !== "" &&
+      // typeof rData.salesQuotaNo !== "" &&
+      rData.ContainerLoad !== undefined &&
+      rData.salesQuotaNo !== undefined
     ) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
         "desc"
       );
-      var BookingNo = this.props.location.state.BookingNo;
-      var isView = this.props.location.state.isView;
-      if (isView) {
-        this.setState({ BookingNo, userType, isView: true });
+      this.setState({
+        ContainerLoad: rData.ContainerLoad,
+        salesQuotaNo: rData.salesQuotaNo,
+        userType
+      });
+      if (rData.ContainerLoad === "LCL") {
         setTimeout(() => {
+          this.HandleGetSalesQuotaion();
+          this.NonCustomerList();
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
-          this.BookigGridDetailsList();
-          this.NonCustomerList();
-        }, 300);
+        }, 100);
       }
-    } else {
-      this.props.history.push("/booking-table");
+      if (rData.ContainerLoad === "FCL") {
+        setTimeout(() => {
+          this.HandleGetSalesQuotaionFCL();
+          this.NonCustomerList();
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+        }, 100);
+      }
+      if (rData.ContainerLoad === "AIR") {
+        setTimeout(() => {
+          this.HandleGetSalesQuotaionAIR();
+          this.NonCustomerList();
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+        }, 100);
+      }
     }
   }
 
+  HandleGetSalesQuotaionLCL() {
+    let self = this;
+    debugger;
+    var ContainerLoad = this.state.ContainerLoad;
+    var salesQuotaNo = this.state.salesQuotaNo;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteView`,
+      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var QuotationData = response.data.Table1;
+      var QuotationSubData = response.data.Table2;
+      var Booking = response.data.Table;
+      var multiCBM = response.data.Table3;
+
+      //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
+
+      if (QuotationData.length > 0) {
+        var Commodity = QuotationData[0].Commodity;
+        var IncoTerms = QuotationData[0].IncoTerm;
+        var POL = QuotationData[0].POL;
+        var POD = QuotationData[0].POD;
+        var SaleQuoteID = QuotationData[0].SaleQuoteID;
+        var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
+        var TypeofMove = QuotationData[0].TypeOfMove;
+        self.setState({
+          multiCBM,
+          QuotationData,
+          QuotationSubData,
+          Commodity,
+          IncoTerms,
+          POL,
+          POD,
+          SaleQuoteID,
+          SaleQuoteIDLineID,
+          TypeofMove
+        });
+      }
+      if (Booking.length > 0) {
+        var ModeofTransport = Booking[0].ModeOfTransport;
+        var companyID = Booking[0].companyID;
+        var company_name = Booking[0].company_name;
+        var contact_name = Booking[0].contact_name;
+        var Company_Address = Booking[0].Company_Address;
+        var SaleQuoteNo = Booking[0].SaleQuoteID;
+        var ShipmentType = Booking[0].ShipmentType;
+
+        self.setState({
+          ModeofTransport,
+          companyID,
+          company_name,
+          contact_name,
+          Company_Address,
+          SaleQuoteNo,
+          ShipmentType
+        });
+      }
+    });
+  }
+
+  HandleGetSalesQuotaionFCL() {
+    let self = this;
+    debugger;
+    var ContainerLoad = this.state.ContainerLoad;
+    var salesQuotaNo = this.state.salesQuotaNo;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteView`,
+      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var QuotationData = response.data.Table1;
+      var QuotationSubData = response.data.Table2;
+      var Booking = response.data.Table;
+      var multiCBM = response.data.Table3;
+
+      //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
+
+      if (Booking.length > 0) {
+        var ModeofTransport = Booking[0].ModeOfTransport;
+        var companyID = Booking[0].companyID;
+        var company_name = Booking[0].company_name;
+        var contact_name = Booking[0].contact_name;
+        var Company_Address = Booking[0].Company_Address;
+
+        var ShipmentType = Booking[0].ShipmentType;
+        var TypeofMove = Booking[0].TypeOfMove;
+        var IncoTerms = Booking[0].IncoTerm;
+        self.setState({
+          Booking,
+          multiCBM,
+          ModeofTransport,
+          companyID,
+          company_name,
+          Company_Address,
+          contact_name,
+          ShipmentType,
+          TypeofMove,
+          IncoTerms
+        });
+      }
+
+      if (QuotationData.length > 0) {
+        var Commodity = QuotationData[0].Commodity;
+        var POL = QuotationData[0].POL;
+        var POD = QuotationData[0].POD;
+        var SaleQuoteID = QuotationData[0].SaleQuoteID;
+        var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
+        var ContainerCode = QuotationData[0].ContainerCode;
+        self.setState({
+          QuotationData,
+          QuotationSubData,
+          Commodity,
+          POL,
+          POD,
+          SaleQuoteID,
+          SaleQuoteIDLineID,
+          ContainerCode
+        });
+      }
+    });
+  }
+
+  HandleGetSalesQuotaionAIR() {
+    let self = this;
+    debugger;
+    var ContainerLoad = this.state.ContainerLoad;
+    var salesQuotaNo = this.state.salesQuotaNo;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteView`,
+      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var QuotationData = response.data.Table1;
+      var QuotationSubData = response.data.Table2;
+      var Booking = response.data.Table;
+      var multiCBM = response.data.Table3;
+
+      //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
+
+      if (QuotationData.length > 0) {
+        var Commodity = QuotationData[0].Commodity;
+        var IncoTerms = QuotationData[0].IncoTerm;
+        var POL = QuotationData[0].POL;
+        var POD = QuotationData[0].POD;
+        var SaleQuoteID = QuotationData[0].SaleQuoteID;
+        var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
+        var TypeofMove = QuotationData[0].TypeOfMove;
+        self.setState({
+          multiCBM,
+          QuotationData,
+          QuotationSubData,
+          Commodity,
+          IncoTerms,
+          POL,
+          POD,
+          SaleQuoteID,
+          SaleQuoteIDLineID,
+          TypeofMove
+        });
+      }
+      if (Booking.length > 0) {
+        var ModeofTransport = Booking[0].ModeOfTransport;
+        var companyID = Booking[0].companyID;
+        var company_name = Booking[0].company_name;
+        var contact_name = Booking[0].contact_name;
+        var Company_Address = Booking[0].Company_Address;
+        var SaleQuoteNo = Booking[0].SaleQuoteID;
+        var ShipmentType = Booking[0].ShipmentType;
+
+        self.setState({
+          ModeofTransport,
+          companyID,
+          company_name,
+          contact_name,
+          Company_Address,
+          SaleQuoteNo,
+          ShipmentType
+        });
+      }
+    });
+  }
+
+  ////booking insert
+
+  HandleBookigInsert() {
+    let self = this;
+    debugger;
+
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+
+    var MyWayUserID = userId;
+    var ShipperID = Number(this.state.shipperData.Company_ID || 0);
+
+    var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
+
+    var Shipper_Displayas = this.state.shipperData.CompanyAddress || "";
+    var Shipper_AddressID = Number(this.state.shipperData.AddressID || 0);
+    var ShipperName = this.state.shipperData.Company_Name || "";
+
+    var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+    var ConsigneeName = this.state.consineeData.Company_Name || "";
+    var Consignee_AddressID = Number(this.state.consineeData.AddressID || 0);
+    var Consignee_Displayas = this.state.consineeData.CompanyAddress;
+
+    var BuyerID = this.state.BuyerID;
+    var Buyer_AddressID = this.state.Buyer_AddressID;
+    var Buyer_Displayas = this.state.Buyer_Displayas;
+    var BuyerName = this.state.BuyerName;
+
+    var Mode = this.state.ContainerLoad;
+
+    if (this.state.Commodity) {
+      var Commodity = Number(
+        this.state.commodityData.filter(
+          x => x.Commodity === this.state.Commodity
+        )[0].id || 0
+      );
+    }
+    // var Commodity = Number(
+    //   this.state.commodityData.filter(
+    //     x => x.Commodity === this.state.Commodity
+    //   )[0].id || 0
+    // );
+    // var Commodity = 49;
+
+    var saleQuoteID = Number(this.state.QuotationData[0].SaleQuoteID || 0);
+    var saleQuoteNo = this.state.salesQuotaNo || "";
+    var saleQuoteLineID = Number(
+      this.state.QuotationData[0].saleQuoteLineID || 0
+    );
+
+    var NotifyID = Number(this.state.NotifyID || 0);
+    var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+    var Notify_Displayas = this.state.Notify_Displayas || "";
+    var NotifyName = this.state.NotifyName || "";
+
+    var BookingDim = [];
+
+    if (this.state.multiCBM.length > 0) {
+      for (let i = 0; i < this.state.multiCBM.length; i++) {
+        var cargoData = new Object();
+
+        cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+        cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+        cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
+        cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+        cargoData.Width = this.state.multiCBM[i].Width || 0;
+        cargoData.Height = this.state.multiCBM[i].Height || 0;
+        cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+        cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+        cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+
+        BookingDim.push(cargoData);
+      }
+    } else {
+      var cargoData = new Object();
+
+      cargoData.BookingPackID = 0;
+      cargoData.PackageType = "";
+      cargoData.Quantity = 0;
+      cargoData.Lengths = 0;
+      cargoData.Width = 0;
+      cargoData.Height = 0;
+      cargoData.GrossWt = 0;
+      cargoData.VolumeWeight = 0;
+      cargoData.Volume = 0;
+      BookingDim.push(cargoData);
+    }
+
+    var paramData = {
+      MyWayUserID: MyWayUserID,
+      ShipperID: ShipperID,
+      Shipper_Displayas: Shipper_Displayas,
+      Shipper_AddressID: Shipper_AddressID,
+      ShipperName: ShipperName,
+      ConsigneeID: ConsigneeID,
+      ConsigneeName: ConsigneeName,
+      Consignee_AddressID: Consignee_AddressID,
+      Consignee_Displayas: Consignee_Displayas,
+      BuyerID: BuyerID,
+      Buyer_AddressID: Buyer_AddressID,
+      Buyer_Displayas: Buyer_Displayas,
+      BuyerName: BuyerName,
+      Mode: Mode,
+      Commodity: Commodity,
+      saleQuoteID: saleQuoteID,
+      saleQuoteNo: saleQuoteNo,
+      saleQuoteLineID: saleQuoteLineID,
+      DefaultEntityTypeID: DefaultEntityTypeID,
+      NotifyID: NotifyID,
+      Notify_AddressID: Notify_AddressID,
+      Notify_Displayas: Notify_Displayas,
+      NotifyName: NotifyName,
+      BookingDim: BookingDim,
+      BookingDocs: []
+    };
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookingInsertion`,
+      data: paramData,
+
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      if (response.data.Table) {
+        var BookingNo = response.data.Table[0].BookingID;
+        self.setState({ BookingNo });
+        self.HandleFileUpload();
+      }
+    });
+  }
+
+  HandleFileUpload() {
+    debugger;
+    var BookingID = this.state.BookingNo;
+    var DocumentID = 0;
+    var DocumnetFile = this.state.FileDataArry;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/BookigFileUpload`,
+      data: {
+        BookingID: BookingID,
+        DocumentID: DocumentID,
+        BookingDoc: DocumnetFile,
+        MyWayUserID: userId
+      },
+
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+    });
+  }
   HandleCommodityDropdown() {
     let self = this;
 
@@ -125,8 +494,6 @@ class BookingView extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
@@ -201,7 +568,7 @@ class BookingView extends Component {
       }).then(function(response) {
         debugger;
 
-        if (response.data.Table > 0) {
+        if (response.data.Table.length > 1) {
           if (field == "Consignee") {
             self.setState({
               Consignee: response.data.Table,
@@ -214,23 +581,29 @@ class BookingView extends Component {
             });
           }
         } else {
-          if (field == "Consignee") {
-            self.setState({
-              Consignee: response.data.Table,
-              fields,
-              consineeData: response.data.Table[0]
-            });
+          if (response.data.Table.length == 1) {
+            if (field == "Consignee") {
+              self.setState({
+                Consignee: response.data.Table,
+                fields,
+                consineeData: response.data.Table[0]
+              });
+            } else {
+              self.setState({
+                Shipper: response.data.Table,
+                fields,
+                shipperData: response.data.Table[0]
+              });
+            }
           } else {
             self.setState({
-              Shipper: response.data.Table,
-              fields,
-              shipperData: response.data.Table[0]
+              fields
             });
           }
         }
       });
     } else {
-      this.setState({
+      self.setState({
         fields
       });
     }
@@ -257,18 +630,16 @@ class BookingView extends Component {
 
   ////this method for NonCustomerList bind
   NonCustomerList() {
-    debugger;
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/NonCustomerList`,
       data: {
-        MyWayUserID: 2679
+        MyWayUserID: 2679 //userId
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var data = response.data.Table;
       self.setState({ NonCustomerData: data });
     });
@@ -281,163 +652,34 @@ class BookingView extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/CommodityDropdown`,
-      data: {},
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
   }
 
-  toggleProfit() {
-    this.setState(prevState => ({
-      modalProfit: !prevState.modalProfit
-    }));
-  }
-
-  toggleRequest() {
-    this.setState(prevState => ({
-      modalRequest: !prevState.modalRequest
-    }));
-  }
-
   onDocumentChangeHandler = event => {
     debugger;
     var FileData = event.target.files;
+    var FileDataArry = [];
     var filesArr = this.state.selectedFile;
     for (let i = 0; i < FileData.length; i++) {
-      var selectedFile = event.target.files[i];
-      filesArr.push(selectedFile);
-      var fileName = event.target.files[i].name;
-      this.setState({ selectedFile: filesArr });
-      this.addClickTruckType(fileName);
+      var objeFile = new Object();
+      objeFile.FileName = event.target.files[i].name;
+
+      FileDataArry.push(event.target.files[i]);
+      filesArr.push(objeFile);
+
+      this.setState({
+        selectedFile: filesArr,
+        FileDataArry
+      });
     }
+    this.CreateFileElement();
   };
 
   ////this methos for bookig details BookigGridDetailsList
-  BookigGridDetailsList() {
-    let self = this;
-    debugger;
-    var bookingId = self.state.BookingNo;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    if (bookingId !== "" && bookingId !== null) {
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/BookigGridDetailsList`,
-        data: {
-          UserID: userId, //874654, //userId, //874654, ,
-          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        debugger;
-        var QuotationData = response.data.Table4;
-        var QuotationSubData = response.data.Table5;
-        var Booking = response.data.Table;
-        var CargoDetails = response.data.Table2;
-        var FileData = response.data.Table3;
-        var eqmtType = response.data.Table1;
-
-        if (typeof QuotationData !== "undefined") {
-          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
-            var ShipmentType = QuotationData[0].ShipmentType;
-            self.setState({
-              QuotationData,
-              QuotationSubData,
-              ShipmentType
-            });
-          }
-        }
-        if (typeof eqmtType !== "undefined") {
-          if (eqmtType.length > 0) {
-            self.setState({ eqmtType });
-          }
-        }
-        if (typeof Booking !== "undefined") {
-          var TypeofMove = "";
-          if (Booking.length > 0) {
-            if (Booking[0].typeofMove === 1) {
-              TypeofMove = "Port To Port";
-            }
-            if (Booking[0].typeofMove === 2) {
-              TypeofMove = "Door To Port";
-            }
-            if (Booking[0].typeofMove === 3) {
-              TypeofMove = "Port To Door";
-            }
-            if (Booking[0].typeofMove === 4) {
-              TypeofMove = "Door To Door";
-            }
-
-            var NotifyID = Booking[0].NotifyID;
-            var Notify_AddressID = Booking[0].Notify_AddressID;
-            var Notify_Displayas = Booking[0].Notify_Displayas;
-            var NotifyName = Booking[0].NotifyName;
-
-            var BuyerID = Booking[0].BuyerID;
-            var Buyer_AddressID = Booking[0].Buyer_AddressID;
-            var Buyer_Displayas = Booking[0].Buyer_Displayas;
-            var BuyerName = Booking[0].BuyerName;
-
-            var ShipperID = Booking[0].ShipperID;
-            var Shipper_AddressID = Booking[0].Shipper_AddressID;
-            var Shipper_Displayas = Booking[0].Shipper_Displayas;
-            var Shipper_Name = Booking[0].Shipper_Name;
-
-            var Consignee = Booking[0].Consignee;
-            var Consignee_AddressID = Booking[0].Consignee_AddressID;
-            var Consignee_Displayas = Booking[0].Consignee_Displayas;
-            var Consignee_Name = Booking[0].Consignee_Name;
-            var CargoType = Booking[0].CargoType;
-            var Incoterm = Booking[0].Incoterm;
-            var strBooking_No = Booking[0].strBooking_No;
-
-            self.setState({
-              multiCBM: CargoDetails,
-              cargoType: Booking[0].CargoType,
-              selectedCommodity: Booking[0].Commodity,
-              NotifyID,
-              Notify_AddressID,
-              Notify_Displayas,
-              NotifyName,
-              BuyerID,
-              Buyer_AddressID,
-              Buyer_Displayas,
-              BuyerName,
-              TypeofMove,
-              POL: Booking[0].POL,
-              POD: Booking[0].POD,
-              ShipperID,
-              Shipper_AddressID,
-              Shipper_Displayas,
-              Shipper_Name,
-              Consignee,
-              Consignee_AddressID,
-              Consignee_Displayas,
-              Consignee_Name,
-              CargoType,
-              Incoterm,
-              strBooking_No,
-              fields: {
-                Consignee: Booking[0].Consignee_Name,
-                Shipper: Booking[0].Shipper_Name
-              }
-            });
-          }
-
-          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
-            self.setState({ FileData });
-          }
-        }
-        self.setState({
-          HazMat: "",
-          Unstackable: "",      
-        });
-      });
-    }
-  }
 
   HandleFileOpen(filePath) {
     var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
@@ -453,31 +695,26 @@ class BookingView extends Component {
       responseType: "blob",
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       if (response.data) {
-        console.log(response.data);
-
-        var blob = new Blob([response.data], { type: "application/pdf" });
+        var blob = new Blob([response.data], {
+          type: "application/pdf"
+        });
         var link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
         link.download = FileName;
         link.click();
       }
-      //   window.open(
-      //     "data:application/octet-stream;charset=utf-16le;base64," + response.data
-      //   );
-      //   window.open(response.data);
     });
   }
 
   ////this method for multiple file element create
   CreateFileElement() {
-    return this.state.FileData.map((el, i) => (
+    return this.state.selectedFile.map((el, i) => (
       <div key={i}>
         <span
-          onClick={e => {
-            this.HandleFileOpen(el.FilePath);
-          }}
+        //   onClick={e => {
+        //     this.HandleFileOpen(el.FilePath);
+        //   }}
         >
           <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
         </span>
@@ -507,6 +744,34 @@ class BookingView extends Component {
     }
   }
 
+  HandleRadioBtn = e => {
+    debugger;
+    var selectedType = e.target.value;
+    this.setState({
+      // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
+      fields: {},
+      Consignee: [],
+      Shipper: [],
+      shipperData: {},
+      consineeData: {}
+    });
+    setTimeout(() => {
+      if (selectedType === "Consignee") {
+        this.setState({
+          selectedType,
+          fields: { Consignee: this.state.company_name }
+        });
+        this.HandleChangeCon(selectedType, this.state.company_name);
+      } else {
+        this.setState({
+          selectedType,
+          fields: { Shipper: this.state.company_name }
+        });
+        this.HandleChangeCon(selectedType, this.state.company_name);
+      }
+    }, 100);
+  };
+
   ////this method for party change value
 
   HandleChangeParty(e) {
@@ -531,8 +796,6 @@ class BookingView extends Component {
   }
 
   render() {
-   
-
     let i = 0;
     let className = "butn m-0";
     if (this.state.showContent == true) {
@@ -541,6 +804,7 @@ class BookingView extends Component {
       className = "butn m-0";
     }
 
+    console.log(this.state.multiCBM, "-------------multiCBM");
     return (
       <React.Fragment>
         <Headers />
@@ -550,7 +814,7 @@ class BookingView extends Component {
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
-              <h2>Booking Details</h2>
+              <h2>Booking Insert</h2>
             </div>
             <div className="row">
               <div className="col-md-12">
@@ -716,17 +980,21 @@ class BookingView extends Component {
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.ModeofTransport}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
-                              {this.state.CargoType}
+                              {this.state.ContainerLoad}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.ContainerCode}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
@@ -741,7 +1009,7 @@ class BookingView extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
-                              {this.state.Incoterm}
+                              {this.state.IncoTerms}
                             </p>
                           </div>
                           <div className="col-md-4">
@@ -803,65 +1071,69 @@ class BookingView extends Component {
                           <div className="col-md-4">
                             <p className="details-title">Account/Customer</p>
 
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.company_name}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.Company_Address}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Notification Person</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.contact_name}
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      {this.state.isInsert === true ? (
-                        <div className="rate-radio-cntr">
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="exist-cust"
-                              checked={
-                                this.state.selectedType === "Consignee"
-                                  ? true
-                                  : false
-                              }
-                              value="Consignee"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="exist-cust"
-                            >
-                              Consignee
-                            </label>
-                          </div>
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="new-cust"
-                              checked={
-                                this.state.selectedType === "Shipper"
-                                  ? true
-                                  : false
-                              }
-                              value="Shipper"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="new-cust"
-                            >
-                              Shipper
-                            </label>
-                          </div>
+                      <div className="rate-radio-cntr">
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={this.HandleRadioBtn}
+                            name="cust-select"
+                            id="exist-cust"
+                            checked={
+                              this.state.selectedType === "Consignee"
+                                ? true
+                                : false
+                            }
+                            value="Consignee"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="exist-cust"
+                          >
+                            Consignee
+                          </label>
                         </div>
-                      ) : null}
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={this.HandleRadioBtn}
+                            name="cust-select"
+                            id="new-cust"
+                            checked={
+                              this.state.selectedType === "Shipper"
+                                ? true
+                                : false
+                            }
+                            value="Shipper"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            Shipper
+                          </label>
+                        </div>
+                      </div>
                     </div>
                     <div>
                       <div className="title-border py-3">
@@ -898,14 +1170,15 @@ class BookingView extends Component {
                                 "Consignee"
                               )}
                               value={this.state.fields["Consignee"]}
-                              autoComplete="off"
                             />
                           </div>
 
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {this.state.Consignee_Displayas}
+                              {this.state.consineeData !== null
+                                ? this.state.consineeData.CompanyAddress
+                                : ""}
                             </p>
                           </div>
                         </div>
@@ -944,14 +1217,15 @@ class BookingView extends Component {
                                 item => item.Company_ID,
                                 "Shipper"
                               )}
-                              autoComplete="off"
                             />
                           </div>
 
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {this.state.Shipper_Displayas}
+                              {this.state.shipperData !== null
+                                ? this.state.shipperData.CompanyAddress
+                                : ""}
                             </p>
                           </div>
                         </div>
@@ -1080,48 +1354,47 @@ class BookingView extends Component {
                           showPagination={false}
                         />
                       ) : null}
-                      {this.state.multiCBM.length > 0 ? (
-                        <ReactTable
-                          columns={[
-                            {
-                              columns: [
-                                {
-                                  Header: "Package Type",
-                                  accessor: "PackageType"
-                                },
-                                {
-                                  Header: "Quantity",
-                                  accessor: "QTY"
-                                },
-                                {
-                                  Header: "Length",
-                                  accessor: "Lengths"
-                                },
-                                {
-                                  Header: "Width",
-                                  accessor: "Width"
-                                },
-                                {
-                                  Header: "Height",
-                                  accessor: "Height"
-                                },
-                                {
-                                  Header: "Gross Weight",
-                                  accessor: "GrossWeight"
-                                },
-                                {
-                                  Header: "Volume Weight",
-                                  accessor: "VolumeWeight"
-                                }
-                              ]
-                            }
-                          ]}
-                          data={this.state.multiCBM}
-                          minRows={0}
-                          showPagination={false}
-                          className="-striped -highlight"
-                        />
-                      ) : null}
+
+                      <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "Package Type",
+                                accessor: "PackageType"
+                              },
+                              {
+                                Header: "Quantity",
+                                accessor: "Quantity"
+                              },
+                              {
+                                Header: "Length",
+                                accessor: "Length"
+                              },
+                              {
+                                Header: "Width",
+                                accessor: "Width"
+                              },
+                              {
+                                Header: "Height",
+                                accessor: "height"
+                              },
+                              {
+                                Header: "Gross Weight",
+                                accessor: "GrossWeight"
+                              },
+                              {
+                                Header: "Volume Weight",
+                                accessor: "VolumeWeight"
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.multiCBM}
+                        minRows={0}
+                        showPagination={false}
+                        className="-striped -highlight"
+                      />
                     </div>
                     <div className="row cargodetailsB"></div>
 
@@ -1144,12 +1417,18 @@ class BookingView extends Component {
                       </div>
                       <br />
 
-                      {this.state.FileData.length > 0
-                        ? this.CreateFileElement()
-                        : null}
+                      {this.CreateFileElement()}
                     </div>
                   </div>
                 </div>
+                <center>
+                  <button
+                    onClick={this.HandleBookigInsert.bind(this)}
+                    className="butn more-padd mt-4"
+                  >
+                    Booking Create
+                  </button>
+                </center>
               </div>
             </div>
           </div>
@@ -1159,4 +1438,4 @@ class BookingView extends Component {
   }
 }
 
-export default BookingView;
+export default BookingInsert;
