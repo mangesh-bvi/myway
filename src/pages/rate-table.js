@@ -3292,7 +3292,9 @@ class RateTable extends Component {
                       onClick={this.toggleQuant}
                       className="butn white-butn w-100 mt-0"
                     >
-                      Container Details
+                      {this.state.containerLoadType === "FCL"
+                        ? "Container Details"
+                        : "Cargo Details"}
                     </button>
                   </div>
                 </div>
