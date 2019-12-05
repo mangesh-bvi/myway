@@ -281,17 +281,17 @@ class RateFinalizingStillBooking extends Component {
     if (fields[field].length > 3) {
       axios({
         method: "post",
-        url: `${appSettings.APIURL}/CustomerList`,
+        url: `${appSettings.APIURL}/NonCustomerList`,
         data: {
-          CustomerName: customerName,
-          CustomerType: "Existing",
+          // CustomerName: customerName,
+          // CustomerType: "Existing",
           MyWayUserID: userId
         },
         headers: authHeader()
       }).then(function(response) {
         debugger;
 
-        if (response.data.Table > 0) {
+        if (response.data.Table.length > 1) {
           if (field == "Consignee") {
             self.setState({
               Consignee: response.data.Table,
@@ -304,17 +304,23 @@ class RateFinalizingStillBooking extends Component {
             });
           }
         } else {
-          if (field == "Consignee") {
-            self.setState({
-              Consignee: response.data.Table,
-              fields,
-              consineeData: response.data.Table[0]
-            });
+          if (response.data.Table.length === 1) {
+            if (field == "Consignee") {
+              self.setState({
+                Consignee: response.data.Table,
+                fields,
+                consineeData: response.data.Table[0]
+              });
+            } else {
+              self.setState({
+                Shipper: response.data.Table,
+                fields,
+                shipperData: response.data.Table[0]
+              });
+            }
           } else {
             self.setState({
-              Shipper: response.data.Table,
-              fields,
-              shipperData: response.data.Table[0]
+              fields
             });
           }
         }
@@ -1668,14 +1674,59 @@ class RateFinalizingStillBooking extends Component {
       }));
     }
   }
+
+  /////
+
+  // file download
+  HandleFileOpen(filePath) {
+    var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    debugger;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DownloadFTPFile`,
+      data: {
+        MywayUserID: userId,
+        FilePath: filePath
+      },
+      responseType: "blob",
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      if (response.data) {
+        console.log(response.data);
+
+        var blob = new Blob([response.data], { type: "application/pdf" });
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = FileName;
+        link.click();
+      }
+      //   window.open(
+      //     "data:application/octet-stream;charset=utf-16le;base64," + response.data
+      //   );
+      //   window.open(response.data);
+    });
+  }
+
   ////this method for multiple file element create
   CreateFileElement() {
     debugger;
     return this.state.FileData.map((el, i) => (
       <div key={i}>
-        <a href={el.FilePath || ""}>
+        {/* <a href={el.FilePath || ""}>
           <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
-        </a>
+
+
+        </a> */}
+        <span
+          onClick={e => {
+            this.HandleFileOpen(el.FilePath);
+          }}
+        >
+          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+        </span>
       </div>
     ));
   }
@@ -2192,50 +2243,48 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      {this.state.isInsert === true ? (
-                        <div className="rate-radio-cntr">
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="exist-cust"
-                              checked={
-                                this.state.selectedType === "Consignee"
-                                  ? true
-                                  : false
-                              }
-                              value="Consignee"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="exist-cust"
-                            >
-                              Consignee
-                            </label>
-                          </div>
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="new-cust"
-                              checked={
-                                this.state.selectedType === "Shipper"
-                                  ? true
-                                  : false
-                              }
-                              value="Shipper"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="new-cust"
-                            >
-                              Shipper
-                            </label>
-                          </div>
+                      <div className="rate-radio-cntr">
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={this.HandleRadioBtn}
+                            name="cust-select"
+                            id="exist-cust"
+                            checked={
+                              this.state.selectedType === "Consignee"
+                                ? true
+                                : false
+                            }
+                            value="Consignee"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="exist-cust"
+                          >
+                            Consignee
+                          </label>
                         </div>
-                      ) : null}
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={this.HandleRadioBtn}
+                            name="cust-select"
+                            id="new-cust"
+                            checked={
+                              this.state.selectedType === "Shipper"
+                                ? true
+                                : false
+                            }
+                            value="Shipper"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            Shipper
+                          </label>
+                        </div>
+                      </div>
                     </div>
                     <div>
                       <div className="title-border py-3">
@@ -2380,7 +2429,7 @@ class RateFinalizingStillBooking extends Component {
                         >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity}>
+                            <option key={i} value={item.id}>
                               {item.Commodity}
                             </option>
                           ))}

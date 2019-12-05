@@ -236,7 +236,7 @@ class RateFinalizingStill extends Component {
     //   modalBook: !prevState.modalBook
     // }));
     this.props.history.push({
-      pathname: "/rate-finalizing-still-booking",
+      pathname: "/booking-insert",
       state: {
         ContainerLoad: this.state.ContainerLoad,
         salesQuotaNo: this.state.QuoteNumber
@@ -1642,13 +1642,29 @@ class RateFinalizingStill extends Component {
                               },
                               {
                                 Cell: row => {
+                                  if (
+                                    row.original.Total !== "" &&
+                                    row.original.Total !== null &&
+                                    row.original.Total !== undefined
+                                  ) {
+                                    var total = row.original.Total;
+                                    var remo = total.substring(
+                                      total.indexOf(" ") + 1
+                                    );
+                                    var final =
+                                      parseFloat(
+                                        total.replace(remo, "")
+                                      ).toFixed(2) +
+                                      " " +
+                                      remo;
+                                  }
                                   return (
                                     <>
                                       <p className="details-title">Price</p>
                                       <p className="details-para">
                                         {row.original.Total !== "" &&
                                         row.original.Total !== null
-                                          ? row.original.Total
+                                          ? final
                                           : ""}
                                       </p>
                                     </>
@@ -1712,15 +1728,28 @@ class RateFinalizingStill extends Component {
                                 minRows={1}
                                 data={this.state.SubRateDetails.filter(
                                   d =>
-                                    d.saleQuoteLineID ===
-                                    row.original.saleQuoteLineID
+                                    d.saleQuoteLineID||d.SaleQuoteIDLineID ===
+                                    row.original.saleQuoteLineID||this.state.RateDetails.saleQuoteLineID
                                 )}
+                                // data={this.state.SubRateDetails}
                                 columns={[
                                   {
                                     columns: [
                                       {
                                         Header: "C. Type",
-                                        accessor: "Type"
+                                        accessor:
+                                          this.state.ContainerLoad === "INLAND"
+                                            ? "ChargeType"
+                                            : "Type",
+                                        Cell: row => {
+                                          debugger;
+                                          if (row.original.Type !== undefined &&row.original.Type !=="" ) {
+                                            return <>{row.original.Type}</>;
+                                          } 
+                                          if(row.original.ChargeType !== undefined) {
+                                            return <>{row.original.ChargeType}</>;
+                                          }
+                                        }
                                       },
                                       {
                                         Header: "C. Name",
@@ -1755,11 +1784,27 @@ class RateFinalizingStill extends Component {
 
                                       {
                                         Cell: row => {
+                                          if (
+                                            row.original.Total !== "" &&
+                                            row.original.Total !== null &&
+                                            row.original.Total !== undefined
+                                          ) {
+                                            var total = row.original.Total;
+                                            var remo = total.substring(
+                                              total.indexOf(" ") + 1
+                                            );
+                                            var final =
+                                              parseFloat(
+                                                total.replace(remo, "")
+                                              ).toFixed(2) +
+                                              " " +
+                                              remo;
+                                          }
                                           return (
                                             <>
                                               {row.original.Total !== "" &&
                                               row.original.Total !== null
-                                                ? row.original.Total
+                                                ? final
                                                 : ""}
                                             </>
                                           );

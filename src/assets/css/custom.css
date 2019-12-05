@@ -1872,6 +1872,18 @@ table tbody tr:last-child {
 .tab-icon-view {
   width: 20px;
 }
+
+.book-view-file {
+  cursor: pointer;
+  width: auto;
+  display: inline-block;
+  /* text-decoration: none;
+  transition: all 0.3s ease-in-out; */
+}
+.book-view-file:hover {
+  color: #0142aa;
+  text-decoration: underline;
+}
 /* booking table ends */
 
 /* dashboard starts */
@@ -2011,7 +2023,7 @@ table tbody tr:last-child {
   left: 0;
   /* height: 100vh; */
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5) url("../img/loader.gif") no-repeat center
+  background: rgba(0, 0, 0, 0.1) url("../img/loader.gif") no-repeat center
     center;
   background-size: 60px;
   z-index: 5;
@@ -2634,7 +2646,8 @@ table tbody tr:last-child {
 .shipment-ul li {
   padding: 5px;
 }
-.shipment-ul li:hover, .shipment-ul li:focus {
+.shipment-ul li:hover,
+.shipment-ul li:focus {
   cursor: pointer;
 }
 .shipment-ul li:last-child {
@@ -2763,7 +2776,8 @@ table tbody tr:last-child {
   width: 100%;
   padding: 6px 10px;
 }
-.sidemenu-ul-li a:hover, .sidemenu-ul-li a:focus {
+.sidemenu-ul-li a:hover,
+.sidemenu-ul-li a:focus {
   color: #fff;
   cursor: pointer;
   background-color: #012d74;
@@ -3609,10 +3623,10 @@ img {
   width: 33px;
   background: #29abe2;
 }
-.messaging {
+/* .messaging {
   /* padding: 15px 0; */
-  /* padding: 0 0 50px 0; */
-}
+  /* padding: 0 0 50px 0; 
+} */
 .inbox_chat::-webkit-scrollbar,
 .msg_history::-webkit-scrollbar {
   width: 7px;
@@ -3681,15 +3695,15 @@ img {
   font-size: 14px;
   width: 250px;
   display: inline-block;
-  float: right;
+  float:right;
   margin-top: -45px;
   margin-right: 15px;
 }
 /* Quote css end by Shlok */
 .menubars {
   height: auto;
-    width: 20px;
-    float: right;
-    margin-top: 15px;
-    cursor: pointer;
+  width: 20px;
+  float: right;
+  margin-top: 15px;
+  cursor: pointer;
 }

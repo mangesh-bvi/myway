@@ -2968,9 +2968,9 @@ class RateTable extends Component {
             <SideMenu />
           </div>
           <NotificationContainer />
-          {this.state.loading === true ? (
+          {/* {this.state.loading === true ? (
             <div className="loader-icon"></div>
-          ) : (
+          ) : ( */}
             <div className="cls-rt no-bg min-hei-auto">
               <div className="rate-table-header">
                 <div className="title-sect">
@@ -3264,9 +3264,13 @@ class RateTable extends Component {
                       </button>
                     </div>
                   </div>
-                   
-                  {this.state.RateDetails.length > 0 ? (
-                    <div className="col-md-9 react-rate-table react-rate-tab">
+                    <div className="col-md-9">
+                  {this.state.loading === true ? (
+                    <div className="position-relative h-100">
+                      <div className="loader-icon"></div>
+                    </div>
+                  ) : this.state.RateDetails.length > 0 ? (
+                    <div className="react-rate-table react-rate-tab">
                       <ReactTable
                         columns={[
                           {
@@ -3613,7 +3617,7 @@ class RateTable extends Component {
                       </p>
                     </div>
                   ) : (
-                    <div className="col-md-9 less-left-rate">
+                    <div className="less-left-rate">
                       <div className="spot-rate">
                         <div className="no-rate">
                           <p>No Rates Found, Ask for Spot Rates</p>
@@ -3627,6 +3631,7 @@ class RateTable extends Component {
                       </p>
                     </div>
                   )}
+                </div>
                 </div>
               </div>
               {/*  --------------------------EquipmentType  Modal ---------------------*/}
@@ -4023,7 +4028,7 @@ class RateTable extends Component {
               </Modal>
               {/* {----------------------End Spot Rate Modal------------------} */}
             </div>
-          )}
+          {/* )} */}
         </div>
       </div>
     );

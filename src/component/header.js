@@ -520,7 +520,7 @@ class Header extends Component {
                           />
                           Activity Log
                         </li>
-                        <li className="profile-setting-li">
+                        {/* <li className="profile-setting-li">
                           <a href="changePassword">
                             <img
                               src={ProfileSettingIcon}
@@ -529,8 +529,8 @@ class Header extends Component {
                             />
                             Change Password
                           </a>
-                        </li>
-                        <li
+                        </li> */}
+                        {/* <li
                           className="profile-setting-li"
                           onClick={this.toggleProfile}
                         >
@@ -542,9 +542,8 @@ class Header extends Component {
                             />
                             Profile Settings
                           </a>
-                        </li>
-                        <li className="profile-setting-li">
-                          {/* <a href=""> */}
+                        </li> */}
+                        {/* <li className="profile-setting-li">
                           <img
                             className="header-phone-icon dropdown-toggle"
                             data-toggle="dropdown"
@@ -553,11 +552,10 @@ class Header extends Component {
                             alt="mobile-icon"
                           />
                           Mobile App
-                          {/* </a> */}
                           <div className="dropdown-menu qr-code-dropdown">
                             <QRCode />
                           </div>
-                        </li>
+                        </li> */}
                         <li
                           className="logout-li"
                           onClick={this.onLogout.bind(this)}
