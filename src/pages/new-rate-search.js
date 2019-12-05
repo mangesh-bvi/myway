@@ -352,7 +352,9 @@ class NewRateSearch extends Component {
 
   HandleCMBtextChange(e) {
     debugger;
-    var Textvalue = e.target.value;
+    var jiji = parseInt(e.target.value);
+    var Textvalue = isNaN(jiji) ? 0 : parseInt(e.target.value);
+    // var Textvalue = e.target.value;
 
     this.setState({ cbmVal: Textvalue });
     document.getElementById("cbm").classList.add("cbm");
@@ -958,7 +960,7 @@ class NewRateSearch extends Component {
           </label>
           {/* <div className="spe-equ"> */}
           <input
-            type="number"
+            type="text"
             name="Quantity"
             min={1}
             placeholder="QTY"
@@ -1303,7 +1305,7 @@ class NewRateSearch extends Component {
         </label>
         <div className="spe-equ">
           <input
-            type="number"
+            type="text"
             min={1}
             placeholder="QTY"
             name="ContainerQuantity"
@@ -1390,6 +1392,7 @@ class NewRateSearch extends Component {
   }
 
   newhandleChange(i, e) {
+    debugger;
     const { name, value } = e.target;
     let users = [...this.state.users];
     users[i] = {
@@ -2993,7 +2996,7 @@ class NewRateSearch extends Component {
                             <div className="col-md-4 m-auto">
                               <div className="spe-equ">
                                 <input
-                                  type="number"
+                                  type="text"
                                   minLength={1}
                                   onChange={this.HandleCMBtextChange.bind(this)}
                                   placeholder={

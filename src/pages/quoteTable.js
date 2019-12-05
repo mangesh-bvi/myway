@@ -238,6 +238,12 @@ class QuoteTable extends Component {
                         Header: "Action",
                         sortable: false,
                         Cell: row => {
+                          // var abc = new Date(row.original.CreatedDate);
+                          // var current = new Date();
+                          // var x = abc.getTime();
+                          // var y = current.getTime();
+                          // console.log(x);
+                          // console.log(y);
                           if (row.original.type !== "No record found") {
                             if (row.original.Status === "Pending") {
                               return (
@@ -368,13 +374,27 @@ class QuoteTable extends Component {
                     filterAll: true
                   }
                 ]}
+                defaultSorted={[
+                  {
+                    id: data => {
+                      debugger;
+                      var abc = new Date(data.CreatedDate);
+                      var current = new Date();
+                      var x = abc.getTime();
+                      var y = current.getTime();
+                      var z = y - x;
+                      console.log(x);
+                      console.log(y);
+                      console.log(z);
+                      // var date = new Date(data.CreatedDate);
+                      return z;
+                    },
+                    desc: true
+                  }
+                ]}
                 // defaultSorted={[
                 //   {
-                //     id: (data) => {
-                //       debugger;
-                //       var date = new Date(data.CreatedDate)
-                //       return date;
-                //     },
+                //     id: "CreatedDate",
                 //     desc: true
                 //   }
                 // ]}
