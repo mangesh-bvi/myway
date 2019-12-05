@@ -472,14 +472,15 @@ class RateTable extends Component {
   }
   togglePODModal() {
     this.setState({
-      modalPOD: !this.state.modalPOD
+      modalPOD: !this.state.modalPOD,
+      multiFields:{}
     });
   }
   togglePOLModal() {
     debugger;
-
     this.setState({
-      modalPOL: !this.state.modalPOL
+      modalPOL: !this.state.modalPOL,
+      multiFields:{}
     });
   }
   toggleQuant() {
@@ -499,7 +500,8 @@ class RateTable extends Component {
     debugger;
     this.state.polFilterArray = this.state.polArray;
     this.setState(prevState => ({
-      polFilterArray: this.state.polFilterArray
+      polFilterArray: this.state.polFilterArray,
+      modalPOL: !this.state.modalPOL
       //modalQuant: !prevState.modalQuant
     }));
     this.HandleMultiPOLPODFilter();
@@ -509,7 +511,8 @@ class RateTable extends Component {
     debugger;
     this.state.podFilterArray = this.state.podArray;
     this.setState(prevState => ({
-      podFilterArray: this.state.podFilterArray
+      podFilterArray: this.state.podFilterArray,
+      modalPOD: !this.state.modalPOD
       //modalQuant: !prevState.modalQuant
     }));
 
