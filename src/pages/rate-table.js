@@ -3021,7 +3021,7 @@ class RateTable extends Component {
                 </Link> */}
                 </div>
               </div>
-              <div className="rate-table-below">
+              <div className="rate-table-below cus-w">
                 <div className="row">
                   <div className="col-md-3 less-right-rate">
                     <div className="rate-table-left">

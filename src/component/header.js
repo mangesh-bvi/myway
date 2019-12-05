@@ -383,14 +383,14 @@ class Header extends Component {
                     </div>
                   </div>
                 </li> */}
-                <li style={{ padding: "10px 15px" }}>
+                <li style={{ padding: "20px" }}>
                   <img
                     src={ChatIcon}
                     alt="chat-icon"
                     className="header-chat-icon"
                     onClick={this.toggleDocu}
                   />
-
+                  <label style={{fontSize:"12px" , fontWeight: "bold" , color: "#1a1919"}}>Live Chat</label>
                   <Modal
                     className="delete-popup pol-pod-popup"
                     isOpen={this.state.modalDocu}
@@ -458,7 +458,7 @@ class Header extends Component {
 
                     <li
                       data-toggle="dropdown"
-                      className="p-0 mt-1 loign-dtlss"
+                      className="p-0 mt-3 loign-dtlss"
                       title={encryption(
                         window.localStorage.getItem("companyname"),
                         "desc"
