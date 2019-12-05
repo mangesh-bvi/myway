@@ -1429,6 +1429,9 @@ table tbody tr:last-child {
   /* width: 35px; */
   margin-left: 5px;
   padding-left: 5px;
+  padding-top: 1px !important;
+  padding-bottom: 1px !important;
+  font-family: 'Bold Font' !important;
 }
 .spec-inner-cntr b {
   font-size: 10px;

@@ -64,6 +64,9 @@ class RateFinalizing extends Component {
       users: [],
       referType: [],
       CargoDetailsArr: [],
+      equipmentTypeArr: [],
+      PackageDetailsArr: [],
+      TruckDetailsArr: [],
       CommodityID: "49",
       destAddress: [],
       pickUpAddress: [],
@@ -105,8 +108,9 @@ class RateFinalizing extends Component {
       CompanyID: 0,
       companyName: "",
       CompanyAddress: "",
-      RateLineName:"",
-      ContactName:""
+      RateLineName: "",
+      ContactName: "",
+      isCopy:false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -150,29 +154,37 @@ class RateFinalizing extends Component {
         var TruckTypeData = this.props.location.state.TruckTypeData;
         var cbmVal = this.props.location.state.cbmVal;
         var packageTypeData = this.props.location.state.packageTypeData;
-        var companyID = this.props.location.state.companyID;
+        var companyID = this.props.location.state.companyId;
         var companyName = this.props.location.state.companyName;
         var companyAddress = this.props.location.state.companyAddress;
         var contactName = this.props.location.state.contactName;
 
         var CargoDetailsArr = [];
+        var equipmentTypeArr = [];
+        var PackageDetailsArr = [];
+        var TruckDetailsArr = [];
         if (containerLoadType == "FCL") {
           if (users != null) {
             if (users.length > 0) {
               for (var i = 0; i < users.length; i++) {
                 CargoDetailsArr.push({
                   ContainerType: users[i].StandardContainerCode,
-                  //Packaging: "-",
+                  Packaging: "-",
                   Quantity: users[i].ContainerQuantity,
-                  //Lenght: "-",
-                  //Width: "-",
-                  // Height: "-",
-                  // Weight: "-",
-                  // Gross_Weight: "-",
-                  // Temperature: "-",
-                  // CBM: "-",
-                  // Editable: false
+                  Lenght: "-",
+                  Width: "-",
+                  Height: "-",
+                  Weight: "-",
+                  Gross_Weight: "-",
+                  Temperature: "-",
+                  CBM: "-",
+                  Editable: false
                 });
+
+                equipmentTypeArr.push({
+                  ContainerType: users[i].StandardContainerCode,
+                  Quantity: users[i].ContainerQuantity,
+                })
               }
             }
           }
@@ -193,6 +205,10 @@ class RateFinalizing extends Component {
                   CBM: "-",
                   Editable: false
                 });
+                equipmentTypeArr.push({
+                  ContainerType: spacEqmtType[i].StandardContainerCode,
+                  Quantity: spacEqmtType[i].Quantity,
+                })
               }
             }
           }
@@ -215,6 +231,11 @@ class RateFinalizing extends Component {
                   CBM: "-",
                   Editable: false
                 });
+
+                // equipmentTypeArr.push({
+                //   ContainerType: users[i].StandardContainerCode,
+                //   Quantity: users[i].Quantity,
+                // })
               }
             }
           }
@@ -242,10 +263,28 @@ class RateFinalizing extends Component {
                   CBM: "-",
                   Editable: true
                 });
+
+                PackageDetailsArr.push({
+                  PackageType: flattack_openTop[i].PackageType,
+                  SpecialContainerCode:
+                    flattack_openTop[i].SpecialContainerCode,
+                  ContainerType:
+                    flattack_openTop[i].PackageType +
+                    " (" +
+                    flattack_openTop[i].SpecialContainerCode +
+                    ")",
+                  Quantity: flattack_openTop[i].Quantity,
+                  Lenght: flattack_openTop[i].length,
+                  Width: flattack_openTop[i].width,
+                  Height: flattack_openTop[i].height,
+                  Weight: flattack_openTop[i].Gross_Weight,
+                  CBM: flattack_openTop[i].total,
+                  Editable: true
+                })
               }
             }
           }
-        } else if (containerLoadType == "LCL") {
+        } else if (containerLoadType == "LCL"  || containerLoadType == "LTL") {
           for (var i = 0; i < multiCBM.length; i++) {
             CargoDetailsArr.push({
               PackageType: multiCBM[i].PackageType,
@@ -264,8 +303,22 @@ class RateFinalizing extends Component {
               VolumeWeight: multiCBM[i].VolumeWeight,
               Editable: true
             });
+
+            PackageDetailsArr.push({
+              PackageType: multiCBM[i].PackageType,
+              SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+              ContainerType: multiCBM[i].PackageType,
+              Packaging: "-",
+              Quantity: multiCBM[i].Quantity,
+              Lenght: multiCBM[i].Lengths,
+              Width: multiCBM[i].Width,
+              Height: multiCBM[i].Height,
+              Weight: multiCBM[i].GrossWt,
+              CBM: multiCBM[i].Volume,
+              Editable: true
+            })
           }
-        } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+        } else if (containerLoadType == "FTL") {
           // var cSelectedRow = this.props.location.state.selectedDataRow;
 
           // var AllrateDetails = this.props.location.state.RateDetails;
@@ -291,6 +344,14 @@ class RateFinalizing extends Component {
                   Temperature: "-",
                   CBM: "-"
                 });
+
+                if(containerLoadType == "FTL")
+                {
+                  TruckDetailsArr.push({
+                    TransportType: TruckTypeData[i].TruckDesc,
+                    Quantity: TruckTypeData[i].Quantity
+                  });
+                }                
               }
             }
           }
@@ -366,6 +427,9 @@ class RateFinalizing extends Component {
           users: users,
           referType: referType,
           CargoDetailsArr: CargoDetailsArr,
+          equipmentTypeArr: equipmentTypeArr,
+          PackageDetailsArr: PackageDetailsArr,
+          TruckDetailsArr: TruckDetailsArr,
           CommodityID: CommodityID,
           destAddress: destAddress,
           pickUpAddress: pickUpAddress,
@@ -397,16 +461,11 @@ class RateFinalizing extends Component {
         this.state.currencyCode = currencyCode;
       } else {
         var qData = this.props.location.state;
+        this.setState({isCopy:this.props.location.state.isCopy})
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
       this.HandleCommodityDropdown();
-      // var rateSubDetails = JSON.parse(localStorage.getItem("rateSubDetails"));
-      // var rateDetails = JSON.parse(localStorage.getItem("rateDetails"));
-      // this.setState({
-      //   rateDetails: rateDetails,
-      //   rateSubDetails: rateSubDetails
-      // });
     }
 
     this.HandleLocalCharges();
@@ -1212,6 +1271,7 @@ class RateFinalizing extends Component {
         }
       }
     } else if (containerLoadType == "LCL") {
+      debugger;
       var multiCBM = this.state.multiCBM;
       if (this.state.isediting) {
         for (var i = 0; i < multiCBM.length; i++) {
@@ -1358,7 +1418,7 @@ class RateFinalizing extends Component {
       RateQueryDim: RateQueryDim,
       MailBody:
         "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
-      Commodity: this.state.CommodityID
+      Commodity: Number(this.state.CommodityID)
     };
 
     var url = "";
@@ -1565,15 +1625,15 @@ class RateFinalizing extends Component {
         // }
         // else
         // {
-       if (element.LineName == rateDetailsarr[i].lineName) {
-        this.state.rateDetails[i].TotalAmount =
-          parseFloat(
-            this.state.rateDetails[i].TotalAmount == null
-              ? 0
-              : this.state.rateDetails[i].TotalAmount
-          ) + parseFloat(e.target.value);
-        // }
-        
+        if (element.LineName == rateDetailsarr[i].lineName) {
+          this.state.rateDetails[i].TotalAmount =
+            parseFloat(
+              this.state.rateDetails[i].TotalAmount == null
+                ? 0
+                : this.state.rateDetails[i].TotalAmount
+            ) + parseFloat(e.target.value);
+          // }
+
           var newrateSubDetails = {
             BaseCurrency: e.target.getAttribute("data-currency"),
             ChargeCode: e.target.getAttribute("data-chargedesc"),
@@ -1598,42 +1658,41 @@ class RateFinalizing extends Component {
           ) {
             newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
           }
-          
+
           this.state.rateSubDetails = this.state.rateSubDetails.concat(
             newrateSubDetails
           );
-       
+        }
       }
-    }
       this.forceUpdate();
     }
     if (!e.target.checked) {
       for (var i = 0; i < rateDetailsarr.length; i++) {
         if (element.LineName == rateDetailsarr[i].lineName) {
-        if (this.state.rateDetails[i].TotalAmount == undefined) {
-          var amount = this.processText(this.state.rateDetails[i].Total);
+          if (this.state.rateDetails[i].TotalAmount == undefined) {
+            var amount = this.processText(this.state.rateDetails[i].Total);
 
-          this.state.rateDetails[i].Total =
-            parseFloat(amount[0]) -
-            parseFloat(e.target.value) +
-            " " +
-            amount[1];
-        } else {
-          this.state.rateDetails[i].TotalAmount =
-            parseFloat(this.state.rateDetails[i].TotalAmount) -
-            parseFloat(e.target.value);
-        }
+            this.state.rateDetails[i].Total =
+              parseFloat(amount[0]) -
+              parseFloat(e.target.value) +
+              " " +
+              amount[1];
+          } else {
+            this.state.rateDetails[i].TotalAmount =
+              parseFloat(this.state.rateDetails[i].TotalAmount) -
+              parseFloat(e.target.value);
+          }
 
-        for (var i = 0; i <= this.state.rateSubDetails.length - 1; i++) {
-          if (
-            this.state.rateSubDetails[i]["ChargeCode"] ==
-            e.target.getAttribute("data-chargedesc")
-          ) {
-            this.state.rateSubDetails.splice(i--, 1);
+          for (var i = 0; i <= this.state.rateSubDetails.length - 1; i++) {
+            if (
+              this.state.rateSubDetails[i]["ChargeCode"] ==
+              e.target.getAttribute("data-chargedesc")
+            ) {
+              this.state.rateSubDetails.splice(i--, 1);
+            }
           }
         }
       }
-    }
       this.forceUpdate();
     }
   }
@@ -1911,6 +1970,7 @@ class RateFinalizing extends Component {
     //     finalPayment: "$3456.00"
     //   }
     // ];
+    console.log(this.state.CompanyID, "------------------compnayID");
 
     var i = 0;
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
@@ -1933,7 +1993,7 @@ class RateFinalizing extends Component {
               data-currency={item.Currency}
               data-amountinbasecurrency={item.AmountInBaseCurrency}
               data-chargetype="Localcharge"
-              onChange={this.HandleLocalSearchCharges.bind(this,item)}
+              onChange={this.HandleLocalSearchCharges.bind(this, item)}
             />
             <label htmlFor={"local" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
@@ -1965,7 +2025,7 @@ class RateFinalizing extends Component {
               data-currency={item.Currency}
               data-amountinbasecurrency={item.AmountInBaseCurrency}
               data-chargetype="surcharge"
-              onChange={this.HandleLocalSearchCharges.bind(this,item)}
+              onChange={this.HandleLocalSearchCharges.bind(this, item)}
             />
             <label htmlFor={"Sur" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
@@ -2006,7 +2066,7 @@ class RateFinalizing extends Component {
     const filterDuplicateService = [];
     var DocumentCharges = [];
     // var containerLoadType = this.props.location.state.containerLoadType
-    const { CargoDetailsArr } = this.state;
+    const { CargoDetailsArr, equipmentTypeArr, PackageDetailsArr, TruckDetailsArr } = this.state;
     return (
       <React.Fragment>
         <Headers />
@@ -2017,7 +2077,11 @@ class RateFinalizing extends Component {
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
               {/* <h2>Rate Query Details</h2> */}
-              <h2>Create Sales Quote</h2>
+              <h2>
+                {this.state.isCopy === true
+                  ? "Clone Sales Quote"
+                  : "Create Sales Quote"}
+              </h2>
             </div>
             <div className="row">
               <div className="col-md-4">
@@ -2879,15 +2943,16 @@ class RateFinalizing extends Component {
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="ag-fresh redirect-row">
-                    <ReactTable
-                        data={CargoDetailsArr}
+                    {TruckDetailsArr.length!==0?
+                      (<ReactTable
+                        data={TruckDetailsArr}
                         filterable
                         minRows={1}
                         showPagination={false}
                         columns={[
                           {
-                            Header: "Container Name",
-                            accessor: "ContainerType",
+                            Header: "Truck Name",
+                            accessor: "TransportType",
                             minWidth: 110
                           },
                           {
@@ -2901,9 +2966,34 @@ class RateFinalizing extends Component {
                         //getTrProps={this.HandleRowClickEvt}
                         //minRows={1}
                       />
+                      ):null}
+                      {equipmentTypeArr.length!==0?
+                      (<ReactTable
+                        data={equipmentTypeArr}
+                        filterable
+                        minRows={1}
+                        showPagination={false}
+                        columns={[
+                          {
+                            Header: "Container Name",
+                            accessor: "ContainerType",
+                            minWidth: 110
+                          },
+                          {
+                            Header: "Quantity",
+                            accessor: "Quantity"
+                          }
+                        ]}
+                        className="-striped -highlight"
+                        defaultPageSize={2000}
+                        //getTrProps={this.HandleRowClickEvt}
+                        //minRows={1}
+                      />
+                      ):null}
 
-                      <ReactTable
-                        data={CargoDetailsArr}
+                      {PackageDetailsArr.length!==0?
+                      (<ReactTable
+                        data={PackageDetailsArr}
                         filterable
                         minRows={1}
                         showPagination={false}
@@ -2990,7 +3080,7 @@ class RateFinalizing extends Component {
                         defaultPageSize={2000}
                         //getTrProps={this.HandleRowClickEvt}
                         //minRows={1}
-                      />
+                      />):null}
                     </div>
                   </div>
 
@@ -3015,78 +3105,94 @@ class RateFinalizing extends Component {
                               )}
                             </p>
                           )}
-                          {(encryption(
-                                window.localStorage.getItem("usertype"),
-                                "desc"
-                              )) != "Customer"?(
-                          this.state.CompanyName == "" || this.state.isCopy ? (
-                            <Autocomplete
-                              id="searchtxt"
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.customerData}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              value={this.state.fields["Company_Name"]}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Company_Name"
-                              )}
-                              menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                "Company_Name"
-                              )}
-                              inputProps={{
-                                placeholder: "Search Account/Consignee"
-                              }}
-                            />
-                          ) : null):null}
+                          {encryption(
+                            window.localStorage.getItem("usertype"),
+                            "desc"
+                          ) != "Customer" ? (
+                            this.state.CompanyName == "" ||
+                            this.state.isCopy ? (
+                              <Autocomplete
+                                id="searchtxt"
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.customerData}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Company_Name"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                inputProps={{
+                                  placeholder: "Search Account/Consignee"
+                                }}
+                              />
+                            ) : null
+                          ) : null}
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Address</p>
                           <p className="details-para">
                             {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
                             {/* {this.state.CustAddress} */}
-                            {this.state.CompanyAddress}
+                            {(encryption(
+                                window.localStorage.getItem("usertype"),
+                                "desc"
+                              )) != "Customer"?
+                            this.state.CompanyAddress:(encryption(
+                              window.localStorage.getItem("companyaddress"),
+                              "desc"
+                            ))}
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
                           <p className="details-para">
-                            {this.state.ContactName}
+                          {(encryption(
+                                window.localStorage.getItem("usertype"),
+                                "desc"
+                              )) != "Customer"?this.state.ContactName:(encryption(
+                                window.localStorage.getItem("contactname"),
+                                "desc"
+                              ))}
                           </p>
                         </div>
                       </div>
                     </div>
-                    {this.state.CompanyName == ""?
-                    (<div className="text-right">
-                      {this.state.toggleAddProfitBtn && (
-                        <button
-                          onClick={() => {
-                            this.toggleNewConsignee();
-                            this.newOpen();
-                          }}
-                          //onClick={this.toggleNewConsignee}
-                          className="butn more-padd"
-                        >
-                          Create Customer
-                        </button>
-                      )}
-                    </div>):null}
+                    {this.state.CompanyName == "" ? (
+                      <div className="text-right">
+                        {this.state.toggleAddProfitBtn && (
+                          <button
+                            onClick={() => {
+                              this.toggleNewConsignee();
+                              this.newOpen();
+                            }}
+                            //onClick={this.toggleNewConsignee}
+                            className="butn more-padd"
+                          >
+                            Create Customer
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
-                          disabled={true}
+                          //disabled={true}
                           value={this.state.CommodityID}
                           onChange={this.commoditySelect.bind(this)}
                         >
@@ -3694,7 +3800,12 @@ class RateFinalizing extends Component {
           <div className="modal-content">
 
             <div className="modal-body"> */}
-              <button type="button" className="close" data-dismiss="modal" onClick={this.togglePreview}>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                onClick={this.togglePreview}
+              >
                 <span>&times;</span>
               </button>
               <div className="row" style={{ margin: 0 }}>

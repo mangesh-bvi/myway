@@ -65,7 +65,8 @@ class RateFinalizingStill extends Component {
       flattack_openTop: [],
       eqmtType: [],
       selectedFile: [],
-      modalRejectPop: false
+      modalRejectPop: false,
+      HazMat: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -137,6 +138,7 @@ class RateFinalizingStill extends Component {
                 IncoTerms = response.data.Table[0].IncoTerm;
 
                 self.setState({
+                  HazMat: response.data.Table[0].HAZMAT,
                   accountcustname:
                     response.data.Table[0].CompanyName == undefined
                       ? response.data.Table[0].company_name
@@ -149,9 +151,9 @@ class RateFinalizingStill extends Component {
                   ModeOfTransport: response.data.Table[0].ModeOfTransport,
                   ShipmentType: response.data.Table[0].ShipmentType,
                   ContainerLoad: param.detail.Type,
-                  EquipmentTypes: ".20 DC",
-                  SpecialEquipment: ".Refer Type (20 degrees)",
-                  HazMatUnstackable: ".",
+                 
+                  SpecialEquipment: "",
+                  HazMatUnstackable: "",
                   TypeofMove: TypeofMove,
                   IncoTerms: IncoTerms
                 });
@@ -177,7 +179,7 @@ class RateFinalizingStill extends Component {
                 self.setState({
                   IncoTerms: IncoTerms,
                   TypeofMove: TypeofMove,
-                  //EquipmentTypes: response.data.Table1[0].ContainerCode,
+                  EquipmentTypes: response.data.Table1[0].ContainerCode,
                   Commodity: response.data.Table1[0].Commodity,
                   selectedCommodity: response.data.Table1[0].Commodity
                 });
@@ -1728,8 +1730,10 @@ class RateFinalizingStill extends Component {
                                 minRows={1}
                                 data={this.state.SubRateDetails.filter(
                                   d =>
-                                    d.saleQuoteLineID||d.SaleQuoteIDLineID ===
-                                    row.original.saleQuoteLineID||this.state.RateDetails.saleQuoteLineID
+                                    d.saleQuoteLineID ||
+                                    d.SaleQuoteIDLineID ===
+                                      row.original.saleQuoteLineID ||
+                                    this.state.RateDetails.saleQuoteLineID
                                 )}
                                 // data={this.state.SubRateDetails}
                                 columns={[
@@ -1743,11 +1747,19 @@ class RateFinalizingStill extends Component {
                                             : "Type",
                                         Cell: row => {
                                           debugger;
-                                          if (row.original.Type !== undefined &&row.original.Type !=="" ) {
+                                          if (
+                                            row.original.Type !== undefined &&
+                                            row.original.Type !== ""
+                                          ) {
                                             return <>{row.original.Type}</>;
-                                          } 
-                                          if(row.original.ChargeType !== undefined) {
-                                            return <>{row.original.ChargeType}</>;
+                                          }
+                                          if (
+                                            row.original.ChargeType !==
+                                            undefined
+                                          ) {
+                                            return (
+                                              <>{row.original.ChargeType}</>
+                                            );
                                           }
                                         }
                                       },
@@ -1862,9 +1874,14 @@ class RateFinalizingStill extends Component {
                             </p>
                           </div>
                           <div className="col-md-4">
-                            <p className="details-title">
-                              HazMat &amp; Unstackable
+                            <p className="details-title">HazMat</p>
+                            <p className="details-para">
+                              {this.state.HazMatUnstackable}
+                              {this.state.HazMat}
                             </p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Unstackable</p>
                             <p className="details-para">
                               {this.state.HazMatUnstackable}
                             </p>

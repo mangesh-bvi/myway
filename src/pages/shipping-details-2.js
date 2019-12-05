@@ -1192,7 +1192,9 @@ class ShippingDetailsTwo extends Component {
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">ATA Booking No#</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {detailsData.ATABookingNo}
+                            </p>
                           </div>
                           <div className="col-md-3 details-border">
                             <p className="details-title">SRT No#</p>
@@ -1262,9 +1264,7 @@ class ShippingDetailsTwo extends Component {
                               : null} */}
                           </span>
 
-                          <span>
-                           {destinationPortName}
-                          </span>
+                          <span>{destinationPortName}</span>
                           <span>
                             {containerData.length > 0
                               ? containerData[

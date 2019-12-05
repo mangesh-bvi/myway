@@ -107,7 +107,8 @@ class BookingInsert extends Component {
       contact_name: "",
       Company_Address: "",
       FileDataArry: [],
-      ContainerCode: ""
+      ContainerCode: "",
+      HAZMAT: ""
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
@@ -248,8 +249,10 @@ class BookingInsert extends Component {
         var ShipmentType = Booking[0].ShipmentType;
         var TypeofMove = Booking[0].TypeOfMove;
         var IncoTerms = Booking[0].IncoTerm;
+        var HAZMAT = Booking[0].HAZMAT;
         self.setState({
           Booking,
+          HAZMAT,
           multiCBM,
           ModeofTransport,
           companyID,
@@ -1057,9 +1060,11 @@ class BookingInsert extends Component {
                             <p className="details-para"></p>
                           </div>
                           <div className="col-md-4">
-                            <p className="details-title">
-                              HazMat &amp; Unstackable
-                            </p>
+                            <p className="details-title">HazMat</p>
+                            <p className="details-para">{this.state.HAZMAT}</p>
+                          </div>
+                          <div className="col-md-4">
+                            <p className="details-title">Unstackable</p>
                             <p className="details-para"></p>
                           </div>
                           <div className="col-md-4">
@@ -1303,7 +1308,7 @@ class BookingInsert extends Component {
                               {/* {this.state.shipperData !== null
                                 ? this.state.shipperData.CompanyAddress
                                 : ""} */}
-                                {this.state.Shipper_Displayas}
+                              {this.state.Shipper_Displayas}
                             </p>
                           </div>
                         </div>
