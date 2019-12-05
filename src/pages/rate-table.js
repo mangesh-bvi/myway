@@ -225,8 +225,8 @@ class RateTable extends Component {
       ChargeableWeight: 0,
       RateQueryDim: [],
       cbmVal: "",
-      errorPOL:"",
-      errorPOD:"",
+      errorPOL: "",
+      errorPOD: "",
       companyId: 0,
       companyName: "",
       companyAddress: "",
@@ -273,49 +273,61 @@ class RateTable extends Component {
           // var modeofTransport = this.props.location.state.containerLoadType;
           if (paramData.typesofMove === "p2p") {
             this.state.polArray.push({
-              POL: paramData.containerLoadType == "AIR"
-              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
-                ? paramData.polfullAddData.Location
-                : ""
-              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
-              ? paramData.polfullAddData.UNECECode
-              : "",
+              POL:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.polfullAddData.Location !== "" &&
+                    paramData.polfullAddData.Location !== undefined
+                    ? paramData.polfullAddData.Location
+                    : ""
+                  : paramData.polfullAddData.UNECECode !== "" &&
+                    paramData.polfullAddData.UNECECode !== undefined
+                  ? paramData.polfullAddData.UNECECode
+                  : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
             });
             this.state.podArray.push({
-              POD: paramData.containerLoadType == "AIR"
-              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
-                ? paramData.podfullAddData.Location
-                : ""
-              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
-              ? paramData.podfullAddData.UNECECode
-              : "",
+              POD:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.podfullAddData.Location !== "" &&
+                    paramData.podfullAddData.Location !== undefined
+                    ? paramData.podfullAddData.Location
+                    : ""
+                  : paramData.podfullAddData.UNECECode !== "" &&
+                    paramData.podfullAddData.UNECECode !== undefined
+                  ? paramData.podfullAddData.UNECECode
+                  : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
             });
             this.state.polFilterArray.push({
-              POL: paramData.containerLoadType == "AIR"
-              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
-                ? paramData.polfullAddData.Location
-                : ""
-              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
-              ? paramData.polfullAddData.UNECECode
-              : "",
+              POL:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.polfullAddData.Location !== "" &&
+                    paramData.polfullAddData.Location !== undefined
+                    ? paramData.polfullAddData.Location
+                    : ""
+                  : paramData.polfullAddData.UNECECode !== "" &&
+                    paramData.polfullAddData.UNECECode !== undefined
+                  ? paramData.polfullAddData.UNECECode
+                  : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
             });
             this.state.podFilterArray.push({
-              POD: paramData.containerLoadType == "AIR"
-              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
-                ? paramData.podfullAddData.Location
-                : ""
-              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
-              ? paramData.podfullAddData.UNECECode
-              : "",
+              POD:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.podfullAddData.Location !== "" &&
+                    paramData.podfullAddData.Location !== undefined
+                    ? paramData.podfullAddData.Location
+                    : ""
+                  : paramData.podfullAddData.UNECECode !== "" &&
+                    paramData.podfullAddData.UNECECode !== undefined
+                  ? paramData.podfullAddData.UNECECode
+                  : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
@@ -329,13 +341,16 @@ class RateTable extends Component {
               IsFilter: true
             });
             this.state.podArray.push({
-              POD: paramData.containerLoadType == "AIR"
-              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
-                ? paramData.podfullAddData.Location
-                : ""
-              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
-              ? paramData.podfullAddData.UNECECode
-              : "",
+              POD:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.podfullAddData.Location !== "" &&
+                    paramData.podfullAddData.Location !== undefined
+                    ? paramData.podfullAddData.Location
+                    : ""
+                  : paramData.podfullAddData.UNECECode !== "" &&
+                    paramData.podfullAddData.UNECECode !== undefined
+                  ? paramData.podfullAddData.UNECECode
+                  : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
@@ -347,13 +362,16 @@ class RateTable extends Component {
               IsFilter: true
             });
             this.state.podFilterArray.push({
-              POD: paramData.containerLoadType == "AIR"
-              ? paramData.podfullAddData.Location !== "" && paramData.podfullAddData.Location !== undefined
-                ? paramData.podfullAddData.Location
-                : ""
-              : paramData.podfullAddData.UNECECode !== "" && paramData.podfullAddData.UNECECode !== undefined
-              ? paramData.podfullAddData.UNECECode
-              : "",
+              POD:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.podfullAddData.Location !== "" &&
+                    paramData.podfullAddData.Location !== undefined
+                    ? paramData.podfullAddData.Location
+                    : ""
+                  : paramData.podfullAddData.UNECECode !== "" &&
+                    paramData.podfullAddData.UNECECode !== undefined
+                  ? paramData.podfullAddData.UNECECode
+                  : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
               IsFilter: true
@@ -387,13 +405,16 @@ class RateTable extends Component {
           }
           if (paramData.typesofMove === "p2d") {
             this.state.polArray.push({
-              POL: paramData.containerLoadType == "AIR"
-              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
-                ? paramData.polfullAddData.Location
-                : ""
-              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
-              ? paramData.polfullAddData.UNECECode
-              : "",
+              POL:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.polfullAddData.Location !== "" &&
+                    paramData.polfullAddData.Location !== undefined
+                    ? paramData.polfullAddData.Location
+                    : ""
+                  : paramData.polfullAddData.UNECECode !== "" &&
+                    paramData.polfullAddData.UNECECode !== undefined
+                  ? paramData.polfullAddData.UNECECode
+                  : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
@@ -405,13 +426,16 @@ class RateTable extends Component {
               IsFilter: true
             });
             this.state.polFilterArray.push({
-              POL: paramData.containerLoadType == "AIR"
-              ? paramData.polfullAddData.Location !== "" && paramData.polfullAddData.Location !== undefined
-                ? paramData.polfullAddData.Location
-                : ""
-              : paramData.polfullAddData.UNECECode !== "" && paramData.polfullAddData.UNECECode !== undefined
-              ? paramData.polfullAddData.UNECECode
-              : "",
+              POL:
+                paramData.containerLoadType == "AIR"
+                  ? paramData.polfullAddData.Location !== "" &&
+                    paramData.polfullAddData.Location !== undefined
+                    ? paramData.polfullAddData.Location
+                    : ""
+                  : paramData.polfullAddData.UNECECode !== "" &&
+                    paramData.polfullAddData.UNECECode !== undefined
+                  ? paramData.polfullAddData.UNECECode
+                  : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
               IsFilter: true
@@ -465,9 +489,9 @@ class RateTable extends Component {
   }
 
   toggleQuantQuantity(paramData) {
-    // this.setState(prevState => ({
-    //   modalQuant: !prevState.modalQuant
-    // }));
+    this.setState(prevState => ({
+      modalQuant: !prevState.modalQuant
+    }));
     this.HandleRateDetailsFCL(paramData);
   }
 
@@ -582,15 +606,14 @@ class RateTable extends Component {
 
   handleCheck() {
     if (this.state.selectedDataRow.length != 0) {
-    this.props.history.push({
-      pathname: "rate-finalizing",
-      state: this.state
-    });
-  }
-  else{
-    //NotificationManager.error("Please select atleast one Rate");
-    alert("Please select atleast one Rate");
-  }
+      this.props.history.push({
+        pathname: "rate-finalizing",
+        state: this.state
+      });
+    } else {
+      //NotificationManager.error("Please select atleast one Rate");
+      alert("Please select atleast one Rate");
+    }
   }
 
   toggleRow(RateLineID, rowData) {
@@ -612,8 +635,11 @@ class RateTable extends Component {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           var thisrateid = this.state.selectedDataRow[i].RateLineID;
           var _originalrateid = rowData._original.RateLineID;
-          if(this.state.containerLoadType == "FCL" || this.state.containerLoadType == "LCL" || this.state.containerLoadType == "AIR")
-          {
+          if (
+            this.state.containerLoadType == "FCL" ||
+            this.state.containerLoadType == "LCL" ||
+            this.state.containerLoadType == "AIR"
+          ) {
             thisrateid = this.state.selectedDataRow[i].RateLineId;
             _originalrateid = rowData._original.RateLineId;
           }
@@ -783,21 +809,23 @@ class RateTable extends Component {
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      if (cmbvalue!=null && cmbvalue!=0 && cmbvalue!= undefined && cmbvalue!= "") {
-        dataParameter.ChargeableWeight = cmbvalue
-      }
-      else{
+      if (
+        cmbvalue != null &&
+        cmbvalue != 0 &&
+        cmbvalue != undefined &&
+        cmbvalue != ""
+      ) {
+        dataParameter.ChargeableWeight = cmbvalue;
+      } else {
         dataParameter.ChargeableWeight = cmbvalue;
         dataParameter.RateQueryDim = paramData.multiCBM;
       }
 
       var EquipmentType = [];
-      if(paramData.StandardContainerCode != undefined)
-      {
-        EquipmentType = paramData.StandardContainerCode
-      }
-      else{
-        EquipmentType = paramData.EquipmentType
+      if (paramData.StandardContainerCode != undefined) {
+        EquipmentType = paramData.StandardContainerCode;
+      } else {
+        EquipmentType = paramData.EquipmentType;
       }
 
       // if(paramData.typesofMove === "p2p")
@@ -955,47 +983,53 @@ class RateTable extends Component {
   toggleChangePOLPOD(i, field, geoCoordinate, e) {
     debugger;
     if (field == "POL") {
-      this.state.polFilterArray[i].IsFilter = !this.state.polFilterArray[i].IsFilter;
-      if(this.state.polFilterArray[i].IsFilter == true)
-      {
-        
+      this.state.polFilterArray[i].IsFilter = !this.state.polFilterArray[i]
+        .IsFilter;
+      if (this.state.polFilterArray[i].IsFilter == true) {
         this.state.mapPositionPOL.push({
-          lat: Number(geoCoordinate.split(',')[0]),
-          lng: Number(geoCoordinate.split(',')[1])
-        });      
-      }
-      else{
-        for(var j = 0;j<this.state.mapPositionPOL.length; j++)
-        {
-          var geocordinates = this.state.mapPositionPOL[j].lat + ',' + this.state.mapPositionPOL[j].lng
-          var cordinates = Number(geoCoordinate.split(',')[0]) + ',' + Number(geoCoordinate.split(',')[1])
+          lat: Number(geoCoordinate.split(",")[0]),
+          lng: Number(geoCoordinate.split(",")[1])
+        });
+      } else {
+        for (var j = 0; j < this.state.mapPositionPOL.length; j++) {
+          var geocordinates =
+            this.state.mapPositionPOL[j].lat +
+            "," +
+            this.state.mapPositionPOL[j].lng;
+          var cordinates =
+            Number(geoCoordinate.split(",")[0]) +
+            "," +
+            Number(geoCoordinate.split(",")[1]);
           if (geocordinates == cordinates) {
-            this.state.mapPositionPOL.splice(j, 1)
+            this.state.mapPositionPOL.splice(j, 1);
           }
         }
       }
-        this.setState({
-          polFilterArray: this.state.polFilterArray,
-          enablePOL: !this.state.enablePOL,
-          mapPositionPOL: this.state.mapPositionPOL
-        });
-      
+      this.setState({
+        polFilterArray: this.state.polFilterArray,
+        enablePOL: !this.state.enablePOL,
+        mapPositionPOL: this.state.mapPositionPOL
+      });
     } else {
-      this.state.podFilterArray[i].IsFilter = !this.state.podFilterArray[i].IsFilter;
-      if(this.state.podFilterArray[i].IsFilter == true)
-      {
+      this.state.podFilterArray[i].IsFilter = !this.state.podFilterArray[i]
+        .IsFilter;
+      if (this.state.podFilterArray[i].IsFilter == true) {
         this.state.markerPositionPOD.push({
-          lat: Number(geoCoordinate.split(',')[0]),
-          lng: Number(geoCoordinate.split(',')[1])
-        });    
-      }
-      else{
-        for(var j = 0;j<this.state.markerPositionPOD.length; j++)
-        {
-          var geocordinates = this.state.markerPositionPOD[j].lat + ',' + this.state.markerPositionPOD[j].lng
-          var cordinates = Number(geoCoordinate.split(',')[0]) + ',' + Number(geoCoordinate.split(',')[1])
+          lat: Number(geoCoordinate.split(",")[0]),
+          lng: Number(geoCoordinate.split(",")[1])
+        });
+      } else {
+        for (var j = 0; j < this.state.markerPositionPOD.length; j++) {
+          var geocordinates =
+            this.state.markerPositionPOD[j].lat +
+            "," +
+            this.state.markerPositionPOD[j].lng;
+          var cordinates =
+            Number(geoCoordinate.split(",")[0]) +
+            "," +
+            Number(geoCoordinate.split(",")[1]);
           if (geocordinates == cordinates) {
-            this.state.markerPositionPOD.splice(j, 1)
+            this.state.markerPositionPOD.splice(j, 1);
           }
         }
       }
@@ -1042,9 +1076,7 @@ class RateTable extends Component {
 
   createUIPOL() {
     return this.state.valuesPOL.map((el, index) => {
-      return (
-        this.state.modeoftransport === "AIR" ? (
-
+      return this.state.modeoftransport === "AIR" ? (
         <div key={index + 1} className="row">
           <div
             className={
@@ -1128,8 +1160,8 @@ class RateTable extends Component {
           </div> */}
           </div>
         </div>
-        ): (
-          <div key={index + 1} className="row">
+      ) : (
+        <div key={index + 1} className="row">
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 3
@@ -1211,15 +1243,14 @@ class RateTable extends Component {
             <textarea className="txt-add" placeholder="Enter POL"></textarea>
           </div> */}
           </div>
-        </div>)
-        );
+        </div>
+      );
     });
   }
 
   createUIPOD() {
     return this.state.valuesPOD.map((el, index) => {
-      return (
-        this.state.modeoftransport === "AIR" ? (
+      return this.state.modeoftransport === "AIR" ? (
         <div key={index + 1} className="row">
           <div
             className={
@@ -1293,79 +1324,80 @@ class RateTable extends Component {
             )}
           </div>
         </div>
-        ):(<div key={index + 1} className="row">
-        <div
-          className={
-            this.state.typeofMove === 1 || this.state.typeofMove === 2
-              ? "rename-cntr login-fields position-relative"
-              : ""
-          }
-        >
-          {this.state.typeofMove === 1 || this.state.typeofMove === 2 ? (
-            <ReactAutocomplete
-              key={index + 1}
-              name={"POD" + (index + 1)}
-              getItemValue={item => item.OceanPortLongName}
-              items={this.state.polpodDataAdd}
-              renderItem={(item, isHighlighted) => (
-                <div
-                  style={{
-                    background: isHighlighted ? "lightgray" : "white"
-                  }}
-                  value={item.AirPortID}
-                >
-                  {item.OceanPortLongName}
-                </div>
-              )}
-              renderInput={function(props) {
-                return (
-                  <input
-                    placeholder="Enter POD"
-                    className="w-100"
-                    type="text"
-                    {...props}
-                  />
-                );
-              }}
-              onChange={this.HandlePOLPODAutosearch.bind(
-                this,
-                "pod" + (index + 1),
-                index + 1
-              )}
-              //menuStyle={this.state.menuStyle}
-              onSelect={this.HandleAddressDropdownPolSelect.bind(
-                this,
-                item => item.NameWoDiacritics,
-                "pod" + (index + 1),
-                index + 1
-              )}
-              value={this.state.multiFields["pod" + (index + 1)]}
-            />
-          ) : (
-            <AutoCompletePODMaps
-              onPlaceSelected={this.onPlaceSelectedPOD}
-              googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-              containerElement={<div />}
-              mapElement={<div />}
-              loadingElement={<div />}
-            ></AutoCompletePODMaps>
-          )}
+      ) : (
+        <div key={index + 1} className="row">
+          <div
+            className={
+              this.state.typeofMove === 1 || this.state.typeofMove === 2
+                ? "rename-cntr login-fields position-relative"
+                : ""
+            }
+          >
+            {this.state.typeofMove === 1 || this.state.typeofMove === 2 ? (
+              <ReactAutocomplete
+                key={index + 1}
+                name={"POD" + (index + 1)}
+                getItemValue={item => item.OceanPortLongName}
+                items={this.state.polpodDataAdd}
+                renderItem={(item, isHighlighted) => (
+                  <div
+                    style={{
+                      background: isHighlighted ? "lightgray" : "white"
+                    }}
+                    value={item.AirPortID}
+                  >
+                    {item.OceanPortLongName}
+                  </div>
+                )}
+                renderInput={function(props) {
+                  return (
+                    <input
+                      placeholder="Enter POD"
+                      className="w-100"
+                      type="text"
+                      {...props}
+                    />
+                  );
+                }}
+                onChange={this.HandlePOLPODAutosearch.bind(
+                  this,
+                  "pod" + (index + 1),
+                  index + 1
+                )}
+                //menuStyle={this.state.menuStyle}
+                onSelect={this.HandleAddressDropdownPolSelect.bind(
+                  this,
+                  item => item.NameWoDiacritics,
+                  "pod" + (index + 1),
+                  index + 1
+                )}
+                value={this.state.multiFields["pod" + (index + 1)]}
+              />
+            ) : (
+              <AutoCompletePODMaps
+                onPlaceSelected={this.onPlaceSelectedPOD}
+                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                containerElement={<div />}
+                mapElement={<div />}
+                loadingElement={<div />}
+              ></AutoCompletePODMaps>
+            )}
 
-          {index === 0 ? (
-            <i
-              className="fa fa-plus equip-plus"
-              id={"remove" + (index + 1)}
-              onClick={this.addClickPOD.bind(this, index)}
-            ></i>
-          ) : (
-            <i
-              className="fa fa-minus equip-plus"
-              id={"remove" + (index + 1)}
-              onClick={this.removeClickPOD.bind(this, index)}
-            ></i>
-          )}
+            {index === 0 ? (
+              <i
+                className="fa fa-plus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.addClickPOD.bind(this, index)}
+              ></i>
+            ) : (
+              <i
+                className="fa fa-minus equip-plus"
+                id={"remove" + (index + 1)}
+                onClick={this.removeClickPOD.bind(this, index)}
+              ></i>
+            )}
+          </div>
         </div>
-      </div>)
       );
     });
   }
@@ -1442,7 +1474,7 @@ class RateTable extends Component {
                   id="exist-cust"
                   value="C"
                   onChange={this.UISpecialChange.bind(this, i)}
-                  checked={el.TemperatureType==="C"?true:false}
+                  checked={el.TemperatureType === "C" ? true : false}
                 />
                 <label
                   className="d-flex flex-column align-items-center"
@@ -1458,7 +1490,7 @@ class RateTable extends Component {
                   id="new-cust"
                   value="F"
                   onChange={this.UISpecialChange.bind(this, i)}
-                  checked={el.TemperatureType==="F"?true:false}
+                  checked={el.TemperatureType === "F" ? true : false}
                 />
                 <label
                   className="d-flex flex-column align-items-center"
@@ -1908,8 +1940,8 @@ class RateTable extends Component {
       modalSpot: !prevState.modalSpot
     }));
   }
-  toggleSpotCloseModal(){
-    this.setState({modalSpot:false});
+  toggleSpotCloseModal() {
+    this.setState({ modalSpot: false });
   }
 
   HandlePOLPODAutosearch(field, i, e) {
@@ -1971,7 +2003,7 @@ class RateTable extends Component {
     multiFields[field] = value;
     var arrPOL = "";
     var arrPOD = "";
-    
+
     if (field === "pol" + i) {
       for (let i = 0; i < this.state.polArray.length; i++) {
         arrPOL += this.state.polArray[i].Address + ",";
@@ -1987,13 +2019,14 @@ class RateTable extends Component {
             lng: PositionPOL.lng
           });
           this.state.polArray.push({
-            POL: this.state.containerLoadType == "AIR"
-            ? id.Location !== "" && id.Location !== undefined
-              ? id.Location
-              : ""
-            : id.UNECECode !== "" && id.UNECECode !== undefined
-            ? id.UNECECode
-            : "",
+            POL:
+              this.state.containerLoadType == "AIR"
+                ? id.Location !== "" && id.Location !== undefined
+                  ? id.Location
+                  : ""
+                : id.UNECECode !== "" && id.UNECECode !== undefined
+                ? id.UNECECode
+                : "",
             POLGeoCordinate: id.GeoCoordinate,
             Address: value,
             IsFilter: true
@@ -2005,13 +2038,12 @@ class RateTable extends Component {
             polArray: this.state.polArray
           });
         }
-      }
-      else{
+      } else {
         multiFields[field] = "";
-        this.state.errorPOL = value+" already exist";
+        this.state.errorPOL = value + " already exist";
         this.setState({
           multiFields,
-          errorPOL:this.state.errorPOL
+          errorPOL: this.state.errorPOL
         });
       }
     } else {
@@ -2030,18 +2062,19 @@ class RateTable extends Component {
             lng: mapPositionPOD.lng
           });
           this.state.podArray.push({
-            POD: this.state.containerLoadType == "AIR"
-            ? id.Location !== "" && id.Location !== undefined
-              ? id.Location
-              : ""
-            : id.UNECECode !== "" && id.UNECECode !== undefined
-            ? id.UNECECode
-            : "",
+            POD:
+              this.state.containerLoadType == "AIR"
+                ? id.Location !== "" && id.Location !== undefined
+                  ? id.Location
+                  : ""
+                : id.UNECECode !== "" && id.UNECECode !== undefined
+                ? id.UNECECode
+                : "",
             PODGeoCordinate: id.GeoCoordinate,
             Address: value,
             IsFilter: true
           });
-          
+
           this.setState({
             podfullAddData: id,
             multiFields,
@@ -2049,17 +2082,16 @@ class RateTable extends Component {
             podArray: this.state.podArray
           });
         }
-      }else{
+      } else {
         multiFields[field] = "";
-        this.state.errorPOD = value+" already exist";
+        this.state.errorPOD = value + " already exist";
         this.setState({
           multiFields,
-          errorPOD:this.state.errorPOD
+          errorPOD: this.state.errorPOD
         });
       }
     }
   }
-  
 
   onPlaceSelected = place => {
     console.log("plc", place);
@@ -2068,65 +2100,64 @@ class RateTable extends Component {
       arrPOL += this.state.polArray[i].Address + ",";
     }
     if (!arrPOL.includes(place.formatted_address)) {
-    const address = place.formatted_address,
-      addressArray = place.address_components,
- 
-      // city = this.getCity(addressArray),
-      // area = this.getArea(addressArray),
-      // state = this.getState(addressArray),
-      // zipcode = this.getZipCode(addressArray),
-      // country = this.getCountry(addressArray),
-      latValue = place.geometry.location.lat(),
-      lngValue = place.geometry.location.lng();
-    if (addressArray.length > 4) {
-      this.setState({ zoomPOL: 15 });
-    } else if (addressArray.length > 2 && addressArray.length <= 4) {
-      this.setState({ zoomPOL: 10 });
-    } else {
-      this.setState({ zoomPOL: 6 });
-    }
-    // this.state.fullAddressPOL.push({
-    //   Area: area,
-    //   City: city,
-    //   State: state,
-    //   ZipCode: zipcode,
-    //   Country: country
-    // });
-    var originGeoCordinates = latValue + "," + lngValue;
-    this.state.polArray.push({
-      POL: "",
-      POLGeoCordinate: originGeoCordinates,
-      Address: address,
-      IsFilter: true
-    });
-    this.setState({
-      // fullAddressPOL: this.state.fullAddressPOL,
-      // PickupCity: city,
-      // OriginGeoCordinates: originGeoCordinates
-      polArray: this.state.polArray
-    });
-    this.state.mapPositionPOL.push({
-      lat: Number(latValue),
-      lng: Number(lngValue)
-    });
-    this.setState({
-      markerPositionPOL: {
+      const address = place.formatted_address,
+        addressArray = place.address_components,
+        // city = this.getCity(addressArray),
+        // area = this.getArea(addressArray),
+        // state = this.getState(addressArray),
+        // zipcode = this.getZipCode(addressArray),
+        // country = this.getCountry(addressArray),
+        latValue = place.geometry.location.lat(),
+        lngValue = place.geometry.location.lng();
+      if (addressArray.length > 4) {
+        this.setState({ zoomPOL: 15 });
+      } else if (addressArray.length > 2 && addressArray.length <= 4) {
+        this.setState({ zoomPOL: 10 });
+      } else {
+        this.setState({ zoomPOL: 6 });
+      }
+      // this.state.fullAddressPOL.push({
+      //   Area: area,
+      //   City: city,
+      //   State: state,
+      //   ZipCode: zipcode,
+      //   Country: country
+      // });
+      var originGeoCordinates = latValue + "," + lngValue;
+      this.state.polArray.push({
+        POL: "",
+        POLGeoCordinate: originGeoCordinates,
+        Address: address,
+        IsFilter: true
+      });
+      this.setState({
+        // fullAddressPOL: this.state.fullAddressPOL,
+        // PickupCity: city,
+        // OriginGeoCordinates: originGeoCordinates
+        polArray: this.state.polArray
+      });
+      this.state.mapPositionPOL.push({
         lat: Number(latValue),
         lng: Number(lngValue)
-      }
-      // mapPositionPOL: {
-      //   lat: Number(latValue),
-      //   lng: Number(lngValue)
-      // }
-    });
-    //this.addressChange("puAdd", address);
-  }else{
-    //multiFields[field] = "";
-    this.state.errorPOL = place.formatted_address+" already exist";
-    this.setState({
-      errorPOL:this.state.errorPOL
-    });
-  }
+      });
+      this.setState({
+        markerPositionPOL: {
+          lat: Number(latValue),
+          lng: Number(lngValue)
+        }
+        // mapPositionPOL: {
+        //   lat: Number(latValue),
+        //   lng: Number(lngValue)
+        // }
+      });
+      //this.addressChange("puAdd", address);
+    } else {
+      //multiFields[field] = "";
+      this.state.errorPOL = place.formatted_address + " already exist";
+      this.setState({
+        errorPOL: this.state.errorPOL
+      });
+    }
   };
 
   onPlaceSelectedPOD = place => {
@@ -2136,63 +2167,62 @@ class RateTable extends Component {
       arrPOD += this.state.podArray[i].Address + ",";
     }
     if (!arrPOD.includes(place.formatted_address)) {
-    const address = place.formatted_address,
-      addressArray = place.address_components,
-      // city = this.getCity(addressArray),
-      // area = this.getArea(addressArray),
-      // state = this.getState(addressArray),
-      // zipcode = this.getZipCode(addressArray),
-      // country = this.getCountry(addressArray),
-      latValue = place.geometry.location.lat(),
-      lngValue = place.geometry.location.lng();
+      const address = place.formatted_address,
+        addressArray = place.address_components,
+        // city = this.getCity(addressArray),
+        // area = this.getArea(addressArray),
+        // state = this.getState(addressArray),
+        // zipcode = this.getZipCode(addressArray),
+        // country = this.getCountry(addressArray),
+        latValue = place.geometry.location.lat(),
+        lngValue = place.geometry.location.lng();
 
-    if (addressArray.length > 4) {
-      this.setState({ zoomPOD: 15 });
-    } else if (addressArray.length > 2 && addressArray.length <= 4) {
-      this.setState({ zoomPOD: 10 });
-    } else {
-      this.setState({ zoomPOD: 6 });
-    }
+      if (addressArray.length > 4) {
+        this.setState({ zoomPOD: 15 });
+      } else if (addressArray.length > 2 && addressArray.length <= 4) {
+        this.setState({ zoomPOD: 10 });
+      } else {
+        this.setState({ zoomPOD: 6 });
+      }
 
-    var destGeoCordinate = latValue + "," + lngValue;
-    this.state.podArray.push({
-      POD: "",
-      PODGeoCordinate: destGeoCordinate,
-      Address: address,
-      IsFilter: true
-    });
-    // this.state.fullAddressPOD.push({
-    //   Area: area,
-    //   City: city,
-    //   State: state,
-    //   ZipCode: zipcode,
-    //   Country: country
-    // });
-    // this.setState({
-    //   fullAddressPOD: this.state.fullAddressPOD,
-    //   DeliveryCity: city,
-    //   DestGeoCordinate: destGeoCordinate
-    // });
-    this.state.markerPositionPOD.push({
-      lat: Number(latValue),
-      lng: Number(lngValue)
-    });
-    this.setState({
-      // markerPositionPOD: {
-      //   lat: Number(latValue),
-      //   lng: Number(lngValue)
-      // },
-      podArray: this.state.podArray
-      // mapPositionPOD: {
-      //   lat: Number(latValue),
-      //   lng: Number(lngValue)
-      // }
-    });
-    }
-    else{
-      this.state.errorPOD = place.formatted_address+" already exist";
+      var destGeoCordinate = latValue + "," + lngValue;
+      this.state.podArray.push({
+        POD: "",
+        PODGeoCordinate: destGeoCordinate,
+        Address: address,
+        IsFilter: true
+      });
+      // this.state.fullAddressPOD.push({
+      //   Area: area,
+      //   City: city,
+      //   State: state,
+      //   ZipCode: zipcode,
+      //   Country: country
+      // });
+      // this.setState({
+      //   fullAddressPOD: this.state.fullAddressPOD,
+      //   DeliveryCity: city,
+      //   DestGeoCordinate: destGeoCordinate
+      // });
+      this.state.markerPositionPOD.push({
+        lat: Number(latValue),
+        lng: Number(lngValue)
+      });
       this.setState({
-        errorPOD:this.state.errorPOD
+        // markerPositionPOD: {
+        //   lat: Number(latValue),
+        //   lng: Number(lngValue)
+        // },
+        podArray: this.state.podArray
+        // mapPositionPOD: {
+        //   lat: Number(latValue),
+        //   lng: Number(lngValue)
+        // }
+      });
+    } else {
+      this.state.errorPOD = place.formatted_address + " already exist";
+      this.setState({
+        errorPOD: this.state.errorPOD
       });
     }
     //this.addressChange("", address);
@@ -2228,8 +2258,7 @@ class RateTable extends Component {
         } else {
           this.setState({
             tempRateDetails: [{ lineName: "No Record Found" }],
-            RateSubDetails: [{ ChargeType: "No Record Found" }],
-            
+            RateSubDetails: [{ ChargeType: "No Record Found" }]
           });
         }
       } else {
@@ -2392,158 +2421,156 @@ class RateTable extends Component {
   }
 
   CreateMultiCBM() {
-    return this.state.cbmVal==""? this.state.multiCBM.map((el, i) => (
-      <div className="row cbm-space" key={i}>
-        <div className="col-md">
-          <div className="spe-equ">
-            <select
-              className="select-text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              name="PackageType"
-              value={el.PackageType}
-            >
-              <option selected>Select</option>
-              {this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageName}>
-                  {item.PackageName}
-                </option>
-              ))}
-            </select>
+    return this.state.cbmVal == "" ? (
+      this.state.multiCBM.map((el, i) => (
+        <div className="row cbm-space" key={i}>
+          <div className="col-md">
+            <div className="spe-equ">
+              <select
+                className="select-text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                name="PackageType"
+                value={el.PackageType}
+              >
+                <option selected>Select</option>
+                {this.state.packageTypeData.map((item, i) => (
+                  <option key={i} value={item.PackageName}>
+                    {item.PackageName}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="QTY"
-              className="w-100"
-              name="Quantity"
-              value={el.Quantity || ""}
-              //onKeyUp={this.cbmChange}
-            />
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="QTY"
+                className="w-100"
+                name="Quantity"
+                value={el.Quantity || ""}
+                //onKeyUp={this.cbmChange}
+              />
+            </div>
           </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"L (cm)"}
-              className="w-100"
-              name="Lengths"
-              value={el.Lengths || ""}
-              // onBlur={this.cbmChange}
-            />
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder={"L (cm)"}
+                className="w-100"
+                name="Lengths"
+                value={el.Lengths || ""}
+                // onBlur={this.cbmChange}
+              />
+            </div>
           </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"W (cm)"}
-              className="w-100"
-              name="Width"
-              value={el.Width || ""}
-              //onBlur={this.cbmChange}
-            />
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder={"W (cm)"}
+                className="w-100"
+                name="Width"
+                value={el.Width || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
           </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="H (cm)"
-              className="w-100"
-              name="Height"
-              value={el.Height || ""}
-              //onBlur={this.cbmChange}
-            />
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="Height"
+                value={el.Height || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
-              name="GrossWt"
-              value={el.GrossWt || ""}
-              className="w-100"
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              disabled
-              name={
-                this.state.containerLoadType === "LCL"
-                  ? "Volume"
-                  : "VolumeWeight"
-              }
-              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={
-                this.state.containerLoadType === "LCL"
-                  ? "KG"
-                  : this.state.containerLoadType === "AIR"
-                  ? "CW"
-                  : "VW"
-              }
-              value={
-                this.state.containerLoadType === "LCL"
-                  ? el.Volume
-                  : el.VolumeWeight || ""
-              }
-              className="w-100 weight-icon"
-            />
-          </div>
-        </div>
-        {i === 0 ? (
-          <div className="">
+          <div className="col-md">
             <div className="spe-equ">
-              <i
-                className="fa fa-plus mt-2"
-                aria-hidden="true"
-                onClick={this.addMultiCBM.bind(this)}
-              ></i>
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                name="GrossWt"
+                value={el.GrossWt || ""}
+                className="w-100"
+              />
             </div>
           </div>
-        ) : null}
-        {this.state.multiCBM.length > 1 ? (
-          <div className="">
+          <div className="col-md">
             <div className="spe-equ">
-              <i
-                className="fa fa-minus mt-2"
-                aria-hidden="true"
-                onClick={this.removeMultiCBM.bind(this, i)}
-              ></i>
+              <input
+                type="text"
+                disabled
+                name={
+                  this.state.containerLoadType === "LCL"
+                    ? "Volume"
+                    : "VolumeWeight"
+                }
+                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                placeholder={
+                  this.state.containerLoadType === "LCL"
+                    ? "KG"
+                    : this.state.containerLoadType === "AIR"
+                    ? "CW"
+                    : "VW"
+                }
+                value={
+                  this.state.containerLoadType === "LCL"
+                    ? el.Volume
+                    : el.VolumeWeight || ""
+                }
+                className="w-100 weight-icon"
+              />
             </div>
           </div>
-        ) : null}
+          {i === 0 ? (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addMultiCBM.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+          {this.state.multiCBM.length > 1 ? (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-minus mt-2"
+                  aria-hidden="true"
+                  onClick={this.removeMultiCBM.bind(this, i)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ))
+    ) : (
+      <div className="col-md-4 m-auto">
+        <div className="spe-equ">
+          <input
+            type="number"
+            minLength={1}
+            //onChange={this.HandleCMBtextChange.bind(this)}
+            placeholder={this.state.modeoftransport != "AIR" ? "CBM" : "KG"}
+            className="w-100"
+            value={this.state.cbmVal}
+          />
+        </div>
       </div>
-    )):<div className="col-md-4 m-auto">
-    <div className="spe-equ">
-      <input
-        type="number"
-        minLength={1}
-        
-        //onChange={this.HandleCMBtextChange.bind(this)}
-        placeholder={
-          this.state.modeoftransport != "AIR"
-            ? "CBM"
-            : "KG"
-        }
-        className="w-100"
-        value={this.state.cbmVal}
-      />
-    </div>
-  </div>
-
+    );
   }
 
   HandleChangeMultiCBM(i, e) {
@@ -2651,7 +2678,8 @@ class RateTable extends Component {
           ContainerCode: param.users[i].StandardContainerCode,
           Type: param.users[i].ContainerName,
           ContainerQuantity: param.users[i].ContainerQuantity,
-          Temperature: param.users[i].Temperature
+          Temperature: param.users[i].Temperature,
+          isSpecialEquipment:false
         });
       }
     }
@@ -2663,7 +2691,8 @@ class RateTable extends Component {
           ContainerCode: param.spacEqmtType[i].StandardContainerCode,
           Type: param.spacEqmtType[i].ContainerName,
           ContainerQuantity: param.spacEqmtType[i].Quantity,
-          Temperature: param.spacEqmtType[i].Temperature
+          Temperature: param.spacEqmtType[i].Temperature,
+          isSpecialEquipment:true
         });
       }
     }
@@ -2973,45 +3002,45 @@ class RateTable extends Component {
           {/* {this.state.loading === true ? (
             <div className="loader-icon"></div>
           ) : ( */}
-            <div className="cls-rt no-bg min-hei-auto">
-              <div className="rate-table-header">
-                <div className="title-sect">
-                  <h2>Rate Table</h2>
-                </div>
-                <div className="login-fields mb-0 rate-tab-drop">
-                  <select onChange={this.filterAll}>
-                    <option>Select</option>
-                    <option value="All">All</option>
-                    {this.state.commodityData.map((item, i) => (
-                      <option
-                        key={i}
-                        value={item.id}
-                        selected={item.Commodity === "FAK"}
-                      >
-                        {item.Commodity}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="rate-table-range">
-                  <span className="cust-labl clr-green">Faster</span>
-                  <span className="cust-labl clr-red">Cheaper</span>
-                  <InputRange
-                    formatLabel={value => `${value} DAYS`}
-                    maxValue={75}
-                    minValue={0}
-                    value={this.state.value}
-                    onChange={this.HandleRangeSlider.bind(this)}
-                  />
-                </div>
-                <div className="rate-table-butn">
-                  <button
-                    onClick={this.handleCheck.bind(this)}
-                    className="blue-butn butn m-0"
-                  >
-                    Proceed
-                  </button>
-                  {/* <Link
+          <div className="cls-rt no-bg min-hei-auto">
+            <div className="rate-table-header">
+              <div className="title-sect">
+                <h2>Rate Table</h2>
+              </div>
+              <div className="login-fields mb-0 rate-tab-drop">
+                <select onChange={this.filterAll}>
+                  <option>Select</option>
+                  <option value="All">All</option>
+                  {this.state.commodityData.map((item, i) => (
+                    <option
+                      key={i}
+                      value={item.id}
+                      selected={item.Commodity === "FAK"}
+                    >
+                      {item.Commodity}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="rate-table-range">
+                <span className="cust-labl clr-green">Faster</span>
+                <span className="cust-labl clr-red">Cheaper</span>
+                <InputRange
+                  formatLabel={value => `${value} DAYS`}
+                  maxValue={75}
+                  minValue={0}
+                  value={this.state.value}
+                  onChange={this.HandleRangeSlider.bind(this)}
+                />
+              </div>
+              <div className="rate-table-butn">
+                <button
+                  onClick={this.handleCheck.bind(this)}
+                  className="blue-butn butn m-0"
+                >
+                  Proceed
+                </button>
+                {/* <Link
                   to={{
                     pathname: "/rate-finalizing"
                   }}
@@ -3019,37 +3048,37 @@ class RateTable extends Component {
                 >
                   Proceed
                 </Link> */}
-                </div>
               </div>
-              <div className="rate-table-below">
-                <div className="row">
-                  <div className="col-md-3 less-right-rate">
-                    <div className="rate-table-left">
-                      <div className="top-select d-flex justify-content-between">
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.shipmentType}
-                        </a>
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.modeoftransport}
-                        </a>
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.containerLoadType}
-                        </a>
-                        <a href="new-rate-search" className="butn btn-sizeRate">
-                          {this.state.typeofMove === 1
-                            ? "P2P"
-                            : this.state.typeofMove === 2
-                            ? "D2P"
-                            : this.state.typeofMove === 4
-                            ? "D2D"
-                            : this.state.typeofMove === 3
-                            ? "P2D"
-                            : ""}
-                        </a>
-                      </div>
-                      <div className="cont-costs">
-                        <div className="remember-forgot d-block m-0">
-                          {/* <div>
+            </div>
+            <div className="rate-table-below">
+              <div className="row">
+                <div className="col-md-3 less-right-rate">
+                  <div className="rate-table-left">
+                    <div className="top-select d-flex justify-content-between">
+                      <a href="new-rate-search" className="butn btn-sizeRate">
+                        {this.state.shipmentType}
+                      </a>
+                      <a href="new-rate-search" className="butn btn-sizeRate">
+                        {this.state.modeoftransport}
+                      </a>
+                      <a href="new-rate-search" className="butn btn-sizeRate">
+                        {this.state.containerLoadType}
+                      </a>
+                      <a href="new-rate-search" className="butn btn-sizeRate">
+                        {this.state.typeofMove === 1
+                          ? "P2P"
+                          : this.state.typeofMove === 2
+                          ? "D2P"
+                          : this.state.typeofMove === 4
+                          ? "D2D"
+                          : this.state.typeofMove === 3
+                          ? "P2D"
+                          : ""}
+                      </a>
+                    </div>
+                    <div className="cont-costs">
+                      <div className="remember-forgot d-block m-0">
+                        {/* <div>
                           <div className="d-flex">
                             <input
                               id="door"
@@ -3071,139 +3100,102 @@ class RateTable extends Component {
                           </div>
                           <span>100$</span>
                         </div> */}
-                          <div>
-                            <div className="d-flex">
-                              <input
-                                id="insu"
-                                type="checkbox"
-                                name="HazMat"
-                                checked={this.state.HazMat}
-                              />
-                              <label htmlFor="insu">HazMat</label>
-                            </div>
-                            {/* <span>50$</span> */}
+                        <div>
+                          <div className="d-flex">
+                            <input
+                              id="insu"
+                              type="checkbox"
+                              name="HazMat"
+                              checked={this.state.HazMat}
+                            />
+                            <label htmlFor="insu">HazMat</label>
                           </div>
-                          {(() => {
-                            if (
-                              this.state.containerLoadType != "FCL" &&
-                              this.state.containerLoadType != "FTL"
-                            ) {
-                              return (
-                                <div>
-                                  <div className="d-flex">
-                                    <input
-                                      id="cont-trak"
-                                      type="checkbox"
-                                      name="NonStackable"
-                                      checked={this.state.NonStackable}
-                                    />
-                                    <label htmlFor="cont-trak">
-                                      NonStackable
-                                    </label>
-                                  </div>
-                                  {/* <span>150$</span> */}
+                          {/* <span>50$</span> */}
+                        </div>
+                        {(() => {
+                          if (
+                            this.state.containerLoadType != "FCL" &&
+                            this.state.containerLoadType != "FTL"
+                          ) {
+                            return (
+                              <div>
+                                <div className="d-flex">
+                                  <input
+                                    id="cont-trak"
+                                    type="checkbox"
+                                    name="NonStackable"
+                                    checked={this.state.NonStackable}
+                                  />
+                                  <label htmlFor="cont-trak">
+                                    NonStackable
+                                  </label>
                                 </div>
-                              );
-                            }
-                          })()}
-                          <div>
-                            <div className="d-flex">
+                                {/* <span>150$</span> */}
+                              </div>
+                            );
+                          }
+                        })()}
+                        <div>
+                          <div className="d-flex">
+                            <input
+                              id="cust-clear"
+                              type="checkbox"
+                              name="Custom_Clearance"
+                              checked={this.state.Custom_Clearance}
+                              onChange={this.custClearToggle}
+                            />
+                            <label htmlFor="cust-clear">Custom Clearance</label>
+                          </div>
+                          {/* <span>900$</span> */}
+                        </div>
+                        <div className="pol-pod">
+                          <span>POL</span>
+                          {this.state.polFilterArray.map((mapPOL, index) => (
+                            <div className="d-flex p-b-10" key={index}>
                               <input
-                                id="cust-clear"
+                                id={"pol" + (index + 1)}
                                 type="checkbox"
-                                name="Custom_Clearance"
-                                checked={this.state.Custom_Clearance}
-                                onChange={this.custClearToggle}
+                                name="address"
+                                defaultChecked={true}
+                                onChange={this.toggleChangePOLPOD.bind(
+                                  this,
+                                  index,
+                                  "POL",
+                                  mapPOL.POLGeoCordinate
+                                )}
                               />
-                              <label htmlFor="cust-clear">
-                                Custom Clearance
+                              <label htmlFor={"pol" + (index + 1)}>
+                                {mapPOL.Address}
                               </label>
                             </div>
-                            {/* <span>900$</span> */}
-                          </div>
-                          <div className="pol-pod">
-                            <span>POL</span>
-                            {this.state.polFilterArray.map((mapPOL, index) => (
-                              <div className="d-flex p-b-10" key={index}>
-                                <input
-                                  id={"pol" + (index + 1)}
-                                  type="checkbox"
-                                  name="address"
-                                  defaultChecked={true}
-                                  onChange={this.toggleChangePOLPOD.bind(
-                                    this,
-                                    index,
-                                    "POL",
-                                    mapPOL.POLGeoCordinate
-                                  )}
-                                />
-                                <label htmlFor={"pol" + (index + 1)}>
-                                  {mapPOL.Address}
-                                </label>
-                              </div>
-                            ))}
-                            <div className="pol-pod-maps">
-                              <span className="rate-map-ovrly map-pol-lbl">
-                                POL
-                              </span>
-                              <span
-                                onClick={this.togglePOLModal}
-                                className="rate-map-ovrly rate-map-plus plusImg-pdng"
-                              >
-                                +
-                              </span>
+                          ))}
+                          <div className="pol-pod-maps">
+                            <span className="rate-map-ovrly map-pol-lbl">
+                              POL
+                            </span>
+                            <span
+                              onClick={this.togglePOLModal}
+                              className="rate-map-ovrly rate-map-plus plusImg-pdng"
+                            >
+                              +
+                            </span>
 
-                              <POLMaps
-                                //zomePOL={this.state.zoomPOL}
-                                markerPOLData={this.state.mapPositionPOL}
-                                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                                containerElement={
-                                  <div
-                                    style={{ height: `100%`, width: "100%" }}
-                                  />
-                                }
-                                mapElement={<div style={{ height: `100%` }} />}
-                                loadingElement={
-                                  <div style={{ height: `100%` }} />
-                                }
-                              ></POLMaps>
-                            </div>
-                            {/* <div className="d-flex">
-                            <input
-                              id="pol-pod"
-                              type="checkbox"
-                              name="address"
-                              checked={true}
-                            />
-                            <label htmlFor="pol-pod">
-                              {this.state.selectaddress}
-                            </label>
-                          </div> */}
-                            {/* <span>900$</span> */}
-                          </div>
-                          <div className="pol-pod">
-                            <span>POD</span>
-                            
-                            {this.state.podFilterArray.map((mapPOD, index) => (
-                              <div className="d-flex">
-                                <input
-                                  id={"pod" + (index + 1)}
-                                  type="checkbox"
-                                  name="address"
-                                  defaultChecked={true}
-                                  onChange={this.toggleChangePOLPOD.bind(
-                                    this,
-                                    index,
-                                    "POD",
-                                    mapPOD.PODGeoCordinate
-                                  )}
+                            <POLMaps
+                              //zomePOL={this.state.zoomPOL}
+                              markerPOLData={this.state.mapPositionPOL}
+                              googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                              containerElement={
+                                <div
+                                  style={{ height: `100%`, width: "100%" }}
                                 />
-                                <label htmlFor={"pod" + (index + 1)}>
-                                  {mapPOD.Address}
-                                </label>
-                              </div>
-                            ))}
-                            {/* <div className="d-flex">
+                              }
+                              mapElement={<div style={{ height: `100%` }} />}
+                              loadingElement={
+                                <div style={{ height: `100%` }} />
+                              }
+                            ></POLMaps>
+                          </div>
+                          {/* <div className="d-flex">
                             <input
                               id="pol-pod"
                               type="checkbox"
@@ -3214,12 +3206,47 @@ class RateTable extends Component {
                               {this.state.selectaddress}
                             </label>
                           </div> */}
-                            {/* <span>900$</span> */}
-                          </div>
+                          {/* <span>900$</span> */}
+                        </div>
+                        <div className="pol-pod">
+                          <span>POD</span>
+
+                          {this.state.podFilterArray.map((mapPOD, index) => (
+                            <div className="d-flex">
+                              <input
+                                id={"pod" + (index + 1)}
+                                type="checkbox"
+                                name="address"
+                                defaultChecked={true}
+                                onChange={this.toggleChangePOLPOD.bind(
+                                  this,
+                                  index,
+                                  "POD",
+                                  mapPOD.PODGeoCordinate
+                                )}
+                              />
+                              <label htmlFor={"pod" + (index + 1)}>
+                                {mapPOD.Address}
+                              </label>
+                            </div>
+                          ))}
+                          {/* <div className="d-flex">
+                            <input
+                              id="pol-pod"
+                              type="checkbox"
+                              name="address"
+                              checked={true}
+                            />
+                            <label htmlFor="pol-pod">
+                              {this.state.selectaddress}
+                            </label>
+                          </div> */}
+                          {/* <span>900$</span> */}
                         </div>
                       </div>
-                      <div className="pol-pod-maps-cntr">
-                        {/* <div className="pol-pod-maps">
+                    </div>
+                    <div className="pol-pod-maps-cntr">
+                      {/* <div className="pol-pod-maps">
                           <span className="rate-map-ovrly">POL</span>
                           <span
                             onClick={this.togglePOLModal}
@@ -3238,35 +3265,36 @@ class RateTable extends Component {
                             loadingElement={<div style={{ height: `100%` }} />}
                           ></POLMaps>
                         </div> */}
-                        <div className="pol-pod-maps pod-maps">
-                          <span className="rate-map-ovrly">POD</span>
-                          <span
-                            onClick={this.togglePODModal}
-                            className="rate-map-ovrly rate-map-plus"
-                          >
-                            +
-                          </span>
-                          <PODMaps
-                            //zomePOL={this.state.zoomPOD}
-                            markerPODData={this.state.markerPositionPOD}
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                            containerElement={
-                              <div style={{ height: `100%`, width: "100%" }} />
-                            }
-                            mapElement={<div style={{ height: `100%` }} />}
-                            loadingElement={<div style={{ height: `100%` }} />}
-                          ></PODMaps>
-                        </div>
+                      <div className="pol-pod-maps pod-maps">
+                        <span className="rate-map-ovrly">POD</span>
+                        <span
+                          onClick={this.togglePODModal}
+                          className="rate-map-ovrly rate-map-plus"
+                        >
+                          +
+                        </span>
+                        <PODMaps
+                          //zomePOL={this.state.zoomPOD}
+                          markerPODData={this.state.markerPositionPOD}
+                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                          containerElement={
+                            <div style={{ height: `100%`, width: "100%" }} />
+                          }
+                          mapElement={<div style={{ height: `100%` }} />}
+                          loadingElement={<div style={{ height: `100%` }} />}
+                        ></PODMaps>
                       </div>
-                      <button
-                        onClick={this.toggleQuant}
-                        className="butn white-butn w-100 mt-0"
-                      >
-                        Container Details
-                      </button>
                     </div>
+                    <button
+                      onClick={this.toggleQuant}
+                      className="butn white-butn w-100 mt-0"
+                    >
+                      Container Details
+                    </button>
                   </div>
-                    <div className="col-md-9">
+                </div>
+
+                <div className="col-md-9">
                   {this.state.loading === true ? (
                     <div className="position-relative h-100">
                       <div className="loader-icon"></div>
@@ -3330,7 +3358,7 @@ class RateTable extends Component {
                                       <>
                                         <p className="details-title"></p>
                                         <p className="details-para max2">
-                                        No Record Found
+                                          No Record Found
                                         </p>
                                       </>
                                     );
@@ -3421,7 +3449,6 @@ class RateTable extends Component {
                               },
                               {
                                 Cell: row => {
-                                  
                                   if (
                                     row.original.lineName !== "No Record Found"
                                   ) {
@@ -3580,36 +3607,35 @@ class RateTable extends Component {
                                         accessor: "Exrate"
                                       },
 
-                                        {
-                                          Cell: row => {
-                                            return (
-                                              <>
-                                                {row.original.TotalAmount !==
-                                                  "" &&
-                                                row.original.TotalAmount !==
-                                                  null
-                                                  ? row.original.TotalAmount +
-                                                    " " +
-                                                    row.original.BaseCurrency
-                                                  : ""}
-                                              </>
-                                            );
-                                          },
-                                          Header: "Final Payment",
-                                          accessor: "TotalAmount"
-                                        }
-                                      ]
-                                    }
-                                  ]}
-                                  showPagination={false}
-                                  defaultPageSize={20}
-                                />
-                              </div>
-                            );
-                          }}
-                          expandedRows={ true }
-                        />
-                        {/* <ReactTable
+                                      {
+                                        Cell: row => {
+                                          return (
+                                            <>
+                                              {row.original.TotalAmount !==
+                                                "" &&
+                                              row.original.TotalAmount !== null
+                                                ? row.original.TotalAmount +
+                                                  " " +
+                                                  row.original.BaseCurrency
+                                                : ""}
+                                            </>
+                                          );
+                                        },
+                                        Header: "Final Payment",
+                                        accessor: "TotalAmount"
+                                      }
+                                    ]
+                                  }
+                                ]}
+                                showPagination={false}
+                                defaultPageSize={20}
+                              />
+                            </div>
+                          );
+                        }}
+                        expandedRows={true}
+                      />
+                      {/* <ReactTable
                     data={Data}
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}
@@ -3634,28 +3660,32 @@ class RateTable extends Component {
                     </div>
                   )}
                 </div>
-                </div>
               </div>
-              {/*  --------------------------EquipmentType  Modal ---------------------*/}
+            </div>
+            {/*  --------------------------EquipmentType  Modal ---------------------*/}
 
-              <Modal
-                className={
-                  this.state.containerLoadType === "FTL"
-                    ? "delete-popup text-left"
-                    : "delete-popup text-left big-popup"
-                }
-                isOpen={this.state.modalQuant}
-                centered={true}
-              >
-                <ModalBody>
-              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleQuant}>
-                <span>&times;</span>
-              </button>
-                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
-                  <h3 className="mb-4 text-center">{this.state.containerLoadType === "FCL"
-                   ? "Equipment Types"
-                   : "Cargo Details"}</h3>
-                  {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+            <Modal
+              className={
+                this.state.containerLoadType === "FTL"
+                  ? "delete-popup text-left"
+                  : "delete-popup text-left big-popup"
+              }
+              isOpen={this.state.modalQuant}
+              centered={true}
+            >
+              <ModalBody>
+                <img
+                  src={CancelImg}
+                  alt="Cancel"
+                  className="cancelImgBtn"
+                  onClick={this.toggleQuant}
+                />
+                <h3 className="mb-4 text-center">
+                  {this.state.containerLoadType === "FCL"
+                    ? "Equipment Types"
+                    : "Cargo Details"}
+                </h3>
+                {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                     <Select
                       className="rate-dropdown"
                       getOptionLabel={option => option.StandardContainerCode}
@@ -3720,171 +3750,99 @@ class RateTable extends Component {
                       </div>
                     </div>
                   ) : null} */}
-                  {this.state.containerLoadType === "FTL" ? (
-                        this.createUITruckType()
-                      ) : this.state.containerLoadType === "FCL" ? (
-                        <>
-                          {" "}
-                          <div className="equip-plus-cntr mt-0 modelselecteqt">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.StandardContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.StandardContainerCode
-                              }
-                              isMulti
-                              options={this.state.EquipmentType}
-                              // onChange={this.equipChange.bind(this)}
-                              onChange={this.newaddClick.bind(this)}
-                              value={this.state.selected}
-                              showNewOptionAtTop={false}
-                            />
-                          </div>
-                          <div className="d-flex flex-wrap justify-content-center">
-                            {this.NewcreateUI()}
-                          </div>
-                          <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                            <input
-                              id="Special-equType"
-                              type="checkbox"
-                              className="d-none"
-                              name={"Special-equType"}
-                              // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                            />
-                            {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                          </div>
-                          {this.state.specialEquipment === true ? (
-                            <div className="">
-                              {/* spe-equ mt-0 */}
-                              <div className="equip-plus-cntr w-100">
-                                <Select
-                                  className="rate-dropdown"
-                                  getOptionLabel={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  getOptionValue={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  options={this.state.SpacialEqmt}
-                                  placeholder="Select Kind of Special Equipment"
-                                  onChange={this.specEquipChange}
-                                  // value={thi.state.spEqtSelect}
-                                  showNewOptionAtTop={false}
-                                />
-                              </div>
-                              <div id="cbmInner">
-                                {this.state.specialEqtSelect === true ? (
-                                  this.state.flattack_openTop.length > 0 ? (
-                                    <>{this.MultiCreateCBM()}</>
-                                  ) : null
-                                ) : null}
-
-                                {this.state.refertypeSelect === true ? (
-                                  this.state.referType.length > 0 ? (
-                                    <>{this.createUISpecial()}</>
-                                  ) : null
-                                ) : null}
-
-                                {this.state.spacEqmtTypeSelect === true ? (
-                                  this.state.spacEqmtType.length > 0 ? (
-                                    <>
-                                      <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                        {this.createUIspacEqmtType()}
-                                      </div>
-                                    </>
-                                  ) : null
-                                ) : null}
-                              </div>
-                            </div>
+                {this.state.containerLoadType === "FTL" ? (
+                  this.createUITruckType()
+                ) : this.state.containerLoadType === "FCL" ? (
+                  <>
+                    {" "}
+                    <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                      <Select
+                        className="rate-dropdown"
+                        getOptionLabel={option => option.StandardContainerCode}
+                        getOptionValue={option => option.StandardContainerCode}
+                        isMulti
+                        options={this.state.EquipmentType}
+                        // onChange={this.equipChange.bind(this)}
+                        onChange={this.newaddClick.bind(this)}
+                        value={this.state.selected}
+                        showNewOptionAtTop={false}
+                      />
+                    </div>
+                    <div className="d-flex flex-wrap justify-content-center">
+                      {this.NewcreateUI()}
+                    </div>
+                    <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                      <input
+                        id="Special-equType"
+                        type="checkbox"
+                        className="d-none"
+                        name={"Special-equType"}
+                        // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                      />
+                      {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                    </div>
+                    {this.state.specialEquipment === true ? (
+                      <div className="">
+                        {/* spe-equ mt-0 */}
+                        <div className="equip-plus-cntr w-100">
+                          <Select
+                            className="rate-dropdown"
+                            getOptionLabel={option =>
+                              option.SpecialContainerCode
+                            }
+                            getOptionValue={option =>
+                              option.SpecialContainerCode
+                            }
+                            options={this.state.SpacialEqmt}
+                            placeholder="Select Kind of Special Equipment"
+                            onChange={this.specEquipChange}
+                            // value={thi.state.spEqtSelect}
+                            showNewOptionAtTop={false}
+                          />
+                        </div>
+                        <div id="cbmInner">
+                          {this.state.specialEqtSelect === true ? (
+                            this.state.flattack_openTop.length > 0 ? (
+                              <>{this.MultiCreateCBM()}</>
+                            ) : null
                           ) : null}
-                        </>
-                      ) : (
-                        this.CreateMultiCBM()
-                      )}
-                  <div className="text-center">
-                    <Button
-                      className="butn"
-                      onClick={() => {
-                        this.toggleQuantQuantity(this.state);
-                      }}
-                    >
-                      Done
-                    </Button>
-                    <Button
-                      className="butn cancel-butn"
-                      onClick={this.toggleQuant}
-                    >Cancel
-                    </Button>
-                  </div>
-                </div>
-                </ModalBody>
-              </Modal>
-              {/* {-------------------------End Equipment Type Modal---------------------------} */}
-              {/* -----------------------Mutiple POL Modal  ------------------*/}
 
-              <Modal
-                className="delete-popup pol-pod-popup"
-                isOpen={this.state.modalPOL}
-                toggle={this.togglePOLModal}
-                centered={true}
-              >
-                <ModalBody>
-              <button type="button" className="close" data-dismiss="modal" onClick={this.togglePOLModal}>
-                <span>&times;</span>
-              </button>
-                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
-                  <div className="pol-mar">
-                  <span style={{ color: "red" }}>
-                      {this.state.errorPOL}
-                  </span>
-                  
-                    {/* <div className="rename-cntr login-fields position-relative"> */}
-                    {this.createUIPOL()}
+                          {this.state.refertypeSelect === true ? (
+                            this.state.referType.length > 0 ? (
+                              <>{this.createUISpecial()}</>
+                            ) : null
+                          ) : null}
 
-                    {/* </div> */}
-                  </div>
-                  <Button className="butn" onClick={this.toggleQuantPOLSave}>
+                          {this.state.spacEqmtTypeSelect === true ? (
+                            this.state.spacEqmtType.length > 0 ? (
+                              <>
+                                <div className="d-flex flex-wrap justify-content-center align-items-center">
+                                  {this.createUIspacEqmtType()}
+                                </div>
+                              </>
+                            ) : null
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  this.CreateMultiCBM()
+                )}
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    onClick={() => {
+                      this.toggleQuantQuantity(this.state);
+                    }}
+                  >
                     Done
                   </Button>
                   <Button
                     className="butn cancel-butn"
-                    onClick={this.togglePOLModal}
+                    onClick={this.toggleQuant}
                   >
-                    Close
-                  </Button>
-                </div>
-                </ModalBody>
-              </Modal>
-              {/* {----------------------End Mutiple POL Modal-----------------------} */}
-              {/*-----------------------Mutiple POD Modal ------------------- */}
-
-              <Modal
-                className="delete-popup pol-pod-popup"
-                isOpen={this.state.modalPOD}
-                toggle={this.togglePODModal}
-                centered={true}
-              >
-                <ModalBody>
-              <button type="button" className="close" data-dismiss="modal" onClick={this.togglePODModal}>
-                <span>&times;</span>
-              </button>
-                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
-                  <div className="pol-mar">
-                    <span style={{ color: "red" }}>
-                        {this.state.errorPOD}
-                    </span>
-                    <div>{this.createUIPOD()}</div>
-                  </div>
-                  <Button className="butn" onClick={this.toggleQuantPODSave}>
-                    Done
-                  </Button>
-                  <Button
-                    className="butn cancel-butn"
-                    onClick={this.togglePODModal}
-                  >
-                    Close
+                    Cancel
                   </Button>
                 </div>
               </ModalBody>
@@ -3955,8 +3913,12 @@ class RateTable extends Component {
               toggle={this.toggleSpot}
               centered={true}
             >
-              <h3 className="text-center">Add Below Details</h3>
+              {/* <h3 className="text-center">Add Below Details</h3> */}
               <ModalBody>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleSpot}>
+                <span>&times;</span>
+              </button>
+              <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
                 <div className="rename-cntr login-fields">
                   <label>Commodity</label>
                   <select onChange={this.filterAll}>
@@ -4059,127 +4021,34 @@ class RateTable extends Component {
                     )}
                     {/* {this.createUITruckType()} */}
                   </div>
-                  <button type="button" className="close" data-dismiss="modal" onClick={this.toggleSpot}>
-                <span>&times;</span>
-              </button>
-                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
-                  <div className="rename-cntr login-fields align-items-start">
-                    <label>Cargo</label>
-                    <div className="w-100">
-                      {this.state.containerLoadType === "FTL" ? (
-                        this.createUITruckType()
-                      ) : this.state.containerLoadType === "FCL" ? (
-                        <>
-                          {" "}
-                          <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.StandardContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.StandardContainerCode
-                              }
-                              isMulti
-                              options={this.state.EquipmentType}
-                              // onChange={this.equipChange.bind(this)}
-                              onChange={this.newaddClick.bind(this)}
-                              value={this.state.selected}
-                              showNewOptionAtTop={false}
-                            />
-                          </div>
-                          <div className="d-flex flex-wrap justify-content-center">
-                            {this.NewcreateUI()}
-                          </div>
-                          <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                            <input
-                              id="Special-equType"
-                              type="checkbox"
-                              className="d-none"
-                              name={"Special-equType"}
-                              // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                            />
-                            {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                          </div>
-                          {this.state.specialEquipment === true ? (
-                            <div className="">
-                              {/* spe-equ mt-0 */}
-                              <div className="equip-plus-cntr w-100">
-                                <Select
-                                  className="rate-dropdown"
-                                  getOptionLabel={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  getOptionValue={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  options={this.state.SpacialEqmt}
-                                  placeholder="Select Kind of Special Equipment"
-                                  onChange={this.specEquipChange}
-                                  // value={thi.state.spEqtSelect}
-                                  showNewOptionAtTop={false}
-                                />
-                              </div>
-                              <div id="cbmInner">
-                                {this.state.specialEqtSelect === true ? (
-                                  this.state.flattack_openTop.length > 0 ? (
-                                    <>{this.MultiCreateCBM()}</>
-                                  ) : null
-                                ) : null}
-
-                                {this.state.refertypeSelect === true ? (
-                                  this.state.referType.length > 0 ? (
-                                    <>{this.createUISpecial()}</>
-                                  ) : null
-                                ) : null}
-
-                                {this.state.spacEqmtTypeSelect === true ? (
-                                  this.state.spacEqmtType.length > 0 ? (
-                                    <>
-                                      <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                        {this.createUIspacEqmtType()}
-                                      </div>
-                                    </>
-                                  ) : null
-                                ) : null}
-                              </div>
-                            </div>
-                          ) : null}
-                        </>
-                      ) : (
-                        this.CreateMultiCBM()
-                      )}
-                      {/* {this.createUITruckType()} */}
-                    </div>
-                    {/* <select>
+                  {/* <select>
                     <option>Select</option>
                     <option>Select</option>
                     <option>Select</option>
                   </select> */}
-                  </div>
-                  <div className="text-center">
-                    <Button
-                      className="butn"
-                      onClick={() => {
-                        this.spotRateSubmit(this.state);
-                        this.toggleSpot();
-                      }}
-                    >
-                      Send
-                    </Button>
-                    <Button
+                </div>
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    onClick={() => {
+                      this.spotRateSubmit(this.state);
+                      this.toggleSpot();
+                    }}
+                  >
+                    Send
+                  </Button>
+                  <Button
                     className="butn"
                     onClick={this.toggleSpotCloseModal.bind(this)}
                   >
                     Cancel
                   </Button>
-                  </div>
-                  </div>
                 </div>
-                </ModalBody>
-              </Modal>
-              {/* {----------------------End Spot Rate Modal------------------} */}
-            </div>
+                </div>
+              </ModalBody>
+            </Modal>
+            {/* {----------------------End Spot Rate Modal------------------} */}
+          </div>
           {/* )} */}
         </div>
       </div>
