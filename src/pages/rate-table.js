@@ -3641,7 +3641,10 @@ class RateTable extends Component {
                 centered={true}
               >
                 <ModalBody>
-                  <img src={CancelImg} alt="Cancel" className="cancelImgBtn" onClick={this.toggleQuant}/>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleQuant}>
+                <span>&times;</span>
+              </button>
+                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
                   <h3 className="mb-4 text-center">{this.state.containerLoadType === "FCL"
                    ? "Equipment Types"
                    : "Cargo Details"}</h3>
@@ -3715,7 +3718,7 @@ class RateTable extends Component {
                       ) : this.state.containerLoadType === "FCL" ? (
                         <>
                           {" "}
-                          <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                          <div className="equip-plus-cntr mt-0 modelselecteqt">
                             <Select
                               className="rate-dropdown"
                               getOptionLabel={option =>
@@ -3808,6 +3811,7 @@ class RateTable extends Component {
                     >Cancel
                     </Button>
                   </div>
+                </div>
                 </ModalBody>
               </Modal>
               {/* {-------------------------End Equipment Type Modal---------------------------} */}
@@ -3820,6 +3824,10 @@ class RateTable extends Component {
                 centered={true}
               >
                 <ModalBody>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.togglePOLModal}>
+                <span>&times;</span>
+              </button>
+                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
                   <div className="pol-mar">
                   <span style={{ color: "red" }}>
                       {this.state.errorPOL}
@@ -3839,6 +3847,7 @@ class RateTable extends Component {
                   >
                     Close
                   </Button>
+                </div>
                 </ModalBody>
               </Modal>
               {/* {----------------------End Mutiple POL Modal-----------------------} */}
@@ -3851,6 +3860,10 @@ class RateTable extends Component {
                 centered={true}
               >
                 <ModalBody>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.togglePODModal}>
+                <span>&times;</span>
+              </button>
+                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
                   <div className="pol-mar">
                     <span style={{ color: "red" }}>
                         {this.state.errorPOD}
@@ -3866,6 +3879,7 @@ class RateTable extends Component {
                   >
                     Close
                   </Button>
+                </div>
                 </ModalBody>
               </Modal>
               {/* {------------------------------End Mutliple POD Modal----------------------} */}

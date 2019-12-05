@@ -211,6 +211,9 @@ h2 span {
 .login-fields {
   margin-bottom: 25px;
 }
+.divwd div {
+  display: block !important;
+}
 .login-input-cntr .login-fields:last-of-type {
   margin-bottom: 0px;
 }
@@ -765,7 +768,7 @@ table tbody tr:last-child {
   text-align: center;
 }
 .delete-popup .modal-body {
-  padding: 40px;
+  padding: 15px;
 }
 .delete-popup .butn {
   margin-right: 20px;
@@ -949,8 +952,7 @@ table tbody tr:last-child {
   height: calc(100% - 65px);
 }
 .transit-sect {
-  padding: 20px 40px;
-  border-bottom: 1px solid #d6d6d6;
+  padding: 0;
 }
 .transit-popup {
   margin: 10px auto;
@@ -1799,7 +1801,7 @@ table tbody tr:last-child {
   text-align: right;
 }
 .pol-mar > div {
-  padding: 20px 0;
+  padding: 0;
   border-bottom: 1px solid #d6d6d6;
   position: relative;
 }
@@ -1812,6 +1814,10 @@ table tbody tr:last-child {
 }
 .pol-mar .equip-plus {
   right: -25px;
+}
+.pol-mar .row {
+  margin: 0 0 15px 0;
+  padding-bottom: 15px;
 }
 .rate-table-butn {
   padding-right: 20px;
@@ -2185,7 +2191,7 @@ table tbody tr:last-child {
   border-bottom: 1px solid #d6d6d6;
 }
 .amnt-popup .modal-body {
-  padding: 30px 20px;
+  padding: 15px;
 }
 .amnt-popup .details-title {
   flex: 0 0 150px;
@@ -2229,9 +2235,10 @@ table tbody tr:last-child {
   width: 50px;
 }
 .modal-body h3 {
-  background: #002d73;
-  color: #fff;
-  padding: 15px 0;
+  background: transparent;
+  color: #002d73;
+  padding: 0;
+  text-align: center;
 }
 /* rate finalizing ends */
 
@@ -2819,7 +2826,7 @@ table tbody tr:last-child {
 
 .actionicon {
   width: 20px !important;
-  margin-left: 20px;
+  margin-left: 10px;
   cursor: pointer;
 }
 .action-cntr a:first-child .actionicon {
@@ -3113,10 +3120,14 @@ table tbody tr:last-child {
 }
 
 .advsearch-sect {
-  padding: 20px 40px;
-  border-bottom: 1px solid #d6d6d6;
+  padding: 15px;
+  background: #f1f2f2;
+  border-radius: 15px !important;
 }
-
+.modal-content {
+  border-radius: 15px !important;
+  background: #f1f2f2;
+}
 .advsearch-sect .butn {
   font-size: 15px;
   min-width: 136px;
@@ -3249,16 +3260,18 @@ table tbody tr:last-child {
   margin-right: auto;
 }
 
-.popupbox .close {
+.close {
   position: absolute;
   right: -8px;
   top: -12px;
   color: #333;
   font-weight: normal;
-  background: #fff;
-  opacity: 1;
+  background: #fff !important;
+  opacity: 1 !important;
   border-radius: 50%;
   width: 25px;
+  font-size: 21px;
+  font-weight: bold;
 }
 .popupbox .modal-body {
   background-color: #f1f2f2;

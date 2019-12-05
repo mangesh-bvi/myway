@@ -948,12 +948,16 @@ class ShippingDetails extends Component {
               centered={true}
             >
               <ModalBody className="p-0">
+              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleAdvSearch}>
+                <span>&times;</span>
+              </button>
                 <div className="container-fluid p-0">
                   <div className="advsearch-sect">
-                    <div className="title-border py-3">
+                    {/* <div className="">
                       <h3>Advanced Search</h3>
-                    </div>
-                    <div className="row" style={{ marginTop: "8px" }}>
+                    </div> */}
+                    <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
+                      <div className="row">
                       <div className="login-fields col-md-3">
                         <label>Mode Of Transport</label>
                         <select
@@ -990,7 +994,7 @@ class ShippingDetails extends Component {
                           ))}
                         </select>
                       </div>
-                      <div className="col-md-5">
+                      <div className="col-md-6">
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
                           <label className="auto-cmp" style={{ padding: "0" }}>
@@ -1086,7 +1090,7 @@ class ShippingDetails extends Component {
                         </div>
                       </div>
                       {/* <div class=" login-fields col-md-4"> */}
-                      <div className="col-md-5">
+                      <div className="col-md-6">
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
                           <label className="auto-cmp" style={{ padding: "0" }}>
@@ -1249,7 +1253,7 @@ class ShippingDetails extends Component {
                     {/* </div> */}
 
                     <div className="row">
-                      <div className="login-fields col-md-3">
+                      <div className="login-fields divwd col-md-3">
                         {/* <div class="rate-radio-cntr"> */}
                         <div style={{ width: "100%" }}>
                           <label style={{ padding: "0" }}>POL</label>
@@ -1276,7 +1280,7 @@ class ShippingDetails extends Component {
                         </div>
                         {/* </div> */}
                       </div>
-                      <div className="login-fields col-md-3">
+                      <div className="login-fields divwd col-md-3">
                         {/* <div class="rate-radio-cntr"> */}
                         <div style={{ width: "100%" }}>
                           <label style={{ padding: "0" }}>POD</label>
@@ -1330,6 +1334,7 @@ class ShippingDetails extends Component {
                           </button>
                         </div>
                       </div>
+                    </div>
                     </div>
 
                     {/* <div className="transit-sect-overflow">
@@ -1401,7 +1406,11 @@ class ShippingDetails extends Component {
               centered={true}
             >
               <ModalBody>
-                <h3 className="mb-4 text-center">Share with others</h3>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleShare}>
+                <span>&times;</span>
+              </button>
+              <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
+                  <h3 className="mb-4 text-center">Share</h3>
                 <div className="txt-cntr">
                   <div className="d-flex align-items-center">
                     <p className="details-title mr-3">Shareable Link</p>
@@ -1410,6 +1419,7 @@ class ShippingDetails extends Component {
                         type="text"
                         disabled
                         class="w-100"
+                        style={{border:"none"}}
                         value={this.state.shareLink}
                       />
                     </div>
@@ -1457,6 +1467,7 @@ class ShippingDetails extends Component {
                     </span>
                   ) : null}
                 </div>
+              </div>
               </ModalBody>
             </Modal>
           </div>
