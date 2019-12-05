@@ -2017,7 +2017,7 @@ table tbody tr:last-child {
   left: 0;
   /* height: 100vh; */
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5) url("../img/loader.gif") no-repeat center
+  background: rgba(0, 0, 0, 0.1) url("../img/loader.gif") no-repeat center
     center;
   background-size: 60px;
   z-index: 5;

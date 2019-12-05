@@ -11,8 +11,8 @@ import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
 
 import { encryption, convertToPlain } from "../helpers/encryption";
-import maersk from "./../assets/img/maersk.png";
-
+const imageAsset = "./../assets/img";
+var sizeOf = require("image-size");
 class BookingView extends Component {
   constructor(props) {
     super(props);
@@ -125,8 +125,6 @@ class BookingView extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
@@ -175,7 +173,6 @@ class BookingView extends Component {
   }
 
   HandleChangeCon(field, e) {
-    debugger;
     let self = this;
     var customerName = "";
     let fields = this.state.fields;
@@ -199,8 +196,6 @@ class BookingView extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
-
         if (response.data.Table > 0) {
           if (field == "Consignee") {
             self.setState({
@@ -237,7 +232,6 @@ class BookingView extends Component {
   }
 
   handleSelectCon(e, field, value, id) {
-    debugger;
     let fields = this.state.fields;
     fields[field] = value;
     if (field == "Consignee") {
@@ -257,7 +251,6 @@ class BookingView extends Component {
 
   ////this method for NonCustomerList bind
   NonCustomerList() {
-    debugger;
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
@@ -268,7 +261,6 @@ class BookingView extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var data = response.data.Table;
       self.setState({ NonCustomerData: data });
     });
@@ -284,8 +276,6 @@ class BookingView extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
@@ -304,7 +294,6 @@ class BookingView extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    debugger;
     var FileData = event.target.files;
     var filesArr = this.state.selectedFile;
     for (let i = 0; i < FileData.length; i++) {
@@ -319,7 +308,7 @@ class BookingView extends Component {
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
     let self = this;
-    debugger;
+
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (bookingId !== "" && bookingId !== null) {
@@ -453,10 +442,7 @@ class BookingView extends Component {
       responseType: "blob",
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       if (response.data) {
-        console.log(response.data);
-
         var blob = new Blob([response.data], { type: "application/pdf" });
         var link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
@@ -487,7 +473,6 @@ class BookingView extends Component {
   ////end methos for multiple file element
 
   HandleChangeBuyer(e) {
-    debugger;
     var BuyerName = e.target.selectedOptions[0].innerText;
     if (BuyerName !== "select") {
       var BuyerID = Number(e.target.selectedOptions[0].value);
@@ -510,7 +495,6 @@ class BookingView extends Component {
   ////this method for party change value
 
   HandleChangeParty(e) {
-    debugger;
     var NotifyName = e.target.selectedOptions[0].innerText;
     if (NotifyName !== "select") {
       var NotifyID = Number(e.target.selectedOptions[0].value);
@@ -530,10 +514,29 @@ class BookingView extends Component {
     }
   }
 
+  GetImageURL = imageName => {
+    debugger;
+    let URL = imageAsset + "/ATAFreight_console.png";
+    new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        URL = imageAsset + "/" + imageName + ".png";
+        resolve({ status: "ok" });
+      };
+      img.onerror = () => {
+        URL = imageAsset + "/ATAFreight_console.png";
+        resolve({ status: "error" });
+      };
+      img.src = imageAsset + "/" + imageName + ".png";
+    }).then(() => {
+      // return <img src={URL} alt="aaa"/>;
+      return URL;
+    });
+  };
+
   render() {
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
-      debugger;
       commodityName = this.state.commodityData.filter(
         x => x.id === this.state.selectedCommodity
       )[0].Commodity;
@@ -546,6 +549,9 @@ class BookingView extends Component {
       className = "butn m-0";
     }
 
+    // var sizeOf = require("image-size");
+    // var dimensions = sizeOf("./../assets/img/maersk.png");
+    // console.log(dimensions.width, dimensions.height);
     return (
       <React.Fragment>
         <Headers />
@@ -571,23 +577,27 @@ class BookingView extends Component {
                             columns: [
                               {
                                 Cell: row => {
-                                  debugger;
                                   i++;
+
                                   return (
                                     <React.Fragment>
                                       <div className="d-flex align-items-center">
                                         <div>
                                           <p className="details-title">
                                             <img
-                                              src={maersk}
+                                              src={require(this.GetImageURL(
+                                                row.original.Linename
+                                              ))}
                                               alt="maersk icon"
                                             />
+                                            {/* {this.GetImageURL(row.original.Linename)} */}
                                           </p>
                                         </div>
                                       </div>
                                     </React.Fragment>
                                   );
                                 },
+
                                 accessor: "lineName",
                                 width: 200
                               },

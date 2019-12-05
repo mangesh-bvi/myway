@@ -16,7 +16,6 @@ import {
 import { encryption, convertToPlain } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 
-
 class BookingInsert extends Component {
   constructor(props) {
     super(props);
@@ -60,6 +59,16 @@ class BookingInsert extends Component {
       Buyer_AddressID: 0,
       Buyer_Displayas: "",
       BuyerName: "",
+
+      ConsineeID: 0,
+      Consinee_AddressID: 0,
+      Consinee_Displayas: "",
+      ConsineeName: "",
+
+      ShipperID: 0,
+      Shipper_AddressID: 0,
+      Shipper_Displayas: "",
+      ShipperName: "",
 
       consineeData: {},
       shipperData: {},
@@ -350,7 +359,7 @@ class BookingInsert extends Component {
 
     var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
 
-    var Shipper_Displayas = this.state.shipperData.CompanyAddress || "";
+    var Shipper_Displayas = this.state.Shipper_Displayas || "";
     var Shipper_AddressID = Number(this.state.shipperData.AddressID || 0);
     var ShipperName = this.state.shipperData.Company_Name || "";
 
@@ -461,7 +470,6 @@ class BookingInsert extends Component {
     }).then(function(response) {
       debugger;
       if (response.data.Table) {
-        
         var BookingNo = response.data.Table[0].BookingID;
         NotificationManager.success(response.data.Table[0]);
         self.setState({ BookingNo });
@@ -643,7 +651,7 @@ class BookingInsert extends Component {
       method: "post",
       url: `${appSettings.APIURL}/NonCustomerList`,
       data: {
-        MyWayUserID: userId,//2679 
+        MyWayUserID: userId //2679
       },
       headers: authHeader()
     }).then(function(response) {
@@ -730,6 +738,48 @@ class BookingInsert extends Component {
   }
   ////end methos for multiple file element
 
+  HandleChangeConsinee(e) {
+    debugger;
+    var ConsineeName = e.target.selectedOptions[0].innerText;
+    if (ConsineeName !== "select") {
+      var ConsineeID = Number(e.target.selectedOptions[0].value);
+
+      var cutomerdata = this.state.NonCustomerData.filter(
+        x => x.Company_ID === ConsineeID
+      );
+      var Consinee_AddressID = cutomerdata[0].Consinee_AddressID;
+      var Consinee_Displayas = cutomerdata[0].Consinee_Address;
+
+      this.setState({
+        ConsineeID,
+        ConsineeName,
+        Consinee_AddressID,
+        Consinee_Displayas
+      });
+    }
+  }
+
+  HandleChangeShipper(e) {
+    debugger;
+    var ShipperName = e.target.selectedOptions[0].innerText;
+    if (ShipperName !== "select") {
+      var ShipperID = Number(e.target.selectedOptions[0].value);
+
+      var cutomerdata = this.state.NonCustomerData.filter(
+        x => x.Company_ID === ShipperID
+      );
+      var Shipper_AddressID = cutomerdata[0].Shipper_AddressID;
+      var Shipper_Displayas = cutomerdata[0].Shipper_Address;
+
+      this.setState({
+        ShipperID,
+        ShipperName,
+        Shipper_AddressID,
+        Shipper_Displayas
+      });
+    }
+  }
+
   HandleChangeBuyer(e) {
     debugger;
     var BuyerName = e.target.selectedOptions[0].innerText;
@@ -811,7 +861,6 @@ class BookingInsert extends Component {
       className = "butn m-0";
     }
 
-    
     return (
       <React.Fragment>
         <Headers />
@@ -1150,7 +1199,7 @@ class BookingInsert extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Consignee Name</p>
-                            <Autocomplete
+                            {/* <Autocomplete
                               getItemValue={item => item.Company_Name}
                               items={this.state.Consignee}
                               renderItem={(item, isHighlighted) => (
@@ -1177,15 +1226,24 @@ class BookingInsert extends Component {
                                 "Consignee"
                               )}
                               value={this.state.fields["Consignee"]}
-                            />
+                            /> */}
+                            <select
+                              onChange={this.HandleChangeConsinee.bind(this)}
+                              value={this.state.ConsigneeID}
+                            >
+                              <option selected>select</option>
+                              {this.state.NonCustomerData.map((item, i) => (
+                                <option key={i} value={item.Company_ID}>
+                                  {item.Company_Name}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {this.state.consineeData !== null
-                                ? this.state.consineeData.CompanyAddress
-                                : ""}
+                              {this.state.Consinee_Displayas}
                             </p>
                           </div>
                         </div>
@@ -1199,7 +1257,7 @@ class BookingInsert extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Shipper Name</p>
-                            <Autocomplete
+                            {/* <Autocomplete
                               getItemValue={item => item.Company_Name}
                               items={this.state.Shipper}
                               renderItem={(item, isHighlighted) => (
@@ -1224,15 +1282,28 @@ class BookingInsert extends Component {
                                 item => item.Company_ID,
                                 "Shipper"
                               )}
-                            />
+                            /> */}
+
+                            <select
+                              onChange={this.HandleChangeShipper.bind(this)}
+                              value={this.state.ShipperID}
+                            >
+                              <option selected>select</option>
+                              {this.state.NonCustomerData.map((item, i) => (
+                                <option key={i} value={item.Company_ID}>
+                                  {item.Company_Name}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {this.state.shipperData !== null
+                              {/* {this.state.shipperData !== null
                                 ? this.state.shipperData.CompanyAddress
-                                : ""}
+                                : ""} */}
+                                {this.state.Shipper_Displayas}
                             </p>
                           </div>
                         </div>
@@ -1440,9 +1511,8 @@ class BookingInsert extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer/> 
+        <NotificationContainer />
       </React.Fragment>
- 
     );
   }
 }

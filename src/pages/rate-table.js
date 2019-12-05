@@ -229,7 +229,8 @@ class RateTable extends Component {
       errorPOD: "",
       companyId: 0,
       companyName: "",
-      companyAddress: ""
+      companyAddress: "",
+      contactName: ""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -488,9 +489,9 @@ class RateTable extends Component {
   }
 
   toggleQuantQuantity(paramData) {
-    // this.setState(prevState => ({
-    //   modalQuant: !prevState.modalQuant
-    // }));
+    this.setState(prevState => ({
+      modalQuant: !prevState.modalQuant
+    }));
     this.HandleRateDetailsFCL(paramData);
   }
 
@@ -935,7 +936,8 @@ class RateTable extends Component {
         cbmVal: paramData.cbmVal,
         companyId: paramData.companyId,
         companyName: paramData.companyName,
-        companyAddress: paramData.companyAddress
+        companyAddress: paramData.companyAddress,
+        contactName: paramData.contactName
       });
     }
 
