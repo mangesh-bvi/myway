@@ -7,6 +7,7 @@ import BookingsIcon from "./../assets/img/bookings-side.png";
 import AnalyticsIcon from "./../assets/img/analytics-side.png";
 import RatesIcon from "./../assets/img/rates-side.png";
 import AdminIcon from "./../assets/img/admin-side.png";
+import ChatIcon from "./../assets/img/chat.png";
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
 import DashboardIcon from "./../assets/img/dashboard-side.png";
@@ -29,6 +30,8 @@ class SideMenu extends Component {
     super(props);
     this.state = {
       aircount: "0",
+      quotePendingCount: "0",
+      bookPendingCount: "0",
       activeRateSearch: "",
       activeSpotList: "",
       modalProfile: false
@@ -36,6 +39,31 @@ class SideMenu extends Component {
 
     this.highlightClass = this.highlightClass.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
+  }
+
+  componentDidMount() {
+    var previousAir = window.localStorage.getItem("aircount");
+    var previousQuotePending = window.localStorage.getItem("quotepending");
+    var previousBookPending = window.localStorage.getItem("bookpending");
+    setInterval(() => {
+      if (window.localStorage.getItem("aircount") !== previousAir) {
+        this.setState({
+          aircount: window.localStorage.getItem("aircount")
+        });
+      }
+      if (
+        window.localStorage.getItem("quotepending") !== previousQuotePending
+      ) {
+        this.setState({
+          quotePendingCount: window.localStorage.getItem("quotepending")
+        });
+      }
+      if (window.localStorage.getItem("bookpending") !== previousBookPending) {
+        this.setState({
+          bookPendingCount: window.localStorage.getItem("bookpending")
+        });
+      }
+    }, 1);
   }
 
   clickShipmentType(e) {
@@ -150,7 +178,10 @@ class SideMenu extends Component {
               Dashboard
             </Link>
           </li>
-          <li className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}>
+          <li
+            className="sidemenu-ul-li shipmentli"
+            style={{ borderTop: "1px solid #265eb5" }}
+          >
             <Accordion
               defaultActiveKey={window.localStorage.getItem("defShipActKey")}
             >
@@ -217,7 +248,10 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          <li className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}>
+          <li
+            className="sidemenu-ul-li shipmentli"
+            style={{ borderTop: "1px solid #265eb5" }}
+          >
             <Accordion
               defaultActiveKey={window.localStorage.getItem("defActKey")}
               // defaultActiveKey={window.localStorage.getItem("defspotActKey")}
@@ -305,7 +339,8 @@ class SideMenu extends Component {
             </Accordion>
           </li>
           <li
-            className="sidemenu-ul-li shipmentli" style={{borderTop: "1px solid #265eb5"}}
+            className="sidemenu-ul-li shipmentli"
+            style={{ borderTop: "1px solid #265eb5" }}
             onClick={this.highlightClass.bind(this)}
           >
             {/* <Link to="/quote-table">
@@ -526,11 +561,14 @@ class SideMenu extends Component {
             }
           })()}
           {(() => {
+            // if (
+            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
+            //     "Customer" &&
+            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
+            //     "Sales User"
+            // ) {
             if (
-              encryption(window.localStorage.getItem("usertype"), "desc") !==
-                "Customer" &&
-              encryption(window.localStorage.getItem("usertype"), "desc") !==
-                "Sales User"
+              encryption(window.localStorage.getItem("isAdmin"), "desc") === "Y"
             ) {
               return (
                 <li className="sidemenu-ul-li">
@@ -564,7 +602,7 @@ class SideMenu extends Component {
                 <li className="profile-setting-li">
                   <a href="mywayMessage">
                     <img
-                      src={ProfileSettingIcon}
+                      src={ChatIcon}
                       alt="profile-icon"
                       className="profilesetting-icon"
                     />

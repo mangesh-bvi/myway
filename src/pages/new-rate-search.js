@@ -297,34 +297,37 @@ class NewRateSearch extends Component {
       errors["PODAddress"] = "Please select destination";
     }
 
-    if(this.state.cmbTypeRadio == "ALL")
-    {
+    if (this.state.cmbTypeRadio == "ALL") {
       var multiCBM = this.state.multiCBM;
       for (let i = 0; i < multiCBM.length; i++) {
-        if (multiCBM[i].PackageType == "" || multiCBM[i].PackageType == "Select" || 
-        multiCBM[i].Quantity == 0 || multiCBM[i].Lengths == 0 || 
-        multiCBM[i].Width == 0 || multiCBM[i].Height == 0 || multiCBM[i].GrossWt == 0) {
+        if (
+          multiCBM[i].PackageType == "" ||
+          multiCBM[i].PackageType == "Select" ||
+          multiCBM[i].Quantity == 0 ||
+          multiCBM[i].Lengths == 0 ||
+          multiCBM[i].Width == 0 ||
+          multiCBM[i].Height == 0 ||
+          multiCBM[i].GrossWt == 0
+        ) {
           formIsValid = false;
-          errors["Dimensions"] = "Please enter dimensions"
+          errors["Dimensions"] = "Please enter dimensions";
         }
-        
       }
     }
     if (this.state.cmbTypeRadio == "CBM") {
-      if(this.state.cbmVal == ""){
+      if (this.state.cbmVal == "") {
         formIsValid = false;
-        errors["CBM"] = "Please enter CBM"
+        errors["CBM"] = "Please enter CBM";
       }
     }
     if (this.state.cmbTypeRadio == "CBM") {
-      if(this.state.cbmVal == ""){
-        if(this.state.containerLoadType.toUpperCase()!= "AIR"){
-        formIsValid = false;
-        errors["CBM"] = "Please enter CBM"
-        }
-        else{
+      if (this.state.cbmVal == "") {
+        if (this.state.containerLoadType.toUpperCase() != "AIR") {
           formIsValid = false;
-        errors["CBM"] = "Please enter Chargable Weight"
+          errors["CBM"] = "Please enter CBM";
+        } else {
+          formIsValid = false;
+          errors["CBM"] = "Please enter Chargable Weight";
         }
       }
     }
@@ -844,7 +847,7 @@ class NewRateSearch extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: value===""?0:parseFloat(value)
+        [name]: value === "" ? 0 : parseFloat(value)
       };
     }
 
@@ -2986,7 +2989,6 @@ class NewRateSearch extends Component {
                         {this.state.containerLoadType !== "FTL" ? (
                           this.state.cmbTypeRadio === "ALL" ? (
                             this.CreateMultiCBM()
-                            
                           ) : this.state.cmbTypeRadio === "CBM" ? (
                             <div className="col-md-4 m-auto">
                               <div className="spe-equ">
@@ -3013,10 +3015,11 @@ class NewRateSearch extends Component {
                         )}
                         {this.state.containerLoadType !== "FTL" ? (
                           this.state.cmbTypeRadio === "ALL" ? (
-                          <span className="equip-error">
-                            {this.state.errors["Dimensions"]}
-                          </span> 
-                        ) : null):(null)}
+                            <span className="equip-error">
+                              {this.state.errors["Dimensions"]}
+                            </span>
+                          ) : null
+                        ) : null}
                       </div>
                       <div className="remember-forgot flex-column rate-checkbox justify-content-center">
                         <input
@@ -3293,18 +3296,19 @@ class NewRateSearch extends Component {
                       </>
                     ) : null}
                   </div>
-                  {this.state.shipmentType.toLowerCase() != "domestic"?(
-                  <div className="spe-equ justify-content-center">
-                    <label>Inco Terms :</label>
-                    <input
-                      type="text"
-                      placeholder="Inco Terms"
-                      className="w-25"
-                      disabled
-                      name="incoTerms"
-                      value={self.state.incoTerms}
-                    />
-                  </div>):null}
+                  {this.state.shipmentType.toLowerCase() != "domestic" ? (
+                    <div className="spe-equ justify-content-center">
+                      <label>Inco Terms :</label>
+                      <input
+                        type="text"
+                        placeholder="Inco Terms"
+                        className="w-25"
+                        disabled
+                        name="incoTerms"
+                        value={self.state.incoTerms}
+                      />
+                    </div>
+                  ) : null}
                 </div>
               </div>
 

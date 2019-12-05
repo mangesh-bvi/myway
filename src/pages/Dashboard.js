@@ -939,6 +939,10 @@ class Dashboard extends Component {
       SelectPin: [],
       checkMapview: true,
       loading: true,
+      watchlistLoading: true,
+      bookingLoading: true,
+      quotesLoading: true,
+      invoicesLoading: true,
       IsWidgets: false,
       mapPosition: {
         lat: 32.24165126,
@@ -1071,7 +1075,7 @@ class Dashboard extends Component {
       var bookData = response.data.Table;
       self.setState({
         BookingData: bookData,
-        loading: false
+        bookingLoading: false
       });
     });
   }
@@ -1097,7 +1101,7 @@ class Dashboard extends Component {
       var invoicesData = response.data.Table1;
       selt.setState({
         InvoicesData: invoicesData,
-        loading: false
+        invoicesLoading: false
       });
     });
   }
@@ -1117,7 +1121,7 @@ class Dashboard extends Component {
       var activeshipment = response.data.Table;
       selt.setState({
         ActiveShipmentData: activeshipment,
-        loading: false
+        watchlistLoading: false
       });
     });
   }
@@ -1135,7 +1139,7 @@ class Dashboard extends Component {
       var quotesdata = response.data.Table;
       selt.setState({
         QuotesData: quotesdata,
-        loading: false
+        quotesLoading: false
       });
     });
   }
@@ -1359,7 +1363,9 @@ class Dashboard extends Component {
             <p>
               <span style={{ color: "#000" }}>{book.BookingNo}</span>
               <span style={{ float: "right" }}>
-                {book.ETD!=="" || undefined || null?new Date(book.ETD).toLocaleDateString("en-US"):""}
+                {book.ETD !== "" || undefined || null
+                  ? new Date(book.ETD).toLocaleDateString("en-US")
+                  : ""}
               </span>
             </p>
             <p>
@@ -1450,11 +1456,11 @@ class Dashboard extends Component {
           </div>
           <div className="cls-rt">
             <div className="dash-outer">
-              {this.state.loading === true ? (
+              {/* {this.state.loading === true ? (
                 <div className="loader-icon"></div>
               ) : (
                 ""
-              )}
+              )} */}
               {this.state.checkMapview == true ? (
                 ""
               ) : (
@@ -1485,7 +1491,14 @@ class Dashboard extends Component {
                   <div className="row dash-sects-cntr">
                     <div className="col-md-3">
                       <div className="dash-sects">
-                        <h3>Watchlist Shipments</h3>
+                        <div className="dashboard-loader">
+                          <h3>Watchlist Shipments</h3>
+                          {this.state.watchlistLoading === true ? (
+                            <div className="loader-icon"></div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
                         <div className="dash-sects-dtls">
                           <div className="dash-sects-dtls-inner">
                             {ActiveShipment}
@@ -1502,7 +1515,14 @@ class Dashboard extends Component {
                     </div>
                     <div className="col-md-3">
                       <div className="dash-sects">
-                        <h3>Booking</h3>
+                        <div className="dashboard-loader">
+                          <h3>Booking</h3>
+                          {this.state.bookingLoading === true ? (
+                            <div className="loader-icon"></div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
                         <div className="dash-sects-dtls">
                           {/* <i className="fa fa-refresh fa-spin"></i> */}
                           <div className="dash-sects-dtls-inner">{Booking}</div>
@@ -1517,7 +1537,14 @@ class Dashboard extends Component {
                     </div>
                     <div className="col-md-3">
                       <div className="dash-sects">
-                        <h3>Quotes</h3>
+                        <div className="dashboard-loader">
+                          <h3>Quotes</h3>
+                          {this.state.quotesLoading === true ? (
+                            <div className="loader-icon"></div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
                         <div className="dash-sects-dtls">
                           {/* <i className="fa fa-refresh fa-spin"></i> */}
                           <div className="dash-sects-dtls-inner">{Quotes}</div>
@@ -1532,7 +1559,14 @@ class Dashboard extends Component {
                     </div>
                     <div className="col-md-3">
                       <div className="dash-sects">
-                        <h3>Invoices</h3>
+                        <div className="dashboard-loader">
+                          <h3>Invoices</h3>
+                          {this.state.invoicesLoading === true ? (
+                            <div className="loader-icon"></div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
                         <div className="dash-sects-dtls">
                           {/* <i className="fa fa-refresh fa-spin"></i> */}
                           <div className="dash-sects-dtls-inner">

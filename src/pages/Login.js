@@ -307,6 +307,10 @@ class Login extends React.Component {
             encryption(data.Table[0].FirstName, "enc")
           );
           window.localStorage.setItem(
+            "isAdmin",
+            encryption(data.Table[0].isAdmin, "enc")
+          );
+          window.localStorage.setItem(
             "lastlogindate",
             encryption(data.Table[0].LastLoginDate, "enc")
           );
@@ -419,12 +423,10 @@ class Login extends React.Component {
         <div className="login-sect">
           <div className="logo">
             <img src={Logo} alt="logo" />
-            <br/>
-            <br/>
-            
+            <br />
+            <br />
+
             {/* <img src="./../assets/img/ATAFreight_console.png" alt="logo" /> */}
-
-
           </div>
           <form onSubmit={this.handleSubmit}>
             <div className="login-cntr">

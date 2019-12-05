@@ -3797,8 +3797,8 @@ class RateFinalizing extends Component {
           <div className="modal-content">
 
             <div className="modal-body"> */}
-              <button type="button" className="close" data-dismiss="modal">
-                &times;
+              <button type="button" className="close" data-dismiss="modal" onClick={this.togglePreview}>
+                <span>&times;</span>
               </button>
               <div className="row" style={{ margin: 0 }}>
                 <div className="logohheader">

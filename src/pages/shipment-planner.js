@@ -1098,6 +1098,9 @@ class ShipmentPlanner extends Component {
                   centered={true}
                 >
                   <ModalBody className="p-0">
+              <button type="button" style={{top:"-20px" , right:"-20px"}} className="close" data-dismiss="modal" onClick={this.toggleVisual}>
+                <span>&times;</span>
+              </button>
                     <table
                       width="100%"
                       border="0"
@@ -1109,6 +1112,7 @@ class ShipmentPlanner extends Component {
                         <tr>
                           <td
                             id="ContentPlaceHolder1_td_bg"
+                            style={{borderRadius: "15px"}}
                             className={this.state.imageClass}
                           >
                             <div className="row">
@@ -1176,12 +1180,6 @@ class ShipmentPlanner extends Component {
                         </tr>
                       </tbody>
                     </table>
-                    <a
-                      href="#!"
-                      className="popup-cross fa fa-times"
-                      onClick={this.toggleVisual}
-                      style={{ color: "#fff" }}
-                    ></a>
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -1190,8 +1188,12 @@ class ShipmentPlanner extends Component {
                   toggle={this.toggleDelivery}
                   centered={true}
                 >
-                  <ModalBody className="p-0">
-                    {deliveryPopup.map((cell, i) => {
+                  <ModalBody>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleDelivery}>
+                <span>&times;</span>
+              </button>
+                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
+                      {deliveryPopup.map((cell, i) => {
                       if (cell.POLLocation == "") {
                         return (
                           <div className="container-fluid p-0 no-sched-avail">
@@ -1255,11 +1257,7 @@ class ShipmentPlanner extends Component {
                         );
                       }
                     })}
-                    <a
-                      href="#!"
-                      className="popup-cross fa fa-times"
-                      onClick={this.toggleDelivery}
-                    ></a>
+                    </div>
                   </ModalBody>
                 </Modal>
                 <Modal
@@ -1268,7 +1266,11 @@ class ShipmentPlanner extends Component {
                   toggle={this.toggleTransit}
                   centered={true}
                 >
-                  <ModalBody className="p-0">
+                  <ModalBody>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleTransit}>
+                <span>&times;</span>
+              </button>
+                <div style={{borderRadius:"15px"}}>
                     <div className="container-fluid p-0">
                       <div className="transit-sect">
                         <div className="row">
@@ -1368,11 +1370,7 @@ class ShipmentPlanner extends Component {
                         })}
                       </div>
                     </div>
-                    <a
-                      href="#!"
-                      className="popup-cross fa fa-times"
-                      onClick={this.toggleTransit}
-                    ></a>
+                    </div>
                   </ModalBody>
                 </Modal>
                 {/* <Modal
