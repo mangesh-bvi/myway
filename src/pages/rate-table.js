@@ -193,7 +193,7 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID: 0,
+      CommodityID: 49,
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       pickUpAddress: [],
@@ -3602,7 +3602,12 @@ class RateTable extends Component {
                                       },
                                       {
                                         Header: "Tax",
-                                        accessor: "Tax"
+                                        accessor: "Tax",
+                                        Cell: props => (
+                                          <React.Fragment>
+                                            {props.original.Tax!==0?props.original.Tax:""}
+                                          </React.Fragment>
+                                        )
                                       },
 
                                       {
