@@ -561,11 +561,14 @@ class SideMenu extends Component {
             }
           })()}
           {(() => {
+            // if (
+            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
+            //     "Customer" &&
+            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
+            //     "Sales User"
+            // ) {
             if (
-              encryption(window.localStorage.getItem("usertype"), "desc") !==
-                "Customer" &&
-              encryption(window.localStorage.getItem("usertype"), "desc") !==
-                "Sales User"
+              encryption(window.localStorage.getItem("isAdmin"), "desc") === "Y"
             ) {
               return (
                 <li className="sidemenu-ul-li">
