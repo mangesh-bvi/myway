@@ -3152,6 +3152,10 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
+            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleProfit}>
+                <span>&times;</span>
+              </button>
+              <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
               <div className="txt-cntr">
                 <div className="d-flex align-items-center">
                   <p className="details-title mr-3">
@@ -3186,6 +3190,7 @@ class RateFinalizing extends Component {
                     Remove
                   </Button>
                 )}
+              </div>
               </div>
             </ModalBody>
           </Modal>
@@ -3227,6 +3232,10 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
+            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleRequest}>
+                <span>&times;</span>
+              </button>
+              <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
               <h3 className="mb-4">Request Changes</h3>
               {this.state.toggleAddProfitBtn && (
                 <div className="rename-cntr login-fields">
@@ -3261,6 +3270,7 @@ class RateFinalizing extends Component {
                 <Button className="butn" onClick={this.SendRequest}>
                   Request
                 </Button>
+              </div>
               </div>
             </ModalBody>
           </Modal>

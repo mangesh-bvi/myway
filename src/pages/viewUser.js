@@ -326,6 +326,10 @@ class ViewUser extends Component {
             centered={true}
           >
             <ModalBody>
+            <button type="button" style={{top:"-12px" , right:"-15px"}} className="close" data-dismiss="modal" onClick={this.toggleDel}>
+                <span>&times;</span>
+              </button>
+              <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
               <p>Are you sure ?</p>
               <Button className="butn" onClick={this.toggleDeactivate}>
                 Yes
@@ -333,6 +337,7 @@ class ViewUser extends Component {
               <Button className="butn cancel-butn" onClick={this.toggleDel}>
                 No
               </Button>
+              </div>
             </ModalBody>
           </Modal>
         </div>

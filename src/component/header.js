@@ -399,6 +399,10 @@ class Header extends Component {
                     // backdrop="static"
                   >
                     <ModalBody>
+                    <button type="button" className="close" data-dismiss="modal" onClick={this.toggleDocu}>
+                <span>&times;</span>
+              </button>
+                      <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
                       <h3 className="mb-4">Send Message</h3>
                       <div className="rename-cntr login-fields">
                         <select id="drpshipment">
@@ -442,6 +446,7 @@ class Header extends Component {
                       >
                         Close
                       </Button>
+                      </div>
                     </ModalBody>
                   </Modal>
                 </li>

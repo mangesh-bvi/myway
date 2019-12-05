@@ -16,6 +16,8 @@ import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
+import PlaneColor from "./../assets/img/Air Shipment color.png";
+import OceanColor from "./../assets/img/Ocean Shipment color.png";
 import Transit from "./../assets/img/transit.png";
 import { encryption } from "../helpers/encryption";
 import Box from "./../assets/img/box.png";
@@ -682,14 +684,14 @@ class ShippingDetails extends Component {
                                   id="transit"
                                   className="shipment-img"
                                 >
-                                  <img src={Plane} />
+                                  <img src={PlaneColor} />
                                 </div>
                               </>
                             );
                           } else if (row.value == "Ocean") {
                             return (
                               <div title="Ship" className="shipment-img">
-                                <img src={Ship} />
+                                <img src={OceanColor} />
                               </div>
                             );
                           } else if (row.value == "Inland") {
