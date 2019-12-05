@@ -3,7 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
-import ATA from "./../assets/img/ATAFreight_console.png";
+import ATA from "./../assets/img/ATAFreight_console1.png";
 import Dummy from "./../assets/dummy.pdf";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
@@ -110,6 +110,7 @@ class RateFinalizing extends Component {
       CompanyAddress: "",
       RateLineName: "",
       ContactName: "",
+      ContactEmail: "",
       isCopy:false
     };
 
@@ -158,6 +159,7 @@ class RateFinalizing extends Component {
         var companyName = this.props.location.state.companyName;
         var companyAddress = this.props.location.state.companyAddress;
         var contactName = this.props.location.state.contactName;
+        var contactEmail = this.props.location.state.contactEmail;
 
         var CargoDetailsArr = [];
         var equipmentTypeArr = [];
@@ -440,7 +442,8 @@ class RateFinalizing extends Component {
           CompanyID: companyID,
           CompanyName: companyName,
           CompanyAddress: companyAddress,
-          ContactName: contactName
+          ContactName: contactName,
+          ContactEmail: contactEmail
         });
 
         this.state.rateDetails = rateDetails;
@@ -466,6 +469,7 @@ class RateFinalizing extends Component {
         this.HandlePackgeTypeData();
       }
       this.HandleCommodityDropdown();
+      this.HandleSalesQuoteConditions();
     }
 
     this.HandleLocalCharges();
@@ -1847,12 +1851,14 @@ class RateFinalizing extends Component {
     var compName = e.Company_Name;
     var companyAddress = e.CompanyAddress;
     var contactName = e.ContactName;
+    var contactEmail = e.ContactEmail;
     this.setState({
       fields,
       CompanyID: compId,
-      //CompanyName: compName,
+      CompanyName: compName,
       CompanyAddress: companyAddress,
-      ContactName: contactName
+      ContactName: contactName,
+      ContactEmail: contactEmail
     });
     //document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -1940,6 +1946,21 @@ class RateFinalizing extends Component {
       });
   }
 
+  HandleSalesQuoteConditions(){
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteConditions`,
+      data:  {Mode:this.state.containerLoadType, ShipmentType:this.state.shipmentType, 
+        MywayUserID:encryption(window.localStorage.getItem("userid"), "desc")},
+      headers: authHeader()
+    }).then(function(response) {
+    debugger; 
+    self.setState({
+      ConditionDesc: response.data.Table[0].conditionDesc
+    })   
+  })
+  }
   //------------------------------------------------------------------//
 
   render() {
@@ -3814,23 +3835,51 @@ class RateFinalizing extends Component {
                     <div className="col-12 col-md-6">
                       <img src={ATA} alt="ATAFreight Console" />
                     </div>
-                    <div className="col-12 col-md-6">
+                    {/* <div className="col-12 col-md-6">
                       <label className="headerlabel">Hello</label>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
-              <div className="row">
+              <div className="row">    
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
                     <h3>
-                      To, <span>Trustwater LLC</span>
+                      From, <span>{encryption(
+                                window.localStorage.getItem("companyname"),
+                                "desc"
+                              )}</span>
                     </h3>
                     <label>
-                      ATNN : <span>Deniz Egemen</span>
+                      Sales Person : <span>{encryption(
+                                window.localStorage.getItem("username"),
+                                "desc"
+                              )}</span>
                     </label>
                     <label>
-                      E-Mail : <span>edeniz@elamafarms.com</span>
+                      E-Mail : <span>{encryption(
+                                window.localStorage.getItem("emailid"),
+                                "desc"
+                              )}</span>
+                    </label>
+                    <label>
+                      Phone : <span></span>
+                    </label>
+                    <label>
+                      Fax : <span></span>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-12 col-sm-6">
+                  <div className="firstbox">
+                    <h3>
+                      To, <span>{this.state.CompanyName}</span>
+                    </h3>
+                    <label>
+                      ATNN : <span>{this.state.ContactName}</span>
+                    </label>
+                    <label>
+                      E-Mail : <span>{this.state.ContactEmail}</span>
                     </label>
                     <label>
                       Phone : <span></span>
@@ -3840,28 +3889,6 @@ class RateFinalizing extends Component {
                     </label>
                     <label>
                       &nbsp;<span></span>
-                    </label>
-                  </div>
-                </div>
-                <div className="col-12 col-sm-6">
-                  <div className="firstbox">
-                    <h3>
-                      From, <span>ATA Freight Line</span>
-                    </h3>
-                    <label>
-                      Sales Person : <span>Horst Percival</span>
-                    </label>
-                    <label>
-                      E-Mail : <span>h.percival@atafreight.com</span>
-                    </label>
-                    <label>
-                      Phone : <span>+1(718) 9953855 X</span>
-                    </label>
-                    <label>
-                      Fax : <span>+1(718) 9954150 X</span>
-                    </label>
-                    <label>
-                      Prepared By : <span>Patricia Poslett</span>
                     </label>
                   </div>
                 </div>
@@ -4270,8 +4297,33 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                   </div>
+                  
                 </>
               ))}
+              <div className="row">
+                 <div className="col-12">
+                    <div className="thirdbox">
+                      <div className="table-responsive">
+                        <table className="table table-responsive">
+                          <thead>
+                            <tr>
+                              <th>Terms and Conditions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{this.state.ConditionDesc}</td>                                 
+                            </tr>
+                            <tr>
+                              <td><a href="http://www.atafreight.com/Document/terms.pdf" target="_blank" style={{cursor: 'pointer', color:'blue'}}>terms and conditions</a></td>                                 
+                            </tr>
+                          </tbody>
+                          </table>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+
               {/* }})()} */}
               {/* </div>
           </div>

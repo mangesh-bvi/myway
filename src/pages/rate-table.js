@@ -230,7 +230,11 @@ class RateTable extends Component {
       companyId: 0,
       companyName: "",
       companyAddress: "",
-      contactName: ""
+      contactName: "",
+      contactEmail: "",
+      profitLossAmt: 0,
+      MinTT: 0,
+      MaxTT: 0
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -627,11 +631,19 @@ class RateTable extends Component {
       cSelectedRow: RateLineID ? newSelected : false
     });
     var selectedRow = [];
-
+    var rateSubDetails = this.state.RateSubDetails.filter(
+      d =>
+        d.RateLineID ===
+        RateLineID
+    )
     if (this.state.selectedDataRow.length == 0) {
       selectedRow.push(rowData._original);
+      for (let j = 0; j < rateSubDetails.length; j++) {
+        this.state.profitLossAmt += (rateSubDetails[j].Rate - rateSubDetails[j].BuyRate)          
+      }
       this.setState({
-        selectedDataRow: selectedRow
+        selectedDataRow: selectedRow,
+        profitLossAmt: this.state.profitLossAmt
       });
     } else {
       if (newSelected[RateLineID] === true) {
@@ -657,7 +669,10 @@ class RateTable extends Component {
             selectedRow = this.state.selectedDataRow;
             selectedRow.push(rowData._original);
             break;
-          }
+          }         
+        }
+        for (let j = 0; j < rateSubDetails.length; j++) {
+          this.state.profitLossAmt += (rateSubDetails[j].Rate - rateSubDetails[j].BuyRate)          
         }
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
@@ -670,10 +685,14 @@ class RateTable extends Component {
             break;
           }
         }
+        for (let j = 0; j < rateSubDetails.length; j++) {
+          this.state.profitLossAmt -= (rateSubDetails[j].Rate - rateSubDetails[j].BuyRate)          
+        }
       }
     }
     this.setState({
-      selectedDataRow: selectedRow
+      selectedDataRow: selectedRow,
+      profitLossAmt: this.state.profitLossAmt
     });
   }
 
@@ -940,7 +959,8 @@ class RateTable extends Component {
         companyId: paramData.companyId,
         companyName: paramData.companyName,
         companyAddress: paramData.companyAddress,
-        contactName: paramData.contactName
+        contactName: paramData.contactName,
+        contactEmail: paramData.contactEmail
       });
     }
 
@@ -957,13 +977,21 @@ class RateTable extends Component {
         //console.log(response);
         var ratetable = response.data.Table;
         var ratetable1 = response.data.Table1;
-
+        
         if (ratetable.length > 0) {
           if (ratetable != null) {
+            var MinTTArray = [];
+            var MaxTTArray = [];
+            for (let i = 0; i < ratetable.length; i++) {
+              MinTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[0]))  
+              MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]))           
+            }             
             self.setState({
               RateDetails: ratetable,
               tempRateDetails: ratetable,
-              loading: false
+              loading: false,
+              MinTT: Math.min(...MinTTArray),
+              MaxTT: Math.max(...MaxTTArray)
             });
           }
           if (ratetable1 != null) {
@@ -3030,8 +3058,8 @@ class RateTable extends Component {
                 <span className="cust-labl clr-red">Cheaper</span>
                 <InputRange
                   formatLabel={value => `${value} DAYS`}
-                  maxValue={75}
-                  minValue={0}
+                  maxValue={this.state.MaxTT}
+                  minValue={this.state.MinTT}
                   value={this.state.value}
                   onChange={this.HandleRangeSlider.bind(this)}
                 />
@@ -3500,10 +3528,11 @@ class RateTable extends Component {
                                         row.original.TotalAmount !== null
                                           ? row.original.TotalAmount +
                                               " " +
-                                              row.original.BaseCurrency !==
+                                            (row.original.BaseCurrency !==
                                             null
-                                            ? row.original.BaseCurrency
-                                            : ""
+                                            ? 
+                                            row.original.BaseCurrency
+                                            : "")
                                           : ""}
                                       </p>
                                     </>
@@ -3653,9 +3682,10 @@ class RateTable extends Component {
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}
                   /> */}
-                      <p className="bottom-profit">
-                        Profit -------$ Customer Segment A Profit Margin %15
-                      </p>
+                      {(encryption(window.localStorage.getItem("usertype"), "desc") !== "Customer")?
+                      (<p className="bottom-profit">
+                      Profit -------{this.state.profitLossAmt}$ Customer Segment A Profit Margin %15
+                      </p>):null}
                     </div>
                   ) : (
                     <div className="less-left-rate">

@@ -348,15 +348,20 @@ class Login extends React.Component {
 
           if(data.Table[0].UserType == "Customer")
           {
-          window.localStorage.setItem(
-            "contactname",
-            encryption(data.Table[0].ContactName, "enc")
-          );
-          window.localStorage.setItem(
-            "companyaddress",
-            encryption(data.Table[0].CompanyAddress, "enc")
-          );
+            window.localStorage.setItem(
+              "contactname",
+              encryption(data.Table[0].ContactName, "enc")
+            );
+            window.localStorage.setItem(
+              "companyaddress",
+              encryption(data.Table[0].CompanyAddress, "enc")
+            );
           }
+
+          window.localStorage.setItem(
+            "emailid",
+            encryption(data.Table[0].email_id, "enc")
+          );
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
 
