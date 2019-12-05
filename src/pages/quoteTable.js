@@ -227,6 +227,10 @@ class QuoteTable extends Component {
                         accessor: "Notes"
                       },
                       {
+                        Header: "Created Date",
+                        accessor: "CreatedDate"
+                      },
+                      {
                         Header: "Status",
                         accessor: "Status"
                       },
@@ -364,6 +368,16 @@ class QuoteTable extends Component {
                     filterAll: true
                   }
                 ]}
+                // defaultSorted={[
+                //   {
+                //     id: (data) => {
+                //       debugger;
+                //       var date = new Date(data.CreatedDate)
+                //       return date;
+                //     },
+                //     desc: true
+                //   }
+                // ]}
                 className="-striped -highlight"
                 defaultPageSize={5}
                 // getTrProps={this.HandleRowClickEvt}

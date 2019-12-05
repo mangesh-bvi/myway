@@ -2048,6 +2048,14 @@ table tbody tr:last-child {
   color: #fff;
   cursor: pointer;
 }
+.dashboard-loader {
+  position: relative;
+}
+.dashboard-loader .loader-icon {
+  background-color: transparent;
+  background-size: 17px;
+  background-position: right 10px center;
+}
 /* dashboard ends */
 
 /* view user starts */
@@ -2481,6 +2489,7 @@ table tbody tr:last-child {
   height: 30px;
   width: 35px;
   cursor: pointer;
+  margin-right: 6px;
 }
 .sidemenu-ul-li {
   /* padding: 6px 10px; */
@@ -2597,6 +2606,7 @@ table tbody tr:last-child {
 .profilesetting-icon {
   width: 30px;
   height: 30px;
+  margin-right: 10px;
 }
 .lastlogin-li {
   padding: 0px 0px 0px 10px !important;
