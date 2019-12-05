@@ -185,8 +185,8 @@ class RateFinalizing extends Component {
 
                 equipmentTypeArr.push({
                   ContainerType: users[i].StandardContainerCode,
-                  Quantity: users[i].ContainerQuantity,
-                })
+                  Quantity: users[i].ContainerQuantity
+                });
               }
             }
           }
@@ -209,8 +209,8 @@ class RateFinalizing extends Component {
                 });
                 equipmentTypeArr.push({
                   ContainerType: spacEqmtType[i].StandardContainerCode,
-                  Quantity: spacEqmtType[i].Quantity,
-                })
+                  Quantity: spacEqmtType[i].Quantity
+                });
               }
             }
           }
@@ -282,11 +282,11 @@ class RateFinalizing extends Component {
                   Weight: flattack_openTop[i].Gross_Weight,
                   CBM: flattack_openTop[i].total,
                   Editable: true
-                })
+                });
               }
             }
           }
-        } else if (containerLoadType == "LCL"  || containerLoadType == "LTL") {
+        } else if (containerLoadType == "LCL" || containerLoadType == "LTL") {
           for (var i = 0; i < multiCBM.length; i++) {
             CargoDetailsArr.push({
               PackageType: multiCBM[i].PackageType,
@@ -318,7 +318,7 @@ class RateFinalizing extends Component {
               Weight: multiCBM[i].GrossWt,
               CBM: multiCBM[i].Volume,
               Editable: true
-            })
+            });
           }
         } else if (containerLoadType == "FTL") {
           // var cSelectedRow = this.props.location.state.selectedDataRow;
@@ -347,13 +347,12 @@ class RateFinalizing extends Component {
                   CBM: "-"
                 });
 
-                if(containerLoadType == "FTL")
-                {
+                if (containerLoadType == "FTL") {
                   TruckDetailsArr.push({
                     TransportType: TruckTypeData[i].TruckDesc,
                     Quantity: TruckTypeData[i].Quantity
                   });
-                }                
+                }
               }
             }
           }
@@ -464,7 +463,7 @@ class RateFinalizing extends Component {
         this.state.currencyCode = currencyCode;
       } else {
         var qData = this.props.location.state;
-        this.setState({isCopy:this.props.location.state.isCopy})
+        this.setState({ isCopy: this.props.location.state.isCopy });
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
@@ -1465,7 +1464,10 @@ class RateFinalizing extends Component {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
-                window.location.href = "quote-table";
+                setTimeout(function() {
+                  window.location.href = "quote-table";
+                }, 5000);
+                // window.location.href = "quote-table";
                 if (usertype !== "Sales User") {
                   self.AcceptQuotes();
                 }
@@ -2087,7 +2089,12 @@ class RateFinalizing extends Component {
     const filterDuplicateService = [];
     var DocumentCharges = [];
     // var containerLoadType = this.props.location.state.containerLoadType
-    const { CargoDetailsArr, equipmentTypeArr, PackageDetailsArr, TruckDetailsArr } = this.state;
+    const {
+      CargoDetailsArr,
+      equipmentTypeArr,
+      PackageDetailsArr,
+      TruckDetailsArr
+    } = this.state;
     return (
       <React.Fragment>
         <Headers />
@@ -2964,144 +2971,144 @@ class RateFinalizing extends Component {
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="ag-fresh redirect-row">
-                    {TruckDetailsArr.length!==0?
-                      (<ReactTable
-                        data={TruckDetailsArr}
-                        filterable
-                        minRows={1}
-                        showPagination={false}
-                        columns={[
-                          {
-                            Header: "Truck Name",
-                            accessor: "TransportType",
-                            minWidth: 110
-                          },
-                          {
-                            Header: "Quantity",
-                            accessor: "Quantity"
-                          }
-                          
-                        ]}
-                        className="-striped -highlight"
-                        defaultPageSize={2000}
-                        //getTrProps={this.HandleRowClickEvt}
-                        //minRows={1}
-                      />
-                      ):null}
-                      {equipmentTypeArr.length!==0?
-                      (<ReactTable
-                        data={equipmentTypeArr}
-                        filterable
-                        minRows={1}
-                        showPagination={false}
-                        columns={[
-                          {
-                            Header: "Container Name",
-                            accessor: "ContainerType",
-                            minWidth: 110
-                          },
-                          {
-                            Header: "Quantity",
-                            accessor: "Quantity"
-                          }
-                        ]}
-                        className="-striped -highlight"
-                        defaultPageSize={2000}
-                        //getTrProps={this.HandleRowClickEvt}
-                        //minRows={1}
-                      />
-                      ):null}
-
-                      {PackageDetailsArr.length!==0?
-                      (<ReactTable
-                        data={PackageDetailsArr}
-                        filterable
-                        minRows={1}
-                        showPagination={false}
-                        columns={[
-                          {
-                            Header: "Pack.Type",
-                            accessor: "ContainerType",
-                            minWidth: 110
-                          },
-                          {
-                            Header: "Quantity",
-                            accessor: "Quantity"
-                          },
-                          {
-                            Header: "Lenght",
-                            accessor: "Lenght"
-                          },
-                          {
-                            Header: "Width",
-                            accessor: "Width"
-                          },
-                          {
-                            Header: "Height",
-                            accessor: "Height"
-                          },
-                          {
-                            Header: "Gross Weight",
-                            accessor: "Weight",
-                            minWidth: 140
-                            //editable: this.state.containerLoadType == "Air" ? true : false
-                          },
-                          // {
-                          //   Header: "Temp.",
-                          //   accessor: "Temperature"
-                          // },
-                          {
-                            Header:
-                              this.state.containerLoadType.toUpperCase() ==
-                              "LCL"
-                                ? "CBM"
-                                : "Chargable Weight",
-                            accessor: "CBM"
-                            //show:  this.state.containerLoadType == "Air" ? false : true
-                          },
-                          {
-                            Header: "Action",
-                            sortable: false,
-                            accessor: "Editable",
-                            Cell: row => {
-                              debugger;
-                              if (row.original.Editable) {
-                                return (
-                                  <div className="action-cntr">
-                                    {/* actionicon */}
-                                    <button onClick={this.toggleEdit}>
-                                      <img
-                                        className=""
-                                        src={Edit}
-                                        alt="booking-icon"
-                                        data-valuetype={
-                                          row.original.PackageType
-                                        }
-                                        data-valuequantity={
-                                          row.original.Quantity
-                                        }
-                                        data-valuelenght={row.original.Lenght}
-                                        data-valuewidth={row.original.Width}
-                                        data-valueheight={row.original.Height}
-                                        data-valueweight={row.original.Weight}
-                                        data-valuecbm={row.original.CBM}
-                                        data-valuespecialsontainersode={
-                                          row.original.SpecialContainerCode
-                                        }
-                                      />
-                                    </button>
-                                  </div>
-                                );
-                              }
-                              return <div></div>;
+                      {TruckDetailsArr.length !== 0 ? (
+                        <ReactTable
+                          data={TruckDetailsArr}
+                          filterable
+                          minRows={1}
+                          showPagination={false}
+                          columns={[
+                            {
+                              Header: "Truck Name",
+                              accessor: "TransportType",
+                              minWidth: 110
+                            },
+                            {
+                              Header: "Quantity",
+                              accessor: "Quantity"
                             }
-                          }
-                        ]}
-                        className="-striped -highlight"
-                        defaultPageSize={2000}
-                        //getTrProps={this.HandleRowClickEvt}
-                        //minRows={1}
-                      />):null}
+                          ]}
+                          className="-striped -highlight"
+                          defaultPageSize={2000}
+                          //getTrProps={this.HandleRowClickEvt}
+                          //minRows={1}
+                        />
+                      ) : null}
+                      {equipmentTypeArr.length !== 0 ? (
+                        <ReactTable
+                          data={equipmentTypeArr}
+                          filterable
+                          minRows={1}
+                          showPagination={false}
+                          columns={[
+                            {
+                              Header: "Container Name",
+                              accessor: "ContainerType",
+                              minWidth: 110
+                            },
+                            {
+                              Header: "Quantity",
+                              accessor: "Quantity"
+                            }
+                          ]}
+                          className="-striped -highlight"
+                          defaultPageSize={2000}
+                          //getTrProps={this.HandleRowClickEvt}
+                          //minRows={1}
+                        />
+                      ) : null}
+
+                      {PackageDetailsArr.length !== 0 ? (
+                        <ReactTable
+                          data={PackageDetailsArr}
+                          filterable
+                          minRows={1}
+                          showPagination={false}
+                          columns={[
+                            {
+                              Header: "Pack.Type",
+                              accessor: "ContainerType",
+                              minWidth: 110
+                            },
+                            {
+                              Header: "Quantity",
+                              accessor: "Quantity"
+                            },
+                            {
+                              Header: "Lenght",
+                              accessor: "Lenght"
+                            },
+                            {
+                              Header: "Width",
+                              accessor: "Width"
+                            },
+                            {
+                              Header: "Height",
+                              accessor: "Height"
+                            },
+                            {
+                              Header: "Gross Weight",
+                              accessor: "Weight",
+                              minWidth: 140
+                              //editable: this.state.containerLoadType == "Air" ? true : false
+                            },
+                            // {
+                            //   Header: "Temp.",
+                            //   accessor: "Temperature"
+                            // },
+                            {
+                              Header:
+                                this.state.containerLoadType.toUpperCase() ==
+                                "LCL"
+                                  ? "CBM"
+                                  : "Chargable Weight",
+                              accessor: "CBM"
+                              //show:  this.state.containerLoadType == "Air" ? false : true
+                            },
+                            {
+                              Header: "Action",
+                              sortable: false,
+                              accessor: "Editable",
+                              Cell: row => {
+                                debugger;
+                                if (row.original.Editable) {
+                                  return (
+                                    <div className="action-cntr">
+                                      {/* actionicon */}
+                                      <button onClick={this.toggleEdit}>
+                                        <img
+                                          className=""
+                                          src={Edit}
+                                          alt="booking-icon"
+                                          data-valuetype={
+                                            row.original.PackageType
+                                          }
+                                          data-valuequantity={
+                                            row.original.Quantity
+                                          }
+                                          data-valuelenght={row.original.Lenght}
+                                          data-valuewidth={row.original.Width}
+                                          data-valueheight={row.original.Height}
+                                          data-valueweight={row.original.Weight}
+                                          data-valuecbm={row.original.CBM}
+                                          data-valuespecialsontainersode={
+                                            row.original.SpecialContainerCode
+                                          }
+                                        />
+                                      </button>
+                                    </div>
+                                  );
+                                }
+                                return <div></div>;
+                              }
+                            }
+                          ]}
+                          className="-striped -highlight"
+                          defaultPageSize={2000}
+                          //getTrProps={this.HandleRowClickEvt}
+                          //minRows={1}
+                        />
+                      ) : null}
                     </div>
                   </div>
 
@@ -3169,26 +3176,29 @@ class RateFinalizing extends Component {
                           <p className="details-para">
                             {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
                             {/* {this.state.CustAddress} */}
-                            {(encryption(
-                                window.localStorage.getItem("usertype"),
-                                "desc"
-                              )) != "Customer"?
-                            this.state.CompanyAddress:(encryption(
-                              window.localStorage.getItem("companyaddress"),
+                            {encryption(
+                              window.localStorage.getItem("usertype"),
                               "desc"
-                            ))}
+                            ) != "Customer"
+                              ? this.state.CompanyAddress
+                              : encryption(
+                                  window.localStorage.getItem("companyaddress"),
+                                  "desc"
+                                )}
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
                           <p className="details-para">
-                          {(encryption(
-                                window.localStorage.getItem("usertype"),
-                                "desc"
-                              )) != "Customer"?this.state.ContactName:(encryption(
-                                window.localStorage.getItem("contactname"),
-                                "desc"
-                              ))}
+                            {encryption(
+                              window.localStorage.getItem("usertype"),
+                              "desc"
+                            ) != "Customer"
+                              ? this.state.ContactName
+                              : encryption(
+                                  window.localStorage.getItem("contactname"),
+                                  "desc"
+                                )}
                           </p>
                         </div>
                       </div>

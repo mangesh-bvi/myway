@@ -287,7 +287,7 @@ class SideMenu extends Component {
                 </Card.Header>
                 <Accordion.Collapse eventKey="1">
                   <Card.Body>
-                    <ul className="shipment-ul">
+                    <ul className="shipment-ul sidemenu">
                       <li>
                         {/* <label className="shipment-ul-lilbl1">Rate Search</label> */}
                         {encryption(
@@ -441,7 +441,8 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          <li className="sidemenu-ul-li shipmentli">
+          <li className="sidemenu-ul-li shipmentli"
+           style={{ borderTop: "1px solid #265eb5" }}>
             {/* <Link to="/booking-table">
               <img
                 src={GreenCounterIcon}

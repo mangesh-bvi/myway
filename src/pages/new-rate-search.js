@@ -1930,7 +1930,7 @@ class NewRateSearch extends Component {
         DeliveryCity: "",
         OriginGeoCordinates: "",
         DestGeoCordinate: "",
-         
+
         Containerdetails: [],
         PortOfDischargeCode: "",
         PortOfLoadingCode: "",
