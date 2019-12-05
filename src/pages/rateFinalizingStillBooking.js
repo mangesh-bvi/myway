@@ -283,8 +283,8 @@ class RateFinalizingStillBooking extends Component {
         method: "post",
         url: `${appSettings.APIURL}/NonCustomerList`,
         data: {
-          CustomerName: customerName,
-          CustomerType: "Existing",
+          // CustomerName: customerName,
+          // CustomerType: "Existing",
           MyWayUserID: userId
         },
         headers: authHeader()
@@ -2243,50 +2243,48 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      {this.state.isInsert === true ? (
-                        <div className="rate-radio-cntr">
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="exist-cust"
-                              checked={
-                                this.state.selectedType === "Consignee"
-                                  ? true
-                                  : false
-                              }
-                              value="Consignee"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="exist-cust"
-                            >
-                              Consignee
-                            </label>
-                          </div>
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="new-cust"
-                              checked={
-                                this.state.selectedType === "Shipper"
-                                  ? true
-                                  : false
-                              }
-                              value="Shipper"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="new-cust"
-                            >
-                              Shipper
-                            </label>
-                          </div>
+                      <div className="rate-radio-cntr">
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={this.HandleRadioBtn}
+                            name="cust-select"
+                            id="exist-cust"
+                            checked={
+                              this.state.selectedType === "Consignee"
+                                ? true
+                                : false
+                            }
+                            value="Consignee"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="exist-cust"
+                          >
+                            Consignee
+                          </label>
                         </div>
-                      ) : null}
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={this.HandleRadioBtn}
+                            name="cust-select"
+                            id="new-cust"
+                            checked={
+                              this.state.selectedType === "Shipper"
+                                ? true
+                                : false
+                            }
+                            value="Shipper"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            Shipper
+                          </label>
+                        </div>
+                      </div>
                     </div>
                     <div>
                       <div className="title-border py-3">

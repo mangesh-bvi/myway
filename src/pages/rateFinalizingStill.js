@@ -1728,15 +1728,28 @@ class RateFinalizingStill extends Component {
                                 minRows={1}
                                 data={this.state.SubRateDetails.filter(
                                   d =>
-                                    d.saleQuoteLineID ===
-                                    row.original.saleQuoteLineID
+                                    d.saleQuoteLineID||d.SaleQuoteIDLineID ===
+                                    row.original.saleQuoteLineID||this.state.RateDetails.saleQuoteLineID
                                 )}
+                                // data={this.state.SubRateDetails}
                                 columns={[
                                   {
                                     columns: [
                                       {
                                         Header: "C. Type",
-                                        accessor: "Type"
+                                        accessor:
+                                          this.state.ContainerLoad === "INLAND"
+                                            ? "ChargeType"
+                                            : "Type",
+                                        Cell: row => {
+                                          debugger;
+                                          if (row.original.Type !== undefined &&row.original.Type !=="" ) {
+                                            return <>{row.original.Type}</>;
+                                          } 
+                                          if(row.original.ChargeType !== undefined) {
+                                            return <>{row.original.ChargeType}</>;
+                                          }
+                                        }
                                       },
                                       {
                                         Header: "C. Name",
