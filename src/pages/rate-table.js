@@ -193,7 +193,7 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID: 0,
+      CommodityID: 49,
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       pickUpAddress: [],
@@ -3052,36 +3052,35 @@ class RateTable extends Component {
                   Proceed
                 </Link> */}
               </div>
-            </div>
-            <div className="rate-table-below">
-              <div className="row">
-                <div className="col-md-3 less-right-rate">
-                  <div className="rate-table-left">
-                    <div className="top-select d-flex justify-content-between">
-                      <a href="new-rate-search" className="butn btn-sizeRate">
-                        {this.state.shipmentType}
-                      </a>
-                      <a href="new-rate-search" className="butn btn-sizeRate">
-                        {this.state.modeoftransport}
-                      </a>
-                      <a href="new-rate-search" className="butn btn-sizeRate">
-                        {this.state.containerLoadType}
-                      </a>
-                      <a href="new-rate-search" className="butn btn-sizeRate">
-                        {this.state.typeofMove === 1
-                          ? "P2P"
-                          : this.state.typeofMove === 2
-                          ? "D2P"
-                          : this.state.typeofMove === 4
-                          ? "D2D"
-                          : this.state.typeofMove === 3
-                          ? "P2D"
-                          : ""}
-                      </a>
-                    </div>
-                    <div className="cont-costs">
-                      <div className="remember-forgot d-block m-0">
-                        {/* <div>
+              <div className="rate-table-below cus-w">
+                <div className="row">
+                  <div className="col-md-3 less-right-rate">
+                    <div className="rate-table-left">
+                      <div className="top-select d-flex justify-content-between">
+                        <a href="new-rate-search" className="butn btn-sizeRate">
+                          {this.state.shipmentType}
+                        </a>
+                        <a href="new-rate-search" className="butn btn-sizeRate">
+                          {this.state.modeoftransport}
+                        </a>
+                        <a href="new-rate-search" className="butn btn-sizeRate">
+                          {this.state.containerLoadType}
+                        </a>
+                        <a href="new-rate-search" className="butn btn-sizeRate">
+                          {this.state.typeofMove === 1
+                            ? "P2P"
+                            : this.state.typeofMove === 2
+                            ? "D2P"
+                            : this.state.typeofMove === 4
+                            ? "D2D"
+                            : this.state.typeofMove === 3
+                            ? "P2D"
+                            : ""}
+                        </a>
+                      </div>
+                      <div className="cont-costs">
+                        <div className="remember-forgot d-block m-0">
+                          {/* <div>
                           <div className="d-flex">
                             <input
                               id="door"
@@ -3610,9 +3609,7 @@ class RateTable extends Component {
                                         accessor: "Tax",
                                         Cell: props => (
                                           <React.Fragment>
-                                            {props.original.Tax !== 0
-                                              ? props.original.Tax
-                                              : ""}
+                                            {props.original.Tax!==0?props.original.Tax:""}
                                           </React.Fragment>
                                         )
                                       },

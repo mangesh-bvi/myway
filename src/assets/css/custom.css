@@ -96,10 +96,10 @@ h3 {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   min-width: 120px;
-  padding: 10px;
+  padding: 10px 15px;
   border-radius: 50px;
-  margin-top: 30px;
-  font-size: 14px;
+  margin-top: 15px;
+  font-size: 12px;
   text-align: center;
   display: inline-block;
   transition: all 0.3s ease-in-out;
@@ -153,7 +153,7 @@ h3 {
 
 /* login starts */
 .login-sect {
-  max-width: 700px;
+  max-width: 500px;
   width: 100%;
 }
 .login-between {
@@ -164,40 +164,42 @@ h3 {
   padding: 50px;
 }
 .logo {
-  width: 212px;
+  width: 175px;
   margin: 0 auto 35px;
+  .header-logline-height: 0;
 }
 .login-cntr {
   background-color: #fff;
 }
 h2 span {
   color: #979797;
-  font-size: 16px;
+  font-size: 12px;
   font-family: "Medium Font";
 }
 .login-cntr h2 {
   border-bottom: 1px solid #e5e5e5;
-  padding: 25px 30px;
+  padding: 20px;
   color: #092c74;
 }
 .login-fields-cntr {
-  padding: 25px 30px 30px;
+  padding: 20px;
 }
 .login-fields label {
   display: block;
   font-family: "Medium Font";
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
-  font-size: 15px;
+  margin-bottom: 5px;
+  font-size: 13px;
 }
 .login-fields input,
 .login-fields select {
   width: 100%;
+  border-radius: 0;
   border: 0;
   font-size: 14px;
   letter-spacing: 0.5px;
   background-color: #ededed;
-  padding: 9px 15px;
+  padding: 15px 15px;
   font-family: "Medium Font";
 }
 .login-fields select {
@@ -209,7 +211,7 @@ h2 span {
   color: #77787b;
 }
 .login-fields {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 .divwd div {
   display: block !important;
@@ -349,10 +351,12 @@ h2 span {
   font-family: "Medium Font";
   font-size: 14px;
   width: 250px;
+  border-radius: 0px;
 }
 .title-sect input::placeholder {
-  font-family: "Italic Font";
+  font-family: "Medium Font";
   color: #77787b;
+  font-weight: normal;
   font-size: 14px;
 }
 table {
@@ -1576,7 +1580,7 @@ table tbody tr:last-child {
   padding-left: 28px;
   color: #696969;
   letter-spacing: 0;
-  font-size: 14px;
+  font-size: 12px;
 }
 .cont-costs .remember-forgot input:checked + label::after {
   left: 6px;
@@ -1728,6 +1732,9 @@ table tbody tr:last-child {
   max-width: 60px;
   display: inline-block;
 }
+..ReactTable .rt-th {
+  padding: 16px 7px !important;
+}
 .react-rate-table .ReactTable .rt-th,
 .react-rate-table .ReactTable .rt-tbody .rt-td {
   padding: 15px 20px !important;
@@ -1801,6 +1808,7 @@ table tbody tr:last-child {
   font-family: "Regular Font";
   color: #5f5f60;
   margin-top: 20px;
+  font-size: 14px;
   text-align: right;
 }
 .pol-mar > div {
@@ -2299,7 +2307,9 @@ table tbody tr:last-child {
   margin-right: 20px;
 }
 /* sales activity log ends */
-
+.noti-drop-down {
+  padding: 0;
+}
 .noti-drop-down p {
   white-space: nowrap;
   font-family: "Medium Font";
@@ -2310,14 +2320,16 @@ table tbody tr:last-child {
   color: #39b54a !important;
 }
 .noti-drop-down div {
-  padding: 10px 20px;
+  padding: 15px;
   border-bottom: 1px solid #d6d6d6;
 }
 .noti-drop-down {
   max-height: 70vh;
   overflow: auto;
 }
-
+.sidemenu li a {
+  padding: 0;
+}
 /* reports starts */
 .report-cntr {
   padding: 0 15px 35px;
@@ -2348,7 +2360,7 @@ table tbody tr:last-child {
 }
 .header-log {
   width: 145px;
-  padding: 10px;
+    padding: 18px 0;
 }
 
 .header-btn {
@@ -2358,7 +2370,7 @@ table tbody tr:last-child {
   color: #fff;
   padding: 5px 20px;
   font-size: 12px;
-  margin-top: 10px;
+  margin: 10px 15px 0 15px;
   display: inline-block;
   transition: all 0.3s ease-in-out;
 }
@@ -2379,10 +2391,11 @@ table tbody tr:last-child {
   display: flex;
   float: right;
   margin: 0;
+  padding: 0;
 }
 .header-ul li {
-  padding: 0 15px;
-  border-right: 1px solid #cccccc;
+  padding: 10px 20px;
+  border-right: 1px solid #d6d6d6;
 }
 .header-ul li:last-child {
   margin: 0;
@@ -2391,21 +2404,21 @@ table tbody tr:last-child {
 }
 
 .header-bell-icon {
-  height: 35px;
-  width: 35px;
-  margin-top: 7px;
-  cursor: pointer;
+  height: auto;
+    width: 25px;
+    margin-top: 12px;
+    cursor: pointer;
 }
 .header-chat-icon {
-  height: 30px;
-  width: 35px;
+  height: auto;
+  width: 35px !important;
   padding-right: 7px;
   cursor: pointer;
 }
 
 .header-login-actore-icon {
-  height: 50px;
-  width: 50px;
+  height: auto;
+    width: 38px;
   padding: 5px 0;
 }
 .login-name {
@@ -2414,9 +2427,9 @@ table tbody tr:last-child {
 
 .login-actore-text {
   margin: 0;
-  font-size: 12px;
-  color: #999;
-  font-size: 11px;
+  color: #a3a3a3;
+    font-size: 11px;
+    font-weight: 600;
   line-height: 7px;
   text-overflow: ellipsis;
   max-width: 100px;
@@ -2425,7 +2438,16 @@ table tbody tr:last-child {
   display: block;
   white-space: nowrap;
 }
-
+.profile-dropdown {
+  border-color: #d6d6d6;
+  padding: 0;
+  transform: translate3d(850px, 70px, 0px) !important;
+  top: 0 !important;
+  left: -18px !important;
+  min-width: 179px;
+  border-color: #d6d6d6;
+    border-radius: 0;
+}
 .header-ul-login-dtls {
   list-style: none;
   display: flex;
@@ -2473,15 +2495,15 @@ table tbody tr:last-child {
   transform: translate(-250px) !important;
 }
 .notificationss {
-  background: red;
+  background: #39b54a;
   color: #fff !important;
-  font-size: 12px;
-  padding: 0px 5px 1px 6px;
+  font-size: 9px;
+  padding: 1px 6px;
   border-radius: 50%;
   position: absolute;
-  right: 3px;
+  right: -7px;
   box-shadow: none;
-  top: 5px;
+  top: 7px;
   opacity: 1;
   margin: 0;
 }
@@ -2534,20 +2556,25 @@ table tbody tr:last-child {
 
 .rmstylebtn {
   border: none;
-  background-color: white;
-  padding: 0;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+    font-size: 14px;
+    background-color: white;
+    padding: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: 600;
+    color: #1a1919;
+    text-transform: capitalize;
 }
 .drp-usericon {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+    height: auto;
 }
 .profile-ul {
   list-style: none;
   display: block;
   margin: 0;
+  border-radius: 0;
   padding: 0;
 }
 
@@ -2568,7 +2595,7 @@ table tbody tr:last-child {
 }
 
 .lastlogin-lbl {
-  font-size: 9px;
+  font-size: 10px;
   display: block;
 }
 
@@ -2579,19 +2606,26 @@ table tbody tr:last-child {
 }
 .lastlogin-ul li:last-child {
   border: none;
-  padding: 4px;
+  padding: 2px 10px;
+}
+.lastlogin-ul li label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(26, 25, 25);
 }
 .activitylog-li {
-  color: #092c74;
   padding: 10px !important;
+  font-size: 14px;
+  color: rgb(26, 25, 25);
+  font-weight: 600;
 }
 .activitylog-icon {
-  width: 30px;
-  height: 30px;
-  padding: 5px;
+  width: 20px;
+    height: auto;
+    margin-right: 10px;
 }
 .activitylog-li:hover {
-  background-color: #cccccc;
+  background-color: #d6d6d6;
 }
 .profile-setting-li {
   color: #092c74;
@@ -2601,10 +2635,13 @@ table tbody tr:last-child {
   background-color: #cccccc;
 }
 .logout-li {
-  color: #092c74;
+  padding: 10px !important;
+    font-size: 14px;
+    color: rgb(26, 25, 25);
+    font-weight: 600;
 }
 .logout-li:hover {
-  background-color: #cccccc;
+  background-color: #d6d6d6;
 }
 .profilesetting-icon {
   width: 30px;
@@ -2638,10 +2675,11 @@ table tbody tr:last-child {
 .shipmentli .card .card-header button {
   color: white;
   padding: 0px;
+  font-weight: 600;
   width: 100%;
   text-align: left;
 }
-.shipmentli .card .card-header button:hover {
+.shipmentli .card .card-header button:hover, .shipmentli .card .card-header button:focus {
   text-decoration: none;
 }
 .shipmentli .card .collapse .card-body {
@@ -2653,11 +2691,13 @@ table tbody tr:last-child {
   list-style: none;
   display: block;
   padding: 10px;
-  margin: 10px 10px 10px 50px;
-  border: 1px solid #5c78a5;
+  margin: 15px 15px 15px 50px;
+  border: 1px solid #264c88;
 }
 .shipment-ul li {
   padding: 5px;
+  color: #fff;
+  font-size: 14px;
 }
 .shipment-ul li:hover,
 .shipment-ul li:focus {
@@ -2691,12 +2731,12 @@ table tbody tr:last-child {
   border-right: none;
 }
 .inofIcon {
-  width: 35px;
-  height: 35px;
+  width: 22px;
+    height: auto;
 }
 .settingIcon {
-  width: 35px;
-  height: 35px;
+  width: 22px;
+    height: auto;
 }
 .popovercls .popover-header {
   background-color: white;
@@ -2786,12 +2826,14 @@ table tbody tr:last-child {
 .sidemenu-ul-li a {
   color: #fff;
   display: inline-block;
+  font-weight: 600;
   width: 100%;
-  padding: 6px 10px;
+  padding: 15px 18px;
 }
 .sidemenu-ul-li a:hover,
 .sidemenu-ul-li a:focus {
   color: #fff;
+  font-weight: 600;
   cursor: pointer;
   background-color: #012d74;
 }
@@ -2982,7 +3024,7 @@ table tbody tr:last-child {
   position: relative;
 }
 .remember-forgot-1 {
-  margin-top: 20px;
+  margin-top: 5px;
   /* display: flex; */
   justify-content: space-between;
   align-items: center;
@@ -2993,6 +3035,7 @@ table tbody tr:last-child {
   letter-spacing: 0.5px;
   transition: all 0.3s ease-in-out;
   text-decoration: underline;
+  font-size: 12px;
   text-decoration-color: transparent;
 }
 .remember-forgot-1 a:hover {
@@ -3020,7 +3063,7 @@ table tbody tr:last-child {
   color: #77787b;
 }
 .login-fields {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .mapIframe {
@@ -3077,9 +3120,9 @@ table tbody tr:last-child {
 .dynamic-remove img {
   width: 22px;
 }
-.rate-active {
+/* .rate-active {
   color: #fbc915 !important;
-}
+} */
 .shareicon {
   font-size: large !important;
   margin-right: 25px;
@@ -3210,7 +3253,7 @@ table tbody tr:last-child {
   padding-left: 10px !important;
 }
 .less-left-rate {
-  padding-left: 5px;
+  padding-left: 0;
 }
 .big-popup {
   max-width: 90%;
@@ -3225,7 +3268,9 @@ table tbody tr:last-child {
   display: block;
   /* margin-left: 13px; */
 }
-
+.pol-pod-maps span {
+  text-align: center;
+}
 .preview-popup {
   max-width: 70%;
 }
@@ -3720,6 +3765,7 @@ img {
   margin-top: 15px;
   cursor: pointer;
 }
+<<<<<<< HEAD
 /* Css Start Kalpesh */ 
 /* .column-a {
   margin: 0 15px;
@@ -3748,3 +3794,17 @@ img {
   font-family: "Medium Font";
 } */
 
+=======
+
+
+@media (min-width: 768px) {
+.cus-w .col-md-3 {
+    flex: 0 0 33.333333%;
+    max-width: 28.333333%;
+}
+.cus-w .col-md-9 {
+  flex: 0 0 71.666667%;
+  max-width: 80.666667%;
+}
+}
+>>>>>>> 331e2d7f1d72d60473e2c42e0d0a8393f2990204

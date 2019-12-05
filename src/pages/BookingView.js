@@ -13,6 +13,7 @@ import Autocomplete from "react-autocomplete";
 import { encryption, convertToPlain } from "../helpers/encryption";
 const imageAsset = "./../assets/img";
 var sizeOf = require("image-size");
+var QuotationData =[];
 class BookingView extends Component {
   constructor(props) {
     super(props);
@@ -305,6 +306,25 @@ class BookingView extends Component {
     }
   };
 
+  GetImageURL(imageObj) {
+    debugger;
+    let URL = imageAsset + "/ATAFreight_console.png";
+    new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        URL = imageAsset + "/" + imageObj.Linename + ".png";
+        imageObj.preparedImageURl = URL;
+        resolve({ status: "ok" });
+      };
+      img.onerror = () => {
+        URL = imageAsset + "/ATAFreight_console.png";
+        imageObj.preparedImageURl = URL;
+        resolve({ status: "error" });
+      };
+      img.src = imageAsset + "/" + imageObj.Linename + ".png";
+    });
+  }
+
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
     let self = this;
@@ -322,12 +342,14 @@ class BookingView extends Component {
         headers: authHeader()
       }).then(function(response) {
         debugger;
-        var QuotationData = response.data.Table4;
+        QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
+        
+console.log(QuotationData);
 
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
@@ -337,6 +359,11 @@ class BookingView extends Component {
               QuotationSubData,
               ShipmentType
             });
+          }
+        }
+        for (let qd of self.state.QuotationData) {
+          if (qd.Linename) {
+            self.GetImageURL(qd);
           }
         }
         if (typeof eqmtType !== "undefined") {
@@ -514,26 +541,6 @@ class BookingView extends Component {
     }
   }
 
-  GetImageURL = imageName => {
-    debugger;
-    let URL = imageAsset + "/ATAFreight_console.png";
-    new Promise(resolve => {
-      const img = new Image();
-      img.onload = () => {
-        URL = imageAsset + "/" + imageName + ".png";
-        resolve({ status: "ok" });
-      };
-      img.onerror = () => {
-        URL = imageAsset + "/ATAFreight_console.png";
-        resolve({ status: "error" });
-      };
-      img.src = imageAsset + "/" + imageName + ".png";
-    }).then(() => {
-      // return <img src={URL} alt="aaa"/>;
-      return URL;
-    });
-  };
-
   render() {
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
@@ -578,18 +585,18 @@ class BookingView extends Component {
                               {
                                 Cell: row => {
                                   i++;
-
+                                  // var urlLink = this.GetImageURL(
+                                  //   row.original.Linename
+                                  // );
                                   return (
                                     <React.Fragment>
                                       <div className="d-flex align-items-center">
                                         <div>
                                           <p className="details-title">
-                                            <img
-                                              src={require(this.GetImageURL(
-                                                row.original.Linename
-                                              ))}
+                                            {/* <img
+                                              src={require(urlLink)}
                                               alt="maersk icon"
-                                            />
+                                            /> */}
                                             {/* {this.GetImageURL(row.original.Linename)} */}
                                           </p>
                                         </div>

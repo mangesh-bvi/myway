@@ -1928,7 +1928,7 @@ class NewRateSearch extends Component {
         DeliveryCity: "",
         OriginGeoCordinates: "",
         DestGeoCordinate: "",
-        companyId: 0,
+         
         Containerdetails: [],
         PortOfDischargeCode: "",
         PortOfLoadingCode: "",
@@ -2679,7 +2679,7 @@ class NewRateSearch extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt rate-bg">
+          <div className="cls-rt">
             <div className="">
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">

@@ -1584,7 +1584,13 @@ class Dashboard extends Component {
                   style={{ minHeight: "calc(137vh - 332px)" }}
                 >
                   <div className="full-map">
-                    <MapWithAMakredInfoWindow
+                    <iframe
+                      key={this.state.iframeKey}
+                      src="/MapMarkerDashboard.html"
+                      className="mapIframe"
+                      //sandbox="allow-top-navigation"
+                    />
+                    {/* <MapWithAMakredInfoWindow
                       searchData={this.state.searchData}
                       markers={mapsData}
                       onClick={this.handleClick}
@@ -1600,7 +1606,7 @@ class Dashboard extends Component {
                       }
                       mapElement={<div style={{ height: `100%` }} />}
                       loadingElement={<div style={{ height: `100%` }} />}
-                    ></MapWithAMakredInfoWindow>
+                    ></MapWithAMakredInfoWindow> */}
                   </div>
                 </div>
               )}
