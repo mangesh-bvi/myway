@@ -104,7 +104,9 @@ class RateFinalizing extends Component {
       fields: {},
       CompanyID: 0,
       companyName: "",
-      CompanyAddress: ""
+      CompanyAddress: "",
+      RateLineName:"",
+      ContactName:""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -151,6 +153,7 @@ class RateFinalizing extends Component {
         var companyID = this.props.location.state.companyID;
         var companyName = this.props.location.state.companyName;
         var companyAddress = this.props.location.state.companyAddress;
+        var contactName = this.props.location.state.contactName;
 
         var CargoDetailsArr = [];
         if (containerLoadType == "FCL") {
@@ -159,16 +162,16 @@ class RateFinalizing extends Component {
               for (var i = 0; i < users.length; i++) {
                 CargoDetailsArr.push({
                   ContainerType: users[i].StandardContainerCode,
-                  Packaging: "-",
+                  //Packaging: "-",
                   Quantity: users[i].ContainerQuantity,
-                  Lenght: "-",
-                  Width: "-",
-                  Height: "-",
-                  Weight: "-",
-                  Gross_Weight: "-",
-                  Temperature: "-",
-                  CBM: "-",
-                  Editable: false
+                  //Lenght: "-",
+                  //Width: "-",
+                  // Height: "-",
+                  // Weight: "-",
+                  // Gross_Weight: "-",
+                  // Temperature: "-",
+                  // CBM: "-",
+                  // Editable: false
                 });
               }
             }
@@ -372,7 +375,8 @@ class RateFinalizing extends Component {
           packageTypeData: packageTypeData,
           CompanyID: companyID,
           CompanyName: companyName,
-          CompanyAddress: companyAddress
+          CompanyAddress: companyAddress,
+          ContactName: contactName
         });
 
         this.state.rateDetails = rateDetails;
@@ -1547,7 +1551,7 @@ class RateFinalizing extends Component {
     return json;
   }
 
-  HandleLocalSearchCharges(e) {
+  HandleLocalSearchCharges(element, e) {
     debugger;
     var rateDetailsarr = this.state.rateDetails;
     if (e.target.checked) {
@@ -1561,6 +1565,7 @@ class RateFinalizing extends Component {
         // }
         // else
         // {
+       if (element.LineName == rateDetailsarr[i].lineName) {
         this.state.rateDetails[i].TotalAmount =
           parseFloat(
             this.state.rateDetails[i].TotalAmount == null
@@ -1568,40 +1573,43 @@ class RateFinalizing extends Component {
               : this.state.rateDetails[i].TotalAmount
           ) + parseFloat(e.target.value);
         // }
+        
+          var newrateSubDetails = {
+            BaseCurrency: e.target.getAttribute("data-currency"),
+            ChargeCode: e.target.getAttribute("data-chargedesc"),
+            ChargeID: 0,
+            ChargeItem: e.target.getAttribute("data-chargeitem"),
+            ChargeType: e.target.getAttribute("data-chargetype"),
+            Currency: e.target.getAttribute("data-currency"),
+            Exrate: 0,
+            Rate: parseFloat(e.target.value),
+            RateLineID: this.state.rateDetails[i].RateLineId,
+            SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+            Tax: 0,
+            TotalAmount: parseFloat(
+              e.target.getAttribute("data-amountinbasecurrency")
+            ),
+            Extracharge: true
+          };
 
-        var newrateSubDetails = {
-          BaseCurrency: e.target.getAttribute("data-currency"),
-          ChargeCode: e.target.getAttribute("data-chargedesc"),
-          ChargeID: 0,
-          ChargeItem: e.target.getAttribute("data-chargeitem"),
-          ChargeType: e.target.getAttribute("data-chargetype"),
-          Currency: e.target.getAttribute("data-currency"),
-          Exrate: 0,
-          Rate: parseFloat(e.target.value),
-          RateLineID: this.state.rateDetails[i].RateLineId,
-          SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
-          Tax: 0,
-          TotalAmount: parseFloat(
-            e.target.getAttribute("data-amountinbasecurrency")
-          ),
-          Extracharge: true
-        };
-
-        if (
-          this.state.containerLoadType == "FTL" ||
-          this.state.containerLoadType == "LTL"
-        ) {
-          newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
-        }
-
-        this.state.rateSubDetails = this.state.rateSubDetails.concat(
-          newrateSubDetails
-        );
+          if (
+            this.state.containerLoadType == "FTL" ||
+            this.state.containerLoadType == "LTL"
+          ) {
+            newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+          }
+          
+          this.state.rateSubDetails = this.state.rateSubDetails.concat(
+            newrateSubDetails
+          );
+       
       }
+    }
       this.forceUpdate();
     }
     if (!e.target.checked) {
       for (var i = 0; i < rateDetailsarr.length; i++) {
+        if (element.LineName == rateDetailsarr[i].lineName) {
         if (this.state.rateDetails[i].TotalAmount == undefined) {
           var amount = this.processText(this.state.rateDetails[i].Total);
 
@@ -1625,6 +1633,7 @@ class RateFinalizing extends Component {
           }
         }
       }
+    }
       this.forceUpdate();
     }
   }
@@ -1778,11 +1787,13 @@ class RateFinalizing extends Component {
     var compId = e.Company_ID;
     var compName = e.Company_Name;
     var companyAddress = e.CompanyAddress;
+    var contactName = e.ContactName;
     this.setState({
       fields,
       CompanyID: compId,
       //CompanyName: compName,
-      CompanyAddress: companyAddress
+      CompanyAddress: companyAddress,
+      ContactName: contactName
     });
     //document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -1922,7 +1933,7 @@ class RateFinalizing extends Component {
               data-currency={item.Currency}
               data-amountinbasecurrency={item.AmountInBaseCurrency}
               data-chargetype="Localcharge"
-              onChange={this.HandleLocalSearchCharges.bind(this)}
+              onChange={this.HandleLocalSearchCharges.bind(this,item)}
             />
             <label htmlFor={"local" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
@@ -1954,7 +1965,7 @@ class RateFinalizing extends Component {
               data-currency={item.Currency}
               data-amountinbasecurrency={item.AmountInBaseCurrency}
               data-chargetype="surcharge"
-              onChange={this.HandleLocalSearchCharges.bind(this)}
+              onChange={this.HandleLocalSearchCharges.bind(this,item)}
             />
             <label htmlFor={"Sur" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
@@ -2868,6 +2879,29 @@ class RateFinalizing extends Component {
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="ag-fresh redirect-row">
+                    <ReactTable
+                        data={CargoDetailsArr}
+                        filterable
+                        minRows={1}
+                        showPagination={false}
+                        columns={[
+                          {
+                            Header: "Container Name",
+                            accessor: "ContainerType",
+                            minWidth: 110
+                          },
+                          {
+                            Header: "Quantity",
+                            accessor: "Quantity"
+                          }
+                          
+                        ]}
+                        className="-striped -highlight"
+                        defaultPageSize={2000}
+                        //getTrProps={this.HandleRowClickEvt}
+                        //minRows={1}
+                      />
+
                       <ReactTable
                         data={CargoDetailsArr}
                         filterable
@@ -3028,12 +3062,13 @@ class RateFinalizing extends Component {
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
                           <p className="details-para">
-                            {this.state.custNotification}
+                            {this.state.ContactName}
                           </p>
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
+                    {this.state.CompanyName == ""?
+                    (<div className="text-right">
                       {this.state.toggleAddProfitBtn && (
                         <button
                           onClick={() => {
@@ -3046,7 +3081,7 @@ class RateFinalizing extends Component {
                           Create Customer
                         </button>
                       )}
-                    </div>
+                    </div>):null}
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>

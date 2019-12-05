@@ -113,6 +113,7 @@ class NewRateSearch extends Component {
       companyId: 0,
       companyName: "",
       companyAddress: "",
+      contactName: "",
       Containerdetails: [],
       PortOfDischargeCode: "",
       PortOfLoadingCode: "",
@@ -234,7 +235,8 @@ class NewRateSearch extends Component {
         this.setState({
           companyId: compId.companyId,
           companyName: compId.companyName,
-          companyAddress: compId.companyAddress
+          companyAddress: compId.companyAddress,
+          contactName: compId.contactName
         });
       }
     }
@@ -1303,6 +1305,7 @@ class NewRateSearch extends Component {
             placeholder="QTY"
             name="ContainerQuantity"
             value={el.ContainerQuantity || ""}
+            //onKeyDown={this.newhandleChange.bind(this, i)}
             onChange={this.newhandleChange.bind(this, i)}
           />
         </div>
@@ -1388,7 +1391,7 @@ class NewRateSearch extends Component {
     let users = [...this.state.users];
     users[i] = {
       ...users[i],
-      [name]: name === "ContainerQuantity" ? parseFloat(value) : 0
+      [name]: name === "ContainerQuantity" ? parseInt(value) : 0
     };
     this.setState({ users });
   }
