@@ -64,6 +64,9 @@ class RateFinalizing extends Component {
       users: [],
       referType: [],
       CargoDetailsArr: [],
+      equipmentTypeArr: [],
+      PackageDetailsArr: [],
+      TruckDetailsArr: [],
       CommodityID: "49",
       destAddress: [],
       pickUpAddress: [],
@@ -156,23 +159,31 @@ class RateFinalizing extends Component {
         var contactName = this.props.location.state.contactName;
 
         var CargoDetailsArr = [];
+        var equipmentTypeArr = [];
+        var PackageDetailsArr = [];
+        var TruckDetailsArr = [];
         if (containerLoadType == "FCL") {
           if (users != null) {
             if (users.length > 0) {
               for (var i = 0; i < users.length; i++) {
                 CargoDetailsArr.push({
                   ContainerType: users[i].StandardContainerCode,
-                  //Packaging: "-",
+                  Packaging: "-",
                   Quantity: users[i].ContainerQuantity,
-                  //Lenght: "-",
-                  //Width: "-",
-                  // Height: "-",
-                  // Weight: "-",
-                  // Gross_Weight: "-",
-                  // Temperature: "-",
-                  // CBM: "-",
-                  // Editable: false
+                  Lenght: "-",
+                  Width: "-",
+                  Height: "-",
+                  Weight: "-",
+                  Gross_Weight: "-",
+                  Temperature: "-",
+                  CBM: "-",
+                  Editable: false
                 });
+
+                equipmentTypeArr.push({
+                  ContainerType: users[i].StandardContainerCode,
+                  Quantity: users[i].ContainerQuantity,
+                })
               }
             }
           }
@@ -193,6 +204,10 @@ class RateFinalizing extends Component {
                   CBM: "-",
                   Editable: false
                 });
+                equipmentTypeArr.push({
+                  ContainerType: spacEqmtType[i].StandardContainerCode,
+                  Quantity: spacEqmtType[i].Quantity,
+                })
               }
             }
           }
@@ -215,6 +230,11 @@ class RateFinalizing extends Component {
                   CBM: "-",
                   Editable: false
                 });
+
+                // equipmentTypeArr.push({
+                //   ContainerType: users[i].StandardContainerCode,
+                //   Quantity: users[i].Quantity,
+                // })
               }
             }
           }
@@ -242,10 +262,28 @@ class RateFinalizing extends Component {
                   CBM: "-",
                   Editable: true
                 });
+
+                PackageDetailsArr.push({
+                  PackageType: flattack_openTop[i].PackageType,
+                  SpecialContainerCode:
+                    flattack_openTop[i].SpecialContainerCode,
+                  ContainerType:
+                    flattack_openTop[i].PackageType +
+                    " (" +
+                    flattack_openTop[i].SpecialContainerCode +
+                    ")",
+                  Quantity: flattack_openTop[i].Quantity,
+                  Lenght: flattack_openTop[i].length,
+                  Width: flattack_openTop[i].width,
+                  Height: flattack_openTop[i].height,
+                  Weight: flattack_openTop[i].Gross_Weight,
+                  CBM: flattack_openTop[i].total,
+                  Editable: true
+                })
               }
             }
           }
-        } else if (containerLoadType == "LCL") {
+        } else if (containerLoadType == "LCL"  || containerLoadType == "LTL") {
           for (var i = 0; i < multiCBM.length; i++) {
             CargoDetailsArr.push({
               PackageType: multiCBM[i].PackageType,
@@ -264,8 +302,22 @@ class RateFinalizing extends Component {
               VolumeWeight: multiCBM[i].VolumeWeight,
               Editable: true
             });
+
+            PackageDetailsArr.push({
+              PackageType: multiCBM[i].PackageType,
+              SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+              ContainerType: multiCBM[i].PackageType,
+              Packaging: "-",
+              Quantity: multiCBM[i].Quantity,
+              Lenght: multiCBM[i].Lengths,
+              Width: multiCBM[i].Width,
+              Height: multiCBM[i].Height,
+              Weight: multiCBM[i].GrossWt,
+              CBM: multiCBM[i].Volume,
+              Editable: true
+            })
           }
-        } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+        } else if (containerLoadType == "FTL") {
           // var cSelectedRow = this.props.location.state.selectedDataRow;
 
           // var AllrateDetails = this.props.location.state.RateDetails;
@@ -291,6 +343,14 @@ class RateFinalizing extends Component {
                   Temperature: "-",
                   CBM: "-"
                 });
+
+                if(containerLoadType == "FTL")
+                {
+                  TruckDetailsArr.push({
+                    TransportType: TruckTypeData[i].TruckDesc,
+                    Quantity: TruckTypeData[i].Quantity
+                  });
+                }                
               }
             }
           }
@@ -366,6 +426,9 @@ class RateFinalizing extends Component {
           users: users,
           referType: referType,
           CargoDetailsArr: CargoDetailsArr,
+          equipmentTypeArr: equipmentTypeArr,
+          PackageDetailsArr: PackageDetailsArr,
+          TruckDetailsArr: TruckDetailsArr,
           CommodityID: CommodityID,
           destAddress: destAddress,
           pickUpAddress: pickUpAddress,
@@ -2006,7 +2069,7 @@ class RateFinalizing extends Component {
     const filterDuplicateService = [];
     var DocumentCharges = [];
     // var containerLoadType = this.props.location.state.containerLoadType
-    const { CargoDetailsArr } = this.state;
+    const { CargoDetailsArr, equipmentTypeArr, PackageDetailsArr, TruckDetailsArr } = this.state;
     return (
       <React.Fragment>
         <Headers />
@@ -2879,8 +2942,33 @@ class RateFinalizing extends Component {
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="ag-fresh redirect-row">
-                    <ReactTable
-                        data={CargoDetailsArr}
+                    {TruckDetailsArr.length!==0?
+                      (<ReactTable
+                        data={TruckDetailsArr}
+                        filterable
+                        minRows={1}
+                        showPagination={false}
+                        columns={[
+                          {
+                            Header: "Truck Name",
+                            accessor: "TransportType",
+                            minWidth: 110
+                          },
+                          {
+                            Header: "Quantity",
+                            accessor: "Quantity"
+                          }
+                          
+                        ]}
+                        className="-striped -highlight"
+                        defaultPageSize={2000}
+                        //getTrProps={this.HandleRowClickEvt}
+                        //minRows={1}
+                      />
+                      ):null}
+                      {equipmentTypeArr.length!==0?
+                      (<ReactTable
+                        data={equipmentTypeArr}
                         filterable
                         minRows={1}
                         showPagination={false}
@@ -2901,9 +2989,11 @@ class RateFinalizing extends Component {
                         //getTrProps={this.HandleRowClickEvt}
                         //minRows={1}
                       />
+                      ):null}
 
-                      <ReactTable
-                        data={CargoDetailsArr}
+                      {PackageDetailsArr.length!==0?
+                      (<ReactTable
+                        data={PackageDetailsArr}
                         filterable
                         minRows={1}
                         showPagination={false}
@@ -2990,7 +3080,7 @@ class RateFinalizing extends Component {
                         defaultPageSize={2000}
                         //getTrProps={this.HandleRowClickEvt}
                         //minRows={1}
-                      />
+                      />):null}
                     </div>
                   </div>
 
@@ -3056,13 +3146,26 @@ class RateFinalizing extends Component {
                           <p className="details-para">
                             {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
                             {/* {this.state.CustAddress} */}
-                            {this.state.CompanyAddress}
+                            {(encryption(
+                                window.localStorage.getItem("usertype"),
+                                "desc"
+                              )) != "Customer"?
+                            this.state.CompanyAddress:(encryption(
+                              window.localStorage.getItem("companyaddress"),
+                              "desc"
+                            ))}
                           </p>
                         </div>
                         <div className="col-md-4">
                           <p className="details-title">Notification Person</p>
                           <p className="details-para">
-                            {this.state.ContactName}
+                          {(encryption(
+                                window.localStorage.getItem("usertype"),
+                                "desc"
+                              )) != "Customer"?this.state.ContactName:(encryption(
+                                window.localStorage.getItem("contactname"),
+                                "desc"
+                              ))}
                           </p>
                         </div>
                       </div>
@@ -3086,7 +3189,7 @@ class RateFinalizing extends Component {
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
-                          disabled={true}
+                          //disabled={true}
                           value={this.state.CommodityID}
                           onChange={this.commoditySelect.bind(this)}
                         >

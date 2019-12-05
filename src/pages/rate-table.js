@@ -193,7 +193,7 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID: "49",
+      CommodityID: 0,
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       pickUpAddress: [],
@@ -2877,7 +2877,7 @@ class RateTable extends Component {
         NonStackable: 0
       };
     }
-
+   
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SpotRateInsertion`,
@@ -3495,7 +3495,7 @@ class RateTable extends Component {
                                         row.original.TotalAmount !== null
                                           ? row.original.TotalAmount +
                                             " " +
-                                            row.original.BaseCurrency
+                                            row.original.BaseCurrency !== null?row.original.BaseCurrency:""
                                           : ""}
                                       </p>
                                     </>
@@ -3918,10 +3918,12 @@ class RateTable extends Component {
                 <div className="rename-cntr login-fields">
                   <label>Commodity</label>
                   <select onChange={this.filterAll}>
-                    <option>Select</option>
-                    <option value="All">All</option>
+                    {/* <option>Select</option>
+                    <option value="All">All</option> */}
                     {this.state.commodityData.map((item, i) => (
-                      <option key={i} value={item.id}>
+                      <option key={i} value={item.id}
+                      selected={item.Commodity === "FAK"}
+                      >
                         {item.Commodity}
                       </option>
                     ))}
