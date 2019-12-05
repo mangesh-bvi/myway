@@ -112,24 +112,6 @@
       var map;
       var blueShip, bluePlane, bookingBlue, delayBlue;
 
-      var locations = [
-        ["loan A", 19.090405, 72.86875, "address A", "Ocean"],
-        ["loan 1", 33.890542, 151.274856, "address 1"],
-        ["loan 2", 33.923036, 151.259052, "address 2"],
-        ["loan 3", 34.028249, 151.157507, "address 3"],
-        ["loan 4", 33.80010128657071, 151.28747820854187, "address 4"],
-        ["loan 5", 33.950198, 151.259302, "address 5"]
-      ];
-
-      //var locations = [
-      //    ['loan A', 19.090405, 72.86875, 'address A', 'Ocean'],
-      //    ['loan 1', 50.037690, 8.562438, 'address 1', 'Air'],
-      //    ['loan 2', 18.950123, 72.950055, 'address 2', 'Booking'],
-      //    ['loan 3', 38.915090, 122.094300, 'address 3', 'Booking-Ocean'],
-      //    ['loan 4', -22.395400, -40.771910, 'Delay-Ocean'],
-      //    ['loan 5', -31.042430, -71.915370, 'Delay-Ocean']
-      //];
-
       /////Read token from local storage
       var token = "";
       token = localStorage.getItem("myToken");
@@ -138,12 +120,11 @@
       var ApiUrl = "";
       ApiUrl = localStorage.getItem("APIUrl");
       // alert(token);
-      //debugger;
+
       if (token == "") {
         token =
           "Bearer U2FsdGVkX18++8bfj5phBV/VV5z0lJkprpfPExiQMPmCk+4wWIvuGhHv5VKt5vz2kwXO4aWoeAbrbugCxXcs5Da7thdiR3JMxaIQJ/L7bqnZHgfG6F2BSX7v7bufzEFWCKI4FBuLYo9xGrBpn1KPDe+J4huu1o76fr+TvTWHqJyrUKIq2xSMRB2JScJ3V5MXSNJ8dPeCuBdS14TPP+ppII0TVgjl9M1a4caG3grgp+nEssiUniEDeXBxxrAz23Y/Q+p9c6qXz8moHUtoVeSuNZIL+w0++erBN6g20WdhwJ769XqNn+aA1Icgtu5KMDOX";
       } else {
-        //token = "Bearer U2FsdGVkX18++8bfj5phBV/VV5z0lJkprpfPExiQMPmCk+4wWIvuGhHv5VKt5vz2kwXO4aWoeAbrbugCxXcs5Da7thdiR3JMxaIQJ/L7bqnZHgfG6F2BSX7v7bufzEFWCKI4FBuLYo9xGrBpn1KPDe+J4huu1o76fr+TvTWHqJyrUKIq2xSMRB2JScJ3V5MXSNJ8dPeCuBdS14TPP+ppII0TVgjl9M1a4caG3grgp+nEssiUniEDeXBxxrAz23Y/Q+p9c6qXz8moHUtoVeSuNZIL+w0++erBN6g20WdhwJ769XqNn+aA1Icgtu5KMDOX";
         token = "Bearer " + token;
       }
 
@@ -207,7 +188,6 @@
           var lng = locations[i][2];
           var contentData = locations[i][3];
           var shipmentType = locations[i][4];
-          debugger;
           var image = blueShip;
           if (shipmentType == "Ocean") image = blueShip;
           if (shipmentType == "Air") image = bluePlane;
@@ -236,8 +216,14 @@
                 debugger;
                 ////////Ajax call to get content data //////////////
                 content = "";
-                var selectedLat = marker.getPosition().lat();
-                var selectedLong = marker.getPosition().lng();
+                var selectedLat = marker
+                  .getPosition()
+                  .lat()
+                  .toFixed(6);
+                var selectedLong = marker
+                  .getPosition()
+                  .lng()
+                  .toFixed(6);
 
                 /////Second Ajax Call
                 $.ajax({
@@ -247,8 +233,6 @@
                   data: {
                     lat: selectedLat,
                     lng: selectedLong,
-                    // lat: 17.69265,
-                    // lng: 83.299995,
                     UserID: userId
                   },
                   headers: {
@@ -339,11 +323,16 @@
         ///Clear input AQTY158984
         $("#dataNumber").val("");
 
-        var loan = locations[4][0];
-        var lat = locations[4][1];
-        var long = locations[4][2];
-        var add = locations[4][3];
-        var shipmentType = locations[4][4];
+        var titleData = "";
+        //var lat = locations[4][1];
+        //var long = locations[4][2];
+        //var add = locations[4][3];
+        //var shipmentType = locations[4][4];
+        var lat = "";
+        var long = "";
+        var add = "";
+        var shipmentType = "";
+
         var content = "";
 
         var image = blueShip;
@@ -372,6 +361,7 @@
 
             var lat = data.Table[0].LastLocation_Lat;
             var lng = data.Table[0].LastLocation_Lon;
+            titleData = data.Table[0].Vessel;
 
             console.log("lat:" + lat);
             console.log("log:" + lng);
@@ -379,7 +369,7 @@
             latlngset = new google.maps.LatLng(lat, lng);
             var marker = new google.maps.Marker({
               map: map,
-              title: loan,
+              title: titleData,
               position: latlngset,
               icon: image
             });
@@ -396,8 +386,6 @@
               data: {
                 lat: lat,
                 lng: lng,
-                //"lat": 17.692650,
-                //"lng": 83.299995,
                 UserID: userId
               },
               headers: {
@@ -406,7 +394,6 @@
               success: function(data) {
                 debugger;
                 //alert('Success - Receive content on search');
-                debugger;
                 var datas = data.Table1;
                 if (datas.length > 0) {
                   var marketContent = "<div id='rootElement'>";
@@ -435,7 +422,6 @@
                       "</p></a></div></h5></div>";
                     //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
                     if (HBLNum == enteredHBLNum) {
-                      debugger;
                       innerContentDatas =
                         innerContentDatas +
                         "<div id='" +
@@ -488,7 +474,6 @@
               "click",
               (function(marker, content, infowindow) {
                 return function() {
-                  //alert('Me-234');
                   infowindow.setContent(content);
                   infowindow.open(map, marker);
                 };
@@ -498,9 +483,6 @@
             /////////////////////////////////////////////////////////////////////////
           }
         });
-
-        //var selectedLat = marker.getPosition().lat();
-        //var selectedLong = marker.getPosition().lng();
 
         ///////////////////////////////////////////////////////////////////////////
         debugger;
@@ -530,11 +512,7 @@
                   "Delay-Ocean"
                 ];
 
-                for (
-                  var i = 0;
-                  i < response.length;
-                  i++ //for (var i = 0; i < 6; i++)
-                ) {
+                for (var i = 0; i < response.length; i++) {
                   var shipMarkerData = [];
                   shipMarkerData.push(
                     response[i]["Vessel"],
@@ -567,14 +545,6 @@
           } else {
             isOceanOn = 1;
           }
-
-          // if (toogleData === 'Ocean' && isOceanOn === 0) {
-          //     $("div > img[src='img/hamb-ship.png']").hide();
-          //     $("#mapOcean").css('opacity', '0.5');
-          // } else {
-          //     $("div > img[src='img/hamb-ship.png']").show();
-          //     $("#mapOcean").css('opacity', '1');
-          // }
 
           if (toogleData === "Ocean" && isOceanOn === 0) {
             $("div > img[src='img/blue-ship.png']").hide();
@@ -676,7 +646,7 @@
         <input
           type="text"
           id="dataNumber"
-          placeholder="Enter a location"
+          placeholder="Search here..."
           value=""
         />
         <i

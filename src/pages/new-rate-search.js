@@ -1925,7 +1925,7 @@ class NewRateSearch extends Component {
         DeliveryCity: "",
         OriginGeoCordinates: "",
         DestGeoCordinate: "",
-        companyId: 0,
+         
         Containerdetails: [],
         PortOfDischargeCode: "",
         PortOfLoadingCode: "",
