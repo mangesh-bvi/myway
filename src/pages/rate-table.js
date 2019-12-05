@@ -193,7 +193,7 @@ class RateTable extends Component {
       currencyCode: "",
       TruckType: [],
       TruckTypeData: [],
-      CommodityID: "49",
+      CommodityID: 0,
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
       pickUpAddress: [],
@@ -472,14 +472,15 @@ class RateTable extends Component {
   }
   togglePODModal() {
     this.setState({
-      modalPOD: !this.state.modalPOD
+      modalPOD: !this.state.modalPOD,
+      multiFields: {}
     });
   }
   togglePOLModal() {
     debugger;
-
     this.setState({
-      modalPOL: !this.state.modalPOL
+      modalPOL: !this.state.modalPOL,
+      multiFields: {}
     });
   }
   toggleQuant() {
@@ -489,9 +490,9 @@ class RateTable extends Component {
   }
 
   toggleQuantQuantity(paramData) {
-    // this.setState(prevState => ({
-    //   modalQuant: !prevState.modalQuant
-    // }));
+    this.setState(prevState => ({
+      modalQuant: !prevState.modalQuant
+    }));
     this.HandleRateDetailsFCL(paramData);
   }
 
@@ -499,7 +500,8 @@ class RateTable extends Component {
     debugger;
     this.state.polFilterArray = this.state.polArray;
     this.setState(prevState => ({
-      polFilterArray: this.state.polFilterArray
+      polFilterArray: this.state.polFilterArray,
+      modalPOL: !this.state.modalPOL
       //modalQuant: !prevState.modalQuant
     }));
     this.HandleMultiPOLPODFilter();
@@ -509,7 +511,8 @@ class RateTable extends Component {
     debugger;
     this.state.podFilterArray = this.state.podArray;
     this.setState(prevState => ({
-      podFilterArray: this.state.podFilterArray
+      podFilterArray: this.state.podFilterArray,
+      modalPOD: !this.state.modalPOD
       //modalQuant: !prevState.modalQuant
     }));
 
@@ -2678,7 +2681,8 @@ class RateTable extends Component {
           ContainerCode: param.users[i].StandardContainerCode,
           Type: param.users[i].ContainerName,
           ContainerQuantity: param.users[i].ContainerQuantity,
-          Temperature: param.users[i].Temperature
+          Temperature: param.users[i].Temperature,
+          isSpecialEquipment: false
         });
       }
     }
@@ -2690,7 +2694,8 @@ class RateTable extends Component {
           ContainerCode: param.spacEqmtType[i].StandardContainerCode,
           Type: param.spacEqmtType[i].ContainerName,
           ContainerQuantity: param.spacEqmtType[i].Quantity,
-          Temperature: param.spacEqmtType[i].Temperature
+          Temperature: param.spacEqmtType[i].Temperature,
+          isSpecialEquipment: true
         });
       }
     }
@@ -3291,6 +3296,7 @@ class RateTable extends Component {
                     </button>
                   </div>
                 </div>
+
                 <div className="col-md-9">
                   {this.state.loading === true ? (
                     <div className="position-relative h-100">
@@ -3491,8 +3497,11 @@ class RateTable extends Component {
                                         {row.original.TotalAmount !== "" &&
                                         row.original.TotalAmount !== null
                                           ? row.original.TotalAmount +
-                                            " " +
-                                            row.original.BaseCurrency
+                                              " " +
+                                              row.original.BaseCurrency !==
+                                            null
+                                            ? row.original.BaseCurrency
+                                            : ""
                                           : ""}
                                       </p>
                                     </>
@@ -3596,7 +3605,14 @@ class RateTable extends Component {
                                       },
                                       {
                                         Header: "Tax",
-                                        accessor: "Tax"
+                                        accessor: "Tax",
+                                        Cell: props => (
+                                          <React.Fragment>
+                                            {props.original.Tax !== 0
+                                              ? props.original.Tax
+                                              : ""}
+                                          </React.Fragment>
+                                        )
                                       },
 
                                       {
@@ -3671,27 +3687,18 @@ class RateTable extends Component {
               centered={true}
             >
               <ModalBody>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
+                <img
+                  src={CancelImg}
+                  alt="Cancel"
+                  className="cancelImgBtn"
                   onClick={this.toggleQuant}
-                >
-                  <span>&times;</span>
-                </button>
-                <div
-                  style={{
-                    background: "#fff",
-                    borderRadius: "15px",
-                    padding: "15px"
-                  }}
-                >
-                  <h3 className="mb-4 text-center">
-                    {this.state.containerLoadType === "FCL"
-                      ? "Equipment Types"
-                      : "Cargo Details"}
-                  </h3>
-                  {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                />
+                <h3 className="mb-4 text-center">
+                  {this.state.containerLoadType === "FCL"
+                    ? "Equipment Types"
+                    : "Cargo Details"}
+                </h3>
+                {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                     <Select
                       className="rate-dropdown"
                       getOptionLabel={option => option.StandardContainerCode}
@@ -3756,105 +3763,100 @@ class RateTable extends Component {
                       </div>
                     </div>
                   ) : null} */}
-                  {this.state.containerLoadType === "FTL" ? (
-                    this.createUITruckType()
-                  ) : this.state.containerLoadType === "FCL" ? (
-                    <>
-                      {" "}
-                      <div className="equip-plus-cntr mt-0 modelselecteqt">
-                        <Select
-                          className="rate-dropdown"
-                          getOptionLabel={option =>
-                            option.StandardContainerCode
-                          }
-                          getOptionValue={option =>
-                            option.StandardContainerCode
-                          }
-                          isMulti
-                          options={this.state.EquipmentType}
-                          // onChange={this.equipChange.bind(this)}
-                          onChange={this.newaddClick.bind(this)}
-                          value={this.state.selected}
-                          showNewOptionAtTop={false}
-                        />
-                      </div>
-                      <div className="d-flex flex-wrap justify-content-center">
-                        {this.NewcreateUI()}
-                      </div>
-                      <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                        <input
-                          id="Special-equType"
-                          type="checkbox"
-                          className="d-none"
-                          name={"Special-equType"}
-                          // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                        />
-                        {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                      </div>
-                      {this.state.specialEquipment === true ? (
-                        <div className="">
-                          {/* spe-equ mt-0 */}
-                          <div className="equip-plus-cntr w-100">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.SpecialContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.SpecialContainerCode
-                              }
-                              options={this.state.SpacialEqmt}
-                              placeholder="Select Kind of Special Equipment"
-                              onChange={this.specEquipChange}
-                              // value={thi.state.spEqtSelect}
-                              showNewOptionAtTop={false}
-                            />
-                          </div>
-                          <div id="cbmInner">
-                            {this.state.specialEqtSelect === true ? (
-                              this.state.flattack_openTop.length > 0 ? (
-                                <>{this.MultiCreateCBM()}</>
-                              ) : null
-                            ) : null}
-
-                            {this.state.refertypeSelect === true ? (
-                              this.state.referType.length > 0 ? (
-                                <>{this.createUISpecial()}</>
-                              ) : null
-                            ) : null}
-
-                            {this.state.spacEqmtTypeSelect === true ? (
-                              this.state.spacEqmtType.length > 0 ? (
-                                <>
-                                  <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                    {this.createUIspacEqmtType()}
-                                  </div>
-                                </>
-                              ) : null
-                            ) : null}
-                          </div>
+                {this.state.containerLoadType === "FTL" ? (
+                  this.createUITruckType()
+                ) : this.state.containerLoadType === "FCL" ? (
+                  <>
+                    {" "}
+                    <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                      <Select
+                        className="rate-dropdown"
+                        getOptionLabel={option => option.StandardContainerCode}
+                        getOptionValue={option => option.StandardContainerCode}
+                        isMulti
+                        options={this.state.EquipmentType}
+                        // onChange={this.equipChange.bind(this)}
+                        onChange={this.newaddClick.bind(this)}
+                        value={this.state.selected}
+                        showNewOptionAtTop={false}
+                      />
+                    </div>
+                    <div className="d-flex flex-wrap justify-content-center">
+                      {this.NewcreateUI()}
+                    </div>
+                    <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                      <input
+                        id="Special-equType"
+                        type="checkbox"
+                        className="d-none"
+                        name={"Special-equType"}
+                        // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                      />
+                      {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                    </div>
+                    {this.state.specialEquipment === true ? (
+                      <div className="">
+                        {/* spe-equ mt-0 */}
+                        <div className="equip-plus-cntr w-100">
+                          <Select
+                            className="rate-dropdown"
+                            getOptionLabel={option =>
+                              option.SpecialContainerCode
+                            }
+                            getOptionValue={option =>
+                              option.SpecialContainerCode
+                            }
+                            options={this.state.SpacialEqmt}
+                            placeholder="Select Kind of Special Equipment"
+                            onChange={this.specEquipChange}
+                            // value={thi.state.spEqtSelect}
+                            showNewOptionAtTop={false}
+                          />
                         </div>
-                      ) : null}
-                    </>
-                  ) : (
-                    this.CreateMultiCBM()
-                  )}
-                  <div className="text-center">
-                    <Button
-                      className="butn"
-                      onClick={() => {
-                        this.toggleQuantQuantity(this.state);
-                      }}
-                    >
-                      Done
-                    </Button>
-                    <Button
-                      className="butn cancel-butn"
-                      onClick={this.toggleQuant}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
+                        <div id="cbmInner">
+                          {this.state.specialEqtSelect === true ? (
+                            this.state.flattack_openTop.length > 0 ? (
+                              <>{this.MultiCreateCBM()}</>
+                            ) : null
+                          ) : null}
+
+                          {this.state.refertypeSelect === true ? (
+                            this.state.referType.length > 0 ? (
+                              <>{this.createUISpecial()}</>
+                            ) : null
+                          ) : null}
+
+                          {this.state.spacEqmtTypeSelect === true ? (
+                            this.state.spacEqmtType.length > 0 ? (
+                              <>
+                                <div className="d-flex flex-wrap justify-content-center align-items-center">
+                                  {this.createUIspacEqmtType()}
+                                </div>
+                              </>
+                            ) : null
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  this.CreateMultiCBM()
+                )}
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    onClick={() => {
+                      this.toggleQuantQuantity(this.state);
+                    }}
+                  >
+                    Done
+                  </Button>
+                  <Button
+                    className="butn cancel-butn"
+                    onClick={this.toggleQuant}
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </ModalBody>
             </Modal>
@@ -3868,39 +3870,23 @@ class RateTable extends Component {
               centered={true}
             >
               <ModalBody>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
+                <div className="pol-mar">
+                  <span style={{ color: "red" }}>{this.state.errorPOL}</span>
+
+                  {/* <div className="rename-cntr login-fields position-relative"> */}
+                  {this.createUIPOL()}
+
+                  {/* </div> */}
+                </div>
+                <Button className="butn" onClick={this.toggleQuantPOLSave}>
+                  Done
+                </Button>
+                <Button
+                  className="butn cancel-butn"
                   onClick={this.togglePOLModal}
                 >
-                  <span>&times;</span>
-                </button>
-                <div
-                  style={{
-                    background: "#fff",
-                    borderRadius: "15px",
-                    padding: "15px"
-                  }}
-                >
-                  <div className="pol-mar">
-                    <span style={{ color: "red" }}>{this.state.errorPOL}</span>
-
-                    {/* <div className="rename-cntr login-fields position-relative"> */}
-                    {this.createUIPOL()}
-
-                    {/* </div> */}
-                  </div>
-                  <Button className="butn" onClick={this.toggleQuantPOLSave}>
-                    Done
-                  </Button>
-                  <Button
-                    className="butn cancel-butn"
-                    onClick={this.togglePOLModal}
-                  >
-                    Close
-                  </Button>
-                </div>
+                  Close
+                </Button>
               </ModalBody>
             </Modal>
             {/* {----------------------End Mutiple POL Modal-----------------------} */}
@@ -3913,35 +3899,19 @@ class RateTable extends Component {
               centered={true}
             >
               <ModalBody>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
+                <div className="pol-mar">
+                  <span style={{ color: "red" }}>{this.state.errorPOD}</span>
+                  <div>{this.createUIPOD()}</div>
+                </div>
+                <Button className="butn" onClick={this.toggleQuantPODSave}>
+                  Done
+                </Button>
+                <Button
+                  className="butn cancel-butn"
                   onClick={this.togglePODModal}
                 >
-                  <span>&times;</span>
-                </button>
-                <div
-                  style={{
-                    background: "#fff",
-                    borderRadius: "15px",
-                    padding: "15px"
-                  }}
-                >
-                  <div className="pol-mar">
-                    <span style={{ color: "red" }}>{this.state.errorPOD}</span>
-                    <div>{this.createUIPOD()}</div>
-                  </div>
-                  <Button className="butn" onClick={this.toggleQuantPODSave}>
-                    Done
-                  </Button>
-                  <Button
-                    className="butn cancel-butn"
-                    onClick={this.togglePODModal}
-                  >
-                    Close
-                  </Button>
-                </div>
+                  Close
+                </Button>
               </ModalBody>
             </Modal>
             {/* {------------------------------End Mutliple POD Modal----------------------} */}
@@ -3956,130 +3926,150 @@ class RateTable extends Component {
               toggle={this.toggleSpot}
               centered={true}
             >
-              <h3 className="text-center">Add Below Details</h3>
+              {/* <h3 className="text-center">Add Below Details</h3> */}
               <ModalBody>
-                <div className="rename-cntr login-fields">
-                  <label>Commodity</label>
-                  <select onChange={this.filterAll}>
-                    <option>Select</option>
-                    <option value="All">All</option>
-                    {this.state.commodityData.map((item, i) => (
-                      <option key={i} value={item.id}>
-                        {item.Commodity}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="rename-cntr login-fields align-items-start">
-                  <label>Cargo</label>
-                  <div className="w-100">
-                    {this.state.containerLoadType === "FTL" ? (
-                      this.createUITruckType()
-                    ) : this.state.containerLoadType === "FCL" ? (
-                      <>
-                        {" "}
-                        <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                          <Select
-                            className="rate-dropdown"
-                            getOptionLabel={option =>
-                              option.StandardContainerCode
-                            }
-                            getOptionValue={option =>
-                              option.StandardContainerCode
-                            }
-                            isMulti
-                            options={this.state.EquipmentType}
-                            // onChange={this.equipChange.bind(this)}
-                            onChange={this.newaddClick.bind(this)}
-                            value={this.state.selected}
-                            showNewOptionAtTop={false}
-                          />
-                        </div>
-                        <div className="d-flex flex-wrap justify-content-center">
-                          {this.NewcreateUI()}
-                        </div>
-                        <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                          <input
-                            id="Special-equType"
-                            type="checkbox"
-                            className="d-none"
-                            name={"Special-equType"}
-                            // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                          />
-                          {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                        </div>
-                        {this.state.specialEquipment === true ? (
-                          <div className="">
-                            {/* spe-equ mt-0 */}
-                            <div className="equip-plus-cntr w-100">
-                              <Select
-                                className="rate-dropdown"
-                                getOptionLabel={option =>
-                                  option.SpecialContainerCode
-                                }
-                                getOptionValue={option =>
-                                  option.SpecialContainerCode
-                                }
-                                options={this.state.SpacialEqmt}
-                                placeholder="Select Kind of Special Equipment"
-                                onChange={this.specEquipChange}
-                                // value={thi.state.spEqtSelect}
-                                showNewOptionAtTop={false}
-                              />
-                            </div>
-                            <div id="cbmInner">
-                              {this.state.specialEqtSelect === true ? (
-                                this.state.flattack_openTop.length > 0 ? (
-                                  <>{this.MultiCreateCBM()}</>
-                                ) : null
-                              ) : null}
-
-                              {this.state.refertypeSelect === true ? (
-                                this.state.referType.length > 0 ? (
-                                  <>{this.createUISpecial()}</>
-                                ) : null
-                              ) : null}
-
-                              {this.state.spacEqmtTypeSelect === true ? (
-                                this.state.spacEqmtType.length > 0 ? (
-                                  <>
-                                    <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                      {this.createUIspacEqmtType()}
-                                    </div>
-                                  </>
-                                ) : null
-                              ) : null}
-                            </div>
-                          </div>
-                        ) : null}
-                      </>
-                    ) : (
-                      this.CreateMultiCBM()
-                    )}
-                    {/* {this.createUITruckType()} */}
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  onClick={this.toggleSpot}
+                >
+                  <span>&times;</span>
+                </button>
+                <div
+                  style={{
+                    background: "#fff",
+                    borderRadius: "15px",
+                    padding: "15px"
+                  }}
+                >
+                  <div className="rename-cntr login-fields">
+                    <label>Commodity</label>
+                    <select onChange={this.filterAll}>
+                      {/* <option>Select</option>
+                    <option value="All">All</option> */}
+                      {this.state.commodityData.map((item, i) => (
+                        <option
+                          key={i}
+                          value={item.id}
+                          selected={item.Commodity === "FAK"}
+                        >
+                          {item.Commodity}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  {/* <select>
+                  <div className="rename-cntr login-fields align-items-start">
+                    <label>Cargo</label>
+                    <div className="w-100">
+                      {this.state.containerLoadType === "FTL" ? (
+                        this.createUITruckType()
+                      ) : this.state.containerLoadType === "FCL" ? (
+                        <>
+                          {" "}
+                          <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                            <Select
+                              className="rate-dropdown"
+                              getOptionLabel={option =>
+                                option.StandardContainerCode
+                              }
+                              getOptionValue={option =>
+                                option.StandardContainerCode
+                              }
+                              isMulti
+                              options={this.state.EquipmentType}
+                              // onChange={this.equipChange.bind(this)}
+                              onChange={this.newaddClick.bind(this)}
+                              value={this.state.selected}
+                              showNewOptionAtTop={false}
+                            />
+                          </div>
+                          <div className="d-flex flex-wrap justify-content-center">
+                            {this.NewcreateUI()}
+                          </div>
+                          <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                            <input
+                              id="Special-equType"
+                              type="checkbox"
+                              className="d-none"
+                              name={"Special-equType"}
+                              // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                            />
+                            {/* <label htmlFor="Special-equType">Special Equipment</label> */}
+                          </div>
+                          {this.state.specialEquipment === true ? (
+                            <div className="">
+                              {/* spe-equ mt-0 */}
+                              <div className="equip-plus-cntr w-100">
+                                <Select
+                                  className="rate-dropdown"
+                                  getOptionLabel={option =>
+                                    option.SpecialContainerCode
+                                  }
+                                  getOptionValue={option =>
+                                    option.SpecialContainerCode
+                                  }
+                                  options={this.state.SpacialEqmt}
+                                  placeholder="Select Kind of Special Equipment"
+                                  onChange={this.specEquipChange}
+                                  // value={thi.state.spEqtSelect}
+                                  showNewOptionAtTop={false}
+                                />
+                              </div>
+                              <div id="cbmInner">
+                                {this.state.specialEqtSelect === true ? (
+                                  this.state.flattack_openTop.length > 0 ? (
+                                    <>{this.MultiCreateCBM()}</>
+                                  ) : null
+                                ) : null}
+
+                                {this.state.refertypeSelect === true ? (
+                                  this.state.referType.length > 0 ? (
+                                    <>{this.createUISpecial()}</>
+                                  ) : null
+                                ) : null}
+
+                                {this.state.spacEqmtTypeSelect === true ? (
+                                  this.state.spacEqmtType.length > 0 ? (
+                                    <>
+                                      <div className="d-flex flex-wrap justify-content-center align-items-center">
+                                        {this.createUIspacEqmtType()}
+                                      </div>
+                                    </>
+                                  ) : null
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : null}
+                        </>
+                      ) : (
+                        this.CreateMultiCBM()
+                      )}
+                      {/* {this.createUITruckType()} */}
+                    </div>
+                    {/* <select>
                     <option>Select</option>
                     <option>Select</option>
                     <option>Select</option>
                   </select> */}
-                </div>
-                <div className="text-center">
-                  <Button
-                    className="butn"
-                    onClick={() => {
-                      this.spotRateSubmit(this.state);
-                      this.toggleSpot();
-                    }}
-                  >
-                    Send
-                  </Button>
-                  <Button
-                    className="butn"
-                    onClick={this.toggleSpotCloseModal.bind(this)}
-                  >
-                    Cancel
-                  </Button>
+                  </div>
+                  <div className="text-center">
+                    <Button
+                      className="butn"
+                      onClick={() => {
+                        this.spotRateSubmit(this.state);
+                        this.toggleSpot();
+                      }}
+                    >
+                      Send
+                    </Button>
+                    <Button
+                      className="butn"
+                      onClick={this.toggleSpotCloseModal.bind(this)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               </ModalBody>
             </Modal>

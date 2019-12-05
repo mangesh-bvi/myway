@@ -247,8 +247,12 @@ class SpotRate extends Component {
               toggle={this.toggleSpot}
               centered={true}
             >
-              <h3>Add Below Details</h3>
+              {/* <h3>Add Below Details</h3> */}
               <ModalBody>
+              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleSpot}>
+                <span>&times;</span>
+              </button>
+                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
                 <div className="rename-cntr login-fields">
                   <label>Commodity</label>
                   <select>
@@ -274,6 +278,7 @@ class SpotRate extends Component {
                 >
                   Send
                 </Button>
+                </div>
               </ModalBody>
             </Modal>
           </div>
