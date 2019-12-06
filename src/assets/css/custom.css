@@ -2457,7 +2457,7 @@ table tbody tr:last-child {
 .profile-dropdown {
   border-color: #d6d6d6;
   padding: 0;
-  transform: translate3d(850px, 70px, 0px) !important;
+  transform: translate3d(740px, 70px, 0px) !important;
   top: 0 !important;
   left: -18px !important;
   min-width: 179px;
