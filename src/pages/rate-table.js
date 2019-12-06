@@ -3732,12 +3732,16 @@ class RateTable extends Component {
                 centered={true}
               >
                 <ModalBody>
-                  <img
+                <button type="button" className="close" data-dismiss="modal" onClick={this.toggleQuant}>
+                <span>&times;</span>
+              </button>
+              <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
+                  {/* <img
                     src={CancelImg}
                     alt="Cancel"
                     className="cancelImgBtn"
-                    onClick={this.toggleQuant}
-                  />
+                    onClick={this.c}
+                  /> */}
                   <h3 className="mb-4 text-center">
                     {this.state.containerLoadType === "FCL"
                       ? "Equipment Types"
@@ -3906,6 +3910,7 @@ class RateTable extends Component {
                     >
                       Cancel
                     </Button>
+                  </div>
                   </div>
                 </ModalBody>
               </Modal>

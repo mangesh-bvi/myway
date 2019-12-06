@@ -2373,6 +2373,10 @@ class ShippingDetailsTwo extends Component {
                   centered={true}
                 >
                   <ModalBody>
+                  <button type="button" className="close" data-dismiss="modal" onClick={this.toggleDocu}>
+                <span>&times;</span>
+              </button>
+                  <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
                     <div className="rename-cntr login-fields">
                       <label>Document Name</label>
                       <input
@@ -2451,6 +2455,7 @@ class ShippingDetailsTwo extends Component {
                     >
                       Add
                     </Button>
+                    </div>
                   </ModalBody>
                 </Modal>
                 <Modal
