@@ -1489,7 +1489,7 @@ class Dashboard extends Component {
                     }}
                   ></div> */}
                   <div className="row dash-sects-cntr">
-                    <div className="col-md-3">
+                    <div className="col-12 col-sm-12 col-md-6 col-lg-3">
                       <div className="dash-sects">
                         <div className="dashboard-loader">
                           <h3>Watchlist Shipments</h3>
@@ -1513,7 +1513,7 @@ class Dashboard extends Component {
                         </span>
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-12 col-sm-12 col-md-6 col-lg-3">
                       <div className="dash-sects">
                         <div className="dashboard-loader">
                           <h3>Booking</h3>
@@ -1535,7 +1535,7 @@ class Dashboard extends Component {
                         </span>
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-12 col-sm-12 col-md-6 col-lg-3">
                       <div className="dash-sects">
                         <div className="dashboard-loader">
                           <h3>Quotes</h3>
@@ -1557,7 +1557,7 @@ class Dashboard extends Component {
                         </span>
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-12 col-sm-12 col-md-6 col-lg-3">
                       <div className="dash-sects">
                         <div className="dashboard-loader">
                           <h3>Invoices</h3>

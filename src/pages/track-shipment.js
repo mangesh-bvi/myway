@@ -148,6 +148,10 @@ class TrackShipment extends Component {
               centered={true}
             >
               <ModalBody>
+                <button type="button" className="close" data-dismiss="modal" onClick={this.toggleShare}>
+                <span>&times;</span>
+              </button>
+                <div style={{backgroundColor:"#fff",padding:"15",borderRadius:"15px"}}>
                 <h3 className="mb-4 text-center">Track Shipment</h3>
                 <div className="txt-cntr">
                   <div className="d-flex align-items-center">
@@ -183,6 +187,7 @@ class TrackShipment extends Component {
                     </span>
                   ) : null}
                 </div> */}
+                </div>
               </ModalBody>
             </Modal>
 

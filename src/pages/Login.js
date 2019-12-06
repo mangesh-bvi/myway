@@ -511,6 +511,10 @@ class Login extends React.Component {
             isOpen={this.state.modalSalesLogin}
             centered={true}
           >
+          
+            <button type="button" style={{top:"-12px" , right:"-15px"}} className="close" data-dismiss="modal" onClick={this.toggleSalesLogin}>
+                <span>&times;</span>
+              </button>
             <ModalHeader>Sales customers</ModalHeader>
             <ModalBody>
               <div>

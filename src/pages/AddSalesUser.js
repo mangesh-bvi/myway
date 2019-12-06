@@ -731,7 +731,7 @@ class AddSalesUser extends React.Component {
           </div>
           <div className="cls-rt">
             <div>
-              <div class="title-sect title-border">
+              <div class="title-sect title-border title-secpad">
                 {(() => {
                   if (this.props.location.state != undefined) {
                     return <h2>Edit Sales User</h2>;

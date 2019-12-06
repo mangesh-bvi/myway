@@ -26,6 +26,7 @@ import Inland from "./../assets/img/inland.png";
 import Delivery from "./../assets/img/delivery.png";
 import Edit from "./../assets/img/pencil.png";
 import Delete from "./../assets/img/red-delete-icon.png";
+import Calen from "./../assets/img/calendar.png";
 import Download from "./../assets/img/csv.png";
 
 import YellowFlag from "./../assets/img/yellow-flag.png";
@@ -1270,11 +1271,42 @@ class ShipmentPlanner extends Component {
               <button type="button" className="close" data-dismiss="modal" onClick={this.toggleTransit}>
                 <span>&times;</span>
               </button>
-                <div style={{borderRadius:"15px"}}>
+                <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
                     <div className="container-fluid p-0">
+{/* <div class="row">
+  <div class="column-a">
+    <div class="card-a">
+      <label className="total-label">Total Average Days</label>
+      <div className="mt-5">
+        <img src={Calen} alt="" className="calendar" />
+        <span className="total-span">37</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="column-a">
+    <div class="card-a">
+      <label className="total-label">Total Minimum Days</label>
+      <div className="mt-5">
+        <img src={Calen} alt="" className="calendar" />
+        <span className="total-span">34</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="column-a">
+    <div class="card-a">
+      <label className="total-label">Total Maximum Days</label>
+      <div className="mt-5">
+        <img src={Calen} alt="" className="calendar" />
+        <span className="total-span">45</span>
+      </div>
+    </div>
+  </div>
+</div> */}
                       <div className="transit-sect">
-                        <div className="row">
-                          <div className="col-md-4 details-border">
+                        <div className="row" style={{margin:"0"}}>
+                          <div className="col-md-4 details-border card-a">
                             <div>
                               <p className="details-title">
                                 Total Average Days
@@ -1284,7 +1316,7 @@ class ShipmentPlanner extends Component {
                               </p>
                             </div>
                           </div>
-                          <div className="col-md-4 details-border">
+                          <div className="col-md-4 details-border card-a">
                             <div>
                               <p className="details-title">
                                 Total Minimum Days
@@ -1294,7 +1326,7 @@ class ShipmentPlanner extends Component {
                               </p>
                             </div>
                           </div>
-                          <div className="col-md-4 details-border">
+                          <div className="col-md-4 details-border card-a">
                             <div>
                               <p className="details-title">
                                 Total Maximum Days

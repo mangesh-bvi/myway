@@ -147,7 +147,7 @@ class SpotRateTable extends Component {
             <div className="ag-fresh">
               <ReactTable
                 data={spotRateGrid}
-                noDataText="No Data Found"
+                noDataText=""
                 onFilteredChange={this.onFilteredChange.bind(this)}
                 filtered={this.state.filtered}
                 defaultFilterMethod={(filter, row) =>
