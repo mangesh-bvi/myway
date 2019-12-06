@@ -3,7 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
-import ATA from "./../assets/img/ATAFreight_console1.png";
+import ATA from "./../assets/img/ATAFreight_console.png";
 import Dummy from "./../assets/dummy.pdf";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
@@ -480,6 +480,7 @@ class RateFinalizing extends Component {
       this.setState({ toggleAddProfitBtn: false });
     }
   }
+  
 
   HandleSalesQuoteView(param) {
     debugger;
@@ -2767,7 +2768,14 @@ class RateFinalizing extends Component {
                                       },
                                       {
                                         Header: "Tax",
-                                        accessor: "Tax"
+                                        accessor: "Tax",
+                                        Cell: props => (
+                                          <React.Fragment>
+                                            {props.original.Tax !== 0
+                                              ? props.original.Tax
+                                              : ""}
+                                          </React.Fragment>
+                                        )
                                       },
 
                                       {
