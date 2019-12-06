@@ -3026,7 +3026,7 @@ class NewRateSearch extends Component {
                           ) : null
                         ) : null}
                       </div>
-                      <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                      <div className="remember-forgot rate-checkbox justify-content-center">
                         <input
                           id="HazMat"
                           type="checkbox"
@@ -3183,7 +3183,7 @@ class NewRateSearch extends Component {
                         ) : null
                       ) : null}
                     </div>
-                    <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                    <div className="remember-forgot rate-checkbox justify-content-center">
                       <input
                         id="haz-mat"
                         type="checkbox"
