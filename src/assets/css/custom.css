@@ -3782,6 +3782,34 @@ img {
   margin-top: 15px;
   cursor: pointer;
 }
+/* Css Start Kalpesh */ 
+/* .column-a {
+  margin: 0 15px;
+}
+.card-a {
+  padding: 15px 20px;
+  background-color: #fff;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  width: 224px;
+}
+.column-a .calendar {
+  width: 35px;
+  height: 35px;
+}
+.total-span {
+  float: right;
+  color: #29aae3;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 50px;
+}
+.total-label{
+  color: #000;
+  font-size: 15px;
+  font-family: "Medium Font";
+} */
+
 
 @media (min-width: 768px) {
   .cus-w .col-md-3 {

@@ -16,6 +16,9 @@ import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
+import PlaneColor from "./../assets/img/Air Shipment color.png";
+import OceanColor from "./../assets/img/Ocean Shipment color.png";
+import TruckColor from "./../assets/img/Delay Shipment color.png";
 import Transit from "./../assets/img/transit.png";
 import { encryption } from "../helpers/encryption";
 import Box from "./../assets/img/box.png";
@@ -23,12 +26,15 @@ import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
 import ArrivedStatus from "./../assets/img/arrived-status.png";
+import ArrivedStatusColor from "./../assets/img/Arrived b.png";
 import InlandTransportStatus from "./../assets/img/inland-transportation-status.png";
+import InlandTransportStatusColor from "./../assets/img/Inland Transportation b.png";
 import TransshippedStatus from "./../assets/img/transshipped-status.png";
 import InTransitStatus from "./../assets/img/in-transit-status.png";
 import GateInStatus from "./../assets/img/gate-in-status.png";
 import DepartedStatus from "./../assets/img/departed-status.png";
 import DeliveredStatus from "./../assets/img/delivered-status.png";
+import DeliveredStatusColor from "./../assets/img/Delivered b.png";
 import BookedStatus from "./../assets/img/booked-status.png";
 import ApprovedStatus from "./../assets/img/approved-status.png";
 import "font-awesome/css/font-awesome.css";
@@ -682,20 +688,20 @@ class ShippingDetails extends Component {
                                   id="transit"
                                   className="shipment-img"
                                 >
-                                  <img src={Plane} />
+                                  <img src={PlaneColor} />
                                 </div>
                               </>
                             );
                           } else if (row.value == "Ocean") {
                             return (
                               <div title="Ship" className="shipment-img">
-                                <img src={Ship} />
+                                <img src={OceanColor} />
                               </div>
                             );
                           } else if (row.value == "Inland") {
                             return (
                               <div title="Truck" className="shipment-img">
-                                <img src={Truck} />
+                                <img src={TruckColor} />
                               </div>
                             );
                           } else if (row.value == "Railway") {
@@ -784,7 +790,7 @@ class ShippingDetails extends Component {
                           } else if (row.value == "Arrived") {
                             return (
                               <div title="Arrived" className="status-img">
-                                <img src={ArrivedStatus} />
+                                <img src={ArrivedStatusColor} />
                               </div>
                             );
                           } else if (row.value == "Booked") {
@@ -817,13 +823,13 @@ class ShippingDetails extends Component {
                                 title="Inland Transportation"
                                 className="status-img"
                               >
-                                <img src={InlandTransportStatus} />
+                                <img src={InlandTransportStatusColor} />
                               </div>
                             );
                           } else if (row.value == "Delivered") {
                             return (
                               <div title="Delivered" className="status-img">
-                                <img src={DeliveredStatus} />
+                                <img src={DeliveredStatusColor} />
                               </div>
                             );
                           } else if (row.value == "DO Issued") {
