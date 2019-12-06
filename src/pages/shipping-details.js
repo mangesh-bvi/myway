@@ -36,7 +36,7 @@ import DepartedStatus from "./../assets/img/departed-status.png";
 import DepartedStatusColor from "./../assets/img/Departed-b.png";
 import DeliveredStatus from "./../assets/img/delivered-status.png";
 import DeliveredStatusColor from "./../assets/img/Delivered-b.png";
-import BookedStatus from "./../assets/img/booked-status.png";
+import BookedStatusColor from "./../assets/img/Booked-b.png";
 import ApprovedStatus from "./../assets/img/approved-status.png";
 import ApprovedStatusColor from "./../assets/img/Approved-b.png";
 import "font-awesome/css/font-awesome.css";
@@ -798,7 +798,7 @@ class ShippingDetails extends Component {
                           } else if (row.value == "Booked") {
                             return (
                               <div title="Booked" className="status-img">
-                                <img src={BookedStatus} />
+                                <img src={BookedStatusColor} />
                               </div>
                             );
                           } else if (row.value == "Gate In") {

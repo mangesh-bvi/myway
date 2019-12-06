@@ -949,6 +949,7 @@ class SpotRateDetails extends Component {
             <button type="button" className="close" data-dismiss="modal" onClick={this.toggleSpotHistory}>
                 <span>&times;</span>
               </button>
+              <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
               <ReactTable
                 data={this.state.historyModalData}
                 columns={[
@@ -982,6 +983,7 @@ class SpotRateDetails extends Component {
                 <Button className="butn" onClick={this.toggleSpotHistory}>
                   Close
                 </Button>
+              </div>
               </div>
             </ModalBody>
           </Modal>

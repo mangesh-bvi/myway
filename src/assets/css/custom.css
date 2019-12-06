@@ -3591,7 +3591,7 @@ img {
   /* height: 600px; */
   /* overflow-y: scroll; */
   /* max-height: calc(100vh - 120px); */
-  max-height: calc(100vh - 210px);
+  max-height: calc(100vh - 130px);
   overflow-y: auto;
 }
 
@@ -3782,6 +3782,9 @@ img {
   margin-top: 15px;
   cursor: pointer;
 } 
+.title-secpad {
+  padding: 15px 30px;
+}
 /* Css Start Kalpesh */ 
 /* .column-a {
   margin: 0 15px;
