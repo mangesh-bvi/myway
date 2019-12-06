@@ -168,7 +168,22 @@ class QuoteTable extends Component {
   }
 
   render() {
-    const { quotesData } = this.state;
+    var dataQuote = [];
+    var { quotesData } = this.state;
+
+    const Moment = require("moment");
+    const array = [
+      { date: "2018-05-11" },
+      { date: "2018-05-12" },
+      { date: "2018-05-10" }
+    ];
+    dataQuote = quotesData.sort(
+      (a, b) =>
+        new Moment(b.CreatedDate).format("YYYYMMDD") -
+        new Moment(a.CreatedDate).format("YYYYMMDD")
+    );
+    console.log(quotesData);
+
     return (
       <div>
         <Headers />
@@ -191,7 +206,7 @@ class QuoteTable extends Component {
             </div>
             <div className="ag-fresh redirect-row">
               <ReactTable
-                data={quotesData}
+                data={dataQuote}
                 noDataText=""
                 onFilteredChange={this.onFilteredChange.bind(this)}
                 filtered={this.state.filtered}
@@ -374,24 +389,25 @@ class QuoteTable extends Component {
                     filterAll: true
                   }
                 ]}
-                defaultSorted={[
-                  {
-                    id: data => {
-                      debugger;
-                      var abc = new Date(data.CreatedDate);
-                      var current = new Date();
-                      var x = abc.getTime();
-                      var y = current.getTime();
-                      var z = y - x;
-                      console.log(x);
-                      console.log(y);
-                      console.log(z);
-                      // var date = new Date(data.CreatedDate);
-                      return z;
-                    },
-                    desc: true
-                  }
-                ]}
+                // defaultSorted={[
+                //   {
+                //     id: "CreatedDate",
+                //     Cell: data => {
+                //       debugger;
+                //       var abc = new Date(data.CreatedDate);
+                //       var current = new Date();
+                //       var x = abc.getTime();
+                //       var y = current.getTime();
+                //       var z = y - x;
+                //       console.log(x);
+                //       console.log(y);
+                //       console.log(z);
+                //       // var date = new Date(data.CreatedDate);
+                //       return z;
+                //     },
+                //     desc: false
+                //   }
+                // ]}
                 // defaultSorted={[
                 //   {
                 //     id: "CreatedDate",
