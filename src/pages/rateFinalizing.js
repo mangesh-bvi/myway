@@ -480,6 +480,7 @@ class RateFinalizing extends Component {
       this.setState({ toggleAddProfitBtn: false });
     }
   }
+  
 
   HandleSalesQuoteView(param) {
     debugger;
