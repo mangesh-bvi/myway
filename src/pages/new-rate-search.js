@@ -114,6 +114,7 @@ class NewRateSearch extends Component {
       companyName: "",
       companyAddress: "",
       contactName: "",
+      contactEmail: "",
       Containerdetails: [],
       PortOfDischargeCode: "",
       PortOfLoadingCode: "",
@@ -236,7 +237,8 @@ class NewRateSearch extends Component {
           companyId: compId.companyId,
           companyName: compId.companyName,
           companyAddress: compId.companyAddress,
-          contactName: compId.contactName
+          contactName: compId.contactName,
+          contactEmail: compId.contactEmail
         });
       }
     }
