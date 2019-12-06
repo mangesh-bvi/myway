@@ -12,8 +12,9 @@ import Autocomplete from "react-autocomplete";
 
 import { encryption, convertToPlain } from "../helpers/encryption";
 const imageAsset = "./../assets/img";
-var sizeOf = require("image-size");
-var QuotationData =[];
+const fetch = require("node-fetch");
+
+var QuotationData = [];
 class BookingView extends Component {
   constructor(props) {
     super(props);
@@ -348,8 +349,8 @@ class BookingView extends Component {
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
-        
-console.log(QuotationData);
+
+        console.log(QuotationData);
 
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
@@ -361,11 +362,11 @@ console.log(QuotationData);
             });
           }
         }
-        for (let qd of self.state.QuotationData) {
-          if (qd.Linename) {
-            self.GetImageURL(qd);
-          }
-        }
+        // for (let qd of self.state.QuotationData) {
+        //   if (qd.Linename) {
+        //     self.GetImageURL(qd);
+        //   }
+        // }
         if (typeof eqmtType !== "undefined") {
           if (eqmtType.length > 0) {
             self.setState({ eqmtType });
@@ -583,28 +584,86 @@ console.log(QuotationData);
                           {
                             columns: [
                               {
-                                Cell: row => {
-                                  i++;
-                                  // var urlLink = this.GetImageURL(
-                                  //   row.original.Linename
-                                  // );
-                                  return (
-                                    <React.Fragment>
-                                      <div className="d-flex align-items-center">
-                                        <div>
-                                          <p className="details-title">
-                                            {/* <img
-                                              src={require(urlLink)}
-                                              alt="maersk icon"
-                                            /> */}
-                                            {/* {this.GetImageURL(row.original.Linename)} */}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </React.Fragment>
-                                  );
-                                },
+                                // Cell: row => {
+                                //   i++;
+                                //   debugger;
+                                //   var URL = "";
+                                //   var lineName = "arkas_line";
+                                //   var status = 0;
+                                //   if (typeof lineName !== "undefined") {
+                                //     URL =
+                                //       "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                //       lineName
+                                //         .replace("  ", "_")
+                                //         .replace(" ", "_") +
+                                //       ".png";
+                                //     fetch(URL).then(res => {
+                                //       status = res.status;
 
+                                //       // Following lines for file download
+                                //       // const dest = fs.createWriteStream('./arkas_line.png');
+                                //       // res.body.pipe(dest);
+                                //     });
+                                //     if (status === 200) {
+                                //       return (
+                                //         <React.Fragment>
+                                //           <div className="d-flex align-items-center">
+                                //             <div>
+                                //               <p className="details-title">
+                                //                 <img
+                                //                   src={require(URL)}
+                                //                   alt="maersk icon"
+                                //                 />
+                                //               </p>
+                                //             </div>
+                                //           </div>
+                                //         </React.Fragment>
+                                //       );
+                                //     } else {
+                                //       return (
+                                //         <React.Fragment>
+                                //           <div className="d-flex align-items-center">
+                                //             <div>
+                                //               <p className="details-title">
+                                //                 <img
+                                //                   src={"https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"}
+                                //                   alt="maersk icon"
+                                //                 />
+                                //               </p>
+                                //             </div>
+                                //           </div>
+                                //         </React.Fragment>
+                                //       );
+                                //     }
+                                //   } else {
+                                //     return <></>;
+                                //   }
+                                // },
+                                // Cell: row => {
+                                //   var lineName = row.original.Linename;
+                                //   lineName
+                                //     .replace("  ", "_")
+                                //     .replace(" ", "_") + ".png";
+
+                                //   return (
+                                //     <React.Fragment>
+                                //       <div className="d-flex align-items-center">
+                                //         <div>
+                                //           <p className="details-title">
+                                //             <img
+                                //               src={
+                                //                 "https://vizio.atafreight.com/MyWayFiles/" +
+                                //                 lineName +
+                                //                 ".png"
+                                //               }
+                                //               alt="maersk icon"
+                                //             />
+                                //           </p>
+                                //         </div>
+                                //       </div>
+                                //     </React.Fragment>
+                                //   );
+                                // },
                                 accessor: "lineName",
                                 width: 200
                               },
@@ -747,14 +806,22 @@ console.log(QuotationData);
                               {this.state.CargoType}
                             </p>
                           </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Equipment Types</p>
-                            <p className="details-para"></p>
-                          </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Special Equipment</p>
-                            <p className="details-para"></p>
-                          </div>
+                          {this.state.CargoType === "FCL" ? (
+                            <>
+                              <div className="col-md-4">
+                                <p className="details-title">Equipment Types</p>
+                                <p className="details-para"></p>
+                              </div>
+                              <div className="col-md-4">
+                                <p className="details-title">
+                                  Special Equipment
+                                </p>
+                                <p className="details-para"></p>
+                              </div>
+                            </>
+                          ) : (
+                            ""
+                          )}
                           <div className="col-md-4">
                             <p className="details-title">
                               HazMat &amp; Unstackable
@@ -782,18 +849,18 @@ console.log(QuotationData);
                             <p className="details-title">POD</p>
                             <p className="details-para">{this.state.POD}</p>
                           </div>
-                          <div className="col-md-4">
+                          {/* <div className="col-md-4">
                             <p className="details-title">PU Address</p>
-                            {/* <p className="details-para">
+                            <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p> */}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Delivery Address</p>
-                            {/* <p className="details-para">
+                            <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p> */}
-                          </div>
+                            </p>
+                          </div> */}
                         </div>
                       </div>
                     </Collapse>
@@ -986,24 +1053,6 @@ console.log(QuotationData);
                       </div>
                     </div>
 
-                    <div className="row">
-                      <div className="col-md-6 login-fields">
-                        <p className="details-title">Commodity</p>
-                        <p className="details-para">{commodityName}</p>
-                        {/* <select
-                          disabled={true}
-                          value={this.state.selectedCommodity}
-                        >
-                          <option>Select</option>
-                          {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.id}>
-                              {item.Commodity}
-                            </option>
-                          ))}
-                        </select> */}
-                      </div>
-                    </div>
-
                     <div>
                       <div className="title-border py-3">
                         <h3>Buyer Details</h3>
@@ -1071,6 +1120,23 @@ console.log(QuotationData);
                             </p>
                           </div>
                         </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-6 login-fields">
+                        <p className="details-title">Commodity</p>
+                        <p className="details-para">{commodityName}</p>
+                        {/* <select
+                          disabled={true}
+                          value={this.state.selectedCommodity}
+                        >
+                          <option>Select</option>
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.id}>
+                              {item.Commodity}
+                            </option>
+                          ))}
+                        </select> */}
                       </div>
                     </div>
                     <div>

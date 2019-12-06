@@ -76,6 +76,8 @@ class RateFinalizingStill extends Component {
     this.toggleBook = this.toggleBook.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
+    // this.isAcceptModal = this.isAcceptModal.bind(this);
+    // this.isRejectModal = this.isRejectModal.bind(this);
   }
 
   componentDidMount() {
@@ -97,14 +99,14 @@ class RateFinalizingStill extends Component {
 
   //////toggleAcceptModal method
 
-  toggleAcceptModal() {
+  toggleAcceptModal = () => {
     this.setState({ isAcceptModal: !this.state.isAcceptModal });
-  }
+  };
 
   //////toggleRejectModal method
-  toggleRejectModal() {
+  toggleRejectModal = () => {
     this.setState({ isRejectModal: !this.state.isRejectModal });
-  }
+  };
 
   HandleSalesQuoteView(param) {
     debugger;
@@ -328,6 +330,7 @@ class RateFinalizingStill extends Component {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
+                self.toggleAcceptModal();
               }
             }
           }
@@ -381,6 +384,7 @@ class RateFinalizingStill extends Component {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
+                self.toggleRejectModal();
               }
             }
           }
@@ -1369,7 +1373,8 @@ class RateFinalizingStill extends Component {
                         //QuoteStatus
                         <button
                           className="butn m-0"
-                          onClick={this.AcceptQuotes.bind(this)}
+                          // onClick={this.AcceptQuotes.bind(this)}
+                          onClick={this.toggleAcceptModal}
                         >
                           Accept
                         </button>
@@ -1378,7 +1383,7 @@ class RateFinalizingStill extends Component {
                         <button
                           className="butn m-0"
                           // onClick={this.RejectQuotes.bind(this)}
-                          onClick={this.toggleRejectPop.bind(this)}
+                          onClick={this.toggleRejectModal}
                         >
                           Reject
                         </button>
@@ -2293,19 +2298,22 @@ class RateFinalizingStill extends Component {
           centered={true}
         >
           <ModalBody>
+            <p>Do you want Accept Quotestion ?</p>
             <div className="text-center">
               <Button
                 className="butn"
+                onClick={this.AcceptQuotes.bind(this)}
                 //onClick={this.hanleProfitAmountSubmit.bind(this)}
               >
-                Add
+                Yes
               </Button>
 
               <Button
+                onClick={this.toggleAcceptModal}
                 className="butn"
                 //onClick={this.hanleProfitAmountRemove.bind(this)}
               >
-                Remove
+                No
               </Button>
             </div>
           </ModalBody>
@@ -2314,14 +2322,15 @@ class RateFinalizingStill extends Component {
         <Modal
           className="amnt-popup"
           isOpen={this.state.isRejectModal}
-          toggle={this.toggleAcceptModal}
+          toggle={this.toggleRejectModal}
           centered={true}
         >
           <ModalBody>
-            <p>Do You Want to Reject Sales Quote</p>
+            <p>Do You Want to Reject Quotestion ?</p>
             <div className="text-center">
               <Button
                 className="butn"
+                onClick={this.RejectQuotes.bind(this)}
                 //onClick={this.hanleProfitAmountSubmit.bind(this)}
               >
                 Yes
@@ -2329,6 +2338,7 @@ class RateFinalizingStill extends Component {
 
               <Button
                 className="butn"
+                onClick={this.toggleRejectModal}
                 //onClick={this.hanleProfitAmountRemove.bind(this)}
               >
                 No
