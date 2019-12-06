@@ -266,6 +266,8 @@ class BookingInsert extends Component {
       }
 
       if (QuotationData.length > 0) {
+
+        
         var Commodity = QuotationData[0].Commodity;
         var POL = QuotationData[0].POL;
         var POD = QuotationData[0].POD;
@@ -1324,7 +1326,7 @@ class BookingInsert extends Component {
                         >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.id}>
+                            <option key={i} value={item.Commodity}>
                               {item.Commodity}
                             </option>
                           ))}

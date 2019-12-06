@@ -1394,16 +1394,17 @@ table tbody tr:last-child {
   margin: 0 5px;
 }
 .rate-checkbox label {
-  min-width: 200px;
+  /* min-width: 200px; */
+  min-width: auto;
   margin-top: 5px;
   margin-bottom: 5px;
 }
-.rate-checkbox label:first-of-type {
+/* .rate-checkbox label:first-of-type {
   margin-top: 0;
 }
 .rate-checkbox label:last-child {
   margin-bottom: 0;
-}
+} */
 .spec-inner-cntr {
   display: flex;
   align-items: center;
@@ -1431,7 +1432,7 @@ table tbody tr:last-child {
   padding-left: 5px;
   padding-top: 1px !important;
   padding-bottom: 1px !important;
-  font-family: 'Bold Font' !important;
+  font-family: "Bold Font" !important;
 }
 .spec-inner-cntr b {
   font-size: 10px;
@@ -1512,6 +1513,21 @@ table tbody tr:last-child {
   width: 60%;
   /* background: #aec6cf; */
   margin: 20px auto;
+}
+.rate-bg .select-text,
+.rate-bg .rate-address,
+.rate-bg .spe-equ input[type="text"] {
+  border-color: #d6d6d6;
+}
+.rate-bg .spe-equ input[type="text"]::placeholder,
+.rate-bg .rate-address::placeholder,
+.rate-bg .select-text::placeholder,
+.css-1wa3eu0-placeholder {
+  font-family: "Italic Font";
+}
+.rate-bg .rate-dropdown .css-yk16xz-control,
+.rate-bg .rate-dropdown .css-yk16xz-control:hover {
+  border-color: #d6d6d6;
 }
 .rate-bg .new-radio-rate-cntr label {
   min-width: 120px;
@@ -2360,7 +2376,7 @@ table tbody tr:last-child {
 }
 .header-log {
   width: 145px;
-    padding: 18px 0;
+  padding: 18px 0;
 }
 
 .header-btn {
@@ -2405,9 +2421,9 @@ table tbody tr:last-child {
 
 .header-bell-icon {
   height: auto;
-    width: 25px;
-    margin-top: 12px;
-    cursor: pointer;
+  width: 25px;
+  margin-top: 12px;
+  cursor: pointer;
 }
 .header-chat-icon {
   height: auto;
@@ -2418,7 +2434,7 @@ table tbody tr:last-child {
 
 .header-login-actore-icon {
   height: auto;
-    width: 38px;
+  width: 38px;
   padding: 5px 0;
 }
 .login-name {
@@ -2428,8 +2444,8 @@ table tbody tr:last-child {
 .login-actore-text {
   margin: 0;
   color: #a3a3a3;
-    font-size: 11px;
-    font-weight: 600;
+  font-size: 11px;
+  font-weight: 600;
   line-height: 7px;
   text-overflow: ellipsis;
   max-width: 100px;
@@ -2446,7 +2462,7 @@ table tbody tr:last-child {
   left: -18px !important;
   min-width: 179px;
   border-color: #d6d6d6;
-    border-radius: 0;
+  border-radius: 0;
 }
 .header-ul-login-dtls {
   list-style: none;
@@ -2556,19 +2572,19 @@ table tbody tr:last-child {
 
 .rmstylebtn {
   border: none;
-    font-size: 14px;
-    background-color: white;
-    padding: 0;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    font-weight: 600;
-    color: #1a1919;
-    text-transform: capitalize;
+  font-size: 14px;
+  background-color: white;
+  padding: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #1a1919;
+  text-transform: capitalize;
 }
 .drp-usericon {
   width: 20px;
-    height: auto;
+  height: auto;
 }
 .profile-ul {
   list-style: none;
@@ -2621,8 +2637,8 @@ table tbody tr:last-child {
 }
 .activitylog-icon {
   width: 20px;
-    height: auto;
-    margin-right: 10px;
+  height: auto;
+  margin-right: 10px;
 }
 .activitylog-li:hover {
   background-color: #d6d6d6;
@@ -2636,9 +2652,9 @@ table tbody tr:last-child {
 }
 .logout-li {
   padding: 10px !important;
-    font-size: 14px;
-    color: rgb(26, 25, 25);
-    font-weight: 600;
+  font-size: 14px;
+  color: rgb(26, 25, 25);
+  font-weight: 600;
 }
 .logout-li:hover {
   background-color: #d6d6d6;
@@ -2679,7 +2695,8 @@ table tbody tr:last-child {
   width: 100%;
   text-align: left;
 }
-.shipmentli .card .card-header button:hover, .shipmentli .card .card-header button:focus {
+.shipmentli .card .card-header button:hover,
+.shipmentli .card .card-header button:focus {
   text-decoration: none;
 }
 .shipmentli .card .collapse .card-body {
@@ -2732,11 +2749,11 @@ table tbody tr:last-child {
 }
 .inofIcon {
   width: 22px;
-    height: auto;
+  height: auto;
 }
 .settingIcon {
   width: 22px;
-    height: auto;
+  height: auto;
 }
 .popovercls .popover-header {
   background-color: white;
@@ -3683,7 +3700,7 @@ img {
 }
 /* .messaging {
   /* padding: 15px 0; */
-  /* padding: 0 0 50px 0; 
+/* padding: 0 0 50px 0; 
 } */
 .inbox_chat::-webkit-scrollbar,
 .msg_history::-webkit-scrollbar {
@@ -3753,7 +3770,7 @@ img {
   font-size: 14px;
   width: 250px;
   display: inline-block;
-  float:right;
+  float: right;
   margin-top: -45px;
   margin-right: 15px;
 }
@@ -3764,16 +3781,43 @@ img {
   float: right;
   margin-top: 15px;
   cursor: pointer;
+} 
+/* Css Start Kalpesh */ 
+/* .column-a {
+  margin: 0 15px;
 }
+.card-a {
+  padding: 15px 20px;
+  background-color: #fff;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  width: 224px;
+}
+.column-a .calendar {
+  width: 35px;
+  height: 35px;
+}
+.total-span {
+  float: right;
+  color: #29aae3;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 50px;
+}
+.total-label{
+  color: #000;
+  font-size: 15px;
+  font-family: "Medium Font";
+} */
 
 
 @media (min-width: 768px) {
-.cus-w .col-md-3 {
+  .cus-w .col-md-3 {
     flex: 0 0 33.333333%;
     max-width: 28.333333%;
-}
-.cus-w .col-md-9 {
-  flex: 0 0 71.666667%;
-  max-width: 80.666667%;
-}
+  }
+  .cus-w .col-md-9 {
+    flex: 0 0 71.666667%;
+    max-width: 80.666667%;
+  }
 }

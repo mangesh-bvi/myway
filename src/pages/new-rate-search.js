@@ -114,6 +114,7 @@ class NewRateSearch extends Component {
       companyName: "",
       companyAddress: "",
       contactName: "",
+      contactEmail: "",
       Containerdetails: [],
       PortOfDischargeCode: "",
       PortOfLoadingCode: "",
@@ -236,7 +237,8 @@ class NewRateSearch extends Component {
           companyId: compId.companyId,
           companyName: compId.companyName,
           companyAddress: compId.companyAddress,
-          contactName: compId.contactName
+          contactName: compId.contactName,
+          contactEmail: compId.contactEmail
         });
       }
     }
@@ -1928,7 +1930,7 @@ class NewRateSearch extends Component {
         DeliveryCity: "",
         OriginGeoCordinates: "",
         DestGeoCordinate: "",
-         
+
         Containerdetails: [],
         PortOfDischargeCode: "",
         PortOfLoadingCode: "",
@@ -2679,7 +2681,7 @@ class NewRateSearch extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt">
+          <div className="cls-rt rate-bg">
             <div className="">
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">
@@ -3024,7 +3026,7 @@ class NewRateSearch extends Component {
                           ) : null
                         ) : null}
                       </div>
-                      <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                      <div className="remember-forgot rate-checkbox justify-content-center">
                         <input
                           id="HazMat"
                           type="checkbox"
@@ -3181,7 +3183,7 @@ class NewRateSearch extends Component {
                         ) : null
                       ) : null}
                     </div>
-                    <div className="remember-forgot flex-column rate-checkbox justify-content-center">
+                    <div className="remember-forgot rate-checkbox justify-content-center">
                       <input
                         id="haz-mat"
                         type="checkbox"

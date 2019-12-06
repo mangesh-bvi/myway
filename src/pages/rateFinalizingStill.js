@@ -66,7 +66,9 @@ class RateFinalizingStill extends Component {
       eqmtType: [],
       selectedFile: [],
       modalRejectPop: false,
-      HazMat: ""
+      HazMat: "",
+      isAcceptModal: false,
+      isRejectModal: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -91,6 +93,17 @@ class RateFinalizingStill extends Component {
       this.HandlePackgeTypeData();
       this.HandleCommodityDropdown();
     }
+  }
+
+  //////toggleAcceptModal method
+
+  toggleAcceptModal() {
+    this.setState({ isAcceptModal: !this.state.isAcceptModal });
+  }
+
+  //////toggleRejectModal method
+  toggleRejectModal() {
+    this.setState({ isRejectModal: !this.state.isRejectModal });
   }
 
   HandleSalesQuoteView(param) {
@@ -151,7 +164,7 @@ class RateFinalizingStill extends Component {
                   ModeOfTransport: response.data.Table[0].ModeOfTransport,
                   ShipmentType: response.data.Table[0].ShipmentType,
                   ContainerLoad: param.detail.Type,
-                 
+
                   SpecialEquipment: "",
                   HazMatUnstackable: "",
                   TypeofMove: TypeofMove,
@@ -2272,6 +2285,57 @@ class RateFinalizingStill extends Component {
             </ModalBody>
           </Modal>
         </div>
+        {/* -------------------------------------Accept Modal---------------------------------------- */}
+        <Modal
+          className="amnt-popup"
+          isOpen={this.state.isAcceptModal}
+          toggle={this.toggleAcceptModal}
+          centered={true}
+        >
+          <ModalBody>
+            <div className="text-center">
+              <Button
+                className="butn"
+                //onClick={this.hanleProfitAmountSubmit.bind(this)}
+              >
+                Add
+              </Button>
+
+              <Button
+                className="butn"
+                //onClick={this.hanleProfitAmountRemove.bind(this)}
+              >
+                Remove
+              </Button>
+            </div>
+          </ModalBody>
+        </Modal>
+        {/* --------------------------------Reject Modal---------------------------------------- */}
+        <Modal
+          className="amnt-popup"
+          isOpen={this.state.isRejectModal}
+          toggle={this.toggleAcceptModal}
+          centered={true}
+        >
+          <ModalBody>
+            <p>Do You Want to Reject Sales Quote</p>
+            <div className="text-center">
+              <Button
+                className="butn"
+                //onClick={this.hanleProfitAmountSubmit.bind(this)}
+              >
+                Yes
+              </Button>
+
+              <Button
+                className="butn"
+                //onClick={this.hanleProfitAmountRemove.bind(this)}
+              >
+                No
+              </Button>
+            </div>
+          </ModalBody>
+        </Modal>
         <NotificationContainer />
       </React.Fragment>
     );
