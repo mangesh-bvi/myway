@@ -175,7 +175,7 @@ class SideMenu extends Component {
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />
-              Dashboard
+              <span className="menuname">Dashboard</span>
             </Link>
           </li>
           <li
@@ -199,7 +199,7 @@ class SideMenu extends Component {
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
-                      Shipment
+                      <span className="menuname">Shipment</span>
                     </Accordion.Toggle>
                   </Link>
                 </Card.Header>
@@ -280,7 +280,8 @@ class SideMenu extends Component {
                           alt="green-counter-icon"
                           className="header-greencounter-icon"
                         />
-                        Rates
+                        
+                      <span className="menuname">Rates</span>
                       </Accordion.Toggle>
                     </Link>
                   )}
@@ -367,7 +368,8 @@ class SideMenu extends Component {
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
-                      Quotes
+                      <span className="menuname">Quotes</span>
+                      
                     </Accordion.Toggle>
                   </Link>
                 </Card.Header>
@@ -464,7 +466,8 @@ class SideMenu extends Component {
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
-                      Bookings
+                      
+                      <span className="menuname">Bookings</span>
                     </Accordion.Toggle>
                   </Link>
                 </Card.Header>
@@ -501,7 +504,8 @@ class SideMenu extends Component {
               "Customer"
             ) {
               return (
-                <li className="sidemenu-ul-li">
+                <li className="sidemenu-ul-li"
+           style={{ borderTop: "1px solid #265eb5" }}>
                   <Link
                     to="/shipment-planner"
                     onClick={this.highlightClass.bind(this)}
@@ -511,7 +515,8 @@ class SideMenu extends Component {
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
-                    Shipment Planner
+                      <span className="menuname">Shipment Planner</span>
+                    
                   </Link>
                 </li>
               );
@@ -529,7 +534,8 @@ class SideMenu extends Component {
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />
-              Analytics
+              
+                      <span className="menuname">Analytics</span>
             </Link>
           </li>
           {/* <li className="sidemenu-ul-li">
@@ -555,7 +561,8 @@ class SideMenu extends Component {
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
-                    Green Counter
+                    
+                      <span className="menuname">Green Counter</span>
                   </Link>
                 </li>
               );
@@ -579,7 +586,8 @@ class SideMenu extends Component {
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
-                    Admin
+                    
+                      <span className="menuname">Admin</span>
                   </Link>
                 </li>
               );
@@ -668,6 +676,10 @@ class SideMenu extends Component {
           centered={true}
         >
           <ModalBody>
+          <button type="button" className="close" data-dismiss="modal" onClick={this.toggleProfile}>
+                <span>&times;</span>
+              </button>
+            <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
             <div className="d-flex align-items-center text-left">
               <div className="prof-img">
                 <img src={LoginActore} />
@@ -721,6 +733,7 @@ class SideMenu extends Component {
             >
               Cancel
             </Button>
+            </div>
           </ModalBody>
         </Modal>
       </div>

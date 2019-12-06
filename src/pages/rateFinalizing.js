@@ -2950,7 +2950,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                         </div>
-                        <div className="row">
+                        {/* <div className="row">
                           <div className="col-md-6 d-flex align-items-center">
                             {this.state.toggleAddProfitBtn && (
                               <button
@@ -2961,10 +2961,12 @@ class RateFinalizing extends Component {
                               </button>
                             )}
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </UncontrolledCollapse>
 
+                    
+                    
                     <div className="text-right">
                       <button
                         onClick={this.rateQuery.bind(this)}
@@ -2976,10 +2978,32 @@ class RateFinalizing extends Component {
                         {this.state.rateQuery ? "View More" : "View Less"}
                       </button>
                     </div>
+                        
+                    {/* <div className="text-right">
+                      <button
+                        onClick={this.rateQuery.bind(this)}
+                        className={
+                          this.state.rateQuery ? "butn m-0" : "butn cancel-butn"
+                        }
+                        id="toggler"
+                      >
+                        {this.state.rateQuery ? "View More" : "View Less"}
+                      </button>
+                    </div> */}
                   </div>
 
-                  <div className="rate-final-contr">
-                    <div className="text-center">
+                  <div className="row m-0 py-3">
+                  <div className="align-center px-3">
+                            {this.state.toggleAddProfitBtn && (
+                              <button
+                                onClick={this.toggleProfit}
+                                className="butn more-padd m-0"
+                              >
+                                Add Profit
+                              </button>
+                            )}
+                          </div>
+                  <div className="text-center">
                       {this.state.toggleIsEdit && (
                         <button
                           onClick={this.toggleRequest}
@@ -2989,6 +3013,18 @@ class RateFinalizing extends Component {
                         </button>
                       )}
                     </div>
+                    </div>
+                  <div className="rate-final-contr">
+                    {/* <div className="text-center">
+                      {this.state.toggleIsEdit && (
+                        <button
+                          onClick={this.toggleRequest}
+                          className="butn more-padd m-0"
+                        >
+                          Request Change
+                        </button>
+                      )}
+                    </div> */}
 
                     <div className="title-border py-3">
                       <h3>Cargo Details</h3>
@@ -3164,6 +3200,7 @@ class RateFinalizing extends Component {
                             this.state.isCopy ? (
                               <Autocomplete
                                 id="searchtxt"
+                                className="title-sect p-0 pt-2"
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.customerData}
                                 renderItem={(item, isHighlighted) => (
@@ -3272,7 +3309,7 @@ class RateFinalizing extends Component {
                       </a> */}
                       <button
                         onClick={this.togglePreview}
-                        className="butn more-padd m-0"
+                        className="butn more-padd mr-3"
                       >
                         Preview
                       </button>

@@ -1369,12 +1369,12 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
+                      <div>
                       {this.state.toggleCustomerType && this.state.QuoteStatus && (
                         //QuoteStatus
                         <button
-                          className="butn m-0"
-                          // onClick={this.AcceptQuotes.bind(this)}
-                          onClick={this.toggleAcceptModal}
+                          className="butn m-0 mr-3"
+                          onClick={this.AcceptQuotes.bind(this)}
                         >
                           Accept
                         </button>
@@ -1388,6 +1388,7 @@ class RateFinalizingStill extends Component {
                           Reject
                         </button>
                       )}
+                      </div>
                     </div>
                     <div className="react-rate-table">
                       {/* <ReactTable
