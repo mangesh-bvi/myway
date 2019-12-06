@@ -68,7 +68,8 @@ class RateFinalizingStill extends Component {
       modalRejectPop: false,
       HazMat: "",
       isAcceptModal: false,
-      isRejectModal: false
+      isRejectModal: false,
+      CustomClearance:0
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -168,7 +169,8 @@ class RateFinalizingStill extends Component {
                   SpecialEquipment: "",
                   HazMatUnstackable: "",
                   TypeofMove: TypeofMove,
-                  IncoTerms: IncoTerms
+                  IncoTerms: IncoTerms,
+                  CustomClearance: response.data.Table[0].Customs_Clearance,
                 });
               }
             }
@@ -214,7 +216,9 @@ class RateFinalizingStill extends Component {
                     Weight: table[i].GrossWeight,
                     Gross_Weight: "-",
                     Temperature: "-",
-                    CBM: "-",
+                    CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
+                         (table[i].ChgWeight)
+                         :(table[i].CBM === undefined?"-":table[i].CBM)),
                     Volume: "-",
                     VolumeWeight: "-",
                     Editable: true
@@ -1546,13 +1550,20 @@ class RateFinalizingStill extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">POL</p>
+                                    <p className="details-title">POL</p>
+                                    {this.state.ContainerLoad === "INLAND"?(                                     
                                       <p
+                                        title={row.original.OriginName}
+                                        className="details-para max2"
+                                      >
+                                        {row.original.OriginName}
+                                      </p>)
+                                      : (<p
                                         title={row.original.POL}
                                         className="details-para max2"
                                       >
                                         {row.original.POL}
-                                      </p>
+                                      </p>)}
                                     </>
                                   );
                                 },
@@ -1565,12 +1576,20 @@ class RateFinalizingStill extends Component {
                                   return (
                                     <>
                                       <p className="details-title">POD</p>
-                                      <p
-                                        title={row.original.POD}
-                                        className="details-para max2"
-                                      >
-                                        {row.original.POD}
-                                      </p>
+                                      {this.state.ContainerLoad === "INLAND"
+                                            ?( <p
+                                            title={row.original.DestinationName}
+                                            className="details-para max2"
+                                          >
+                                            {row.original.DestinationName}
+                                          </p>)
+                                            : (<p
+                                            title={row.original.POD}
+                                            className="details-para max2"
+                                          >
+                                            {row.original.POD}
+                                          </p>)
+                                      }
                                     </>
                                   );
                                 },
@@ -1585,9 +1604,10 @@ class RateFinalizingStill extends Component {
                                       <p className="details-title">
                                         TransShipment Port
                                       </p>
+                                      {this.state.ContainerLoad !== "INLAND"?(
                                       <p className="details-para">
                                         {row.original.TransshipmentPort}
-                                      </p>
+                                      </p>):(<p className="details-para"></p>)}
                                     </>
                                   );
                                 },
@@ -1613,9 +1633,10 @@ class RateFinalizingStill extends Component {
                                   return (
                                     <>
                                       <p className="details-title">Container</p>
+                                      {this.state.ContainerLoad !== "INLAND"?(
                                       <p className="details-para">
                                         {row.original.ContainerType}
-                                      </p>
+                                      </p>):(<p className="details-para"></p>)}
                                     </>
                                   );
                                 },
@@ -1646,9 +1667,10 @@ class RateFinalizingStill extends Component {
                                   return (
                                     <>
                                       <p className="details-title">TT</p>
+                                      {this.state.ContainerLoad !== "INLAND"?(
                                       <p className="details-para">
                                         {row.original.TransitTime}
-                                      </p>
+                                      </p>):(<p className="details-para"></p>)}
                                     </>
                                   );
                                 },
@@ -1742,11 +1764,16 @@ class RateFinalizingStill extends Component {
                               <ReactTable
                                 minRows={1}
                                 data={this.state.SubRateDetails.filter(
+                                  this.state.ContainerLoad !== "INLAND"?(
                                   d =>
                                     d.saleQuoteLineID ||
                                     d.SaleQuoteIDLineID ===
                                       row.original.saleQuoteLineID ||
-                                    this.state.RateDetails.saleQuoteLineID
+                                    this.state.RateDetails.saleQuoteLineID):(
+                                      d =>
+                                    d.SaleQuoteIDD ===
+                                      row.original.SaleQuoteID 
+                                    )
                                 )}
                                 // data={this.state.SubRateDetails}
                                 columns={[
@@ -1889,16 +1916,33 @@ class RateFinalizingStill extends Component {
                           <div className="col-md-4">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
-                              {this.state.HazMatUnstackable}
-                              {this.state.HazMat}
+                              {this.state.HazMat==1?"Yes":"No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Unstackable</p>
+
+                            {this.state.ContainerLoad!=="FCL" && "LTL"?(
+                            <>
+                            <div className="col-md-4">
+                              <p className="details-title">Non Stackable</p>
+                              <p className="details-para">
+                                {this.state.HazMatUnstackable==1?"Yes":"No"}
+                              </p>
+                            </div>
+                            <div className="col-md-4">
+                              <p className="details-title">CustomClearance</p>
+                              <p className="details-para">
+                                {this.state.CustomClearance==1?"Yes":"No"}
+                              </p>
+                            </div>
+                            </>
+                            ):(<div className="col-md-4">
+                            <p className="details-title">CustomClearance</p>
                             <p className="details-para">
-                              {this.state.HazMatUnstackable}
+                              {this.state.CustomClearance==1?"Yes":"No"}
                             </p>
-                          </div>
+                            </div>
+                            )}
+                          
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">

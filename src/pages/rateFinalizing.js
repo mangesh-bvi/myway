@@ -111,7 +111,8 @@ class RateFinalizing extends Component {
       RateLineName: "",
       ContactName: "",
       ContactEmail: "",
-      isCopy:false
+      isCopy:false,
+      CustomClearance:0
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -160,6 +161,7 @@ class RateFinalizing extends Component {
         var companyAddress = this.props.location.state.companyAddress;
         var contactName = this.props.location.state.contactName;
         var contactEmail = this.props.location.state.contactEmail;
+        var customClearance = this.props.location.state.Custom_Clearance;
 
         var CargoDetailsArr = [];
         var equipmentTypeArr = [];
@@ -442,7 +444,8 @@ class RateFinalizing extends Component {
           CompanyName: companyName,
           CompanyAddress: companyAddress,
           ContactName: contactName,
-          ContactEmail: contactEmail
+          ContactEmail: contactEmail,
+          CustomClearance: customClearance
         });
 
         this.state.rateDetails = rateDetails;
@@ -461,6 +464,8 @@ class RateFinalizing extends Component {
         this.state.polfullAddData = polfullAddData;
         this.state.podfullAddData = podfullAddData;
         this.state.currencyCode = currencyCode;
+        this.HandleLocalCharges();
+        this.HandleSurCharges();
       } else {
         var qData = this.props.location.state;
         this.setState({ isCopy: this.props.location.state.isCopy });
@@ -471,8 +476,7 @@ class RateFinalizing extends Component {
       this.HandleSalesQuoteConditions();
     }
 
-    this.HandleLocalCharges();
-    this.HandleSurCharges();
+    
 
     if (
       encryption(window.localStorage.getItem("usertype"), "desc") == "Customer"
@@ -493,7 +497,8 @@ class RateFinalizing extends Component {
     this.setState({
       toggleIsEdit: false,
       isediting: isediting,
-      isCopy: isCopy
+      isCopy: isCopy,
+      containerLoadType: type
     });
     var SalesQuoteViewdata = {
       Mode: type,
@@ -517,6 +522,7 @@ class RateFinalizing extends Component {
         var TypeofMove = "";
         var IncoTerms = "";
         var CargoDetailsArr = [];
+        var PackageDetailsArr = [];
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -613,32 +619,50 @@ class RateFinalizing extends Component {
               if (response.data.Table3.length > 0) {
                 var table = response.data.Table3;
                 for (var i = 0; i < table.length; i++) {
-                  CargoDetailsArr.push({
+                //   CargoDetailsArr.push({
+                //     PackageType: table[i].PackageType,
+                //     SpecialContainerCode: table[i].PackageType + "_" + i,
+                //     ContainerType: table[i].PackageType,
+                //     Packaging: "-",
+                //     Quantity: table[i].Quantity,
+                //     Lenght: table[i].Length,
+                //     Width: table[i].Width,
+                //     Height: table[i].height,
+                //     Weight: table[i].GrossWeight,
+                //     Gross_Weight: "-",
+                //     Temperature: "-",
+                //     CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
+                //          (table[i].ChgWeight)
+                //          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                //     Volume: "-",
+                //     VolumeWeight: "-",
+                //     Editable: true
+                //   });
+                // }
+                  PackageDetailsArr.push({
                     PackageType: table[i].PackageType,
-                    SpecialContainerCode: table[i].PackageType + "_" + i,
+                    // SpecialContainerCode:
+                    //   flattack_openTop[i].SpecialContainerCode,
                     ContainerType: table[i].PackageType,
-                    Packaging: "-",
                     Quantity: table[i].Quantity,
                     Lenght: table[i].Length,
                     Width: table[i].Width,
                     Height: table[i].height,
                     Weight: table[i].GrossWeight,
-                    Gross_Weight: "-",
-                    Temperature: "-",
-                    CBM: "-",
-                    Volume: "-",
-                    VolumeWeight: "-",
+                    CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
+                        (table[i].ChgWeight)
+                        :(table[i].CBM === undefined?"-":table[i].CBM)),
                     Editable: true
                   });
                 }
               } else {
-                CargoDetailsArr.push({ Width: "No Data Found" });
+                PackageDetailsArr.push({ Width: "No Data Found" });
               }
             } else {
-              CargoDetailsArr.push({ Width: "No Data Found" });
+              PackageDetailsArr.push({ Width: "No Data Found" });
             }
             self.setState({
-              CargoDetailsArr: CargoDetailsArr
+              PackageDetailsArr: PackageDetailsArr
             });
           }
         }
@@ -649,6 +673,8 @@ class RateFinalizing extends Component {
           multiCBM: response.data.Table3
         });
         self.forceUpdate();
+        self.HandleLocalCharges();
+        self.HandleSurCharges();
         //console.log(response);
       })
       .catch(error => {
@@ -1153,7 +1179,7 @@ class RateFinalizing extends Component {
           if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
             FCLSQCharges.push({
               ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate: rateSubDetailsarr[j].Rate,
+              Rate: rateSubDetailsarr[j].Rate==null?0:rateSubDetailsarr[j].Rate,
               Currency: rateSubDetailsarr[j].Currency,
               RateLineID: rateSubDetailsarr[j].RateLineID,
               ChargeCode: rateSubDetailsarr[j].ChargeCode,
@@ -1162,7 +1188,7 @@ class RateFinalizing extends Component {
               ChargeItem: rateSubDetailsarr[j].ChargeItem,
               Exrate: rateSubDetailsarr[j].Exrate,
               ChargeType: rateSubDetailsarr[j].ChargeType,
-              TotalAmount: rateSubDetailsarr[j].TotalAmount
+              TotalAmount: rateSubDetailsarr[j].TotalAmount==null?0:rateSubDetailsarr[j].TotalAmount
             });
           }
         }
@@ -1170,7 +1196,7 @@ class RateFinalizing extends Component {
           if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
             FCLSQCharges.push({
               ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate: rateSubDetailsarr[j].Rate,
+              Rate: rateSubDetailsarr[j].Rate==null?0:rateSubDetailsarr[j].Rate,
               Currency: rateSubDetailsarr[j].Currency,
               RateLineID: rateSubDetailsarr[j].RateLineID,
               ChargeCode: rateSubDetailsarr[j].ChargeCode,
@@ -1306,7 +1332,7 @@ class RateFinalizing extends Component {
           });
         }
       }
-    } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+    } else if (containerLoadType == "FTL") {
       var TruckTypeData = this.state.TruckTypeData;
       for (var i = 0; i < TruckTypeData.length; i++) {
         //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
@@ -1322,7 +1348,7 @@ class RateFinalizing extends Component {
         });
       }
       //
-    } else if (containerLoadType == "AIR") {
+    } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
       var multiCBM = this.state.multiCBM;
       for (var i = 0; i < multiCBM.length; i++) {
         //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
@@ -1374,8 +1400,11 @@ class RateFinalizing extends Component {
       ZipCode: 0
     };
 
-    if (this.state.typeofMove == 2 || this.state.typeofMove == 4) {
-      PickUpAddress = this.props.location.state.pickUpAddress[0].City;
+    if (this.state.typeofMove == 1) {
+      PickUpAddress = this.state.polfullAddData.OceanPortLongName;
+      DestinationAddress = this.state.podfullAddData.OceanPortLongName;
+    }
+    if (this.state.typeofMove == 2) {
       PickUpAddressDetails = {
         Street: this.props.location.state.pickUpAddress[0].Area,
         Country: this.props.location.state.pickUpAddress[0].Country,
@@ -1383,10 +1412,27 @@ class RateFinalizing extends Component {
         City: this.props.location.state.pickUpAddress[0].City,
         ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
       };
+      DestinationAddress = this.state.podfullAddData.OceanPortLongName;
     }
 
-    if (this.state.typeofMove == 3 || this.state.typeofMove == 4) {
-      DestinationAddress = this.props.location.state.destAddress[0].City;
+    if (this.state.typeofMove == 4) {
+      PickUpAddressDetails = {
+        Street: this.props.location.state.pickUpAddress[0].Area,
+        Country: this.props.location.state.pickUpAddress[0].Country,
+        State: this.props.location.state.pickUpAddress[0].State,
+        City: this.props.location.state.pickUpAddress[0].City,
+        ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+      };
+      DestinationAddressDetails = {
+        Street: this.props.location.state.destAddress[0].Area,
+        Country: this.props.location.state.destAddress[0].Country,
+        State: this.props.location.state.destAddress[0].State,
+        City: this.props.location.state.destAddress[0].City,
+        ZipCode: this.props.location.state.destAddress[0].ZipCode
+      };
+    } 
+    if (this.state.typeofMove == 3) {
+      PickUpAddress = this.state.polfullAddData.OceanPortLongName;
       DestinationAddressDetails = {
         Street: this.props.location.state.destAddress[0].Area,
         Country: this.props.location.state.destAddress[0].Country,
@@ -1405,7 +1451,7 @@ class RateFinalizing extends Component {
       DestinationAddress: DestinationAddress,
       HazMat: this.state.HazMat == true ? 1 : 0,
       ChargeableWt: 0,
-      Containerdetails: Containerdetails,
+      //Containerdetails: Containerdetails,
       PickUpAddressDetails: PickUpAddressDetails,
       DestinationAddressDetails: DestinationAddressDetails,
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
@@ -1423,6 +1469,7 @@ class RateFinalizing extends Component {
       MailBody:
         "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
       Commodity: Number(this.state.CommodityID)
+        
     };
 
     var url = "";
@@ -1430,10 +1477,16 @@ class RateFinalizing extends Component {
     if (this.state.containerLoadType == "FCL") {
       senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.FCLSQCharges = FCLSQCharges;
+      senrequestpara.CustomClearance  = this.state.CustomClearance == true ? 1 : 0;
+      senrequestpara.Containerdetails = Containerdetails;
+      //senrequestpara.NonStackable = 0;
       url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "LCL") {
       senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.LCLSQCharges = FCLSQCharges;
+      senrequestpara.CustomClearance = this.state.CustomClearance == true ? 1 : 0;;
+      senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
+      senrequestpara.Containerdetails = Containerdetails;
       url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
     } else if (
       this.state.containerLoadType == "FTL" ||
@@ -1441,10 +1494,15 @@ class RateFinalizing extends Component {
     ) {
       senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.InlandSQCharges = FCLSQCharges;
+      senrequestpara.CustomClearance = this.state.CustomClearance == true ? 1 : 0;;
+      
       url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "AIR") {
       senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.AirSQCharges = FCLSQCharges;
+      senrequestpara.CustomClearance = this.state.CustomClearance == true ? 1 : 0;;
+      senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
+      senrequestpara.Containerdetails = Containerdetails;
       url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
     }
     //return false;
@@ -1959,9 +2017,11 @@ class RateFinalizing extends Component {
       headers: authHeader()
     }).then(function(response) {
     debugger; 
-    self.setState({
-      ConditionDesc: response.data.Table[0].conditionDesc
-    })   
+    if (response.data.Table.length > 0) {
+      self.setState({
+        ConditionDesc: response.data.Table[0].conditionDesc
+      })   
+    }    
   })
   }
   //------------------------------------------------------------------//
