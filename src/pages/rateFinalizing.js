@@ -111,7 +111,9 @@ class RateFinalizing extends Component {
       RateLineName: "",
       ContactName: "",
       ContactEmail: "",
-      isCopy:false
+      isCopy: false,
+      SalesQuoteNo: "",
+      
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -480,7 +482,6 @@ class RateFinalizing extends Component {
       this.setState({ toggleAddProfitBtn: false });
     }
   }
-  
 
   HandleSalesQuoteView(param) {
     debugger;
@@ -1465,13 +1466,23 @@ class RateFinalizing extends Component {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
-                setTimeout(function() {
-                  window.location.href = "quote-table";
-                }, 5000);
-                // window.location.href = "quote-table";
+                var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
                 if (usertype !== "Sales User") {
+                  self.setState({
+                    SalesQuoteNo
+                  });
+
                   self.AcceptQuotes();
+
+                  setTimeout(function() {
+                    window.location.href = "quote-table";
+                  }, 1000);
+                } else {
+                  setTimeout(function() {
+                    window.location.href = "quote-table";
+                  }, 1000);
                 }
+                // window.location.href = "quote-table";
               }
             }
           }
@@ -1869,15 +1880,14 @@ class RateFinalizing extends Component {
   // --------------------------------------------------------------//
 
   AcceptQuotes() {
+    debugger;
     let self = this;
     var SalesQuoteNumber = "";
     var QuoteType = "";
-    if (typeof this.props.location.state != "undefined") {
-      SalesQuoteNumber = this.props.location.state.detail.Quotes;
-      QuoteType = this.props.location.state.detail.Type;
-    } else {
-      return false;
-    }
+
+    SalesQuoteNumber = self.state.SalesQuoteNo;
+    QuoteType = self.state.containerLoadType;
+
     debugger;
     axios({
       method: "post",
@@ -1949,20 +1959,25 @@ class RateFinalizing extends Component {
       });
   }
 
-  HandleSalesQuoteConditions(){
+  HandleSalesQuoteConditions() {
     let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteConditions`,
-      data:  {Mode:this.state.containerLoadType, ShipmentType:this.state.shipmentType, 
-        MywayUserID:encryption(window.localStorage.getItem("userid"), "desc")},
+      data: {
+        Mode: this.state.containerLoadType,
+        ShipmentType: this.state.shipmentType,
+        MywayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
       headers: authHeader()
     }).then(function(response) {
-    debugger; 
-    self.setState({
-      ConditionDesc: response.data.Table[0].conditionDesc
-    })   
-  })
+      debugger;
+      if (response.data.Table.length > 0) {
+        self.setState({
+          ConditionDesc: response.data.Table[0].conditionDesc
+        });
+      }
+    });
   }
   //------------------------------------------------------------------//
 
@@ -2935,7 +2950,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                         </div>
-                        <div className="row">
+                        {/* <div className="row">
                           <div className="col-md-6 d-flex align-items-center">
                             {this.state.toggleAddProfitBtn && (
                               <button
@@ -2946,10 +2961,12 @@ class RateFinalizing extends Component {
                               </button>
                             )}
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </UncontrolledCollapse>
 
+                    
+                    
                     <div className="text-right">
                       <button
                         onClick={this.rateQuery.bind(this)}
@@ -2961,10 +2978,32 @@ class RateFinalizing extends Component {
                         {this.state.rateQuery ? "View More" : "View Less"}
                       </button>
                     </div>
+                        
+                    {/* <div className="text-right">
+                      <button
+                        onClick={this.rateQuery.bind(this)}
+                        className={
+                          this.state.rateQuery ? "butn m-0" : "butn cancel-butn"
+                        }
+                        id="toggler"
+                      >
+                        {this.state.rateQuery ? "View More" : "View Less"}
+                      </button>
+                    </div> */}
                   </div>
 
-                  <div className="rate-final-contr">
-                    <div className="text-center">
+                  <div className="row m-0 py-3">
+                  <div className="align-center px-3">
+                            {this.state.toggleAddProfitBtn && (
+                              <button
+                                onClick={this.toggleProfit}
+                                className="butn more-padd m-0"
+                              >
+                                Add Profit
+                              </button>
+                            )}
+                          </div>
+                  <div className="text-center">
                       {this.state.toggleIsEdit && (
                         <button
                           onClick={this.toggleRequest}
@@ -2974,6 +3013,18 @@ class RateFinalizing extends Component {
                         </button>
                       )}
                     </div>
+                    </div>
+                  <div className="rate-final-contr">
+                    {/* <div className="text-center">
+                      {this.state.toggleIsEdit && (
+                        <button
+                          onClick={this.toggleRequest}
+                          className="butn more-padd m-0"
+                        >
+                          Request Change
+                        </button>
+                      )}
+                    </div> */}
 
                     <div className="title-border py-3">
                       <h3>Cargo Details</h3>
@@ -3149,6 +3200,7 @@ class RateFinalizing extends Component {
                             this.state.isCopy ? (
                               <Autocomplete
                                 id="searchtxt"
+                                className="title-sect p-0 pt-2"
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.customerData}
                                 renderItem={(item, isHighlighted) => (
@@ -3257,7 +3309,7 @@ class RateFinalizing extends Component {
                       </a> */}
                       <button
                         onClick={this.togglePreview}
-                        className="butn more-padd m-0"
+                        className="butn more-padd mr-3"
                       >
                         Preview
                       </button>
@@ -3297,45 +3349,58 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
-            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleProfit}>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                onClick={this.toggleProfit}
+              >
                 <span>&times;</span>
               </button>
-              <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
-              <div className="txt-cntr">
-                <div className="d-flex align-items-center">
-                  <p className="details-title mr-3">
-                    Amount ({this.state.currencyCode})
-                  </p>
-                  <div class="spe-equ d-block m-0 flex-grow-1">
-                    <input
-                      type="text"
-                      placeholder={"Enter Amount in " + this.state.currencyCode}
-                      class="w-100"
-                      value={this.state.ProfitAmount}
-                      onChange={this.hanleProfitAmountChange.bind(this)}
-                      maxLength="10"
-                    />
+              <div
+                style={{
+                  background: "#fff",
+                  padding: "15px",
+                  borderRadius: "15px"
+                }}
+              >
+                <div className="txt-cntr">
+                  <div className="d-flex align-items-center">
+                    <p className="details-title mr-3">
+                      Amount ({this.state.currencyCode})
+                    </p>
+                    <div class="spe-equ d-block m-0 flex-grow-1">
+                      <input
+                        type="text"
+                        placeholder={
+                          "Enter Amount in " + this.state.currencyCode
+                        }
+                        class="w-100"
+                        value={this.state.ProfitAmount}
+                        onChange={this.hanleProfitAmountChange.bind(this)}
+                        maxLength="10"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="text-center">
-                {!this.state.toggleProfitRemoveBtn && (
-                  <Button
-                    className="butn"
-                    onClick={this.hanleProfitAmountSubmit.bind(this)}
-                  >
-                    Add
-                  </Button>
-                )}
-                {this.state.toggleProfitRemoveBtn && (
-                  <Button
-                    className="butn"
-                    onClick={this.hanleProfitAmountRemove.bind(this)}
-                  >
-                    Remove
-                  </Button>
-                )}
-              </div>
+                <div className="text-center">
+                  {!this.state.toggleProfitRemoveBtn && (
+                    <Button
+                      className="butn"
+                      onClick={this.hanleProfitAmountSubmit.bind(this)}
+                    >
+                      Add
+                    </Button>
+                  )}
+                  {this.state.toggleProfitRemoveBtn && (
+                    <Button
+                      className="butn"
+                      onClick={this.hanleProfitAmountRemove.bind(this)}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
               </div>
             </ModalBody>
           </Modal>
@@ -3377,45 +3442,56 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
-            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleRequest}>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                onClick={this.toggleRequest}
+              >
                 <span>&times;</span>
               </button>
-              <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
-              <h3 className="mb-4">Request Changes</h3>
-              {this.state.toggleAddProfitBtn && (
-                <div className="rename-cntr login-fields">
-                  <label>Discount</label>
-                  <input
-                    type="text"
-                    id="txtRequestDiscount"
-                    placeholder="Enter Discount"
-                  />
+              <div
+                style={{
+                  background: "#fff",
+                  padding: "15px",
+                  borderRadius: "15px"
+                }}
+              >
+                <h3 className="mb-4">Request Changes</h3>
+                {this.state.toggleAddProfitBtn && (
+                  <div className="rename-cntr login-fields">
+                    <label>Discount</label>
+                    <input
+                      type="text"
+                      id="txtRequestDiscount"
+                      placeholder="Enter Discount"
+                    />
+                  </div>
+                )}
+                {this.state.toggleAddProfitBtn && (
+                  <div className="rename-cntr login-fields">
+                    <label>Free Time</label>
+                    <input
+                      type="text"
+                      id="txtRequestFreeTime"
+                      placeholder="Enter Time"
+                      maxLength="2"
+                    />
+                  </div>
+                )}
+                <div className="rename-cntr login-fields mb-0">
+                  <label>Comments</label>
+                  <textarea
+                    className="txt-add"
+                    placeholder="Enter Comments"
+                    id="txtRequestComments"
+                  ></textarea>
                 </div>
-              )}
-              {this.state.toggleAddProfitBtn && (
-                <div className="rename-cntr login-fields">
-                  <label>Free Time</label>
-                  <input
-                    type="text"
-                    id="txtRequestFreeTime"
-                    placeholder="Enter Time"
-                    maxLength="2"
-                  />
+                <div className="text-center">
+                  <Button className="butn" onClick={this.SendRequest}>
+                    Request
+                  </Button>
                 </div>
-              )}
-              <div className="rename-cntr login-fields mb-0">
-                <label>Comments</label>
-                <textarea
-                  className="txt-add"
-                  placeholder="Enter Comments"
-                  id="txtRequestComments"
-                ></textarea>
-              </div>
-              <div className="text-center">
-                <Button className="butn" onClick={this.SendRequest}>
-                  Request
-                </Button>
-              </div>
               </div>
             </ModalBody>
           </Modal>
@@ -3869,26 +3945,35 @@ class RateFinalizing extends Component {
                   </div>
                 </div>
               </div>
-              <div className="row">    
+              <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
                     <h3>
-                      From, <span>{encryption(
-                                window.localStorage.getItem("companyname"),
-                                "desc"
-                              )}</span>
+                      From,{" "}
+                      <span>
+                        {encryption(
+                          window.localStorage.getItem("companyname"),
+                          "desc"
+                        )}
+                      </span>
                     </h3>
                     <label>
-                      Sales Person : <span>{encryption(
-                                window.localStorage.getItem("username"),
-                                "desc"
-                              )}</span>
+                      Sales Person :{" "}
+                      <span>
+                        {encryption(
+                          window.localStorage.getItem("username"),
+                          "desc"
+                        )}
+                      </span>
                     </label>
                     <label>
-                      E-Mail : <span>{encryption(
-                                window.localStorage.getItem("emailid"),
-                                "desc"
-                              )}</span>
+                      E-Mail :{" "}
+                      <span>
+                        {encryption(
+                          window.localStorage.getItem("emailid"),
+                          "desc"
+                        )}
+                      </span>
                     </label>
                     <label>
                       Phone : <span></span>
@@ -4325,31 +4410,38 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                   </div>
-                  
                 </>
               ))}
               <div className="row">
-                 <div className="col-12">
-                    <div className="thirdbox">
-                      <div className="table-responsive">
-                        <table className="table table-responsive">
-                          <thead>
-                            <tr>
-                              <th>Terms and Conditions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>{this.state.ConditionDesc}</td>                                 
-                            </tr>
-                            <tr>
-                              <td><a href="http://www.atafreight.com/Document/terms.pdf" target="_blank" style={{cursor: 'pointer', color:'blue'}}>terms and conditions</a></td>                                 
-                            </tr>
-                          </tbody>
-                          </table>
-                      </div>
+                <div className="col-12">
+                  <div className="thirdbox">
+                    <div className="table-responsive">
+                      <table className="table table-responsive">
+                        <thead>
+                          <tr>
+                            <th>Terms and Conditions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{this.state.ConditionDesc}</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <a
+                                href="http://www.atafreight.com/Document/terms.pdf"
+                                target="_blank"
+                                style={{ cursor: "pointer", color: "blue" }}
+                              >
+                                terms and conditions
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
+                </div>
               </div>
 
               {/* }})()} */}

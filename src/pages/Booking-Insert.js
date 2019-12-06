@@ -41,6 +41,8 @@ class BookingInsert extends Component {
       Consignee: [],
       Shipper: [],
       FileData: [],
+      Notify: [],
+      Buyer: [],
       packageTypeData: [],
       userType: "",
       NonCustomerData: [],
@@ -72,6 +74,9 @@ class BookingInsert extends Component {
 
       consineeData: {},
       shipperData: {},
+      notifyData: {},
+      buyerData: {},
+
       buyerId: 0,
 
       //---------------sales quotation details
@@ -266,8 +271,6 @@ class BookingInsert extends Component {
       }
 
       if (QuotationData.length > 0) {
-
-        
         var Commodity = QuotationData[0].Commodity;
         var POL = QuotationData[0].POL;
         var POD = QuotationData[0].POD;
@@ -581,7 +584,7 @@ class BookingInsert extends Component {
         url: `${appSettings.APIURL}/NonCustomerList`,
         data: {
           CustomerName: customerName,
-          CustomerType: "Existing",
+
           MyWayUserID: userId
         },
         headers: authHeader()
@@ -594,9 +597,21 @@ class BookingInsert extends Component {
               Consignee: response.data.Table,
               fields
             });
-          } else {
+          }
+          if (field == "Notify") {
+            self.setState({
+              Notify: response.data.Table,
+              fields
+            });
+          }
+          if (field == "Shipper") {
             self.setState({
               Shipper: response.data.Table,
+              fields
+            });
+          } else {
+            self.setState({
+              Buyer: response.data.Table,
               fields
             });
           }
@@ -608,11 +623,25 @@ class BookingInsert extends Component {
                 fields,
                 consineeData: response.data.Table[0]
               });
-            } else {
+            }
+            if (field == "Shipper") {
               self.setState({
                 Shipper: response.data.Table,
                 fields,
                 shipperData: response.data.Table[0]
+              });
+            }
+            if (field == "Notify") {
+              self.setState({
+                Notify: response.data.Table,
+                fields,
+                notifyData: response.data.Table[0]
+              });
+            } else {
+              self.setState({
+                Buyer: response.data.Table,
+                fields,
+                buyerData: response.data.Table[0]
               });
             }
           } else {
@@ -635,10 +664,22 @@ class BookingInsert extends Component {
     fields[field] = value;
     if (field == "Consignee") {
       this.state.ConsigneeID = id.Company_ID;
-      this.setState({ consineeData: id });
-    } else {
-      this.setState({ shipperData: id });
+      var Consignee_Displayas = id.Company_Address;
+      this.setState({ consineeData: id, Consignee_Displayas });
+    }
+    if (field == "Shipper") {
+      var Shipper_Displayas = id.Company_Address;
+      this.setState({ shipperData: id, Shipper_Displayas });
       this.state.ShipperID = id.Company_ID;
+    }
+    if (field == "Notify") {
+      var Notify_Displayas = id.Company_Address;
+      this.setState({ shipperData: id, Notify_Displayas });
+      this.state.NotifyID = id.Company_ID;
+    } else {
+      var Shipper_Displayas = id.Company_Address;
+      this.setState({ shipperData: id, Shipper_Displayas });
+      this.state.BuyerID = id.Company_ID;
     }
 
     this.setState({
@@ -892,20 +933,32 @@ class BookingInsert extends Component {
                               {
                                 Cell: row => {
                                   i++;
-                                  return (
-                                    <React.Fragment>
-                                      <div className="d-flex align-items-center">
-                                        <div>
-                                          <p className="details-title">
-                                            <img
-                                              src={maersk}
-                                              alt="maersk icon"
-                                            />
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </React.Fragment>
-                                  );
+                                  debugger;
+                                  var URL = "";
+                                  var lineName = row.original.lineName;
+                                  if (typeof lineName !== "undefined") {
+                                    if (this.state.ModeofTransport == "Ocean") {
+                                      URL =
+                                        "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                        lineName.replace(" ", "_");
+                                      return (
+                                        <React.Fragment>
+                                          <div className="d-flex align-items-center">
+                                            <div>
+                                              <p className="details-title">
+                                                <img
+                                                  src={require(URL)}
+                                                  alt="maersk icon"
+                                                />
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  } else {
+                                    return <></>;
+                                  }
                                 },
                                 accessor: "lineName",
                                 width: 200
@@ -1051,16 +1104,24 @@ class BookingInsert extends Component {
                               {this.state.ContainerLoad}
                             </p>
                           </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Equipment Types</p>
-                            <p className="details-para">
-                              {this.state.ContainerCode}
-                            </p>
-                          </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Special Equipment</p>
-                            <p className="details-para"></p>
-                          </div>
+                          {this.state.ContainerLoad === "FCL" ? (
+                            <>
+                              <div className="col-md-4">
+                                <p className="details-title">Equipment Types</p>
+                                <p className="details-para">
+                                  {this.state.ContainerCode}
+                                </p>
+                              </div>
+                              <div className="col-md-4">
+                                <p className="details-title">
+                                  Special Equipment
+                                </p>
+                                <p className="details-para"></p>
+                              </div>
+                            </>
+                          ) : (
+                            ""
+                          )}
                           <div className="col-md-4">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">{this.state.HAZMAT}</p>
@@ -1090,18 +1151,18 @@ class BookingInsert extends Component {
                             <p className="details-title">POD</p>
                             <p className="details-para">{this.state.POD}</p>
                           </div>
-                          <div className="col-md-4">
+                          {/* <div className="col-md-4">
                             <p className="details-title">PU Address</p>
-                            {/* <p className="details-para">
+                            <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p> */}
+                            </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Delivery Address</p>
-                            {/* <p className="details-para">
+                            <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p> */}
-                          </div>
+                            </p>
+                          </div> */}
                         </div>
                       </div>
                     </Collapse>
@@ -1206,7 +1267,7 @@ class BookingInsert extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Consignee Name</p>
-                            {/* <Autocomplete
+                            <Autocomplete
                               getItemValue={item => item.Company_Name}
                               items={this.state.Consignee}
                               renderItem={(item, isHighlighted) => (
@@ -1233,8 +1294,8 @@ class BookingInsert extends Component {
                                 "Consignee"
                               )}
                               value={this.state.fields["Consignee"]}
-                            /> */}
-                            <select
+                            />
+                            {/* <select
                               onChange={this.HandleChangeConsinee.bind(this)}
                               value={this.state.ConsigneeID}
                             >
@@ -1244,14 +1305,18 @@ class BookingInsert extends Component {
                                   {item.Company_Name}
                                 </option>
                               ))}
-                            </select>
+                            </select> */}
                           </div>
 
-                          <div className="col-md-4">
+                          <div className="col-md-6">
                             <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {this.state.Consinee_Displayas}
-                            </p>
+                            {/* <p className="details-para"> */}
+                            <textarea
+                              style={{ width: "100%" }}
+                              value={this.state.Consignee_Displayas}
+                            ></textarea>
+                            {/* {this.state.Consinee_Displayas} */}
+                            {/* </p> */}
                           </div>
                         </div>
                       </div>
@@ -1264,7 +1329,7 @@ class BookingInsert extends Component {
                         <div className="row">
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Shipper Name</p>
-                            {/* <Autocomplete
+                            <Autocomplete
                               getItemValue={item => item.Company_Name}
                               items={this.state.Shipper}
                               renderItem={(item, isHighlighted) => (
@@ -1289,9 +1354,9 @@ class BookingInsert extends Component {
                                 item => item.Company_ID,
                                 "Shipper"
                               )}
-                            /> */}
+                            />
 
-                            <select
+                            {/* <select
                               onChange={this.HandleChangeShipper.bind(this)}
                               value={this.state.ShipperID}
                             >
@@ -1301,17 +1366,20 @@ class BookingInsert extends Component {
                                   {item.Company_Name}
                                 </option>
                               ))}
-                            </select>
+                            </select> */}
                           </div>
 
-                          <div className="col-md-4">
+                          <div className="col-md-6">
                             <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {/* {this.state.shipperData !== null
+
+                            {/* {this.state.shipperData !== null
                                 ? this.state.shipperData.CompanyAddress
                                 : ""} */}
-                              {this.state.Shipper_Displayas}
-                            </p>
+                            {/* {this.state.Shipper_Displayas} */}
+                            <textarea
+                              style={{ width: "100%" }}
+                              value={this.state.Shipper_Displayas}
+                            ></textarea>
                           </div>
                         </div>
                       </div>
@@ -1347,7 +1415,7 @@ class BookingInsert extends Component {
                                 ? Booking[0].Buyer_Name
                                 : null} */}
 
-                              <select
+                              {/* <select
                                 onChange={this.HandleChangeBuyer.bind(this)}
                                 value={this.state.BuyerID}
                               >
@@ -1357,16 +1425,47 @@ class BookingInsert extends Component {
                                     {item.Company_Name}
                                   </option>
                                 ))}
-                              </select>
+                              </select> */}
+
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Buyer}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Buyer"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Buyer"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Buyer"
+                                )}
+                              />
                             </p>
                           </div>
                           <div className="col-md-6">
                             <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {this.state.Buyer_Displayas !== ""
+
+                            {/* {this.state.Buyer_Displayas !== ""
                                 ? this.state.Buyer_Displayas
-                                : null}
-                            </p>
+                                : null} */}
+
+                            <textarea
+                              style={{ width: "100%" }}
+                              value={this.state.Buyer_Displayas}
+                            ></textarea>
                           </div>
                         </div>
                       </div>
@@ -1380,7 +1479,7 @@ class BookingInsert extends Component {
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
-                              <select
+                              {/* <select
                                 onChange={this.HandleChangeParty.bind(this)}
                                 value={this.state.NotifyID}
                               >
@@ -1390,16 +1489,48 @@ class BookingInsert extends Component {
                                     {item.Company_Name}
                                   </option>
                                 ))}
-                              </select>
+                              </select> */}
+
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Notify}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Notify"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Notify"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Notify"
+                                )}
+                              />
                             </p>
                           </div>
                           <div className="col-md-6">
                             <p className="details-title">Address</p>
-                            <p className="details-para">
+                            {/* <p className="details-para">
                               {this.state.Notify_Displayas !== ""
                                 ? this.state.Notify_Displayas
                                 : null}
-                            </p>
+                            </p> */}
+
+                            <textarea
+                              style={{ width: "100%" }}
+                              value={this.state.Buyer_Displayas}
+                            ></textarea>
                           </div>
                         </div>
                       </div>

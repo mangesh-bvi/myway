@@ -4,7 +4,7 @@ import Logo from "./../assets/img/logo.png";
 import Menubars from "./../assets/img/menubars.png";
 import "../assets/css/custom.css";
 import BellIcon from "./../assets/img/bell.png";
-import ChatIcon from "./../assets/img/chat.png";
+import ChatIcon from "./../assets/img/chat-old.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import PhoneIcon from "./../assets/img/phone.png";
 import QRCode from "../pages/QRCode";
@@ -327,13 +327,13 @@ class Header extends Component {
       <div>
         <div className="cls-header-1">
           <div className="row">
-            <div className="col-xs col-sm-6 col-md-3">
+            <div className="col-xs col-sm-3 col-md-3 col-lg-3">
               <Link to="/Dashboard">
                 <img src={Logo} alt="log-icon" className="header-log" />
               </Link>
               {/* <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" /> */}
             </div>
-            <div className="col-xs col-sm-6 col-md-9">
+            <div className="col-xs col-sm-9 col-md-9 col-lg-9">
               <ul className="header-ul">
                 {encryption(window.localStorage.getItem("usertype"), "desc") ===
                 "Sales User"
@@ -391,15 +391,7 @@ class Header extends Component {
                     className="header-chat-icon"
                     onClick={this.toggleDocu}
                   />
-                  <label
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                      color: "#1a1919"
-                    }}
-                  >
-                    Live Chat
-                  </label>
+                  {/* <label style={{fontSize:"12px" , fontWeight: "bold" , color: "#1a1919"}}>Live Chat</label> */}
                   <Modal
                     className="delete-popup pol-pod-popup"
                     isOpen={this.state.modalDocu}

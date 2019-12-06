@@ -2428,7 +2428,7 @@ table tbody tr:last-child {
 .header-chat-icon {
   height: auto;
   width: 35px !important;
-  padding-right: 7px;
+  padding: 0 3px;
   cursor: pointer;
 }
 
@@ -2457,10 +2457,8 @@ table tbody tr:last-child {
 .profile-dropdown {
   border-color: #d6d6d6;
   padding: 0;
-  transform: translate3d(850px, 70px, 0px) !important;
   top: 0 !important;
-  left: -18px !important;
-  min-width: 179px;
+  left: -10px !important;
   border-color: #d6d6d6;
   border-radius: 0;
 }
@@ -3591,7 +3589,7 @@ img {
   /* height: 600px; */
   /* overflow-y: scroll; */
   /* max-height: calc(100vh - 120px); */
-  max-height: calc(100vh - 210px);
+  max-height: calc(100vh - 130px);
   overflow-y: auto;
 }
 
@@ -3781,6 +3779,9 @@ img {
   float: right;
   margin-top: 15px;
   cursor: pointer;
+} 
+.title-secpad {
+  padding: 15px 30px;
 }
 /* Css Start Kalpesh */
 /* .column-a {
@@ -3818,5 +3819,66 @@ img {
   .cus-w .col-md-9 {
     flex: 0 0 71.666667%;
     max-width: 80.666667%;
+  }
+}
+@media (max-width: 768px) {
+  .menuname {
+    display: none;
+  }
+  .cls-flside {
+    width: 50px;
+  }
+  .sidemenu-ul-li a {
+    padding: 15px 5px;
+  }
+  .header-greencounter-icon {
+    display: block;
+    width: 30px;
+    margin-right: 0;
+    margin: auto;
+  }
+  .cls-rt {
+    width: calc(94% - 40px);
+  }
+}
+@media (min-width: 576px) and (max-width: 767px) {
+  .header-ul li {
+    padding: 10px;
+}
+.header-btn {
+  padding: 5px 10px;
+  font-size: 10px;
+  margin: 10px 5px 0 5px;
+}
+.header-chat-icon {
+  padding: 0 4px;
+}
+}
+@media (min-width: 461px) and (max-width: 575px) {
+.header-log {
+  margin: auto;
+  display: block;
+}
+.header-ul {
+  float: none;
+  margin: auto;
+  border-top: 1px solid #d6d6d6;
+}
+}
+@media (min-width: 320px) and (max-width: 460px) {
+  .login-between {
+    padding: 50px 15px;
+  }
+  .login-cntr .butn {
+    margin-right: 10px;
+  }
+  .header-log {
+    margin: auto;
+    display: block;
+  }
+  .header-ul {
+    float: none;
+    margin: auto;
+    border-top: 1px solid #d6d6d6;
   }
 }

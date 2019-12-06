@@ -1271,7 +1271,7 @@ class ShipmentPlanner extends Component {
               <button type="button" className="close" data-dismiss="modal" onClick={this.toggleTransit}>
                 <span>&times;</span>
               </button>
-                <div style={{backgroundColor:"#fff",padding:"15",borderRadius:"0"}}>
+                <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
                     <div className="container-fluid p-0">
 {/* <div class="row">
   <div class="column-a">

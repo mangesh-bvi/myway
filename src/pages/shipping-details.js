@@ -16,9 +16,9 @@ import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
-import PlaneColor from "./../assets/img/Air Shipment color.png";
-import OceanColor from "./../assets/img/Ocean Shipment color.png";
-import TruckColor from "./../assets/img/Delay Shipment color.png";
+import PlaneColor from "./../assets/img/AirShipment-color.png";
+import OceanColor from "./../assets/img/OceanShipment-color.png";
+import TruckColor from "./../assets/img/DelayShipment-color.png";
 import Transit from "./../assets/img/transit.png";
 import { encryption } from "../helpers/encryption";
 import Box from "./../assets/img/box.png";
@@ -26,17 +26,19 @@ import Delivered from "./../assets/img/delivered.png";
 import InPlane from "./../assets/img/in-plane.png";
 import Arrived from "./../assets/img/arrived.png";
 import ArrivedStatus from "./../assets/img/arrived-status.png";
-import ArrivedStatusColor from "./../assets/img/Arrived b.png";
+import ArrivedStatusColor from "./../assets/img/Arrived-b.png";
 import InlandTransportStatus from "./../assets/img/inland-transportation-status.png";
-import InlandTransportStatusColor from "./../assets/img/Inland Transportation b.png";
+import InlandTransportStatusColor from "./../assets/img/InlandTransportation-b.png";
 import TransshippedStatus from "./../assets/img/transshipped-status.png";
 import InTransitStatus from "./../assets/img/in-transit-status.png";
 import GateInStatus from "./../assets/img/gate-in-status.png";
 import DepartedStatus from "./../assets/img/departed-status.png";
+import DepartedStatusColor from "./../assets/img/Departed-b.png";
 import DeliveredStatus from "./../assets/img/delivered-status.png";
-import DeliveredStatusColor from "./../assets/img/Delivered b.png";
-import BookedStatus from "./../assets/img/booked-status.png";
+import DeliveredStatusColor from "./../assets/img/Delivered-b.png";
+import BookedStatusColor from "./../assets/img/Booked-b.png";
 import ApprovedStatus from "./../assets/img/approved-status.png";
+import ApprovedStatusColor from "./../assets/img/Approved-b.png";
 import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -778,7 +780,7 @@ class ShippingDetails extends Component {
                           } else if (row.value == "Departed") {
                             return (
                               <div title="Departed" className="status-img">
-                                <img src={DepartedStatus} />
+                                <img src={DepartedStatusColor} />
                               </div>
                             );
                           } else if (row.value == "Transshipped") {
@@ -796,7 +798,7 @@ class ShippingDetails extends Component {
                           } else if (row.value == "Booked") {
                             return (
                               <div title="Booked" className="status-img">
-                                <img src={BookedStatus} />
+                                <img src={BookedStatusColor} />
                               </div>
                             );
                           } else if (row.value == "Gate In") {
@@ -808,7 +810,7 @@ class ShippingDetails extends Component {
                           } else if (row.value == "Approved") {
                             return (
                               <div title="Approved" className="status-img">
-                                <img src={ApprovedStatus} />
+                                <img src={ApprovedStatusColor} />
                               </div>
                             );
                           } else if (row.value == "In Transit") {
@@ -964,7 +966,8 @@ class ShippingDetails extends Component {
                     </div> */}
                     <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
                       <div className="row">
-                      <div className="login-fields col-md-3">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         <label>Mode Of Transport</label>
                         <select
                           onChange={this.HandleChangeSelect.bind(
@@ -980,9 +983,11 @@ class ShippingDetails extends Component {
                             </option>
                           ))}
                         </select>
+                        </div>
                       </div>
 
-                      <div className="login-fields col-md-3">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         <label>Shipment Stage</label>
                         <select
                           onChange={this.HandleChangeSelect.bind(
@@ -1000,7 +1005,8 @@ class ShippingDetails extends Component {
                           ))}
                         </select>
                       </div>
-                      <div className="col-md-6">
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-6">
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
                           <label className="auto-cmp" style={{ padding: "0" }}>
@@ -1056,7 +1062,8 @@ class ShippingDetails extends Component {
                     {/* </div> */}
 
                     <div className="row">
-                      <div className=" login-fields col-md-3">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         {/* <label>SELECT</label> */}
                         {/* <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
@@ -1080,7 +1087,9 @@ class ShippingDetails extends Component {
                           />
                         </div>
                       </div>
-                      <div className="login-fields col-md-3">
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         <div>
                           <label>To Date Of Departure</label>
                           <DatePicker
@@ -1095,8 +1104,9 @@ class ShippingDetails extends Component {
                           />
                         </div>
                       </div>
+                      </div>
                       {/* <div class=" login-fields col-md-4"> */}
-                      <div className="col-md-6">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-6">
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
                           <label className="auto-cmp" style={{ padding: "0" }}>
@@ -1150,7 +1160,8 @@ class ShippingDetails extends Component {
                       {/* </div> */}
                     </div>
                     <div className="row">
-                      <div className="login-fields col-md-3">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         {/* <label>SELECT PARAMETER</label>
                           <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
@@ -1174,7 +1185,9 @@ class ShippingDetails extends Component {
                           />
                         </div>
                       </div>
-                      <div className="login-fields col-md-3">
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         <div>
                           <label>To Date Of Arrival</label>
                           <DatePicker
@@ -1186,7 +1199,9 @@ class ShippingDetails extends Component {
                           />
                         </div>
                       </div>
-                      <div className="col-md-3">
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
                           <label style={{ padding: "0" }}>Origin Country</label>
@@ -1220,8 +1235,10 @@ class ShippingDetails extends Component {
                         </div>
                         {/* </div> */}
                       </div>
+                      </div>
                       {/* </div> */}
-                      <div className="col-md-3">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields">
                         {/* <div class="rate-radio-cntr"> */}
                         <div className="login-fields" style={{ width: "100%" }}>
                           <label style={{ padding: "0" }}>
@@ -1256,10 +1273,12 @@ class ShippingDetails extends Component {
                         {/* </div> */}
                       </div>
                     </div>
+                    </div>
                     {/* </div> */}
 
                     <div className="row">
-                      <div className="login-fields divwd col-md-3">
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields divwd">
                         {/* <div class="rate-radio-cntr"> */}
                         <div style={{ width: "100%" }}>
                           <label style={{ padding: "0" }}>POL</label>
@@ -1286,7 +1305,9 @@ class ShippingDetails extends Component {
                         </div>
                         {/* </div> */}
                       </div>
-                      <div className="login-fields divwd col-md-3">
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                      <div className="login-fields divwd">
                         {/* <div class="rate-radio-cntr"> */}
                         <div style={{ width: "100%" }}>
                           <label style={{ padding: "0" }}>POD</label>
@@ -1319,7 +1340,9 @@ class ShippingDetails extends Component {
                           />
                         </div>
                       </div>
-                      <div className="login-fields col-md-5">
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-6 col-lg-5">
+                      <div className="login-fields divwd">
                         <div>
                           <label style={{ padding: "11px" }}></label>
                           <button
@@ -1339,6 +1362,7 @@ class ShippingDetails extends Component {
                             Cancel
                           </button>
                         </div>
+                      </div>
                       </div>
                     </div>
                     </div>
