@@ -676,6 +676,10 @@ class SideMenu extends Component {
           centered={true}
         >
           <ModalBody>
+          <button type="button" className="close" data-dismiss="modal" onClick={this.toggleProfile}>
+                <span>&times;</span>
+              </button>
+            <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
             <div className="d-flex align-items-center text-left">
               <div className="prof-img">
                 <img src={LoginActore} />
@@ -729,6 +733,7 @@ class SideMenu extends Component {
             >
               Cancel
             </Button>
+            </div>
           </ModalBody>
         </Modal>
       </div>

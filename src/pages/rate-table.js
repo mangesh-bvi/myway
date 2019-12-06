@@ -3924,6 +3924,10 @@ class RateTable extends Component {
                 centered={true}
               >
                 <ModalBody>
+                <button type="button" className="close" data-dismiss="modal" onClick={this.togglePOLModal}>
+                    <span>&times;</span>
+                </button>
+                <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
                   <div className="pol-mar">
                     <span style={{ color: "red" }}>{this.state.errorPOL}</span>
 
@@ -3941,6 +3945,7 @@ class RateTable extends Component {
                   >
                     Close
                   </Button>
+                  </div>
                 </ModalBody>
               </Modal>
               {/* {----------------------End Mutiple POL Modal-----------------------} */}
@@ -3953,6 +3958,10 @@ class RateTable extends Component {
                 centered={true}
               >
                 <ModalBody>
+                <button type="button" className="close" data-dismiss="modal" onClick={this.togglePODModal}>
+                    <span>&times;</span>
+                </button>
+                <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
                   <div className="pol-mar">
                     <span style={{ color: "red" }}>{this.state.errorPOD}</span>
                     <div>{this.createUIPOD()}</div>
@@ -3966,6 +3975,7 @@ class RateTable extends Component {
                   >
                     Close
                   </Button>
+                  </div>
                 </ModalBody>
               </Modal>
               {/* {------------------------------End Mutliple POD Modal----------------------} */}
