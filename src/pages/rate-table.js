@@ -3091,9 +3091,7 @@ class RateTable extends Component {
 
               {/* {----------------------End Spot Rate Modal------------------} */}
             </div>
-            <div className="rate-table-below cus-w">
-              {" "}
-              {/* cus-w */}
+            <div className="rate-table-below">{/* cus-w */}
               <div className="row">
                 <div className="col-md-3 less-right-rate">
                   <div className="rate-table-left">
