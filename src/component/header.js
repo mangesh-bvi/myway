@@ -83,7 +83,9 @@ class Header extends Component {
       this.setState({ searchButn: false });
     }
 
-    window.addEventListener("load", this.BindNotifiation);
+    // window.addEventListener("load", this.BindNotifiation);
+
+    this.BindNotifiation();
 
     let self = this;
     axios({
