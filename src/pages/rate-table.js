@@ -3048,8 +3048,8 @@ class RateTable extends Component {
               <div className="login-fields mb-0 rate-tab-drop">
                 Commodity :
                 <select className="ml-2" onChange={this.filterAll}>
-                  <option>Select</option>
-                  <option value="All">All</option>
+                  {/* <option>Select</option> */}
+                  {/* <option value="All">All</option> */}
                   {this.state.commodityData.map((item, i) => (
                     <option
                       key={i}
@@ -3091,7 +3091,8 @@ class RateTable extends Component {
 
               {/* {----------------------End Spot Rate Modal------------------} */}
             </div>
-            <div className="rate-table-below">{/* cus-w */}
+            <div className="rate-table-below">
+              {/* cus-w */}
               <div className="row">
                 <div className="col-md-3 less-right-rate">
                   <div className="rate-table-left">
