@@ -1296,7 +1296,12 @@ class NewRateSearch extends Component {
     this.setState({ flattack_openTop });
   }
   removeSpecEquip(i) {
-    this.setState({ specialEquipment: false });
+    this.setState({
+      specialEquipment: false,
+      spacEqmtType: [],
+      flattack_openTop: [],
+      referType: []
+    });
   }
 
   ////end for flattack and openTop dynamic create elements

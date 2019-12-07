@@ -585,7 +585,7 @@ class Analytics extends Component {
         }
       }
     } else {
-      document.getElementById("delivered-inv").click();
+      document.getElementById("active-inv").click();
     }
 
     var axiosdata = {
