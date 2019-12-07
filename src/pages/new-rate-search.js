@@ -1295,6 +1295,9 @@ class NewRateSearch extends Component {
     flattack_openTop.splice(i, 1);
     this.setState({ flattack_openTop });
   }
+  removeSpecEquip(i) {
+    this.setState({ specialEquipment: false });
+  }
 
   ////end for flattack and openTop dynamic create elements
 
@@ -1324,6 +1327,7 @@ class NewRateSearch extends Component {
   }
 
   newaddClick(e, option) {
+    debugger;
     if (e.length > 0) {
       if (this.state.users.length == 0) {
         if (option.option.ContainerName === "Special Equipment") {
@@ -3148,6 +3152,11 @@ class NewRateSearch extends Component {
                               value={self.state.spEqtSelect}
                               showNewOptionAtTop={false}
                             />
+                            <i
+                              className="fa fa-times spec-cross"
+                              aria-hidden="true"
+                              onClick={this.removeSpecEquip.bind(this)}
+                            ></i>
                           </div>
                         </div>
                         <div className="spe-equ mt-0">
