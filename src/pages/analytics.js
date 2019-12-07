@@ -337,6 +337,7 @@ class Analytics extends Component {
         }
 
         if (arrayOcean != null) {
+          debugger;
           if (arrayOcean.length > 0) {
             for (var i = 0; i < arrayOcean.length; i++) {
               if (Segregatedby == "VolumeChart") {
