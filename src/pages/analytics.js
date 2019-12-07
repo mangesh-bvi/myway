@@ -351,7 +351,7 @@ class Analytics extends Component {
               strokeColor: "#ACC26D",
               pointColor: "#fff",
               pointStrokeColor: "#9DB86D",
-              label: arrayOcean[0].Modeoftransport,
+              label: "Ocean",
               data: arrayOceandata,
               backgroundColor: "#4a99e7"
             });
