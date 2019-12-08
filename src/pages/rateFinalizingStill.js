@@ -1515,10 +1515,16 @@ class RateFinalizingStill extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
+
+                                  var linename =
+                                    row.original.Linename.replace(
+                                      "  ",
+                                      "_"
+                                    ).replace(" ", "_") + ".png";
                                   return (
                                     <React.Fragment>
-                                      <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                        <div className="remember-forgot rat-img d-block m-0">
+                                      {/* <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                        <div className="remember-forgot rat-img d-block m-0"> */}
                                           {/* <input
                                           id={"maersk-logo" + i}
                                           type="checkbox"
@@ -1538,13 +1544,13 @@ class RateFinalizingStill extends Component {
                                             this.toggleRow( original.RateLineID == undefined ? original.RateLineId : original.RateLineID , row)
                                           }
                                         /> */}
-                                          <label
+                                          {/* <label
                                             htmlFor={"maersk-logo" + i}
                                           ></label>
                                         </div>
-                                      </div>
+                                      </div> */}
                                       <div className="rate-tab-img">
-                                        <img src={maersk} alt="maersk icon" />
+                                        <img src={maersk} alt={row.original.Linename} />
                                       </div>
                                     </React.Fragment>
                                   );

@@ -584,86 +584,30 @@ class BookingView extends Component {
                           {
                             columns: [
                               {
-                                // Cell: row => {
-                                //   i++;
-                                //   debugger;
-                                //   var URL = "";
-                                //   var lineName = "arkas_line";
-                                //   var status = 0;
-                                //   if (typeof lineName !== "undefined") {
-                                //     URL =
-                                //       "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                                //       lineName
-                                //         .replace("  ", "_")
-                                //         .replace(" ", "_") +
-                                //       ".png";
-                                //     fetch(URL).then(res => {
-                                //       status = res.status;
-
-                                //       // Following lines for file download
-                                //       // const dest = fs.createWriteStream('./arkas_line.png');
-                                //       // res.body.pipe(dest);
-                                //     });
-                                //     if (status === 200) {
-                                //       return (
-                                //         <React.Fragment>
-                                //           <div className="d-flex align-items-center">
-                                //             <div>
-                                //               <p className="details-title">
-                                //                 <img
-                                //                   src={require(URL)}
-                                //                   alt="maersk icon"
-                                //                 />
-                                //               </p>
-                                //             </div>
-                                //           </div>
-                                //         </React.Fragment>
-                                //       );
-                                //     } else {
-                                //       return (
-                                //         <React.Fragment>
-                                //           <div className="d-flex align-items-center">
-                                //             <div>
-                                //               <p className="details-title">
-                                //                 <img
-                                //                   src={"https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"}
-                                //                   alt="maersk icon"
-                                //                 />
-                                //               </p>
-                                //             </div>
-                                //           </div>
-                                //         </React.Fragment>
-                                //       );
-                                //     }
-                                //   } else {
-                                //     return <></>;
-                                //   }
-                                // },
-                                // Cell: row => {
-                                //   var lineName = row.original.Linename;
-                                //   lineName
-                                //     .replace("  ", "_")
-                                //     .replace(" ", "_") + ".png";
-
-                                //   return (
-                                //     <React.Fragment>
-                                //       <div className="d-flex align-items-center">
-                                //         <div>
-                                //           <p className="details-title">
-                                //             <img
-                                //               src={
-                                //                 "https://vizio.atafreight.com/MyWayFiles/" +
-                                //                 lineName +
-                                //                 ".png"
-                                //               }
-                                //               alt="maersk icon"
-                                //             />
-                                //           </p>
-                                //         </div>
-                                //       </div>
-                                //     </React.Fragment>
-                                //   );
-                                // },
+                                Cell: row => {
+                                  var linename =
+                                    row.original.Linename.replace(
+                                      "  ",
+                                      "_"
+                                    ).replace(" ", "_") + ".png";
+                                  return (
+                                    <React.Fragment>
+                                      <div className="d-flex align-items-center">
+                                        <div>
+                                          <p className="details-title">
+                                            <img
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/" +
+                                                linename
+                                              }
+                                              alt={row.original.Linename}
+                                            />
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </React.Fragment>
+                                  );
+                                },
                                 accessor: "lineName",
                                 width: 200
                               },

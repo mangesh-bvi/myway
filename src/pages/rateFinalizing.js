@@ -111,10 +111,9 @@ class RateFinalizing extends Component {
       RateLineName: "",
       ContactName: "",
       ContactEmail: "",
-      isCopy:false,
-      CustomClearance:0,
-      SalesQuoteNo: "",
-      
+      isCopy: false,
+      CustomClearance: 0,
+      SalesQuoteNo: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -478,8 +477,6 @@ class RateFinalizing extends Component {
       this.HandleSalesQuoteConditions();
     }
 
-    
-
     if (
       encryption(window.localStorage.getItem("usertype"), "desc") == "Customer"
     ) {
@@ -620,26 +617,26 @@ class RateFinalizing extends Component {
               if (response.data.Table3.length > 0) {
                 var table = response.data.Table3;
                 for (var i = 0; i < table.length; i++) {
-                //   CargoDetailsArr.push({
-                //     PackageType: table[i].PackageType,
-                //     SpecialContainerCode: table[i].PackageType + "_" + i,
-                //     ContainerType: table[i].PackageType,
-                //     Packaging: "-",
-                //     Quantity: table[i].Quantity,
-                //     Lenght: table[i].Length,
-                //     Width: table[i].Width,
-                //     Height: table[i].height,
-                //     Weight: table[i].GrossWeight,
-                //     Gross_Weight: "-",
-                //     Temperature: "-",
-                //     CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
-                //          (table[i].ChgWeight)
-                //          :(table[i].CBM === undefined?"-":table[i].CBM)),
-                //     Volume: "-",
-                //     VolumeWeight: "-",
-                //     Editable: true
-                //   });
-                // }
+                  //   CargoDetailsArr.push({
+                  //     PackageType: table[i].PackageType,
+                  //     SpecialContainerCode: table[i].PackageType + "_" + i,
+                  //     ContainerType: table[i].PackageType,
+                  //     Packaging: "-",
+                  //     Quantity: table[i].Quantity,
+                  //     Lenght: table[i].Length,
+                  //     Width: table[i].Width,
+                  //     Height: table[i].height,
+                  //     Weight: table[i].GrossWeight,
+                  //     Gross_Weight: "-",
+                  //     Temperature: "-",
+                  //     CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
+                  //          (table[i].ChgWeight)
+                  //          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                  //     Volume: "-",
+                  //     VolumeWeight: "-",
+                  //     Editable: true
+                  //   });
+                  // }
                   PackageDetailsArr.push({
                     PackageType: table[i].PackageType,
                     // SpecialContainerCode:
@@ -650,9 +647,13 @@ class RateFinalizing extends Component {
                     Width: table[i].Width,
                     Height: table[i].height,
                     Weight: table[i].GrossWeight,
-                    CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
-                        (table[i].ChgWeight)
-                        :(table[i].CBM === undefined?"-":table[i].CBM)),
+                    CBM:
+                      response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                      "AIR"
+                        ? table[i].ChgWeight
+                        : table[i].CBM === undefined
+                        ? "-"
+                        : table[i].CBM,
                     Editable: true
                   });
                 }
@@ -1180,7 +1181,10 @@ class RateFinalizing extends Component {
           if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
             FCLSQCharges.push({
               ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate: rateSubDetailsarr[j].Rate==null?0:rateSubDetailsarr[j].Rate,
+              Rate:
+                rateSubDetailsarr[j].Rate == null
+                  ? 0
+                  : rateSubDetailsarr[j].Rate,
               Currency: rateSubDetailsarr[j].Currency,
               RateLineID: rateSubDetailsarr[j].RateLineID,
               ChargeCode: rateSubDetailsarr[j].ChargeCode,
@@ -1189,7 +1193,10 @@ class RateFinalizing extends Component {
               ChargeItem: rateSubDetailsarr[j].ChargeItem,
               Exrate: rateSubDetailsarr[j].Exrate,
               ChargeType: rateSubDetailsarr[j].ChargeType,
-              TotalAmount: rateSubDetailsarr[j].TotalAmount==null?0:rateSubDetailsarr[j].TotalAmount
+              TotalAmount:
+                rateSubDetailsarr[j].TotalAmount == null
+                  ? 0
+                  : rateSubDetailsarr[j].TotalAmount
             });
           }
         }
@@ -1197,7 +1204,10 @@ class RateFinalizing extends Component {
           if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
             FCLSQCharges.push({
               ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate: rateSubDetailsarr[j].Rate==null?0:rateSubDetailsarr[j].Rate,
+              Rate:
+                rateSubDetailsarr[j].Rate == null
+                  ? 0
+                  : rateSubDetailsarr[j].Rate,
               Currency: rateSubDetailsarr[j].Currency,
               RateLineID: rateSubDetailsarr[j].RateLineID,
               ChargeCode: rateSubDetailsarr[j].ChargeCode,
@@ -1431,7 +1441,7 @@ class RateFinalizing extends Component {
         City: this.props.location.state.destAddress[0].City,
         ZipCode: this.props.location.state.destAddress[0].ZipCode
       };
-    } 
+    }
     if (this.state.typeofMove == 3) {
       PickUpAddress = this.state.polfullAddData.OceanPortLongName;
       DestinationAddressDetails = {
@@ -1470,7 +1480,6 @@ class RateFinalizing extends Component {
       MailBody:
         "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
       Commodity: Number(this.state.CommodityID)
-        
     };
 
     var url = "";
@@ -1478,14 +1487,16 @@ class RateFinalizing extends Component {
     if (this.state.containerLoadType == "FCL") {
       senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.FCLSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance  = this.state.CustomClearance == true ? 1 : 0;
+      senrequestpara.CustomClearance =
+        this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
       //senrequestpara.NonStackable = 0;
       url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "LCL") {
       senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.LCLSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance = this.state.CustomClearance == true ? 1 : 0;;
+      senrequestpara.CustomClearance =
+        this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
       url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
@@ -1495,13 +1506,15 @@ class RateFinalizing extends Component {
     ) {
       senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.InlandSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance = this.state.CustomClearance == true ? 1 : 0;;
-      
+      senrequestpara.CustomClearance =
+        this.state.CustomClearance == true ? 1 : 0;
+
       url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "AIR") {
       senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.AirSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance = this.state.CustomClearance == true ? 1 : 0;;
+      senrequestpara.CustomClearance =
+        this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
       url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
@@ -2029,13 +2042,13 @@ class RateFinalizing extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-    debugger; 
-    if (response.data.Table.length > 0) {
-      self.setState({
-        ConditionDesc: response.data.Table[0].conditionDesc
-      })   
-    }    
-  })
+      debugger;
+      if (response.data.Table.length > 0) {
+        self.setState({
+          ConditionDesc: response.data.Table[0].conditionDesc
+        });
+      }
+    });
   }
   //------------------------------------------------------------------//
 
@@ -2530,39 +2543,41 @@ class RateFinalizing extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  return (
-                                    <React.Fragment>
-                                      <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                        <div className="remember-forgot rat-img d-block m-0">
-                                          {/* <input
-                                          id={"maersk-logo" + i}
-                                          type="checkbox"
-                                          name={"rate-tab-check"}
-                                          // checked={
-                                          //   this.state.RateDetails[i - 1].checkbx
-                                          //     ? this.state.RateDetails[i - 1]
-                                          //         .checkbx
-                                          //     : false
-                                          // }
-                                          // checked={
-                                          //   this.state.cSelectedRow[
-                                          //     original.rateID
-                                          //   ] === true
-                                          // }
-                                          // onChange={e =>
-                                          //   this.toggleRow(original.rateID, row)
-                                          // }
-                                        /> */}
-                                          <label
-                                            htmlFor={"maersk-logo" + i}
-                                          ></label>
+                                  debugger;
+                                  var mode = this.state.modeoftransport;
+                                  var lname=(original.Linename.replace(" ","_")).replace("  ","_")+".png";
+                                  if (mode === "Ocean") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/"+lname} alt="maersk icon" />
                                         </div>
-                                      </div>
-                                      <div className="rate-tab-img">
-                                        <img src={maersk} alt="maersk icon" />
-                                      </div>
-                                    </React.Fragment>
-                                  );
+                                      </React.Fragment>
+                                    );
+                                  } if (mode === "AIR") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img src={"https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/"+lname} alt="maersk icon" />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+
+                                  }
+                                  else{
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
+                                            alt="maersk icon"
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 },
                                 accessor: "lineName"
                                 // minWidth: 200
@@ -3023,8 +3038,6 @@ class RateFinalizing extends Component {
                       </div>
                     </UncontrolledCollapse>
 
-                    
-                    
                     <div className="text-right">
                       <button
                         onClick={this.rateQuery.bind(this)}
@@ -3036,7 +3049,7 @@ class RateFinalizing extends Component {
                         {this.state.rateQuery ? "View More" : "View Less"}
                       </button>
                     </div>
-                        
+
                     {/* <div className="text-right">
                       <button
                         onClick={this.rateQuery.bind(this)}
@@ -3051,17 +3064,17 @@ class RateFinalizing extends Component {
                   </div>
 
                   <div className="row m-0 py-3">
-                  <div className="align-center px-3">
-                            {this.state.toggleAddProfitBtn && (
-                              <button
-                                onClick={this.toggleProfit}
-                                className="butn more-padd m-0"
-                              >
-                                Add Profit
-                              </button>
-                            )}
-                          </div>
-                  <div className="text-center">
+                    <div className="align-center px-3">
+                      {this.state.toggleAddProfitBtn && (
+                        <button
+                          onClick={this.toggleProfit}
+                          className="butn more-padd m-0"
+                        >
+                          Add Profit
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-center">
                       {this.state.toggleIsEdit && (
                         <button
                           onClick={this.toggleRequest}
@@ -3071,7 +3084,7 @@ class RateFinalizing extends Component {
                         </button>
                       )}
                     </div>
-                    </div>
+                  </div>
                   <div className="rate-final-contr">
                     {/* <div className="text-center">
                       {this.state.toggleIsEdit && (
