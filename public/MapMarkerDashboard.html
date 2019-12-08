@@ -125,6 +125,10 @@
       var map;
       var blueShip, bluePlane, bookingBlue, delayBlue;
 
+      $(document).ready(function() {
+	     initMap();
+	  });
+
       /////Read token from local storage
       var token = "";
       token = localStorage.getItem("myToken");

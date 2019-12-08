@@ -240,7 +240,8 @@ class ShippingDetailsTwo extends Component {
       MessagesActivityDetails: [],
       iframeKey: 0,
       ModaType: "",
-      eve: "N/A"
+      eve: "N/A",
+      pageName: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -275,10 +276,11 @@ class ShippingDetailsTwo extends Component {
       debugger;
       var hblno = this.props.location.state.detail;
       var event = this.props.location.state.event || "";
+      var pageName = this.props.location.state.pageName;
       if (event !== "N/A") {
         self.setState({ eve: event });
       }
-      self.setState({ HblNo: hblno });
+      self.setState({ HblNo: hblno, pageName });
       self.HandleShipmentDetails(hblno);
       //self.handleActivityList();
     } else {
@@ -783,7 +785,16 @@ class ShippingDetailsTwo extends Component {
     console.log(1);
   }
   handleChangePage() {
-    window.history.back();
+    // window.history.back();
+    var pageName = this.state.pageName;
+
+    if (pageName === "Dashboard") {
+      this.props.history.push("/Dashboard");
+    } else if (pageName === "ShipmentPage") {
+      this.props.history.push("/shipment-details");
+    } else {
+      this.props.history.push("/Dashboard");
+    }
   }
 
   handleAddToWatchList = () => {
@@ -1020,10 +1031,7 @@ class ShippingDetailsTwo extends Component {
     } else {
       Watchlist = (
         <>
-          <button
-            onClick={this.handleBackBtn}
-            className="butn mt-0"
-          >
+          <button onClick={this.handleBackBtn} className="butn mt-0">
             Back
           </button>
           <button onClick={this.handleRemoveWatchList} className="butn mt-0">
@@ -2373,88 +2381,101 @@ class ShippingDetailsTwo extends Component {
                   centered={true}
                 >
                   <ModalBody>
-                  <button type="button" className="close" data-dismiss="modal" onClick={this.toggleDocu}>
-                <span>&times;</span>
-              </button>
-                  <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
-                    <div className="rename-cntr login-fields">
-                      <label>Document Name</label>
-                      <input
-                        id="docName"
-                        type="text"
-                        placeholder="Enter Document Name"
-                      />
-                    </div>
-                    <div className="rename-cntr login-fields">
-                      <label>Document Description</label>
-                      <input
-                        id="docDesc"
-                        type="text"
-                        placeholder="Enter Document Description"
-                      />
-                    </div>
-                    <div className="rename-cntr login-fields d-block">
-                      {/* <input
+                    <button
+                      type="button"
+                      className="close"
+                      data-dismiss="modal"
+                      onClick={this.toggleDocu}
+                    >
+                      <span>&times;</span>
+                    </button>
+                    <div
+                      style={{
+                        background: "#fff",
+                        padding: "15px",
+                        borderRadius: "15px"
+                      }}
+                    >
+                      <div className="rename-cntr login-fields">
+                        <label>Document Name</label>
+                        <input
+                          id="docName"
+                          type="text"
+                          placeholder="Enter Document Name"
+                        />
+                      </div>
+                      <div className="rename-cntr login-fields">
+                        <label>Document Description</label>
+                        <input
+                          id="docDesc"
+                          type="text"
+                          placeholder="Enter Document Description"
+                        />
+                      </div>
+                      <div className="rename-cntr login-fields d-block">
+                        {/* <input
                         type="file"
                         onChange={this.onDocumentChangeHandler}
                       ></input> */}
-                      <div className="d-flex w-100 align-items-center">
-                        <label>Document File</label>
-                        <div className="w-100">
-                          <input
-                            id="file-upload"
-                            className="file-upload d-none"
-                            type="file"
-                            onChange={this.onDocumentChangeHandler}
-                          />
-                          <label htmlFor="file-upload">
-                            <div className="file-icon">
-                              <img src={FileUpload} alt="file-upload" />
-                            </div>
-                            Add Document Files
-                          </label>
+                        <div className="d-flex w-100 align-items-center">
+                          <label>Document File</label>
+                          <div className="w-100">
+                            <input
+                              id="file-upload"
+                              className="file-upload d-none"
+                              type="file"
+                              onChange={this.onDocumentChangeHandler}
+                            />
+                            <label htmlFor="file-upload">
+                              <div className="file-icon">
+                                <img src={FileUpload} alt="file-upload" />
+                              </div>
+                              Add Document Files
+                            </label>
+                          </div>
                         </div>
+                        <p className="file-name">
+                          {this.state.selectedFileName}
+                        </p>
                       </div>
-                      <p className="file-name">{this.state.selectedFileName}</p>
-                    </div>
-                    <div className="rename-cntr login-fields d-block">
-                      <div className="d-flex w-100 align-items-center">
-                        <label>Consignee Document</label>
-                        <div className="w-100">
-                          <input
-                            id="docu-upload"
-                            className="file-upload d-none"
-                            type="file"
-                            onChange={this.onDocumentConsignee}
-                          />
-                          <label htmlFor="docu-upload">
-                            <div className="file-icon">
-                              <img src={FileUpload} alt="file-upload" />
-                            </div>
-                            Add Consignee Files
-                          </label>
+                      <div className="rename-cntr login-fields d-block">
+                        <div className="d-flex w-100 align-items-center">
+                          <label>Consignee Document</label>
+                          <div className="w-100">
+                            <input
+                              id="docu-upload"
+                              className="file-upload d-none"
+                              type="file"
+                              onChange={this.onDocumentConsignee}
+                            />
+                            <label htmlFor="docu-upload">
+                              <div className="file-icon">
+                                <img src={FileUpload} alt="file-upload" />
+                              </div>
+                              Add Consignee Files
+                            </label>
+                          </div>
                         </div>
+                        <p className="file-name">
+                          {this.state.consigneeFileName}
+                        </p>
                       </div>
-                      <p className="file-name">
-                        {this.state.consigneeFileName}
-                      </p>
-                    </div>
-                    {/* <div>
+                      {/* <div>
                       <input
                         type="button"
                         onClick={this.onDocumentClickHandler}
                         value="Save"
                       ></input>
                     </div> */}
-                    <Button
-                      className="butn"
-                      onClick={() => {
-                        this.toggleDocu();
-                        this.onDocumentClickHandler();
-                      }}
-                    >
-                      Add
-                    </Button>
+                      <Button
+                        className="butn"
+                        onClick={() => {
+                          this.toggleDocu();
+                          this.onDocumentClickHandler();
+                        }}
+                      >
+                        Add
+                      </Button>
                     </div>
                   </ModalBody>
                 </Modal>
