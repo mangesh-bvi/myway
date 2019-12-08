@@ -29,6 +29,7 @@
         border: 0px;
         border-radius: 50px;
         padding-right: 45px;
+        box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1);
       }
       .dash-search-cntr2 .fa-search {
         background: #002d73;
@@ -90,6 +91,18 @@
       }
       .rem-icon {
         left: 0 !important;
+      }
+      #loader-icon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        /* height: 100vh; */
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.2) url("img/loader.gif") no-repeat center
+          center;
+        background-size: 60px;
+        z-index: 5;
       }
     </style>
     <script
@@ -526,6 +539,9 @@
                 debugger;
                 setMarkers(map, shippingLocations);
               }
+            },
+            complete: function() {
+              document.getElementById("loader-icon").style.display = "none";
             }
           });
         }
@@ -715,6 +731,7 @@
       </div>
     </div>
 
+    <div id="loader-icon"></div>
     <div id="default" style="width:100%; height:100%"></div>
   </body>
 </html>
