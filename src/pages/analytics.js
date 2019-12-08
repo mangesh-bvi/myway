@@ -119,7 +119,9 @@ class Analytics extends Component {
       toggleShipmentYearDate: false,
       setSupplierdrop: [],
       toggleFclLcl: false,
-      toggleFtlLtl: false
+      toggleFtlLtl: false,
+      toggleInvFclLcl: false,
+      toggleInvFtlLtl: false
     };
     this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
   }
@@ -337,6 +339,7 @@ class Analytics extends Component {
         }
 
         if (arrayOcean != null) {
+          debugger;
           if (arrayOcean.length > 0) {
             for (var i = 0; i < arrayOcean.length; i++) {
               if (Segregatedby == "VolumeChart") {
@@ -350,7 +353,7 @@ class Analytics extends Component {
               strokeColor: "#ACC26D",
               pointColor: "#fff",
               pointStrokeColor: "#9DB86D",
-              label: "Ocean",
+              label: arrayOcean[0].Modeoftransport,
               data: arrayOceandata,
               backgroundColor: "#4a99e7"
             });
@@ -489,23 +492,37 @@ class Analytics extends Component {
       toggleFtlLtl: true
     });
   };
+  toggleInvFclLcl = e => {
+    this.setState({
+      toggleInvFclLcl: true
+    });
+  };
+  toggleInvFtlLtl = e => {
+    this.setState({
+      toggleInvFtlLtl: true
+    });
+  };
 
   toggleBtnsInv = e => {
     console.log(e.target.id);
     if (e.target.id === "ship-inv") {
       this.setState({
         toggleShipInv: true,
-        toggleRoadInv: false
+        toggleRoadInv: false,
+        toggleInvFtlLtl: false
       });
     } else if (e.target.id === "road-inv") {
       this.setState({
         toggleRoadInv: true,
-        toggleShipInv: false
+        toggleShipInv: false,
+        toggleInvFclLcl: false
       });
     } else if (e.target.id === "plane-inv") {
       this.setState({
         toggleRoadInv: false,
-        toggleShipInv: false
+        toggleShipInv: false,
+        toggleInvFtlLtl: false,
+        toggleInvFclLcl: false
       });
     }
   };
@@ -513,97 +530,109 @@ class Analytics extends Component {
   handleAnalyticsInvoice(event) {
     let self = this;
 
-    var ActiveFlag = "D";
-    //var Mode = "A,O,I";
-    var Mode = "A,FCL,LCL,FTL,LTL";
-    var period = document.getElementById("drp-period-invoice").value;
-
-    var FromDate = "";
-    var ToDate = "";
-    if (period == "M") {
-      var tempfromdate = document
-        .getElementById("datpicker-from-invoice")
-        .value.split("/"); //05/12/2019
-      var temptodate = document
-        .getElementById("datpicker-to-invoice")
-        .value.split("/");
-      FromDate = tempfromdate[1] + "-" + tempfromdate[0] + "-01";
-      ToDate = temptodate[1] + "-" + temptodate[0] + "-01";
-    } else if (period == "W") {
-      var tempfromdate = document
-        .getElementById("datpicker-from-invoice")
-        .value.split("/"); //05/12/2019
-      var temptodate = document
-        .getElementById("datpicker-to-invoice")
-        .value.split("/");
-      FromDate =
-        tempfromdate[2] + "-" + tempfromdate[0] + "-" + tempfromdate[1];
-      ToDate = temptodate[2] + "-" + temptodate[0] + "-" + temptodate[1];
-    } else if (period == "Y") {
-      var tempfromdate = document.getElementById("date-year-invoice").value;
-      FromDate = tempfromdate + "-01-01";
-      ToDate = tempfromdate + "-12-31";
-    }
-    var g1 = new Date(FromDate);
-    var g2 = new Date(ToDate);
-
-    if (g1.getTime() > g2.getTime()) {
-      NotificationManager.error("To date should be greater then From date.");
-      document.getElementById("datpicker-to-invoice").focus();
-      return false;
-    }
-    if (event.target.id == "invoices-view-btn") {
-      var ActiveFlagele = document.getElementsByName("ship-type-invoice");
-      for (var i = 0; i < ActiveFlagele.length; i++) {
-        if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
-      }
-
-      var Modeele = document.getElementsByName("ship-way-invoice");
-      if (Modeele.length > 0) {
-        for (var i = 0; i < Modeele.length; i++) {
-          if (Modeele[i].checked) Mode = Modeele[i].value;
-        }
-      }
-      var modegetElementsByName = "";
-      if (Mode == "O") {
-        Mode = "FCL,LCL";
-        //sea-opt
-        modegetElementsByName = "sea-opt-invoice";
-      }
-
-      if (Mode == "I") {
-        //road-opt
-        Mode = "FTL,LTL";
-        modegetElementsByName = "road-opt-invoice";
-      }
-
-      var ModeeleOther = document.getElementsByName(modegetElementsByName);
-      if (ModeeleOther.length > 0) {
-        for (var i = 0; i < ModeeleOther.length; i++) {
-          if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
-        }
-      }
+    if (
+      this.state.toggleShipInv === true &&
+      this.state.toggleInvFclLcl === false
+    ) {
+      NotificationManager.error("Please select FCL or LCL");
+    } else if (
+      this.state.toggleRoadInv === true &&
+      this.state.toggleInvFtlLtl === false
+    ) {
+      NotificationManager.error("Please select FTL or LTL");
     } else {
-      document.getElementById("delivered-inv").click();
-    }
+      var ActiveFlag = "D";
+      //var Mode = "A,O,I";
+      var Mode = "A,FCL,LCL,FTL,LTL";
+      var period = document.getElementById("drp-period-invoice").value;
 
-    var axiosdata = {
-      UserId: encryption(window.localStorage.getItem("userid"), "desc"),
-      FromDate: FromDate,
-      ToDate: ToDate,
-      ActiveFlag: ActiveFlag,
-      Mode: Mode,
-      period: period
-      //ShipperID:1340354108
-    };
+      var FromDate = "";
+      var ToDate = "";
+      if (period == "M") {
+        var tempfromdate = document
+          .getElementById("datpicker-from-invoice")
+          .value.split("/"); //05/12/2019
+        var temptodate = document
+          .getElementById("datpicker-to-invoice")
+          .value.split("/");
+        FromDate = tempfromdate[1] + "-" + tempfromdate[0] + "-01";
+        ToDate = temptodate[1] + "-" + temptodate[0] + "-01";
+      } else if (period == "W") {
+        var tempfromdate = document
+          .getElementById("datpicker-from-invoice")
+          .value.split("/"); //05/12/2019
+        var temptodate = document
+          .getElementById("datpicker-to-invoice")
+          .value.split("/");
+        FromDate =
+          tempfromdate[2] + "-" + tempfromdate[0] + "-" + tempfromdate[1];
+        ToDate = temptodate[2] + "-" + temptodate[0] + "-" + temptodate[1];
+      } else if (period == "Y") {
+        var tempfromdate = document.getElementById("date-year-invoice").value;
+        FromDate = tempfromdate + "-01-01";
+        ToDate = tempfromdate + "-12-31";
+      }
+      var g1 = new Date(FromDate);
+      var g2 = new Date(ToDate);
 
-    if (event.target.id == "invoices-view-btn") {
-      axiosdata.ShipperID = document.getElementById(
-        "drp-supplie-invoice"
-      ).value;
-      self.setgrafval(axiosdata);
-    } else {
-      this.setSupplierdrop(axiosdata);
+      if (g1.getTime() > g2.getTime()) {
+        NotificationManager.error("To date should be greater then From date.");
+        document.getElementById("datpicker-to-invoice").focus();
+        return false;
+      }
+      if (event.target.id == "invoices-view-btn") {
+        var ActiveFlagele = document.getElementsByName("ship-type-invoice");
+        for (var i = 0; i < ActiveFlagele.length; i++) {
+          if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
+        }
+
+        var Modeele = document.getElementsByName("ship-way-invoice");
+        if (Modeele.length > 0) {
+          for (var i = 0; i < Modeele.length; i++) {
+            if (Modeele[i].checked) Mode = Modeele[i].value;
+          }
+        }
+        var modegetElementsByName = "";
+        if (Mode == "O") {
+          Mode = "FCL,LCL";
+          //sea-opt
+          modegetElementsByName = "sea-opt-invoice";
+        }
+
+        if (Mode == "I") {
+          //road-opt
+          Mode = "FTL,LTL";
+          modegetElementsByName = "road-opt-invoice";
+        }
+
+        var ModeeleOther = document.getElementsByName(modegetElementsByName);
+        if (ModeeleOther.length > 0) {
+          for (var i = 0; i < ModeeleOther.length; i++) {
+            if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
+          }
+        }
+      } else {
+        document.getElementById("active-inv").click();
+      }
+
+      var axiosdata = {
+        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        FromDate: FromDate,
+        ToDate: ToDate,
+        ActiveFlag: ActiveFlag,
+        Mode: Mode,
+        period: period
+        //ShipperID:1340354108
+      };
+
+      if (event.target.id == "invoices-view-btn") {
+        axiosdata.ShipperID = document.getElementById(
+          "drp-supplie-invoice"
+        ).value;
+        self.setgrafval(axiosdata);
+      } else {
+        this.setSupplierdrop(axiosdata);
+      }
     }
   }
 
@@ -1199,6 +1228,7 @@ class Analytics extends Component {
                             name="sea-opt-invoice"
                             id="fcl-inv"
                             value="FCL"
+                            onClick={this.toggleInvFclLcl}
                           />
                           <label htmlFor="fcl-inv">FCL</label>
                         </div>
@@ -1208,6 +1238,7 @@ class Analytics extends Component {
                             name="sea-opt-invoice"
                             id="lcl-inv"
                             value="LCL"
+                            onClick={this.toggleInvFclLcl}
                           />
                           <label htmlFor="lcl-inv">LCL</label>
                         </div>
@@ -1221,6 +1252,7 @@ class Analytics extends Component {
                             name="road-opt-invoice"
                             id="ftl-inv"
                             value="FTL"
+                            onClick={this.toggleInvFtlLtl}
                           />
                           <label htmlFor="ftl-inv">FTL</label>
                         </div>
@@ -1230,6 +1262,7 @@ class Analytics extends Component {
                             name="road-opt-invoice"
                             id="ltl-inv"
                             value="LTL"
+                            onClick={this.toggleInvFtlLtl}
                           />
                           <label htmlFor="ltl-inv">LTL</label>
                         </div>

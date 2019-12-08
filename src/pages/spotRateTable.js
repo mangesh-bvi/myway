@@ -82,14 +82,22 @@ class SpotRateTable extends Component {
           self.setState({ pageNo: 1 });
         }
       })
-      .catch();
-    {
-      var actData = [];
-      actData.push({
-        OriginPort_Name: "No Data Found"
+      // .catch();
+      .catch(error => {
+        debugger;
+        var actData = [];
+        actData.push({
+          OriginPort_Name: "No Data Found"
+        });
+        self.setState({ spotRateGrid: actData });
       });
-      self.setState({ spotRateGrid: actData });
-    }
+    // {
+    //   var actData = [];
+    //   actData.push({
+    //     OriginPort_Name: "No Data Found"
+    //   });
+    //   self.setState({ spotRateGrid: actData });
+    // }
   }
 
   HandleChangeSpotRateDetails(RateQueryId) {
