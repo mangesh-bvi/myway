@@ -265,9 +265,9 @@ class RateTable extends Component {
   componentDidMount() {
     document.addEventListener("mousedown", this.handleClickOutside);
 
-    // setTimeout(() => {
-    //   this.HandleCommodityData();
-    // }, 100);
+    setTimeout(() => {
+      this.HandleCommodityData();
+    }, 100);
 
     if (typeof this.props.location.state !== "undefined") {
       if (this.props.location.state !== null) {
@@ -3050,7 +3050,7 @@ class RateTable extends Component {
                 <select className="ml-2" onChange={this.filterAll}>
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
-                  {this.state.commodityData.map((item, i) => (
+                  {this.state.loading === true ? '' : this.state.commodityData.map((item, i) => (
                     <option
                       key={i}
                       value={item.id}

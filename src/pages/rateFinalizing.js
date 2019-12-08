@@ -2909,8 +2909,8 @@ class RateFinalizing extends Component {
                                   {
                                     columns: [
                                       {
-                                        Header: "C. Type",
-                                        accessor: "ChargeType",
+                                        Header: "C. Description",
+                                        accessor: "ChargeDesc",
                                         Cell: row => {
                                           return (
                                             <>
