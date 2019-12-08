@@ -232,7 +232,7 @@ class ShippingDetails extends Component {
   HandleChangeShipmentDetails(HblNo, eventManage) {
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: HblNo, event: eventManage }
+      state: { detail: HblNo, event: eventManage,pageName:"ShipmentPage"}
     });
   }
 

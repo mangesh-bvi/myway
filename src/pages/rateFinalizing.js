@@ -1831,7 +1831,7 @@ class RateFinalizing extends Component {
         // }
         // else
         // {
-        if (element.LineName == rateDetailsarr[i].lineName) {
+        if (element.LineName == (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)) {
           this.state.rateDetails[i].TotalAmount =
             parseFloat(
               this.state.rateDetails[i].TotalAmount == null

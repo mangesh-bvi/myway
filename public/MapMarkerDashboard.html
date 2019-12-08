@@ -125,6 +125,10 @@
       var map;
       var blueShip, bluePlane, bookingBlue, delayBlue;
 
+      $(document).ready(function() {
+        initMap();
+      });
+
       /////Read token from local storage
       var token = "";
       token = localStorage.getItem("myToken");
@@ -327,10 +331,23 @@
         }
       }
 
+      $(document).ajaxStart(function() {
+        // alert("AJAX request started");
+        $("#loader-icon").show();
+      });
+
+      $(document).ajaxComplete(function() {
+        $("#loader-icon").hide();
+      });
+
       ///When click on the text box got the info window
       function ShowMarker() {
         //alert('Method call on search text and button click');
         debugger;
+
+        // setTimeout(function() {
+        //   $("#loader-icon").show();
+        // }, 500);
 
         var enteredHBLNum = $("#dataNumber").val();
         ///Clear input AQTY158984
@@ -359,7 +376,7 @@
         /////////////////////////////////////////////////////////////
         $.ajax({
           type: "POST",
-          async: false,
+          async: true,
           url: ApiUrl + "/MyWaySearchGeoCoOrdinate",
           data: {
             UserID: userId,
@@ -372,6 +389,7 @@
             debugger;
             //alert('Success-Receive Lat:' + data.Table[0].LastLocation_Lat + ' | long:' + data.Table[0].LastLocation_Lon);
 
+            // $("#loader-icon").show();
             var lat = data.Table[0].LastLocation_Lat;
             var lng = data.Table[0].LastLocation_Lon;
             titleData = data.Table[0].Vessel;
