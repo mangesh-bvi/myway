@@ -16,6 +16,7 @@ import "react-notifications/lib/notifications.css";
 import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
+import Eye from "./../assets/img/eye.png";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -95,6 +96,7 @@ class RateFinalizingStill extends Component {
       this.HandleSalesQuoteView(qData);
       this.HandlePackgeTypeData();
       this.HandleCommodityDropdown();
+      //this.HandleDowloadFile();
     }
   }
 
@@ -813,6 +815,57 @@ class RateFinalizingStill extends Component {
       NotificationManager.success(response.data[0].Result);
     });
   };
+
+  onDocumentSaleQuoteHandler = () => {
+    debugger;
+    const docData = new FormData();
+    var docName = this.state.selectedFileName;
+
+    if (docName == "") {
+      NotificationManager.error("Select File");
+      return false;
+    }
+
+    debugger;
+    //docData.append();
+    docData.append("QuoteID", this.state.RateDetails[0].SaleQuoteID);
+    docData.append("DocumentID", 0);
+    docData.append("MywayUserID", encryption(window.localStorage.getItem("userid"), "desc"));
+    docData.append("Mode", this.state.ContainerLoad);
+    docData.append("SalesQuoteDoc", this.state.selectedFile);
+    // docData.append()
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteFileUpload`,
+      data: docData,
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      NotificationManager.success(response.data.Table[0].Result);
+    }).catch(error => {
+      debugger;
+      NotificationManager.error(error.response.data.split("'")[1]);
+      console.log(error.response);
+    });
+  };
+
+  HandleDowloadFile = () =>{
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DownloadFTPFile`,
+      data: {MywayUserID:874588,
+      FilePath:'ftp://vizio.atafreight.com/BookingDoc/11130Nov2019001100_526.pdf'},
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      NotificationManager.success(response.data.Table[0].Result);
+    }).catch(error => {
+      debugger;
+      NotificationManager.error(error.response.data.split("'")[1]);
+      console.log(error.response);
+    });
+  }
 
   createUISpecial() {
     return this.state.referType.map((el, i) => {
@@ -1777,14 +1830,18 @@ class RateFinalizingStill extends Component {
                                 minRows={1}
                                 data={this.state.SubRateDetails.filter(
                                   this.state.ContainerLoad !== "INLAND"?(
-                                  d =>
-                                    d.saleQuoteLineID ||
+                                    this.state.ContainerLoad === "LCL"?(d =>
                                     d.SaleQuoteIDLineID ===
-                                      row.original.saleQuoteLineID ||
-                                    this.state.RateDetails.saleQuoteLineID):(
+                                    row.original.saleQuoteLineID):(d =>
+                                    d.saleQuoteLineID ===
+                                    row.original.saleQuoteLineID)
+                                    // ||
+                                    // d.SaleQuoteIDLineID 
+                                    
+                                    ):(
                                       d =>
-                                    d.SaleQuoteIDD ===
-                                      row.original.SaleQuoteID 
+                                    d.SaleQuoteIDLineID ===
+                                      row.original.SaleQuoteIDLineID 
                                     )
                                 )}
                                 // data={this.state.SubRateDetails}
@@ -1821,7 +1878,12 @@ class RateFinalizingStill extends Component {
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "ChargeItem"
+                                        accessor: "ChargeItem",
+                                        Cell: props => (
+                                          <React.Fragment>
+                                            {props.original.Chargeitem}
+                                          </React.Fragment>
+                                        )
                                       },
                                       {
                                         Header: "Unit Price",
@@ -2151,6 +2213,59 @@ class RateFinalizingStill extends Component {
                         {this.state.selectedFileName}
                       </p>
                     </div>
+                    <button
+                        className={className}
+                        id="toggler"
+                        onClick={() => {
+                          this.onDocumentSaleQuoteHandler();
+                        }}
+                      >   
+                      Upload File                   
+                      </button>
+                      <div className="row">
+                      {" "}
+                      <div className="col-md-12 login-fields">
+                        <p className="details-title">Cargo Details</p>
+                        <div className="ag-fresh redirect-row">
+                          <ReactTable
+                            data={CargoDetailsArr}
+                            filterable
+                            minRows={1}
+                            showPagination={false}
+                            columns={[
+                              {
+                                Header: "File",
+                                accessor: "ContainerType"
+                              },
+                              {
+                                Header: "Download",
+                                accessor: "Quantity"
+                              },
+                              {
+                                Cell: row => {                                 
+                                    return (
+                                      <div
+                                        onClick={e => this.HandleDowloadFile()}
+                                        className="tab-icon-view"
+                                      >
+                                        <img src={Eye} alt="eye icon" />
+                                      </div>
+                                    );
+                                },
+                                Header: "Action",
+                                sortable: false
+                              }
+                              
+                            ]}
+                            className="-striped -highlight"
+                            defaultPageSize={2000}
+                            //getTrProps={this.HandleRowClickEvt}
+                            //minRows={1}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                     <center>
                       {/* <Button
                       className="butn"
