@@ -83,7 +83,9 @@ class Header extends Component {
       this.setState({ searchButn: false });
     }
 
-    window.addEventListener("load", this.BindNotifiation);
+    // window.addEventListener("load", this.BindNotifiation);
+
+    this.BindNotifiation();
 
     let self = this;
     axios({
@@ -129,6 +131,7 @@ class Header extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       // self.state.Notificationcount = response.data.Table.length;
       var today = new Date();
       today.setDate(today.getDate() - 8);
@@ -399,53 +402,64 @@ class Header extends Component {
                     // backdrop="static"
                   >
                     <ModalBody>
-                    <button type="button" className="close" data-dismiss="modal" onClick={this.toggleDocu}>
-                <span>&times;</span>
-              </button>
-                      <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
-                      <h3 className="mb-4">Send Message</h3>
-                      <div className="rename-cntr login-fields">
-                        <select id="drpshipment">
-                          <option value="0">Select</option>
-                          {/* <option value="Shipment">Shipment</option> */}
-                          {optionItems}
-                          <option value="Subject">Subject</option>
-                        </select>
-                      </div>
-                      <div className="rename-cntr login-fields">
-                        <input
-                          id="txtShipmentNo"
-                          type="text"
-                          placeholder="Enter Shipment No."
-                          value={popupHBLNO}
-                          onChange={this.onShipmentNoChangeHandler}
-                        />
-                      </div>
-                      <div className="rename-cntr login-fields">
-                        <textarea
-                          id="txtshipmentcomment"
-                          name="comment"
-                          className="txt-add"
-                          placeholder="Enter Comment..."
-                        ></textarea>
-                      </div>
+                      <button
+                        type="button"
+                        className="close"
+                        data-dismiss="modal"
+                        onClick={this.toggleDocu}
+                      >
+                        <span>&times;</span>
+                      </button>
+                      <div
+                        style={{
+                          background: "#fff",
+                          padding: "15px",
+                          borderRadius: "15px"
+                        }}
+                      >
+                        <h3 className="mb-4">Send Message</h3>
+                        <div className="rename-cntr login-fields">
+                          <select id="drpshipment">
+                            <option value="0">Select</option>
+                            {/* <option value="Shipment">Shipment</option> */}
+                            {optionItems}
+                            <option value="Subject">Subject</option>
+                          </select>
+                        </div>
+                        <div className="rename-cntr login-fields">
+                          <input
+                            id="txtShipmentNo"
+                            type="text"
+                            placeholder="Enter Shipment No."
+                            value={popupHBLNO}
+                            onChange={this.onShipmentNoChangeHandler}
+                          />
+                        </div>
+                        <div className="rename-cntr login-fields">
+                          <textarea
+                            id="txtshipmentcomment"
+                            name="comment"
+                            className="txt-add"
+                            placeholder="Enter Comment..."
+                          ></textarea>
+                        </div>
 
-                      <Button
-                        className="butn"
-                        onClick={() => {
-                          this.SendMessage();
-                        }}
-                      >
-                        Send
-                      </Button>
-                      <Button
-                        className="butn"
-                        onClick={() => {
-                          this.toggleDocu();
-                        }}
-                      >
-                        Close
-                      </Button>
+                        <Button
+                          className="butn"
+                          onClick={() => {
+                            this.SendMessage();
+                          }}
+                        >
+                          Send
+                        </Button>
+                        <Button
+                          className="butn"
+                          onClick={() => {
+                            this.toggleDocu();
+                          }}
+                        >
+                          Close
+                        </Button>
                       </div>
                     </ModalBody>
                   </Modal>

@@ -16,6 +16,7 @@ import "react-notifications/lib/notifications.css";
 import { encryption } from "../helpers/encryption";
 import maersk from "./../assets/img/maersk.png";
 import matchSorter from "match-sorter";
+import Eye from "./../assets/img/eye.png";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -68,7 +69,8 @@ class RateFinalizingStill extends Component {
       modalRejectPop: false,
       HazMat: "",
       isAcceptModal: false,
-      isRejectModal: false
+      isRejectModal: false,
+      CustomClearance: 0
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -76,6 +78,8 @@ class RateFinalizingStill extends Component {
     this.toggleBook = this.toggleBook.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
+    // this.isAcceptModal = this.isAcceptModal.bind(this);
+    // this.isRejectModal = this.isRejectModal.bind(this);
   }
 
   componentDidMount() {
@@ -92,19 +96,20 @@ class RateFinalizingStill extends Component {
       this.HandleSalesQuoteView(qData);
       this.HandlePackgeTypeData();
       this.HandleCommodityDropdown();
+      //this.HandleDowloadFile();
     }
   }
 
   //////toggleAcceptModal method
 
-  toggleAcceptModal() {
+  toggleAcceptModal = () => {
     this.setState({ isAcceptModal: !this.state.isAcceptModal });
-  }
+  };
 
   //////toggleRejectModal method
-  toggleRejectModal() {
+  toggleRejectModal = () => {
     this.setState({ isRejectModal: !this.state.isRejectModal });
-  }
+  };
 
   HandleSalesQuoteView(param) {
     debugger;
@@ -168,7 +173,8 @@ class RateFinalizingStill extends Component {
                   SpecialEquipment: "",
                   HazMatUnstackable: "",
                   TypeofMove: TypeofMove,
-                  IncoTerms: IncoTerms
+                  IncoTerms: IncoTerms,
+                  CustomClearance: response.data.Table[0].Customs_Clearance
                 });
               }
             }
@@ -214,7 +220,13 @@ class RateFinalizingStill extends Component {
                     Weight: table[i].GrossWeight,
                     Gross_Weight: "-",
                     Temperature: "-",
-                    CBM: "-",
+                    CBM:
+                      response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                      "AIR"
+                        ? table[i].ChgWeight
+                        : table[i].CBM === undefined
+                        ? "-"
+                        : table[i].CBM,
                     Volume: "-",
                     VolumeWeight: "-",
                     Editable: true
@@ -328,6 +340,7 @@ class RateFinalizingStill extends Component {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
+                self.toggleAcceptModal();
               }
             }
           }
@@ -381,6 +394,7 @@ class RateFinalizingStill extends Component {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
+                self.toggleRejectModal();
               }
             }
           }
@@ -804,6 +818,67 @@ class RateFinalizingStill extends Component {
       debugger;
       NotificationManager.success(response.data[0].Result);
     });
+  };
+
+  onDocumentSaleQuoteHandler = () => {
+    debugger;
+    const docData = new FormData();
+    var docName = this.state.selectedFileName;
+
+    if (docName == "") {
+      NotificationManager.error("Select File");
+      return false;
+    }
+
+    debugger;
+    //docData.append();
+    docData.append("QuoteID", this.state.RateDetails[0].SaleQuoteID);
+    docData.append("DocumentID", 0);
+    docData.append(
+      "MywayUserID",
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
+    docData.append("Mode", this.state.ContainerLoad);
+    docData.append("SalesQuoteDoc", this.state.selectedFile);
+    // docData.append()
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteFileUpload`,
+      data: docData,
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        NotificationManager.success(response.data.Table[0].Result);
+      })
+      .catch(error => {
+        debugger;
+        NotificationManager.error(error.response.data.split("'")[1]);
+        console.log(error.response);
+      });
+  };
+
+  HandleDowloadFile = () => {
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DownloadFTPFile`,
+      data: {
+        MywayUserID: 874588,
+        FilePath:
+          "ftp://vizio.atafreight.com/BookingDoc/11130Nov2019001100_526.pdf"
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        NotificationManager.success(response.data.Table[0].Result);
+      })
+      .catch(error => {
+        debugger;
+        NotificationManager.error(error.response.data.split("'")[1]);
+        console.log(error.response);
+      });
   };
 
   createUISpecial() {
@@ -1366,24 +1441,26 @@ class RateFinalizingStill extends Component {
                     <div className="title-border d-flex align-items-center justify-content-between py-3">
                       <h3>Quotation Price</h3>
                       <div>
-                      {this.state.toggleCustomerType && this.state.QuoteStatus && (
-                        //QuoteStatus
-                        <button
-                          className="butn m-0 mr-3"
-                          onClick={this.AcceptQuotes.bind(this)}
-                        >
-                          Accept
-                        </button>
-                      )}
-                      {this.state.toggleCustomerType && this.state.QuoteStatus && (
-                        <button
-                          className="butn m-0"
-                          // onClick={this.RejectQuotes.bind(this)}
-                          onClick={this.toggleRejectPop.bind(this)}
-                        >
-                          Reject
-                        </button>
-                      )}
+                        {this.state.toggleCustomerType &&
+                          this.state.QuoteStatus && (
+                            //QuoteStatus
+                            <button
+                              className="butn m-0 mr-3"
+                              onClick={this.AcceptQuotes.bind(this)}
+                            >
+                              Accept
+                            </button>
+                          )}
+                        {this.state.toggleCustomerType &&
+                          this.state.QuoteStatus && (
+                            <button
+                              className="butn m-0"
+                              // onClick={this.RejectQuotes.bind(this)}
+                              onClick={this.toggleRejectModal}
+                            >
+                              Reject
+                            </button>
+                          )}
                       </div>
                     </div>
                     <div className="react-rate-table">
@@ -1507,11 +1584,19 @@ class RateFinalizingStill extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
+                                 
+                                 if (original.Linename!==undefined) {        
+                                  var linename =
+                                    original.Linename.replace(
+                                      "  ",
+                                      "_"
+                                    ).replace(" ", "_") + ".png";
+                                  }
                                   return (
                                     <React.Fragment>
-                                      <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                        <div className="remember-forgot rat-img d-block m-0">
-                                          {/* <input
+                                      {/* <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                        <div className="remember-forgot rat-img d-block m-0"> */}
+                                      {/* <input
                                           id={"maersk-logo" + i}
                                           type="checkbox"
                                           name={"rate-tab-check"}
@@ -1530,13 +1615,16 @@ class RateFinalizingStill extends Component {
                                             this.toggleRow( original.RateLineID == undefined ? original.RateLineId : original.RateLineID , row)
                                           }
                                         /> */}
-                                          <label
+                                      {/* <label
                                             htmlFor={"maersk-logo" + i}
                                           ></label>
                                         </div>
-                                      </div>
+                                      </div> */}
                                       <div className="rate-tab-img">
-                                        <img src={maersk} alt="maersk icon" />
+                                        <img
+                                          src={maersk}
+                                          alt={original.Linename}
+                                        />
                                       </div>
                                     </React.Fragment>
                                   );
@@ -1549,12 +1637,21 @@ class RateFinalizingStill extends Component {
                                   return (
                                     <>
                                       <p className="details-title">POL</p>
-                                      <p
-                                        title={row.original.POL}
-                                        className="details-para max2"
-                                      >
-                                        {row.original.POL}
-                                      </p>
+                                      {this.state.ContainerLoad === "INLAND" ? (
+                                        <p
+                                          title={row.original.OriginName}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.OriginName}
+                                        </p>
+                                      ) : (
+                                        <p
+                                          title={row.original.POL}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.POL}
+                                        </p>
+                                      )}
                                     </>
                                   );
                                 },
@@ -1567,12 +1664,21 @@ class RateFinalizingStill extends Component {
                                   return (
                                     <>
                                       <p className="details-title">POD</p>
-                                      <p
-                                        title={row.original.POD}
-                                        className="details-para max2"
-                                      >
-                                        {row.original.POD}
-                                      </p>
+                                      {this.state.ContainerLoad === "INLAND" ? (
+                                        <p
+                                          title={row.original.DestinationName}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.DestinationName}
+                                        </p>
+                                      ) : (
+                                        <p
+                                          title={row.original.POD}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.POD}
+                                        </p>
+                                      )}
                                     </>
                                   );
                                 },
@@ -1587,9 +1693,13 @@ class RateFinalizingStill extends Component {
                                       <p className="details-title">
                                         TransShipment Port
                                       </p>
-                                      <p className="details-para">
-                                        {row.original.TransshipmentPort}
-                                      </p>
+                                      {this.state.ContainerLoad !== "INLAND" ? (
+                                        <p className="details-para">
+                                          {row.original.TransshipmentPort}
+                                        </p>
+                                      ) : (
+                                        <p className="details-para"></p>
+                                      )}
                                     </>
                                   );
                                 },
@@ -1615,9 +1725,13 @@ class RateFinalizingStill extends Component {
                                   return (
                                     <>
                                       <p className="details-title">Container</p>
-                                      <p className="details-para">
-                                        {row.original.ContainerType}
-                                      </p>
+                                      {this.state.ContainerLoad !== "INLAND" ? (
+                                        <p className="details-para">
+                                          {row.original.ContainerType}
+                                        </p>
+                                      ) : (
+                                        <p className="details-para"></p>
+                                      )}
                                     </>
                                   );
                                 },
@@ -1648,9 +1762,13 @@ class RateFinalizingStill extends Component {
                                   return (
                                     <>
                                       <p className="details-title">TT</p>
-                                      <p className="details-para">
-                                        {row.original.TransitTime}
-                                      </p>
+                                      {this.state.ContainerLoad !== "INLAND" ? (
+                                        <p className="details-para">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      ) : (
+                                        <p className="details-para"></p>
+                                      )}
                                     </>
                                   );
                                 },
@@ -1744,21 +1862,30 @@ class RateFinalizingStill extends Component {
                               <ReactTable
                                 minRows={1}
                                 data={this.state.SubRateDetails.filter(
-                                  d =>
-                                    d.saleQuoteLineID ||
-                                    d.SaleQuoteIDLineID ===
-                                      row.original.saleQuoteLineID ||
-                                    this.state.RateDetails.saleQuoteLineID
+                                  this.state.ContainerLoad !== "INLAND"
+                                    ? this.state.ContainerLoad === "LCL"
+                                      ? d =>
+                                          d.SaleQuoteIDLineID ===
+                                          row.original.saleQuoteLineID
+                                      : d =>
+                                          d.saleQuoteLineID ===
+                                          row.original.saleQuoteLineID
+                                    : // ||
+                                      // d.SaleQuoteIDLineID
+
+                                      d =>
+                                        d.SaleQuoteIDLineID ===
+                                        row.original.SaleQuoteIDLineID
                                 )}
                                 // data={this.state.SubRateDetails}
                                 columns={[
                                   {
                                     columns: [
                                       {
-                                        Header: "C. Type",
+                                        Header: "C. Description",
                                         accessor:
                                           this.state.ContainerLoad === "INLAND"
-                                            ? "ChargeType"
+                                            ? "ChargeDesc"
                                             : "Type",
                                         Cell: row => {
                                           debugger;
@@ -1769,11 +1896,11 @@ class RateFinalizingStill extends Component {
                                             return <>{row.original.Type}</>;
                                           }
                                           if (
-                                            row.original.ChargeType !==
+                                            row.original.ChargeDesc !==
                                             undefined
                                           ) {
                                             return (
-                                              <>{row.original.ChargeType}</>
+                                              <>{row.original.ChargeDesc}</>
                                             );
                                           }
                                         }
@@ -1784,7 +1911,12 @@ class RateFinalizingStill extends Component {
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "ChargeItem"
+                                        accessor: "ChargeItem",
+                                        Cell: props => (
+                                          <React.Fragment>
+                                            {props.original.Chargeitem}
+                                          </React.Fragment>
+                                        )
                                       },
                                       {
                                         Header: "Unit Price",
@@ -1891,16 +2023,38 @@ class RateFinalizingStill extends Component {
                           <div className="col-md-4">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
-                              {this.state.HazMatUnstackable}
-                              {this.state.HazMat}
+                              {this.state.HazMat == 1 ? "Yes" : "No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Unstackable</p>
-                            <p className="details-para">
-                              {this.state.HazMatUnstackable}
-                            </p>
-                          </div>
+
+                          {this.state.ContainerLoad !== "FCL" && "LTL" ? (
+                            <>
+                              <div className="col-md-4">
+                                <p className="details-title">Non Stackable</p>
+                                <p className="details-para">
+                                  {this.state.HazMatUnstackable == 1
+                                    ? "Yes"
+                                    : "No"}
+                                </p>
+                              </div>
+                              <div className="col-md-4">
+                                <p className="details-title">CustomClearance</p>
+                                <p className="details-para">
+                                  {this.state.CustomClearance == 1
+                                    ? "Yes"
+                                    : "No"}
+                                </p>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="col-md-4">
+                              <p className="details-title">CustomClearance</p>
+                              <p className="details-para">
+                                {this.state.CustomClearance == 1 ? "Yes" : "No"}
+                              </p>
+                            </div>
+                          )}
+
                           <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
@@ -2097,6 +2251,58 @@ class RateFinalizingStill extends Component {
                         {this.state.selectedFileName}
                       </p>
                     </div>
+                    <button
+                      className={className}
+                      id="toggler"
+                      onClick={() => {
+                        this.onDocumentSaleQuoteHandler();
+                      }}
+                    >
+                      Upload File
+                    </button>
+                    {/* <div className="row">
+                      {" "}
+                      <div className="col-md-12 login-fields">
+                        <p className="details-title">Cargo Details</p>
+                        <div className="ag-fresh redirect-row">
+                          <ReactTable
+                            data={CargoDetailsArr}
+                            filterable
+                            minRows={1}
+                            showPagination={false}
+                            columns={[
+                              {
+                                Header: "File",
+                                accessor: "ContainerType"
+                              },
+                              {
+                                Header: "Download",
+                                accessor: "Quantity"
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <div
+                                      onClick={e => this.HandleDowloadFile()}
+                                      className="tab-icon-view"
+                                    >
+                                      <img src={Eye} alt="eye icon" />
+                                    </div>
+                                  );
+                                },
+                                Header: "Action",
+                                sortable: false
+                              }
+                            ]}
+                            className="-striped -highlight"
+                            defaultPageSize={2000}
+                            //getTrProps={this.HandleRowClickEvt}
+                            //minRows={1}
+                          />
+                        </div>
+                      </div>
+                    </div> */}
+
                     <center>
                       {/* <Button
                       className="butn"
@@ -2295,19 +2501,22 @@ class RateFinalizingStill extends Component {
           centered={true}
         >
           <ModalBody>
+            <p>Do you want Accept Quotestion ?</p>
             <div className="text-center">
               <Button
                 className="butn"
+                onClick={this.AcceptQuotes.bind(this)}
                 //onClick={this.hanleProfitAmountSubmit.bind(this)}
               >
-                Add
+                Yes
               </Button>
 
               <Button
+                onClick={this.toggleAcceptModal}
                 className="butn"
                 //onClick={this.hanleProfitAmountRemove.bind(this)}
               >
-                Remove
+                No
               </Button>
             </div>
           </ModalBody>
@@ -2316,14 +2525,15 @@ class RateFinalizingStill extends Component {
         <Modal
           className="amnt-popup"
           isOpen={this.state.isRejectModal}
-          toggle={this.toggleAcceptModal}
+          toggle={this.toggleRejectModal}
           centered={true}
         >
           <ModalBody>
-            <p>Do You Want to Reject Sales Quote</p>
+            <p>Do You Want to Reject Quotestion ?</p>
             <div className="text-center">
               <Button
                 className="butn"
+                onClick={this.RejectQuotes.bind(this)}
                 //onClick={this.hanleProfitAmountSubmit.bind(this)}
               >
                 Yes
@@ -2331,6 +2541,7 @@ class RateFinalizingStill extends Component {
 
               <Button
                 className="butn"
+                onClick={this.toggleRejectModal}
                 //onClick={this.hanleProfitAmountRemove.bind(this)}
               >
                 No

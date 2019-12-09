@@ -1083,7 +1083,7 @@ class Dashboard extends Component {
   HandleRediractPageShipmentDetails(hblno) {
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: hblno }
+      state: { detail: hblno,pageName:"ShipmentPage" }
     });
   }
   HandleActiveShipmentData() {

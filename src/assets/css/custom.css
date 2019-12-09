@@ -1558,7 +1558,18 @@ table tbody tr:last-child {
 .sticky-dropdown + div div {
   padding: 5px;
 }
-
+.spec-cross {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -15px;
+  color: #777;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.spec-cross:hover {
+  color: #000;
+}
 /* new rate search ends */
 
 /* rate table starts */
@@ -3779,11 +3790,11 @@ img {
   float: right;
   margin-top: 15px;
   cursor: pointer;
-} 
+}
 .title-secpad {
   padding: 15px 30px;
 }
-/* Css Start Kalpesh */ 
+/* Css Start Kalpesh */
 /* .column-a {
   margin: 0 15px;
 }
@@ -3810,7 +3821,6 @@ img {
   font-size: 15px;
   font-family: "Medium Font";
 } */
-
 
 @media (min-width: 768px) {
   .cus-w .col-md-3 {
@@ -3845,26 +3855,26 @@ img {
 @media (min-width: 576px) and (max-width: 767px) {
   .header-ul li {
     padding: 10px;
-}
-.header-btn {
-  padding: 5px 10px;
-  font-size: 10px;
-  margin: 10px 5px 0 5px;
-}
-.header-chat-icon {
-  padding: 0 4px;
-}
+  }
+  .header-btn {
+    padding: 5px 10px;
+    font-size: 10px;
+    margin: 10px 5px 0 5px;
+  }
+  .header-chat-icon {
+    padding: 0 4px;
+  }
 }
 @media (min-width: 461px) and (max-width: 575px) {
-.header-log {
-  margin: auto;
-  display: block;
-}
-.header-ul {
-  float: none;
-  margin: auto;
-  border-top: 1px solid #d6d6d6;
-}
+  .header-log {
+    margin: auto;
+    display: block;
+  }
+  .header-ul {
+    float: none;
+    margin: auto;
+    border-top: 1px solid #d6d6d6;
+  }
 }
 @media (min-width: 320px) and (max-width: 460px) {
   .login-between {
