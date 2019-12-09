@@ -3240,17 +3240,6 @@ class RateFinalizing extends Component {
                       </button>
                     </div>
                         
-                    {/* <div className="text-right">
-                      <button
-                        onClick={this.rateQuery.bind(this)}
-                        className={
-                          this.state.rateQuery ? "butn m-0" : "butn cancel-butn"
-                        }
-                        id="toggler"
-                      >
-                        {this.state.rateQuery ? "View More" : "View Less"}
-                      </button>
-                    </div> */}
                   </div>
 
                   <div className="row m-0 py-3">
@@ -4737,6 +4726,10 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
+            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleEdit}>
+                  <span>&times;</span>
+            </button>
+            <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
               <h3 className="mb-4">Edit Cargo Details</h3>
 
               <div className="rename-cntr login-fields">
@@ -4825,6 +4818,7 @@ class RateFinalizing extends Component {
                 >
                   Submit
                 </Button>
+              </div>
               </div>
             </ModalBody>
           </Modal>

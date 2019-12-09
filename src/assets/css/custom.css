@@ -2471,7 +2471,7 @@ table tbody tr:last-child {
   top: 0 !important;
   left: -10px !important;
   border-color: #d6d6d6;
-  border-radius: 0;
+  border-radius: 0.25rem;
 }
 .header-ul-login-dtls {
   list-style: none;
