@@ -545,6 +545,7 @@ class BookingView extends Component {
   render() {
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
+      debugger
       commodityName = this.state.commodityData.filter(
         x => x.id === this.state.selectedCommodity
       )[0].Commodity;
