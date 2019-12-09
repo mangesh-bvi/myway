@@ -3814,12 +3814,12 @@ img {
 
 @media (min-width: 768px) {
   .cus-w .col-md-3 {
-    flex: 0 0 33.333333%;
+    flex: 0 0 28.333333%;
     max-width: 28.333333%;
   }
   .cus-w .col-md-9 {
     flex: 0 0 71.666667%;
-    max-width: 80.666667%;
+    max-width: 71.666667%;
   }
 }
 @media (max-width: 768px) {

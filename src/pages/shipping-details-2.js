@@ -1040,18 +1040,16 @@ class ShippingDetailsTwo extends Component {
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
-                <p>{team.Message}</p>
+                <p style={{fontWeight: "600"}}>{team.Message}</p>
 
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-between">
                   <div>
-                    <span style={{ marginRight: "195px" }}>
-                      Created by :-
-                      <b>
-                        {encryption(
+                    <span>
+                      Created by: 
+                      {encryption(
                           window.localStorage.getItem("username"),
                           "desc"
                         )}
-                      </b>
                     </span>
                   </div>
                   ({team.MessageCreationTime})

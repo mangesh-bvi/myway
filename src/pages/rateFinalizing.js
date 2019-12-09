@@ -2112,8 +2112,8 @@ class RateFinalizing extends Component {
                   : "Create Sales Quote"}
               </h2>
             </div>
-            <div className="row">
-              <div className="col-md-4">
+            <div className="row cus-w">
+              <div className="col-md-3">
                 <div className="rate-table-left rate-final-left">
                   <div>
                     <h3>Locals</h3>
@@ -2209,7 +2209,7 @@ class RateFinalizing extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-md-8">
+              <div className="col-md-9">
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
                     <div className="title-border py-3">
@@ -2977,8 +2977,8 @@ class RateFinalizing extends Component {
                     </div> */}
                   </div>
 
-                  <div className="row m-0 py-3">
-                  <div className="align-center px-3">
+                  <div className="row m-0 p-3">
+                  <div className="align-center">
                             {this.state.toggleAddProfitBtn && (
                               <button
                                 onClick={this.toggleProfit}
