@@ -3050,15 +3050,17 @@ class RateTable extends Component {
                 <select className="ml-2" onChange={this.filterAll}>
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
-                  {this.state.loading === true ? '' : this.state.commodityData.map((item, i) => (
-                    <option
-                      key={i}
-                      value={item.id}
-                      selected={item.Commodity === "FAK"}
-                    >
-                      {item.Commodity}
-                    </option>
-                  ))}
+                  {this.state.loading === true
+                    ? ""
+                    : this.state.commodityData.map((item, i) => (
+                        <option
+                          key={i}
+                          value={item.id}
+                          selected={item.Commodity === "FAK"}
+                        >
+                          {item.Commodity}
+                        </option>
+                      ))}
                 </select>
               </div>
               <div className="rate-table-range">
@@ -3352,13 +3354,8 @@ class RateTable extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  var mode = this.state.modeoftransport;
-                                  var lname =
-                                    original.lineName
-                                      .replace(" ", "_")
-                                      .replace("  ", "_") + ".png";
                                   if (
-                                    row._original.lineName !== "No Record Found" && mode=="Ocean"
+                                    row._original.lineName !== "No Record Found"
                                   ) {
                                     return (
                                       <React.Fragment>
@@ -3368,6 +3365,12 @@ class RateTable extends Component {
                                               id={"maersk-logo" + i}
                                               type="checkbox"
                                               name={"rate-tab-check"}
+                                              // checked={
+                                              // this.state.RateDetails[i - 1].checkbx
+                                              // ? this.state.RateDetails[i - 1]
+                                              // .checkbx
+                                              // : false
+                                              // }
                                               checked={
                                                 this.state.cSelectedRow[
                                                   original.RateLineID ==
@@ -3392,46 +3395,7 @@ class RateTable extends Component {
                                           </div>
                                         </div>
                                         <div className="rate-tab-img">
-                                          <img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/"+lname} alt="maersk icon" />
-                                        </div>
-                                      </React.Fragment>
-                                    );
-                                  }if (
-                                    row._original.lineName !== "No Record Found" && mode=="AIR"
-                                  ){
-                                    return (
-                                      <React.Fragment>
-                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                          <div className="remember-forgot rat-img d-block m-0">
-                                            <input
-                                              id={"maersk-logo" + i}
-                                              type="checkbox"
-                                              name={"rate-tab-check"}
-                                              checked={
-                                                this.state.cSelectedRow[
-                                                  original.RateLineID ==
-                                                  undefined
-                                                    ? original.RateLineId
-                                                    : original.RateLineID
-                                                ] === true
-                                              }
-                                              onChange={e =>
-                                                this.toggleRow(
-                                                  original.RateLineID ==
-                                                    undefined
-                                                    ? original.RateLineId
-                                                    : original.RateLineID,
-                                                  row
-                                                )
-                                              }
-                                            />
-                                            <label
-                                              htmlFor={"maersk-logo" + i}
-                                            ></label>
-                                          </div>
-                                        </div>
-                                        <div className="rate-tab-img">
-                                          <img src={"https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/"+lname} alt="maersk icon" />
+                                          <img src={maersk} alt="maersk icon" />
                                         </div>
                                       </React.Fragment>
                                     );
@@ -3449,6 +3413,106 @@ class RateTable extends Component {
                                 accessor: "lineName"
                                 // minWidth: 200
                               },
+                              // {
+                              //   Cell: ({ original, row }) => {
+                              //     i++;
+                              //     var mode = this.state.modeoftransport;
+                              //     var lname =
+                              //       original.lineName
+                              //         .replace(" ", "_")
+                              //         .replace("  ", "_") + ".png";
+                              //     if (
+                              //       row._original.lineName !== "No Record Found" && mode=="Ocean"
+                              //     ) {
+                              //       return (
+                              //         <React.Fragment>
+                              //           <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                              //             <div className="remember-forgot rat-img d-block m-0">
+                              //               <input
+                              //                 id={"maersk-logo" + i}
+                              //                 type="checkbox"
+                              //                 name={"rate-tab-check"}
+                              //                 checked={
+                              //                   this.state.cSelectedRow[
+                              //                     original.RateLineID ==
+                              //                     undefined
+                              //                       ? original.RateLineId
+                              //                       : original.RateLineID
+                              //                   ] === true
+                              //                 }
+                              //                 onChange={e =>
+                              //                   this.toggleRow(
+                              //                     original.RateLineID ==
+                              //                       undefined
+                              //                       ? original.RateLineId
+                              //                       : original.RateLineID,
+                              //                     row
+                              //                   )
+                              //                 }
+                              //               />
+                              //               <label
+                              //                 htmlFor={"maersk-logo" + i}
+                              //               ></label>
+                              //             </div>
+                              //           </div>
+                              //           <div className="rate-tab-img">
+                              //             <img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/"+lname} alt="maersk icon" />
+                              //           </div>
+                              //         </React.Fragment>
+                              //       );
+                              //     }if (
+                              //       row._original.lineName !== "No Record Found" && mode=="AIR"
+                              //     ){
+                              //       return (
+                              //         <React.Fragment>
+                              //           <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                              //             <div className="remember-forgot rat-img d-block m-0">
+                              //               <input
+                              //                 id={"maersk-logo" + i}
+                              //                 type="checkbox"
+                              //                 name={"rate-tab-check"}
+                              //                 checked={
+                              //                   this.state.cSelectedRow[
+                              //                     original.RateLineID ==
+                              //                     undefined
+                              //                       ? original.RateLineId
+                              //                       : original.RateLineID
+                              //                   ] === true
+                              //                 }
+                              //                 onChange={e =>
+                              //                   this.toggleRow(
+                              //                     original.RateLineID ==
+                              //                       undefined
+                              //                       ? original.RateLineId
+                              //                       : original.RateLineID,
+                              //                     row
+                              //                   )
+                              //                 }
+                              //               />
+                              //               <label
+                              //                 htmlFor={"maersk-logo" + i}
+                              //               ></label>
+                              //             </div>
+                              //           </div>
+                              //           <div className="rate-tab-img">
+                              //             <img src={"https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/"+lname} alt="maersk icon" />
+                              //           </div>
+                              //         </React.Fragment>
+                              //       );
+                              //     } else {
+                              //       return (
+                              //         <>
+                              //           <p className="details-title"></p>
+                              //           <p className="details-para max2">
+                              //             No Record Found
+                              //           </p>
+                              //         </>
+                              //       );
+                              //     }
+                              //   },
+                              //   accessor: "lineName"
+                              //   // minWidth: 200
+                              // },
                               {
                                 Cell: row => {
                                   return (
