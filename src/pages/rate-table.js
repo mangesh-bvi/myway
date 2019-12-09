@@ -3724,15 +3724,18 @@ class RateTable extends Component {
                                     columns: [
                                       {
                                         Header: "C. Description",
-                                        accessor: "ChargeDesc"
+                                        accessor: "ChargeDesc",
+                                        
                                       },
                                       {
                                         Header: "C. Name",
-                                        accessor: "ChargeCode"
+                                        accessor: "ChargeCode",
+                                        
                                       },
                                       {
                                         Header: "Unit Price",
                                         accessor: "Rate",
+                                        minWidth:70,
                                         Cell: props => (
                                           <React.Fragment>
                                             {props.original.Rate}
@@ -3743,11 +3746,13 @@ class RateTable extends Component {
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "ChargeItem"
+                                        accessor: "ChargeItem",
+                                        
                                       },
                                       {
                                         Header: "Tax",
                                         accessor: "Tax",
+                                        minWidth:55,
                                         Cell: props => (
                                           <React.Fragment>
                                             {props.original.Tax !== 0
@@ -3759,7 +3764,8 @@ class RateTable extends Component {
 
                                       {
                                         Header: "Exrate",
-                                        accessor: "Exrate"
+                                        accessor: "Exrate",
+                                        
                                       },
 
                                       {
@@ -3777,7 +3783,8 @@ class RateTable extends Component {
                                           );
                                         },
                                         Header: "Final Payment",
-                                        accessor: "TotalAmount"
+                                        accessor: "TotalAmount",
+                                        
                                       }
                                     ]
                                   }

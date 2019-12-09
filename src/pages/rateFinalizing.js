@@ -2400,8 +2400,8 @@ class RateFinalizing extends Component {
                   : "Create Sales Quote"}
               </h2>
             </div>
-            <div className="row">
-              <div className="col-md-4">
+            <div className="row cus-w">
+              <div className="col-md-3">
                 <div className="rate-table-left rate-final-left">
                   <div>
                     <h3>Locals</h3>
@@ -2497,7 +2497,7 @@ class RateFinalizing extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-md-8">
+              <div className="col-md-9">
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
                     <div className="title-border py-3">
@@ -3324,20 +3324,23 @@ class RateFinalizing extends Component {
                         {this.state.rateQuery ? "View More" : "View Less"}
                       </button>
                     </div>
-
-                    {/* <div className="text-right">
-                      <button
-                        onClick={this.rateQuery.bind(this)}
-                        className={
-                          this.state.rateQuery ? "butn m-0" : "butn cancel-butn"
-                        }
-                        id="toggler"
-                      >
-                        {this.state.rateQuery ? "View More" : "View Less"}
-                      </button>
-                    </div> */}
+                        
                   </div>
 
+<<<<<<< HEAD
+                  <div className="row m-0 p-3">
+                  <div className="align-center">
+                            {this.state.toggleAddProfitBtn && (
+                              <button
+                                onClick={this.toggleProfit}
+                                className="butn more-padd m-0"
+                              >
+                                Add Profit
+                              </button>
+                            )}
+                          </div>
+                  <div className="text-center">
+=======
                   <div className="row m-0 py-3">
                     <div className="align-center px-3">
                       {this.state.toggleAddProfitBtn && (
@@ -3350,6 +3353,7 @@ class RateFinalizing extends Component {
                       )}
                     </div>
                     <div className="text-center">
+>>>>>>> 9dab083ed9ccd810c342a8938093bd9ca0d89a6a
                       {this.state.toggleIsEdit && (
                         <button
                           onClick={this.toggleRequest}
@@ -4828,6 +4832,10 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
+            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleEdit}>
+                  <span>&times;</span>
+            </button>
+            <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
               <h3 className="mb-4">Edit Cargo Details</h3>
 
               <div className="rename-cntr login-fields">
@@ -4916,6 +4924,7 @@ class RateFinalizing extends Component {
                 >
                   Submit
                 </Button>
+              </div>
               </div>
             </ModalBody>
           </Modal>
