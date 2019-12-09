@@ -3327,22 +3327,8 @@ class RateFinalizing extends Component {
                         
                   </div>
 
-<<<<<<< HEAD
                   <div className="row m-0 p-3">
-                  <div className="align-center">
-                            {this.state.toggleAddProfitBtn && (
-                              <button
-                                onClick={this.toggleProfit}
-                                className="butn more-padd m-0"
-                              >
-                                Add Profit
-                              </button>
-                            )}
-                          </div>
-                  <div className="text-center">
-=======
-                  <div className="row m-0 py-3">
-                    <div className="align-center px-3">
+                    <div className="align-center">
                       {this.state.toggleAddProfitBtn && (
                         <button
                           onClick={this.toggleProfit}
@@ -3353,7 +3339,6 @@ class RateFinalizing extends Component {
                       )}
                     </div>
                     <div className="text-center">
->>>>>>> 9dab083ed9ccd810c342a8938093bd9ca0d89a6a
                       {this.state.toggleIsEdit && (
                         <button
                           onClick={this.toggleRequest}

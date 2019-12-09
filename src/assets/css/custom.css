@@ -2470,7 +2470,7 @@ table tbody tr:last-child {
   top: 0 !important;
   left: -10px !important;
   border-color: #d6d6d6;
-  border-radius: 0.25rem;
+  border-radius: 0;
 }
 .header-ul-login-dtls {
   list-style: none;
@@ -2515,9 +2515,6 @@ table tbody tr:last-child {
   border: none;
   transition: 0.5s;
 }
-/* .cls-flside-close {
-  transform: translate(-250px) !important;
-} */
 .notificationss {
   background: #39b54a;
   color: #fff !important;
@@ -3781,8 +3778,6 @@ img {
   float: right;
   margin-top: -45px;
   margin-right: 15px;
-  /* float: right; */
-
 }
 /* Quote css end by Shlok */
 .menubars {
