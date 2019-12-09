@@ -249,6 +249,7 @@ class ShippingDetailsTwo extends Component {
     this.toggleEdit = this.toggleEdit.bind(this);
     this.togglePackage = this.togglePackage.bind(this);
     this.handleActivityList = this.handleActivityList.bind(this);
+    this.HandleShipmentDocument = this.HandleShipmentDocument.bind(this);
     // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
@@ -706,6 +707,7 @@ class ShippingDetailsTwo extends Component {
   };
   onDocumentClickHandler = () => {
     debugger;
+    let self = this;
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
     var docDesc = document.getElementById("docDesc").value;
@@ -719,8 +721,10 @@ class ShippingDetailsTwo extends Component {
     }
     debugger;
     //docData.append();
-    docData.append("ShipmentNumber", "BCM2453770");
-    docData.append("HBLNo", "BCM23770");
+    docData.append("ShipmentNumber", this.state.ShipperID);
+    // docData.append("ShipmentNumber", "BCM2453770");
+    // docData.append("HBLNo", "BCM23770");
+    docData.append("HBLNo", this.state.HblNo);
     docData.append("DocDescription", docDesc);
     docData.append("name", docName);
     docData.append("FileData", this.state.selectedFile);
@@ -734,6 +738,7 @@ class ShippingDetailsTwo extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data[0].Result);
+      self.HandleShipmentDocument();
     });
   };
 
