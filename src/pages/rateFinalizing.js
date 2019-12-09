@@ -676,7 +676,7 @@ class RateFinalizing extends Component {
                     Editable: true
                   });
                 // }
-
+                if (param.type == "FCL") {
                 if (!container.includes(table[i].ContainerCode)) {
                   container += table[i].ContainerCode + ","
                   containerDetailsArr.push({
@@ -692,7 +692,8 @@ class RateFinalizing extends Component {
                     Quantity: table[i].ContainerQuantity
                   });                                    
                 }
-              } 
+              }
+            } 
             }
             }
 

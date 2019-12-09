@@ -1584,12 +1584,14 @@ class RateFinalizingStill extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-
+                                 
+                                 if (original.Linename!==undefined) {        
                                   var linename =
-                                    row.original.Linename.replace(
+                                    original.Linename.replace(
                                       "  ",
                                       "_"
                                     ).replace(" ", "_") + ".png";
+                                  }
                                   return (
                                     <React.Fragment>
                                       {/* <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -1621,7 +1623,7 @@ class RateFinalizingStill extends Component {
                                       <div className="rate-tab-img">
                                         <img
                                           src={maersk}
-                                          alt={row.original.Linename}
+                                          alt={original.Linename}
                                         />
                                       </div>
                                     </React.Fragment>
@@ -2258,7 +2260,7 @@ class RateFinalizingStill extends Component {
                     >
                       Upload File
                     </button>
-                    <div className="row">
+                    {/* <div className="row">
                       {" "}
                       <div className="col-md-12 login-fields">
                         <p className="details-title">Cargo Details</p>
@@ -2299,7 +2301,7 @@ class RateFinalizingStill extends Component {
                           />
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <center>
                       {/* <Button
