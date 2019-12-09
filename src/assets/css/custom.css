@@ -166,7 +166,6 @@ h3 {
 .logo {
   width: 175px;
   margin: 0 auto 35px;
-  .header-logline-height: 0;
 }
 .login-cntr {
   background-color: #fff;
@@ -1759,7 +1758,7 @@ table tbody tr:last-child {
   max-width: 60px;
   display: inline-block;
 }
-..ReactTable .rt-th {
+.ReactTable .rt-th {
   padding: 16px 7px !important;
 }
 .react-rate-table .ReactTable .rt-th,
@@ -2516,9 +2515,9 @@ table tbody tr:last-child {
   border: none;
   transition: 0.5s;
 }
-.cls-flside-close {
+/* .cls-flside-close {
   transform: translate(-250px) !important;
-}
+} */
 .notificationss {
   background: #39b54a;
   color: #fff !important;
