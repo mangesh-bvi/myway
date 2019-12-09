@@ -3324,25 +3324,10 @@ class RateFinalizing extends Component {
                         {this.state.rateQuery ? "View More" : "View Less"}
                       </button>
                     </div>
-                        
                   </div>
 
-<<<<<<< HEAD
                   <div className="row m-0 p-3">
-                  <div className="align-center">
-                            {this.state.toggleAddProfitBtn && (
-                              <button
-                                onClick={this.toggleProfit}
-                                className="butn more-padd m-0"
-                              >
-                                Add Profit
-                              </button>
-                            )}
-                          </div>
-                  <div className="text-center">
-=======
-                  <div className="row m-0 py-3">
-                    <div className="align-center px-3">
+                    <div className="align-center">
                       {this.state.toggleAddProfitBtn && (
                         <button
                           onClick={this.toggleProfit}
@@ -3353,7 +3338,6 @@ class RateFinalizing extends Component {
                       )}
                     </div>
                     <div className="text-center">
->>>>>>> 9dab083ed9ccd810c342a8938093bd9ca0d89a6a
                       {this.state.toggleIsEdit && (
                         <button
                           onClick={this.toggleRequest}
@@ -4832,99 +4816,110 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
-            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleEdit}>
-                  <span>&times;</span>
-            </button>
-            <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
-              <h3 className="mb-4">Edit Cargo Details</h3>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                onClick={this.toggleEdit}
+              >
+                <span>&times;</span>
+              </button>
+              <div
+                style={{
+                  backgroundColor: "#fff",
+                  padding: "15px",
+                  borderRadius: "15px"
+                }}
+              >
+                <h3 className="mb-4">Edit Cargo Details</h3>
 
-              <div className="rename-cntr login-fields">
-                <select
-                  className="select-text"
-                  onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                  name="PackageType"
-                  value={this.state.currentPackageType}
-                >
-                  <option selected>Select</option>
-                  {this.state.packageTypeData.map((item, i) => (
-                    <option key={i} value={item.PackageName}>
-                      {item.PackageName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <div className="rename-cntr login-fields">
+                  <select
+                    className="select-text"
+                    onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                    name="PackageType"
+                    value={this.state.currentPackageType}
+                  >
+                    <option selected>Select</option>
+                    {this.state.packageTypeData.map((item, i) => (
+                      <option key={i} value={item.PackageName}>
+                        {item.PackageName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Quantity</label>
-                <input
-                  type="text"
-                  value={this.state.valuequantity}
-                  id="txtRequestFreeTime"
-                  placeholder="Quantity"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Quantity</label>
+                  <input
+                    type="text"
+                    value={this.state.valuequantity}
+                    id="txtRequestFreeTime"
+                    placeholder="Quantity"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Lenght</label>
-                <input
-                  type="text"
-                  value={this.state.valuelenght}
-                  id="txtRequestFreeTime"
-                  placeholder="Lenght"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Lenght</label>
+                  <input
+                    type="text"
+                    value={this.state.valuelenght}
+                    id="txtRequestFreeTime"
+                    placeholder="Lenght"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Width</label>
-                <input
-                  type="text"
-                  value={this.state.valuewidth}
-                  id="txtRequestFreeTime"
-                  placeholder="Width"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Width</label>
+                  <input
+                    type="text"
+                    value={this.state.valuewidth}
+                    id="txtRequestFreeTime"
+                    placeholder="Width"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Height</label>
-                <input
-                  type="text"
-                  value={this.state.valueheight}
-                  id="txtRequestFreeTime"
-                  placeholder="Height"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Height</label>
+                  <input
+                    type="text"
+                    value={this.state.valueheight}
+                    id="txtRequestFreeTime"
+                    placeholder="Height"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Weight</label>
-                <input
-                  type="text"
-                  value={this.state.valueweight}
-                  id="txtRequestFreeTime"
-                  placeholder="Weight"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Weight</label>
+                  <input
+                    type="text"
+                    value={this.state.valueweight}
+                    id="txtRequestFreeTime"
+                    placeholder="Weight"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>CBM</label>
-                <input
-                  type="text"
-                  value={this.state.valuecbm}
-                  id="txtRequestFreeTime"
-                  placeholder="CBM"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>CBM</label>
+                  <input
+                    type="text"
+                    value={this.state.valuecbm}
+                    id="txtRequestFreeTime"
+                    placeholder="CBM"
+                  />
+                </div>
 
-              <div className="text-center">
-                <Button
-                  className="butn"
-                  data-valuespecialsontainersode={
-                    this.state.valuespecialsontainersode
-                  }
-                  onClick={this.SubmitCargoDetails.bind()}
-                >
-                  Submit
-                </Button>
-              </div>
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    data-valuespecialsontainersode={
+                      this.state.valuespecialsontainersode
+                    }
+                    onClick={this.SubmitCargoDetails.bind()}
+                  >
+                    Submit
+                  </Button>
+                </div>
               </div>
             </ModalBody>
           </Modal>
