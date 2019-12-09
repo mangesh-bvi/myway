@@ -1048,8 +1048,8 @@ class BookingInsert extends Component {
                                   {
                                     columns: [
                                       {
-                                        Header: "C.Type",
-                                        accessor: "Type"
+                                        Header: "C. Description",
+                                        accessor: "ChargeDesc"
                                       },
                                       {
                                         Header: "C.Name",
