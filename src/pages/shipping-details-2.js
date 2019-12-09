@@ -755,6 +755,36 @@ class ShippingDetailsTwo extends Component {
       modalDel: !prevState.modalDel
     }));
   }
+
+  deleteDocument() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DeleteShipmentDocument`,
+      data: {
+        DocumentId: self.state.documentData.DocumentID,
+        FileName: self.state.documentData.FileName,
+        DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        NotificationManager.success(response.data[0].Result);
+        self.HandleShipmentDocument();
+      })
+      .catch(error => {
+        debugger;
+        // var temperror = error.response.data;
+        // var err = temperror.split(":");
+        // var actData = [];
+        // actData.push({ DocumentDescription: "No Data Found" });
+
+        // self.setState({ documentData: actData });
+      });
+  }
+
   togglePackage(cargoId) {
     debugger;
     let self = this;
@@ -2368,7 +2398,13 @@ class ShippingDetailsTwo extends Component {
                 >
                   <ModalBody>
                     <p>Are you sure ?</p>
-                    <Button className="butn" onClick={this.toggleDel}>
+                    <Button
+                      className="butn"
+                      onClick={() => {
+                        this.toggleDel();
+                        this.deleteDocument();
+                      }}
+                    >
                       Yes
                     </Button>
                     <Button
