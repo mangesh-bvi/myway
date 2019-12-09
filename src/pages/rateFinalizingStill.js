@@ -1904,10 +1904,10 @@ class RateFinalizingStill extends Component {
                                   {
                                     columns: [
                                       {
-                                        Header: "C. Type",
+                                        Header: "C. Description",
                                         accessor:
                                           this.state.ContainerLoad === "INLAND"
-                                            ? "ChargeType"
+                                            ? "ChargeDesc"
                                             : "Type",
                                         Cell: row => {
                                           debugger;
@@ -1918,11 +1918,11 @@ class RateFinalizingStill extends Component {
                                             return <>{row.original.Type}</>;
                                           }
                                           if (
-                                            row.original.ChargeType !==
+                                            row.original.ChargeDesc !==
                                             undefined
                                           ) {
                                             return (
-                                              <>{row.original.ChargeType}</>
+                                              <>{row.original.ChargeDesc}</>
                                             );
                                           }
                                         }
@@ -2282,7 +2282,7 @@ class RateFinalizingStill extends Component {
                     >
                       Upload File
                     </button>
-                    <div className="row">
+                    {/* <div className="row">
                       {" "}
                       <div className="col-md-12 login-fields">
                         <p className="details-title">Cargo Details</p>
@@ -2323,7 +2323,7 @@ class RateFinalizingStill extends Component {
                           />
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <center>
                       {/* <Button

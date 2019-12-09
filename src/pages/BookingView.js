@@ -349,6 +349,7 @@ class BookingView extends Component {
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
+        
 
         console.log(QuotationData);
 
@@ -410,8 +411,9 @@ class BookingView extends Component {
             var CargoType = Booking[0].CargoType;
             var Incoterm = Booking[0].Incoterm;
             var strBooking_No = Booking[0].strBooking_No;
-
+            var ModeofTransport =  Booking[0].ModeofTransport;
             self.setState({
+              ModeofTransport,
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
               selectedCommodity: Booking[0].Commodity,
@@ -545,7 +547,7 @@ class BookingView extends Component {
   render() {
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
-      debugger
+      debugger;
       commodityName = this.state.commodityData.filter(
         x => x.id === this.state.selectedCommodity
       )[0].Commodity;
@@ -585,32 +587,77 @@ class BookingView extends Component {
                           {
                             columns: [
                               {
-                                Cell: row => {
-                                  var linename =
-                                    row.original.Linename.replace(
-                                      "  ",
-                                      "_"
-                                    ).replace(" ", "_") + ".png";
-                                  return (
-                                    <React.Fragment>
-                                      <div className="d-flex align-items-center">
-                                        <div>
-                                          <p className="details-title">
-                                            <img
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/" +
-                                                linename
-                                              }
-                                              alt={row.original.Linename}
-                                            />
-                                          </p>
+                                Cell: ({ original, row }) => {
+                                  i++;
+                                  debugger;
+                                  var lname = "";
+                                  var olname = "";
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
+                                    lname =
+                                      row._original.Linename.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
+                                    lname =
+                                      row._original.LineName.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+                                  var mode = this.state.ModeofTransport;
+
+                                  if (mode === "Ocean" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              lname
+                                            }
+                                          />
                                         </div>
-                                      </div>
-                                    </React.Fragment>
-                                  );
+                                      </React.Fragment>
+                                    );
+                                  } else if (mode == "Air" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              lname
+                                            }
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
+                                            alt={olname}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 },
-                                accessor: "lineName",
-                                width: 200
+                                accessor: "lineName"
+                                // minWidth: 200
                               },
                               {
                                 accessor: "POL",
@@ -697,8 +744,8 @@ class BookingView extends Component {
                                   {
                                     columns: [
                                       {
-                                        Header: "C.Type",
-                                        accessor: "Type"
+                                        Header: "C. Description",
+                                        accessor: "ChargeDesc"
                                       },
                                       {
                                         Header: "C.Name",
