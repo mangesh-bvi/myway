@@ -166,7 +166,6 @@ h3 {
 .logo {
   width: 175px;
   margin: 0 auto 35px;
-  .header-logline-height: 0;
 }
 .login-cntr {
   background-color: #fff;
@@ -1759,7 +1758,7 @@ table tbody tr:last-child {
   max-width: 60px;
   display: inline-block;
 }
-..ReactTable .rt-th {
+.ReactTable .rt-th {
   padding: 16px 7px !important;
 }
 .react-rate-table .ReactTable .rt-th,
@@ -2370,6 +2369,18 @@ table tbody tr:last-child {
 }
 /* side menu ends */
 
+.quote-to-from {
+  display: flex;
+  align-items: center;
+}
+.quote-to-from span {
+  margin-right: 10px;
+}
+.quote-to-from .react-datepicker-wrapper {
+  width: 150px;
+  margin-right: 20px;
+}
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
@@ -2471,7 +2482,7 @@ table tbody tr:last-child {
   top: 0 !important;
   left: -10px !important;
   border-color: #d6d6d6;
-  border-radius: 0;
+  border-radius: 0.25rem;
 }
 .header-ul-login-dtls {
   list-style: none;
@@ -2516,9 +2527,9 @@ table tbody tr:last-child {
   border: none;
   transition: 0.5s;
 }
-.cls-flside-close {
+/* .cls-flside-close {
   transform: translate(-250px) !important;
-}
+} */
 .notificationss {
   background: #39b54a;
   color: #fff !important;
@@ -3782,6 +3793,8 @@ img {
   float: right;
   margin-top: -45px;
   margin-right: 15px;
+  /* float: right; */
+
 }
 /* Quote css end by Shlok */
 .menubars {
@@ -3824,14 +3837,56 @@ img {
 
 @media (min-width: 768px) {
   .cus-w .col-md-3 {
-    flex: 0 0 33.333333%;
+    flex: 0 0 28.333333%;
     max-width: 28.333333%;
   }
   .cus-w .col-md-9 {
     flex: 0 0 71.666667%;
-    max-width: 80.666667%;
+    max-width: 71.666667%;
   }
 }
+
+
+
+
+/* Css Start Kalpesh*/
+@media (min-width: 1025px) and (max-width: 1350px) {
+
+}
+@media (min-width: 992px) and (max-width: 1024px) {
+  .disblo {
+    display: contents !important;
+  }
+  .top-select .butn {
+    margin: 2px;
+    min-width: 80px;
+  }
+  .rate-tab-drop select {
+    margin: 0 !important;
+  }
+  .planner-top-butns {
+    text-align: left;
+  }
+  .planner-top-butns .butn {
+    font-size: 11px;
+    min-width: 119px;
+    padding: 8px;
+    margin-right: 20px;
+  }
+  .marlefbtn {
+    margin: 0 15px !important;
+  }
+  .cust-tabs a {
+    margin-right: 15px;
+  }
+}
+@media (min-width: 769px) and (max-width: 991px) {
+
+}
+
+/* Css End Kalpesh*/
+
+
 @media (max-width: 768px) {
   .menuname {
     display: none;

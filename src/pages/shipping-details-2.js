@@ -755,6 +755,36 @@ class ShippingDetailsTwo extends Component {
       modalDel: !prevState.modalDel
     }));
   }
+
+  deleteDocument() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DeleteShipmentDocument`,
+      data: {
+        DocumentId: self.state.documentData.DocumentID,
+        FileName: self.state.documentData.FileName,
+        DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        NotificationManager.success(response.data[0].Result);
+        self.HandleShipmentDocument();
+      })
+      .catch(error => {
+        debugger;
+        // var temperror = error.response.data;
+        // var err = temperror.split(":");
+        // var actData = [];
+        // actData.push({ DocumentDescription: "No Data Found" });
+
+        // self.setState({ documentData: actData });
+      });
+  }
+
   togglePackage(cargoId) {
     debugger;
     let self = this;
@@ -1023,7 +1053,7 @@ class ShippingDetailsTwo extends Component {
         <>
           <button
             onClick={this.handleChangePage.bind(this)}
-            className="butn mt-0"
+            className="butn mt-0 marlefbtn"
             style={{ marginLeft: "140px" }}
           >
             Back
@@ -1053,18 +1083,16 @@ class ShippingDetailsTwo extends Component {
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
-                <p>{team.Message}</p>
+                <p style={{ fontWeight: "600" }}>{team.Message}</p>
 
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-between">
                   <div>
-                    <span style={{ marginRight: "195px" }}>
-                      Created by :-
-                      <b>
-                        {encryption(
-                          window.localStorage.getItem("username"),
-                          "desc"
-                        )}
-                      </b>
+                    <span>
+                      Created by:
+                      {encryption(
+                        window.localStorage.getItem("username"),
+                        "desc"
+                      )}
                     </span>
                   </div>
                   ({team.MessageCreationTime})
@@ -1716,7 +1744,7 @@ class ShippingDetailsTwo extends Component {
                       <div className="table-scroll">
                         <ReactTable
                           data={documentData}
-                          showPagination={false}
+                          showPagination={true}
                           noDataText=""
                           columns={[
                             {
@@ -2368,7 +2396,13 @@ class ShippingDetailsTwo extends Component {
                 >
                   <ModalBody>
                     <p>Are you sure ?</p>
-                    <Button className="butn" onClick={this.toggleDel}>
+                    <Button
+                      className="butn"
+                      onClick={() => {
+                        this.toggleDel();
+                        this.deleteDocument();
+                      }}
+                    >
                       Yes
                     </Button>
                     <Button
