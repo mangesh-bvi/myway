@@ -70,7 +70,8 @@ class RateFinalizingStill extends Component {
       HazMat: "",
       isAcceptModal: false,
       isRejectModal: false,
-      CustomClearance: 0
+      CustomClearance: 0,
+      errorRejReson: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -341,6 +342,9 @@ class RateFinalizingStill extends Component {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
                 self.toggleAcceptModal();
+                setTimeout(function() {
+                  window.location.href = "quote-table";
+                }, 1000);
               }
             }
           }
@@ -372,6 +376,8 @@ class RateFinalizingStill extends Component {
     }
     var RejectResontxt = document.getElementById("RejectResontxt").value;
     debugger;
+    if(RejectResontxt!=="")
+    {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteReject`,
@@ -387,7 +393,7 @@ class RateFinalizingStill extends Component {
       .then(function(response) {
         debugger;
 
-        self.toggleRejectPop();
+        //self.toggleRejectPop();
 
         if (response != null) {
           if (response.data != null) {
@@ -395,6 +401,9 @@ class RateFinalizingStill extends Component {
               if (response.data.Table.length > 0) {
                 NotificationManager.success(response.data.Table[0].Message);
                 self.toggleRejectModal();
+                setTimeout(function() {
+                  window.location.href = "quote-table";
+                }, 1000);
               }
             }
           }
@@ -412,6 +421,13 @@ class RateFinalizingStill extends Component {
         //alert(err[1].replace("}", ""))
         NotificationManager.error(err[1].replace("}", ""));
       });
+    }
+    else{
+      var errorRejReson = "Please enter rejection reason"
+      self.setState({
+        errorRejReson:errorRejReson 
+      })
+    }
   }
 
   SendMail(SalesQuoteNumber, Messagebody) {
@@ -1446,7 +1462,7 @@ class RateFinalizingStill extends Component {
                             //QuoteStatus
                             <button
                               className="butn m-0 mr-3"
-                              onClick={this.AcceptQuotes.bind(this)}
+                              onClick={this.toggleAcceptModal}
                             >
                               Accept
                             </button>
@@ -2552,8 +2568,15 @@ class RateFinalizingStill extends Component {
           centered={true}
         >
           <ModalBody>
-            <p>Do You Want to Reject Quotestion ?</p>
+            <p>Do You Want to Reject Quotation ?</p>
             <div className="text-center">
+              <div className="rename-cntr reject-popup login-fields">
+                  <label>Reject Reason</label>
+                  <input type="text" id="RejectResontxt" />
+                  <span style={{ color: "red" }}>
+                      {this.state.errorRejReson}
+                  </span>
+              </div>
               <Button
                 className="butn"
                 onClick={this.RejectQuotes.bind(this)}
