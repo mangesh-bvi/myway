@@ -3109,7 +3109,7 @@ class NewRateSearch extends Component {
                     <div className="equip-plus-cntr mt-0">
                       <Select
                         className="rate-dropdown"
-                        getOptionLabel={option => option.StandardContainerCode}
+                        getOptionLabel={option => option.ContainerName}
                         getOptionValue={option => option.StandardContainerCode}
                         isMulti
                         options={self.state.StandardContainerCode}
@@ -3144,7 +3144,7 @@ class NewRateSearch extends Component {
                               isDisabled={self.state.isSpacialEqt}
                               className="rate-dropdown"
                               getOptionLabel={option =>
-                                option.SpecialContainerCode
+                                option.ContainerName
                               }
                               isMulti
                               getOptionValue={option =>
