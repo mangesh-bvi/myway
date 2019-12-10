@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta charset="utf-8" />
-     
+
     <style>
       /* Always set the map height explicitly to define the size of the div
          * element that contains the map. */
@@ -27,7 +27,7 @@
       //{"title": 'loan 1',"lat":"49.24859","long":"8.887826","addr":'address 1'},
       //{"title":'loan 2',"lat":"21.143956","long":"79.093453","addr":'address 2'}
       //];
-      
+
       var baloonData = localStorage.getItem("BaloonData");
       var flagData = localStorage.getItem("FlagsData");
       var linesData = localStorage.getItem("AllLineData");
@@ -49,10 +49,9 @@
 
       function initMap() {
         var map = new google.maps.Map(document.getElementById("map"), {
-           
-          zoom: 1,
+          zoom: 2,
           mapTypeId: "terrain",
-          gestureHandling: 'cooperative'
+          gestureHandling: "cooperative"
         });
 
         // Define the symbol, using one of the predefined paths ('CIRCLE')

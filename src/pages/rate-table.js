@@ -711,6 +711,8 @@ class RateTable extends Component {
 
   HandleRateDetailsFCL(paramData) {
     var dataParameter = {};
+    var pickUpAddress = {Street:'',Country:'',State:'',City:'',ZipCode:''}
+    var destUpAddress = {Street:'',Country:'',State:'',City:'',ZipCode:''}
     if (paramData.isSearch) {
       var rTypeofMove =
         paramData.typesofMove === "p2p"
@@ -787,6 +789,18 @@ class RateTable extends Component {
         cmbvalue = 0;
       }
 
+      if(paramData.typesofMove === "d2p")
+      {
+        pickUpAddress = paramData.fullAddressPOL[0];
+      }
+      else if (paramData.typesofMove === "p2d") {
+        destUpAddress = paramData.fullAddressPOD[0];
+      }
+      else if (paramData.typesofMove === "d2d"){
+        pickUpAddress = paramData.fullAddressPOL[0];
+        destUpAddress = paramData.fullAddressPOD[0];
+      }
+
       dataParameter = {
         QuoteType: paramData.containerLoadType,
         ModeOfTransport: rModeofTransport,
@@ -847,6 +861,24 @@ class RateTable extends Component {
         dataParameter.ChargeableWeight = cmbvalue;
         dataParameter.RateQueryDim = paramData.multiCBM;
       }
+
+      if(encryption(
+        window.localStorage.getItem("usertype"),
+        "desc"
+      ) === "Customer"){
+        paramData.companyId = (encryption(
+          window.localStorage.getItem("companyid"),
+          "desc"
+        ))
+      }
+
+      dataParameter.Commodity = this.state.CommodityID;
+      dataParameter.CustomerId = parseInt(paramData.companyId);
+      dataParameter.PickUpAddressDetails = pickUpAddress;
+      dataParameter.DestinationAddressDetails = destUpAddress;
+      dataParameter.HazMat = paramData.HazMat;
+      dataParameter.CustomClearance = paramData.Custom_Clearance;
+      dataParameter.NonStackable = paramData.NonStackable;
 
       var EquipmentType = [];
       if (paramData.StandardContainerCode != undefined) {
@@ -3209,8 +3241,10 @@ class RateTable extends Component {
                                 )}
                               />
                               <label htmlFor={"pol" + (index + 1)}>
-                                {mapPOL.Address}
                               </label>
+                              <h5 htmlFor={"pol" + (index + 1)}>
+                                {mapPOL.Address}
+                              </h5>
                             </div>
                           ))}
                           <div className="pol-pod-maps">
@@ -3270,8 +3304,10 @@ class RateTable extends Component {
                                 )}
                               />
                               <label htmlFor={"pod" + (index + 1)}>
-                                {mapPOD.Address}
                               </label>
+                              <h5 htmlFor={"pol" + (index + 1)}>
+                                {mapPOD.Address}
+                              </h5>
                             </div>
                           ))}
                           {/* <div className="d-flex">
