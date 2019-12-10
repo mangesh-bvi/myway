@@ -351,7 +351,7 @@ class QuoteTable extends Component {
                               title="Create Booking"
                               onClick={this.toggleBook} 
                             > */}
-                                  <a
+                                  {/* <a
                                     title="Create Booking"
                                     onClick={this.Editfinalizing.bind(this)}
                                   >
@@ -364,7 +364,7 @@ class QuoteTable extends Component {
                                       }
                                       data-type={row.original.type}
                                     />
-                                  </a>
+                                  </a> */}
                                   {/* </span> */}
                                   <a onClick={this.Copyfinalizing.bind(this)}>
                                     <img
@@ -393,7 +393,7 @@ class QuoteTable extends Component {
                                       alt="view-icon"
                                     />
                                   </a>
-                                  <a
+                                  {/* <a
                                     title={"It has been " + row.original.Status}
                                     onClick={this.Editfinalizing.bind(this)}
                                   >
@@ -406,7 +406,7 @@ class QuoteTable extends Component {
                                       }
                                       data-type={row.original.type}
                                     />
-                                  </a>
+                                  </a> */}
                                   {/* </span> */}
                                   <a onClick={this.Copyfinalizing.bind(this)}>
                                     <img

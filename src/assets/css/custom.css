@@ -3528,6 +3528,16 @@ table tbody tr:last-child {
     margin-right: -15px;
     margin-left: -16px;
 } */
+.reject-popup {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+.reject-popup label {
+flex: 0 0 120px;
+    text-align: left;
+    margin-bottom: 0;
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/
@@ -3876,6 +3886,48 @@ img {
     max-width: 71.666667%;
   }
 }
+
+
+
+
+/* Css Start Kalpesh*/
+@media (min-width: 1025px) and (max-width: 1350px) {
+
+}
+@media (min-width: 992px) and (max-width: 1024px) {
+  .disblo {
+    display: contents !important;
+  }
+  .top-select .butn {
+    margin: 2px;
+    min-width: 80px;
+  }
+  .rate-tab-drop select {
+    margin: 0 !important;
+  }
+  .planner-top-butns {
+    text-align: left;
+  }
+  .planner-top-butns .butn {
+    font-size: 11px;
+    min-width: 119px;
+    padding: 8px;
+    margin-right: 20px;
+  }
+  .marlefbtn {
+    margin: 0 15px !important;
+  }
+  .cust-tabs a {
+    margin-right: 15px;
+  }
+}
+@media (min-width: 769px) and (max-width: 991px) {
+
+}
+
+/* Css End Kalpesh*/
+
+
 @media (max-width: 768px) {
   .menuname {
     display: none;

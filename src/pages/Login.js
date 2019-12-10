@@ -356,6 +356,10 @@ class Login extends React.Component {
               "companyaddress",
               encryption(data.Table[0].CompanyAddress, "enc")
             );
+            window.localStorage.setItem(
+              "companyid",
+              encryption(data.Table[0].CompanyID, "enc")
+            );
           }
 
           window.localStorage.setItem(
