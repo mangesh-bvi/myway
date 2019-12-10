@@ -3209,8 +3209,10 @@ class RateTable extends Component {
                                 )}
                               />
                               <label htmlFor={"pol" + (index + 1)}>
-                                {mapPOL.Address}
                               </label>
+                              <h5 htmlFor={"pol" + (index + 1)}>
+                                {mapPOL.Address}
+                              </h5>
                             </div>
                           ))}
                           <div className="pol-pod-maps">
@@ -3270,8 +3272,10 @@ class RateTable extends Component {
                                 )}
                               />
                               <label htmlFor={"pod" + (index + 1)}>
-                                {mapPOD.Address}
                               </label>
+                              <h5 htmlFor={"pol" + (index + 1)}>
+                                {mapPOD.Address}
+                              </h5>
                             </div>
                           ))}
                           {/* <div className="d-flex">

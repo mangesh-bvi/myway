@@ -162,7 +162,8 @@ class SideMenu extends Component {
     // }
 
     return (
-      <div className="d-flex flex-column justify-content-between h-100">
+      // <div className="sidemenubar" id="sidemenubar">
+        <div className="d-flex flex-column justify-content-between h-100">
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
             <Link
@@ -737,6 +738,7 @@ class SideMenu extends Component {
           </ModalBody>
         </Modal>
       </div>
+      // </div>
     );
   }
 }

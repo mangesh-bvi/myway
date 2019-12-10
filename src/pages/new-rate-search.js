@@ -8,6 +8,7 @@ import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
 import Weight from "./../assets/img/weight.png";
+import Arrow from "./../assets/img/arw.png";
 
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -435,7 +436,7 @@ class NewRateSearch extends Component {
     return this.state.TruckTypeData.map((el, i) => {
       return (
         <div key={i} className="equip-plus-cntr">
-          <div className="spe-equ">
+          <div className="spe-equ" style={{margin: "auto"}}>
             <select
               className="select-text mr-3"
               name="TruckName"
@@ -464,9 +465,8 @@ class NewRateSearch extends Component {
                 onChange={this.UITruckTypeChange.bind(this, i)}
               />
             ) : null}
-          </div>
+            
           {i === 0 ? (
-            <div className="col-md">
               <div className="spe-equ">
                 <i
                   className="fa fa-plus mt-2"
@@ -474,10 +474,8 @@ class NewRateSearch extends Component {
                   onClick={this.addClickTruckType.bind(this)}
                 ></i>
               </div>
-            </div>
           ) : null}
           {this.state.TruckTypeData.length > 1 ? (
-            <div className="col-md">
               <div className="spe-equ mt-2">
                 <i
                   className="fa fa-minus"
@@ -485,8 +483,8 @@ class NewRateSearch extends Component {
                   onClick={this.removeClickTruckType.bind(this)}
                 ></i>
               </div>
-            </div>
           ) : null}
+          </div>
         </div>
       );
     });
@@ -3274,7 +3272,8 @@ class NewRateSearch extends Component {
                             value={"p2p"}
                             onChange={this.HandleTypeofMove}
                           />
-                          <label htmlFor="p2p">Port2Port</label>
+                          <label htmlFor="p2p">Port
+                          <img src={Arrow} className="arwimg" alt="Arrow"/>Port</label>
                         </div>
                         <div>
                           <input
@@ -3284,7 +3283,8 @@ class NewRateSearch extends Component {
                             value={"d2p"}
                             onChange={this.HandleTypeofMove}
                           />
-                          <label htmlFor="d2p">Door2Port</label>
+                          <label htmlFor="d2p">Door
+                          <img src={Arrow} className="arwimg" alt="Arrow"/>Port</label>
                         </div>
                       </>
                     ) : null}
@@ -3296,7 +3296,8 @@ class NewRateSearch extends Component {
                         value={"d2d"}
                         onChange={this.HandleTypeofMove}
                       />
-                      <label htmlFor="d2d">Door2Door</label>
+                      <label htmlFor="d2d">Door
+                          <img src={Arrow} className="arwimg" alt="Arrow"/>Door</label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
                     this.state.containerLoadType === "AIR" ||
@@ -3310,7 +3311,9 @@ class NewRateSearch extends Component {
                             value={"p2d"}
                             onChange={this.HandleTypeofMove}
                           />
-                          <label htmlFor="p2d">Port2Door</label>
+                          <label htmlFor="p2d">Port
+                          <img src={Arrow} className="arwimg" alt="Arrow"/>
+                          Door</label>
                         </div>
                       </>
                     ) : null}
