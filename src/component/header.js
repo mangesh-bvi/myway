@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
 import Logo from "./../assets/img/logo.png";
-import Menubars from "./../assets/img/menubars.png";
 import "../assets/css/custom.css";
 import BellIcon from "./../assets/img/bell.png";
 import ChatIcon from "./../assets/img/chat-old.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import PhoneIcon from "./../assets/img/phone.png";
 import QRCode from "../pages/QRCode";
+import Menubars from "./../assets/img/menubars.png";
 import UserIcon from "./../assets/img/user.png";
 import ActivityLogIcon from "./../assets/img/activity-log.png";
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
@@ -333,7 +333,7 @@ class Header extends Component {
               <Link to="/Dashboard">
                 <img src={Logo} alt="log-icon" className="header-log" />
               </Link>
-              <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" />
+              <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" onclick="myFunction()" />
             </div>
             <div className="col-xs col-sm-9 col-md-9 col-lg-9">
               <ul className="header-ul">
