@@ -490,7 +490,10 @@ class RateFinalizing extends Component {
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
-      this.HandleCommodityDropdown();
+      if (this.props.location.state.isCopy === true) {
+        debugger;
+        this.HandleCommodityDropdown();
+      }
       this.HandleSalesQuoteConditions();
     }
 
@@ -2232,6 +2235,10 @@ class RateFinalizing extends Component {
       });
   }
 
+  handleChangePage() {
+    window.history.back();
+  }
+
   HandleSalesQuoteConditions() {
     let self = this;
     axios({
@@ -2392,13 +2399,19 @@ class RateFinalizing extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt no-bg">
-            <div className="rate-fin-tit title-sect mb-4">
+            <div className="title-sect mb-4">
               {/* <h2>Rate Query Details</h2> */}
               <h2>
                 {this.state.isCopy === true
                   ? "Clone Sales Quote"
                   : "Create Sales Quote"}
               </h2>
+              <button
+                onClick={this.handleChangePage.bind(this)}
+                className="butn mt-0"
+              >
+                Back
+              </button>
             </div>
             <div className="row cus-w">
               <div className="col-md-3">
@@ -3654,7 +3667,7 @@ class RateFinalizing extends Component {
                           value={this.state.CommodityID}
                           onChange={this.commoditySelect.bind(this)}
                         >
-                          <option value="select">Select</option>
+                          {/* <option value="select">Select</option> */}
                           {this.state.commodityData.map((item, i) => (
                             <option key={i} value={item.id}>
                               {item.Commodity}
