@@ -1914,7 +1914,8 @@ class RateFinalizingStill extends Component {
                                         accessor: "ChargeItem",
                                         Cell: props => (
                                           <React.Fragment>
-                                            {props.original.Chargeitem}
+                                            {props.original.Chargeitem !== undefined?
+                                            props.original.Chargeitem:props.original.ChargeItem}
                                           </React.Fragment>
                                         )
                                       },
