@@ -2745,39 +2745,72 @@ class RateFinalizing extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  return (
-                                    <React.Fragment>
-                                      <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                                        <div className="remember-forgot rat-img d-block m-0">
-                                          {/* <input
-                                          id={"maersk-logo" + i}
-                                          type="checkbox"
-                                          name={"rate-tab-check"}
-                                          // checked={
-                                          //   this.state.RateDetails[i - 1].checkbx
-                                          //     ? this.state.RateDetails[i - 1]
-                                          //         .checkbx
-                                          //     : false
-                                          // }
-                                          // checked={
-                                          //   this.state.cSelectedRow[
-                                          //     original.rateID
-                                          //   ] === true
-                                          // }
-                                          // onChange={e =>
-                                          //   this.toggleRow(original.rateID, row)
-                                          // }
-                                        /> */}
-                                          <label
-                                            htmlFor={"maersk-logo" + i}
-                                          ></label>
+                                  debugger;
+                                  var lname = "";
+                                  var olname = "";
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
+                                    lname =
+                                      row._original.Linename.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
+                                    lname =
+                                      row._original.LineName.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+                                  var mode = this.state.ModeOfTransport;
+
+                                  if (mode === "Ocean" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              lname
+                                            }
+                                          />
                                         </div>
-                                      </div>
-                                      <div className="rate-tab-img">
-                                        <img src={maersk} alt="maersk icon" />
-                                      </div>
-                                    </React.Fragment>
-                                  );
+                                      </React.Fragment>
+                                    );
+                                  } else if (mode == "Air" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              lname
+                                            }
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
+                                            alt={olname}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 },
                                 accessor: "lineName"
                                 // minWidth: 200
@@ -3324,7 +3357,6 @@ class RateFinalizing extends Component {
                         {this.state.rateQuery ? "View More" : "View Less"}
                       </button>
                     </div>
-                        
                   </div>
 
                   <div className="row m-0 p-3">
@@ -4817,99 +4849,110 @@ class RateFinalizing extends Component {
             centered={true}
           >
             <ModalBody>
-            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleEdit}>
-                  <span>&times;</span>
-            </button>
-            <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
-              <h3 className="mb-4">Edit Cargo Details</h3>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                onClick={this.toggleEdit}
+              >
+                <span>&times;</span>
+              </button>
+              <div
+                style={{
+                  backgroundColor: "#fff",
+                  padding: "15px",
+                  borderRadius: "15px"
+                }}
+              >
+                <h3 className="mb-4">Edit Cargo Details</h3>
 
-              <div className="rename-cntr login-fields">
-                <select
-                  className="select-text"
-                  onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                  name="PackageType"
-                  value={this.state.currentPackageType}
-                >
-                  <option selected>Select</option>
-                  {this.state.packageTypeData.map((item, i) => (
-                    <option key={i} value={item.PackageName}>
-                      {item.PackageName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <div className="rename-cntr login-fields">
+                  <select
+                    className="select-text"
+                    onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                    name="PackageType"
+                    value={this.state.currentPackageType}
+                  >
+                    <option selected>Select</option>
+                    {this.state.packageTypeData.map((item, i) => (
+                      <option key={i} value={item.PackageName}>
+                        {item.PackageName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Quantity</label>
-                <input
-                  type="text"
-                  value={this.state.valuequantity}
-                  id="txtRequestFreeTime"
-                  placeholder="Quantity"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Quantity</label>
+                  <input
+                    type="text"
+                    value={this.state.valuequantity}
+                    id="txtRequestFreeTime"
+                    placeholder="Quantity"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Lenght</label>
-                <input
-                  type="text"
-                  value={this.state.valuelenght}
-                  id="txtRequestFreeTime"
-                  placeholder="Lenght"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Lenght</label>
+                  <input
+                    type="text"
+                    value={this.state.valuelenght}
+                    id="txtRequestFreeTime"
+                    placeholder="Lenght"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Width</label>
-                <input
-                  type="text"
-                  value={this.state.valuewidth}
-                  id="txtRequestFreeTime"
-                  placeholder="Width"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Width</label>
+                  <input
+                    type="text"
+                    value={this.state.valuewidth}
+                    id="txtRequestFreeTime"
+                    placeholder="Width"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Height</label>
-                <input
-                  type="text"
-                  value={this.state.valueheight}
-                  id="txtRequestFreeTime"
-                  placeholder="Height"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Height</label>
+                  <input
+                    type="text"
+                    value={this.state.valueheight}
+                    id="txtRequestFreeTime"
+                    placeholder="Height"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>Weight</label>
-                <input
-                  type="text"
-                  value={this.state.valueweight}
-                  id="txtRequestFreeTime"
-                  placeholder="Weight"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>Weight</label>
+                  <input
+                    type="text"
+                    value={this.state.valueweight}
+                    id="txtRequestFreeTime"
+                    placeholder="Weight"
+                  />
+                </div>
 
-              <div className="rename-cntr login-fields">
-                <label>CBM</label>
-                <input
-                  type="text"
-                  value={this.state.valuecbm}
-                  id="txtRequestFreeTime"
-                  placeholder="CBM"
-                />
-              </div>
+                <div className="rename-cntr login-fields">
+                  <label>CBM</label>
+                  <input
+                    type="text"
+                    value={this.state.valuecbm}
+                    id="txtRequestFreeTime"
+                    placeholder="CBM"
+                  />
+                </div>
 
-              <div className="text-center">
-                <Button
-                  className="butn"
-                  data-valuespecialsontainersode={
-                    this.state.valuespecialsontainersode
-                  }
-                  onClick={this.SubmitCargoDetails.bind()}
-                >
-                  Submit
-                </Button>
-              </div>
+                <div className="text-center">
+                  <Button
+                    className="butn"
+                    data-valuespecialsontainersode={
+                      this.state.valuespecialsontainersode
+                    }
+                    onClick={this.SubmitCargoDetails.bind()}
+                  >
+                    Submit
+                  </Button>
+                </div>
               </div>
             </ModalBody>
           </Modal>
