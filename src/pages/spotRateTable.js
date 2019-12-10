@@ -188,6 +188,10 @@ class SpotRateTable extends Component {
                         accessor: "DestinationAddress"
                       },
                       {
+                        Header:"Created Date",
+                        accessor:"CreatedDate"
+                      },
+                      {
                         Header: "Expiry Date",
                         accessor: "ExpiryDate"
                       },
