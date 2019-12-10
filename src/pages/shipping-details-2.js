@@ -1053,7 +1053,7 @@ class ShippingDetailsTwo extends Component {
         <>
           <button
             onClick={this.handleChangePage.bind(this)}
-            className="butn mt-0"
+            className="butn mt-0 marlefbtn"
             style={{ marginLeft: "140px" }}
           >
             Back

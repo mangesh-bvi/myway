@@ -3098,7 +3098,7 @@ class RateTable extends Component {
               <div className="row">
                 <div className="col-md-3 less-right-rate">
                   <div className="rate-table-left">
-                    <div className="top-select d-flex justify-content-between">
+                    <div className="top-select d-flex justify-content-between disblo">
                       <a href="new-rate-search" className="butn btn-sizeRate">
                         {this.state.shipmentType}
                       </a>
