@@ -20,6 +20,7 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import { FusionTablesLayer } from "react-google-maps";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class RateFinalizing extends Component {
     this.state = {
       modalProfit: false,
       modalRequest: false,
+      modalRequestMsg:false,
       modalEdit: false,
       modalNewConsignee: false,
       commoditySelect: "select",
@@ -129,6 +131,8 @@ class RateFinalizing extends Component {
     this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
     this.SendRequestCopy = this.SendRequestCopy.bind(this);
+    this.RequestChangeMsgModal=this.RequestChangeMsgModal.bind(this);
+    this.RequestChangeMsgModalClose=this.RequestChangeMsgModalClose.bind(this);
   }
 
   componentDidMount() {
@@ -1036,6 +1040,18 @@ class RateFinalizing extends Component {
     this.setState(prevState => ({
       modalRequest: !prevState.modalRequest
     }));
+    this.RequestChangeMsgModalClose();
+  }
+
+  RequestChangeMsgModal(){
+    this.setState(prevState => ({
+      modalRequestMsg:!prevState.modalRequestMsg
+    }));
+  }
+  RequestChangeMsgModalClose(){
+    this.setState({
+      modalRequestMsg:false
+    })
   }
 
   togglePreview() {
@@ -1078,6 +1094,7 @@ class RateFinalizing extends Component {
   }
 
   SendRequest() {
+    debugger
     var txtRequestDiscount,
       txtRequestFreeTime,
       txtRequestComments = "";
@@ -2971,15 +2988,32 @@ class RateFinalizing extends Component {
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-                                  if (row._original.LineName) {
-                                    olname = row._original.LineName;
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
                                     lname =
-                                      row._original.LineName.replace(
+                                      row._original.Linename.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
                                   var mode = this.state.ModeOfTransport;
+                                  // if (row._original.lineName) {
+                                  //   olname = row._original.lineName;
+                                  //   lname =
+                                  //   row._original.lineName
+                                  //   .replace(" ", "_")
+                                  //   .replace(" ", "_") + ".png";
+                                  //   }
+                                  //   var mode = "";
+                                  //   if (this.state.ModeOfTransport) {
+                                  //   mode = this.state.ModeOfTransport;
+                                  //   }
+                                  //   if (this.state.modeoftransport) {
+                                  //   mode =
+                                  //   this.state.modeoftransport === "SEA"
+                                  //   ? "Ocean"
+                                  //   : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                  //   }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
@@ -3588,7 +3622,7 @@ class RateFinalizing extends Component {
                     <div className="text-center">
                       {this.state.toggleIsEdit && (
                         <button
-                          onClick={this.toggleRequest}
+                          onClick={this.RequestChangeMsgModal}
                           className="butn more-padd m-0"
                         >
                           Request Change
@@ -4017,6 +4051,22 @@ class RateFinalizing extends Component {
               </div>
             </ModalBody>
           </Modal> */}
+         <Modal
+            className="delete-popup pol-pod-popup"
+            isOpen={this.state.modalRequestMsg}
+            toggle={this.RequestChangeMsgModal}
+            centered={true}
+          >
+            <ModalBody>
+              <p>Are you sure, this will discard the Sales Quote and will raise a new Spot Rate Request.</p>
+              <Button className="butn" onClick={this.toggleRequest}>
+                Yes
+              </Button>
+              <Button className="butn cancel-butn" onClick={this.RequestChangeMsgModal}>
+                No
+              </Button>
+            </ModalBody>
+          </Modal>
           <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequest}

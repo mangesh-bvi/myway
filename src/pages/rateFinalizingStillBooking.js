@@ -52,6 +52,7 @@ class RateFinalizingStillBooking extends Component {
       QuotationSubData: [],
       typeofMove: "",
       cargoType: "",
+      ModeofTransport:"",
 
       //dynamic element
       TruckTypeData: [
@@ -815,7 +816,7 @@ class RateFinalizingStillBooking extends Component {
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
-
+        var ModeofTransport =  response.data.Table[0].ModeofTransport;
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
             var nPartyID = QuotationData[0].NotifyID;
@@ -824,7 +825,8 @@ class RateFinalizingStillBooking extends Component {
               QuotationData,
               QuotationSubData,
               Booking,
-              nPartyID
+              nPartyID,
+              ModeofTransport
             });
           }
         }
@@ -1921,37 +1923,77 @@ class RateFinalizingStillBooking extends Component {
                           {
                             columns: [
                               {
-                                Cell: row => {
+                                Cell: ({ original, row }) => {
                                   i++;
-                                  return (
-                                    <React.Fragment>
-                                      <div className="d-flex align-items-center">
-                                        {/* <div className="cont-costs still-maersk rate-tab-check p-0">
-                                          <div className="remember-forgot d-block m-0">
-                                            <input
-                                              id={"maersk-logo" + i}
-                                              type="checkbox"
-                                              name={"rate-tab-check"}
-                                            />
-                                            <label
-                                              htmlFor={"maersk-logo" + i}
-                                            ></label>
-                                          </div>
-                                        </div> */}
-                                        <div>
-                                          <p className="details-title">
-                                            <img
-                                              src={maersk}
-                                              alt="maersk icon"
-                                            />
-                                          </p>
+                                  debugger;
+                                  var lname = "";
+                                  var olname = "";
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
+                                    lname =
+                                    row._original.Linename.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
+                                    lname =
+                                      row._original.Linename.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+                                  var mode = this.state.ModeofTransport;
+
+                                  if (mode === "Ocean" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              lname
+                                            }
+                                          />
                                         </div>
-                                      </div>
-                                    </React.Fragment>
-                                  );
+                                      </React.Fragment>
+                                    );
+                                  } else if (mode == "Air" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              lname
+                                            }
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
+                                            alt={olname}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 },
                                 accessor: "lineName"
-                                // width: 200
+                                // minWidth: 200
                               },
                               {
                                 accessor: "POL",

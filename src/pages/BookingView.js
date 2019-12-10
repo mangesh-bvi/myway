@@ -351,7 +351,7 @@ class BookingView extends Component {
         var eqmtType = response.data.Table1;
         
 
-        console.log(QuotationData);
+        console.log(Booking);
 
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
