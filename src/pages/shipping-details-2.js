@@ -680,6 +680,7 @@ class ShippingDetailsTwo extends Component {
       var ModeType = response.data.Table[0].ModeOfTransport;
       self.setState({
         detailsData: shipmentdata.Table[0],
+        ShipperID: shipmentdata.Table[0].ShipperId,
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
         DData:
@@ -729,7 +730,7 @@ class ShippingDetailsTwo extends Component {
     docData.append("ShipmentNumber", this.state.ShipperID);
     // docData.append("ShipmentNumber", "BCM2453770");
     // docData.append("HBLNo", "BCM23770");
-    docData.append("HBLNo", this.state.HblNo);
+    docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
     docData.append("name", docName);
     docData.append("FileData", this.state.selectedFile);
@@ -831,7 +832,7 @@ class ShippingDetailsTwo extends Component {
     if (pageName === "Dashboard") {
       this.props.history.push("/Dashboard");
     } else if (pageName === "ShipmentPage") {
-      this.props.history.push("/shipment-details");
+      this.props.history.push("/shipment-summary");
     } else {
       this.props.history.push("/Dashboard");
     }

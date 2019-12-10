@@ -192,8 +192,12 @@ class SpotRateTable extends Component {
                         accessor: "ExpiryDate"
                       },
                       {
+                        Header: "Created Date",
+                        accessor: "CreatedDate"
+                      },
+                      {
                         Header: "Status",
-                        accessor: "Status"
+                        accessor: "STATUS"
                       },
                       {
                         Cell: row => {
