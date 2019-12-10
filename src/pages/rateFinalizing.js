@@ -3916,7 +3916,11 @@ class RateFinalizing extends Component {
                             : "butn"
                         }
                       >
-                        Send
+                        {encryption(
+                              window.localStorage.getItem("usertype"),
+                              "desc"
+                            ) != "Customer"?
+                        "Send":"Confirm And Approve"}
                       </button>
                     </div>
                   </div>
