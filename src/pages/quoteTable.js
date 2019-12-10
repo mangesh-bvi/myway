@@ -27,15 +27,20 @@ import Eye from "./../assets/img/eye.png";
 import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import DatePicker from "react-datepicker";
+import { NotificationManager } from "react-notifications";
 
 class QuoteTable extends Component {
   constructor(props) {
+    var someDate = new Date();
     super(props);
     this.state = {
       modalDel: false,
       modalBook: false,
       filterAll: "",
-      quotesData: []
+      quotesData: [],
+      startDate: someDate.setMonth(someDate.getMonth() - 1),
+      endDate: new Date().setHours(0, 0, 0, 0)
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -167,6 +172,41 @@ class QuoteTable extends Component {
     });
   }
 
+  handleChangeStart = e => {
+    debugger;
+    var strt = this.state.startDate;
+    var thisE = e;
+    this.setState({
+      startDate: e
+    });
+    if (
+      thisE.setHours(0, 0, 0, 0) >
+      new Date(this.state.endDate).setHours(0, 0, 0, 0)
+    ) {
+      NotificationManager.error("From Date needs to be smaller than To Date");
+      this.setState({
+        startDate: strt
+      });
+    }
+  };
+  handleChangeEnd = e => {
+    debugger;
+    var ennd = this.state.endDate;
+    var thisE = e;
+    this.setState({
+      endDate: e
+    });
+    if (
+      new Date(this.state.startDate).setHours(0, 0, 0, 0) >
+      thisE.setHours(0, 0, 0, 0)
+    ) {
+      NotificationManager.error("To Date needs to be greater than From Date");
+      this.setState({
+        endDate: ennd
+      });
+    }
+  };
+
   render() {
     var dataQuote = [];
     var { quotesData } = this.state;
@@ -192,21 +232,53 @@ class QuoteTable extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <div className="title-sect">
-              <h2>Quote Table</h2>
-            </div>
-            <div className="">
-              <input
-                type="search"
-                className="quote-txt-srch"
-                placeholder="Search here"
-                value={this.state.filterAll}
-                onChange={this.filterAll}
-              />
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="title-sect">
+                <h2>Quote Table</h2>
+              </div>
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="login-fields quote-to-from mb-0">
+                  <span>From</span>
+                  <DatePicker
+                    id="datpicker-from-shipment"
+                    className="ana-to"
+                    selected={this.state.startDate}
+                    onChange={this.handleChangeStart}
+                    maxDate={new Date()}
+                    showWeekNumbers
+                  />
+                </div>
+                <div className="login-fields quote-to-from mb-0">
+                  <span>To</span>
+                  <DatePicker
+                    id="datpicker-to-shipment"
+                    className="ana-to"
+                    selected={this.state.endDate}
+                    onChange={this.handleChangeEnd}
+                    maxDate={new Date()}
+                    showWeekNumbers
+                  />
+                </div>
+                <div className="">
+                  <input
+                    type="search"
+                    className="quote-txt-srch mt-0"
+                    placeholder="Search here"
+                    value={this.state.filterAll}
+                    onChange={this.filterAll}
+                  />
+                </div>
+              </div>
             </div>
             <div className="ag-fresh redirect-row">
               <ReactTable
-                data={dataQuote}
+                data={dataQuote.filter(
+                  d =>
+                    new Date(d.CreatedDate) >=
+                      new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
+                    new Date(d.CreatedDate) <=
+                      new Date(this.state.endDate).setHours(0, 0, 0, 0)
+                )}
                 noDataText=""
                 onFilteredChange={this.onFilteredChange.bind(this)}
                 filtered={this.state.filtered}
@@ -279,7 +351,7 @@ class QuoteTable extends Component {
                               title="Create Booking"
                               onClick={this.toggleBook} 
                             > */}
-                                  <a
+                                  {/* <a
                                     title="Create Booking"
                                     onClick={this.Editfinalizing.bind(this)}
                                   >
@@ -292,7 +364,7 @@ class QuoteTable extends Component {
                                       }
                                       data-type={row.original.type}
                                     />
-                                  </a>
+                                  </a> */}
                                   {/* </span> */}
                                   <a onClick={this.Copyfinalizing.bind(this)}>
                                     <img
@@ -321,7 +393,7 @@ class QuoteTable extends Component {
                                       alt="view-icon"
                                     />
                                   </a>
-                                  <a
+                                  {/* <a
                                     title={"It has been " + row.original.Status}
                                     onClick={this.Editfinalizing.bind(this)}
                                   >
@@ -334,7 +406,7 @@ class QuoteTable extends Component {
                                       }
                                       data-type={row.original.type}
                                     />
-                                  </a>
+                                  </a> */}
                                   {/* </span> */}
                                   <a onClick={this.Copyfinalizing.bind(this)}>
                                     <img

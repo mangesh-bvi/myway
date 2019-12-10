@@ -1058,7 +1058,7 @@ class ShippingDetailsTwo extends Component {
         <>
           <button
             onClick={this.handleChangePage.bind(this)}
-            className="butn mt-0"
+            className="butn mt-0 marlefbtn"
             style={{ marginLeft: "140px" }}
           >
             Back
@@ -1088,18 +1088,16 @@ class ShippingDetailsTwo extends Component {
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
-                <p>{team.Message}</p>
+                <p style={{ fontWeight: "600" }}>{team.Message}</p>
 
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-between">
                   <div>
-                    <span style={{ marginRight: "195px" }}>
-                      Created by :-
-                      <b>
-                        {encryption(
-                          window.localStorage.getItem("username"),
-                          "desc"
-                        )}
-                      </b>
+                    <span>
+                      Created by:
+                      {encryption(
+                        window.localStorage.getItem("username"),
+                        "desc"
+                      )}
                     </span>
                   </div>
                   ({team.MessageCreationTime})
@@ -1751,7 +1749,7 @@ class ShippingDetailsTwo extends Component {
                       <div className="table-scroll">
                         <ReactTable
                           data={documentData}
-                          showPagination={false}
+                          showPagination={true}
                           noDataText=""
                           columns={[
                             {
