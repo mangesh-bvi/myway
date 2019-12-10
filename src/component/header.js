@@ -333,7 +333,7 @@ class Header extends Component {
               <Link to="/Dashboard">
                 <img src={Logo} alt="log-icon" className="header-log" />
               </Link>
-              {/* <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" /> */}
+              <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" />
             </div>
             <div className="col-xs col-sm-9 col-md-9 col-lg-9">
               <ul className="header-ul">

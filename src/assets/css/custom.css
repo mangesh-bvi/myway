@@ -1381,7 +1381,11 @@ table tbody tr:last-child {
   margin-right: 10px;
 }
 .equip-plus-cntr .spe-equ {
-  margin: 0;
+  margin: 0 5px;
+  margin-top: 0 !important;
+}
+.equip-plus-cntr .spe-equ i {
+  margin-top: 0 !important;
 }
 /* .equip-plus-cntr .spe-equ input {
   width: 100px;
@@ -1538,7 +1542,7 @@ table tbody tr:last-child {
   width: 100%;
 } */
 .rate-bg .equip-plus-cntr {
-  width: 40%;
+  width: 85%;
   /* width: 60%; */
 }
 /* .weight-icon {
@@ -1605,8 +1609,15 @@ table tbody tr:last-child {
 .cont-costs .remember-forgot label {
   padding-left: 28px;
   color: #696969;
+  margin-right: 0;
   letter-spacing: 0;
   font-size: 12px;
+}
+.cont-costs .remember-forgot h5 {
+  color: #696969;
+  letter-spacing: 0;
+  font-size: 12px;
+  margin-bottom: 0;
 }
 .cont-costs .remember-forgot input:checked + label::after {
   left: 6px;
@@ -2007,8 +2018,7 @@ table tbody tr:last-child {
 .map-icon-cntr {
   width: 45px;
   height: 45px;
-  background: #0142aa;
-  padding: 10px;
+  padding: 4px;
   border-radius: 50%;
   line-height: 1;
   display: inline-block;
@@ -2021,6 +2031,7 @@ table tbody tr:last-child {
   color: #fff;
   font-size: 21px;
 }
+
 .map-filter {
   position: absolute;
   top: 10px;
@@ -2029,19 +2040,22 @@ table tbody tr:last-child {
 .map-filter .map-icon-cntr:first-child {
   position: relative;
   z-index: 1;
+  background: #0142aa;
+  padding: 10px;
   line-height: 28px;
 }
 .map-filter .map-icon-cntr:nth-child(5) {
   left: -50px;
+  display: none;
 }
 .map-filter .map-icon-cntr:nth-child(4) {
-  left: -100px;
+  left: -50px;
 }
 .map-filter .map-icon-cntr:nth-child(3) {
-  left: -150px;
+  left: -100px;
 }
 .map-filter .map-icon-cntr:nth-child(2) {
-  left: -200px;
+  left: -150px;
 }
 .rem-icon {
   left: 0 !important;
@@ -2482,7 +2496,7 @@ table tbody tr:last-child {
   top: 0 !important;
   left: -10px !important;
   border-color: #d6d6d6;
-  border-radius: 0.25rem;
+  border-radius: 0;
 }
 .header-ul-login-dtls {
   list-style: none;
@@ -2518,7 +2532,6 @@ table tbody tr:last-child {
 .header-ul-login-dtls li:last-child {
   margin-top: 5px;
 }
-
 .cls-flside {
   width: 250px;
   float: left;
@@ -2527,8 +2540,20 @@ table tbody tr:last-child {
   border: none;
   transition: 0.5s;
 }
-/* .cls-flside-close {
-  transform: translate(-250px) !important;
+/* .cls-flside {
+  border: none;
+  transition: 0.5s;
+}
+.sidemenubar {
+  width: 250px;
+  float: left;
+  height: auto;
+  background-color: #0142aa;
+  border: none;
+  transition: 0.5s;
+}
+.sidemenu-close {
+  transform: translate(-250px);
 } */
 .notificationss {
   background: #39b54a;
@@ -3803,15 +3828,13 @@ img {
   float: right;
   margin-top: -45px;
   margin-right: 15px;
-  /* float: right; */
-
 }
 /* Quote css end by Shlok */
 .menubars {
   height: auto;
   width: 20px;
-  float: right;
-  margin-top: 15px;
+  float: none;
+  margin: 0 0 0 30px;
   cursor: pointer;
 }
 .title-secpad {
@@ -3844,6 +3867,14 @@ img {
   font-size: 15px;
   font-family: "Medium Font";
 } */
+.arwimg {
+  height: auto;
+  width: 18px;
+  margin: 0 3px;
+}
+
+
+
 
 @media (min-width: 768px) {
   .cus-w .col-md-3 {
