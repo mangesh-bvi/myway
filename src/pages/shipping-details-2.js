@@ -1083,16 +1083,16 @@ class ShippingDetailsTwo extends Component {
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
-                <p style={{fontWeight: "600"}}>{team.Message}</p>
+                <p style={{ fontWeight: "600" }}>{team.Message}</p>
 
                 <div class="d-flex justify-content-between">
                   <div>
                     <span>
-                      Created by: 
+                      Created by:
                       {encryption(
-                          window.localStorage.getItem("username"),
-                          "desc"
-                        )}
+                        window.localStorage.getItem("username"),
+                        "desc"
+                      )}
                     </span>
                   </div>
                   ({team.MessageCreationTime})
@@ -1744,7 +1744,7 @@ class ShippingDetailsTwo extends Component {
                       <div className="table-scroll">
                         <ReactTable
                           data={documentData}
-                          showPagination={false}
+                          showPagination={true}
                           noDataText=""
                           columns={[
                             {

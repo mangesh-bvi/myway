@@ -232,7 +232,7 @@ class ShippingDetails extends Component {
   HandleChangeShipmentDetails(HblNo, eventManage) {
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: HblNo, event: eventManage,pageName:"ShipmentPage"}
+      state: { detail: HblNo, event: eventManage, pageName: "ShipmentPage" }
     });
   }
 
@@ -956,70 +956,87 @@ class ShippingDetails extends Component {
               centered={true}
             >
               <ModalBody className="p-0">
-              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleAdvSearch}>
-                <span>&times;</span>
-              </button>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  onClick={this.toggleAdvSearch}
+                >
+                  <span>&times;</span>
+                </button>
                 <div className="container-fluid p-0">
                   <div className="advsearch-sect">
                     {/* <div className="">
                       <h3>Advanced Search</h3>
                     </div> */}
-                    <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
+                    <div
+                      style={{
+                        background: "#fff",
+                        padding: "15px",
+                        borderRadius: "15px"
+                      }}
+                    >
                       <div className="row">
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        <label>Mode Of Transport</label>
-                        <select
-                          onChange={this.HandleChangeSelect.bind(
-                            this,
-                            "ModeOfTransport"
-                          )}
-                          name={"ModeOfTransport"}
-                          value={this.state.fields["ModeOfTransport"]}
-                        >
-                          {this.state.selectMOT.map(team => (
-                            <option key={team.key} value={team.key}>
-                              {team.value}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            <label>Mode Of Transport</label>
+                            <select
+                              onChange={this.HandleChangeSelect.bind(
+                                this,
+                                "ModeOfTransport"
+                              )}
+                              name={"ModeOfTransport"}
+                              value={this.state.fields["ModeOfTransport"]}
+                            >
+                              {this.state.selectMOT.map(team => (
+                                <option key={team.key} value={team.key}>
+                                  {team.value}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        <label>Shipment Stage</label>
-                        <select
-                          onChange={this.HandleChangeSelect.bind(
-                            this,
-                            "ShipmentStage"
-                          )}
-                          name={"ShipmentStage"}
-                          value={this.state.fields["ShipmentStage"]}
-                        >
-                          <option value="Select">Select Stage</option>
-                          {this.state.selectShipStage.map(team => (
-                            <option key={team.StageId} value={team.StageId}>
-                              {team.StageName}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      </div>
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-6">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label className="auto-cmp" style={{ padding: "0" }}>
-                            Consignee
-                          </label>
-                          {/* <Select
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            <label>Shipment Stage</label>
+                            <select
+                              onChange={this.HandleChangeSelect.bind(
+                                this,
+                                "ShipmentStage"
+                              )}
+                              name={"ShipmentStage"}
+                              value={this.state.fields["ShipmentStage"]}
+                            >
+                              <option value="Select">Select Stage</option>
+                              {this.state.selectShipStage.map(team => (
+                                <option key={team.StageId} value={team.StageId}>
+                                  {team.StageName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-6">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div
+                            className="login-fields"
+                            style={{ width: "100%" }}
+                          >
+                            <label
+                              className="auto-cmp"
+                              style={{ padding: "0" }}
+                            >
+                              Consignee
+                            </label>
+                            {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
                             isMulti
                             options={optionsOrigin}
                             /> */}
-                          {/* <Autosuggest
+                            {/* <Autosuggest
                             suggestions={suggestions1}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested1}
                             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -1027,45 +1044,45 @@ class ShippingDetails extends Component {
                             renderSuggestion={this.renderSuggestion1}
                             inputProps={inputProps}
                           /> */}
-                          <Autocomplete
-                            getItemValue={item => item.Company_Name}
-                            items={this.state.Consignee}
-                            renderItem={(item, isHighlighted) => (
-                              <div
-                                style={{
-                                  background: isHighlighted
-                                    ? "lightgray"
-                                    : "white"
-                                }}
-                                //value={item.Company_ID}
-                              >
-                                {item.Company_Name}
-                              </div>
-                            )}
-                            onChange={this.HandleChangeCon.bind(
-                              this,
-                              "Consignee"
-                            )}
-                            //menuStyle={this.state.menuStyle}
-                            onSelect={this.handleSelectCon.bind(
-                              this,
-                              item => item.Company_ID,
-                              "Consignee"
-                            )}
-                            value={this.state.fields["Consignee"]}
-                          />
+                            <Autocomplete
+                              getItemValue={item => item.Company_Name}
+                              items={this.state.Consignee}
+                              renderItem={(item, isHighlighted) => (
+                                <div
+                                  style={{
+                                    background: isHighlighted
+                                      ? "lightgray"
+                                      : "white"
+                                  }}
+                                  //value={item.Company_ID}
+                                >
+                                  {item.Company_Name}
+                                </div>
+                              )}
+                              onChange={this.HandleChangeCon.bind(
+                                this,
+                                "Consignee"
+                              )}
+                              //menuStyle={this.state.menuStyle}
+                              onSelect={this.handleSelectCon.bind(
+                                this,
+                                item => item.Company_ID,
+                                "Consignee"
+                              )}
+                              value={this.state.fields["Consignee"]}
+                            />
+                          </div>
                         </div>
+                        {/* </div> */}
                       </div>
+
                       {/* </div> */}
-                    </div>
 
-                    {/* </div> */}
-
-                    <div className="row">
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        {/* <label>SELECT</label> */}
-                        {/* <div>
+                      <div className="row">
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            {/* <label>SELECT</label> */}
+                            {/* <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
                             <label for="exist-cust">ETD</label>
                           </div>
@@ -1073,46 +1090,52 @@ class ShippingDetails extends Component {
                             <input type="radio" name="cust-select" id="new-cust" />
                             <label for="new-cust">ATD</label>
                         </div> */}
-                        <div>
-                          <label>From Date Of Departure</label>
-                          <DatePicker
-                            id="FrDepDate"
-                            selected={this.state.FrDepDate}
-                            showMonthDropdown
-                            showYearDropdown
-                            onChange={this.handleChange.bind(
-                              this,
-                              "FromDeparture"
-                            )}
-                          />
+                            <div>
+                              <label>From Date Of Departure</label>
+                              <DatePicker
+                                id="FrDepDate"
+                                selected={this.state.FrDepDate}
+                                showMonthDropdown
+                                showYearDropdown
+                                onChange={this.handleChange.bind(
+                                  this,
+                                  "FromDeparture"
+                                )}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      </div>
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        <div>
-                          <label>To Date Of Departure</label>
-                          <DatePicker
-                            id="ToDepDate"
-                            selected={this.state.ToDepDate}
-                            showMonthDropdown
-                            showYearDropdown
-                            onChange={this.handleChange.bind(
-                              this,
-                              "ToDeparture"
-                            )}
-                          />
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            <div>
+                              <label>To Date Of Departure</label>
+                              <DatePicker
+                                id="ToDepDate"
+                                selected={this.state.ToDepDate}
+                                showMonthDropdown
+                                showYearDropdown
+                                onChange={this.handleChange.bind(
+                                  this,
+                                  "ToDeparture"
+                                )}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      </div>
-                      {/* <div class=" login-fields col-md-4"> */}
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-6">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label className="auto-cmp" style={{ padding: "0" }}>
-                            Shipper
-                          </label>
-                          {/* <Select
+                        {/* <div class=" login-fields col-md-4"> */}
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-6">
+                          {/* <div class="rate-radio-cntr"> */}
+                          <div
+                            className="login-fields"
+                            style={{ width: "100%" }}
+                          >
+                            <label
+                              className="auto-cmp"
+                              style={{ padding: "0" }}
+                            >
+                              Shipper
+                            </label>
+                            {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
@@ -1120,7 +1143,7 @@ class ShippingDetails extends Component {
                             options={optionsOrigin}
                             /> */}
 
-                          {/* <Autosuggest
+                            {/* <Autosuggest
                             suggestions={suggestions}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -1128,41 +1151,41 @@ class ShippingDetails extends Component {
                             renderSuggestion={this.renderSuggestion}
                             inputProps={inputShip}
                           /> */}
-                          <Autocomplete
-                            getItemValue={item => item.Company_Name}
-                            items={this.state.Shipper}
-                            renderItem={(item, isHighlighted) => (
-                              <div
-                                style={{
-                                  background: isHighlighted
-                                    ? "lightgray"
-                                    : "white"
-                                }}
-                              >
-                                {item.Company_Name}
-                              </div>
-                            )}
-                            value={this.state.fields["Shipper"]}
-                            onChange={this.HandleChangeCon.bind(
-                              this,
-                              "Shipper"
-                            )}
-                            //menuStyle={this.state.menuStyle}
-                            onSelect={this.handleSelectCon.bind(
-                              this,
-                              item => item.Company_ID,
-                              "Shipper"
-                            )}
-                          />
+                            <Autocomplete
+                              getItemValue={item => item.Company_Name}
+                              items={this.state.Shipper}
+                              renderItem={(item, isHighlighted) => (
+                                <div
+                                  style={{
+                                    background: isHighlighted
+                                      ? "lightgray"
+                                      : "white"
+                                  }}
+                                >
+                                  {item.Company_Name}
+                                </div>
+                              )}
+                              value={this.state.fields["Shipper"]}
+                              onChange={this.HandleChangeCon.bind(
+                                this,
+                                "Shipper"
+                              )}
+                              //menuStyle={this.state.menuStyle}
+                              onSelect={this.handleSelectCon.bind(
+                                this,
+                                item => item.Company_ID,
+                                "Shipper"
+                              )}
+                            />
+                          </div>
+                          {/* </div> */}
                         </div>
                         {/* </div> */}
                       </div>
-                      {/* </div> */}
-                    </div>
-                    <div className="row">
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        {/* <label>SELECT PARAMETER</label>
+                      <div className="row">
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            {/* <label>SELECT PARAMETER</label>
                           <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
                             <label for="exist-cust">ETA</label>
@@ -1171,41 +1194,49 @@ class ShippingDetails extends Component {
                             <input type="radio" name="cust-select" id="new-cust" />
                             <label for="new-cust">ATA</label>
                         </div> */}
-                        <div>
-                          <label>From Date Of Arrival</label>
-                          <DatePicker
-                            id="FrArrDate"
-                            selected={this.state.FrArrDate}
-                            showMonthDropdown
-                            showYearDropdown
-                            onChange={this.handleChange.bind(
-                              this,
-                              "FromArrival"
-                            )}
-                          />
+                            <div>
+                              <label>From Date Of Arrival</label>
+                              <DatePicker
+                                id="FrArrDate"
+                                selected={this.state.FrArrDate}
+                                showMonthDropdown
+                                showYearDropdown
+                                onChange={this.handleChange.bind(
+                                  this,
+                                  "FromArrival"
+                                )}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      </div>
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        <div>
-                          <label>To Date Of Arrival</label>
-                          <DatePicker
-                            id="ToArrDate"
-                            selected={this.state.ToArrDate}
-                            showMonthDropdown
-                            showYearDropdown
-                            onChange={this.handleChange.bind(this, "ToArrival")}
-                          />
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            <div>
+                              <label>To Date Of Arrival</label>
+                              <DatePicker
+                                id="ToArrDate"
+                                selected={this.state.ToArrDate}
+                                showMonthDropdown
+                                showYearDropdown
+                                onChange={this.handleChange.bind(
+                                  this,
+                                  "ToArrival"
+                                )}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      </div>
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>Origin Country</label>
-                          {/* <Select
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            {/* <div class="rate-radio-cntr"> */}
+                            <div
+                              className="login-fields"
+                              style={{ width: "100%" }}
+                            >
+                              <label style={{ padding: "0" }}>
+                                Origin Country
+                              </label>
+                              {/* <Select
                             className="rate-dropdown track-dropdown"
                             id = "originCountry"
                             closeMenuOnSelect={false}
@@ -1217,34 +1248,37 @@ class ShippingDetails extends Component {
                             onChange = {this.handleChangeCountry.bind(this,"OriginCountry")}
                             value = {this.state.originCountry}
                             /> */}
-                          <select
-                            onChange={this.handleChangeCountry.bind(
-                              this,
-                              "OriginCountry"
-                            )}
-                            name={"originCountry"}
-                            value={this.state.fields["OriginCountry"]}
-                          >
-                            <option value="Select">Select Country</option>
-                            {this.state.optionsOrigin.map(team => (
-                              <option key={team.value} value={team.label}>
-                                {team.label}
-                              </option>
-                            ))}
-                          </select>
+                              <select
+                                onChange={this.handleChangeCountry.bind(
+                                  this,
+                                  "OriginCountry"
+                                )}
+                                name={"originCountry"}
+                                value={this.state.fields["OriginCountry"]}
+                              >
+                                <option value="Select">Select Country</option>
+                                {this.state.optionsOrigin.map(team => (
+                                  <option key={team.value} value={team.label}>
+                                    {team.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            {/* </div> */}
+                          </div>
                         </div>
                         {/* </div> */}
-                      </div>
-                      </div>
-                      {/* </div> */}
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div className="login-fields" style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>
-                            Destination Country
-                          </label>
-                          {/* <Select
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields">
+                            {/* <div class="rate-radio-cntr"> */}
+                            <div
+                              className="login-fields"
+                              style={{ width: "100%" }}
+                            >
+                              <label style={{ padding: "0" }}>
+                                Destination Country
+                              </label>
+                              {/* <Select
                             className="rate-dropdown track-dropdown"
                             id = "destinCountry"
                             closeMenuOnSelect={false}
@@ -1254,117 +1288,129 @@ class ShippingDetails extends Component {
                             onChange = {this.handleChangeCountry.bind(this,"DestinationCountry")}
                             value = {this.state.destCountry}
                             /> */}
-                          <select
-                            onChange={this.handleChangeCountry.bind(
-                              this,
-                              "DestinationCountry"
-                            )}
-                            name={"destinCountry"}
-                            value={this.state.fields["DestinationCountry"]}
-                          >
-                            <option value="Select">Select Country</option>
-                            {this.state.optionsOrigin.map(team => (
-                              <option key={team.value} value={team.label}>
-                                {team.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        {/* </div> */}
-                      </div>
-                    </div>
-                    </div>
-                    {/* </div> */}
-
-                    <div className="row">
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields divwd">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>POL</label>
-                          <Autocomplete
-                            getItemValue={item => item.NameWoDiacritics}
-                            items={this.state.POL}
-                            renderItem={(item, isHighlighted) => (
-                              <div
-                                style={{
-                                  background: isHighlighted
-                                    ? "lightgray"
-                                    : "white"
-                                }}
+                              <select
+                                onChange={this.handleChangeCountry.bind(
+                                  this,
+                                  "DestinationCountry"
+                                )}
+                                name={"destinCountry"}
+                                value={this.state.fields["DestinationCountry"]}
                               >
-                                {item.NameWoDiacritics}
-                              </div>
-                            )}
-                            value={this.state.fields["POL"]}
-                            onChange={this.HandleChangePOLPOD.bind(this, "POL")}
-                            menuStyle={this.state.menuStyle}
-                            onSelect={this.handleSelectPOLPOD.bind(this, "POL")}
-                            isMulti={true}
-                          />
+                                <option value="Select">Select Country</option>
+                                {this.state.optionsOrigin.map(team => (
+                                  <option key={team.value} value={team.label}>
+                                    {team.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            {/* </div> */}
+                          </div>
                         </div>
-                        {/* </div> */}
                       </div>
-                      </div>
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                      <div className="login-fields divwd">
-                        {/* <div class="rate-radio-cntr"> */}
-                        <div style={{ width: "100%" }}>
-                          <label style={{ padding: "0" }}>POD</label>
-                          {/* <Select
+                      {/* </div> */}
+
+                      <div className="row">
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields divwd">
+                            {/* <div class="rate-radio-cntr"> */}
+                            <div style={{ width: "100%" }}>
+                              <label style={{ padding: "0" }}>POL</label>
+                              <Autocomplete
+                                getItemValue={item => item.NameWoDiacritics}
+                                items={this.state.POL}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.NameWoDiacritics}
+                                  </div>
+                                )}
+                                value={this.state.fields["POL"]}
+                                onChange={this.HandleChangePOLPOD.bind(
+                                  this,
+                                  "POL"
+                                )}
+                                menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectPOLPOD.bind(
+                                  this,
+                                  "POL"
+                                )}
+                                isMulti={true}
+                              />
+                            </div>
+                            {/* </div> */}
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                          <div className="login-fields divwd">
+                            {/* <div class="rate-radio-cntr"> */}
+                            <div style={{ width: "100%" }}>
+                              <label style={{ padding: "0" }}>POD</label>
+                              {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
                             isMulti
                             options={this.state.optionsOrigin}
                             /> */}
-                          <Autocomplete
-                            getItemValue={item => item.NameWoDiacritics}
-                            items={this.state.POD}
-                            renderItem={(item, isHighlighted) => (
-                              <div
-                                style={{
-                                  background: isHighlighted
-                                    ? "lightgray"
-                                    : "white"
-                                }}
+                              <Autocomplete
+                                getItemValue={item => item.NameWoDiacritics}
+                                items={this.state.POD}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.NameWoDiacritics}
+                                  </div>
+                                )}
+                                value={this.state.fields["POD"]}
+                                onChange={this.HandleChangePOLPOD.bind(
+                                  this,
+                                  "POD"
+                                )}
+                                menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectPOLPOD.bind(
+                                  this,
+                                  "POD"
+                                )}
+                                isMulti
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6 col-md-6 col-lg-5">
+                          <div className="login-fields divwd">
+                            <div>
+                              <label style={{ padding: "11px" }}></label>
+                              <button
+                                type="button"
+                                className="butn mr-3"
+                                onClick={this.handleSubmit}
                               >
-                                {item.NameWoDiacritics}
-                              </div>
-                            )}
-                            value={this.state.fields["POD"]}
-                            onChange={this.HandleChangePOLPOD.bind(this, "POD")}
-                            menuStyle={this.state.menuStyle}
-                            onSelect={this.handleSelectPOLPOD.bind(this, "POD")}
-                            isMulti
-                          />
+                                Submit
+                              </button>
+                              <button
+                                type="button"
+                                className="butn cancel-butn"
+                                onClick={this.handleAdvanceSearchModalClose.bind(
+                                  this
+                                )}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      </div>
-                      <div className="col-12 col-sm-6 col-md-6 col-lg-5">
-                      <div className="login-fields divwd">
-                        <div>
-                          <label style={{ padding: "11px" }}></label>
-                          <button
-                            type="button"
-                            className="butn mr-3"
-                            onClick={this.handleSubmit}
-                          >
-                            Submit
-                          </button>
-                          <button
-                            type="button"
-                            className="butn cancel-butn"
-                            onClick={this.handleAdvanceSearchModalClose.bind(
-                              this
-                            )}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                      </div>
-                    </div>
                     </div>
 
                     {/* <div className="transit-sect-overflow">
@@ -1436,68 +1482,79 @@ class ShippingDetails extends Component {
               centered={true}
             >
               <ModalBody>
-              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleShare}>
-                <span>&times;</span>
-              </button>
-              <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  onClick={this.toggleShare}
+                >
+                  <span>&times;</span>
+                </button>
+                <div
+                  style={{
+                    background: "#fff",
+                    borderRadius: "15px",
+                    padding: "15px"
+                  }}
+                >
                   <h3 className="mb-4 text-center">Share</h3>
-                <div className="txt-cntr">
-                  <div className="d-flex align-items-center">
-                    <p className="details-title mr-3">Shareable Link</p>
-                    <div class="spe-equ d-block m-0 flex-grow-1">
-                      <input
-                        type="text"
-                        disabled
-                        class="w-100"
-                        style={{border:"none"}}
-                        value={this.state.shareLink}
-                      />
+                  <div className="txt-cntr">
+                    <div className="d-flex align-items-center">
+                      <p className="details-title mr-3">Shareable Link</p>
+                      <div class="spe-equ d-block m-0 flex-grow-1">
+                        <input
+                          type="text"
+                          disabled
+                          class="w-100"
+                          style={{ border: "none" }}
+                          value={this.state.shareLink}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="text-right d-flex justify-content-end mb-0">
-                  <Button
-                    className="butn cancel-butn"
-                    onClick={this.toggleShare}
-                  >
-                    Cancel
-                  </Button>
-                  <a
-                    href={
-                      "mailto:username@example.com?subject=Shipment Details&body=Check the link :" +
-                      this.state.shareLink
-                    }
-                    className="butn mx-3"
-                    onClick={this.onShare}
-                  >
-                    Share
-                  </a>
-                  <CopyToClipboard
-                    onCopy={this.onCopy}
-                    text={this.state.shareLink}
-                  >
+                  <div className="text-right d-flex justify-content-end mb-0">
                     <Button
-                      className="butn blue-butn"
-                      // onClick={this.toggleShare}
+                      className="butn cancel-butn"
+                      onClick={this.toggleShare}
                     >
-                      Copy
+                      Cancel
                     </Button>
-                  </CopyToClipboard>
-                </div>
-                <div className="text-right">
-                  {this.state.copied ? (
-                    <span
-                      style={{
-                        color: "#39b54a",
-                        marginTop: "5px",
-                        display: "block"
-                      }}
+                    <a
+                      href={
+                        "mailto:username@example.com?subject=Shipment Details&body=Check the link :" +
+                        this.state.shareLink
+                      }
+                      className="butn mx-3"
+                      onClick={this.onShare}
                     >
-                      Copied.
-                    </span>
-                  ) : null}
+                      Share
+                    </a>
+                    <CopyToClipboard
+                      onCopy={this.onCopy}
+                      text={this.state.shareLink}
+                    >
+                      <Button
+                        className="butn blue-butn"
+                        // onClick={this.toggleShare}
+                      >
+                        Copy
+                      </Button>
+                    </CopyToClipboard>
+                  </div>
+                  <div className="text-right">
+                    {this.state.copied ? (
+                      <span
+                        style={{
+                          color: "#39b54a",
+                          marginTop: "5px",
+                          display: "block"
+                        }}
+                      >
+                        Copied.
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
               </ModalBody>
             </Modal>
           </div>

@@ -2369,6 +2369,18 @@ table tbody tr:last-child {
 }
 /* side menu ends */
 
+.quote-to-from {
+  display: flex;
+  align-items: center;
+}
+.quote-to-from span {
+  margin-right: 10px;
+}
+.quote-to-from .react-datepicker-wrapper {
+  width: 150px;
+  margin-right: 20px;
+}
+
 /* chetan css ends */
 
 /* -------------------------------Deepak Savani----------------------------- */
