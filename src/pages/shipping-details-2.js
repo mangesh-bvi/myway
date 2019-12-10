@@ -614,7 +614,7 @@ class ShippingDetailsTwo extends Component {
     var HblNo = row.original["HBL#"];
     this.setState({ modalDel: true });
   }
- 
+
   HandleShipmentDocument() {
     debugger;
     let self = this;
@@ -761,20 +761,15 @@ class ShippingDetailsTwo extends Component {
     }));
   }
 
-  deleteDocument(evt, row) {
-    debugger
-    this.toggleDel();
+  deleteDocument() {
     let self = this;
-    var HblNo = row.original["HBL#"];
-    var DocId=row.original.DocumentID;
-    var FName=row.original.FileName;
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/DeleteShipmentDocument`,
       data: {
-        DocumentId:DocId,   // self.state.documentData.DocumentID,
-        FileName: FName,    //self.state.documentData.FileName,
+        DocumentId: self.state.documentData.DocumentID,
+        FileName: self.state.documentData.FileName,
         DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
@@ -1063,7 +1058,7 @@ class ShippingDetailsTwo extends Component {
         <>
           <button
             onClick={this.handleChangePage.bind(this)}
-            className="butn mt-0 marlefbtn"
+            className="butn mt-0"
             style={{ marginLeft: "140px" }}
           >
             Back
@@ -1791,7 +1786,7 @@ class ShippingDetailsTwo extends Component {
                                             src={Delete}
                                             alt="delete-icon"
                                             onClick={e =>
-                                              this.deleteDocument(e, row)
+                                              this.HandleDocumentDelete(e, row)
                                             }
                                           />
                                           <img
@@ -2400,7 +2395,7 @@ class ShippingDetailsTwo extends Component {
                     </Button>
                   </ModalBody>
                 </Modal>
-                {/* <Modal
+                <Modal
                   className="delete-popup"
                   isOpen={this.state.modalDel}
                   toggle={this.toggleDel}
@@ -2411,8 +2406,8 @@ class ShippingDetailsTwo extends Component {
                     <Button
                       className="butn"
                       onClick={() => {
-                        // this.toggleDel();
-                        this.deleteDocument(evt, row);
+                        this.toggleDel();
+                        this.deleteDocument();
                       }}
                     >
                       Yes
@@ -2424,7 +2419,7 @@ class ShippingDetailsTwo extends Component {
                       No
                     </Button>
                   </ModalBody>
-                </Modal> */}
+                </Modal>
                 <Modal
                   className="delete-popup pol-pod-popup"
                   isOpen={this.state.modalDocu}
@@ -2539,11 +2534,11 @@ class ShippingDetailsTwo extends Component {
                   <ModalBody>
                     <div className="rename-cntr login-fields">
                       <iframe
-                        src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
-                        // src={
-                        //   this.state.viewFilePath +
-                        //   "#toolbar=0&navpanes=0&scrollbar=0"
-                        // }
+                        // src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
+                        src={
+                          this.state.viewFilePath +
+                          "#toolbar=0&navpanes=0&scrollbar=0"
+                        }
                         title="Document View"
                         className="agreement-pdf"
                       ></iframe>
