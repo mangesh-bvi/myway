@@ -611,7 +611,7 @@ class ShippingDetailsTwo extends Component {
     var HblNo = row.original["HBL#"];
     this.setState({ modalDel: true });
   }
-
+ 
   HandleShipmentDocument() {
     debugger;
     let self = this;
@@ -756,15 +756,20 @@ class ShippingDetailsTwo extends Component {
     }));
   }
 
-  deleteDocument() {
+  deleteDocument(evt, row) {
+    debugger
+    this.toggleDel();
     let self = this;
+    var HblNo = row.original["HBL#"];
+    var DocId=row.original.DocumentID;
+    var FName=row.original.FileName;
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/DeleteShipmentDocument`,
       data: {
-        DocumentId: self.state.documentData.DocumentID,
-        FileName: self.state.documentData.FileName,
+        DocumentId:DocId,   // self.state.documentData.DocumentID,
+        FileName: FName,    //self.state.documentData.FileName,
         DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
@@ -1783,7 +1788,7 @@ class ShippingDetailsTwo extends Component {
                                             src={Delete}
                                             alt="delete-icon"
                                             onClick={e =>
-                                              this.HandleDocumentDelete(e, row)
+                                              this.deleteDocument(e, row)
                                             }
                                           />
                                           <img
@@ -2390,7 +2395,7 @@ class ShippingDetailsTwo extends Component {
                     </Button>
                   </ModalBody>
                 </Modal>
-                <Modal
+                {/* <Modal
                   className="delete-popup"
                   isOpen={this.state.modalDel}
                   toggle={this.toggleDel}
@@ -2401,8 +2406,8 @@ class ShippingDetailsTwo extends Component {
                     <Button
                       className="butn"
                       onClick={() => {
-                        this.toggleDel();
-                        this.deleteDocument();
+                        // this.toggleDel();
+                        this.deleteDocument(evt, row);
                       }}
                     >
                       Yes
@@ -2414,7 +2419,7 @@ class ShippingDetailsTwo extends Component {
                       No
                     </Button>
                   </ModalBody>
-                </Modal>
+                </Modal> */}
                 <Modal
                   className="delete-popup pol-pod-popup"
                   isOpen={this.state.modalDocu}
