@@ -436,7 +436,7 @@ class RateFinalizing extends Component {
             }
           }
         }
-
+        
         this.setState({
           rateDetails: rateDetails,
           rateSubDetails: rateSubDetails,
@@ -450,7 +450,15 @@ class RateFinalizing extends Component {
           commodityData: commodityData,
           selected: selected,
           spacEqmtType: spacEqmtType,
-          flattack_openTop: flattack_openTop,
+          flattack_openTop: flattack_openTop.length==0?[{SpecialContainerCode: "",
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0}]:flattack_openTop,
           polfullAddData: polfullAddData,
           podfullAddData: podfullAddData,
           currencyCode: currencyCode,
@@ -5818,7 +5826,144 @@ class RateFinalizing extends Component {
                             ) : null}
                           </div>
                         </div>
-                      ) : null):(
+                      ) : (<div className="row cbm-space" key={i}>
+                      {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <label className="mr-0 mt-2" name="SpecialContainerCode">
+                            {el.SpecialContainerCode}
+                          </label>
+                        </div>
+                      </div> */}
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <select
+                            className="select-text"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            name="SpecialContainerCode"
+                            //value={el.SpecialContainerCode}
+                          >
+                            <option selected>Select</option>
+                            {this.state.equipmentTypeArr.map((item, i) => (
+                              <option key={i} value={item.ContainerType}>
+                                {item.ContainerType}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <select
+                            className="select-text"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            name="PackageType"
+                            //value={el.PackageType}
+                          >
+                            <option selected>Select</option>
+                            {this.state.packageTypeData.map((item, i) => (
+                              <option key={i} value={item.PackageName}>
+                                {item.PackageName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            placeholder={"L (cm)"}
+                            className="w-100"
+                            name="length"
+                            //value={el.length || ""}
+                            // onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            placeholder={"W (cm)"}
+                            className="w-100"
+                            name="width"
+                            //value={el.width || ""}
+                            //onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            placeholder="H (cm)"
+                            className="w-100"
+                            name="height"
+                            //value={el.height || ""}
+                            //onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+              
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            //placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                            name="Gross_Weight"
+                            //value={el.Gross_Weight}
+                            className="w-100"
+                          />
+                        </div>
+                      </div>
+                      {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            name="total"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+                            value={el.total || ""}
+                            className="w-100"
+                          />
+                        </div>
+                      </div> */}
+                      {i === 0 ? (
+                          <div className="">
+                            <div className="spe-equ">
+                              <i
+                                className="fa fa-plus mt-2"
+                                aria-hidden="true"
+                                onClick={this.addMultiDim.bind(this)}
+                              ></i>
+                            </div>
+                          </div>
+                        ) : null}
+                        {this.state.flattack_openTop.length > 1 ? (
+                          <div className="">
+                            <div className="spe-equ">
+                              <i
+                                className="fa fa-minus mt-2"
+                                aria-hidden="true"
+                                onClick={this.removeMultiDim.bind(this, i)}
+                              ></i>
+                            </div>
+                          </div>
+                        ) : null}
+                      {/* <div className="">
+                        <div className="spe-equ">
+                          <i
+                            className="fa fa-minus mt-2"
+                            aria-hidden="true"
+                            //onClick={this.removeClickMultiCBM.bind(this)}
+                          ></i>
+                        </div>
+                      </div> */}
+                    </div>)):(
                         this.CreateMultiCBM()
                       )}
                     </>
