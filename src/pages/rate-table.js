@@ -2657,7 +2657,7 @@ class RateTable extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: parseFloat(value)
+        [name]: value === "" ? 0 : parseFloat(value)
       };
     }
 
@@ -2667,10 +2667,17 @@ class RateTable extends Component {
         (multiCBM[i].Quantity *
           (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["VolumeWeight"]: parseFloat(decVolumeWeight)
-      };
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
     } else {
       var decVolume =
         multiCBM[i].Quantity *
@@ -2679,11 +2686,12 @@ class RateTable extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: 2
+        ["Volume"]: parseFloat(decVolume)
       };
     }
 
     this.setState({ multiCBM });
+
   }
 
   HandleCMBtextChange(e) {
@@ -3079,7 +3087,7 @@ class RateTable extends Component {
               </div>
               <div className="login-fields mb-0 rate-tab-drop">
                 Commodity :
-                <select className="ml-2" onChange={this.filterAll}>
+                <select className="" onChange={this.filterAll}>
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
                   {this.state.loading === true
@@ -3125,10 +3133,10 @@ class RateTable extends Component {
 
               {/* {----------------------End Spot Rate Modal------------------} */}
             </div>
-            <div className="rate-table-below">
+            <div className="rate-table-below cus-w">
               {/* cus-w */}
               <div className="row">
-                <div className="col-md-3 less-right-rate">
+                <div className="col-12 col-md-5 col-lg-3 less-right-rate">
                   <div className="rate-table-left">
                     <div className="top-select d-flex justify-content-between disblo">
                       <a href="new-rate-search" className="butn btn-sizeRate">
@@ -3376,7 +3384,7 @@ class RateTable extends Component {
                   </div>
                 </div>
 
-                <div className="col-md-9">
+                <div className="col-12 col-md-7 col-lg-9">
                   {this.state.loading === true ? (
                     <div className="position-relative h-100">
                       <div className="loader-icon"></div>

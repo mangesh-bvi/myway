@@ -1083,7 +1083,7 @@ class Dashboard extends Component {
   HandleRediractPageShipmentDetails(hblno) {
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: hblno,pageName:"ShipmentPage" }
+      state: { detail: hblno, pageName: "ShipmentPage" }
     });
   }
   HandleActiveShipmentData() {
@@ -1136,6 +1136,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var quotesdata = response.data.Table;
       selt.setState({
         QuotesData: quotesdata,
@@ -1399,6 +1400,11 @@ class Dashboard extends Component {
       if (i < 4) {
         return (
           <div key={i}>
+            <p>
+              <span style={{ color: "#000", fontFamily: "Bold Font" }}>
+                {quotes.SalesQuoteNumber}
+              </span>
+            </p>
             <p>
               <span title="Customer Name">{quotes.CompanyName}</span>
             </p>

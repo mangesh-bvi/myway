@@ -1131,7 +1131,7 @@ table tbody tr:last-child {
   min-width: 170px;
 }
 .rate-radio-cntr > div {
-  margin: 0 15px;
+  margin-right: 15px;
 }
 #cbmInner .rate-radio-cntr > div {
   margin: 0 10px;
@@ -2243,7 +2243,7 @@ table tbody tr:last-child {
 }
 .rate-final-contr select,
 .rate-final-contr input {
-  margin-top: 10px;
+  margin-top: 0px;
 }
 .rate-final-contr .login-fields {
   margin-bottom: 0px;
@@ -2539,7 +2539,7 @@ table tbody tr:last-child {
   background-color: #0142aa;
   border: none;
   transition: 0.5s;
-  }
+}
 /* .cls-flside {
   border: none;
   transition: 0.5s;
@@ -3528,6 +3528,19 @@ table tbody tr:last-child {
     margin-right: -15px;
     margin-left: -16px;
 } */
+.reject-popup {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+.reject-popup label {
+flex: 0 0 120px;
+    text-align: left;
+    margin-bottom: 0;
+}
+.large-popup {
+  max-width: 80%
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/
@@ -3863,77 +3876,13 @@ img {
   margin: 0 3px;
 }
 
-
-
-
 @media (min-width: 768px) {
-  .cus-w .col-md-3 {
+  .cus-w .col-lg-3 {
     flex: 0 0 28.333333%;
     max-width: 28.333333%;
   }
-  .cus-w .col-md-9 {
+  .cus-w .col-lg-9 {
     flex: 0 0 71.666667%;
     max-width: 71.666667%;
-  }
-}
-@media (max-width: 768px) {
-  .menuname {
-    display: none;
-  }
-  .cls-flside {
-    width: 50px;
-  }
-  .sidemenu-ul-li a {
-    padding: 15px 5px;
-  }
-  .header-greencounter-icon {
-    display: block;
-    width: 30px;
-    margin-right: 0;
-    margin: auto;
-  }
-  .cls-rt {
-    width: calc(94% - 40px);
-  }
-}
-@media (min-width: 576px) and (max-width: 767px) {
-  .header-ul li {
-    padding: 10px;
-  }
-  .header-btn {
-    padding: 5px 10px;
-    font-size: 10px;
-    margin: 10px 5px 0 5px;
-  }
-  .header-chat-icon {
-    padding: 0 4px;
-  }
-}
-@media (min-width: 461px) and (max-width: 575px) {
-  .header-log {
-    margin: auto;
-    display: block;
-  }
-  .header-ul {
-    float: none;
-    margin: auto;
-    border-top: 1px solid #d6d6d6;
-  }
-}
-@media (min-width: 320px) and (max-width: 460px) {
-  .login-between {
-    padding: 50px 15px;
-  }
-  .login-cntr .butn {
-    margin-right: 10px;
-  }
-  .header-log {
-    margin: auto;
-    display: block;
-  }
-  .header-ul {
-    float: none;
-    margin: auto;
-    border-top: 1px solid #d6d6d6;
   }
 }
