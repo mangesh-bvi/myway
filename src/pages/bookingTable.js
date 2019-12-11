@@ -14,14 +14,19 @@ import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { encryption } from "../helpers/encryption";
+import { NotificationManager } from "react-notifications";
+import DatePicker from "react-datepicker";
 
 class BookingTable extends Component {
   constructor(props) {
+    var someDate = new Date();
     super(props);
     this.state = {
       modalDel: false,
       filterAll: "",
-      bookingData: []
+      bookingData: [],
+      startDate: someDate.setMonth(someDate.getMonth() - 1),
+      endDate: new Date().setHours(0, 0, 0, 0)
     };
     this.HandleBookingList = this.HandleBookingList.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -114,7 +119,7 @@ class BookingTable extends Component {
     var BookingNo = row.original["BookingID"];
     this.props.history.push({
       pathname: "booking-view",
-      state: { BookingNo: BookingNo ,isView:true}
+      state: { BookingNo: BookingNo, isView: true }
     });
   }
   HandleDocumentView(evt, row) {
@@ -125,8 +130,57 @@ class BookingTable extends Component {
       state: { BookingNo: BookingNo }
     });
   }
+  handleChangeStart = e => {
+    debugger;
+    var strt = this.state.startDate;
+    var thisE = e;
+    this.setState({
+      startDate: e
+    });
+    if (
+      thisE.setHours(0, 0, 0, 0) >
+      new Date(this.state.endDate).setHours(0, 0, 0, 0)
+    ) {
+      NotificationManager.error("From Date needs to be smaller than To Date");
+      this.setState({
+        startDate: strt
+      });
+    }
+  };
+  handleChangeEnd = e => {
+    debugger;
+    var ennd = this.state.endDate;
+    var thisE = e;
+    this.setState({
+      endDate: e
+    });
+    if (
+      new Date(this.state.startDate).setHours(0, 0, 0, 0) >
+      thisE.setHours(0, 0, 0, 0)
+    ) {
+      NotificationManager.error("To Date needs to be greater than From Date");
+      this.setState({
+        endDate: ennd
+      });
+    }
+  };
+
   render() {
     const { bookingData } = this.state;
+    var dataQuote = [];
+    var { quotesData } = this.state;
+
+    const Moment = require("moment");
+    const array = [
+      { date: "2018-05-11" },
+      { date: "2018-05-12" },
+      { date: "2018-05-10" }
+    ];
+    // dataQuote = quotesData.sort(
+    //   (a, b) =>
+    //     new Moment(b.CreatedDate).format("YYYYMMDD") -
+    //     new Moment(a.CreatedDate).format("YYYYMMDD")
+    // );
     return (
       <div>
         <Headers />
@@ -138,14 +192,38 @@ class BookingTable extends Component {
             <div className="title-sect">
               <h2>Booking Table</h2>
             </div>
-            <div className="">
-              <input
-                type="search"
-                className="quote-txt-srch"
-                placeholder="Search here"
-                value={this.state.filterAll}
-                onChange={this.filterAll}
-              />
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="login-fields quote-to-from mb-0">
+                <span>From</span>
+                <DatePicker
+                  id="datpicker-from-shipment"
+                  className="ana-to"
+                  selected={this.state.startDate}
+                  onChange={this.handleChangeStart}
+                  maxDate={new Date()}
+                  showWeekNumbers
+                />
+              </div>
+              <div className="login-fields quote-to-from mb-0">
+                <span>To</span>
+                <DatePicker
+                  id="datpicker-to-shipment"
+                  className="ana-to"
+                  selected={this.state.endDate}
+                  onChange={this.handleChangeEnd}
+                  maxDate={new Date()}
+                  showWeekNumbers
+                />
+              </div>
+              <div className="">
+                <input
+                  type="search"
+                  className="quote-txt-srch"
+                  placeholder="Search here"
+                  value={this.state.filterAll}
+                  onChange={this.filterAll}
+                />
+              </div>
             </div>
             <div className="ag-fresh">
               <ReactTable
@@ -197,11 +275,11 @@ class BookingTable extends Component {
                               <div className="action-cntr">
                                 {/* <a> */}
                                 <img
-                            className="actionicon"
-                            src={Eye}
-                            alt="view-icon"
-                            onClick={e => this.HandleRowClickEvt(e, row)}
-                          />
+                                  className="actionicon"
+                                  src={Eye}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleRowClickEvt(e, row)}
+                                />
                                 {/* </a> */}
                                 {/* <a href="/rate-finalizing-still-booking"> */}
                                 <img
@@ -226,11 +304,11 @@ class BookingTable extends Component {
                               <div className="action-cntr">
                                 {/* <a> */}
                                 <img
-                            className="actionicon"
-                            src={Eye}
-                            alt="view-icon"
-                            onClick={e => this.HandleRowClickEvt(e, row)}
-                          />
+                                  className="actionicon"
+                                  src={Eye}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleRowClickEvt(e, row)}
+                                />
                                 {/* </a> */}
                                 {/* <a href="/rate-finalizing-still-booking"> */}
                                 <img

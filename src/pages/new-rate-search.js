@@ -1142,7 +1142,7 @@ class NewRateSearch extends Component {
             </select>
           </div>
         </div>
-        <div className="col-md">
+        {/* <div className="col-md">
           <div className="spe-equ">
             <input
               type="text"
@@ -1154,7 +1154,7 @@ class NewRateSearch extends Component {
               //onKeyUp={this.cbmChange}
             />
           </div>
-        </div>
+        </div> */}
         <div className="col-md">
           <div className="spe-equ">
             <input
@@ -1207,7 +1207,7 @@ class NewRateSearch extends Component {
             />
           </div>
         </div>
-        <div className="col-md">
+        {/* <div className="col-md">
           <div className="spe-equ">
             <input
               type="text"
@@ -1218,7 +1218,7 @@ class NewRateSearch extends Component {
               className="w-100"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="">
           <div className="spe-equ">
@@ -1272,21 +1272,23 @@ class NewRateSearch extends Component {
   }
   addClickMultiCBM(optionsVal) {
     debugger;
-    this.setState(prevState => ({
-      flattack_openTop: [
-        ...prevState.flattack_openTop,
-        {
-          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
-          PackageType: "",
-          length: "",
-          width: "",
-          height: "",
-          Quantity: "1",
-          Gross_Weight: "",
-          total: ""
-        }
-      ]
-    }));
+    if(this.state.flattack_openTop.length == 0){
+      this.setState(prevState => ({
+        flattack_openTop: [
+          ...prevState.flattack_openTop,
+          {
+            SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+            PackageType: "",
+            length: "",
+            width: "",
+            height: "",
+            Quantity: "1",
+            Gross_Weight: "",
+            total: ""
+          }
+        ]
+      }));
+    }
   }
   removeClickMultiCBM(i) {
     let flattack_openTop = [...this.state.flattack_openTop];
@@ -2446,6 +2448,7 @@ class NewRateSearch extends Component {
           specialEqtSelect: true
         });
         this.addClickMultiCBM(value);
+        this.addSpacEqmtType(value);
       }
     }
     if (option.option.IsTemperatureRequired === 1) {

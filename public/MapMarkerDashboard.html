@@ -2,6 +2,7 @@
 
 <html>
   <head>
+    <link rel="stylesheet" href="./../src/assets/css/responsive.css">
     <style type="text/css">
       html {
         height: 100%;
@@ -20,7 +21,7 @@
       .dash-search-cntr2 {
         position: absolute;
         top: 10px;
-        left: 195px;
+        left: 215px;
         z-index: 1;
       }
       .dash-search-cntr2 input {
@@ -585,10 +586,10 @@
           }
 
           if (toogleData === "Ocean" && isOceanOn === 0) {
-            $("div > img[src='img/hamb-ship.png']").hide();
+            $("div > img[src='img/blue-ship.png']").hide();
             $("#mapOcean").css("opacity", "0.5");
           } else {
-            $("div > img[src='img/hamb-ship.png']").show();
+            $("div > img[src='img/blue-ship.png']").show();
             $("#mapOcean").css("opacity", "1");
           }
         }
@@ -617,10 +618,10 @@
           }
 
           if (toogleData === "DelayShipment" && isDelayShipment === 0) {
-            $("div > img[src='blue-delay.png']").hide();
+            $("div > img[src='img/delay-shipment.png']").hide();
             $("#mapDelay").css("opacity", "0.5");
           } else {
-            $("div > img[src='blue-delay.png']").show();
+            $("div > img[src='img/delay-shipment.png']").show();
             $("#mapDelay").css("opacity", "1");
           }
         }

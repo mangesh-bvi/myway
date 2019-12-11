@@ -2993,40 +2993,40 @@ class RateFinalizing extends Component {
                                   debugger;
                                   var lname = "";
                                   var olname = "";
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
                                     lname =
-                                      row._original.lineName.replace(
+                                      row._original.LineName.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
                                     lname =
-                                      row._original.lineName.replace(
+                                      row._original.LineName.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
                                   var mode = this.state.ModeOfTransport;
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
-                                    lname =
-                                    row._original.lineName
-                                    .replace(" ", "_")
-                                    .replace(" ", "_") + ".png";
-                                    }
-                                    var mode = "";
-                                    if (this.state.ModeOfTransport) {
-                                    mode = this.state.ModeOfTransport;
-                                    }
-                                    if (this.state.modeoftransport) {
-                                    mode =
-                                    this.state.modeoftransport === "SEA"
-                                    ? "Ocean"
-                                    : this.state.modeoftransport === "AIR"?"Air":"Inlande";
-                                    }
+                                  // if (row._original.lineName) {
+                                  //   olname = row._original.lineName;
+                                  //   lname =
+                                  //   row._original.lineName
+                                  //   .replace(" ", "_")
+                                  //   .replace(" ", "_") + ".png";
+                                  //   }
+                                  //   var mode = "";
+                                  //   if (this.state.ModeOfTransport) {
+                                  //   mode = this.state.ModeOfTransport;
+                                  //   }
+                                  //   if (this.state.modeoftransport) {
+                                  //   mode =
+                                  //   this.state.modeoftransport === "SEA"
+                                  //   ? "Ocean"
+                                  //   : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                  //   }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (

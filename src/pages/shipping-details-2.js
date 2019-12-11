@@ -243,7 +243,10 @@ class ShippingDetailsTwo extends Component {
       ModaType: "",
       eve: "N/A",
       pageName: "",
-      viewFilePath: ""
+      viewFilePath: "",
+      delDocuId: "",
+      delFileName: "",
+      downloadFilePath: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -252,7 +255,7 @@ class ShippingDetailsTwo extends Component {
     this.togglePackage = this.togglePackage.bind(this);
     this.handleActivityList = this.handleActivityList.bind(this);
     this.HandleShipmentDocument = this.HandleShipmentDocument.bind(this);
-    // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
+    this.HandleDownloadFile = this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
   }
@@ -304,7 +307,7 @@ class ShippingDetailsTwo extends Component {
         url: `${appSettings.APIURL}/SendCommonMessage`,
         data: {
           UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-          ReferenceNo: hbllNo,
+          ReferenceNo: hbllNo.trim(),
           // TypeOfMessage: drpshipment.value.trim(),
           Message: msgg
         },
@@ -609,10 +612,47 @@ class ShippingDetailsTwo extends Component {
     var viewFilePath = row.original["FilePath"];
     this.setState({ modalEdit: true, viewFilePath });
   }
+  HandleDownloadFile(evt, row) {
+    debugger;
+    var HblNo = row.original["HBL#"];
+    var downloadFilePath = row.original["FilePath"];
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DownloadFTPFile`,
+      data: {
+        MywayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        FilePath: row.original["FilePath"]
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        // var documentdata = [];
+        // documentdata = response.data;
+        // documentdata.forEach(function(file, i) {
+        //   file.sr_no = i + 1;
+        // });
+
+        // self.setState({ documentData: documentdata });
+      })
+      .catch(error => {
+        debugger;
+        // var temperror = error.response.data;
+        // var err = temperror.split(":");
+        // // NotificationManager.error("No Data Found");
+        // var actData = [];
+        // actData.push({ DocumentDescription: "No Data Found" });
+
+        // self.setState({ documentData: actData });
+      });
+  }
   HandleDocumentDelete(evt, row) {
     debugger;
     var HblNo = row.original["HBL#"];
-    this.setState({ modalDel: true });
+    var delDocuId = row.original["DocumentID"];
+    var delFileName = row.original["FileName"];
+    this.setState({ modalDel: true, delDocuId, delFileName });
   }
 
   HandleShipmentDocument() {
@@ -620,7 +660,7 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var HblNo;
     if (typeof this.props.location.state != "undefined") {
-      HblNo = this.props.location.state.detail;
+      HblNo = this.props.location.state.detail.trim();
     }
 
     axios({
@@ -727,13 +767,17 @@ class ShippingDetailsTwo extends Component {
     }
     debugger;
     //docData.append();
-    docData.append("ShipmentNumber", this.state.ShipperID);
+    // docData.append("ShipmentNumber", this.state.ShipperID);
     // docData.append("ShipmentNumber", "BCM2453770");
     // docData.append("HBLNo", "BCM23770");
     docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
     docData.append("name", docName);
     docData.append("FileData", this.state.selectedFile);
+    docData.append(
+      "CreatedBy",
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
     // docData.append()
 
     axios({
@@ -769,8 +813,8 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/DeleteShipmentDocument`,
       data: {
-        DocumentId: self.state.documentData.DocumentID,
-        FileName: self.state.documentData.FileName,
+        DocumentId: self.state.delDocuId,
+        FileName: self.state.delFileName,
         DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
@@ -879,7 +923,7 @@ class ShippingDetailsTwo extends Component {
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
       data: {
         UserId: encryption(window.localStorage.getItem("userid"), "desc"),
-        HBLNO: HblNo
+        HBLNO: HblNo.trim()
       },
       headers: authHeader()
     })
@@ -1183,15 +1227,15 @@ class ShippingDetailsTwo extends Component {
                       {/* <div className="sect-padd">
                         <p className="details-heading">Booking Details</p>
                         <div className="row">
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Mode Of Transport</p>
                             <p className="details-para">Ocean</p>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Cargo Type</p>
                             <p className="details-para">FCL</p>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">EXW</p>
                           </div>
@@ -1199,7 +1243,7 @@ class ShippingDetailsTwo extends Component {
                       </div> */}
                       <div className="sect-padd">
                         <div className="row">
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">HBL#</p>
                             <a href="#!" className="details-para">
                               {detailsData.HBLNO}
@@ -1210,14 +1254,14 @@ class ShippingDetailsTwo extends Component {
                               />
                             </a>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-para">{detailsData.HBLNO}</p>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Status</p>
                             <p className="details-para">{detailsData.Status}</p>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Last Update</p>
                             <p className="details-para">
                               {detailsData["Status Date"]}
@@ -1225,25 +1269,25 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Mode</p>
                             <p className="details-para">
                               {detailsData.ModeOfTransport}
                             </p>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Cargo Type</p>
                             <p className="details-para">
                               {detailsData.CargoType}
                             </p>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">ATA Booking No#</p>
                             <p className="details-para">
                               {detailsData.ATABookingNo}
                             </p>
                           </div>
-                          <div className="col-md-3 details-border">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">SRT No#</p>
                             <p className="details-para">
                               {detailsData["SRT No#"]}
@@ -1329,7 +1373,7 @@ class ShippingDetailsTwo extends Component {
                               Routing Information - {i}
                             </p>
                             <div className="row mid-border">
-                              <div className="col-md-6 details-border">
+                              <div className="col-12 col-sm-12 col-md-12 col-lg-6 details-border">
                                 <div className="row">
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
@@ -1363,7 +1407,7 @@ class ShippingDetailsTwo extends Component {
                                   </div>
                                 </div>
                               </div>
-                              <div className="col-md-6 details-border">
+                              <div className="col-12 col-sm-12 col-md-12 col-lg-6 details-border">
                                 <div className="row">
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
@@ -1406,7 +1450,7 @@ class ShippingDetailsTwo extends Component {
                             >
                               <div className="collapse-sect">
                                 <div className="row">
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">
                                       Container Agents
                                     </p>
@@ -1414,19 +1458,19 @@ class ShippingDetailsTwo extends Component {
                                       {routedata["Container Agents"]}
                                     </p>
                                   </div>
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">Flag</p>
                                     <p className="details-para">
                                       {routedata.Flag}
                                     </p>
                                   </div>
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">Voyage Id</p>
                                     <p className="details-para">
                                       {routedata["Voyage Identification"]}
                                     </p>
                                   </div>
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">IMO Number</p>
                                     <p className="details-para">
                                       {routedata["IMO Number"]}
@@ -1434,7 +1478,7 @@ class ShippingDetailsTwo extends Component {
                                   </div>
                                 </div>
                                 <div className="row">
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">
                                       Document Cutoff
                                     </p>
@@ -1442,7 +1486,7 @@ class ShippingDetailsTwo extends Component {
                                       {routedata["Document Cutoff"]}
                                     </p>
                                   </div>
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">Port Cutoff</p>
                                     <p className="details-para">
                                       {routedata["Port Cutoff"]}
@@ -1473,7 +1517,7 @@ class ShippingDetailsTwo extends Component {
                             return (
                               <div className="cont-det-cntr">
                                 <div className="row">
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">
                                       Container Number
                                     </p>
@@ -1481,7 +1525,7 @@ class ShippingDetailsTwo extends Component {
                                       {cntrDet["Container Number"]}
                                     </p>
                                   </div>
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">
                                       Container Code / Type
                                     </p>
@@ -1490,13 +1534,13 @@ class ShippingDetailsTwo extends Component {
                                       {cntrDet.ContainerType}
                                     </p>
                                   </div>
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">Seal NO.1</p>
                                     <p className="details-para">
                                       {cntrDet.SealNo1}
                                     </p>
                                   </div>
-                                  <div className="col-md-3 details-border">
+                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                     <p className="details-title">Seal NO.2</p>
                                     <p className="details-para">
                                       {cntrDet.SealNo2}
@@ -1509,25 +1553,25 @@ class ShippingDetailsTwo extends Component {
                                 >
                                   <div className="collapse-sect">
                                     <div className="row">
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">Unit</p>
                                         <p className="details-para">
                                           {cntrDet.Unit}
                                         </p>
                                       </div>
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">Height</p>
                                         <p className="details-para">
                                           {cntrDet.height}
                                         </p>
                                       </div>
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">Width</p>
                                         <p className="details-para">
                                           {cntrDet.width}
                                         </p>
                                       </div>
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">Length</p>
                                         <p className="details-para">
                                           {cntrDet.length}
@@ -1535,7 +1579,7 @@ class ShippingDetailsTwo extends Component {
                                       </div>
                                     </div>
                                     <div className="row">
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">
                                           Gross Weight
                                         </p>
@@ -1543,7 +1587,7 @@ class ShippingDetailsTwo extends Component {
                                           {cntrDet["Gross Weight"]}
                                         </p>
                                       </div>
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">
                                           Net Weight
                                         </p>
@@ -1551,7 +1595,7 @@ class ShippingDetailsTwo extends Component {
                                           {cntrDet.NetWeight}
                                         </p>
                                       </div>
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">
                                           Volume Weight
                                         </p>
@@ -1559,7 +1603,7 @@ class ShippingDetailsTwo extends Component {
                                           {cntrDet.VolumeWeight}
                                         </p>
                                       </div>
-                                      <div className="col-md-3 details-border">
+                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">
                                           Description
                                         </p>
@@ -1606,7 +1650,7 @@ class ShippingDetailsTwo extends Component {
                           return (
                             <>
                               <div className="row">
-                                <div className="col-md-3 details-border">
+                                <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                   <p className="details-title">Package Type</p>
                                   <p className="details-para">
                                     {packData.PackageType}
@@ -1619,7 +1663,7 @@ class ShippingDetailsTwo extends Component {
                               >
                                 <div className="collapse-sect">
                                   <div className="row">
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">
                                         Case Number
                                       </p>
@@ -1627,13 +1671,13 @@ class ShippingDetailsTwo extends Component {
                                         {packData.CaseNumber}
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Units</p>
                                       <p className="details-para">
                                         {packData.UnitType}
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">
                                         Package Count
                                       </p>
@@ -1641,7 +1685,7 @@ class ShippingDetailsTwo extends Component {
                                         {packData.PackageCount}
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Length</p>
                                       <p className="details-para">
                                         {packData.Length}
@@ -1649,19 +1693,19 @@ class ShippingDetailsTwo extends Component {
                                     </div>
                                   </div>
                                   <div className="row">
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Width</p>
                                       <p className="details-para">
                                         {packData.Width}
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Height</p>
                                       <p className="details-para">
                                         {packData.Height}
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">
                                         Net Weight
                                       </p>
@@ -1669,7 +1713,7 @@ class ShippingDetailsTwo extends Component {
                                         {packData.NetWeight} Kgs.
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">
                                         Gross Weight
                                       </p>
@@ -1679,13 +1723,13 @@ class ShippingDetailsTwo extends Component {
                                     </div>
                                   </div>
                                   <div className="row">
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Volume</p>
                                       <p className="details-para">
                                         {packData.Volume}
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">
                                         Volume Weight
                                       </p>
@@ -1693,7 +1737,7 @@ class ShippingDetailsTwo extends Component {
                                         {packData.VolumeWeight} Kgs.
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">
                                         Total Net Weight
                                       </p>
@@ -1701,7 +1745,7 @@ class ShippingDetailsTwo extends Component {
                                         {packData.TotalNetWeight} Kgs.
                                       </p>
                                     </div>
-                                    <div className="col-md-3 details-border">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">
                                         Total Gross Weight
                                       </p>
@@ -2471,6 +2515,7 @@ class ShippingDetailsTwo extends Component {
                               id="file-upload"
                               className="file-upload d-none"
                               type="file"
+                              accept="application/pdf"
                               onChange={this.onDocumentChangeHandler}
                             />
                             <label htmlFor="file-upload">

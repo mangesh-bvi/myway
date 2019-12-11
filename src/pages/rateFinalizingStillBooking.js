@@ -1470,7 +1470,7 @@ class RateFinalizingStillBooking extends Component {
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {Booking.length > 0
@@ -1478,7 +1478,7 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {Booking.length > 0
@@ -1486,7 +1486,7 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].CargoType : null}
@@ -1495,17 +1495,17 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Equipment Types</p>
                             <p className="details-para">
                               {this.state.EquipmentTypes}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Special Equipment</p>
                             <p className="details-para"></p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
@@ -1513,7 +1513,7 @@ class RateFinalizingStillBooking extends Component {
                               {/* {this.state.EquipmentTypes} */}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].Incoterm : ""}
@@ -1523,14 +1523,14 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove}
                             </p>
                           </div>
 
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">POL</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].POL : null}
@@ -1539,7 +1539,7 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">POD</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].POD : null}
@@ -1548,13 +1548,13 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">PU Address</p>
                             {/* <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
                             </p> */}
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Delivery Address</p>
                             {/* <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099

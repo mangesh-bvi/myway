@@ -309,10 +309,10 @@ class QuoteTable extends Component {
                         Header: "Type",
                         accessor: "type"
                       },
-                      {
-                        Header: "Notes",
-                        accessor: "Notes"
-                      },
+                      // {
+                      //   Header: "Notes",
+                      //   accessor: "Notes"
+                      // },
                       {
                         Header: "Created Date",
                         accessor: "CreatedDate"

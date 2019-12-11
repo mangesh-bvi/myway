@@ -782,17 +782,17 @@ class BookingView extends Component {
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.ShipmentType}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para"></p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.CargoType}
@@ -800,11 +800,11 @@ class BookingView extends Component {
                           </div>
                           {this.state.CargoType === "FCL" ? (
                             <>
-                              <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                                 <p className="details-title">Equipment Types</p>
                                 <p className="details-para"></p>
                               </div>
-                              <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                                 <p className="details-title">
                                   Special Equipment
                                 </p>
@@ -814,30 +814,29 @@ class BookingView extends Component {
                           ) : (
                             ""
                           )}
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
                             <p className="details-para"></p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {this.state.Incoterm}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.TypeofMove}
                             </p>
                           </div>
-
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">POL</p>
                             <p className="details-para">{this.state.POL}</p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">POD</p>
                             <p className="details-para">{this.state.POD}</p>
                           </div>
@@ -882,15 +881,15 @@ class BookingView extends Component {
                       </div>
                       <div className="">
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Account/Customer</p>
                             <p className="details-para"></p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Address</p>
                             <p className="details-para"></p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para"></p>
                           </div>
@@ -986,7 +985,7 @@ class BookingView extends Component {
                             /> */}
                           </div>
 
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Consignee_Displayas}
