@@ -119,8 +119,7 @@ class RateFinalizing extends Component {
       SalesQuoteNo: "",
       PickUpAddress: "",
       DestinationAddress: "",
-      specialEqtSelect: false,
-      specialEquipment: false
+      multiCBM: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -565,6 +564,7 @@ class RateFinalizing extends Component {
         var PickUpAddress = "";
         var DestinationAddress = "";
         var multiCBM = [];
+        var flattack_openTop = [];
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -714,7 +714,10 @@ class RateFinalizing extends Component {
                         ContainerType: table[i].ContainerCode,
                         Quantity: table[i].ContainerQuantity
                       });
+
                     }
+
+                    
                   }
                 }
               }
@@ -764,6 +767,20 @@ class RateFinalizing extends Component {
                     });
 
                     multiCBM.push(table[i])
+                    if (param.type == "FCL") {
+                      flattack_openTop.push({
+                        SpecialContainerCode: "",
+                        PackageType: table[i].PackageType,
+                        Quantity: table[i].Quantity,
+                        length: table[i].Length,
+                        width: table[i].Width,
+                        height: table[i].height,
+                        Weight: table[i].GrossWeight,
+                        Gross_Weight: table[i].GrossWeight,
+                        VolumeWeight: 0,
+                        Volume: 0
+                      })
+                    }
                   }
                 }
               }
@@ -779,7 +796,11 @@ class RateFinalizing extends Component {
         self.setState({
           rateDetails: rateDetails,
           rateSubDetails: response.data.Table2,
-          multiCBM: multiCBM
+          multiCBM: multiCBM,
+          flattack_openTop: flattack_openTop,
+          specialEqtSelect: true,
+          specialEquipment:true
+          
         });
         self.forceUpdate();
         self.HandleLocalCharges();
@@ -1715,126 +1736,6 @@ class RateFinalizing extends Component {
       Commodity: Number(this.state.CommodityID)
     };
 
-    debugger
-    // var SendRequestparaAIR={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   Containerdetails:Containerdetails,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   BaseCurrency:rateSubDetailsarr[j].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-
-    // var SendRequestparaFCL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   Containerdetails:Containerdetails,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   BaseCurrency:rateSubDetailsarr[j].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-    // var SendRequestparaLCL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-    // var SendRequestparaFTL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   FTLTruckDetails:,
-    //   BaseCurrency:rateSubDetailsarr[j].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
     var url = "";
 
     if (this.state.containerLoadType == "FCL") {
@@ -1844,7 +1745,7 @@ class RateFinalizing extends Component {
         this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
       //senrequestpara.NonStackable = 0;
-      // url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "LCL") {
       senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.LCLSQCharges = FCLSQCharges;
@@ -1852,7 +1753,7 @@ class RateFinalizing extends Component {
         this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
-      // url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
     } else if (
       this.state.containerLoadType == "FTL" ||
       this.state.containerLoadType == "LTL"
@@ -1862,7 +1763,7 @@ class RateFinalizing extends Component {
       senrequestpara.CustomClearance =
         this.state.CustomClearance == true ? 1 : 0;
 
-      // url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "AIR") {
       senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.AirSQCharges = FCLSQCharges;
@@ -1870,7 +1771,7 @@ class RateFinalizing extends Component {
         this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
-      // url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
     }
     //return false;
     // usertype
@@ -1879,7 +1780,7 @@ class RateFinalizing extends Component {
     let self = this;
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/SpotRateInsertion`,
+      url: url,
       data: senrequestpara,
       headers: authHeader()
     })
@@ -2381,6 +2282,7 @@ class RateFinalizing extends Component {
     });
     this.forceUpdate();
   }
+
   SubmitCargoDetails(e) {
     debugger;
     var PackageDetailsArr = [];
@@ -2397,24 +2299,22 @@ class RateFinalizing extends Component {
           multiCBM[i].PackageType = this.state.currentPackageType;
         }
 
-        
-      PackageDetailsArr.push({
-        PackageType: multiCBM[i].PackageType,
-        SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
-        ContainerType: multiCBM[i].PackageType,
-        Packaging: "-",
-        Quantity: multiCBM[i].Quantity,
-        Lenght: multiCBM[i].Lengths,
-        Width: multiCBM[i].Width,
-        Height: multiCBM[i].Height,
-        Weight: multiCBM[i].GrossWt,
-        CBM: multiCBM[i].VolumeWeight,
-        Editable: true
-      });
+        PackageDetailsArr.push({
+          PackageType: multiCBM[i].PackageType,
+          SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+          ContainerType: multiCBM[i].PackageType,
+          Packaging: "-",
+          Quantity: multiCBM[i].Quantity,
+          Lenght: multiCBM[i].Lengths,
+          Width: multiCBM[i].Width,
+          Height: multiCBM[i].Height,
+          Weight: multiCBM[i].GrossWt,
+          CBM: multiCBM[i].Volume,
+          Editable: true
+        });
       }
 
       this.setState({
-        PackageDetailsArr: PackageDetailsArr,
         multiCBM: multiCBM
       });
     } else {
@@ -2426,33 +2326,28 @@ class RateFinalizing extends Component {
         ) {
           flattack_openTop[i].PackageType = this.state.currentPackageType;
         }
+
+        PackageDetailsArr.push({
+          PackageType: flattack_openTop[i].PackageType,
+          SpecialContainerCode:
+            flattack_openTop[i].SpecialContainerCode,
+          ContainerType:
+            flattack_openTop[i].PackageType +
+            " (" +
+            flattack_openTop[i].SpecialContainerCode +
+            ")",
+          Quantity: flattack_openTop[i].Quantity,
+          Lenght: flattack_openTop[i].length,
+          Width: flattack_openTop[i].width,
+          Height: flattack_openTop[i].height,
+          Weight: flattack_openTop[i].Gross_Weight,
+          CBM: flattack_openTop[i].total,
+          Editable: true
+        });
       }
 
-      if (flattack_openTop != null) {
-        if (flattack_openTop.length > 0) {
-          for (var i = 0; i < flattack_openTop.length; i++) {
-            PackageDetailsArr.push({
-              PackageType: flattack_openTop[i].PackageType,
-              SpecialContainerCode:
-                flattack_openTop[i].SpecialContainerCode,
-              ContainerType:
-                flattack_openTop[i].PackageType +
-                " (" +
-                flattack_openTop[i].SpecialContainerCode +
-                ")",
-              Quantity: flattack_openTop[i].Quantity,
-              Lenght: flattack_openTop[i].length,
-              Width: flattack_openTop[i].width,
-              Height: flattack_openTop[i].height,
-              Weight: flattack_openTop[i].Gross_Weight,
-              CBM: flattack_openTop[i].total,
-              Editable: true
-            });
-          }
-        }
-      }
       this.setState({
-        PackageDetailsArr: PackageDetailsArr,
+        
         flattack_openTop: flattack_openTop
       });
     }
@@ -2481,6 +2376,7 @@ class RateFinalizing extends Component {
     }
 
     this.setState({
+      PackageDetailsArr: PackageDetailsArr,
       CargoDetailsArr: CargoDetailsArr
     });
 
@@ -2489,6 +2385,8 @@ class RateFinalizing extends Component {
     this.forceUpdate();
     this.toggleEdit();
   }
+
+  
 
   HandleChangeCon(field, e) {
     debugger;
@@ -2704,7 +2602,7 @@ class RateFinalizing extends Component {
 
     this.setState({ flattack_openTop });
   }
-  
+
   addMultiDim() {
     this.setState(prevState => ({
       flattack_openTop: [
@@ -2728,57 +2626,6 @@ class RateFinalizing extends Component {
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop.splice(i, 1);
     this.setState({ flattack_openTop });
-  }
-
-  HandleChangeMultiCBM(i, e) {
-    debugger;
-    const { name, value } = e.target;
-
-    let multiCBM = [...this.state.multiCBM];
-
-    if ("PackageType" === name) {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value
-      };
-    } else {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value === "" ? 0 : parseFloat(value)
-      };
-    }
-
-    this.setState({ multiCBM });
-    if (this.state.containerLoadType !== "LCL") {
-      var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
-        6000;
-      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWt
-        };
-      } else {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
-        };
-      }
-    } else {
-      var decVolume =
-        multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
-      };
-    }
-
-    this.setState({ multiCBM });
-
   }
 
   addMultiCBM() {
@@ -2948,67 +2795,120 @@ class RateFinalizing extends Component {
     ));
   }
 
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value === "" ? 0 : parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        6000;
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: parseFloat(decVolume)
+      };
+    }
+
+    this.setState({ multiCBM });
+  }
+
   CreateMultiCBM() {
-    return this.state.cbmVal == "" ? (
-      this.state.multiCBM.map((el, i) => (
-        <div className="row cbm-space" key={i}>
-          <div className="col-md">
-            <div className="spe-equ">
-              <select
-                className="select-text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                name="PackageType"
-                value={el.PackageType}
-              >
-                <option selected>Select</option>
-                {this.state.packageTypeData.map((item, i) => (
-                  <option key={i} value={item.PackageName}>
-                    {item.PackageName}
-                  </option>
-                ))}
-              </select>
-            </div>
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder="QTY"
-                className="w-100"
-                name="Quantity"
-                value={el.Quantity || ""}
-                //onKeyUp={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={"L (cm)"}
-                className="w-100"
-                name="Lengths"
-                value={el.Lengths || ""}
-                // onBlur={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Lengths"
+              value={this.state.isCopy==true?el.Length:el.Lengths || ""}
+              // onBlur={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={"W (cm)"}
-                className="w-100"
-                name="Width"
-                value={el.Width || ""}
-                //onBlur={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
+        </div>
+        <div className="col-md">
+          {(this.state.containerLoadType.toUpperCase() == "LCL" ||
+            "AIR" ||
+            "LTL") &&
+          this.state.NonStackable ? (
             <div className="spe-equ">
               <input
                 type="text"
@@ -3016,90 +2916,92 @@ class RateFinalizing extends Component {
                 placeholder="H (cm)"
                 className="w-100"
                 name="Height"
-                value={el.Height || ""}
+                value={this.state.isCopy==true?el.height:el.Height || ""}
+                disabled
                 //onBlur={this.cbmChange}
               />
             </div>
-          </div>
-
-          <div className="col-md">
+          ) : (
             <div className="spe-equ">
               <input
                 type="text"
                 onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
-                name="GrossWt"
-                value={el.GrossWt || ""}
+                placeholder="H (cm)"
                 className="w-100"
+                name="Height"
+                value={this.state.isCopy==true?el.height:el.Height || ""}
+                //onBlur={this.cbmChange}
               />
             </div>
+          )}
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
+              name="GrossWt"
+              value={this.state.isCopy==true?el.GrossWeight:el.GrossWt || ""}
+              className="w-100"
+            />
           </div>
-          <div className="col-md">
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
             <div className="spe-equ">
-              <input
-                type="text"
-                disabled
-                name={
-                  this.state.containerLoadType === "LCL"
-                    ? "Volume"
-                    : "VolumeWeight"
-                }
-                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                placeholder={
-                  this.state.containerLoadType === "LCL"
-                    ? "KG"
-                    : this.state.containerLoadType === "AIR"
-                    ? "CW"
-                    : "VW"
-                }
-                value={
-                  this.state.containerLoadType === "LCL"
-                    ? el.Volume
-                    : el.VolumeWeight || ""
-                }
-                className="w-100 weight-icon"
-              />
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
             </div>
           </div>
-          {i === 0 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-plus mt-2"
-                  aria-hidden="true"
-                  onClick={this.addMultiCBM.bind(this)}
-                ></i>
-              </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
             </div>
-          ) : null}
-          {this.state.multiCBM.length > 1 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-minus mt-2"
-                  aria-hidden="true"
-                  onClick={this.removeMultiCBM.bind(this, i)}
-                ></i>
-              </div>
-            </div>
-          ) : null}
-        </div>
-      ))
-    ) : (
-      <div className="col-md-4 m-auto">
-        <div className="spe-equ">
-          <input
-            type="number"
-            minLength={1}
-            //onChange={this.HandleCMBtextChange.bind(this)}
-            placeholder={this.state.modeoftransport != "AIR" ? "CBM" : "KG"}
-            className="w-100"
-            value={this.state.cbmVal}
-          />
-        </div>
+          </div>
+        ) : null}
       </div>
-    );
+    ));
   }
+
+
   //------------------------------------------------------------------//
 
   render() {
@@ -3602,40 +3504,40 @@ class RateFinalizing extends Component {
                                   debugger;
                                   var lname = "";
                                   var olname = "";
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
                                     lname =
-                                      row._original.lineName.replace(
+                                      row._original.LineName.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
                                     lname =
-                                      row._original.lineName.replace(
+                                      row._original.LineName.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
                                   var mode = this.state.ModeOfTransport;
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
-                                    lname =
-                                    row._original.lineName
-                                    .replace(" ", "_")
-                                    .replace(" ", "_") + ".png";
-                                    }
-                                    var mode = "";
-                                    if (this.state.ModeOfTransport) {
-                                    mode = this.state.ModeOfTransport;
-                                    }
-                                    if (this.state.modeoftransport) {
-                                    mode =
-                                    this.state.modeoftransport === "SEA"
-                                    ? "Ocean"
-                                    : this.state.modeoftransport === "AIR"?"Air":"Inlande";
-                                    }
+                                  // if (row._original.lineName) {
+                                  //   olname = row._original.lineName;
+                                  //   lname =
+                                  //   row._original.lineName
+                                  //   .replace(" ", "_")
+                                  //   .replace(" ", "_") + ".png";
+                                  //   }
+                                  //   var mode = "";
+                                  //   if (this.state.ModeOfTransport) {
+                                  //   mode = this.state.ModeOfTransport;
+                                  //   }
+                                  //   if (this.state.modeoftransport) {
+                                  //   mode =
+                                  //   this.state.modeoftransport === "SEA"
+                                  //   ? "Ocean"
+                                  //   : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                  //   }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
@@ -4097,25 +3999,25 @@ class RateFinalizing extends Component {
                           </a> */}
                         </div>
                         <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.shipmentType}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {this.state.modeoftransport}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.containerLoadType}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
                             {this.state.selected.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4123,7 +4025,7 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
                             {this.state.flattack_openTop.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4136,25 +4038,25 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
                               {this.state.HazMat === true ? "Yes " : "No"}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Non Stackable</p>
                             <p className="details-para">
                               {this.state.NonStackable === true ? "Yes" : "No"}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {this.state.incoTerm}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove === 1
@@ -4169,7 +4071,7 @@ class RateFinalizing extends Component {
                             </p>
                           </div>
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">POL</p>
                               <p className="details-para">
                                 {this.state.polfullAddData.NameWoDiacritics}
@@ -4177,7 +4079,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">POD</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.NameWoDiacritics}
@@ -4185,7 +4087,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">PU Address</p>
                               <p className="details-para">
                                 {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -4194,7 +4096,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">Delivery Address</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.OceanPortLongName}
@@ -4267,13 +4169,15 @@ class RateFinalizing extends Component {
                     <div className="title-border py-3">
                       <h3>Cargo Details</h3>
                     </div>
-                    <div className="ag-fresh redirect-row">
+                    <div className="align-center">
                         <button
                           onClick={this.toggleEdit}
                           className="butn more-padd m-0"
                         >
                           Add Cargo
                         </button>
+                      </div>
+                    <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (
                         <ReactTable
                           data={TruckDetailsArr}
@@ -4333,15 +4237,12 @@ class RateFinalizing extends Component {
                               accessor: "ContainerType",
                               minWidth: 110
                             },
-                            // this.state.containerLoadType.toUpperCase() !==
-                            //     "FCL"?
                             {
                               Header: "Quantity",
                               accessor: "Quantity",
-                              show: this.state.containerLoadType.toUpperCase() !==
-                                   "FCL"?true:false
+                              show: this.state.containerLoadType.toUpperCase() ==
+                                    "FCL"?false:true
                             },
-                            //:null,
                             {
                               Header: "Lenght",
                               accessor: "Lenght"
@@ -4357,7 +4258,7 @@ class RateFinalizing extends Component {
                             {
                               Header: "Gross Weight",
                               accessor: "Weight",
-                              minWidth: 140                              
+                              minWidth: 140
                               //editable: this.state.containerLoadType == "Air" ? true : false
                             },
                             // {
@@ -4371,9 +4272,7 @@ class RateFinalizing extends Component {
                                   ? "CBM"
                                   : "Chargable Weight",
                               accessor: "CBM",
-                              show: this.state.containerLoadType.toUpperCase() !==
-                                    "FCL"?true:false
-                              //show:  this.state.containerLoadType == "Air" ? false : true
+                              show:  this.state.containerLoadType.toUpperCase() == "FCL" ? false : true
                             }
                             // {
                             //   Header: "Action",
@@ -5967,82 +5866,6 @@ class RateFinalizing extends Component {
                         this.CreateMultiCBM()
                       )}
                     </>
-
-                {/* <div className="rename-cntr login-fields">
-                  <select
-                    className="select-text"
-                    onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                    name="PackageType"
-                    value={this.state.currentPackageType}
-                  >
-                    <option selected>Select</option>
-                    {this.state.packageTypeData.map((item, i) => (
-                      <option key={i} value={item.PackageName}>
-                        {item.PackageName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Quantity</label>
-                  <input
-                    type="text"
-                    value={this.state.valuequantity}
-                    id="txtRequestFreeTime"
-                    placeholder="Quantity"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Lenght</label>
-                  <input
-                    type="text"
-                    value={this.state.valuelenght}
-                    id="txtRequestFreeTime"
-                    placeholder="Lenght"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Width</label>
-                  <input
-                    type="text"
-                    value={this.state.valuewidth}
-                    id="txtRequestFreeTime"
-                    placeholder="Width"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Height</label>
-                  <input
-                    type="text"
-                    value={this.state.valueheight}
-                    id="txtRequestFreeTime"
-                    placeholder="Height"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Weight</label>
-                  <input
-                    type="text"
-                    value={this.state.valueweight}
-                    id="txtRequestFreeTime"
-                    placeholder="Weight"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>CBM</label>
-                  <input
-                    type="text"
-                    value={this.state.valuecbm}
-                    id="txtRequestFreeTime"
-                    placeholder="CBM"
-                  />
-                </div> */}
 
                 <div className="text-center">
                   <Button
