@@ -1,4 +1,5 @@
 let appSetting = {
+  
   APIURL:"http://vizio.atafreight.com/mywayapi/",
   //APIURL: "http://vizio.atafreight.com/MyWayAPIReplica/",
   Keys: "AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"
