@@ -3488,25 +3488,25 @@ class RateFinalizing extends Component {
                           </a> */}
                         </div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.shipmentType}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {this.state.modeoftransport}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.containerLoadType}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Equipment Types</p>
                             {this.state.selected.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -3514,7 +3514,7 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Special Equipment</p>
                             {this.state.flattack_openTop.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -3527,25 +3527,25 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
                               {this.state.HazMat === true ? "Yes " : "No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Non Stackable</p>
                             <p className="details-para">
                               {this.state.NonStackable === true ? "Yes" : "No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {this.state.incoTerm}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove === 1
@@ -3560,7 +3560,7 @@ class RateFinalizing extends Component {
                             </p>
                           </div>
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                               <p className="details-title">POL</p>
                               <p className="details-para">
                                 {this.state.polfullAddData.NameWoDiacritics}
@@ -3568,7 +3568,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                               <p className="details-title">POD</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.NameWoDiacritics}
@@ -3576,7 +3576,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                               <p className="details-title">PU Address</p>
                               <p className="details-para">
                                 {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -3585,7 +3585,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                               <p className="details-title">Delivery Address</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.OceanPortLongName}

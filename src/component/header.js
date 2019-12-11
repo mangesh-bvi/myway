@@ -329,13 +329,13 @@ class Header extends Component {
       <div>
         <div className="cls-header-1">
           <div className="row">
-            <div className="col-xs col-sm-3 col-md-3 col-lg-3">
+            <div className="col-xs col-sm-3 col-md-4 col-lg-3">
               <Link to="/Dashboard">
                 <img src={Logo} alt="log-icon" className="header-log" />
               </Link>
               <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" onclick="myFunction()" />
             </div>
-            <div className="col-xs col-sm-9 col-md-9 col-lg-9">
+            <div className="col-xs col-sm-9 col-md-8 col-lg-9">
               <ul className="header-ul">
                 {encryption(window.localStorage.getItem("usertype"), "desc") ===
                 "Sales User"

@@ -50,6 +50,7 @@ import Reports from "./pages/reports";
 import ReportDetails from "./pages/report-details";
 import TrackShipment from "./pages/track-shipment";
 import TrackShipment2 from "./pages/track-shipment2";
+import "./assets/css/responsive.css";
 // import Exmaple from './pages/Example';
 
 // import Signin from './pages/Signin';
