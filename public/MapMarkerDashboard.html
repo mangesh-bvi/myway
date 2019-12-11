@@ -19,8 +19,8 @@
 
       .dash-search-cntr2 {
         position: absolute;
-        top: 85px;
-        left: 10px;
+        top: 10px;
+        left: 195px;
         z-index: 1;
       }
       .dash-search-cntr2 input {
@@ -29,7 +29,7 @@
         border: 0px;
         border-radius: 50px;
         padding-right: 45px;
-        box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1);
+        /* box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1); */
       }
       .dash-search-cntr2 .fa-search {
         background: #002d73;
@@ -617,10 +617,10 @@
           }
 
           if (toogleData === "DelayShipment" && isDelayShipment === 0) {
-            $("div > img[src='blue-delay.png']").hide();
+            $("div > img[src='img/delay-shipment.png']").hide();
             $("#mapDelay").css("opacity", "0.5");
           } else {
-            $("div > img[src='blue-delay.png']").show();
+            $("div > img[src='img/delay-shipment.png']").show();
             $("#mapDelay").css("opacity", "1");
           }
         }

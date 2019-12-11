@@ -243,7 +243,9 @@ class ShippingDetailsTwo extends Component {
       ModaType: "",
       eve: "N/A",
       pageName: "",
-      viewFilePath: ""
+      viewFilePath: "",
+      delDocuId: "",
+      delFileName: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -612,9 +614,11 @@ class ShippingDetailsTwo extends Component {
   HandleDocumentDelete(evt, row) {
     debugger;
     var HblNo = row.original["HBL#"];
-    this.setState({ modalDel: true });
+    var delDocuId = row.original["DocumentID"];
+    var delFileName = row.original["FileName"];
+    this.setState({ modalDel: true, delDocuId, delFileName });
   }
- 
+
   HandleShipmentDocument() {
     debugger;
     let self = this;
@@ -680,6 +684,7 @@ class ShippingDetailsTwo extends Component {
       var ModeType = response.data.Table[0].ModeOfTransport;
       self.setState({
         detailsData: shipmentdata.Table[0],
+        ShipperID: shipmentdata.Table[0].ShipperId,
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
         DData:
@@ -729,7 +734,7 @@ class ShippingDetailsTwo extends Component {
     docData.append("ShipmentNumber", this.state.ShipperID);
     // docData.append("ShipmentNumber", "BCM2453770");
     // docData.append("HBLNo", "BCM23770");
-    docData.append("HBLNo", this.state.HblNo);
+    docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
     docData.append("name", docName);
     docData.append("FileData", this.state.selectedFile);
@@ -761,20 +766,15 @@ class ShippingDetailsTwo extends Component {
     }));
   }
 
-  deleteDocument(evt, row) {
-    debugger
-    this.toggleDel();
+  deleteDocument() {
     let self = this;
-    var HblNo = row.original["HBL#"];
-    var DocId=row.original.DocumentID;
-    var FName=row.original.FileName;
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/DeleteShipmentDocument`,
       data: {
-        DocumentId:DocId,   // self.state.documentData.DocumentID,
-        FileName: FName,    //self.state.documentData.FileName,
+        DocumentId: self.state.delDocuId,
+        FileName: self.state.delFileName,
         DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
@@ -836,7 +836,7 @@ class ShippingDetailsTwo extends Component {
     if (pageName === "Dashboard") {
       this.props.history.push("/Dashboard");
     } else if (pageName === "ShipmentPage") {
-      this.props.history.push("/shipment-details");
+      this.props.history.push("/shipment-summary");
     } else {
       this.props.history.push("/Dashboard");
     }
@@ -1063,7 +1063,7 @@ class ShippingDetailsTwo extends Component {
         <>
           <button
             onClick={this.handleChangePage.bind(this)}
-            className="butn mt-0 marlefbtn"
+            className="butn mt-0"
             style={{ marginLeft: "140px" }}
           >
             Back
@@ -1791,7 +1791,7 @@ class ShippingDetailsTwo extends Component {
                                             src={Delete}
                                             alt="delete-icon"
                                             onClick={e =>
-                                              this.deleteDocument(e, row)
+                                              this.HandleDocumentDelete(e, row)
                                             }
                                           />
                                           <img
@@ -2400,7 +2400,7 @@ class ShippingDetailsTwo extends Component {
                     </Button>
                   </ModalBody>
                 </Modal>
-                {/* <Modal
+                <Modal
                   className="delete-popup"
                   isOpen={this.state.modalDel}
                   toggle={this.toggleDel}
@@ -2411,8 +2411,8 @@ class ShippingDetailsTwo extends Component {
                     <Button
                       className="butn"
                       onClick={() => {
-                        // this.toggleDel();
-                        this.deleteDocument(evt, row);
+                        this.toggleDel();
+                        this.deleteDocument();
                       }}
                     >
                       Yes
@@ -2424,7 +2424,7 @@ class ShippingDetailsTwo extends Component {
                       No
                     </Button>
                   </ModalBody>
-                </Modal> */}
+                </Modal>
                 <Modal
                   className="delete-popup pol-pod-popup"
                   isOpen={this.state.modalDocu}
@@ -2539,11 +2539,11 @@ class ShippingDetailsTwo extends Component {
                   <ModalBody>
                     <div className="rename-cntr login-fields">
                       <iframe
-                        src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
-                        // src={
-                        //   this.state.viewFilePath +
-                        //   "#toolbar=0&navpanes=0&scrollbar=0"
-                        // }
+                        // src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
+                        src={
+                          this.state.viewFilePath +
+                          "#toolbar=0&navpanes=0&scrollbar=0"
+                        }
                         title="Document View"
                         className="agreement-pdf"
                       ></iframe>

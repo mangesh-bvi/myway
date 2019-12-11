@@ -19,11 +19,8 @@
   display: flex;
 }
 .cls-flside {
-  width: 16%;
   float: left;
   height: 700px;
-  background-color: blue;
-  border: solid 1px black;
   }
 /* 
 .cls-flside {
