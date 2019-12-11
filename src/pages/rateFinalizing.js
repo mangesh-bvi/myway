@@ -2764,7 +2764,23 @@ class RateFinalizing extends Component {
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-                                  var mode = this.state.ModeOfTransport;
+                                  if (row._original.lineName) {
+                                    olname = row._original.lineName;
+                                    lname =
+                                      row._original.lineName
+                                        .replace("  ", "_")
+                                        .replace(" ", "_") + ".png";
+                                  }
+                                  var mode = "";
+                                  if (this.state.ModeOfTransport) {
+                                    mode = this.state.ModeOfTransport;
+                                  }
+                                  if (this.state.modeoftransport) {
+                                    mode =
+                                      this.state.modeoftransport === "SEA"
+                                        ? "Ocean"
+                                        : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                  }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
