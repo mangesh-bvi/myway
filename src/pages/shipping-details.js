@@ -681,6 +681,15 @@ class ShippingDetails extends Component {
                         sortable: true
                       },
                       {
+                        Header: "HBL",
+                        accessor: "HBL#",
+                        sortable: true,
+                        show: false,
+                        Cell: row => {
+                          return row.value.trim();
+                        }
+                      },
+                      {
                         Cell: row => {
                           if (row.value == "Air") {
                             return (
@@ -925,6 +934,7 @@ class ShippingDetails extends Component {
                       const result = matchSorter(rows, filter.value, {
                         keys: [
                           "BL/HBL",
+                          "HBL#",
                           "Consignee",
                           "ConsigneeID",
                           "Event",
