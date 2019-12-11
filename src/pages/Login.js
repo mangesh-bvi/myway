@@ -346,8 +346,7 @@ class Login extends React.Component {
             encryption(data.Table[0].Company_Name, "enc")
           );
 
-          if(data.Table[0].UserType == "Customer")
-          {
+          if (data.Table[0].UserType == "Customer") {
             window.localStorage.setItem(
               "contactname",
               encryption(data.Table[0].ContactName, "enc")
@@ -373,13 +372,24 @@ class Login extends React.Component {
           var userTypeName = userType[0].UserType;
 
           var ProfileTypen = userType[0].ProfileType;
-          if (userTypeName === "Sales User" && ProfileTypen) {
-            var sData = response.data.Table3;
-            debugger;
-            self.HandleDisplaySalesPersonData(sData);
-            self.setState({
-              modalSalesLogin: !self.state.modalSalesLogin
-            });
+          var SalesCompanyPopupFlag = userType[0].SalesCompanyPopupFlag;
+          if (SalesCompanyPopupFlag === 1) {
+            if (
+              userTypeName === "Sales User" &&
+              ProfileTypen &&
+              SalesCompanyPopupFlag === 1
+            ) {
+              var sData = response.data.Table3;
+              debugger;
+              self.HandleDisplaySalesPersonData(sData);
+              self.setState({
+                modalSalesLogin: !self.state.modalSalesLogin
+              });
+            }
+          } else {
+            setTimeout(function() {
+              window.location.href = "./rate-search";
+            }, 300);
           }
 
           //window.location.href = "./user-agreement";
@@ -515,10 +525,15 @@ class Login extends React.Component {
             isOpen={this.state.modalSalesLogin}
             centered={true}
           >
-          
-            <button type="button" style={{top:"-12px" , right:"-15px"}} className="close" data-dismiss="modal" onClick={this.toggleSalesLogin}>
-                <span>&times;</span>
-              </button>
+            <button
+              type="button"
+              style={{ top: "-12px", right: "-15px" }}
+              className="close"
+              data-dismiss="modal"
+              onClick={this.toggleSalesLogin}
+            >
+              <span>&times;</span>
+            </button>
             <ModalHeader>Sales customers</ModalHeader>
             <ModalBody>
               <div>
