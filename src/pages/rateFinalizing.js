@@ -2268,9 +2268,25 @@ class RateFinalizing extends Component {
         ) {
           multiCBM[i].PackageType = this.state.currentPackageType;
         }
+
+        
+      PackageDetailsArr.push({
+        PackageType: multiCBM[i].PackageType,
+        SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+        ContainerType: multiCBM[i].PackageType,
+        Packaging: "-",
+        Quantity: multiCBM[i].Quantity,
+        Lenght: multiCBM[i].Lengths,
+        Width: multiCBM[i].Width,
+        Height: multiCBM[i].Height,
+        Weight: multiCBM[i].GrossWt,
+        CBM: multiCBM[i].VolumeWeight,
+        Editable: true
+      });
       }
 
       this.setState({
+        PackageDetailsArr: PackageDetailsArr,
         multiCBM: multiCBM
       });
     } else {
@@ -2561,7 +2577,7 @@ class RateFinalizing extends Component {
     this.setState({ flattack_openTop });
   }
   
-  addMultiCBM() {
+  addMultiDim() {
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
@@ -2580,10 +2596,85 @@ class RateFinalizing extends Component {
     }));
   }
 
-  removeMultiCBM(i) {
+  removeMultiDim(i) {
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop.splice(i, 1);
     this.setState({ flattack_openTop });
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value === "" ? 0 : parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        6000;
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: parseFloat(decVolume)
+      };
+    }
+
+    this.setState({ multiCBM });
+
+  }
+
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
+
+  removeMultiCBM(i) {
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
   }
 
   MultiCreateCBM() {
@@ -2700,7 +2791,7 @@ class RateFinalizing extends Component {
                 <i
                   className="fa fa-plus mt-2"
                   aria-hidden="true"
-                  onClick={this.addMultiCBM.bind(this)}
+                  onClick={this.addMultiDim.bind(this)}
                 ></i>
               </div>
             </div>
@@ -2711,7 +2802,7 @@ class RateFinalizing extends Component {
                 <i
                   className="fa fa-minus mt-2"
                   aria-hidden="true"
-                  onClick={this.removeMultiCBM.bind(this, i)}
+                  onClick={this.removeMultiDim.bind(this, i)}
                 ></i>
               </div>
             </div>
@@ -2727,6 +2818,159 @@ class RateFinalizing extends Component {
         </div> */}
       </div>
     ));
+  }
+
+  CreateMultiCBM() {
+    return this.state.cbmVal == "" ? (
+      this.state.multiCBM.map((el, i) => (
+        <div className="row cbm-space" key={i}>
+          <div className="col-md">
+            <div className="spe-equ">
+              <select
+                className="select-text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                name="PackageType"
+                value={el.PackageType}
+              >
+                <option selected>Select</option>
+                {this.state.packageTypeData.map((item, i) => (
+                  <option key={i} value={item.PackageName}>
+                    {item.PackageName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="QTY"
+                className="w-100"
+                name="Quantity"
+                value={el.Quantity || ""}
+                //onKeyUp={this.cbmChange}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder={"L (cm)"}
+                className="w-100"
+                name="Lengths"
+                value={el.Lengths || ""}
+                // onBlur={this.cbmChange}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder={"W (cm)"}
+                className="w-100"
+                name="Width"
+                value={el.Width || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="Height"
+                value={el.Height || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          </div>
+
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                name="GrossWt"
+                value={el.GrossWt || ""}
+                className="w-100"
+              />
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                disabled
+                name={
+                  this.state.containerLoadType === "LCL"
+                    ? "Volume"
+                    : "VolumeWeight"
+                }
+                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                placeholder={
+                  this.state.containerLoadType === "LCL"
+                    ? "KG"
+                    : this.state.containerLoadType === "AIR"
+                    ? "CW"
+                    : "VW"
+                }
+                value={
+                  this.state.containerLoadType === "LCL"
+                    ? el.Volume
+                    : el.VolumeWeight || ""
+                }
+                className="w-100 weight-icon"
+              />
+            </div>
+          </div>
+          {i === 0 ? (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addMultiCBM.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+          {this.state.multiCBM.length > 1 ? (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-minus mt-2"
+                  aria-hidden="true"
+                  onClick={this.removeMultiCBM.bind(this, i)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ))
+    ) : (
+      <div className="col-md-4 m-auto">
+        <div className="spe-equ">
+          <input
+            type="number"
+            minLength={1}
+            //onChange={this.HandleCMBtextChange.bind(this)}
+            placeholder={this.state.modeoftransport != "AIR" ? "CBM" : "KG"}
+            className="w-100"
+            value={this.state.cbmVal}
+          />
+        </div>
+      </div>
+    );
   }
   //------------------------------------------------------------------//
 
@@ -3896,6 +4140,12 @@ class RateFinalizing extends Component {
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="ag-fresh redirect-row">
+                        <button
+                          onClick={this.toggleEdit}
+                          className="butn more-padd m-0"
+                        >
+                          Add Cargo
+                        </button>
                       {TruckDetailsArr.length !== 0 ? (
                         <ReactTable
                           data={TruckDetailsArr}
@@ -3955,10 +4205,15 @@ class RateFinalizing extends Component {
                               accessor: "ContainerType",
                               minWidth: 110
                             },
+                            // this.state.containerLoadType.toUpperCase() !==
+                            //     "FCL"?
                             {
                               Header: "Quantity",
-                              accessor: "Quantity"
+                              accessor: "Quantity",
+                              show: this.state.containerLoadType.toUpperCase() !==
+                                   "FCL"?true:false
                             },
+                            //:null,
                             {
                               Header: "Lenght",
                               accessor: "Lenght"
@@ -3974,7 +4229,7 @@ class RateFinalizing extends Component {
                             {
                               Header: "Gross Weight",
                               accessor: "Weight",
-                              minWidth: 140
+                              minWidth: 140                              
                               //editable: this.state.containerLoadType == "Air" ? true : false
                             },
                             // {
@@ -3987,46 +4242,48 @@ class RateFinalizing extends Component {
                                 "LCL"
                                   ? "CBM"
                                   : "Chargable Weight",
-                              accessor: "CBM"
+                              accessor: "CBM",
+                              show: this.state.containerLoadType.toUpperCase() !==
+                                    "FCL"?true:false
                               //show:  this.state.containerLoadType == "Air" ? false : true
-                            },
-                            {
-                              Header: "Action",
-                              sortable: false,
-                              accessor: "Editable",
-                              Cell: row => {
-                                debugger;
-                                if (row.original.Editable) {
-                                  return (
-                                    <div className="action-cntr">
-                                      {/* actionicon */}
-                                      <button onClick={this.toggleEdit}>
-                                        <img
-                                          className=""
-                                          src={Edit}
-                                          alt="booking-icon"
-                                          data-valuetype={
-                                            row.original.PackageType
-                                          }
-                                          data-valuequantity={
-                                            row.original.Quantity
-                                          }
-                                          data-valuelenght={row.original.Lenght}
-                                          data-valuewidth={row.original.Width}
-                                          data-valueheight={row.original.Height}
-                                          data-valueweight={row.original.Weight}
-                                          data-valuecbm={row.original.CBM}
-                                          data-valuespecialsontainersode={
-                                            row.original.SpecialContainerCode
-                                          }
-                                        />
-                                      </button>
-                                    </div>
-                                  );
-                                }
-                                return <div></div>;
-                              }
                             }
+                            // {
+                            //   Header: "Action",
+                            //   sortable: false,
+                            //   accessor: "Editable",
+                            //   Cell: row => {
+                            //     debugger;
+                            //     if (row.original.Editable) {
+                            //       return (
+                            //         <div className="action-cntr">
+                            //           {/* actionicon */}
+                            //           <button onClick={this.toggleEdit}>
+                            //             <img
+                            //               className=""
+                            //               src={Edit}
+                            //               alt="booking-icon"
+                            //               data-valuetype={
+                            //                 row.original.PackageType
+                            //               }
+                            //               data-valuequantity={
+                            //                 row.original.Quantity
+                            //               }
+                            //               data-valuelenght={row.original.Lenght}
+                            //               data-valuewidth={row.original.Width}
+                            //               data-valueheight={row.original.Height}
+                            //               data-valueweight={row.original.Weight}
+                            //               data-valuecbm={row.original.CBM}
+                            //               data-valuespecialsontainersode={
+                            //                 row.original.SpecialContainerCode
+                            //               }
+                            //             />
+                            //           </button>
+                            //         </div>
+                            //       );
+                            //     }
+                            //     return <div></div>;
+                            //   }
+                            // }
                           ]}
                           className="-striped -highlight"
                           defaultPageSize={2000}
@@ -5414,7 +5671,8 @@ class RateFinalizing extends Component {
                           // onChange={this.HandleSpecialEqtCheck.bind(this)}
                         />
                       </div> */}
-                      {this.state.specialEquipment === true ? (
+                      {this.state.containerLoadType === "FCL" ? (
+                      this.state.specialEquipment === true ? (
                         <div className="">
                           {/* spe-equ mt-0 */}
                           {/* <div className="equip-plus-cntr w-100">
@@ -5440,7 +5698,9 @@ class RateFinalizing extends Component {
                             ) : null}
                           </div>
                         </div>
-                      ) : null}
+                      ) : null):(
+                        this.CreateMultiCBM()
+                      )}
                     </>
 
                 {/* <div className="rename-cntr login-fields">

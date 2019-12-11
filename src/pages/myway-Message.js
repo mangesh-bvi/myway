@@ -15,12 +15,15 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import { Table } from "react-bootstrap";
 
 class myWayMessage extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      MessageArr: []
+    };
 
     this.bindMyWayMessage = this.bindMyWayMessage.bind(this);
   }
@@ -41,6 +44,9 @@ class myWayMessage extends Component {
     })
       .then(function(response) {
         debugger;
+        self.setState({
+          MessageArr: response.data.Table
+        })        
         self.bindMyWayMessageById();
       })
       .catch(error => {
@@ -107,16 +113,19 @@ class myWayMessage extends Component {
                         <div class="inbox_chat">
                           <div class="chat_list active_chat">
                             <div class="chat_people">
+                            {this.state.MessageArr.map((item, i) => (
                               <div class="chat_ib">
-                                <h5>
-                                  Sunil Rajput{" "}
-                                  <span class="chat_date">Dec 25</span>
-                                </h5>
-                                <p>
-                                  Test, which is a new approach to have all
-                                  solutions astrology under one roof.
-                                </p>
+                              <h5>
+                                Sunil Rajput{" "}
+                                <span class="chat_date">Dec 25</span>
+                              </h5>
+                              <p>
+                                Test, which is a new approach to have all
+                                solutions astrology under one roof.
+                              </p>
                               </div>
+                            ))}
+                              
                             </div>
                           </div>
                           <div class="chat_list">

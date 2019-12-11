@@ -306,7 +306,7 @@ class ShippingDetailsTwo extends Component {
         url: `${appSettings.APIURL}/SendCommonMessage`,
         data: {
           UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-          ReferenceNo: hbllNo,
+          ReferenceNo: hbllNo.trim(),
           // TypeOfMessage: drpshipment.value.trim(),
           Message: msgg
         },
@@ -883,7 +883,7 @@ class ShippingDetailsTwo extends Component {
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
       data: {
         UserId: encryption(window.localStorage.getItem("userid"), "desc"),
-        HBLNO: HblNo
+        HBLNO: HblNo.trim()
       },
       headers: authHeader()
     })
