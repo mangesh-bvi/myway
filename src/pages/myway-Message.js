@@ -22,7 +22,9 @@ class myWayMessage extends Component {
     super(props);
 
     this.state = {
-      MessageArr: []
+      MessageArr: [],
+      MessageLogArr: [],
+      CommunicationUser:""
     };
 
     this.bindMyWayMessage = this.bindMyWayMessage.bind(this);
@@ -47,7 +49,7 @@ class myWayMessage extends Component {
         self.setState({
           MessageArr: response.data.Table
         })        
-        self.bindMyWayMessageById();
+        self.bindMyWayMessageById(response.data.Table[0]);
       })
       .catch(error => {
         debugger;
@@ -63,22 +65,28 @@ class myWayMessage extends Component {
       });
   }
 
-  bindMyWayMessageById() {
+  bindMyWayMessageById(item,e) {
+    debugger;
+    let self = this;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/MessageDetailsbyID`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        MsgType: "User Message",
-        MessageID: 8410010
+        MsgType: item.MessageType,
+        MessageID: item.MessageId
       },
       headers: authHeader()
     })
       .then(function(response) {
         debugger;
+        self.setState({
+          CommunicationUser: item.LastCommunicationUser,
+          MessageLogArr: response.data
+        })
       })
       .catch(error => {
-        debugger;
+        debugger; 
         var temperror = error.response.data;
         var err = temperror.split(":");
         NotificationManager.error(err[1].replace("}", ""));
@@ -111,133 +119,42 @@ class myWayMessage extends Component {
                     <div className="col-md-4">
                       <div class="inbox_people">
                         <div class="inbox_chat">
-                          <div class="chat_list active_chat">
+                        {this.state.MessageArr.map((item, i) => (
+                          <div class="chat_list active_chat" onClick={this.bindMyWayMessageById.bind(this,item)}>
                             <div class="chat_people">
-                            {this.state.MessageArr.map((item, i) => (
                               <div class="chat_ib">
                               <h5>
-                                Sunil Rajput{" "}
-                                <span class="chat_date">Dec 25</span>
+                                {item.LastCommunicationUser}
+                              <span class="chat_date">{item.MessageTitle!==null?(item.MessageTitle.split(':')[1] !== undefined?
+                                                      item.MessageTitle.split(':')[1].trim():item.MessageTitle):""}</span>
                               </h5>
                               <p>
                                 Test, which is a new approach to have all
                                 solutions astrology under one roof.
                               </p>
                               </div>
-                            ))}
+                            
                               
                             </div>
                           </div>
-                          <div class="chat_list">
-                            <div class="chat_people">
-                              <div class="chat_ib">
-                                <h5>
-                                  Sunil Rajput{" "}
-                                  <span class="chat_date">Dec 25</span>
-                                </h5>
-                                <p>
-                                  Test, which is a new approach to have all
-                                  solutions astrology under one roof.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="chat_list">
-                            <div class="chat_people">
-                              <div class="chat_ib">
-                                <h5>
-                                  Sunil Rajput{" "}
-                                  <span class="chat_date">Dec 25</span>
-                                </h5>
-                                <p>
-                                  Test, which is a new approach to have all
-                                  solutions astrology under one roof.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="chat_list">
-                            <div class="chat_people">
-                              <div class="chat_ib">
-                                <h5>
-                                  Sunil Rajput{" "}
-                                  <span class="chat_date">Dec 25</span>
-                                </h5>
-                                <p>
-                                  Test, which is a new approach to have all
-                                  solutions astrology under one roof.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="chat_list">
-                            <div class="chat_people">
-                              <div class="chat_ib">
-                                <h5>
-                                  Sunil Rajput{" "}
-                                  <span class="chat_date">Dec 25</span>
-                                </h5>
-                                <p>
-                                  Test, which is a new approach to have all
-                                  solutions astrology under one roof.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="chat_list">
-                            <div class="chat_people">
-                              <div class="chat_ib">
-                                <h5>
-                                  Sunil Rajput{" "}
-                                  <span class="chat_date">Dec 25</span>
-                                </h5>
-                                <p>
-                                  Test, which is a new approach to have all
-                                  solutions astrology under one roof.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="chat_list">
-                            <div class="chat_people">
-                              <div class="chat_ib">
-                                <h5>
-                                  Sunil Rajput{" "}
-                                  <span class="chat_date">Dec 25</span>
-                                </h5>
-                                <p>
-                                  Test, which is a new approach to have all
-                                  solutions astrology under one roof.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
+                           ))}
                         </div>
                       </div>
                     </div>
                     <div className="col-md-8">
                       <div class="mesgs">
-                        <p className="chat-name">Sunil Rajput</p>
+                        <p className="chat-name">{this.state.CommunicationUser}</p>
                         <div class="msg_history">
+                          {this.state.MessageLogArr.map((item, i) => (
                           <div class="outgoing_msg">
                             <div class="sent_msg">
                               <p>
-                                Test which is a new approach to have all
-                                solutions
+                               {item.Message}
                               </p>
-                              <span class="time_date"> 11:01 AM | June 9</span>{" "}
+                              <span class="time_date">{item.MessageCreationTime}</span>{" "}
                             </div>
                           </div>
-
-                          <div class="outgoing_msg">
-                            <div class="sent_msg">
-                              <p>Apollo University, Delhi, India Test</p>
-                              <span class="time_date">
-                                {" "}
-                                11:01 AM | Today
-                              </span>{" "}
-                            </div>
-                          </div>
+                          ))}                         
                         </div>
                         <div class="type_msg">
                           <div class="input_msg_write">
