@@ -3392,10 +3392,15 @@ class RateTable extends Component {
                                   i++;
                                   debugger;
                                   var mode = this.state.modeoftransport;
-                                  var lname =
-                                  row._original.lineName
-                                      .replace(" ", "_")
-                                      .replace("  ", "_") + ".png";
+                                  var lname="";
+
+                                  if(row._original.lineName){
+                                   lname =
+                                    row._original.lineName
+                                        .replace(" ", "_")
+                                        .replace("  ", "_") + ".png";
+                                  }
+                                 
                                   if (
                                     row._original.lineName !==
                                       "No Record Found" &&
