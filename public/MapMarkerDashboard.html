@@ -19,8 +19,8 @@
 
       .dash-search-cntr2 {
         position: absolute;
-        top: 85px;
-        left: 10px;
+        top: 10px;
+        left: 195px;
         z-index: 1;
       }
       .dash-search-cntr2 input {
@@ -29,7 +29,7 @@
         border: 0px;
         border-radius: 50px;
         padding-right: 45px;
-        box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1);
+        /* box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1); */
       }
       .dash-search-cntr2 .fa-search {
         background: #002d73;
@@ -57,21 +57,21 @@
       }
       .map-filter .map-icon-cntr:nth-child(5) {
         left: -50px;
+        display: none;
       }
       .map-filter .map-icon-cntr:nth-child(4) {
-        left: -100px;
+        left: -50px;
       }
       .map-filter .map-icon-cntr:nth-child(3) {
-        left: -150px;
+        left: -100px;
       }
       .map-filter .map-icon-cntr:nth-child(2) {
-        left: -200px;
+        left: -150px;
       }
       .map-icon-cntr {
         width: 45px;
         height: 45px;
-        background: #0142aa;
-        padding: 10px;
+        padding: 4px;
         border-radius: 50%;
         line-height: 1;
         display: inline-block;
@@ -80,6 +80,10 @@
         transition: all 0.3s ease-in-out;
         cursor: pointer;
         z-index: 1;
+      }
+      .map-icon-cntr:first-child {
+        background: #0142aa;
+        padding: 10px;
       }
       .map-icon-cntr img {
         width: 100%;
@@ -581,10 +585,10 @@
           }
 
           if (toogleData === "Ocean" && isOceanOn === 0) {
-            $("div > img[src='img/blue-ship.png']").hide();
+            $("div > img[src='img/hamb-ship.png']").hide();
             $("#mapOcean").css("opacity", "0.5");
           } else {
-            $("div > img[src='img/blue-ship.png']").show();
+            $("div > img[src='img/hamb-ship.png']").show();
             $("#mapOcean").css("opacity", "1");
           }
         }

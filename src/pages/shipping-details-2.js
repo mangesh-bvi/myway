@@ -218,6 +218,7 @@ class ShippingDetailsTwo extends Component {
       detailsData: {},
       addressData: [],
       containerData: [],
+      DData: "",
       containerDetails: [],
       ShowCard: true,
       documentData: [],
@@ -241,7 +242,8 @@ class ShippingDetailsTwo extends Component {
       iframeKey: 0,
       ModaType: "",
       eve: "N/A",
-      pageName: ""
+      pageName: "",
+      viewFilePath: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -604,7 +606,8 @@ class ShippingDetailsTwo extends Component {
   HandleDocumentView(evt, row) {
     debugger;
     var HblNo = row.original["HBL#"];
-    this.setState({ modalEdit: true });
+    var viewFilePath = row.original["FilePath"];
+    this.setState({ modalEdit: true, viewFilePath });
   }
   HandleDocumentDelete(evt, row) {
     debugger;
@@ -677,8 +680,11 @@ class ShippingDetailsTwo extends Component {
       var ModeType = response.data.Table[0].ModeOfTransport;
       self.setState({
         detailsData: shipmentdata.Table[0],
+        ShipperID: shipmentdata.Table[0].ShipperId,
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
+        DData:
+          shipmentdata.Table2[shipmentdata.Table2.length - 1]["Arrival Date"],
         containerDetails: shipmentdata.Table3,
         bookedStatus: shipmentdata.Table4,
         packageDetails: shipmentdata.Table7,
@@ -724,7 +730,7 @@ class ShippingDetailsTwo extends Component {
     docData.append("ShipmentNumber", this.state.ShipperID);
     // docData.append("ShipmentNumber", "BCM2453770");
     // docData.append("HBLNo", "BCM23770");
-    docData.append("HBLNo", this.state.HblNo);
+    docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
     docData.append("name", docName);
     docData.append("FileData", this.state.selectedFile);
@@ -826,7 +832,7 @@ class ShippingDetailsTwo extends Component {
     if (pageName === "Dashboard") {
       this.props.history.push("/Dashboard");
     } else if (pageName === "ShipmentPage") {
-      this.props.history.push("/shipment-details");
+      this.props.history.push("/shipment-summary");
     } else {
       this.props.history.push("/Dashboard");
     }
@@ -1863,7 +1869,9 @@ class ShippingDetailsTwo extends Component {
                         <div>
                           <p className="est-title">Estimated Time of Arrival</p>
                           <p className="est-time">
-                            9 October 2019, 90:45:56 Min
+                            {/* {this.state.containerData[0].DepartureDate} */}
+                            {this.state.DData}
+                            {/* 4545 */}
                           </p>
                         </div>
                         <div className="ship-white-cntr">
@@ -2527,7 +2535,11 @@ class ShippingDetailsTwo extends Component {
                   <ModalBody>
                     <div className="rename-cntr login-fields">
                       <iframe
-                        src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
+                        // src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
+                        src={
+                          this.state.viewFilePath +
+                          "#toolbar=0&navpanes=0&scrollbar=0"
+                        }
                         title="Document View"
                         className="agreement-pdf"
                       ></iframe>

@@ -20,6 +20,7 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import { FusionTablesLayer } from "react-google-maps";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class RateFinalizing extends Component {
     this.state = {
       modalProfit: false,
       modalRequest: false,
+      modalRequestMsg:false,
       modalEdit: false,
       modalNewConsignee: false,
       commoditySelect: "select",
@@ -128,6 +130,9 @@ class RateFinalizing extends Component {
     this.togglePreview = this.togglePreview.bind(this);
     this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
+    this.SendRequestCopy = this.SendRequestCopy.bind(this);
+    this.RequestChangeMsgModal=this.RequestChangeMsgModal.bind(this);
+    this.RequestChangeMsgModalClose=this.RequestChangeMsgModalClose.bind(this);
   }
 
   componentDidMount() {
@@ -490,7 +495,10 @@ class RateFinalizing extends Component {
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
-      this.HandleCommodityDropdown();
+      if (this.props.location.state.isCopy === true) {
+        debugger;
+        this.HandleCommodityDropdown();
+      }
       this.HandleSalesQuoteConditions();
     }
 
@@ -542,6 +550,7 @@ class RateFinalizing extends Component {
         var equipmentTypeArr = [];
         var PickUpAddress = "";
         var DestinationAddress = "";
+        var multiCBM = [];
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -700,50 +709,48 @@ class RateFinalizing extends Component {
             if (response.data.Table3 != null) {
               if (response.data.Table3.length > 0) {
                 var table = response.data.Table3;
+                var cargoDetails = "";
                 for (var i = 0; i < table.length; i++) {
-                  CargoDetailsArr.push({
-                    PackageType: table[i].PackageType,
-                    SpecialContainerCode: table[i].PackageType + "_" + i,
-                    ContainerType: table[i].PackageType,
-                    Packaging: "-",
-                    Quantity: table[i].Quantity,
-                    Lenght: table[i].Length,
-                    Width: table[i].Width,
-                    Height: table[i].height,
-                    Weight: table[i].GrossWeight,
-                    Gross_Weight: "-",
-                    Temperature: "-",
-                    CBM:
-                      response.data.Table[0].ModeOfTransport.toUpperCase() ===
-                      "AIR"
-                        ? table[i].ChgWeight
-                        : table[i].CBM === undefined
-                        ? "-"
-                        : table[i].CBM,
-                    Volume: "-",
-                    VolumeWeight: "-",
-                    Editable: true
-                  });
+                  if (!cargoDetails.includes(table[i].PackageType)) {
+                    cargoDetails += table[i].PackageType + ","
+                    CargoDetailsArr.push({
+                      PackageType: table[i].PackageType,
+                      SpecialContainerCode: table[i].PackageType + "_" + i,
+                      ContainerType: table[i].PackageType,
+                      Packaging: "-",
+                      Quantity: table[i].Quantity,
+                      Lenght: table[i].Length,
+                      Width: table[i].Width,
+                      Height: table[i].height,
+                      Weight: table[i].GrossWeight,
+                      Gross_Weight: "-",
+                      Temperature: "-",
+                      CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
+                          (table[i].ChgWeight)
+                          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                      Volume: "-",
+                      VolumeWeight: "-",
+                      Editable: true
+                    });
+                  
+                    PackageDetailsArr.push({
+                      PackageType: table[i].PackageType,
+                      // SpecialContainerCode:
+                      //   flattack_openTop[i].SpecialContainerCode,
+                      ContainerType: table[i].PackageType,
+                      Quantity: table[i].Quantity,
+                      Lenght: table[i].Length,
+                      Width: table[i].Width,
+                      Height: table[i].height,
+                      Weight: table[i].GrossWeight,
+                      CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
+                          (table[i].ChgWeight)
+                          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                      Editable: true
+                    });
 
-                  PackageDetailsArr.push({
-                    PackageType: table[i].PackageType,
-                    // SpecialContainerCode:
-                    //   flattack_openTop[i].SpecialContainerCode,
-                    ContainerType: table[i].PackageType,
-                    Quantity: table[i].Quantity,
-                    Lenght: table[i].Length,
-                    Width: table[i].Width,
-                    Height: table[i].height,
-                    Weight: table[i].GrossWeight,
-                    CBM:
-                      response.data.Table[0].ModeOfTransport.toUpperCase() ===
-                      "AIR"
-                        ? table[i].ChgWeight
-                        : table[i].CBM === undefined
-                        ? "-"
-                        : table[i].CBM,
-                    Editable: true
-                  });
+                    multiCBM.push(table[i])
+                  }
                 }
               }
             }
@@ -758,7 +765,7 @@ class RateFinalizing extends Component {
         self.setState({
           rateDetails: rateDetails,
           rateSubDetails: response.data.Table2,
-          multiCBM: response.data.Table3
+          multiCBM: multiCBM
         });
         self.forceUpdate();
         self.HandleLocalCharges();
@@ -1036,6 +1043,18 @@ class RateFinalizing extends Component {
     this.setState(prevState => ({
       modalRequest: !prevState.modalRequest
     }));
+    this.RequestChangeMsgModalClose();
+  }
+
+  RequestChangeMsgModal(){
+    this.setState(prevState => ({
+      modalRequestMsg:!prevState.modalRequestMsg
+    }));
+  }
+  RequestChangeMsgModalClose(){
+    this.setState({
+      modalRequestMsg:false
+    })
   }
 
   togglePreview() {
@@ -1078,6 +1097,7 @@ class RateFinalizing extends Component {
   }
 
   SendRequest() {
+    debugger
     var txtRequestDiscount,
       txtRequestFreeTime,
       txtRequestComments = "";
@@ -1765,6 +1785,221 @@ class RateFinalizing extends Component {
       });
   }
 
+  SendRequestCopy(){
+    var txtRequestDiscount,
+    txtRequestFreeTime,
+    txtRequestComments = "";
+  txtRequestDiscount = 0;
+  txtRequestFreeTime = 0;
+  var containerLoadType = this.state.containerLoadType;
+ 
+  var rateDetailsarr = this.state.rateDetails;
+  var rateSubDetailsarr = this.state.rateSubDetails;
+
+  var SQCopyChargesList = [];
+
+ 
+    for (var j = 0; j < rateSubDetailsarr.length; j++) {
+      if (containerLoadType == "FCL") {
+          
+            SQCopyChargesList.push({
+                SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+                SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
+                ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+                Chargeitem:rateSubDetailsarr[j].Chargeitem,
+                Tax:rateSubDetailsarr[j].Tax,
+                ExRate:rateSubDetailsarr[j].ExRate,
+                ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
+                Type:rateSubDetailsarr[j].Type,
+                SellRate:rateSubDetailsarr[j].SellRate,
+                BuyRate:rateSubDetailsarr[j].BuyRate,
+                Currency:rateSubDetailsarr[j].BaseCurrency                
+              });
+                  
+      }else if(containerLoadType == "LCL"){
+          SQCopyChargesList.push({
+            SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+            SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+            ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+            Chargeitem:rateSubDetailsarr[j].Chargeitem,
+            Tax:rateSubDetailsarr[j].Tax,
+            ExRate:rateSubDetailsarr[j].ExRate,
+            ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
+            Type:rateSubDetailsarr[j].Type,
+            SellRate:rateSubDetailsarr[j].SellRate,
+            BuyRate:rateSubDetailsarr[j].BuyRate,
+            Currency:rateSubDetailsarr[j].BaseCurrency                
+          });
+      }else if (containerLoadType == "AIR") {
+        SQCopyChargesList.push({
+          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+          SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
+          ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+          Chargeitem:rateSubDetailsarr[j].Chargeitem,
+          Tax:rateSubDetailsarr[j].Tax,
+          ExRate:rateSubDetailsarr[j].Exrate,
+          ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
+          Type:rateSubDetailsarr[j].Type,
+          SellRate:rateSubDetailsarr[j].SellRate,
+          BuyRate:rateSubDetailsarr[j].BuyRate,
+          Currency:rateSubDetailsarr[j].BaseCurrency              
+        });
+      }else if (containerLoadType == "INLAND") {
+        SQCopyChargesList.push({
+          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteIDD,
+          SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+          ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+          Chargeitem:rateSubDetailsarr[j].Chargeitem,
+          Tax:rateSubDetailsarr[j].Tax,
+          ExRate:rateSubDetailsarr[j].ExRate,
+          ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
+          Type:rateSubDetailsarr[j].Type,
+          SellRate:rateSubDetailsarr[j].SellRate,
+          BuyRate:rateSubDetailsarr[j].BuyRate,
+          Currency:rateSubDetailsarr[j].BaseCurrency              
+        });
+      }
+      
+     
+    }
+
+
+  var Containerdetails = [];
+  var RateQueryDim = [];
+  // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+  var usesr = this.state.users;
+  var spacEqmtType = this.state.spacEqmtType;
+  var referType = this.state.referType;
+  var flattack_openTop = this.state.flattack_openTop;
+
+ 
+    debugger;
+    var multiCBM = this.state.multiCBM;
+    
+    for (var i = 0; i < multiCBM.length; i++) {
+      if (this.state.containerLoadType == "FCL") {
+        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+        RateQueryDim.push({
+          Quantity: multiCBM[i].Quantity,
+          Lengths: multiCBM[i].Length,
+          Width: multiCBM[i].Width,
+          Height: multiCBM[i].height,
+          GrossWt: multiCBM[i].GrossWeight,
+          VolumeWeight: 0,
+          Volume: 0,
+          PackageType: multiCBM[i].PackageType
+        });
+      }
+      if (this.state.containerLoadType == "LCL") {
+        RateQueryDim.push({
+          Quantity: multiCBM[i].Quantity,
+          Lengths: multiCBM[i].Length,
+          Width: multiCBM[i].Width,
+          Height: multiCBM[i].height,
+          GrossWt: multiCBM[i].GrossWeight,
+          VolumeWeight: 0,
+          Volume: 0,
+          PackageType: multiCBM[i].PackageType
+        });
+      }
+      if (this.state.containerLoadType == "AIR") {
+        RateQueryDim.push({
+          Quantity: multiCBM[i].Quantity,
+          Lengths: multiCBM[i].Length,
+          Width: multiCBM[i].Width,
+          Height: multiCBM[i].height,
+          GrossWt: multiCBM[i].GrossWeight,
+          VolumeWeight: multiCBM[i].VolumeWeight,
+          Volume: 0,
+          PackageType: multiCBM[i].PackageType
+        });
+      }
+      if (this.state.containerLoadType == "INLAND") {
+        RateQueryDim.push({
+          Quantity: multiCBM[i].Quantity,
+          Lengths: multiCBM[i].Length,
+          Width: multiCBM[i].Width,
+          Height: multiCBM[i].height,
+          GrossWt: multiCBM[i].GrossWeight,
+          VolumeWeight: multiCBM[i].VolumeWeight,
+          Volume: 0,
+          PackageType: multiCBM[i].PackageType === null?"":multiCBM[i].PackageType
+        });
+      }
+    }
+    
+
+
+  debugger;
+  var senrequestpara = {
+    Commodity: Number(this.state.CommodityID),
+    OldSaleQuoteNumber: this.props.location.state.Quote,
+    OldSaleQuoteID: rateSubDetailsarr[0].SaleQuoteID==undefined?
+                    rateSubDetailsarr[0].SaleQuoteIDD:rateSubDetailsarr[0].SaleQuoteID,
+    MailBody:"Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+    RateQueryDim: RateQueryDim,
+    SQCopyChargesList: SQCopyChargesList,
+    Mode: this.state.containerLoadType,
+    MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+  };
+
+  var url = "";
+
+  //if (this.state.containerLoadType == "FCL") {
+    //senrequestpara.NonStackable = 0;
+    url = `${appSettings.APIURL}/SalesQuoteCopy`;
+  //} 
+  //return false;
+  // usertype
+
+  var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
+  let self = this;
+  axios({
+    method: "post",
+    url: url,
+    data: senrequestpara,
+    headers: authHeader()
+  })
+    .then(function(response) {
+      debugger;
+      if (response != null) {
+        if (response.data != null) {
+          if (response.data.Table != null) {
+            if (response.data.Table.length > 0) {
+              NotificationManager.success(response.data.Table[0].Message);
+              var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
+              if (usertype !== "Sales User") {
+                self.setState({
+                  SalesQuoteNo
+                });
+
+                self.AcceptQuotes();
+
+                setTimeout(function() {
+                  window.location.href = "quote-table";
+                }, 1000);
+              } else {
+                setTimeout(function() {
+                  window.location.href = "quote-table";
+                }, 1000);
+              }
+              // window.location.href = "quote-table";
+            }
+          }
+        }
+      }
+      //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+    })
+    .catch(error => {
+      debugger;
+      console.log(error.response);
+    });
+  }
+
   SendQuote() {}
 
   // SendMail()
@@ -2232,6 +2467,10 @@ class RateFinalizing extends Component {
       });
   }
 
+  handleChangePage() {
+    window.history.back();
+  }
+
   HandleSalesQuoteConditions() {
     let self = this;
     axios({
@@ -2392,13 +2631,19 @@ class RateFinalizing extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt no-bg">
-            <div className="rate-fin-tit title-sect mb-4">
+            <div className="title-sect mb-4">
               {/* <h2>Rate Query Details</h2> */}
               <h2>
                 {this.state.isCopy === true
                   ? "Clone Sales Quote"
                   : "Create Sales Quote"}
               </h2>
+              <button
+                onClick={this.handleChangePage.bind(this)}
+                className="butn mt-0"
+              >
+                Back
+              </button>
             </div>
             <div className="row cus-w">
               <div className="col-md-3">
@@ -2748,18 +2993,10 @@ class RateFinalizing extends Component {
                                   debugger;
                                   var lname = "";
                                   var olname = "";
-                                  if (row._original.Linename) {
-                                    olname = row._original.Linename;
+                                  if (row._original.lineName) {
+                                    olname = row._original.lineName;
                                     lname =
-                                      row._original.Linename.replace(
-                                        "  ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
-                                  }
-                                  if (row._original.LineName) {
-                                    olname = row._original.LineName;
-                                    lname =
-                                      row._original.LineName.replace(
+                                      row._original.lineName.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
@@ -2767,20 +3004,29 @@ class RateFinalizing extends Component {
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
-                                      row._original.lineName
-                                        .replace("  ", "_")
-                                        .replace(" ", "_") + ".png";
+                                      row._original.lineName.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
                                   }
-                                  var mode = "";
-                                  if (this.state.ModeOfTransport) {
+                                  var mode = this.state.ModeOfTransport;
+                                  if (row._original.lineName) {
+                                    olname = row._original.lineName;
+                                    lname =
+                                    row._original.lineName
+                                    .replace(" ", "_")
+                                    .replace(" ", "_") + ".png";
+                                    }
+                                    var mode = "";
+                                    if (this.state.ModeOfTransport) {
                                     mode = this.state.ModeOfTransport;
-                                  }
-                                  if (this.state.modeoftransport) {
+                                    }
+                                    if (this.state.modeoftransport) {
                                     mode =
-                                      this.state.modeoftransport === "SEA"
-                                        ? "Ocean"
-                                        : this.state.modeoftransport === "AIR"?"Air":"Inlande";
-                                  }
+                                    this.state.modeoftransport === "SEA"
+                                    ? "Ocean"
+                                    : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                    }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
@@ -3389,7 +3635,7 @@ class RateFinalizing extends Component {
                     <div className="text-center">
                       {this.state.toggleIsEdit && (
                         <button
-                          onClick={this.toggleRequest}
+                          onClick={this.RequestChangeMsgModal}
                           className="butn more-padd m-0"
                         >
                           Request Change
@@ -3670,7 +3916,7 @@ class RateFinalizing extends Component {
                           value={this.state.CommodityID}
                           onChange={this.commoditySelect.bind(this)}
                         >
-                          <option value="select">Select</option>
+                          {/* <option value="select">Select</option> */}
                           {this.state.commodityData.map((item, i) => (
                             <option key={i} value={item.id}>
                               {item.Commodity}
@@ -3709,7 +3955,7 @@ class RateFinalizing extends Component {
                       </a> */}
                       <button
                         // onClick={this.SendQuote}
-                        onClick={this.SendRequest}
+                        onClick={this.state.isCopy===true?this.SendRequestCopy:this.SendRequest}
                         className={
                           this.state.commoditySelect == "select" // ||
                             ? // this.state.cargoSelect == "select"
@@ -3717,7 +3963,11 @@ class RateFinalizing extends Component {
                             : "butn"
                         }
                       >
-                        Send
+                        {encryption(
+                              window.localStorage.getItem("usertype"),
+                              "desc"
+                            ) != "Customer"?
+                        "Send":"Confirm And Approve"}
                       </button>
                     </div>
                   </div>
@@ -3818,6 +4068,22 @@ class RateFinalizing extends Component {
               </div>
             </ModalBody>
           </Modal> */}
+         <Modal
+            className="delete-popup pol-pod-popup"
+            isOpen={this.state.modalRequestMsg}
+            toggle={this.RequestChangeMsgModal}
+            centered={true}
+          >
+            <ModalBody>
+              <p>Are you sure, this will discard the Sales Quote and will raise a new Spot Rate Request.</p>
+              <Button className="butn" onClick={this.toggleRequest}>
+                Yes
+              </Button>
+              <Button className="butn cancel-butn" onClick={this.RequestChangeMsgModal}>
+                No
+              </Button>
+            </ModalBody>
+          </Modal>
           <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequest}
