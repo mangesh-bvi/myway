@@ -243,7 +243,9 @@ class ShippingDetailsTwo extends Component {
       ModaType: "",
       eve: "N/A",
       pageName: "",
-      viewFilePath: ""
+      viewFilePath: "",
+      delDocuId: "",
+      delFileName: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -612,7 +614,9 @@ class ShippingDetailsTwo extends Component {
   HandleDocumentDelete(evt, row) {
     debugger;
     var HblNo = row.original["HBL#"];
-    this.setState({ modalDel: true });
+    var delDocuId = row.original["DocumentID"];
+    var delFileName = row.original["FileName"];
+    this.setState({ modalDel: true, delDocuId, delFileName });
   }
 
   HandleShipmentDocument() {
@@ -769,8 +773,8 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/DeleteShipmentDocument`,
       data: {
-        DocumentId: self.state.documentData.DocumentID,
-        FileName: self.state.documentData.FileName,
+        DocumentId: self.state.delDocuId,
+        FileName: self.state.delFileName,
         DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
