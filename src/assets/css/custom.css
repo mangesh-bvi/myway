@@ -3538,6 +3538,9 @@ flex: 0 0 120px;
     text-align: left;
     margin-bottom: 0;
 }
+.large-popup {
+  max-width: 80%
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/

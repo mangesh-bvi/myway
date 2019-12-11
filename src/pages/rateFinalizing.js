@@ -116,7 +116,9 @@ class RateFinalizing extends Component {
       CustomClearance: 0,
       SalesQuoteNo: "",
       PickUpAddress: "",
-      DestinationAddress: ""
+      DestinationAddress: "",
+      specialEqtSelect: false,
+      specialEquipment: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -167,6 +169,8 @@ class RateFinalizing extends Component {
         var contactName = this.props.location.state.contactName;
         var contactEmail = this.props.location.state.contactEmail;
         var customClearance = this.props.location.state.Custom_Clearance;
+        var specialEqtSelect = this.props.location.state.specialEqtSelect;
+        var specialEquipment = this.props.location.state.specialEquipment;
 
         var CargoDetailsArr = [];
         var equipmentTypeArr = [];
@@ -464,7 +468,9 @@ class RateFinalizing extends Component {
           CompanyAddress: companyAddress,
           ContactName: contactName,
           ContactEmail: contactEmail,
-          CustomClearance: customClearance
+          CustomClearance: customClearance,
+          specialEqtSelect: specialEqtSelect,
+          specialEquipment: specialEquipment
         });
 
         this.state.rateDetails = rateDetails;
@@ -2232,6 +2238,7 @@ class RateFinalizing extends Component {
   }
   SubmitCargoDetails(e) {
     debugger;
+    var PackageDetailsArr = [];
     if (
       this.state.containerLoadType == "AIR" ||
       this.state.containerLoadType == "LCL"
@@ -2260,7 +2267,31 @@ class RateFinalizing extends Component {
         }
       }
 
+      if (flattack_openTop != null) {
+        if (flattack_openTop.length > 0) {
+          for (var i = 0; i < flattack_openTop.length; i++) {
+            PackageDetailsArr.push({
+              PackageType: flattack_openTop[i].PackageType,
+              SpecialContainerCode:
+                flattack_openTop[i].SpecialContainerCode,
+              ContainerType:
+                flattack_openTop[i].PackageType +
+                " (" +
+                flattack_openTop[i].SpecialContainerCode +
+                ")",
+              Quantity: flattack_openTop[i].Quantity,
+              Lenght: flattack_openTop[i].length,
+              Width: flattack_openTop[i].width,
+              Height: flattack_openTop[i].height,
+              Weight: flattack_openTop[i].Gross_Weight,
+              CBM: flattack_openTop[i].total,
+              Editable: true
+            });
+          }
+        }
+      }
       this.setState({
+        PackageDetailsArr: PackageDetailsArr,
         flattack_openTop: flattack_openTop
       });
     }
@@ -2473,6 +2504,212 @@ class RateFinalizing extends Component {
         });
       }
     });
+  }
+
+  newMultiCBMHandleChange(i, e) {
+    const { name, value } = e.target;
+    debugger;
+    let flattack_openTop = [...this.state.flattack_openTop];
+    if (name === "PackageType" || name === "SpecialContainerCode") {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: value
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: parseFloat(value)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].width *
+          flattack_openTop[i].height)) /
+      6000;
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+  }
+  
+  addMultiCBM() {
+    this.setState(prevState => ({
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
+        {
+          SpecialContainerCode: "",
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
+
+  removeMultiCBM(i) {
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
+  }
+
+  MultiCreateCBM() {
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        {/* <div className="col-md">
+          <div className="spe-equ">
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
+          </div>
+        </div> */}
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="SpecialContainerCode"
+              value={el.SpecialContainerCode}
+            >
+              <option selected>Select</option>
+              {this.state.equipmentTypeArr.map((item, i) => (
+                <option key={i} value={item.ContainerType}>
+                  {item.ContainerType}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="Gross_Weight"
+              value={el.Gross_Weight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        {/* <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div> */}
+        {i === 0 ? (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addMultiCBM.bind(this)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+          {this.state.flattack_openTop.length > 1 ? (
+            <div className="">
+              <div className="spe-equ">
+                <i
+                  className="fa fa-minus mt-2"
+                  aria-hidden="true"
+                  onClick={this.removeMultiCBM.bind(this, i)}
+                ></i>
+              </div>
+            </div>
+          ) : null}
+        {/* <div className="">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              aria-hidden="true"
+              //onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div> */}
+      </div>
+    ));
   }
   //------------------------------------------------------------------//
 
@@ -5075,7 +5312,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
           <Modal
-            className="delete-popup pol-pod-popup"
+            className="delete-popup pol-pod-popup large-popup"
             isOpen={this.state.modalEdit}
             toggle={this.toggleEdit}
             centered={true}
@@ -5097,8 +5334,66 @@ class RateFinalizing extends Component {
                 }}
               >
                 <h3 className="mb-4">Edit Cargo Details</h3>
+                <>
+                      {" "}
+                      {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                        <Select
+                          className="rate-dropdown"
+                          getOptionLabel={option =>
+                            option.StandardContainerCode
+                          }
+                          getOptionValue={option =>
+                            option.StandardContainerCode
+                          }
+                          isMulti
+                          options={this.state.EquipmentType}
+                          onChange={this.newaddClick.bind(this)}
+                          value={this.state.selected}
+                          showNewOptionAtTop={false}
+                        />
+                      </div> */}
+                      {/* <div className="d-flex flex-wrap justify-content-center">
+                        {this.NewcreateUI()}
+                      </div>
+                      <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                        <input
+                          id="Special-equType"
+                          type="checkbox"
+                          className="d-none"
+                          name={"Special-equType"}
+                          // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                        />
+                      </div> */}
+                      {this.state.specialEquipment === true ? (
+                        <div className="">
+                          {/* spe-equ mt-0 */}
+                          {/* <div className="equip-plus-cntr w-100">
+                            <Select
+                              className="rate-dropdown"
+                              getOptionLabel={option =>
+                                option.SpecialContainerCode
+                              }
+                              getOptionValue={option =>
+                                option.SpecialContainerCode
+                              }
+                              options={this.state.SpacialEqmt}
+                              placeholder="Select Kind of Special Equipment"
+                              onChange={this.specEquipChange}
+                              showNewOptionAtTop={false}
+                            />
+                          </div> */}
+                          <div id="cbmInner">
+                            {this.state.specialEqtSelect === true ? (
+                              this.state.flattack_openTop.length > 0 ? (
+                                <>{this.MultiCreateCBM()}</>
+                              ) : null
+                            ) : null}
+                          </div>
+                        </div>
+                      ) : null}
+                    </>
 
-                <div className="rename-cntr login-fields">
+                {/* <div className="rename-cntr login-fields">
                   <select
                     className="select-text"
                     onChange={this.newMultiCBMHandleChange.bind(this, i)}
@@ -5172,7 +5467,7 @@ class RateFinalizing extends Component {
                     id="txtRequestFreeTime"
                     placeholder="CBM"
                   />
-                </div>
+                </div> */}
 
                 <div className="text-center">
                   <Button
