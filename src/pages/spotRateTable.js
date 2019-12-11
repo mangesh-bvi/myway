@@ -24,6 +24,7 @@ import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { encryption } from "../helpers/encryption";
+import Moment from "react-moment";
 
 class SpotRateTable extends Component {
   constructor(props) {
@@ -188,16 +189,19 @@ class SpotRateTable extends Component {
                         accessor: "DestinationAddress"
                       },
                       {
-                        Header:"Created Date",
-                        accessor:"CreatedDate"
-                      },
-                      {
                         Header: "Expiry Date",
                         accessor: "ExpiryDate"
                       },
                       {
                         Header: "Created Date",
-                        accessor: "CreatedDate"
+                        accessor: "CreatedDate",
+                        Cell: row => {
+                          return (
+                            <Moment format="DD-MMM-YYYY">
+                              {row.original["CreatedDate"]}
+                            </Moment>
+                          );
+                        }
                       },
                       {
                         Header: "Status",

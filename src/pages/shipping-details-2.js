@@ -243,7 +243,10 @@ class ShippingDetailsTwo extends Component {
       ModaType: "",
       eve: "N/A",
       pageName: "",
-      viewFilePath: ""
+      viewFilePath: "",
+      delDocuId: "",
+      delFileName: "",
+      downloadFilePath: ""
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -252,7 +255,7 @@ class ShippingDetailsTwo extends Component {
     this.togglePackage = this.togglePackage.bind(this);
     this.handleActivityList = this.handleActivityList.bind(this);
     this.HandleShipmentDocument = this.HandleShipmentDocument.bind(this);
-    // this.HandleDownloadFile=this.HandleDownloadFile.bind(this);
+    this.HandleDownloadFile = this.HandleDownloadFile.bind(this);
     // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
     // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
   }
@@ -304,7 +307,7 @@ class ShippingDetailsTwo extends Component {
         url: `${appSettings.APIURL}/SendCommonMessage`,
         data: {
           UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-          ReferenceNo: hbllNo,
+          ReferenceNo: hbllNo.trim(),
           // TypeOfMessage: drpshipment.value.trim(),
           Message: msgg
         },
@@ -609,10 +612,47 @@ class ShippingDetailsTwo extends Component {
     var viewFilePath = row.original["FilePath"];
     this.setState({ modalEdit: true, viewFilePath });
   }
+  HandleDownloadFile(evt, row) {
+    debugger;
+    var HblNo = row.original["HBL#"];
+    var downloadFilePath = row.original["FilePath"];
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/DownloadFTPFile`,
+      data: {
+        MywayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        FilePath: row.original["FilePath"]
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        // var documentdata = [];
+        // documentdata = response.data;
+        // documentdata.forEach(function(file, i) {
+        //   file.sr_no = i + 1;
+        // });
+
+        // self.setState({ documentData: documentdata });
+      })
+      .catch(error => {
+        debugger;
+        // var temperror = error.response.data;
+        // var err = temperror.split(":");
+        // // NotificationManager.error("No Data Found");
+        // var actData = [];
+        // actData.push({ DocumentDescription: "No Data Found" });
+
+        // self.setState({ documentData: actData });
+      });
+  }
   HandleDocumentDelete(evt, row) {
     debugger;
     var HblNo = row.original["HBL#"];
-    this.setState({ modalDel: true });
+    var delDocuId = row.original["DocumentID"];
+    var delFileName = row.original["FileName"];
+    this.setState({ modalDel: true, delDocuId, delFileName });
   }
 
   HandleShipmentDocument() {
@@ -620,7 +660,7 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var HblNo;
     if (typeof this.props.location.state != "undefined") {
-      HblNo = this.props.location.state.detail;
+      HblNo = this.props.location.state.detail.trim();
     }
 
     axios({
@@ -727,13 +767,17 @@ class ShippingDetailsTwo extends Component {
     }
     debugger;
     //docData.append();
-    docData.append("ShipmentNumber", this.state.ShipperID);
+    // docData.append("ShipmentNumber", this.state.ShipperID);
     // docData.append("ShipmentNumber", "BCM2453770");
     // docData.append("HBLNo", "BCM23770");
     docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
     docData.append("name", docName);
     docData.append("FileData", this.state.selectedFile);
+    docData.append(
+      "CreatedBy",
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
     // docData.append()
 
     axios({
@@ -769,8 +813,8 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/DeleteShipmentDocument`,
       data: {
-        DocumentId: self.state.documentData.DocumentID,
-        FileName: self.state.documentData.FileName,
+        DocumentId: self.state.delDocuId,
+        FileName: self.state.delFileName,
         DeletedBy: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
@@ -879,7 +923,7 @@ class ShippingDetailsTwo extends Component {
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
       data: {
         UserId: encryption(window.localStorage.getItem("userid"), "desc"),
-        HBLNO: HblNo
+        HBLNO: HblNo.trim()
       },
       headers: authHeader()
     })
@@ -2471,6 +2515,7 @@ class ShippingDetailsTwo extends Component {
                               id="file-upload"
                               className="file-upload d-none"
                               type="file"
+                              accept="application/pdf"
                               onChange={this.onDocumentChangeHandler}
                             />
                             <label htmlFor="file-upload">

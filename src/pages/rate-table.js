@@ -2657,7 +2657,7 @@ class RateTable extends Component {
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: parseFloat(value)
+        [name]: value === "" ? 0 : parseFloat(value)
       };
     }
 
@@ -2667,10 +2667,17 @@ class RateTable extends Component {
         (multiCBM[i].Quantity *
           (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["VolumeWeight"]: parseFloat(decVolumeWeight)
-      };
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
     } else {
       var decVolume =
         multiCBM[i].Quantity *
@@ -2679,11 +2686,12 @@ class RateTable extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: 2
+        ["Volume"]: parseFloat(decVolume)
       };
     }
 
     this.setState({ multiCBM });
+
   }
 
   HandleCMBtextChange(e) {
