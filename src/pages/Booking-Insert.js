@@ -113,7 +113,12 @@ class BookingInsert extends Component {
       Company_Address: "",
       FileDataArry: [],
       ContainerCode: "",
-      HAZMAT: ""
+      HAZMAT: "",
+      conshineeAddData: [],
+      shipperAddData: [],
+      buyerAddData: [],
+      notifyAddData: [],
+      Consinee_Displayas: ""
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
@@ -182,7 +187,7 @@ class BookingInsert extends Component {
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
       if (QuotationData.length > 0) {
-        var Commodity = QuotationData[0].Commodity;
+        var selectedCommodity = QuotationData[0].Commodity;
         var IncoTerms = QuotationData[0].IncoTerm;
         var POL = QuotationData[0].POL;
         var POD = QuotationData[0].POD;
@@ -193,7 +198,7 @@ class BookingInsert extends Component {
           multiCBM,
           QuotationData,
           QuotationSubData,
-          Commodity,
+          selectedCommodity,
           IncoTerms,
           POL,
           POD,
@@ -271,7 +276,7 @@ class BookingInsert extends Component {
       }
 
       if (QuotationData.length > 0) {
-        var Commodity = QuotationData[0].Commodity;
+        var selectedCommodity = QuotationData[0].Commodity;
         var POL = QuotationData[0].POL;
         var POD = QuotationData[0].POD;
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
@@ -280,7 +285,7 @@ class BookingInsert extends Component {
         self.setState({
           QuotationData,
           QuotationSubData,
-          Commodity,
+          selectedCommodity,
           POL,
           POD,
           SaleQuoteID,
@@ -312,7 +317,7 @@ class BookingInsert extends Component {
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
       if (QuotationData.length > 0) {
-        var Commodity = QuotationData[0].Commodity;
+        var selectedCommodity = QuotationData[0].Commodity;
         var IncoTerms = QuotationData[0].IncoTerm;
         var POL = QuotationData[0].POL;
         var POD = QuotationData[0].POD;
@@ -323,7 +328,7 @@ class BookingInsert extends Component {
           multiCBM,
           QuotationData,
           QuotationSubData,
-          Commodity,
+          selectedCommodity,
           IncoTerms,
           POL,
           POD,
@@ -362,33 +367,31 @@ class BookingInsert extends Component {
 
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
-    var MyWayUserID = userId;
+    var MyWayUserID = Number(userId);
     var ShipperID = Number(this.state.shipperData.Company_ID || 0);
 
     var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
 
     var Shipper_Displayas = this.state.Shipper_Displayas || "";
-    var Shipper_AddressID = Number(this.state.shipperData.AddressID || 0);
+    var Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
     var ShipperName = this.state.shipperData.Company_Name || "";
 
     var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
     var ConsigneeName = this.state.consineeData.Company_Name || "";
-    var Consignee_AddressID = Number(this.state.consineeData.AddressID || 0);
-    var Consignee_Displayas = this.state.consineeData.CompanyAddress;
+    var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+    var Consignee_Displayas = this.state.Consinee_Displayas;
 
-    var BuyerID = this.state.BuyerID;
+    var BuyerID = Number(this.state.buyerData.Company_ID || 0);
     var Buyer_AddressID = this.state.Buyer_AddressID;
     var Buyer_Displayas = this.state.Buyer_Displayas;
-    var BuyerName = this.state.BuyerName;
+    var BuyerName = this.state.buyerData.Company_Name;
 
     var Mode = this.state.ContainerLoad;
-
-    if (this.state.Commodity) {
-      var Commodity = Number(
-        this.state.commodityData.filter(
-          x => x.Commodity === this.state.Commodity
-        )[0].id || 0
-      );
+    var Commodity = 0;
+    if (this.state.selectedCommodity) {
+      Commodity = this.state.commodityData.filter(
+        x => x.Commodity === this.state.selectedCommodity
+      )[0].id;
     }
     // var Commodity = Number(
     //   this.state.commodityData.filter(
@@ -403,27 +406,37 @@ class BookingInsert extends Component {
       this.state.QuotationData[0].saleQuoteLineID || 0
     );
 
-    var NotifyID = Number(this.state.NotifyID || 0);
+    var NotifyID = Number(this.state.buyerData.Company_ID || 0);
     var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
     var Notify_Displayas = this.state.Notify_Displayas || "";
-    var NotifyName = this.state.NotifyName || "";
+    var NotifyName = this.state.buyerData.Company_Name || "";
 
     var BookingDim = [];
 
     if (this.state.multiCBM.length > 0) {
       for (let i = 0; i < this.state.multiCBM.length; i++) {
         var cargoData = new Object();
-
-        cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-        cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-        cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-        cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-        cargoData.Width = this.state.multiCBM[i].Width || 0;
-        cargoData.Height = this.state.multiCBM[i].Height || 0;
-        cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-        cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-        cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-
+        if (Mode === "AIR") {
+          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+          cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
+          cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+          cargoData.Width = this.state.multiCBM[i].Width || 0;
+          cargoData.Height = this.state.multiCBM[i].height || 0;
+          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+        } else {
+          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+          cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
+          cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+          cargoData.Width = this.state.multiCBM[i].Width || 0;
+          cargoData.Height = this.state.multiCBM[i].Height || 0;
+          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+        }
         BookingDim.push(cargoData);
       }
     } else {
@@ -479,7 +492,7 @@ class BookingInsert extends Component {
       debugger;
       if (response.data.Table) {
         var BookingNo = response.data.Table[0].BookingID;
-        NotificationManager.success(response.data.Table[0]);
+        NotificationManager.success(response.data.Table[0].Message);
         self.setState({ BookingNo });
         self.HandleFileUpload();
       }
@@ -505,7 +518,7 @@ class BookingInsert extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      NotificationManager.success(response.data.Table[0]);
+      NotificationManager.success(response.data.Table[0].Message);
     });
   }
   HandleCommodityDropdown() {
@@ -609,7 +622,8 @@ class BookingInsert extends Component {
               Shipper: response.data.Table,
               fields
             });
-          } else {
+          }
+          if (field == "Buyer") {
             self.setState({
               Buyer: response.data.Table,
               fields
@@ -637,7 +651,8 @@ class BookingInsert extends Component {
                 fields,
                 notifyData: response.data.Table[0]
               });
-            } else {
+            }
+            if (field == "Buyer") {
               self.setState({
                 Buyer: response.data.Table,
                 fields,
@@ -666,20 +681,24 @@ class BookingInsert extends Component {
       this.state.ConsigneeID = id.Company_ID;
       var Consignee_Displayas = id.Company_Address;
       this.setState({ consineeData: id, Consignee_Displayas });
+      this.HandleCompanyAddress(field, id.Company_ID);
     }
     if (field == "Shipper") {
       var Shipper_Displayas = id.Company_Address;
       this.setState({ shipperData: id, Shipper_Displayas });
       this.state.ShipperID = id.Company_ID;
+      this.HandleCompanyAddress(field, id.Company_ID);
     }
     if (field == "Notify") {
       var Notify_Displayas = id.Company_Address;
-      this.setState({ shipperData: id, Notify_Displayas });
+      this.setState({ notifyData: id, Notify_Displayas });
       this.state.NotifyID = id.Company_ID;
+      this.HandleCompanyAddress(field, id.Company_ID);
     } else {
       var Shipper_Displayas = id.Company_Address;
-      this.setState({ shipperData: id, Shipper_Displayas });
+      this.setState({ buyerData: id, Shipper_Displayas });
       this.state.BuyerID = id.Company_ID;
+      this.HandleCompanyAddress(field, id.Company_ID);
     }
 
     this.setState({
@@ -689,6 +708,99 @@ class BookingInsert extends Component {
     });
   }
 
+  HandleCompanyAddress(type, cid) {
+    var ctype = type;
+    var compId = cid;
+    let self = this;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerAddressList`,
+      data: {
+        UserID: userId,
+        CustomerID: compId
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      var AData = response.data.Table;
+      if (ctype === "Consignee") {
+        self.setState({ conshineeAddData: AData });
+      }
+      if (ctype === "Shipper") {
+        self.setState({ shipperAddData: AData });
+      }
+      if (ctype === "Notify") {
+        self.setState({ notifyAddData: AData });
+      }
+      if (ctype === "Buyer") {
+        self.setState({ buyerAddData: AData });
+      }
+    });
+  }
+
+  AddressChange(type, e) {
+    debugger;
+    var companyID = e.target.value;
+    if (e.target.selectedOptions[0].label === "Other") {
+      if (type == "Consignee") {
+        this.setState({
+          Consignee_AddressID: 0,
+          conshineeother: true,
+          Consinee_Displayas: ""
+        });
+      }
+      if (type == "Shipper") {
+        this.setState({
+          Shipper_AddressID: 0,
+          shipperother: true,
+          Shipper_Displayas: ""
+        });
+      }
+      if (type == "Notify") {
+        this.setState({
+          Notify_AddressID: 0,
+          notiother: true,
+          Notify_Displayas: ""
+        });
+      }
+      if (type == "Buyer") {
+        this.setState({
+          Buyer_AddressID: 0,
+          buyerother: true,
+          Buyer_Displayas: ""
+        });
+      }
+    } else {
+      if (type == "Consignee") {
+        this.setState({
+          Consignee_AddressID: companyID,
+          conshineeother: true,
+          Consinee_Displayas: e.target.selectedOptions[0].label
+        });
+      }
+      if (type == "Shipper") {
+        this.setState({
+          Shipper_AddressID: companyID,
+          shipperother: true,
+          Shipper_Displayas: e.target.selectedOptions[0].label
+        });
+      }
+      if (type == "Notify") {
+        this.setState({
+          Notify_AddressID: companyID,
+          notiother: true,
+          Notify_Displayas: e.target.selectedOptions[0].label
+        });
+      }
+      if (type == "Buyer") {
+        this.setState({
+          Buyer_AddressID: companyID,
+          buyerother: true,
+          Buyer_Displayas: e.target.selectedOptions[0].label
+        });
+      }
+    }
+  }
   ////this method for NonCustomerList bind
   NonCustomerList() {
     let self = this;
@@ -897,6 +1009,22 @@ class BookingInsert extends Component {
       });
     }
   }
+  HandleConsineeAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Consinee_Displayas: addval });
+  }
+  HandleShipperAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Shipper_Displayas: addval });
+  }
+  HandleNotifyAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Notify_Displayas: addval });
+  }
+  HandleBuyerAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Buyer_Displayas: addval });
+  }
 
   render() {
     let i = 0;
@@ -933,31 +1061,66 @@ class BookingInsert extends Component {
                               {
                                 Cell: row => {
                                   i++;
-                                  debugger;
-                                  var URL = "";
-                                  var lineName = row.original.lineName;
-                                  if (typeof lineName !== "undefined") {
-                                    if (this.state.ModeofTransport == "Ocean") {
-                                      URL =
-                                        "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                                        lineName.replace(" ", "_");
-                                      return (
-                                        <React.Fragment>
-                                          <div className="d-flex align-items-center">
-                                            <div>
-                                              <p className="details-title">
-                                                <img
-                                                  src={require(URL)}
-                                                  alt="maersk icon"
-                                                />
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </React.Fragment>
-                                      );
-                                    }
+
+                                  var olname = "";
+                                  var lname = "";
+                                  if (row.original.Linename) {
+                                    olname = row.original.Linename;
+                                    lname =
+                                      row.original.Linename.replace(
+                                        " ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+
+                                  var mode = "";
+                                  if (this.state.ModeofTransport) {
+                                    mode = this.state.ModeofTransport;
+                                  }
+                                  if (mode == "Ocean" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              lname
+                                            }
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else if (mode == "Air" && lname !== "") {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            alt={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              lname
+                                            }
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
                                   } else {
-                                    return <></>;
+                                    return (
+                                      <React.Fragment>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={olname}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
+                                            alt={olname}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
                                   }
                                 },
                                 accessor: "lineName",
@@ -1214,7 +1377,6 @@ class BookingInsert extends Component {
                         </div>
                       </div>
                     </div>
-
                     <div>
                       <div className="rate-radio-cntr">
                         <div>
@@ -1295,28 +1457,37 @@ class BookingInsert extends Component {
                               )}
                               value={this.state.fields["Consignee"]}
                             />
-                            {/* <select
-                              onChange={this.HandleChangeConsinee.bind(this)}
-                              value={this.state.ConsigneeID}
-                            >
-                              <option selected>select</option>
-                              {this.state.NonCustomerData.map((item, i) => (
-                                <option key={i} value={item.Company_ID}>
-                                  {item.Company_Name}
-                                </option>
-                              ))}
-                            </select> */}
                           </div>
 
                           <div className="col-md-6">
                             <p className="details-title">Address</p>
-                            {/* <p className="details-para"> */}
-                            <textarea
-                              style={{ width: "100%" }}
-                              value={this.state.Consignee_Displayas}
-                            ></textarea>
-                            {/* {this.state.Consinee_Displayas} */}
-                            {/* </p> */}
+
+                            <select
+                              onChange={this.AddressChange.bind(
+                                this,
+                                "Consignee"
+                              )}
+                            >
+                              <option>Select</option>
+
+                              {this.state.conshineeAddData.length > 0
+                                ? this.state.conshineeAddData.map((item, i) => (
+                                    <option key={i} value={item.AddressID}>
+                                      {item.Cust_Address}
+                                    </option>
+                                  ))
+                                : ""}
+                              <option>Other</option>
+                            </select>
+                            <br />
+                            {this.state.conshineeother === true ? (
+                              <textarea
+                                value={this.state.Consinee_Displayas}
+                                onChange={this.HandleConsineeAddressChange.bind(
+                                  this
+                                )}
+                              ></textarea>
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -1355,50 +1526,40 @@ class BookingInsert extends Component {
                                 "Shipper"
                               )}
                             />
-
-                            {/* <select
-                              onChange={this.HandleChangeShipper.bind(this)}
-                              value={this.state.ShipperID}
-                            >
-                              <option selected>select</option>
-                              {this.state.NonCustomerData.map((item, i) => (
-                                <option key={i} value={item.Company_ID}>
-                                  {item.Company_Name}
-                                </option>
-                              ))}
-                            </select> */}
                           </div>
 
                           <div className="col-md-6">
                             <p className="details-title">Address</p>
 
-                            {/* {this.state.shipperData !== null
-                                ? this.state.shipperData.CompanyAddress
-                                : ""} */}
-                            {/* {this.state.Shipper_Displayas} */}
-                            <textarea
-                              style={{ width: "100%" }}
-                              value={this.state.Shipper_Displayas}
-                            ></textarea>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                            <select
+                              onChange={this.AddressChange.bind(
+                                this,
+                                "Shipper"
+                              )}
+                            >
+                              <option>Select</option>
 
-                    <div className="row">
-                      <div className="col-md-6 login-fields">
-                        <p className="details-title">Commodity</p>
-                        <select
-                          disabled={true}
-                          value={this.state.selectedCommodity}
-                        >
-                          <option>Select</option>
-                          {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.Commodity}>
-                              {item.Commodity}
-                            </option>
-                          ))}
-                        </select>
+                              {this.state.shipperAddData.length > 0
+                                ? this.state.shipperAddData.map((item, i) => (
+                                    <option key={i} value={item.AddressID}>
+                                      {item.Cust_Address}
+                                    </option>
+                                  ))
+                                : ""}
+                              <option>Other</option>
+                            </select>
+                            <br />
+                            {this.state.shipperother === true ? (
+                              <textarea
+                                value={this.state.Shipper_Displayas}
+                                onChange={this.HandleConsineeAddressChange.bind(
+                                  this
+                                )}
+                              ></textarea>
+                            ) : null}
+                            </div>
+                       
+                        </div>
                       </div>
                     </div>
 
@@ -1411,22 +1572,7 @@ class BookingInsert extends Component {
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
-                              {/* {Booking.length > 0
-                                ? Booking[0].Buyer_Name
-                                : null} */}
-
-                              {/* <select
-                                onChange={this.HandleChangeBuyer.bind(this)}
-                                value={this.state.BuyerID}
-                              >
-                                <option selected>select</option>
-                                {this.state.NonCustomerData.map((item, i) => (
-                                  <option key={i} value={item.Company_ID}>
-                                    {item.Company_Name}
-                                  </option>
-                                ))}
-                              </select> */}
-
+                               
                               <Autocomplete
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.Buyer}
@@ -1461,11 +1607,31 @@ class BookingInsert extends Component {
                             {/* {this.state.Buyer_Displayas !== ""
                                 ? this.state.Buyer_Displayas
                                 : null} */}
+                            <select
+                              onChange={this.AddressChange.bind(this, "Buyer")}
+                            >
+                              <option>Select</option>
 
-                            <textarea
-                              style={{ width: "100%" }}
-                              value={this.state.Buyer_Displayas}
-                            ></textarea>
+                              {this.state.buyerAddData.length > 0
+                                ? this.state.buyerAddData.map((item, i) => (
+                                    <option key={i} value={item.AddressID}>
+                                      {item.Cust_Address}
+                                    </option>
+                                  ))
+                                : ""
+                              //<option>Other</option>
+                              }
+                              <option>Other</option>
+                            </select>
+                            <br />
+                            {this.state.buyerother === true ? (
+                              <textarea
+                                value={this.state.Buyer_Displayas}
+                                onChange={this.HandleConsineeAddressChange.bind(
+                                  this
+                                )}
+                              ></textarea>
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -1479,17 +1645,7 @@ class BookingInsert extends Component {
                           <div className="col-md-6 login-fields">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
-                              {/* <select
-                                onChange={this.HandleChangeParty.bind(this)}
-                                value={this.state.NotifyID}
-                              >
-                                <option selected>select</option>
-                                {this.state.NonCustomerData.map((item, i) => (
-                                  <option key={i} value={item.Company_ID}>
-                                    {item.Company_Name}
-                                  </option>
-                                ))}
-                              </select> */}
+                              
 
                               <Autocomplete
                                 getItemValue={item => item.Company_Name}
@@ -1521,18 +1677,50 @@ class BookingInsert extends Component {
                           </div>
                           <div className="col-md-6">
                             <p className="details-title">Address</p>
-                            {/* <p className="details-para">
-                              {this.state.Notify_Displayas !== ""
-                                ? this.state.Notify_Displayas
-                                : null}
-                            </p> */}
+                    
+                            <select
+                              onChange={this.AddressChange.bind(this, "Notify")}
+                            >
+                              <option>Select</option>
 
-                            <textarea
-                              style={{ width: "100%" }}
-                              value={this.state.Buyer_Displayas}
-                            ></textarea>
+                              {this.state.notifyAddData.length > 0
+                                ? this.state.notifyAddData.map((item, i) => (
+                                    <option key={i} value={item.AddressID}>
+                                      {item.Cust_Address}
+                                    </option>
+                                  ))
+                                : ""
+                              //<option>Other</option>
+                              }
+                              <option>Other</option>
+                            </select>
+                            <br />
+                            {this.state.notiother === true ? (
+                              <textarea
+                                value={this.state.Notify_Displayas}
+                                onChange={this.HandleConsineeAddressChange.bind(
+                                  this
+                                )}
+                              ></textarea>
+                            ) : null}
                           </div>
                         </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-6 login-fields">
+                        <p className="details-title">Commodity</p>
+                        <select
+                          disabled={true}
+                          value={this.state.selectedCommodity}
+                        >
+                          <option>Select</option>
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.Commodity}>
+                              {item.Commodity}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     <div>

@@ -711,7 +711,7 @@ class ShipmentPlanner extends Component {
     debugger;
     let self = this;
     var selectComp = document.getElementById("drpCompany").selectedIndex;
-    let compArray = this.state.companydrp[selectComp];
+    let compArray = this.state.companydrp[selectComp-1];
 
     // for (let index = 0; index < this.state.companydrp.length; index++) {
     //   if (this.state.companydrp[index].MyCompID == e.target.value) {
