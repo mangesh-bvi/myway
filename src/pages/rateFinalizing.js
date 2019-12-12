@@ -29,7 +29,7 @@ class RateFinalizing extends Component {
     this.state = {
       modalProfit: false,
       modalRequest: false,
-      modalRequestMsg:false,
+      modalRequestMsg: false,
       modalEdit: false,
       modalNewConsignee: false,
       commoditySelect: "select",
@@ -119,8 +119,7 @@ class RateFinalizing extends Component {
       SalesQuoteNo: "",
       PickUpAddress: "",
       DestinationAddress: "",
-      specialEqtSelect: false,
-      specialEquipment: false
+      multiCBM: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -133,8 +132,10 @@ class RateFinalizing extends Component {
     this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
     this.SendRequestCopy = this.SendRequestCopy.bind(this);
-    this.RequestChangeMsgModal=this.RequestChangeMsgModal.bind(this);
-    this.RequestChangeMsgModalClose=this.RequestChangeMsgModalClose.bind(this);
+    this.RequestChangeMsgModal = this.RequestChangeMsgModal.bind(this);
+    this.RequestChangeMsgModalClose = this.RequestChangeMsgModalClose.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -450,7 +451,22 @@ class RateFinalizing extends Component {
           commodityData: commodityData,
           selected: selected,
           spacEqmtType: spacEqmtType,
-          flattack_openTop: flattack_openTop,
+          flattack_openTop:
+            flattack_openTop.length == 0
+              ? [
+                  {
+                    SpecialContainerCode: "",
+                    PackageType: "",
+                    Quantity: 0,
+                    Lengths: 0,
+                    Width: 0,
+                    Height: 0,
+                    Weight: 0,
+                    VolumeWeight: 0,
+                    Volume: 0
+                  }
+                ]
+              : flattack_openTop,
           polfullAddData: polfullAddData,
           podfullAddData: podfullAddData,
           currencyCode: currencyCode,
@@ -557,6 +573,7 @@ class RateFinalizing extends Component {
         var PickUpAddress = "";
         var DestinationAddress = "";
         var multiCBM = [];
+        var flattack_openTop = [];
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -718,7 +735,7 @@ class RateFinalizing extends Component {
                 var cargoDetails = "";
                 for (var i = 0; i < table.length; i++) {
                   if (!cargoDetails.includes(table[i].PackageType)) {
-                    cargoDetails += table[i].PackageType + ","
+                    cargoDetails += table[i].PackageType + ",";
                     CargoDetailsArr.push({
                       PackageType: table[i].PackageType,
                       SpecialContainerCode: table[i].PackageType + "_" + i,
@@ -731,14 +748,18 @@ class RateFinalizing extends Component {
                       Weight: table[i].GrossWeight,
                       Gross_Weight: "-",
                       Temperature: "-",
-                      CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
-                          (table[i].ChgWeight)
-                          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                      CBM:
+                        response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                        "AIR"
+                          ? table[i].ChgWeight
+                          : table[i].CBM === undefined
+                          ? "-"
+                          : table[i].CBM,
                       Volume: "-",
                       VolumeWeight: "-",
                       Editable: true
                     });
-                  
+
                     PackageDetailsArr.push({
                       PackageType: table[i].PackageType,
                       // SpecialContainerCode:
@@ -749,13 +770,31 @@ class RateFinalizing extends Component {
                       Width: table[i].Width,
                       Height: table[i].height,
                       Weight: table[i].GrossWeight,
-                      CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
-                          (table[i].ChgWeight)
-                          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                      CBM:
+                        response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                        "AIR"
+                          ? table[i].ChgWeight
+                          : table[i].CBM === undefined
+                          ? "-"
+                          : table[i].CBM,
                       Editable: true
                     });
 
-                    multiCBM.push(table[i])
+                    multiCBM.push(table[i]);
+                    if (param.type == "FCL") {
+                      flattack_openTop.push({
+                        SpecialContainerCode: "",
+                        PackageType: table[i].PackageType,
+                        Quantity: table[i].Quantity,
+                        length: table[i].Length,
+                        width: table[i].Width,
+                        height: table[i].height,
+                        Weight: table[i].GrossWeight,
+                        Gross_Weight: table[i].GrossWeight,
+                        VolumeWeight: 0,
+                        Volume: 0
+                      });
+                    }
                   }
                 }
               }
@@ -771,7 +810,10 @@ class RateFinalizing extends Component {
         self.setState({
           rateDetails: rateDetails,
           rateSubDetails: response.data.Table2,
-          multiCBM: multiCBM
+          multiCBM: multiCBM,
+          flattack_openTop: flattack_openTop,
+          specialEqtSelect: true,
+          specialEquipment: true
         });
         self.forceUpdate();
         self.HandleLocalCharges();
@@ -1052,15 +1094,15 @@ class RateFinalizing extends Component {
     this.RequestChangeMsgModalClose();
   }
 
-  RequestChangeMsgModal(){
+  RequestChangeMsgModal() {
     this.setState(prevState => ({
-      modalRequestMsg:!prevState.modalRequestMsg
+      modalRequestMsg: !prevState.modalRequestMsg
     }));
   }
-  RequestChangeMsgModalClose(){
+  RequestChangeMsgModalClose() {
     this.setState({
-      modalRequestMsg:false
-    })
+      modalRequestMsg: false
+    });
   }
 
   togglePreview() {
@@ -1103,7 +1145,7 @@ class RateFinalizing extends Component {
   }
 
   SendRequest() {
-    debugger
+    debugger;
     var txtRequestDiscount,
       txtRequestFreeTime,
       txtRequestComments = "";
@@ -1707,126 +1749,6 @@ class RateFinalizing extends Component {
       Commodity: Number(this.state.CommodityID)
     };
 
-    debugger
-    // var SendRequestparaAIR={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   Containerdetails:Containerdetails,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   BaseCurrency:rateSubDetailsarr[j].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-
-    // var SendRequestparaFCL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   Containerdetails:Containerdetails,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   BaseCurrency:rateSubDetailsarr[j].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-    // var SendRequestparaLCL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-    // var SendRequestparaFTL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   OriginPort_ID :,
-    //   DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   PickUpAddressDetails:this.state.pickUpAddress,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.DestGeoCordinate,
-    //   FTLTruckDetails:,
-    //   BaseCurrency:rateSubDetailsarr[j].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:,
-    //   SQCharges:this.state.RateSubDetails
-    // };
     var url = "";
 
     if (this.state.containerLoadType == "FCL") {
@@ -1836,7 +1758,7 @@ class RateFinalizing extends Component {
         this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
       //senrequestpara.NonStackable = 0;
-      // url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "LCL") {
       senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.LCLSQCharges = FCLSQCharges;
@@ -1844,7 +1766,7 @@ class RateFinalizing extends Component {
         this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
-      // url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
     } else if (
       this.state.containerLoadType == "FTL" ||
       this.state.containerLoadType == "LTL"
@@ -1854,7 +1776,7 @@ class RateFinalizing extends Component {
       senrequestpara.CustomClearance =
         this.state.CustomClearance == true ? 1 : 0;
 
-      // url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
     } else if (this.state.containerLoadType == "AIR") {
       senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
       senrequestpara.AirSQCharges = FCLSQCharges;
@@ -1862,7 +1784,7 @@ class RateFinalizing extends Component {
         this.state.CustomClearance == true ? 1 : 0;
       senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
       senrequestpara.Containerdetails = Containerdetails;
-      // url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
+      url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
     }
     //return false;
     // usertype
@@ -1871,7 +1793,7 @@ class RateFinalizing extends Component {
     let self = this;
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/SpotRateInsertion`,
+      url: url,
       data: senrequestpara,
       headers: authHeader()
     })
@@ -1911,101 +1833,94 @@ class RateFinalizing extends Component {
       });
   }
 
-  SendRequestCopy(){
+  SendRequestCopy() {
     var txtRequestDiscount,
-    txtRequestFreeTime,
-    txtRequestComments = "";
-  txtRequestDiscount = 0;
-  txtRequestFreeTime = 0;
-  var containerLoadType = this.state.containerLoadType;
- 
-  var rateDetailsarr = this.state.rateDetails;
-  var rateSubDetailsarr = this.state.rateSubDetails;
+      txtRequestFreeTime,
+      txtRequestComments = "";
+    txtRequestDiscount = 0;
+    txtRequestFreeTime = 0;
+    var containerLoadType = this.state.containerLoadType;
 
-  var SQCopyChargesList = [];
+    var rateDetailsarr = this.state.rateDetails;
+    var rateSubDetailsarr = this.state.rateSubDetails;
 
- 
+    var SQCopyChargesList = [];
+
     for (var j = 0; j < rateSubDetailsarr.length; j++) {
       if (containerLoadType == "FCL") {
-          
-            SQCopyChargesList.push({
-                SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
-                SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-                Chargeitem:rateSubDetailsarr[j].Chargeitem,
-                Tax:rateSubDetailsarr[j].Tax,
-                ExRate:rateSubDetailsarr[j].ExRate,
-                ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-                Type:rateSubDetailsarr[j].Type,
-                SellRate:rateSubDetailsarr[j].SellRate,
-                BuyRate:rateSubDetailsarr[j].BuyRate,
-                Currency:rateSubDetailsarr[j].BaseCurrency                
-              });
-                  
-      }else if(containerLoadType == "LCL"){
-          SQCopyChargesList.push({
-            SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
-            SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
-            ChargeCode: rateSubDetailsarr[j].ChargeCode,
-            BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-            Chargeitem:rateSubDetailsarr[j].Chargeitem,
-            Tax:rateSubDetailsarr[j].Tax,
-            ExRate:rateSubDetailsarr[j].ExRate,
-            ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-            Type:rateSubDetailsarr[j].Type,
-            SellRate:rateSubDetailsarr[j].SellRate,
-            BuyRate:rateSubDetailsarr[j].BuyRate,
-            Currency:rateSubDetailsarr[j].BaseCurrency                
-          });
-      }else if (containerLoadType == "AIR") {
         SQCopyChargesList.push({
           SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
           SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
           ChargeCode: rateSubDetailsarr[j].ChargeCode,
           BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem:rateSubDetailsarr[j].Chargeitem,
-          Tax:rateSubDetailsarr[j].Tax,
-          ExRate:rateSubDetailsarr[j].Exrate,
-          ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-          Type:rateSubDetailsarr[j].Type,
-          SellRate:rateSubDetailsarr[j].SellRate,
-          BuyRate:rateSubDetailsarr[j].BuyRate,
-          Currency:rateSubDetailsarr[j].BaseCurrency              
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].ExRate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
         });
-      }else if (containerLoadType == "INLAND") {
+      } else if (containerLoadType == "LCL") {
+        SQCopyChargesList.push({
+          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+          SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+          ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].ExRate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
+        });
+      } else if (containerLoadType == "AIR") {
+        SQCopyChargesList.push({
+          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+          SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
+          ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].Exrate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
+        });
+      } else if (containerLoadType == "INLAND") {
         SQCopyChargesList.push({
           SaleQuoteID: rateSubDetailsarr[j].SaleQuoteIDD,
           SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
           ChargeCode: rateSubDetailsarr[j].ChargeCode,
           BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem:rateSubDetailsarr[j].Chargeitem,
-          Tax:rateSubDetailsarr[j].Tax,
-          ExRate:rateSubDetailsarr[j].ExRate,
-          ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-          Type:rateSubDetailsarr[j].Type,
-          SellRate:rateSubDetailsarr[j].SellRate,
-          BuyRate:rateSubDetailsarr[j].BuyRate,
-          Currency:rateSubDetailsarr[j].BaseCurrency              
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].ExRate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
         });
       }
-      
-     
     }
 
+    var Containerdetails = [];
+    var RateQueryDim = [];
+    // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+    var usesr = this.state.users;
+    var spacEqmtType = this.state.spacEqmtType;
+    var referType = this.state.referType;
+    var flattack_openTop = this.state.flattack_openTop;
 
-  var Containerdetails = [];
-  var RateQueryDim = [];
-  // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
-  var usesr = this.state.users;
-  var spacEqmtType = this.state.spacEqmtType;
-  var referType = this.state.referType;
-  var flattack_openTop = this.state.flattack_openTop;
-
- 
     debugger;
     var multiCBM = this.state.multiCBM;
-    
+
     for (var i = 0; i < multiCBM.length; i++) {
       if (this.state.containerLoadType == "FCL") {
         //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
@@ -2053,77 +1968,79 @@ class RateFinalizing extends Component {
           GrossWt: multiCBM[i].GrossWeight,
           VolumeWeight: multiCBM[i].VolumeWeight,
           Volume: 0,
-          PackageType: multiCBM[i].PackageType === null?"":multiCBM[i].PackageType
+          PackageType:
+            multiCBM[i].PackageType === null ? "" : multiCBM[i].PackageType
         });
       }
     }
-    
 
+    debugger;
+    var senrequestpara = {
+      Commodity: Number(this.state.CommodityID),
+      OldSaleQuoteNumber: this.props.location.state.Quote,
+      OldSaleQuoteID:
+        rateSubDetailsarr[0].SaleQuoteID == undefined
+          ? rateSubDetailsarr[0].SaleQuoteIDD
+          : rateSubDetailsarr[0].SaleQuoteID,
+      MailBody:
+        "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+      RateQueryDim: RateQueryDim,
+      SQCopyChargesList: SQCopyChargesList,
+      Mode: this.state.containerLoadType,
+      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+    };
 
-  debugger;
-  var senrequestpara = {
-    Commodity: Number(this.state.CommodityID),
-    OldSaleQuoteNumber: this.props.location.state.Quote,
-    OldSaleQuoteID: rateSubDetailsarr[0].SaleQuoteID==undefined?
-                    rateSubDetailsarr[0].SaleQuoteIDD:rateSubDetailsarr[0].SaleQuoteID,
-    MailBody:"Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
-    RateQueryDim: RateQueryDim,
-    SQCopyChargesList: SQCopyChargesList,
-    Mode: this.state.containerLoadType,
-    MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-  };
+    var url = "";
 
-  var url = "";
-
-  //if (this.state.containerLoadType == "FCL") {
+    //if (this.state.containerLoadType == "FCL") {
     //senrequestpara.NonStackable = 0;
     url = `${appSettings.APIURL}/SalesQuoteCopy`;
-  //} 
-  //return false;
-  // usertype
+    //}
+    //return false;
+    // usertype
 
-  var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
-  let self = this;
-  axios({
-    method: "post",
-    url: url,
-    data: senrequestpara,
-    headers: authHeader()
-  })
-    .then(function(response) {
-      debugger;
-      if (response != null) {
-        if (response.data != null) {
-          if (response.data.Table != null) {
-            if (response.data.Table.length > 0) {
-              NotificationManager.success(response.data.Table[0].Message);
-              var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
-              if (usertype !== "Sales User") {
-                self.setState({
-                  SalesQuoteNo
-                });
+    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
+    let self = this;
+    axios({
+      method: "post",
+      url: url,
+      data: senrequestpara,
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                NotificationManager.success(response.data.Table[0].Message);
+                var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
+                if (usertype !== "Sales User") {
+                  self.setState({
+                    SalesQuoteNo
+                  });
 
-                self.AcceptQuotes();
+                  self.AcceptQuotes();
 
-                setTimeout(function() {
-                  window.location.href = "quote-table";
-                }, 1000);
-              } else {
-                setTimeout(function() {
-                  window.location.href = "quote-table";
-                }, 1000);
+                  setTimeout(function() {
+                    window.location.href = "quote-table";
+                  }, 1000);
+                } else {
+                  setTimeout(function() {
+                    window.location.href = "quote-table";
+                  }, 1000);
+                }
+                // window.location.href = "quote-table";
               }
-              // window.location.href = "quote-table";
             }
           }
         }
-      }
-      //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
-    })
-    .catch(error => {
-      debugger;
-      console.log(error.response);
-    });
+        //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+      })
+      .catch(error => {
+        debugger;
+        console.log(error.response);
+      });
   }
 
   SendQuote() {}
@@ -2373,6 +2290,7 @@ class RateFinalizing extends Component {
     });
     this.forceUpdate();
   }
+
   SubmitCargoDetails(e) {
     debugger;
     var PackageDetailsArr = [];
@@ -2389,24 +2307,22 @@ class RateFinalizing extends Component {
           multiCBM[i].PackageType = this.state.currentPackageType;
         }
 
-        
-      PackageDetailsArr.push({
-        PackageType: multiCBM[i].PackageType,
-        SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
-        ContainerType: multiCBM[i].PackageType,
-        Packaging: "-",
-        Quantity: multiCBM[i].Quantity,
-        Lenght: multiCBM[i].Lengths,
-        Width: multiCBM[i].Width,
-        Height: multiCBM[i].Height,
-        Weight: multiCBM[i].GrossWt,
-        CBM: multiCBM[i].VolumeWeight,
-        Editable: true
-      });
+        PackageDetailsArr.push({
+          PackageType: multiCBM[i].PackageType,
+          SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+          ContainerType: multiCBM[i].PackageType,
+          Packaging: "-",
+          Quantity: multiCBM[i].Quantity,
+          Lenght: multiCBM[i].Lengths,
+          Width: multiCBM[i].Width,
+          Height: multiCBM[i].Height,
+          Weight: multiCBM[i].GrossWt,
+          CBM: multiCBM[i].Volume,
+          Editable: true
+        });
       }
 
       this.setState({
-        PackageDetailsArr: PackageDetailsArr,
         multiCBM: multiCBM
       });
     } else {
@@ -2418,33 +2334,26 @@ class RateFinalizing extends Component {
         ) {
           flattack_openTop[i].PackageType = this.state.currentPackageType;
         }
+
+        PackageDetailsArr.push({
+          PackageType: flattack_openTop[i].PackageType,
+          SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
+          ContainerType:
+            flattack_openTop[i].PackageType +
+            " (" +
+            flattack_openTop[i].SpecialContainerCode +
+            ")",
+          Quantity: flattack_openTop[i].Quantity,
+          Lenght: flattack_openTop[i].length,
+          Width: flattack_openTop[i].width,
+          Height: flattack_openTop[i].height,
+          Weight: flattack_openTop[i].Gross_Weight,
+          CBM: flattack_openTop[i].total,
+          Editable: true
+        });
       }
 
-      if (flattack_openTop != null) {
-        if (flattack_openTop.length > 0) {
-          for (var i = 0; i < flattack_openTop.length; i++) {
-            PackageDetailsArr.push({
-              PackageType: flattack_openTop[i].PackageType,
-              SpecialContainerCode:
-                flattack_openTop[i].SpecialContainerCode,
-              ContainerType:
-                flattack_openTop[i].PackageType +
-                " (" +
-                flattack_openTop[i].SpecialContainerCode +
-                ")",
-              Quantity: flattack_openTop[i].Quantity,
-              Lenght: flattack_openTop[i].length,
-              Width: flattack_openTop[i].width,
-              Height: flattack_openTop[i].height,
-              Weight: flattack_openTop[i].Gross_Weight,
-              CBM: flattack_openTop[i].total,
-              Editable: true
-            });
-          }
-        }
-      }
       this.setState({
-        PackageDetailsArr: PackageDetailsArr,
         flattack_openTop: flattack_openTop
       });
     }
@@ -2473,6 +2382,7 @@ class RateFinalizing extends Component {
     }
 
     this.setState({
+      PackageDetailsArr: PackageDetailsArr,
       CargoDetailsArr: CargoDetailsArr
     });
 
@@ -2696,7 +2606,7 @@ class RateFinalizing extends Component {
 
     this.setState({ flattack_openTop });
   }
-  
+
   addMultiDim() {
     this.setState(prevState => ({
       flattack_openTop: [
@@ -2720,57 +2630,6 @@ class RateFinalizing extends Component {
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop.splice(i, 1);
     this.setState({ flattack_openTop });
-  }
-
-  HandleChangeMultiCBM(i, e) {
-    debugger;
-    const { name, value } = e.target;
-
-    let multiCBM = [...this.state.multiCBM];
-
-    if ("PackageType" === name) {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value
-      };
-    } else {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value === "" ? 0 : parseFloat(value)
-      };
-    }
-
-    this.setState({ multiCBM });
-    if (this.state.containerLoadType !== "LCL") {
-      var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
-        6000;
-      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWt
-        };
-      } else {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
-        };
-      }
-    } else {
-      var decVolume =
-        multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
-      };
-    }
-
-    this.setState({ multiCBM });
-
   }
 
   addMultiCBM() {
@@ -2906,27 +2765,27 @@ class RateFinalizing extends Component {
           </div>
         </div> */}
         {i === 0 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-plus mt-2"
-                  aria-hidden="true"
-                  onClick={this.addMultiDim.bind(this)}
-                ></i>
-              </div>
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiDim.bind(this)}
+              ></i>
             </div>
-          ) : null}
-          {this.state.flattack_openTop.length > 1 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-minus mt-2"
-                  aria-hidden="true"
-                  onClick={this.removeMultiDim.bind(this, i)}
-                ></i>
-              </div>
+          </div>
+        ) : null}
+        {this.state.flattack_openTop.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiDim.bind(this, i)}
+              ></i>
             </div>
-          ) : null}
+          </div>
+        ) : null}
         {/* <div className="">
           <div className="spe-equ">
             <i
@@ -2940,67 +2799,120 @@ class RateFinalizing extends Component {
     ));
   }
 
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value === "" ? 0 : parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+        6000;
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWt
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Lengths / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].Height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: parseFloat(decVolume)
+      };
+    }
+
+    this.setState({ multiCBM });
+  }
+
   CreateMultiCBM() {
-    return this.state.cbmVal == "" ? (
-      this.state.multiCBM.map((el, i) => (
-        <div className="row cbm-space" key={i}>
-          <div className="col-md">
-            <div className="spe-equ">
-              <select
-                className="select-text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                name="PackageType"
-                value={el.PackageType}
-              >
-                <option selected>Select</option>
-                {this.state.packageTypeData.map((item, i) => (
-                  <option key={i} value={item.PackageName}>
-                    {item.PackageName}
-                  </option>
-                ))}
-              </select>
-            </div>
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder="QTY"
-                className="w-100"
-                name="Quantity"
-                value={el.Quantity || ""}
-                //onKeyUp={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={"L (cm)"}
-                className="w-100"
-                name="Lengths"
-                value={el.Lengths || ""}
-                // onBlur={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Lengths"
+              value={this.state.isCopy == true ? el.Length : el.Lengths || ""}
+              // onBlur={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={"W (cm)"}
-                className="w-100"
-                name="Width"
-                value={el.Width || ""}
-                //onBlur={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
+        </div>
+        <div className="col-md">
+          {(this.state.containerLoadType.toUpperCase() == "LCL" ||
+            "AIR" ||
+            "LTL") &&
+          this.state.NonStackable ? (
             <div className="spe-equ">
               <input
                 type="text"
@@ -3008,90 +2920,93 @@ class RateFinalizing extends Component {
                 placeholder="H (cm)"
                 className="w-100"
                 name="Height"
-                value={el.Height || ""}
+                value={this.state.isCopy == true ? el.height : el.Height || ""}
+                disabled
                 //onBlur={this.cbmChange}
               />
             </div>
-          </div>
-
-          <div className="col-md">
+          ) : (
             <div className="spe-equ">
               <input
                 type="text"
                 onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
-                name="GrossWt"
-                value={el.GrossWt || ""}
+                placeholder="H (cm)"
                 className="w-100"
+                name="Height"
+                value={this.state.isCopy == true ? el.height : el.Height || ""}
+                //onBlur={this.cbmChange}
               />
             </div>
+          )}
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
+              name="GrossWt"
+              value={
+                this.state.isCopy == true ? el.GrossWeight : el.GrossWt || ""
+              }
+              className="w-100"
+            />
           </div>
-          <div className="col-md">
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
             <div className="spe-equ">
-              <input
-                type="text"
-                disabled
-                name={
-                  this.state.containerLoadType === "LCL"
-                    ? "Volume"
-                    : "VolumeWeight"
-                }
-                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                placeholder={
-                  this.state.containerLoadType === "LCL"
-                    ? "KG"
-                    : this.state.containerLoadType === "AIR"
-                    ? "CW"
-                    : "VW"
-                }
-                value={
-                  this.state.containerLoadType === "LCL"
-                    ? el.Volume
-                    : el.VolumeWeight || ""
-                }
-                className="w-100 weight-icon"
-              />
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
             </div>
           </div>
-          {i === 0 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-plus mt-2"
-                  aria-hidden="true"
-                  onClick={this.addMultiCBM.bind(this)}
-                ></i>
-              </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
             </div>
-          ) : null}
-          {this.state.multiCBM.length > 1 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-minus mt-2"
-                  aria-hidden="true"
-                  onClick={this.removeMultiCBM.bind(this, i)}
-                ></i>
-              </div>
-            </div>
-          ) : null}
-        </div>
-      ))
-    ) : (
-      <div className="col-md-4 m-auto">
-        <div className="spe-equ">
-          <input
-            type="number"
-            minLength={1}
-            //onChange={this.HandleCMBtextChange.bind(this)}
-            placeholder={this.state.modeoftransport != "AIR" ? "CBM" : "KG"}
-            className="w-100"
-            value={this.state.cbmVal}
-          />
-        </div>
+          </div>
+        ) : null}
       </div>
-    );
+    ));
   }
+
   //------------------------------------------------------------------//
 
   render() {
@@ -3594,40 +3509,35 @@ class RateFinalizing extends Component {
                                   debugger;
                                   var lname = "";
                                   var olname = "";
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
                                     lname =
-                                      row._original.lineName.replace(
+                                      row._original.LineName.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
-                                    lname =
-                                      row._original.lineName.replace(
-                                        "  ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
-                                  }
+
                                   var mode = this.state.ModeOfTransport;
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
-                                    row._original.lineName
-                                    .replace(" ", "_")
-                                    .replace(" ", "_") + ".png";
-                                    }
-                                    var mode = "";
-                                    if (this.state.ModeOfTransport) {
+                                      row._original.lineName
+                                        .replace(" ", "_")
+                                        .replace(" ", "_") + ".png";
+                                  }
+                                  var mode = "";
+                                  if (this.state.ModeOfTransport) {
                                     mode = this.state.ModeOfTransport;
-                                    }
-                                    if (this.state.modeoftransport) {
+                                  }
+                                  if (this.state.modeoftransport) {
                                     mode =
-                                    this.state.modeoftransport === "SEA"
-                                    ? "Ocean"
-                                    : this.state.modeoftransport === "AIR"?"Air":"Inlande";
-                                    }
+                                      this.state.modeoftransport === "SEA"
+                                        ? "Ocean"
+                                        : this.state.modeoftransport === "AIR"
+                                        ? "Air"
+                                        : "Inlande";
+                                  }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
@@ -4089,25 +3999,25 @@ class RateFinalizing extends Component {
                           </a> */}
                         </div>
                         <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.shipmentType}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {this.state.modeoftransport}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.containerLoadType}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Equipment Types</p>
                             {this.state.selected.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4115,7 +4025,7 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Special Equipment</p>
                             {this.state.flattack_openTop.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4128,25 +4038,25 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
                               {this.state.HazMat === true ? "Yes " : "No"}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Non Stackable</p>
                             <p className="details-para">
                               {this.state.NonStackable === true ? "Yes" : "No"}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {this.state.incoTerm}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-md-4">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove === 1
@@ -4161,7 +4071,7 @@ class RateFinalizing extends Component {
                             </p>
                           </div>
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">POL</p>
                               <p className="details-para">
                                 {this.state.polfullAddData.NameWoDiacritics}
@@ -4169,7 +4079,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">POD</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.NameWoDiacritics}
@@ -4177,7 +4087,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">PU Address</p>
                               <p className="details-para">
                                 {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -4186,7 +4096,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                            <div className="col-md-4">
                               <p className="details-title">Delivery Address</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.OceanPortLongName}
@@ -4259,13 +4169,15 @@ class RateFinalizing extends Component {
                     <div className="title-border py-3">
                       <h3>Cargo Details</h3>
                     </div>
+                    <div className="align-center">
+                      <button
+                        onClick={this.toggleEdit}
+                        className="butn more-padd m-0"
+                      >
+                        Add Cargo
+                      </button>
+                    </div>
                     <div className="ag-fresh redirect-row">
-                        <button
-                          onClick={this.toggleEdit}
-                          className="butn more-padd m-0"
-                        >
-                          Add Cargo
-                        </button>
                       {TruckDetailsArr.length !== 0 ? (
                         <ReactTable
                           data={TruckDetailsArr}
@@ -4325,15 +4237,15 @@ class RateFinalizing extends Component {
                               accessor: "ContainerType",
                               minWidth: 110
                             },
-                            // this.state.containerLoadType.toUpperCase() !==
-                            //     "FCL"?
                             {
                               Header: "Quantity",
                               accessor: "Quantity",
-                              show: this.state.containerLoadType.toUpperCase() !==
-                                   "FCL"?true:false
+                              show:
+                                this.state.containerLoadType.toUpperCase() ==
+                                "FCL"
+                                  ? false
+                                  : true
                             },
-                            //:null,
                             {
                               Header: "Lenght",
                               accessor: "Lenght"
@@ -4349,7 +4261,7 @@ class RateFinalizing extends Component {
                             {
                               Header: "Gross Weight",
                               accessor: "Weight",
-                              minWidth: 140                              
+                              minWidth: 140
                               //editable: this.state.containerLoadType == "Air" ? true : false
                             },
                             // {
@@ -4363,9 +4275,11 @@ class RateFinalizing extends Component {
                                   ? "CBM"
                                   : "Chargable Weight",
                               accessor: "CBM",
-                              show: this.state.containerLoadType.toUpperCase() !==
-                                    "FCL"?true:false
-                              //show:  this.state.containerLoadType == "Air" ? false : true
+                              show:
+                                this.state.containerLoadType.toUpperCase() ==
+                                "FCL"
+                                  ? false
+                                  : true
                             }
                             // {
                             //   Header: "Action",
@@ -4569,7 +4483,11 @@ class RateFinalizing extends Component {
                       </a> */}
                       <button
                         // onClick={this.SendQuote}
-                        onClick={this.state.isCopy===true?this.SendRequestCopy:this.SendRequest}
+                        onClick={
+                          this.state.isCopy === true
+                            ? this.SendRequestCopy
+                            : this.SendRequest
+                        }
                         className={
                           this.state.commoditySelect == "select" // ||
                             ? // this.state.cargoSelect == "select"
@@ -4578,10 +4496,11 @@ class RateFinalizing extends Component {
                         }
                       >
                         {encryption(
-                              window.localStorage.getItem("usertype"),
-                              "desc"
-                            ) != "Customer"?
-                        "Send":"Confirm And Approve"}
+                          window.localStorage.getItem("usertype"),
+                          "desc"
+                        ) != "Customer"
+                          ? "Send"
+                          : "Confirm And Approve"}
                       </button>
                     </div>
                   </div>
@@ -4682,18 +4601,24 @@ class RateFinalizing extends Component {
               </div>
             </ModalBody>
           </Modal> */}
-         <Modal
+          <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequestMsg}
             toggle={this.RequestChangeMsgModal}
             centered={true}
           >
             <ModalBody>
-              <p>Are you sure, this will discard the Sales Quote and will raise a new Spot Rate Request.</p>
+              <p>
+                Are you sure, this will discard the Sales Quote and will raise a
+                new Spot Rate Request.
+              </p>
               <Button className="butn" onClick={this.toggleRequest}>
                 Yes
               </Button>
-              <Button className="butn cancel-butn" onClick={this.RequestChangeMsgModal}>
+              <Button
+                className="butn cancel-butn"
+                onClick={this.RequestChangeMsgModal}
+              >
                 No
               </Button>
             </ModalBody>
@@ -5762,8 +5687,8 @@ class RateFinalizing extends Component {
               >
                 <h3 className="mb-4">Edit Cargo Details</h3>
                 <>
-                      {" "}
-                      {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                  {" "}
+                  {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                         <Select
                           className="rate-dropdown"
                           getOptionLabel={option =>
@@ -5779,7 +5704,7 @@ class RateFinalizing extends Component {
                           showNewOptionAtTop={false}
                         />
                       </div> */}
-                      {/* <div className="d-flex flex-wrap justify-content-center">
+                  {/* <div className="d-flex flex-wrap justify-content-center">
                         {this.NewcreateUI()}
                       </div>
                       <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
@@ -5791,11 +5716,11 @@ class RateFinalizing extends Component {
                           // onChange={this.HandleSpecialEqtCheck.bind(this)}
                         />
                       </div> */}
-                      {this.state.containerLoadType === "FCL" ? (
-                      this.state.specialEquipment === true ? (
-                        <div className="">
-                          {/* spe-equ mt-0 */}
-                          {/* <div className="equip-plus-cntr w-100">
+                  {this.state.containerLoadType === "FCL" ? (
+                    this.state.specialEquipment === true ? (
+                      <div className="">
+                        {/* spe-equ mt-0 */}
+                        {/* <div className="equip-plus-cntr w-100">
                             <Select
                               className="rate-dropdown"
                               getOptionLabel={option =>
@@ -5810,94 +5735,176 @@ class RateFinalizing extends Component {
                               showNewOptionAtTop={false}
                             />
                           </div> */}
-                          <div id="cbmInner">
-                            {this.state.specialEqtSelect === true ? (
-                              this.state.flattack_openTop.length > 0 ? (
-                                <>{this.MultiCreateCBM()}</>
-                              ) : null
-                            ) : null}
+                        <div id="cbmInner">
+                          {this.state.specialEqtSelect === true ? (
+                            this.state.flattack_openTop.length > 0 ? (
+                              <>{this.MultiCreateCBM()}</>
+                            ) : null
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="row cbm-space" key={i}>
+                        {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <label className="mr-0 mt-2" name="SpecialContainerCode">
+                            {el.SpecialContainerCode}
+                          </label>
+                        </div>
+                      </div> */}
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <select
+                              className="select-text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              name="SpecialContainerCode"
+                              //value={el.SpecialContainerCode}
+                            >
+                              <option selected>Select</option>
+                              {this.state.equipmentTypeArr.map((item, i) => (
+                                <option key={i} value={item.ContainerType}>
+                                  {item.ContainerType}
+                                </option>
+                              ))}
+                            </select>
                           </div>
                         </div>
-                      ) : null):(
-                        this.CreateMultiCBM()
-                      )}
-                    </>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <select
+                              className="select-text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              name="PackageType"
+                              //value={el.PackageType}
+                            >
+                              <option selected>Select</option>
+                              {this.state.packageTypeData.map((item, i) => (
+                                <option key={i} value={item.PackageName}>
+                                  {item.PackageName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              placeholder={"L (cm)"}
+                              className="w-100"
+                              name="length"
+                              //value={el.length || ""}
+                              // onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              placeholder={"W (cm)"}
+                              className="w-100"
+                              name="width"
+                              //value={el.width || ""}
+                              //onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              placeholder="H (cm)"
+                              className="w-100"
+                              name="height"
+                              //value={el.height || ""}
+                              //onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
 
-                {/* <div className="rename-cntr login-fields">
-                  <select
-                    className="select-text"
-                    onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                    name="PackageType"
-                    value={this.state.currentPackageType}
-                  >
-                    <option selected>Select</option>
-                    {this.state.packageTypeData.map((item, i) => (
-                      <option key={i} value={item.PackageName}>
-                        {item.PackageName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Quantity</label>
-                  <input
-                    type="text"
-                    value={this.state.valuequantity}
-                    id="txtRequestFreeTime"
-                    placeholder="Quantity"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Lenght</label>
-                  <input
-                    type="text"
-                    value={this.state.valuelenght}
-                    id="txtRequestFreeTime"
-                    placeholder="Lenght"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Width</label>
-                  <input
-                    type="text"
-                    value={this.state.valuewidth}
-                    id="txtRequestFreeTime"
-                    placeholder="Width"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Height</label>
-                  <input
-                    type="text"
-                    value={this.state.valueheight}
-                    id="txtRequestFreeTime"
-                    placeholder="Height"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Weight</label>
-                  <input
-                    type="text"
-                    value={this.state.valueweight}
-                    id="txtRequestFreeTime"
-                    placeholder="Weight"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>CBM</label>
-                  <input
-                    type="text"
-                    value={this.state.valuecbm}
-                    id="txtRequestFreeTime"
-                    placeholder="CBM"
-                  />
-                </div> */}
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              //placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                              name="Gross_Weight"
+                              //value={el.Gross_Weight}
+                              className="w-100"
+                            />
+                          </div>
+                        </div>
+                        {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            name="total"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+                            value={el.total || ""}
+                            className="w-100"
+                          />
+                        </div>
+                      </div> */}
+                        {i === 0 ? (
+                          <div className="">
+                            <div className="spe-equ">
+                              <i
+                                className="fa fa-plus mt-2"
+                                aria-hidden="true"
+                                onClick={this.addMultiDim.bind(this)}
+                              ></i>
+                            </div>
+                          </div>
+                        ) : null}
+                        {this.state.flattack_openTop.length > 1 ? (
+                          <div className="">
+                            <div className="spe-equ">
+                              <i
+                                className="fa fa-minus mt-2"
+                                aria-hidden="true"
+                                onClick={this.removeMultiDim.bind(this, i)}
+                              ></i>
+                            </div>
+                          </div>
+                        ) : null}
+                        {/* <div className="">
+                        <div className="spe-equ">
+                          <i
+                            className="fa fa-minus mt-2"
+                            aria-hidden="true"
+                            //onClick={this.removeClickMultiCBM.bind(this)}
+                          ></i>
+                        </div>
+                      </div> */}
+                      </div>
+                    )
+                  ) : (
+                    this.CreateMultiCBM()
+                  )}
+                </>
 
                 <div className="text-center">
                   <Button

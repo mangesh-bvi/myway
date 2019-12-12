@@ -138,7 +138,17 @@ class NewRateSearch extends Component {
       ],
       users: [],
       referType: [],
-      flattack_openTop: [],
+      flattack_openTop: [{
+        SpecialContainerCode: "",
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+      }],
       spacEqmtType: [],
       TruckTypeSelect: [],
       TruckTypeData: [
@@ -1279,12 +1289,20 @@ class NewRateSearch extends Component {
           {
             SpecialContainerCode: optionsVal[0].SpecialContainerCode,
             PackageType: "",
-            length: "",
-            width: "",
-            height: "",
-            Quantity: "1",
-            Gross_Weight: "",
-            total: ""
+            Quantity: 0,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            Weight: 0,
+            VolumeWeight: 0,
+            Volume: 0
+            // PackageType: "",
+            // length: "",
+            // width: "",
+            // height: "",
+            // Quantity: "1",
+            // Gross_Weight: "",
+            // total: ""
           }
         ]
       }));
