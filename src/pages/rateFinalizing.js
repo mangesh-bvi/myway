@@ -119,7 +119,8 @@ class RateFinalizing extends Component {
       SalesQuoteNo: "",
       PickUpAddress: "",
       DestinationAddress: "",
-      multiCBM: []
+      multiCBM: [],
+      users: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -177,6 +178,7 @@ class RateFinalizing extends Component {
         var customClearance = this.props.location.state.Custom_Clearance;
         var specialEqtSelect = this.props.location.state.specialEqtSelect;
         var specialEquipment = this.props.location.state.specialEquipment;
+        var users  = this.props.location.state.users;
 
         var CargoDetailsArr = [];
         var equipmentTypeArr = [];
@@ -519,7 +521,8 @@ class RateFinalizing extends Component {
           ContactEmail: contactEmail,
           CustomClearance: customClearance,
           specialEqtSelect: specialEqtSelect,
-          specialEquipment: specialEquipment
+          specialEquipment: specialEquipment,
+          users: users
         });
 
         this.state.rateDetails = rateDetails;
@@ -789,25 +792,27 @@ class RateFinalizing extends Component {
                       Editable: true
                     });
 
-                    PackageDetailsArr.push({
-                      PackageType: table[i].PackageType,
-                      // SpecialContainerCode:
-                      //   flattack_openTop[i].SpecialContainerCode,
-                      ContainerType: table[i].PackageType,
-                      Quantity: table[i].Quantity,
-                      Lenght: table[i].Length,
-                      Width: table[i].Width,
-                      Height: table[i].height,
-                      Weight: table[i].GrossWeight,
-                      CBM:
-                        response.data.Table[0].ModeOfTransport.toUpperCase() ===
-                        "AIR"
-                          ? table[i].ChgWeight
-                          : table[i].CBM === undefined
-                          ? "-"
-                          : table[i].CBM,
-                      Editable: true
-                    });
+                    if(table[i].PackageType !== null){
+                      PackageDetailsArr.push({
+                        PackageType: table[i].PackageType,
+                        // SpecialContainerCode:
+                        //   flattack_openTop[i].SpecialContainerCode,
+                        ContainerType: table[i].PackageType,
+                        Quantity: table[i].Quantity,
+                        Lenght: table[i].Length,
+                        Width: table[i].Width,
+                        Height: table[i].height,
+                        Weight: table[i].GrossWeight,
+                        CBM:
+                          response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                          "AIR"
+                            ? table[i].ChgWeight
+                            : table[i].CBM === undefined
+                            ? "-"
+                            : table[i].CBM,
+                        Editable: true
+                      });
+                    }
 
                     multiCBM.push({
                         PackageType: table[i].PackageType,
@@ -5238,7 +5243,7 @@ class RateFinalizing extends Component {
                           {!this.state.toggleAddProfitBtn && (
                             <p className="details-para">
                               {encryption(
-                                window.localStorage.getItem("username"),
+                                window.localStorage.getItem("companyname"),
                                 "desc"
                               )}
                             </p>
@@ -5247,8 +5252,8 @@ class RateFinalizing extends Component {
                             window.localStorage.getItem("usertype"),
                             "desc"
                           ) != "Customer" ? (
-                            this.state.CompanyName == "" ||
-                            this.state.isCopy ? (
+                            // this.state.CompanyName == "" ||
+                            // this.state.isCopy ? (
                               <Autocomplete
                                 id="searchtxt"
                                 className="title-sect p-0 pt-2"
@@ -5279,7 +5284,7 @@ class RateFinalizing extends Component {
                                   placeholder: "Search Account/Consignee"
                                 }}
                               />
-                            ) : null
+                            // ) : null
                           ) : null}
                         </div>
                         <div className="col-md-4">
