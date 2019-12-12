@@ -10,34 +10,34 @@ import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import LoginActore from "./../assets/img/login-actore.jfif";
-import DownArrow from "./../assets/img/down-arrow.png";
-import Ship from "./../assets/img/ship.png";
-import Truck from "./../assets/img/truck.png";
+// import LoginActore from "./../assets/img/login-actore.jfif";
+// import DownArrow from "./../assets/img/down-arrow.png";
+// import Ship from "./../assets/img/ship.png";
+// import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
-import Plane from "./../assets/img/plane.png";
+// import Plane from "./../assets/img/plane.png";
 import PlaneColor from "./../assets/img/AirShipment-color.png";
 import OceanColor from "./../assets/img/OceanShipment-color.png";
 import TruckColor from "./../assets/img/DelayShipment-color.png";
-import Transit from "./../assets/img/transit.png";
+// import Transit from "./../assets/img/transit.png";
 import { encryption } from "../helpers/encryption";
-import Box from "./../assets/img/box.png";
+// import Box from "./../assets/img/box.png";
 import Delivered from "./../assets/img/delivered.png";
-import InPlane from "./../assets/img/in-plane.png";
-import Arrived from "./../assets/img/arrived.png";
-import ArrivedStatus from "./../assets/img/arrived-status.png";
+// import InPlane from "./../assets/img/in-plane.png";
+// import Arrived from "./../assets/img/arrived.png";
+// import ArrivedStatus from "./../assets/img/arrived-status.png";
 import ArrivedStatusColor from "./../assets/img/Arrived-b.png";
-import InlandTransportStatus from "./../assets/img/inland-transportation-status.png";
+// import InlandTransportStatus from "./../assets/img/inland-transportation-status.png";
 import InlandTransportStatusColor from "./../assets/img/InlandTransportation-b.png";
 import TransshippedStatus from "./../assets/img/transshipped-status.png";
 import InTransitStatus from "./../assets/img/in-transit-status.png";
 import GateInStatus from "./../assets/img/gate-in-status.png";
-import DepartedStatus from "./../assets/img/departed-status.png";
+// import DepartedStatus from "./../assets/img/departed-status.png";
 import DepartedStatusColor from "./../assets/img/Departed-b.png";
-import DeliveredStatus from "./../assets/img/delivered-status.png";
+// import DeliveredStatus from "./../assets/img/delivered-status.png";
 import DeliveredStatusColor from "./../assets/img/Delivered-b.png";
 import BookedStatusColor from "./../assets/img/Booked-b.png";
-import ApprovedStatus from "./../assets/img/approved-status.png";
+// import ApprovedStatus from "./../assets/img/approved-status.png";
 import ApprovedStatusColor from "./../assets/img/Approved-b.png";
 import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
@@ -46,7 +46,7 @@ import matchSorter from "match-sorter";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import makeAnimated from "react-select/animated";
-import Select from "react-select";
+// import Select from "react-select";
 import Autocomplete from "react-autocomplete";
 import {
   NotificationContainer,
@@ -132,7 +132,7 @@ class ShippingDetails extends Component {
       .slice(window.location.href.indexOf("?") + 1)
       .split("=")[1];
     var shiptype = "";
-    if (url != undefined) {
+    if (url !== undefined) {
       shiptype = url;
     }
     this.HandleListShipmentSummey(shiptype);
@@ -164,7 +164,7 @@ class ShippingDetails extends Component {
       // NOTE: this removes any FILTER ALL filter
       const filterAll = "";
       this.setState({
-        filtered: filtered.filter(item => item.id != "all"),
+        filtered: filtered.filter(item => item.id !== "all"),
         filterAll
       });
     } else this.setState({ filtered });
@@ -204,8 +204,8 @@ class ShippingDetails extends Component {
       var air = data.filter(x => x.ModeOfTransport === "Air").length;
       var ocean = data.filter(x => x.ModeOfTransport === "Ocean").length;
 
-      if (shiptype != "") {
-        data = data.filter(item => item.ModeOfTransport == shiptype);
+      if (shiptype !== "") {
+        data = data.filter(item => item.ModeOfTransport === shiptype);
         if (data.length === 0) {
           data = [{ POL: "No record found" }];
         }
@@ -283,7 +283,7 @@ class ShippingDetails extends Component {
 
   HandleChangeSelect(field, e) {
     let fields = this.state.fields;
-    if (e.target.value == "Select") {
+    if (e.target.value === "Select") {
       fields[field] = "";
     } else {
       fields[field] = e.target.value;
@@ -313,7 +313,7 @@ class ShippingDetails extends Component {
         headers: authHeader()
       })
         .then(function(response) {
-          if (field == "Consignee") {
+          if (field === "Consignee") {
             self.setState({
               Consignee: response.data.Table,
               fields
@@ -333,7 +333,7 @@ class ShippingDetails extends Component {
           //NotificationManager.error(err[1].replace("}", ""));
         });
     } else {
-      if (field == "Consignee") {
+      if (field === "Consignee") {
         self.setState({
           //Consignee: response.data.Table,
           fields
@@ -354,7 +354,7 @@ class ShippingDetails extends Component {
     debugger;
     let fields = this.state.fields;
     fields[field] = value;
-    if (field == "Consignee") {
+    if (field === "Consignee") {
       this.state.ConsigneeID = id.Company_ID;
     } else {
       this.state.ShipperID = id.Company_ID;
@@ -412,7 +412,7 @@ class ShippingDetails extends Component {
         headers: authHeader()
       }).then(function(response) {
         debugger;
-        if (field == "POL") {
+        if (field === "POL") {
           self.setState({
             POL: response.data.Table
           });
@@ -457,15 +457,15 @@ class ShippingDetails extends Component {
   }
 
   handleChange(field, e) {
-    if (field == "FromDeparture") {
+    if (field === "FromDeparture") {
       this.setState({
         FrDepDate: e
       });
-    } else if (field == "ToDeparture") {
+    } else if (field === "ToDeparture") {
       this.setState({
         ToDepDate: e
       });
-    } else if (field == "FromArrival") {
+    } else if (field === "FromArrival") {
       this.setState({
         FrArrDate: e
       });
@@ -480,7 +480,7 @@ class ShippingDetails extends Component {
     debugger;
     // this.state.originCountry.push(e)
     var value = e.target.value;
-    if (text == "OriginCountry") {
+    if (text === "OriginCountry") {
       this.setState({
         originCountry: value
       });
@@ -691,7 +691,7 @@ class ShippingDetails extends Component {
                       },
                       {
                         Cell: row => {
-                          if (row.value == "Air") {
+                          if (row.value === "Air") {
                             return (
                               <>
                                 <div
@@ -703,19 +703,19 @@ class ShippingDetails extends Component {
                                 </div>
                               </>
                             );
-                          } else if (row.value == "Ocean") {
+                          } else if (row.value === "Ocean") {
                             return (
                               <div title="Ship" className="shipment-img">
                                 <img src={OceanColor} />
                               </div>
                             );
-                          } else if (row.value == "Inland") {
+                          } else if (row.value === "Inland") {
                             return (
                               <div title="Truck" className="shipment-img">
                                 <img src={TruckColor} />
                               </div>
                             );
-                          } else if (row.value == "Railway") {
+                          } else if (row.value === "Railway") {
                             return (
                               <div title="Rail" className="shipment-img">
                                 <img src={Rail} />
@@ -786,49 +786,49 @@ class ShippingDetails extends Component {
                                 <img src={Delivered} />
                               </div>
                             );
-                          } else if (row.value == "Departed") {
+                          } else if (row.value === "Departed") {
                             return (
                               <div title="Departed" className="status-img">
                                 <img src={DepartedStatusColor} />
                               </div>
                             );
-                          } else if (row.value == "Transshipped") {
+                          } else if (row.value === "Transshipped") {
                             return (
                               <div title="Transshipped" className="status-img">
                                 <img src={TransshippedStatus} />
                               </div>
                             );
-                          } else if (row.value == "Arrived") {
+                          } else if (row.value === "Arrived") {
                             return (
                               <div title="Arrived" className="status-img">
                                 <img src={ArrivedStatusColor} />
                               </div>
                             );
-                          } else if (row.value == "Booked") {
+                          } else if (row.value === "Booked") {
                             return (
                               <div title="Booked" className="status-img">
                                 <img src={BookedStatusColor} />
                               </div>
                             );
-                          } else if (row.value == "Gate In") {
+                          } else if (row.value === "Gate In") {
                             return (
                               <div title="Gate In" className="status-img">
                                 <img src={GateInStatus} />
                               </div>
                             );
-                          } else if (row.value == "Approved") {
+                          } else if (row.value === "Approved") {
                             return (
                               <div title="Approved" className="status-img">
                                 <img src={ApprovedStatusColor} />
                               </div>
                             );
-                          } else if (row.value == "In Transit") {
+                          } else if (row.value === "In Transit") {
                             return (
                               <div title="In Transit" className="status-img">
                                 <img src={InTransitStatus} />
                               </div>
                             );
-                          } else if (row.value == "Inland Transportation") {
+                          } else if (row.value === "Inland Transportation") {
                             return (
                               <div
                                 title="Inland Transportation"
@@ -837,13 +837,13 @@ class ShippingDetails extends Component {
                                 <img src={InlandTransportStatusColor} />
                               </div>
                             );
-                          } else if (row.value == "Delivered") {
+                          } else if (row.value === "Delivered") {
                             return (
                               <div title="Delivered" className="status-img">
                                 <img src={DeliveredStatusColor} />
                               </div>
                             );
-                          } else if (row.value == "DO Issued") {
+                          } else if (row.value === "DO Issued") {
                             return <div title="DO Issued">{row.value}</div>;
                           } else {
                             return row.value || "";
@@ -866,7 +866,7 @@ class ShippingDetails extends Component {
                                 <label className="">{row.value}</label>
                               </div>
                             );
-                          } else if (row.value == "On Time") {
+                          } else if (row.value === "On Time") {
                             return (
                               <div>
                                 <label className="girdevtgreen">
@@ -874,7 +874,7 @@ class ShippingDetails extends Component {
                                 </label>
                               </div>
                             );
-                          } else if (row.value == "Behind Schedule") {
+                          } else if (row.value === "Behind Schedule") {
                             return (
                               <div>
                                 <label className="girdevtred">
@@ -882,7 +882,7 @@ class ShippingDetails extends Component {
                                 </label>
                               </div>
                             );
-                          } else if (row.value == "Delay Risk") {
+                          } else if (row.value === "Delay Risk") {
                             return (
                               <div>
                                 <label className="girdevtyellow">

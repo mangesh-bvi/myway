@@ -6,14 +6,14 @@ import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import { Button, Modal, ModalBody } from "reactstrap";
-import InputRange from "react-input-range";
+// import { Button, Modal, ModalBody } from "reactstrap";
+// import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
-import ReactTable from "react-table";
-import maersk from "./../assets/img/maersk.png";
+// import ReactTable from "react-table";
+// import maersk from "./../assets/img/maersk.png";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { encryption } from "../helpers/encryption";
+// import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
