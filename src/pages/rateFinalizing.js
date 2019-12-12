@@ -533,11 +533,13 @@ class RateFinalizing extends Component {
         this.state.incoTerm = incoTerms;
         this.state.commodityData = commodityData;
         this.state.selected = selected;
+        this.state.users = users;
         this.state.spacEqmtType = spacEqmtType;
         this.state.flattack_openTop = flattack_openTop;
         this.state.polfullAddData = polfullAddData;
         this.state.podfullAddData = podfullAddData;
         this.state.currencyCode = currencyCode;
+        this.state.multiCBM = multiCBM;
         this.HandleLocalCharges();
         this.HandleSurCharges();
       } else {
@@ -789,25 +791,27 @@ class RateFinalizing extends Component {
                       Editable: true
                     });
 
-                    PackageDetailsArr.push({
-                      PackageType: table[i].PackageType,
-                      // SpecialContainerCode:
-                      //   flattack_openTop[i].SpecialContainerCode,
-                      ContainerType: table[i].PackageType,
-                      Quantity: table[i].Quantity,
-                      Lenght: table[i].Length,
-                      Width: table[i].Width,
-                      Height: table[i].height,
-                      Weight: table[i].GrossWeight,
-                      CBM:
-                        response.data.Table[0].ModeOfTransport.toUpperCase() ===
-                        "AIR"
-                          ? table[i].ChgWeight
-                          : table[i].CBM === undefined
-                          ? "-"
-                          : table[i].CBM,
-                      Editable: true
-                    });
+                    if(table[i].PackageType !== null){
+                      PackageDetailsArr.push({
+                        PackageType: table[i].PackageType,
+                        // SpecialContainerCode:
+                        //   flattack_openTop[i].SpecialContainerCode,
+                        ContainerType: table[i].PackageType,
+                        Quantity: table[i].Quantity,
+                        Lenght: table[i].Length,
+                        Width: table[i].Width,
+                        Height: table[i].height,
+                        Weight: table[i].GrossWeight,
+                        CBM:
+                          response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                          "AIR"
+                            ? table[i].ChgWeight
+                            : table[i].CBM === undefined
+                            ? "-"
+                            : table[i].CBM,
+                        Editable: true
+                      });
+                    }
 
                     multiCBM.push({
                         PackageType: table[i].PackageType,
@@ -887,23 +891,25 @@ class RateFinalizing extends Component {
 
   HandleLocalCharges() {
     let self = this;
-
+    var Containerdetails = [];
+    for (let i = 0; i < this.state.users.length; i++) {
+      Containerdetails.push({
+        ProfileCodeID: this.state.users[i].ProfileCodeID,
+        ContainerCode: this.state.users[i].StandardContainerCode,
+        Type: this.state.users[i].ContainerName,
+        ContainerQuantity: this.state.users[i].ContainerQuantity,
+        Temperature: this.state.users[i].Temperature,
+        TemperatureType: this.state.users[i].TemperatureType
+      })     
+    }
+   
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
       ModeOfTransport: this.state.modeoftransport,
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
-      Containerdetails: [
-        {
-          ProfileCodeID: this.state.selected.ProfileCodeID,
-          ContainerCode: this.state.selected.StandardContainerCode,
-          Type: "",
-          ContainerQuantity: 2,
-          Temperature: 0,
-          TemperatureType: ""
-        }
-      ],
+      Containerdetails: Containerdetails,
       Currency: self.state.currencyCode,
       // MultiplePOLPOD:[
       // {POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
@@ -3918,9 +3924,11 @@ class RateFinalizing extends Component {
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
       let amtSign;
       if (item.Currency == "INR") {
-        amtSign = "";
+        amtSign = " INR";
       } else if (item.Currency == "USD") {
         amtSign = "$";
+      } else if (item.Currency == "TL") {
+        amtSign = " TL"
       }
       return (
         <div>
@@ -3940,8 +3948,11 @@ class RateFinalizing extends Component {
             <label htmlFor={"local" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
           <span>
+            {item.LineName}
+          </span>
+          <span>
             {item.Amount}
-            {amtSign}
+            {" "+item.Currency}
           </span>
         </div>
       );
@@ -3950,10 +3961,14 @@ class RateFinalizing extends Component {
     const checkSurCharges = this.state.arrSurCharges.map((item, index) => {
       let amtSign;
       if (item.Currency == "INR") {
-        amtSign = "";
+        amtSign = " INR";
       } else if (item.Currency == "USD") {
         amtSign = "$";
       }
+      else if (item.Currency == "TL") {
+        amtSign = " TL"
+      }
+
       return (
         <div>
           <div className="d-flex">
@@ -3972,8 +3987,11 @@ class RateFinalizing extends Component {
             <label htmlFor={"Sur" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
           <span>
+            {item.LineName}
+          </span>
+          <span>
             {item.Amount}
-            {amtSign}
+            {" "+item.Currency}
           </span>
         </div>
       );
@@ -4885,32 +4903,32 @@ class RateFinalizing extends Component {
 
                     <UncontrolledCollapse toggler="#toggler">
                       <div className="rate-final-contr p-0">
-                        <div className="d-flex justify-content-between align-items-center title-border py-3">
+                        <div className="d-flex justify-content-between align-items-center title-border py-3" style={{marginBottom:"15px"}}>
                           <h3>Rate Query</h3>
                           {/* <a href="rate-table" className="rate-edit-icon">
                             <img src={Edit} alt="edit icon" />
                           </a> */}
                         </div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.shipmentType}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {this.state.modeoftransport}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.containerLoadType}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Equipment Types</p>
                             {this.state.selected.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4918,7 +4936,7 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Special Equipment</p>
                             {this.state.flattack_openTop.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4931,25 +4949,25 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
                               {this.state.HazMat === true ? "Yes " : "No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Non Stackable</p>
                             <p className="details-para">
                               {this.state.NonStackable === true ? "Yes" : "No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {this.state.incoTerm}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove === 1
@@ -4964,7 +4982,7 @@ class RateFinalizing extends Component {
                             </p>
                           </div>
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">POL</p>
                               <p className="details-para">
                                 {this.state.polfullAddData.NameWoDiacritics}
@@ -4972,7 +4990,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">POD</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.NameWoDiacritics}
@@ -4980,7 +4998,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">PU Address</p>
                               <p className="details-para">
                                 {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -4989,7 +5007,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">Delivery Address</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.OceanPortLongName}
@@ -5059,7 +5077,7 @@ class RateFinalizing extends Component {
                       )}
                     </div> */}
 
-                    <div className="title-border py-3">
+                    <div className="title-border py-3" style={{marginBottom:"15px"}}>
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="align-center">
@@ -5222,12 +5240,12 @@ class RateFinalizing extends Component {
                   </div>
 
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border py-3" style={{marginBottom:"15px"}}>
                       <h3>Customer Details</h3>
                     </div>
                     <div className="">
                       <div className="row">
-                        <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-xl-3">
                           <p className="details-title">Account/Customer</p>
                           {this.state.toggleAddProfitBtn && (
                             <p className="details-para">
@@ -5237,7 +5255,7 @@ class RateFinalizing extends Component {
                           {!this.state.toggleAddProfitBtn && (
                             <p className="details-para">
                               {encryption(
-                                window.localStorage.getItem("username"),
+                                window.localStorage.getItem("companyname"),
                                 "desc"
                               )}
                             </p>
@@ -5246,8 +5264,8 @@ class RateFinalizing extends Component {
                             window.localStorage.getItem("usertype"),
                             "desc"
                           ) != "Customer" ? (
-                            this.state.CompanyName == "" ||
-                            this.state.isCopy ? (
+                            // this.state.CompanyName == "" ||
+                            // this.state.isCopy ? (
                               <Autocomplete
                                 id="searchtxt"
                                 className="title-sect p-0 pt-2"
@@ -5278,10 +5296,10 @@ class RateFinalizing extends Component {
                                   placeholder: "Search Account/Consignee"
                                 }}
                               />
-                            ) : null
+                            // ) : null
                           ) : null}
                         </div>
-                        <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-6">
                           <p className="details-title">Address</p>
                           <p className="details-para">
                             {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -5297,7 +5315,7 @@ class RateFinalizing extends Component {
                                 )}
                           </p>
                         </div>
-                        <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-xl-3">
                           <p className="details-title">Notification Person</p>
                           <p className="details-para">
                             {encryption(
@@ -6063,9 +6081,9 @@ class RateFinalizing extends Component {
                 </div>
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
-                    <h3>
+                    {/* <h3>
                       To, <span>{this.state.CompanyName}</span>
-                    </h3>
+                    </h3> */}
                     <label>
                       ATNN : <span>{this.state.ContactName}</span>
                     </label>
@@ -6248,7 +6266,7 @@ class RateFinalizing extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-4">
                             <label>
-                              Transit Time<span>{item.TransitTime}</span>
+                              Transit Time : <span>{item.TransitTime+" Days"}</span>
                             </label>
                           </div>
                           {/* <div className="col-12 col-sm-4">
@@ -6464,8 +6482,9 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                   </div>
-
-                  <div className="row">
+                  
+                  {DocumentCharges.length!==0?
+                  (<div className="row">
                     <div className="col-12">
                       <div className="thirdbox">
                         <h3>Documentation Charges</h3>
@@ -6506,7 +6525,7 @@ class RateFinalizing extends Component {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div>):null}
                 </>
               ))}
               <div className="row">

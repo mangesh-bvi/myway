@@ -184,7 +184,7 @@ class AddEventManagement extends Component {
             </div>
             <div className="container add-user-cntr">
               <div className="row mt-3">
-                <div className="login-fields col-md-4">
+                <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>Container No</label>
                   <input
                     type="text"
@@ -199,7 +199,7 @@ class AddEventManagement extends Component {
                     {this.state.errors["ContainerNo"]}
                   </span>
                 </div>
-                <div className="login-fields col-md-4">
+                <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>Status</label>
                   <select
                     onChange={this.HandleChangeSelect.bind(this, "Status")}
@@ -218,7 +218,7 @@ class AddEventManagement extends Component {
                 </div>
               </div>
               <div className="row">
-                <div className="login-fields col-md-4">
+                <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>Diff</label>
                   <input
                     type="text"
@@ -232,7 +232,7 @@ class AddEventManagement extends Component {
                     {this.state.errors["DiffInDays"]}
                   </span>
                 </div>
-                <div className="login-fields col-md-4">
+                <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>PTTP</label>
                   <input
                     type="text"
@@ -248,7 +248,7 @@ class AddEventManagement extends Component {
                 </div>
               </div>
               <div className="row">
-                <div className="login-fields col-md-4">
+                <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>POL</label>
                   <input
                     type="text"
@@ -261,7 +261,7 @@ class AddEventManagement extends Component {
                   />
                   {/* <span style={{color: "red"}}>{this.state.errors["username"]}</span> */}
                 </div>
-                <div className="login-fields col-md-4">
+                <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>POD</label>
                   <input
                     type="text"
@@ -276,7 +276,7 @@ class AddEventManagement extends Component {
                 </div>
               </div>
               <div className="row">
-                <div className="login-fields col-md-4">
+                <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>Shipper/Consignee</label>
                   <input
                     type="text"

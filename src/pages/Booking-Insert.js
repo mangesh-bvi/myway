@@ -123,6 +123,7 @@ class BookingInsert extends Component {
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
   componentDidMount() {
+    debugger
     var rData = this.props.location.state;
     if (
       // typeof rData.ContainerLoad !== "" &&
@@ -163,8 +164,81 @@ class BookingInsert extends Component {
           this.HandlePackgeTypeData();
         }, 100);
       }
+      else{
+        setTimeout(() => {
+          this.HandleGetSalesQuotaionINLAND();
+          this.NonCustomerList();
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+        }, 100);
+      }
     }
+    
   }
+
+  HandleGetSalesQuotaionINLAND() {
+    let self = this;
+    debugger;
+    var ContainerLoad = this.state.ContainerLoad;
+    var salesQuotaNo = this.state.salesQuotaNo;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteView`,
+      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var QuotationData = response.data.Table1;
+      var QuotationSubData = response.data.Table2;
+      var Booking = response.data.Table;
+      var multiCBM = response.data.Table3;
+
+      //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
+
+      if (QuotationData.length > 0) {
+        var selectedCommodity = QuotationData[0].Commodity;
+        var IncoTerms = QuotationData[0].IncoTerm;
+        var POL = QuotationData[0].POL;
+        var POD = QuotationData[0].POD;
+        var SaleQuoteID = QuotationData[0].SaleQuoteID;
+        var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
+        var TypeofMove = QuotationData[0].TypeOfMove;
+        self.setState({
+          multiCBM,
+          QuotationData,
+          QuotationSubData,
+          selectedCommodity,
+          IncoTerms,
+          POL,
+          POD,
+          SaleQuoteID,
+          SaleQuoteIDLineID,
+          TypeofMove
+        });
+      }
+      if (Booking.length > 0) {
+        var ModeofTransport = Booking[0].ModeOfTransport;
+        var companyID = Booking[0].companyID;
+        var company_name = Booking[0].company_name;
+        var contact_name = Booking[0].contact_name;
+        var Company_Address = Booking[0].Company_Address;
+        var SaleQuoteNo = Booking[0].SaleQuoteID;
+        var ShipmentType = Booking[0].ShipmentType;
+
+        self.setState({
+          ModeofTransport,
+          companyID,
+          company_name,
+          contact_name,
+          Company_Address,
+          SaleQuoteNo,
+          ShipmentType
+        });
+      }
+    });
+  }
+
 
   HandleGetSalesQuotaionLCL() {
     let self = this;
@@ -519,6 +593,7 @@ class BookingInsert extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data.Table[0].Message);
+      this.props.history.push("./booking-table")
     });
   }
   HandleCommodityDropdown() {
@@ -695,8 +770,8 @@ class BookingInsert extends Component {
       this.state.NotifyID = id.Company_ID;
       this.HandleCompanyAddress(field, id.Company_ID);
     } else {
-      var Shipper_Displayas = id.Company_Address;
-      this.setState({ buyerData: id, Shipper_Displayas });
+      var Buyer_AddressID = id.Company_Address;
+      this.setState({ buyerData: id, Buyer_AddressID });
       this.state.BuyerID = id.Company_ID;
       this.HandleCompanyAddress(field, id.Company_ID);
     }
@@ -1249,19 +1324,19 @@ class BookingInsert extends Component {
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.ShipmentType}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {this.state.ModeofTransport}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.ContainerLoad}
@@ -1275,7 +1350,7 @@ class BookingInsert extends Component {
                                   {this.state.ContainerCode}
                                 </p>
                               </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                                 <p className="details-title">
                                   Special Equipment
                                 </p>
@@ -1285,11 +1360,11 @@ class BookingInsert extends Component {
                           ) : (
                             ""
                           )}
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">{this.state.HAZMAT}</p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Unstackable</p>
                             <p className="details-para"></p>
                           </div>
@@ -1299,14 +1374,14 @@ class BookingInsert extends Component {
                               {this.state.IncoTerms}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.TypeofMove}
                             </p>
                           </div>
 
-                          <div className="col-12 col-sm-4 col-md-6 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">POL</p>
                             <p className="details-para">{this.state.POL}</p>
                           </div>
@@ -1350,25 +1425,25 @@ class BookingInsert extends Component {
 
                   <div className="rate-final-contr">
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Customer Details</h3>
                       </div>
                       <div className="">
                         <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Account/Customer</p>
 
                             <p className="details-para">
                               {this.state.company_name}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Company_Address}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">
                               {this.state.contact_name}
@@ -1422,12 +1497,12 @@ class BookingInsert extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Consignee Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Consignee Name</p>
                             <Autocomplete
                               getItemValue={item => item.Company_Name}
@@ -1459,7 +1534,7 @@ class BookingInsert extends Component {
                             />
                           </div>
 
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
 
                             <select
@@ -1493,12 +1568,12 @@ class BookingInsert extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Shipper Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Shipper Name</p>
                             <Autocomplete
                               getItemValue={item => item.Company_Name}
@@ -1528,7 +1603,7 @@ class BookingInsert extends Component {
                             />
                           </div>
 
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
 
                             <select
@@ -1564,12 +1639,12 @@ class BookingInsert extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Buyer Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
                                
@@ -1601,7 +1676,7 @@ class BookingInsert extends Component {
                               />
                             </p>
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
 
                             {/* {this.state.Buyer_Displayas !== ""
@@ -1637,12 +1712,12 @@ class BookingInsert extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Notify Party Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
                               
@@ -1675,7 +1750,7 @@ class BookingInsert extends Component {
                               />
                             </p>
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
                     
                             <select
@@ -1708,7 +1783,7 @@ class BookingInsert extends Component {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
                           disabled={true}
@@ -1725,7 +1800,7 @@ class BookingInsert extends Component {
                     </div>
                     <div>
                       <div
-                        className="title-border py-3"
+                        className="title-border-t py-3"
                         style={{ width: "100%" }}
                       >
                         <h3>Cargo Details</h3>

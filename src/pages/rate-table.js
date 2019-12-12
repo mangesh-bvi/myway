@@ -1040,7 +1040,8 @@ class RateTable extends Component {
               loading: false,
               commodityData: ratetable2,
               MinTT: Math.min(...MinTTArray),
-              MaxTT: Math.max(...MaxTTArray)
+              MaxTT: Math.max(...MaxTTArray),
+              value: Math.max(...MaxTTArray)
             });
           }
           if (ratetable1 != null) {
@@ -1625,6 +1626,23 @@ class RateTable extends Component {
         </div> */}
         <div className="col-md">
           <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {/* <div className="col-md">
+          <div className="spe-equ">
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
@@ -1635,7 +1653,7 @@ class RateTable extends Component {
               //onKeyUp={this.cbmChange}
             />
           </div>
-        </div>
+        </div> */}
         <div className="col-md">
           <div className="spe-equ">
             <input
@@ -2321,30 +2339,35 @@ class RateTable extends Component {
   }
   filterAll(e, type) {
     debugger;
-    const { value } = e.target;
-    var filteval = e.target.selectedOptions[0].innerText;
-    if (typeof type !== "undefined" && type !== "" && type !== null) {
-    } else {
-      if (value !== "All") {
-        var filterData = this.state.RateDetails.filter(
-          x => x.commodities === filteval
-        );
-        if (filterData.length > 0) {
-          this.setState({
-            tempRateDetails: filterData,
-            Commodity: value,
-            CommodityID: value
-          });
-        } else {
-          this.setState({
-            tempRateDetails: [{ lineName: "No Record Found" }],
-            RateSubDetails: [{ ChargeType: "No Record Found" }]
-          });
-        }
-      } else {
-        this.setState({ tempRateDetails: this.state.RateDetails });
-      }
-    }
+    // const { value } = e.target;
+    // var filteval = e.target.selectedOptions[0].innerText;
+    // if (typeof type !== "undefined" && type !== "" && type !== null) {
+    // } else {
+    //   if (value !== "All") {
+    //     var filterData = this.state.RateDetails.filter(
+    //       x => x.commodities === filteval
+    //     );
+    //     if (filterData.length > 0) {
+    //       this.setState({
+    //         tempRateDetails: filterData,
+    //         Commodity: value,
+    //         CommodityID: value
+    //       });
+    //     } else {
+    //       this.setState({
+    //         tempRateDetails: [{ lineName: "No Record Found" }],
+    //         RateSubDetails: [{ ChargeType: "No Record Found" }]
+    //       });
+    //     }
+    //   } else {
+    //     this.setState({ tempRateDetails: this.state.RateDetails });
+    //   }
+    // }
+    this.state.CommodityID = parseInt(e.target.value)
+    this.setState({
+      CommodityID: this.state.CommodityID
+    })
+    this.HandleRateDetailsFCL(this.state)
   }
 
   custClearToggle() {
@@ -2353,8 +2376,8 @@ class RateTable extends Component {
     });
   }
 
-  HandleRangeSlider(MaxTT) {
-    this.setState({ MaxTT });
+  HandleRangeSlider(value) {
+    this.setState({ value });
     debugger;
     // this.filterAll(value, "R");
     var filteredData = [];
@@ -2365,7 +2388,7 @@ class RateTable extends Component {
     // ];
 
     var actualData = this.state.RateDetails;
-    var checkingValue = MaxTT;
+    var checkingValue = value;
 
     for (var j = 0; j < actualData.length; j++) {
       var colData = actualData[j].TransitTime; //0-5
@@ -3119,7 +3142,7 @@ class RateTable extends Component {
                   formatLabel={value => `${value} DAYS`}
                   maxValue={this.state.MaxTT}
                   minValue={this.state.MinTT}
-                  value={this.state.MaxTT}
+                  value={this.state.value}
                   onChange={this.HandleRangeSlider.bind(this)}
                 />
               </div>
