@@ -2029,19 +2029,19 @@ class RateFinalizingStill extends Component {
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.ShipmentType}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {this.state.ModeOfTransport}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.ContainerLoad}
@@ -2053,13 +2053,13 @@ class RateFinalizingStill extends Component {
                               {this.state.EquipmentTypes}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Special Equipment</p>
                             <p className="details-para">
                               {this.state.SpecialEquipment}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
                               {this.state.HazMat == 1 ? "Yes" : "No"}
@@ -2068,7 +2068,7 @@ class RateFinalizingStill extends Component {
 
                           {this.state.ContainerLoad !== "FCL" && "LTL" ? (
                             <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                                 <p className="details-title">Non Stackable</p>
                                 <p className="details-para">
                                   {this.state.HazMatUnstackable == 1
@@ -2086,7 +2086,7 @@ class RateFinalizingStill extends Component {
                               </div>
                             </>
                           ) : (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                               <p className="details-title">CustomClearance</p>
                               <p className="details-para">
                                 {this.state.CustomClearance == 1 ? "Yes" : "No"}
@@ -2094,14 +2094,14 @@ class RateFinalizingStill extends Component {
                             </div>
                           )}
 
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {" "}
                               {this.state.IncoTerms}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.TypeofMove}
@@ -2150,7 +2150,7 @@ class RateFinalizingStill extends Component {
                   </div>
 
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border-t py-3">
                       <h3>Customer Details</h3>
                     </div>
                     <div className="">

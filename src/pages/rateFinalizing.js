@@ -4903,32 +4903,32 @@ class RateFinalizing extends Component {
 
                     <UncontrolledCollapse toggler="#toggler">
                       <div className="rate-final-contr p-0">
-                        <div className="d-flex justify-content-between align-items-center title-border py-3">
+                        <div className="d-flex justify-content-between align-items-center title-border py-3" style={{marginBottom:"15px"}}>
                           <h3>Rate Query</h3>
                           {/* <a href="rate-table" className="rate-edit-icon">
                             <img src={Edit} alt="edit icon" />
                           </a> */}
                         </div>
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {this.state.shipmentType}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {this.state.modeoftransport}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {this.state.containerLoadType}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Equipment Types</p>
                             {this.state.selected.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4936,7 +4936,7 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Special Equipment</p>
                             {this.state.flattack_openTop.map((item, i) => (
                               <p className="details-para" key={i}>
@@ -4949,25 +4949,25 @@ class RateFinalizing extends Component {
                               </p>
                             ))}
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">HazMat</p>
                             <p className="details-para">
                               {this.state.HazMat === true ? "Yes " : "No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Non Stackable</p>
                             <p className="details-para">
                               {this.state.NonStackable === true ? "Yes" : "No"}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {this.state.incoTerm}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove === 1
@@ -4982,7 +4982,7 @@ class RateFinalizing extends Component {
                             </p>
                           </div>
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">POL</p>
                               <p className="details-para">
                                 {this.state.polfullAddData.NameWoDiacritics}
@@ -4990,7 +4990,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">POD</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.NameWoDiacritics}
@@ -4998,7 +4998,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">PU Address</p>
                               <p className="details-para">
                                 {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -5007,7 +5007,7 @@ class RateFinalizing extends Component {
                             </div>
                           )}
                           {this.state.isediting && (
-                            <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                               <p className="details-title">Delivery Address</p>
                               <p className="details-para">
                                 {this.state.podfullAddData.OceanPortLongName}
@@ -5077,7 +5077,7 @@ class RateFinalizing extends Component {
                       )}
                     </div> */}
 
-                    <div className="title-border py-3">
+                    <div className="title-border py-3" style={{marginBottom:"15px"}}>
                       <h3>Cargo Details</h3>
                     </div>
                     <div className="align-center">
@@ -5240,12 +5240,12 @@ class RateFinalizing extends Component {
                   </div>
 
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border py-3" style={{marginBottom:"15px"}}>
                       <h3>Customer Details</h3>
                     </div>
                     <div className="">
                       <div className="row">
-                        <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-xl-3">
                           <p className="details-title">Account/Customer</p>
                           {this.state.toggleAddProfitBtn && (
                             <p className="details-para">
@@ -5299,7 +5299,7 @@ class RateFinalizing extends Component {
                             // ) : null
                           ) : null}
                         </div>
-                        <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-6">
                           <p className="details-title">Address</p>
                           <p className="details-para">
                             {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -5315,7 +5315,7 @@ class RateFinalizing extends Component {
                                 )}
                           </p>
                         </div>
-                        <div className="col-md-4">
+                          <div className="col-12 col-sm-4 col-md-3 col-xl-3">
                           <p className="details-title">Notification Person</p>
                           <p className="details-para">
                             {encryption(
