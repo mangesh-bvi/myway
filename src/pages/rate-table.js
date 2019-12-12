@@ -710,6 +710,7 @@ class RateTable extends Component {
   }
 
   HandleRateDetailsFCL(paramData) {
+    debugger
     var dataParameter = {};
     var pickUpAddress = {
       Street: "",
