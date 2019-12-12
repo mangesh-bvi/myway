@@ -94,24 +94,36 @@ class BookingView extends Component {
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
   componentDidMount() {
-    if (
-      this.props.location.state.BookingNo != "" &&
-      this.props.location.state.BookingNo != undefined
-    ) {
+    if (this.props.location.state.BookingNo && this.props.location.state.Mode) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
         "desc"
       );
       var BookingNo = this.props.location.state.BookingNo;
-      var isView = this.props.location.state.isView;
+      var ModeofTransport = this.props.location.state.Mode;
+      var isView =this.props.location.state.isView;
       if (isView) {
-        this.setState({ BookingNo, userType, isView: true });
-        setTimeout(() => {
-          this.HandleCommodityDropdown();
-          this.HandlePackgeTypeData();
-          this.BookigGridDetailsList();
-          this.NonCustomerList();
-        }, 300);
+        this.setState({
+          BookingNo,
+          userType,
+          isView: true,
+          ModeofTransport: ModeofTransport
+        });
+        if (ModeofTransport === "AIR") {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsListAIR();
+            this.NonCustomerList();
+          }, 300);
+        } else {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsList();
+            this.NonCustomerList();
+          }, 300);
+        }
       }
     } else {
       this.props.history.push("/booking-table");
@@ -349,7 +361,6 @@ class BookingView extends Component {
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
-        
 
         console.log(Booking);
 
@@ -411,7 +422,139 @@ class BookingView extends Component {
             var CargoType = Booking[0].CargoType;
             var Incoterm = Booking[0].Incoterm;
             var strBooking_No = Booking[0].strBooking_No;
-            var ModeofTransport =  Booking[0].ModeofTransport;
+            var ModeofTransport = Booking[0].ModeofTransport;
+            self.setState({
+              ModeofTransport,
+              multiCBM: CargoDetails,
+              cargoType: Booking[0].CargoType,
+              selectedCommodity: Booking[0].Commodity,
+              NotifyID,
+              Notify_AddressID,
+              Notify_Displayas,
+              NotifyName,
+              BuyerID,
+              Buyer_AddressID,
+              Buyer_Displayas,
+              BuyerName,
+              TypeofMove,
+              POL: Booking[0].POL,
+              POD: Booking[0].POD,
+              ShipperID,
+              Shipper_AddressID,
+              Shipper_Displayas,
+              Shipper_Name,
+              Consignee,
+              Consignee_AddressID,
+              Consignee_Displayas,
+              Consignee_Name,
+              CargoType,
+              Incoterm,
+              strBooking_No,
+              fields: {
+                Consignee: Booking[0].Consignee_Name,
+                Shipper: Booking[0].Shipper_Name
+              }
+            });
+          }
+
+          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
+            self.setState({ FileData });
+          }
+        }
+        self.setState({
+          HazMat: "",
+          Unstackable: ""
+        });
+      });
+    }
+  }
+
+
+
+  BookigGridDetailsListAIR() {
+    let self = this;
+
+    var bookingId = self.state.BookingNo;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (bookingId !== "" && bookingId !== null) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookigGridDetailsList`,
+        data: {
+          UserID: userId, //874654, //userId, //874654, ,
+          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        QuotationData = response.data.Table4;
+        var QuotationSubData = response.data.Table5;
+        var Booking = response.data.Table;
+        var CargoDetails = response.data.Table2;
+        var FileData = response.data.Table3;
+        var eqmtType = response.data.Table1;
+
+        console.log(Booking);
+
+        if (typeof QuotationData !== "undefined") {
+          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
+            var ShipmentType = QuotationData[0].ShipmentType;
+            self.setState({
+              QuotationData,
+              QuotationSubData,
+              ShipmentType
+            });
+          }
+        }
+        // for (let qd of self.state.QuotationData) {
+        //   if (qd.Linename) {
+        //     self.GetImageURL(qd);
+        //   }
+        // }
+        if (typeof eqmtType !== "undefined") {
+          if (eqmtType.length > 0) {
+            self.setState({ eqmtType });
+          }
+        }
+        if (typeof Booking !== "undefined") {
+          var TypeofMove = "";
+          if (Booking.length > 0) {
+            if (Booking[0].typeofMove === 1) {
+              TypeofMove = "Port To Port";
+            }
+            if (Booking[0].typeofMove === 2) {
+              TypeofMove = "Door To Port";
+            }
+            if (Booking[0].typeofMove === 3) {
+              TypeofMove = "Port To Door";
+            }
+            if (Booking[0].typeofMove === 4) {
+              TypeofMove = "Door To Door";
+            }
+
+            var NotifyID = Booking[0].NotifyID;
+            var Notify_AddressID = Booking[0].Notify_AddressID;
+            var Notify_Displayas = Booking[0].Notify_Displayas;
+            var NotifyName = Booking[0].NotifyName;
+
+            var BuyerID = Booking[0].BuyerID;
+            var Buyer_AddressID = Booking[0].Buyer_AddressID;
+            var Buyer_Displayas = Booking[0].Buyer_Displayas;
+            var BuyerName = Booking[0].BuyerName;
+
+            var ShipperID = Booking[0].ShipperID;
+            var Shipper_AddressID = Booking[0].Shipper_AddressID;
+            var Shipper_Displayas = Booking[0].Shipper_Displayas;
+            var Shipper_Name = Booking[0].Shipper_Name;
+
+            var Consignee = Booking[0].Consignee;
+            var Consignee_AddressID = Booking[0].Consignee_AddressID;
+            var Consignee_Displayas = Booking[0].Consignee_Displayas;
+            var Consignee_Name = Booking[0].Consignee_Name;
+            var CargoType = Booking[0].CargoType;
+            var Incoterm = Booking[0].Incoterm;
+            var strBooking_No = Booking[0].strBooking_No;
+            var ModeofTransport = Booking[0].ModeofTransport;
             self.setState({
               ModeofTransport,
               multiCBM: CargoDetails,
@@ -800,11 +943,11 @@ class BookingView extends Component {
                           </div>
                           {this.state.CargoType === "FCL" ? (
                             <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                                 <p className="details-title">Equipment Types</p>
                                 <p className="details-para"></p>
                               </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                                 <p className="details-title">
                                   Special Equipment
                                 </p>
