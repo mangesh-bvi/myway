@@ -237,7 +237,7 @@ class QuoteTable extends Component {
                 <h2>Quote Table</h2>
               </div>
               <div className="d-flex justify-content-between align-items-center">
-                <div className="login-fields quote-to-from mb-0">
+                <div className="login-fields quote-to-from col-12 col-sm-4">
                   <span>From</span>
                   <DatePicker
                     id="datpicker-from-shipment"
@@ -248,7 +248,7 @@ class QuoteTable extends Component {
                     showWeekNumbers
                   />
                 </div>
-                <div className="login-fields quote-to-from mb-0">
+                <div className="login-fields quote-to-from col-12 col-sm-4">
                   <span>To</span>
                   <DatePicker
                     id="datpicker-to-shipment"
@@ -259,7 +259,7 @@ class QuoteTable extends Component {
                     showWeekNumbers
                   />
                 </div>
-                <div className="">
+                <div className="col-12 col-sm-4">
                   <input
                     type="search"
                     className="quote-txt-srch mt-0"

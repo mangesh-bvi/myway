@@ -647,19 +647,19 @@ class SpotRateDetails extends Component {
                         </h3>
                       </div>
                       <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Shipment Type</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.ShipmentType}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Mode of Transport</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Mode}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Container Load</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Trade_terms}
@@ -688,7 +688,7 @@ class SpotRateDetails extends Component {
                             <p className="details-para">No</p>
                           )}
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Custom Clearance</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl
@@ -701,13 +701,13 @@ class SpotRateDetails extends Component {
                             )}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Inco Terms</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Trade_terms}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Type of Move</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.TypeofMove}
@@ -722,7 +722,7 @@ class SpotRateDetails extends Component {
                                 {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>                          
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">POD</p>
                             <p className="details-para">
                                 {this.state.spotrateresponseTbl.DestinationAddress}
@@ -732,13 +732,13 @@ class SpotRateDetails extends Component {
                          ):null):""}
                          {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to door"?(
                           <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">PU Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Delivery Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.DestinationAddress}
@@ -754,7 +754,7 @@ class SpotRateDetails extends Component {
                                 {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>                          
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Delivery Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.DestinationAddress}
@@ -764,13 +764,13 @@ class SpotRateDetails extends Component {
                          ):null):""}
                          {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to port"?(
                           <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">PU Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">POD</p>
                             <p className="details-para">
                                 {this.state.spotrateresponseTbl.DestinationAddress}
@@ -783,12 +783,12 @@ class SpotRateDetails extends Component {
                   </div>
 
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border-t py-3">
                       <h3>Customer Details</h3>
                     </div>
                     <div className="">
                       <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-6 col-md-4">
                           <p className="details-title">Account/Customer</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Customer}
@@ -807,7 +807,7 @@ class SpotRateDetails extends Component {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4">
                         <p className="details-title">Commodity</p>
                         {/* <input type="text" value="Dummy" disabled /> */}
                         <select
