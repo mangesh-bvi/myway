@@ -1845,7 +1845,6 @@ class RateFinalizing extends Component {
       SQCharges:this.props.location.state.RateSubDetails,
       RateTypes:RateDataArr
     };
-    console.log(SendRequestparaAIR);
     // var SendRequestparaFCL={
     //   Mode:this.state.modeoftransport,
     //   ShipmentType :this.state.shipmentType,
