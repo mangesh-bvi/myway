@@ -3512,7 +3512,8 @@ class RateTable extends Component {
                                         </div>
                                       </React.Fragment>
                                     );
-                                  } else {
+                                  } else if( row._original.lineName !==
+                                    "No Record Found" &&lname==="" ) {
                                     return (
                                       <React.Fragment>
                                         <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -3553,6 +3554,16 @@ class RateTable extends Component {
                                         </div>
                                       </React.Fragment>
                                     );
+                                  }
+                                  else{
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                           {row._original.lineName}
+                                         </div>
+                                      </React.Fragment>
+                                    );
+
                                   }
                                 },
                                 accessor: "lineName"
