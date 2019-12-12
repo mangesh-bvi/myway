@@ -333,6 +333,17 @@ class RateFinalizing extends Component {
               CBM: multiCBM[i].Volume,
               Editable: true
             });
+
+            // multiCBM.push({
+            //     PackageType: "",
+            //     Quantity: 0,
+            //     Length: 0,
+            //     Width: 0,
+            //     height: 0,
+            //     Weight: 0,
+            //     VolumeWeight: 0,
+            //     Volume: 0
+            //   })
           }
         } else if (containerLoadType == "FTL") {
           // var cSelectedRow = this.props.location.state.selectedDataRow;
@@ -435,6 +446,19 @@ class RateFinalizing extends Component {
             }
           }
         }
+        // if (multiCBM != null) {
+        //   if (multiCBM.length > 0) {
+        //     for (var i = 0; i < multiCBM.length; i++) {
+        //       multiCBM.push({
+        //         PackageType: multiCBM[i].PackageType,
+        //         Quantity: multiCBM[i].Quantity,
+        //         Length: multiCBM[i].Lengths,
+        //         Width: multiCBM[i].Width,
+        //         height: multiCBM[i].Height,
+        //         Weight: multiCBM[i].GrossWt,
+        //         VolumeWeight: multiCBM[i].VolumeWeight,
+        //         Volume: 0
+        //       })}}}
         
         this.setState({
           rateDetails: rateDetails,
@@ -766,7 +790,22 @@ class RateFinalizing extends Component {
                       Editable: true
                     });
 
-                    multiCBM.push(table[i])
+                    multiCBM.push({
+                        PackageType: table[i].PackageType,
+                        Quantity: table[i].Quantity,
+                        Length: table[i].Length,
+                        Width: table[i].Width,
+                        height: table[i].height,
+                        Weight: table[i].GrossWeight,
+                        GrossWeight: table[i].GrossWeight,
+                        VolumeWeight: (param.type.toUpperCase()==="AIR"?
+                                      (table[i].ChgWeight):0),
+                        Volume: (param.type.toUpperCase()==="LCL"?
+                                table[i].CBM:0)
+                      })
+
+                    //multiCBM.push(table[i])
+
                     if (param.type == "FCL") {
                       flattack_openTop.push({
                         SpecialContainerCode: "",
@@ -797,9 +836,9 @@ class RateFinalizing extends Component {
           rateDetails: rateDetails,
           rateSubDetails: response.data.Table2,
           multiCBM: multiCBM,
-          flattack_openTop: flattack_openTop,
-          specialEqtSelect: true,
-          specialEquipment:true
+          flattack_openTop: flattack_openTop
+          // specialEqtSelect: true,
+          // specialEquipment:true
           
         });
         self.forceUpdate();
@@ -2305,11 +2344,11 @@ class RateFinalizing extends Component {
           ContainerType: multiCBM[i].PackageType,
           Packaging: "-",
           Quantity: multiCBM[i].Quantity,
-          Lenght: multiCBM[i].Lengths,
+          Lenght: this.state.isCopy==true?multiCBM[i].Length || multiCBM[i].Lengths:multiCBM[i].Lengths,
           Width: multiCBM[i].Width,
-          Height: multiCBM[i].Height,
-          Weight: multiCBM[i].GrossWt,
-          CBM: multiCBM[i].Volume,
+          Height: this.state.isCopy==true?multiCBM[i].height:multiCBM[i].Height,
+          Weight: this.state.isCopy==true?multiCBM[i].GrossWeight:multiCBM[i].GrossWt,
+          CBM: this.state.containerLoadType == "LCL"?multiCBM[i].Volume:multiCBM[i].VolumeWeight,
           Editable: true
         });
       }
@@ -2635,9 +2674,9 @@ class RateFinalizing extends Component {
         {
           PackageType: "",
           Quantity: 0,
-          Lengths: 0,
+          Length: 0,
           Width: 0,
-          Height: 0,
+          height: 0,
           Weight: 0,
           VolumeWeight: 0,
           Volume: 0
@@ -2817,12 +2856,12 @@ class RateFinalizing extends Component {
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
         (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+          (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
         6000;
-      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+      if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWt
+          ["VolumeWeight"]: multiCBM[i].GrossWeight
         };
       } else {
         multiCBM[i] = {
@@ -2833,9 +2872,9 @@ class RateFinalizing extends Component {
     } else {
       var decVolume =
         multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
+        ((multiCBM[i].Length / 100) *
           (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
+          (multiCBM[i].height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: parseFloat(decVolume)
@@ -2885,8 +2924,8 @@ class RateFinalizing extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={"L (cm)"}
               className="w-100"
-              name="Lengths"
-              value={this.state.isCopy==true?el.Length:el.Lengths || ""}
+              name="Length"
+              value={this.state.isCopy==true?el.Length:el.Length || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -2915,8 +2954,8 @@ class RateFinalizing extends Component {
                 onChange={this.HandleChangeMultiCBM.bind(this, i)}
                 placeholder="H (cm)"
                 className="w-100"
-                name="Height"
-                value={this.state.isCopy==true?el.height:el.Height || ""}
+                name="height"
+                value={this.state.isCopy==true?el.height:el.height || ""}
                 disabled
                 //onBlur={this.cbmChange}
               />
@@ -2928,7 +2967,7 @@ class RateFinalizing extends Component {
                 onChange={this.HandleChangeMultiCBM.bind(this, i)}
                 placeholder="H (cm)"
                 className="w-100"
-                name="Height"
+                name="height"
                 value={this.state.isCopy==true?el.height:el.Height || ""}
                 //onBlur={this.cbmChange}
               />
@@ -2942,7 +2981,7 @@ class RateFinalizing extends Component {
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
-              name="GrossWt"
+              name="GrossWeight"
               value={this.state.isCopy==true?el.GrossWeight:el.GrossWt || ""}
               className="w-100"
             />
@@ -5699,7 +5738,8 @@ class RateFinalizing extends Component {
                         />
                       </div> */}
                       {this.state.containerLoadType === "FCL" ? (
-                      this.state.specialEquipment === true ? (
+                      // this.state.specialEquipment === true ? (
+                        this.state.flattack_openTop.length > 0 ? (
                         <div className="">
                           {/* spe-equ mt-0 */}
                           {/* <div className="equip-plus-cntr w-100">
@@ -5718,11 +5758,11 @@ class RateFinalizing extends Component {
                             />
                           </div> */}
                           <div id="cbmInner">
-                            {this.state.specialEqtSelect === true ? (
-                              this.state.flattack_openTop.length > 0 ? (
+                            {/* {this.state.specialEqtSelect === true ? ( */}
+                             {/* {this.state.flattack_openTop.length > 0 ? ( */}
                                 <>{this.MultiCreateCBM()}</>
-                              ) : null
-                            ) : null}
+                              {/* //) : null */}
+                            {/* ) : null} */}
                           </div>
                         </div>
                       ) : (<div className="row cbm-space" key={i}>
