@@ -109,9 +109,12 @@ class RateFinalizingStillBooking extends Component {
       shipperAddData: [],
       buyerAddData: [],
       notifyAddData: [],
-      company_name:"",
-      ContactName:"",
-
+      Company_Name: "",
+      ContactName: "",
+      DefaultEntityTypeID: 0,
+      CustomerID: 0,
+      CustomerName: "",
+      CustomerAddress: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -120,13 +123,12 @@ class RateFinalizingStillBooking extends Component {
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
     this.BookigGridDetailsList = this.BookigGridDetailsList.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
-
     this.NonCustomerList = this.NonCustomerList.bind(this);
     this.HandleGetSalesQuotaion = this.HandleGetSalesQuotaion.bind(this);
   }
   componentDidMount() {
     var rData = this.props.location.state;
-
+    debugger;
     if (
       // typeof rData.ContainerLoad !== "" &&
       // typeof rData.salesQuotaNo !== "" &&
@@ -413,8 +415,8 @@ class RateFinalizingStillBooking extends Component {
       this.state.NotifyID = id.Company_ID;
       this.HandleCompanyAddress(field, id.Company_ID);
     } else {
-      var Shipper_Displayas = id.Company_Address;
-      this.setState({ buyerData: id, Shipper_Displayas });
+      var Buyer_Displayas = id.Company_Address;
+      this.setState({ buyerData: id, Buyer_Displayas });
       this.state.BuyerID = id.Company_ID;
       this.HandleCompanyAddress(field, id.Company_ID);
     }
@@ -636,31 +638,34 @@ class RateFinalizingStillBooking extends Component {
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     var bookingDetails = this.state.Booking;
 
-    var DefaultEntityTypeID = 1; ////ask to way it give parameter
+    var DefaultEntityTypeID = this.state.DefaultEntityTypeID; ////ask to way it give parameter
     var MyWayUserID = userId;
-    var ShipperID = Number(bookingDetails[0].ShipperID || 0);
-    var Shipper_Displayas = bookingDetails[0].Shipper_Displayas || "";
-    var Shipper_AddressID = Number(bookingDetails[0].Shipper_AddressID || 0);
-    var ShipperName = bookingDetails[0].Shipper_Name || "";
-    var ConsigneeID = Number(bookingDetails[0].Consignee || 0);
-    var ConsigneeName = bookingDetails[0].Consignee_Name || "";
-    var Consignee_AddressID = Number(
-      bookingDetails[0].Consignee_AddressID || 0
-    );
-    var Consignee_Displayas = bookingDetails[0].Consignee_Displayas || "";
-    var BuyerID = Number(bookingDetails[0].BuyerID || 0);
-    var Buyer_AddressID = Number(bookingDetails[0].Buyer_AddressID || 0);
-    var Buyer_Displayas = bookingDetails[0].Buyer_Displayas || "";
-    var BuyerName = bookingDetails[0].Buyer_Name || "";
+
+    var ShipperID = Number(this.state.shipperData.Company_ID || 0);
+    var Shipper_Displayas = this.state.Shipper_Displayas || "";
+    var Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+    var ShipperName = this.state.shipperData.Company_Name || "";
+
+    var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+    var ConsigneeName = this.state.consineeData.Company_Name || "";
+    var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+    var Consignee_Displayas = this.state.Consinee_Displayas;
+
+    var BuyerID = Number(this.state.buyerData.Company_ID || 0);
+    var Buyer_AddressID = this.state.Buyer_AddressID;
+    var Buyer_Displayas = this.state.Buyer_Displayas;
+    var BuyerName = this.state.buyerData.Company_Name;
+
     var Mode = bookingDetails[0].CargoType;
     var Commodity = Number(bookingDetails[0].Commodity || 0);
     var saleQuoteID = Number(bookingDetails[0].saleQuoteID || 0);
     var saleQuoteNo = bookingDetails[0].saleQuoteNo || "";
     var saleQuoteLineID = Number(bookingDetails[0].saleQuoteLineID || 0);
-    var NotifyID = Number(bookingDetails[0].NotifyID || 0);
-    var Notify_AddressID = Number(bookingDetails[0].Notify_AddressID || 0);
-    var Notify_Displayas = bookingDetails[0].Notify_Displayas || "";
-    var NotifyName = bookingDetails[0].NotifyName || "";
+    var NotifyID = Number(this.state.buyerData.Company_ID || 0);
+    var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+    var Notify_Displayas = this.state.Notify_Displayas || "";
+    var NotifyName = this.state.buyerData.Company_Name || "";
+
     var BookingDocs = [];
     var BookingDim = [];
     if (this.state.FileData.length > 0) {
@@ -805,8 +810,45 @@ class RateFinalizingStillBooking extends Component {
             var Shipper_AddressID = Booking[0].Shipper_AddressID;
             var Shipper_Displayas = Booking[0].Shipper_Displayas;
             var ShipperName = Booking[0].Shipper_Name;
+            var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
 
+            var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
+            var companyID = 0;
+            var CompanyAddress = "";
+            var Company_Name = "";
+            var Company_AddressID = 0;
+            if (DefaultEntityTypeID === ShipperID) {
+              companyID = ShipperID;
+              CompanyAddress = Shipper_Displayas;
+              Company_Name = ShipperName;
+              Company_AddressID = Shipper_AddressID;
+            }
+            if (DefaultEntityTypeID === BuyerID) {
+              companyID = BuyerID;
+              CompanyAddress = Buyer_Displayas;
+              Company_Name = BuyerName;
+              Company_AddressID = Buyer_AddressID;
+            }
+
+            if (DefaultEntityTypeID === ConsigneeID) {
+              companyID = ConsigneeID;
+              CompanyAddress = Consignee_Displayas;
+              Company_Name = ConsigneeName;
+              Company_AddressID = Consignee_AddressID;
+            }
+
+            if (DefaultEntityTypeID === NotifyID) {
+              companyID = NotifyID;
+              CompanyAddress = Notify_Displayas;
+              Company_Name = NotifyName;
+              Company_AddressID = Notify_AddressID;
+            }
             self.setState({
+              companyID,
+              CompanyAddress,
+              Company_Name,
+              Company_AddressID,
+              DefaultEntityTypeID,
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
               selectedCommodity: Booking[0].Commodity,
@@ -929,6 +971,9 @@ class RateFinalizingStillBooking extends Component {
             if (Booking[0].typeofMove === 4) {
               typeofMove = "Door To Door";
             }
+
+            var selectedCommodity = "";
+
             var NotifyID = Booking[0].NotifyID;
             var Notify_AddressID = Booking[0].Notify_AddressID;
             var Notify_Displayas = Booking[0].Notify_Displayas;
@@ -948,7 +993,46 @@ class RateFinalizingStillBooking extends Component {
             var Shipper_AddressID = Booking[0].Shipper_AddressID;
             var Shipper_Displayas = Booking[0].Shipper_Displayas;
             var ShipperName = Booking[0].Shipper_Name;
+
+            var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
+            var companyID = 0;
+            var CompanyAddress = "";
+            var Company_Name = "";
+            var Company_AddressID = 0;
+            if (DefaultEntityTypeID === ShipperID) {
+              companyID = ShipperID;
+              CompanyAddress = Shipper_Displayas;
+              Company_Name = ShipperName;
+              Company_AddressID = Shipper_AddressID;
+            }
+            if (DefaultEntityTypeID === BuyerID) {
+              companyID = BuyerID;
+              CompanyAddress = Buyer_Displayas;
+              Company_Name = BuyerName;
+              Company_AddressID = Buyer_AddressID;
+            }
+
+            if (DefaultEntityTypeID === ConsigneeID) {
+              companyID = ConsigneeID;
+              CompanyAddress = Consignee_Displayas;
+              Company_Name = ConsigneeName;
+              Company_AddressID = Consignee_AddressID;
+            }
+
+            if (DefaultEntityTypeID === NotifyID) {
+              companyID = NotifyID;
+              CompanyAddress = Notify_Displayas;
+              Company_Name = NotifyName;
+              Company_AddressID = Notify_AddressID;
+            }
+
             self.setState({
+              DefaultEntityTypeID,
+              companyID,
+              CompanyAddress,
+              Company_Name,
+              Company_AddressID,
+
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
               selectedCommodity: Booking[0].Commodity,
@@ -1322,7 +1406,7 @@ class RateFinalizingStillBooking extends Component {
     if (Booking.length > 0) {
       bNumber = Booking[0].strBooking_No;
     }
-    var selectedCommodity = "";
+    // var selectedCommodity = "";
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -1330,19 +1414,19 @@ class RateFinalizingStillBooking extends Component {
       className = "butn m-0";
     }
 
-    if (
-      this.state.commodityData.length > 0 && this.state.salesQuotaNo === ""
-        ? this.state.QuotationData.length > 0
-        : this.state.Booking.length > 0
-    ) {
-      if (this.state.salesQuotaNo === "") {
-        selectedCommodity = this.state.commodityData.filter(
-          x => x.id === this.state.Booking[0].Commodity
-        )[0].Commodity;
-      } else {
-        selectedCommodity = this.state.QuotationData[0].Commodity;
-      }
-    }
+    // if (
+    //   this.state.commodityData.length > 0 && this.state.salesQuotaNo === ""
+    //     ? this.state.QuotationData.length > 0
+    //     : this.state.Booking.length > 0
+    // ) {
+    //   if (this.state.salesQuotaNo === "") {
+    //     selectedCommodity = this.state.commodityData.filter(
+    //       x => x.id === this.state.Booking[0].Commodity
+    //     )[0].Commodity;
+    //   } else {
+    //     selectedCommodity = this.state.QuotationData[0].Commodity;
+    //   }
+    // }
 
     let i = 0;
 
@@ -1776,39 +1860,25 @@ class RateFinalizingStillBooking extends Component {
                               {Booking.length > 0
                                 ? Booking[0].company_name
                                 : ""}
-                              {this.state.company_name}
-                               
-      
+                              {this.state.Company_Name}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
-                              {/* {this.state.selectedType === "Shipper"
-                                ? Booking3.length > 0
-                                  ? Booking3[0].ShipperAddress
-                                  : null
-                                : Booking3.length > 0
-                                ? Booking3[0].ConsigneeAddress
-                                : null} */}
-
-                              {/* {selectedType === "Shipper"
-                                ? Booking[0].Shipper_Displayas
-                                : selectedType === "Consignee"
-                                ? Booking[0].Consignee_Displayas
-                                : null} */}
                               {Booking.length > 0
                                 ? Booking[0].Company_Address
                                 : ""}
+                              {this.state.CompanyAddress}
                             </p>
                           </div>
                           <div className="col-md-4">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">
-                              {Booking.length > 0
+                              {/* {Booking.length > 0
                                 ? Booking[0].contact_name
                                 : ""}
-                              {this.state.ContactName}
+                               */}
                             </p>
                           </div>
                         </div>
@@ -2162,11 +2232,7 @@ class RateFinalizingStillBooking extends Component {
                         <p className="details-title">Commodity</p>
                         <select
                           disabled={true}
-                          value={
-                            this.state.copy === false
-                              ? selectedCommodity
-                              : this.state.selectedCommodity
-                          }
+                          value={Number(this.state.selectedCommodity)}
                         >
                           <option>Select</option>
                           {this.state.commodityData.map((item, i) => (
@@ -2191,11 +2257,6 @@ class RateFinalizingStillBooking extends Component {
                           columns={[
                             {
                               columns: [
-                                // {
-                                //   Header: "Booking Pack",
-                                //   accessor: "BookingPackID",
-                                //   width:120
-                                // },
                                 {
                                   Header: "Container Name",
                                   accessor: "ContainerName"
@@ -2215,7 +2276,6 @@ class RateFinalizingStillBooking extends Component {
                           data={this.state.eqmtType}
                           minRows={0}
                           showPagination={false}
-                          // className="-striped -highlight"
                         />
                       ) : null}
                       {this.state.multiCBM.length > 0 ? (
@@ -2290,7 +2350,7 @@ class RateFinalizingStillBooking extends Component {
                         ? this.CreateFileElement()
                         : null}
                     </div>
-                    {this.state.isView === false ? (
+                    {this.state.isView === true ? (
                       <center>
                         <button
                           onClick={

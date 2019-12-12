@@ -101,7 +101,7 @@ class BookingView extends Component {
       );
       var BookingNo = this.props.location.state.BookingNo;
       var ModeofTransport = this.props.location.state.Mode;
-      var isView =this.props.location.state.isView;
+      var isView = this.props.location.state.isView;
       if (isView) {
         this.setState({
           BookingNo,
@@ -408,7 +408,7 @@ class BookingView extends Component {
             var BuyerID = Booking[0].BuyerID;
             var Buyer_AddressID = Booking[0].Buyer_AddressID;
             var Buyer_Displayas = Booking[0].Buyer_Displayas;
-            var BuyerName = Booking[0].BuyerName;
+            var BuyerName = Booking[0].Buyer_Name;
 
             var ShipperID = Booking[0].ShipperID;
             var Shipper_AddressID = Booking[0].Shipper_AddressID;
@@ -419,11 +419,49 @@ class BookingView extends Component {
             var Consignee_AddressID = Booking[0].Consignee_AddressID;
             var Consignee_Displayas = Booking[0].Consignee_Displayas;
             var Consignee_Name = Booking[0].Consignee_Name;
+
             var CargoType = Booking[0].CargoType;
             var Incoterm = Booking[0].Incoterm;
             var strBooking_No = Booking[0].strBooking_No;
             var ModeofTransport = Booking[0].ModeofTransport;
+
+            var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
+            var companyID = 0;
+            var CompanyAddress = "";
+            var Company_Name = "";
+            var Company_AddressID = 0;
+            if (DefaultEntityTypeID === ShipperID) {
+              companyID = ShipperID;
+              CompanyAddress = Shipper_Displayas;
+              Company_Name = Shipper_Name;
+              Company_AddressID = Shipper_AddressID;
+            }
+            if (DefaultEntityTypeID === BuyerID) {
+              companyID = BuyerID;
+              CompanyAddress = Buyer_Displayas;
+              Company_Name = BuyerName;
+              Company_AddressID = Buyer_AddressID;
+            }
+
+            if (DefaultEntityTypeID === Consignee) {
+              companyID = Consignee;
+              CompanyAddress = Consignee_Displayas;
+              Company_Name = Consignee_Name;
+              Company_AddressID = Consignee_AddressID;
+            }
+
+            if (DefaultEntityTypeID === NotifyID) {
+              companyID = NotifyID;
+              CompanyAddress = Notify_Displayas;
+              Company_Name = NotifyName;
+              Company_AddressID = Notify_AddressID;
+            }
             self.setState({
+              DefaultEntityTypeID,
+              companyID,
+              CompanyAddress,
+              Company_Name,
+              Company_AddressID,
               ModeofTransport,
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
@@ -468,8 +506,6 @@ class BookingView extends Component {
       });
     }
   }
-
-
 
   BookigGridDetailsListAIR() {
     let self = this;
@@ -540,7 +576,7 @@ class BookingView extends Component {
             var BuyerID = Booking[0].BuyerID;
             var Buyer_AddressID = Booking[0].Buyer_AddressID;
             var Buyer_Displayas = Booking[0].Buyer_Displayas;
-            var BuyerName = Booking[0].BuyerName;
+            var BuyerName = Booking[0].Buyer_Name;
 
             var ShipperID = Booking[0].ShipperID;
             var Shipper_AddressID = Booking[0].Shipper_AddressID;
@@ -555,7 +591,44 @@ class BookingView extends Component {
             var Incoterm = Booking[0].Incoterm;
             var strBooking_No = Booking[0].strBooking_No;
             var ModeofTransport = Booking[0].ModeofTransport;
+
+            var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
+            var companyID = 0;
+            var CompanyAddress = "";
+            var Company_Name = "";
+            var Company_AddressID = 0;
+            if (DefaultEntityTypeID === ShipperID) {
+              companyID = ShipperID;
+              CompanyAddress = Shipper_Displayas;
+              Company_Name = Shipper_Name;
+              Company_AddressID = Shipper_AddressID;
+            }
+            if (DefaultEntityTypeID === BuyerID) {
+              companyID = BuyerID;
+              CompanyAddress = Buyer_Displayas;
+              Company_Name = BuyerName;
+              Company_AddressID = Buyer_AddressID;
+            }
+
+            if (DefaultEntityTypeID === Consignee) {
+              companyID = Consignee;
+              CompanyAddress = Consignee_Displayas;
+              Company_Name = Consignee_Name;
+              Company_AddressID = Consignee_AddressID;
+            }
+
+            if (DefaultEntityTypeID === NotifyID) {
+              companyID = NotifyID;
+              CompanyAddress = Notify_Displayas;
+              Company_Name = NotifyName;
+              Company_AddressID = Notify_AddressID;
+            }
+
             self.setState({
+              DefaultEntityTypeID,
+              companyID,
+              Company_Name,
+              Company_AddressID,
               ModeofTransport,
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
