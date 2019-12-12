@@ -3873,6 +3873,7 @@ img {
   font-size: 15px;
   font-family: "Medium Font";
 } */
+/*  */
 .arwimg {
   height: auto;
   width: 18px;
@@ -3889,3 +3890,82 @@ img {
     max-width: 71.666667%;
   }
 }
+/* TransitSection css start kalpesh */
+.transit-sect .car-a {
+  width: 100%;
+  border: 1px solid #F1F2F2;
+  border-radius: 15px;
+  padding: 15px 20px;
+  background-color: #fff;
+}
+.transit-sect .details-border {
+  border: none;
+}
+.transit-sect .details-para1 {
+  float: right;
+}
+.transit-sect .calendar {
+  width: 35px;
+  height: 35px;
+}
+/*.Transitnew ul {
+  list-style: none;
+}
+.Transitnew .progressk {
+  padding: 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+}
+.Transitnew .progressk .progress1 {
+  position: relative;
+}
+.Transitnew .grey {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 3px;
+  border: 1px solid #999;
+  color: #999;
+  margin: 0 auto 6px;
+  font-size: 12px;
+  font-style: normal;
+}
+.Transitnew .min1 {
+    background-color: #29aae3;
+    color: #fff;
+    border: 1px solid #29aae3;
+    font-family: "Bold Font";
+    padding: 4px 8px;
+    border-radius: 50px;
+    margin: 0 3px;
+    font-size: 11px;
+    text-align: center;
+    font-weight: 300;
+    display: inline-block;
+    transition: all 0.3s ease-in-out;
+}
+.Transitnew .red {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  padding: 0;
+  border: 10px solid red;
+  margin: 1px;
+}
+.Transitnew .turkey1 {
+  color: red;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-family: "Regular Font";
+}
+.Transitnew .turkey {
+  color: #39b54a;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-family: "Regular Font";
+} */
+/* TransitSection css End kalpesh */
+    
