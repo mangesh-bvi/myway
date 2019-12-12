@@ -462,14 +462,20 @@ class SpotRateDetails extends Component {
       if (this.state.spotrateresponseTbl3.length > 0) {
         for (var i = 0; i < this.state.spotrateresponseTbl3.length; i++) {
           multiCBM.push({
-            PackageType: this.state.spotrateresponseTbl3[i].PackageType == null?"":this.state.spotrateresponseTbl3[i].PackageType,
+            PackageType:
+              this.state.spotrateresponseTbl3[i].PackageType == null
+                ? ""
+                : this.state.spotrateresponseTbl3[i].PackageType,
             Quantity: this.state.spotrateresponseTbl3[i].Quantity,
             Lengths: this.state.spotrateresponseTbl3[i].Lengths,
             Width: this.state.spotrateresponseTbl3[i].Width,
             Height: this.state.spotrateresponseTbl3[i].Height,
             GrossWt: this.state.spotrateresponseTbl3[i].GrossWt,
             VolumeWeight: 0,
-            Volume: this.state.spotrateresponseTbl3[i].Volume == null?0:this.state.spotrateresponseTbl3[i].Volume
+            Volume:
+              this.state.spotrateresponseTbl3[i].Volume == null
+                ? 0
+                : this.state.spotrateresponseTbl3[i].Volume
           });
         }
       }
@@ -647,19 +653,19 @@ class SpotRateDetails extends Component {
                         </h3>
                       </div>
                       <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Shipment Type</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.ShipmentType}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Mode of Transport</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Mode}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Container Load</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Trade_terms}
@@ -676,7 +682,7 @@ class SpotRateDetails extends Component {
                           <p className="details-title">Special Equipment</p>
                           <p className="details-para"></p>
                         </div> */}
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                           <p className="details-title">
                             HazMat &amp; Unstackable
                           </p>
@@ -688,7 +694,7 @@ class SpotRateDetails extends Component {
                             <p className="details-para">No</p>
                           )}
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Custom Clearance</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl
@@ -701,13 +707,13 @@ class SpotRateDetails extends Component {
                             )}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Inco Terms</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Trade_terms}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Type of Move</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.TypeofMove}
@@ -722,7 +728,7 @@ class SpotRateDetails extends Component {
                                 {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>                          
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">POD</p>
                             <p className="details-para">
                                 {this.state.spotrateresponseTbl.DestinationAddress}
@@ -732,13 +738,13 @@ class SpotRateDetails extends Component {
                          ):null):""}
                          {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to door"?(
                           <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">PU Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Delivery Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.DestinationAddress}
@@ -754,7 +760,7 @@ class SpotRateDetails extends Component {
                                 {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>                          
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Delivery Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.DestinationAddress}
@@ -764,13 +770,13 @@ class SpotRateDetails extends Component {
                          ):null):""}
                          {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to port"?(
                           <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">PU Address</p>
                             <p className="details-para">
                               {this.state.spotrateresponseTbl.PickUpAddress}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">POD</p>
                             <p className="details-para">
                                 {this.state.spotrateresponseTbl.DestinationAddress}
@@ -783,12 +789,12 @@ class SpotRateDetails extends Component {
                   </div>
 
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border-t py-3">
                       <h3>Customer Details</h3>
                     </div>
                     <div className="">
                       <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-6 col-md-4">
                           <p className="details-title">Account/Customer</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Customer}
@@ -807,11 +813,11 @@ class SpotRateDetails extends Component {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4">
                         <p className="details-title">Commodity</p>
                         {/* <input type="text" value="Dummy" disabled /> */}
                         <select
-                        value={this.state.spotrateresponseTbl.CommodityID}
+                          value={this.state.spotrateresponseTbl.CommodityID}
                         >
                           <option>Select</option>
                           <option>All</option>
@@ -820,7 +826,6 @@ class SpotRateDetails extends Component {
                               {item.Commodity}
                             </option>
                           ))}
-                          
                         </select>
                       </div>
                       <div className="col-md-12 login-fields">
@@ -830,34 +835,36 @@ class SpotRateDetails extends Component {
                             {/* {(() => {
                               if (spotrateresponseTbl1.length>0) {
                           */}
-                            <ReactTable
-                              data={spotrateresponseTbl1}
-                              noDataText="No Data Found"
-                              filterable
-                              columns={[
-                                {
-                                  columns: [
-                                    {
-                                      Header: "Container",
-                                      accessor: "Container"
-                                    },
-                                    {
-                                      Header: "Quantity",
-                                      accessor: "ContainerQty"
-                                    },
+                            {spotrateresponseTbl1.length > 0 ? (
+                              <ReactTable
+                                data={spotrateresponseTbl1}
+                                noDataText="No Data Found"
+                                filterable
+                                columns={[
+                                  {
+                                    columns: [
+                                      {
+                                        Header: "Container",
+                                        accessor: "Container"
+                                      },
+                                      {
+                                        Header: "Quantity",
+                                        accessor: "ContainerQty"
+                                      },
 
-                                    {
-                                      Header: "Temperature",
-                                      accessor: "Container_Temperature"
-                                    }
-                                  ]
-                                }
-                              ]}
-                              className="-striped -highlight"
-                              defaultPageSize={10}
-                              minRows={1}
-                              //getTrProps={this.HandleRowClickEvt}
-                            />
+                                      {
+                                        Header: "Temperature",
+                                        accessor: "Container_Temperature"
+                                      }
+                                    ]
+                                  }
+                                ]}
+                                className="-striped -highlight"
+                                defaultPageSize={10}
+                                minRows={1}
+                                //getTrProps={this.HandleRowClickEvt}
+                              />
+                            ) : null}
                           </div>
                           <div className="ag-fresh">
                             <ReactTable
@@ -946,44 +953,55 @@ class SpotRateDetails extends Component {
             centered={true}
           >
             <ModalBody>
-            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleSpotHistory}>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                onClick={this.toggleSpotHistory}
+              >
                 <span>&times;</span>
               </button>
-              <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
-              <ReactTable
-                data={this.state.historyModalData}
-                columns={[
-                  {
-                    columns: [
-                      {
-                        Header: "Status",
-                        accessor: "Status"
-                      },
-                      {
-                        Header: "CreatedBy",
-                        accessor: "CreatedBy"
-                      },
-                      // {
-                      //   Header: "CreatedDate(GMT)",
-                      //   accessor: "CreatedDate"
-                      // },
-                      {
-                        Header: "CreatedDate",
-                        accessor: "CreatedDate"
-                      }
-                    ]
-                  }
-                ]}
-                defaultPageSize={3}
-                minRows={1}
-                showPagination={false}
-              />
-              
-              <div className="text-center">
-                <Button className="butn" onClick={this.toggleSpotHistory}>
-                  Close
-                </Button>
-              </div>
+              <div
+                style={{
+                  backgroundColor: "#fff",
+                  padding: "15px",
+                  borderRadius: "15px"
+                }}
+              >
+                <ReactTable
+                  data={this.state.historyModalData}
+                  columns={[
+                    {
+                      columns: [
+                        {
+                          Header: "Status",
+                          accessor: "Status"
+                        },
+                        {
+                          Header: "CreatedBy",
+                          accessor: "CreatedBy"
+                        },
+                        // {
+                        //   Header: "CreatedDate(GMT)",
+                        //   accessor: "CreatedDate"
+                        // },
+                        {
+                          Header: "CreatedDate",
+                          accessor: "CreatedDate"
+                        }
+                      ]
+                    }
+                  ]}
+                  defaultPageSize={3}
+                  minRows={1}
+                  showPagination={false}
+                />
+
+                <div className="text-center">
+                  <Button className="butn" onClick={this.toggleSpotHistory}>
+                    Close
+                  </Button>
+                </div>
               </div>
             </ModalBody>
           </Modal>

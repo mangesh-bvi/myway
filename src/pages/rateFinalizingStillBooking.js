@@ -82,6 +82,16 @@ class RateFinalizingStillBooking extends Component {
       Buyer_Displayas: "",
       BuyerName: "",
 
+      ConshineeID: 0,
+      Conshinee_AddressID: 0,
+      Conshinee_Displayas: "",
+      ConshineeName: "",
+
+      ShipperID: 0,
+      Shipper_AddressID: 0,
+      Shipper_Displayas: "",
+      ShipperName: "",
+
       consineeData: {},
       shipperData: {},
       buyerId: 0,
@@ -98,7 +108,10 @@ class RateFinalizingStillBooking extends Component {
       conshineeAddData: [],
       shipperAddData: [],
       buyerAddData: [],
-      notifyAddData: []
+      notifyAddData: [],
+      company_name:"",
+      ContactName:"",
+
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -113,7 +126,7 @@ class RateFinalizingStillBooking extends Component {
   }
   componentDidMount() {
     var rData = this.props.location.state;
-    debugger;
+
     if (
       // typeof rData.ContainerLoad !== "" &&
       // typeof rData.salesQuotaNo !== "" &&
@@ -144,13 +157,24 @@ class RateFinalizingStillBooking extends Component {
         "desc"
       );
       var BookingNo = this.props.location.state.BookingNo;
-      this.setState({ BookingNo, userType, copy: true });
-      setTimeout(() => {
-        this.HandleCommodityDropdown();
-        this.HandlePackgeTypeData();
-        this.BookigGridDetailsList();
-        this.NonCustomerList();
-      }, 300);
+      var ModeofTransport = this.props.location.state.Mode;
+
+      this.setState({ BookingNo, userType, copy: true, ModeofTransport });
+      if (ModeofTransport === "AIR") {
+        setTimeout(() => {
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+          this.BookigGridDetailsListAIR();
+          this.NonCustomerList();
+        }, 300);
+      } else {
+        setTimeout(() => {
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+          this.BookigGridDetailsList();
+          this.NonCustomerList();
+        }, 300);
+      }
     }
 
     if (
@@ -162,17 +186,17 @@ class RateFinalizingStillBooking extends Component {
         "desc"
       );
       var BookingNo = this.props.location.state.BookingNo;
-      var isView = this.props.location.state.isView;
-      if (isView) {
-        this.setState({ BookingNo, userType, isView: true });
+      var ModeofTransport = this.props.location.state.Mode;
+
+      this.setState({ BookingNo, userType, isView: true, ModeofTransport });
+      if (ModeofTransport === "AIR") {
         setTimeout(() => {
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
-          this.BookigGridDetailsList();
+          this.BookigGridDetailsListAIR();
           this.NonCustomerList();
         }, 300);
       } else {
-        this.setState({ BookingNo, userType });
         setTimeout(() => {
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
@@ -401,20 +425,36 @@ class RateFinalizingStillBooking extends Component {
       ShipperID: this.state.ShipperID
     });
   }
+  HandleConsineeAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Consinee_Displayas: addval });
+  }
+  HandleShipperAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Shipper_Displayas: addval });
+  }
+  HandleNotifyAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Notify_Displayas: addval });
+  }
+  HandleBuyerAddressChange(e) {
+    var addval = e.target.value;
+    this.setState({ Buyer_Displayas: addval });
+  }
+
   ////this method for NonCustomerList bind
+
   NonCustomerList() {
-    debugger;
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/NonCustomerList`,
       data: {
-        MyWayUserID: 2679
+        MyWayUserID: userId
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var data = response.data.Table;
       self.setState({ NonCustomerData: data });
     });
@@ -430,15 +470,12 @@ class RateFinalizingStillBooking extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
   }
   ////Handel Update Booking Details
   HandleBookingUpdate() {
-    debugger;
     //const formData = new FormData();
     var fData = [];
     var cData = [];
@@ -552,7 +589,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    debugger;
     var FileData = event.target.files;
     var filesArr = this.state.selectedFile;
     for (let i = 0; i < FileData.length; i++) {
@@ -566,7 +602,6 @@ class RateFinalizingStillBooking extends Component {
 
   ////change value of SelectType methiod
   HandleRadioBtn = e => {
-    debugger;
     var selectedType = e.target.value;
     this.setState({
       // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
@@ -592,154 +627,6 @@ class RateFinalizingStillBooking extends Component {
       }
     }, 100);
   };
-
-  ////booking insert
-
-  HandleBookigInsert() {
-    //let self = this;
-    debugger;
-    var bookingDetails = this.state.Booking;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-
-    var MyWayUserID = userId;
-    var ShipperID = Number(this.state.shipperData.Company_ID || 0);
-
-    var DefaultEntityTypeID = bookingDetails[0].companyID; ////ask to way it give parameter
-
-    var Shipper_Displayas = this.state.shipperData.CompanyAddress || "";
-    var Shipper_AddressID = Number(this.state.shipperData.AddressID || 0);
-    var ShipperName = this.state.shipperData.Company_Name || "";
-
-    var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-    var ConsigneeName = this.state.consineeData.Company_Name || "";
-    var Consignee_AddressID = Number(this.state.consineeData.AddressID || 0);
-    var Consignee_Displayas = this.state.consineeData.CompanyAddress;
-
-    var BuyerID = this.state.BuyerID;
-    var Buyer_AddressID = this.state.Buyer_AddressID;
-    var Buyer_Displayas = this.state.Buyer_Displayas;
-    var BuyerName = this.state.BuyerName;
-
-    var Mode = this.state.ContainerLoad;
-
-    var Commodity = Number(
-      this.state.commodityData.filter(
-        x => x.Commodity === this.state.selectedCommodity
-      )[0].id || 0
-    );
-
-    var saleQuoteID = Number(this.state.QuotationData[0].SaleQuoteID || 0);
-    var saleQuoteNo = this.state.salesQuotaNo || "";
-    var saleQuoteLineID = Number(
-      this.state.QuotationData[0].saleQuoteLineID || 0
-    );
-
-    var NotifyID = Number(this.state.NotifyID || 0);
-    var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
-    var Notify_Displayas = this.state.Notify_Displayas || "";
-    var NotifyName = this.state.NotifyName || "";
-
-    var BookingDim = [];
-
-    if (this.state.multiCBM.length > 0) {
-      for (let i = 0; i < this.state.multiCBM.length; i++) {
-        var cargoData = new Object();
-
-        cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-        cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-        cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-        cargoData.Lengths = this.state.multiCBM[i].Lengths || 0;
-        cargoData.Width = this.state.multiCBM[i].Width || 0;
-        cargoData.Height = this.state.multiCBM[i].Height || 0;
-        cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-        cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-        cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-
-        BookingDim.push(cargoData);
-      }
-    } else {
-      var cargoData = new Object();
-
-      cargoData.BookingPackID = 0;
-      cargoData.PackageType = "";
-      cargoData.Quantity = 0;
-      cargoData.Lengths = 0;
-      cargoData.Width = 0;
-      cargoData.Height = 0;
-      cargoData.GrossWt = 0;
-      cargoData.VolumeWeight = 0;
-      cargoData.Volume = 0;
-      BookingDim.push(cargoData);
-    }
-    var BookingDocs = [];
-    // if (this.state.FileData.length > 0) {
-    //   for (let i = 0; i < this.state.FileData.length; i++) {
-    //     var fileObj = new Object();
-    //     fileObj.BookingID = bookingId;
-    //     fileObj.DocumentID = this.state.FileData[i].DocumentID;
-    //     fileObj.FTPFilePath = this.state.FileData[i].FilePath;
-    //     BookingDocs.push(fileObj);
-    //   }
-    // }
-
-    var BookingID = this.state.FileData.BookingID || 0;
-    var DocumentID = this.state.FileData.DocumentID || 0;
-    var BookingDoc = this.state.selectedFile;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-
-    var paramData = {
-      MyWayUserID: MyWayUserID,
-      ShipperID: ShipperID,
-      Shipper_Displayas: Shipper_Displayas,
-      Shipper_AddressID: Shipper_AddressID,
-      ShipperName: ShipperName,
-      ConsigneeID: ConsigneeID,
-      ConsigneeName: ConsigneeName,
-      Consignee_AddressID: Consignee_AddressID,
-      Consignee_Displayas: Consignee_Displayas,
-      BuyerID: BuyerID,
-      Buyer_AddressID: Buyer_AddressID,
-      Buyer_Displayas: Buyer_Displayas,
-      BuyerName: BuyerName,
-      Mode: Mode,
-      Commodity: Commodity,
-      saleQuoteID: saleQuoteID,
-      saleQuoteNo: saleQuoteNo,
-      saleQuoteLineID: saleQuoteLineID,
-      DefaultEntityTypeID: DefaultEntityTypeID,
-      NotifyID: NotifyID,
-      Notify_AddressID: Notify_AddressID,
-      Notify_Displayas: Notify_Displayas,
-      NotifyName: NotifyName,
-      BookingDocs: BookingDocs,
-      BookingDim: BookingDim
-    };
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookingInsertion`,
-      data: paramData,
-
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-    });
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookigFileUpload`,
-      data: {
-        BookingID: BookingID,
-        DocumentID: DocumentID,
-        BookingDoc: BookingDoc,
-        MyWayUserID: userId
-      },
-
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-    });
-  }
 
   ////this methos for bookig details HandleBookigClone
   HandleBookigClone() {
@@ -842,10 +729,9 @@ class RateFinalizingStillBooking extends Component {
     });
   }
 
-  ////this methos for bookig details BookigGridDetailsList
-  BookigGridDetailsList() {
+  BookigGridDetailsListAIR() {
     let self = this;
-    debugger;
+
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (bookingId !== "" && bookingId !== null) {
@@ -904,19 +790,215 @@ class RateFinalizingStillBooking extends Component {
             var Notify_AddressID = Booking[0].Notify_AddressID;
             var Notify_Displayas = Booking[0].Notify_Displayas;
             var NotifyName = Booking[0].NotifyName;
+
+            var ConsigneeID = Booking[0].Consignee;
+            var Consignee_AddressID = Booking[0].Consignee_AddressID;
+            var Consignee_Displayas = Booking[0].Consignee_Displayas;
+            var ConsigneeName = Booking[0].Consignee_Name;
+
+            var BuyerID = Booking[0].BuyerID;
+            var Buyer_AddressID = Booking[0].Buyer_AddressID;
+            var Buyer_Displayas = Booking[0].Buyer_Displayas;
+            var BuyerName = Booking[0].Buyer_Name;
+
+            var ShipperID = Booking[0].ShipperID;
+            var Shipper_AddressID = Booking[0].Shipper_AddressID;
+            var Shipper_Displayas = Booking[0].Shipper_Displayas;
+            var ShipperName = Booking[0].Shipper_Name;
+
             self.setState({
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
               selectedCommodity: Booking[0].Commodity,
+
               NotifyID,
               Notify_AddressID,
               Notify_Displayas,
               NotifyName,
+
+              ConsigneeName,
+              ConsigneeID,
+              Consignee_AddressID,
+              Consignee_Displayas,
+
+              ShipperID,
+              Shipper_AddressID,
+              Shipper_Displayas,
+              ShipperName,
+
+              BuyerID,
+              Buyer_AddressID,
+              Buyer_Displayas,
+              BuyerName,
               fields: {
                 Consignee: Booking[0].Consignee_Name,
-                Shipper: Booking[0].Shipper_Name
+                Shipper: Booking[0].Shipper_Name,
+                Notify: NotifyName,
+                Buyer: BuyerName
               }
             });
+
+            if (Consignee_AddressID) {
+              setTimeout(() => {
+                self.conshineeAddressList(ConsigneeID, Consignee_AddressID);
+              }, 200);
+            }
+            if (Shipper_AddressID) {
+              setTimeout(() => {
+                self.shipperAddressList(ShipperID, Shipper_AddressID);
+              }, 400);
+            }
+            if (Buyer_AddressID) {
+              setTimeout(() => {
+                self.buyerAddressList(BuyerID, Buyer_AddressID);
+              }, 600);
+            }
+            if (Notify_AddressID) {
+              setTimeout(() => {
+                self.notifyPartyAddressList(NotifyID, Notify_AddressID);
+              }, 800);
+            }
+          }
+
+          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
+            self.setState({ FileData });
+          }
+        }
+      });
+    }
+  }
+
+  ////this methos for bookig details BookigGridDetailsList
+  BookigGridDetailsList() {
+    let self = this;
+    debugger;
+    var bookingId = self.state.BookingNo;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (bookingId !== "" && bookingId !== null) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookigGridDetailsList`,
+        data: {
+          UserID: userId, //874654, //userId, //874654, ,
+          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        var QuotationData = response.data.Table4;
+        var QuotationSubData = response.data.Table5;
+        var Booking = response.data.Table;
+        var CargoDetails = response.data.Table2;
+        var FileData = response.data.Table3;
+        var eqmtType = response.data.Table1;
+        var ModeofTransport = response.data.Table[0].ModeofTransport;
+        if (typeof QuotationData !== "undefined") {
+          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
+            var nPartyID = QuotationData[0].NotifyID;
+            var company_name = QuotationData[0].company_name;
+            var ContactName = QuotationData[0].ContactName;
+
+            self.setState({
+              company_name,
+              ContactName,
+              QuotationData,
+              QuotationSubData,
+              Booking,
+              nPartyID,
+              ModeofTransport
+            });
+          }
+        }
+        if (typeof eqmtType !== "undefined") {
+          if (eqmtType.length > 0) {
+            self.setState({ eqmtType });
+          }
+        }
+        if (typeof Booking !== "undefined") {
+          var typeofMove = "";
+          if (Booking.length > 0) {
+            if (Booking[0].typeofMove === 1) {
+              typeofMove = "Port To Port";
+            }
+            if (Booking[0].typeofMove === 2) {
+              typeofMove = "Door To Port";
+            }
+            if (Booking[0].typeofMove === 3) {
+              typeofMove = "Port To Door";
+            }
+            if (Booking[0].typeofMove === 4) {
+              typeofMove = "Door To Door";
+            }
+            var NotifyID = Booking[0].NotifyID;
+            var Notify_AddressID = Booking[0].Notify_AddressID;
+            var Notify_Displayas = Booking[0].Notify_Displayas;
+            var NotifyName = Booking[0].NotifyName;
+
+            var ConsigneeID = Booking[0].Consignee;
+            var Consignee_AddressID = Booking[0].Consignee_AddressID;
+            var Consignee_Displayas = Booking[0].Consignee_Displayas;
+            var ConsigneeName = Booking[0].Consignee_Name;
+
+            var BuyerID = Booking[0].BuyerID;
+            var Buyer_AddressID = Booking[0].Buyer_AddressID;
+            var Buyer_Displayas = Booking[0].Buyer_Displayas;
+            var BuyerName = Booking[0].Buyer_Name;
+
+            var ShipperID = Booking[0].ShipperID;
+            var Shipper_AddressID = Booking[0].Shipper_AddressID;
+            var Shipper_Displayas = Booking[0].Shipper_Displayas;
+            var ShipperName = Booking[0].Shipper_Name;
+            self.setState({
+              multiCBM: CargoDetails,
+              cargoType: Booking[0].CargoType,
+              selectedCommodity: Booking[0].Commodity,
+
+              NotifyID,
+              Notify_AddressID,
+              Notify_Displayas,
+              NotifyName,
+
+              ConsigneeName,
+              ConsigneeID,
+              Consignee_AddressID,
+              Consignee_Displayas,
+
+              ShipperID,
+              Shipper_AddressID,
+              Shipper_Displayas,
+              ShipperName,
+
+              BuyerID,
+              Buyer_AddressID,
+              Buyer_Displayas,
+              BuyerName,
+              fields: {
+                Consignee: ConsigneeName,
+                Shipper: ShipperName,
+                Notify: NotifyName,
+                Buyer: BuyerName
+              }
+            });
+          }
+          if (Consignee_AddressID) {
+            setTimeout(() => {
+              self.conshineeAddressList(ConsigneeID, Consignee_AddressID);
+            }, 200);
+          }
+          if (Shipper_AddressID) {
+            setTimeout(() => {
+              self.shipperAddressList(ShipperID, Shipper_AddressID);
+            }, 400);
+          }
+          if (Buyer_AddressID) {
+            setTimeout(() => {
+              self.buyerAddressList(BuyerID, Buyer_AddressID);
+            }, 600);
+          }
+          if (Notify_AddressID) {
+            setTimeout(() => {
+              self.notifyPartyAddressList(NotifyID, Notify_AddressID);
+            }, 800);
           }
 
           if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
@@ -1066,7 +1148,6 @@ class RateFinalizingStillBooking extends Component {
 
   ////this method for multiple file element create
   CreateFileElement() {
-    debugger;
     return this.state.FileData.map((el, i) => (
       <div key={i}>
         {/* <a href={el.FilePath || ""}>
@@ -1087,7 +1168,6 @@ class RateFinalizingStillBooking extends Component {
   ////end methos for multiple file element
 
   HandleChangeBuyer(e) {
-    debugger;
     var BuyerName = e.target.selectedOptions[0].innerText;
     if (BuyerName !== "select") {
       var BuyerID = Number(e.target.selectedOptions[0].value);
@@ -1110,7 +1190,6 @@ class RateFinalizingStillBooking extends Component {
   ////this method for party change value
 
   HandleChangeParty(e) {
-    debugger;
     var NotifyName = e.target.selectedOptions[0].innerText;
     if (NotifyName !== "select") {
       var NotifyID = Number(e.target.selectedOptions[0].value);
@@ -1130,10 +1209,10 @@ class RateFinalizingStillBooking extends Component {
     }
   }
 
-  notifyPartyAddressList() {
+  notifyPartyAddressList(NotifyID, Notify_AddressID) {
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    var cusID = this.state.NotifyID;
+    var cusID = NotifyID;
 
     axios({
       method: "post",
@@ -1145,17 +1224,20 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
+      debugger;
+
       var notifyAddData = response.data.Table;
       if (notifyAddData) {
-        self.setState({ notifyAddData });
+        var Notify_AddressID = Notify_AddressID;
+        self.setState({ notifyAddData, Notify_AddressID, notiother: true });
       }
     });
   }
-  
-  buyerAddressList() {
+
+  buyerAddressList(BuyerID, Buyer_AddressID) {
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    var cusID = this.state.BuyerID;
+    var cusID = BuyerID;
 
     axios({
       method: "post",
@@ -1167,17 +1249,19 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var buyerAddData = response.data.Table;
       if (buyerAddData) {
-        self.setState({ buyerAddData });
+        var Buyer_AddressID = Buyer_AddressID;
+        self.setState({ buyerAddData, Buyer_AddressID, buyerother: true });
       }
     });
   }
 
-  conshineeAddressList() {
+  conshineeAddressList(ConsigneeID, Conshinee_AddressID) {
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    var cusID = this.state.BuyerID;
+    var cusID = ConsigneeID;
 
     axios({
       method: "post",
@@ -1189,9 +1273,41 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var conshineeAddData = response.data.Table;
       if (conshineeAddData) {
-        self.setState({ conshineeAddData });
+        var Conshinee_AddressID = Conshinee_AddressID;
+        self.setState({
+          conshineeAddData,
+          Conshinee_AddressID,
+          conshineeother: true
+        });
+      }
+    });
+  }
+
+  shipperAddressList(ShipperID, Shipper_AddressID) {
+    let self = this;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    var cusID = ShipperID;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerAddressList`,
+      data: {
+        UserID: userId,
+        CustomerID: cusID
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var shipperAddData = response.data.Table;
+      if (shipperAddData) {
+        var Shipper_AddressID = Shipper_AddressID;
+        self.setState({
+          shipperAddData,
+          Shipper_AddressID,
+          shipperother: true
+        });
       }
     });
   }
@@ -1219,7 +1335,6 @@ class RateFinalizingStillBooking extends Component {
         ? this.state.QuotationData.length > 0
         : this.state.Booking.length > 0
     ) {
-      debugger;
       if (this.state.salesQuotaNo === "") {
         selectedCommodity = this.state.commodityData.filter(
           x => x.id === this.state.Booking[0].Commodity
@@ -1343,7 +1458,7 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  debugger;
+
                                   var lname = "";
                                   var olname = "";
                                   if (row._original.Linename) {
@@ -1536,7 +1651,7 @@ class RateFinalizingStillBooking extends Component {
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {Booking.length > 0
@@ -1544,7 +1659,7 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {Booking.length > 0
@@ -1552,7 +1667,7 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].CargoType : null}
@@ -1567,11 +1682,11 @@ class RateFinalizingStillBooking extends Component {
                               {this.state.EquipmentTypes}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Special Equipment</p>
                             <p className="details-para"></p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
@@ -1579,7 +1694,7 @@ class RateFinalizingStillBooking extends Component {
                               {/* {this.state.EquipmentTypes} */}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].Incoterm : ""}
@@ -1596,7 +1711,7 @@ class RateFinalizingStillBooking extends Component {
                             </p>
                           </div>
 
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">POL</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].POL : null}
@@ -1605,7 +1720,7 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">POD</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].POD : null}
@@ -1614,17 +1729,11 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">PU Address</p>
-                            {/* <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p> */}
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Delivery Address</p>
-                            {/* <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p> */}
                           </div>
                         </div>
                       </div>
@@ -1650,12 +1759,12 @@ class RateFinalizingStillBooking extends Component {
 
                   <div className="rate-final-contr">
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Customer Details</h3>
                       </div>
                       <div className="">
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Account/Customer</p>
 
                             <p className="details-para">
@@ -1667,9 +1776,12 @@ class RateFinalizingStillBooking extends Component {
                               {Booking.length > 0
                                 ? Booking[0].company_name
                                 : ""}
+                              {this.state.company_name}
+                               
+      
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {/* {this.state.selectedType === "Shipper"
@@ -1690,12 +1802,13 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">
                               {Booking.length > 0
                                 ? Booking[0].contact_name
                                 : ""}
+                              {this.state.ContactName}
                             </p>
                           </div>
                         </div>
@@ -1747,12 +1860,12 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Consignee Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Consignee Name</p>
                             {this.state.userType !== "Customer" ? (
                               <input
@@ -1792,7 +1905,7 @@ class RateFinalizingStillBooking extends Component {
                             )}
                           </div>
 
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
                             <select
                               onChange={this.AddressChange.bind(
@@ -1827,12 +1940,12 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Shipper Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Shipper Name</p>
                             {this.state.userType !== "Customer" ? (
                               <input
@@ -1874,7 +1987,7 @@ class RateFinalizingStillBooking extends Component {
                             </p> */}
                           </div>
 
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
 
                             <select
@@ -1909,12 +2022,12 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Buyer Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
                               <Autocomplete
@@ -1945,7 +2058,7 @@ class RateFinalizingStillBooking extends Component {
                               />
                             </p>
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
 
                             <select
@@ -1976,12 +2089,12 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border py-3">
+                      <div className="title-border-t py-3">
                         <h3>Notify Party Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
                               <Autocomplete
@@ -2012,7 +2125,7 @@ class RateFinalizingStillBooking extends Component {
                               />
                             </p>
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
 
                             <select
@@ -2045,7 +2158,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-md-6 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
                           disabled={true}
@@ -2066,7 +2179,7 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div>
                       <div
-                        className="title-border py-3"
+                      className="title-border-t py-3"
                         style={{ width: "100%" }}
                       >
                         <h3>Cargo Details</h3>

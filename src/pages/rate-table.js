@@ -1039,7 +1039,8 @@ class RateTable extends Component {
               loading: false,
               commodityData: ratetable2,
               MinTT: Math.min(...MinTTArray),
-              MaxTT: Math.max(...MaxTTArray)
+              MaxTT: Math.max(...MaxTTArray),
+              value: Math.max(...MaxTTArray)
             });
           }
           if (ratetable1 != null) {
@@ -1624,6 +1625,23 @@ class RateTable extends Component {
         </div> */}
         <div className="col-md">
           <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {/* <div className="col-md">
+          <div className="spe-equ">
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
@@ -1634,7 +1652,7 @@ class RateTable extends Component {
               //onKeyUp={this.cbmChange}
             />
           </div>
-        </div>
+        </div> */}
         <div className="col-md">
           <div className="spe-equ">
             <input

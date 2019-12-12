@@ -1476,8 +1476,8 @@ class AddUser extends React.Component {
               <div className="container add-user-cntr">
                 {" "}
                 {/* login-input-cntr */}
-                <div className="row mt-3">
-                  <div className="login-fields col-md-4">
+                <div className="row mt-3 title-border">
+                  <div className="login-fields col-12 col-sm-4 col-md-4">
                     <label>
                       User Name{" "}
                       <sup style={{ color: "#f00", fontSize: "14px" }}>*</sup>
@@ -1494,7 +1494,7 @@ class AddUser extends React.Component {
                       {this.state.errors["username"]}
                     </span>
                   </div>
-                  <div className="login-fields col-md-4">
+                  <div className="login-fields col-12 col-sm-4 col-md-4">
                     <label>
                       Password{" "}
                       <sup style={{ color: "#f00", fontSize: "14px" }}>*</sup>
@@ -1510,7 +1510,7 @@ class AddUser extends React.Component {
                       {this.state.errors["password"]}
                     </span>
                   </div>
-                  <div className="login-fields col-md-4">
+                  <div className="login-fields col-12 col-sm-4 col-md-4">
                     <label>
                       Email Id{" "}
                       <sup style={{ color: "#f00", fontSize: "14px" }}>*</sup>
@@ -1528,8 +1528,8 @@ class AddUser extends React.Component {
                     </span>
                   </div>
                 </div>
-                <div className="row">
-                  <div className="login-fields col-md-4">
+                <div className="row title-border">
+                  <div className="login-fields col-12 col-sm-4 col-md-4">
                     <label>
                       First Name{" "}
                       <sup style={{ color: "#f00", fontSize: "14px" }}>*</sup>
@@ -1545,7 +1545,7 @@ class AddUser extends React.Component {
                       {this.state.errors["firstname"]}
                     </span>
                   </div>
-                  <div className="login-fields col-md-4">
+                  <div className="login-fields col-12 col-sm-4 col-md-4">
                     <label>
                       Last Name{" "}
                       <sup style={{ color: "#f00", fontSize: "14px" }}>*</sup>
@@ -1561,7 +1561,7 @@ class AddUser extends React.Component {
                       {this.state.errors["lastname"]}
                     </span>
                   </div>
-                  <div className="login-fields col-md-4">
+                  <div className="login-fields col-12 col-sm-4 col-md-4">
                     <label>
                       Country{" "}
                       <sup style={{ color: "#f00", fontSize: "14px" }}>*</sup>
@@ -1603,8 +1603,8 @@ class AddUser extends React.Component {
                    /> */}
                   </div>
                 </div>
-                <div className="row">
-                  <div className="login-fields col-md-4">
+                <div className="row title-border">
+                  <div className="login-fields col-12 col-sm-12 col-md-12 col-lg-3 r-border m0-p15">
                     <label>Dashboard Refresh Time</label>
                     <input
                       type="text"
@@ -1617,120 +1617,144 @@ class AddUser extends React.Component {
                       {this.state.errors["refreshtime"]}
                     </span>
                   </div>
+                  <div className="col-12 col-sm-12 col-md-12 col-lg-9">
+                    <div class="row">
+                      <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-3 col-xl-2">
+                        <label>Is Enabled</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "isenabled"
+                          )}
+                          name={"isenabled"}
+                          value={this.state.fields["isenabled"]}
+                        >
+                          {this.state.selectEnable.map(team => (
+                            <option key={team.key} value={team.key}>
+                              {team.value}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
+                        <label>User Type</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "usertype"
+                          )}
+                          name={"usertype"}
+                          value={this.state.fields["usertype"]}
+                        >
+                          {this.state.selectUserType.map(team => (
+                            <option key={team.UserType} value={team.UserType}>
+                              {team.UserType}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-3 col-xl-2">
+                        <label>User Creation</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "usercreation"
+                          )}
+                          name={"usercreation"}
+                          value={this.state.fields["usercreation"]}
+                        >
+                          {this.state.selectUserCreate.map(team => (
+                            <option key={team.key} value={team.key}>
+                              {team.value}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-3 col-xl-2">
+                        <label>Is Admin</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "isadmin"
+                          )}
+                          name={"isadmin"}
+                          value={this.state.fields["isadmin"]}
+                        >
+                          {this.state.selectIsAdmin.map(team => (
+                            <option key={team.key} value={team.key}>
+                              {team.value}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
+                        <label>Imp. Exp.</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "ImpExp"
+                          )}
+                          name={"ImpExp"}
+                          value={this.state.fields["ImpExp"]}
+                        >
+                          {this.state.selectImpExp.map(team => (
+                            <option key={team.ID} value={team.ID}>
+                              {team.Value}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="row">
-                  <div className="login-fields col-md-2">
-                    <label>Is Enabled</label>
-                    <select
-                      onChange={this.HandleChangeSelect.bind(this, "isenabled")}
-                      name={"isenabled"}
-                      value={this.state.fields["isenabled"]}
-                    >
-                      {this.state.selectEnable.map(team => (
-                        <option key={team.key} value={team.key}>
-                          {team.value}
-                        </option>
-                      ))}
-                    </select>
+                <div class="row title-border">
+                  <div className="col-12 col-sm-12 col-md-12 col-lg-5 r-border m0-p15">
+                    <div className="row">
+                      <div
+                        className="login-fields col-12 col-sm-6 col-md-6 col-lg-6"
+                        style={{ margin: 0 }}
+                      >
+                        <label>Display As Shipper</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "displayShipper"
+                          )}
+                          name={"displayShipper"}
+                          value={this.state.fields["displayShipper"]}
+                        >
+                          {this.state.selectIsEnable.map(team => (
+                            <option key={team.key} value={team.key}>
+                              {team.value}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div
+                        className="login-fields col-12 col-sm-6 col-md-6 col-lg-6"
+                        style={{ margin: "0" }}
+                      >
+                        <label>Display As Consignee</label>
+                        <select
+                          onChange={this.HandleChangeSelect.bind(
+                            this,
+                            "displayConsignee"
+                          )}
+                          name={"displayConsignee"}
+                          value={this.state.fields["displayConsignee"]}
+                        >
+                          {this.state.selectIsEnable.map(team => (
+                            <option key={team.key} value={team.key}>
+                              {team.value}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                   </div>
-                  <div className="login-fields col-md-2">
-                    <label>User Type</label>
-                    <select
-                      onChange={this.HandleChangeSelect.bind(this, "usertype")}
-                      name={"usertype"}
-                      value={this.state.fields["usertype"]}
-                    >
-                      {this.state.selectUserType.map(team => (
-                        <option key={team.UserType} value={team.UserType}>
-                          {team.UserType}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="login-fields col-md-2">
-                    <label>User Creation</label>
-                    <select
-                      onChange={this.HandleChangeSelect.bind(
-                        this,
-                        "usercreation"
-                      )}
-                      name={"usercreation"}
-                      value={this.state.fields["usercreation"]}
-                    >
-                      {this.state.selectUserCreate.map(team => (
-                        <option key={team.key} value={team.key}>
-                          {team.value}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="login-fields col-md-2">
-                    <label>Is Admin</label>
-                    <select
-                      onChange={this.HandleChangeSelect.bind(this, "isadmin")}
-                      name={"isadmin"}
-                      value={this.state.fields["isadmin"]}
-                    >
-                      {this.state.selectIsAdmin.map(team => (
-                        <option key={team.key} value={team.key}>
-                          {team.value}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="login-fields col-md-4">
-                    <label>Imp. Exp.</label>
-                    <select
-                      onChange={this.HandleChangeSelect.bind(this, "ImpExp")}
-                      name={"ImpExp"}
-                      value={this.state.fields["ImpExp"]}
-                    >
-                      {this.state.selectImpExp.map(team => (
-                        <option key={team.ID} value={team.ID}>
-                          {team.Value}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="login-fields col-md-2">
-                    <label>Display As Shipper</label>
-                    <select
-                      onChange={this.HandleChangeSelect.bind(
-                        this,
-                        "displayShipper"
-                      )}
-                      name={"displayShipper"}
-                      value={this.state.fields["displayShipper"]}
-                    >
-                      {this.state.selectIsEnable.map(team => (
-                        <option key={team.key} value={team.key}>
-                          {team.value}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="login-fields col-md-4">
-                    <label>Display As Consignee</label>
-                    <select
-                      onChange={this.HandleChangeSelect.bind(
-                        this,
-                        "displayConsignee"
-                      )}
-                      name={"displayConsignee"}
-                      value={this.state.fields["displayConsignee"]}
-                    >
-                      {this.state.selectIsEnable.map(team => (
-                        <option key={team.key} value={team.key}>
-                          {team.value}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="login-fields col-md">
+                  <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4 r-border m0-p15">
                     <label>Mode Of Transport</label>
-                    <div className="remember-forgot mt-0">
+                    <div className="remember-forgot">
                       {this.state.chkModeOfTrans.map(
                         (chkModeOfTrans, index) => (
                           <div key={chkModeOfTrans.ID}>
@@ -1754,9 +1778,12 @@ class AddUser extends React.Component {
                       )}
                     </div>
                   </div>
-                  <div className="login-fields col-md">
+                  <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-3">
                     <label>Is Mobile Enabled?</label>
-                    <div className="remember-forgot">
+                    <div
+                      className="remember-forgot"
+                      style={{ paddingTop: "10px" }}
+                    >
                       <div>
                         <input
                           id="MobileEnable"
@@ -1773,8 +1800,8 @@ class AddUser extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div className="row">
-                  <div className="login-fields dynamic-fields col-md-6">
+                <div class="row title-border">
+                  <div className="col-12 col-sm-6 col-md-9 col-lg-9 login-fields dynamic-fields m0-p15 r-border">
                     <label>Company Name</label>
                     {/* {(() => {
                     if (this.props.location.state == undefined) {
@@ -1836,85 +1863,99 @@ class AddUser extends React.Component {
                     {this.createUI()}
                     {/* {this.state.values} */}
                   </div>
+                  <div className="col-12 col-sm-6 col-md-3 col-lg-3">
+                    <input
+                      type="button"
+                      className="butn"
+                      style={{ margin: "50px auto 0", display: "block" }}
+                      value="Add Company"
+                      onClick={this.addClick.bind(this)}
+                    />
+                  </div>
                 </div>
-                <input
-                  type="button"
-                  className="butn mt-0 mb-4"
-                  value="Add Company"
-                  onClick={this.addClick.bind(this)}
-                />
                 <div className="row">
                   <div className="login-fields col-md-12">
-                    <label className="mb-0">Hide Document('S)</label>
-                    <div className="row">
-                      {this.state.hideDocument.map((hideDocument, index) => (
-                        <div
-                          className="remember-forgot col-md-4"
-                          key={hideDocument.DocumentID}
-                        >
-                          <input
-                            id={hideDocument.DocumentID}
-                            type="checkbox"
-                            name={hideDocument.DocumentName}
-                            value={hideDocument.DocumentID}
-                            defaultChecked={hideDocument.IsSelected}
-                            onClick={this.toggleChangeHideDoc.bind(this, index)}
-                          />
-                          <label
-                            className="m-0"
-                            htmlFor={hideDocument.DocumentID}
+                    <div className="br1-pd15">
+                      <label className="mb-0">Hide Document('S)</label>
+                      <div className="row">
+                        {this.state.hideDocument.map((hideDocument, index) => (
+                          <div
+                            className="remember-forgot col-12 col-sm-6 col-md-6 col-lg-4"
+                            key={hideDocument.DocumentID}
                           >
-                            {hideDocument.DocumentName}
-                          </label>
-                        </div>
-                      ))}
+                            <input
+                              id={hideDocument.DocumentID}
+                              type="checkbox"
+                              name={hideDocument.DocumentName}
+                              value={hideDocument.DocumentID}
+                              defaultChecked={hideDocument.IsSelected}
+                              onClick={this.toggleChangeHideDoc.bind(
+                                this,
+                                index
+                              )}
+                            />
+                            <label
+                              className="m-0"
+                              htmlFor={hideDocument.DocumentID}
+                            >
+                              {hideDocument.DocumentName}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="row">
                   <div className="login-fields col-md-12">
-                    <label className="mb-0">Miscelleneous</label>
-                    <div className="remember-forgot justify-content-start">
-                      {this.state.miscelleneous.map((miscelleneous, index) => (
-                        <div key={miscelleneous.InvFlag}>
-                          <input
-                            id={miscelleneous.InvFlag}
-                            type="checkbox"
-                            value={miscelleneous.InvFlag}
-                            defaultChecked={miscelleneous.IsSelected}
-                          />
-                          <label htmlFor={miscelleneous.InvFlag}>
-                            {miscelleneous.InvFlag}
-                          </label>
-                        </div>
-                      ))}
+                    <div className="br1-pd15">
+                      <label className="mb-0">Miscelleneous</label>
+                      <div className="remember-forgot justify-content-start">
+                        {this.state.miscelleneous.map(
+                          (miscelleneous, index) => (
+                            <div key={miscelleneous.InvFlag}>
+                              <input
+                                id={miscelleneous.InvFlag}
+                                type="checkbox"
+                                value={miscelleneous.InvFlag}
+                                defaultChecked={miscelleneous.IsSelected}
+                              />
+                              <label htmlFor={miscelleneous.InvFlag}>
+                                {miscelleneous.InvFlag}
+                              </label>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="row">
                   <div className="login-fields col-md-12">
-                    <label className="mb-0">Access Rights</label>
-                    <div className="row">
-                      {this.state.accessrights.map((accessrights, index) => (
-                        <div
-                          className="remember-forgot col-md-3"
-                          key={accessrights.id}
-                        >
-                          <input
-                            id={accessrights.id}
-                            type="checkbox"
-                            value={accessrights.Value}
-                            onChange={this.toggleChangeAccRight.bind(
-                              this,
-                              index
-                            )}
-                            defaultChecked={accessrights.IsSelected}
-                          />
-                          <label className="m-0" htmlFor={accessrights.id}>
-                            {accessrights.Value}
-                          </label>
-                        </div>
-                      ))}
+                    <div className="br1-pd15">
+                      <label className="mb-0">Access Rights</label>
+                      <div className="row">
+                        {this.state.accessrights.map((accessrights, index) => (
+                          <div
+                            className="remember-forgot col-12 col-sm-6 col-md-6 col-lg-3"
+                            key={accessrights.id}
+                          >
+                            <input
+                              id={accessrights.id}
+                              type="checkbox"
+                              value={accessrights.Value}
+                              onChange={this.toggleChangeAccRight.bind(
+                                this,
+                                index
+                              )}
+                              defaultChecked={accessrights.IsSelected}
+                            />
+                            <label className="m-0" htmlFor={accessrights.id}>
+                              {accessrights.Value}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>

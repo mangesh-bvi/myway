@@ -19,14 +19,14 @@ import DatePicker from "react-datepicker";
 
 class BookingTable extends Component {
   constructor(props) {
-    var someDate = new Date();
+    // var someDate = new Date();
     super(props);
     this.state = {
       modalDel: false,
       filterAll: "",
       bookingData: [],
-      startDate: someDate.setMonth(someDate.getMonth() - 1),
-      endDate: new Date().setHours(0, 0, 0, 0)
+      // startDate: someDate.setMonth(someDate.getMonth() - 1),
+      // endDate: new Date().setHours(0, 0, 0, 0)
     };
     this.HandleBookingList = this.HandleBookingList.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -108,9 +108,10 @@ class BookingTable extends Component {
   HandleCopyClick(evt, row) {
     debugger;
     var BookingNo = row.original["BookingID"];
+    var Mode = row.original["Mode"];
     this.props.history.push({
       pathname: "rate-finalizing-still-booking",
-      state: { BookingNo: BookingNo, Copy: true }
+      state: { BookingNo: BookingNo, Copy: true, Mode: Mode }
     });
   }
 
@@ -133,52 +134,52 @@ class BookingTable extends Component {
       state: { BookingNo: BookingNo, Mode: Mode }
     });
   }
-  handleChangeStart = e => {
-    debugger;
-    var strt = this.state.startDate;
-    var thisE = e;
-    this.setState({
-      startDate: e
-    });
-    if (
-      thisE.setHours(0, 0, 0, 0) >
-      new Date(this.state.endDate).setHours(0, 0, 0, 0)
-    ) {
-      NotificationManager.error("From Date needs to be smaller than To Date");
-      this.setState({
-        startDate: strt
-      });
-    }
-  };
-  handleChangeEnd = e => {
-    debugger;
-    var ennd = this.state.endDate;
-    var thisE = e;
-    this.setState({
-      endDate: e
-    });
-    if (
-      new Date(this.state.startDate).setHours(0, 0, 0, 0) >
-      thisE.setHours(0, 0, 0, 0)
-    ) {
-      NotificationManager.error("To Date needs to be greater than From Date");
-      this.setState({
-        endDate: ennd
-      });
-    }
-  };
+  // handleChangeStart = e => {
+  //   debugger;
+  //   var strt = this.state.startDate;
+  //   var thisE = e;
+  //   this.setState({
+  //     startDate: e
+  //   });
+  //   if (
+  //     thisE.setHours(0, 0, 0, 0) >
+  //     new Date(this.state.endDate).setHours(0, 0, 0, 0)
+  //   ) {
+  //     NotificationManager.error("From Date needs to be smaller than To Date");
+  //     this.setState({
+  //       startDate: strt
+  //     });
+  //   }
+  // };
+  // handleChangeEnd = e => {
+  //   debugger;
+  //   var ennd = this.state.endDate;
+  //   var thisE = e;
+  //   this.setState({
+  //     endDate: e
+  //   });
+  //   if (
+  //     new Date(this.state.startDate).setHours(0, 0, 0, 0) >
+  //     thisE.setHours(0, 0, 0, 0)
+  //   ) {
+  //     NotificationManager.error("To Date needs to be greater than From Date");
+  //     this.setState({
+  //       endDate: ennd
+  //     });
+  //   }
+  // };
 
   render() {
     const { bookingData } = this.state;
-    var dataQuote = [];
-    var { quotesData } = this.state;
+    // var dataQuote = [];
+    // var { quotesData } = this.state;
 
-    const Moment = require("moment");
-    const array = [
-      { date: "2018-05-11" },
-      { date: "2018-05-12" },
-      { date: "2018-05-10" }
-    ];
+    // const Moment = require("moment");
+    // const array = [
+    //   { date: "2018-05-11" },
+    //   { date: "2018-05-12" },
+    //   { date: "2018-05-10" }
+    // ];
     // dataQuote = quotesData.sort(
     //   (a, b) =>
     //     new Moment(b.CreatedDate).format("YYYYMMDD") -
@@ -196,7 +197,7 @@ class BookingTable extends Component {
               <h2>Booking Table</h2>
             </div>
             <div className="d-flex justify-content-between align-items-center">
-              <div className="login-fields quote-to-from mb-0">
+              <div className="login-fields quote-to-from col-12 col-sm-4">
                 <span>From</span>
                 <DatePicker
                   id="datpicker-from-shipment"
@@ -207,7 +208,7 @@ class BookingTable extends Component {
                   showWeekNumbers
                 />
               </div>
-              <div className="login-fields quote-to-from mb-0">
+              <div className="login-fields quote-to-from col-12 col-sm-4">
                 <span>To</span>
                 <DatePicker
                   id="datpicker-to-shipment"
@@ -218,7 +219,7 @@ class BookingTable extends Component {
                   showWeekNumbers
                 />
               </div>
-              <div className="">
+              <div className="col-12 col-sm-4">
                 <input
                   type="search"
                   className="quote-txt-srch"
@@ -227,7 +228,7 @@ class BookingTable extends Component {
                   onChange={this.filterAll}
                 />
               </div>
-            </div>
+            {/* </div> */}
             <div className="ag-fresh">
               <ReactTable
                 data={bookingData}

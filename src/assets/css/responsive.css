@@ -1,6 +1,28 @@
 /* Css Start Kalpesh*/
 @media (min-width: 1025px) and (max-width: 1350px) {
+<<<<<<< HEAD
   
+=======
+  .remember-forgot label {
+    padding-left: 30px;
+    font-size: 12px;
+  }
+  .remember-forgot input + label::before {
+    width: 20px;
+    height: 20px;
+  }
+  .login-fields select {
+    padding-right: 15px;
+    font-size: 12px;
+}
+.login-fields select {
+  background: #ededed url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=) no-repeat right 10px center;
+  padding-right: 15px;
+}
+.login-fields label {
+  font-size: 12px;
+}
+>>>>>>> 6afa5c7fc5dcbbbf0c165728ccfe7c83ec7da0b3
 }
 @media (min-width: 992px) and (max-width: 1024px) {
   .disblo {
@@ -28,6 +50,14 @@
   .cust-tabs a {
     margin-right: 15px;
   }
+  .remember-forgot label {
+    padding-left: 30px;
+    font-size: 12px;
+  }
+  .remember-forgot input + label::before {
+    width: 20px;
+    height: 20px;
+  }
 }
 @media (min-width: 768px) and (max-width: 991px) {
   .dash-search-cntr2 {
@@ -40,10 +70,13 @@
     margin: 10px 0px 0px;
   }
   .butn {
-    min-width: 100px;
+    min-width: 75px;
     padding: 10px 10px;
     font-size: 10px;
-  }
+}
+.ana-rep * {
+  margin-right: 6px;
+}
   .cls-flside {
     width: 195px;
   }
@@ -117,6 +150,33 @@
 }
 .cust-tabs-content .tab-pane .row .details-border:first-child {
   align-items: center;
+}
+.r-border {
+  border-right: none;
+}
+.m0-p15 {
+  margin: 15px 0 !important;
+  padding: 0 10px;
+}
+.remember-forgot label {
+  padding-left: 30px;
+  font-size: 12px;
+}
+.remember-forgot input + label::before {
+  width: 20px;
+  height: 20px;
+}
+.planner-cntr {
+  padding: 30px 0px 30px 9px;
+}
+.planner-top-butns .butn {
+  font-size: 10px;
+  min-width: auto;
+  padding: 8px 5px;
+  margin-right: 5px;
+}
+.delivery-inner > .row {
+  padding: 20px 15px;
 }
 }
 
