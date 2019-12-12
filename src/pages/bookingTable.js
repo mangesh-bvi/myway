@@ -108,9 +108,10 @@ class BookingTable extends Component {
   HandleCopyClick(evt, row) {
     debugger;
     var BookingNo = row.original["BookingID"];
+    var Mode = row.original["Mode"];
     this.props.history.push({
       pathname: "rate-finalizing-still-booking",
-      state: { BookingNo: BookingNo, Copy: true }
+      state: { BookingNo: BookingNo, Copy: true, Mode: Mode }
     });
   }
 
