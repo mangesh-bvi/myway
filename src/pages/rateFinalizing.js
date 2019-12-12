@@ -181,6 +181,7 @@ class RateFinalizing extends Component {
         var equipmentTypeArr = [];
         var PackageDetailsArr = [];
         var TruckDetailsArr = [];
+        var MultiCBM = [];
         if (containerLoadType == "FCL") {
           if (users != null) {
             if (users.length > 0) {
@@ -448,19 +449,22 @@ class RateFinalizing extends Component {
             }
           }
         }
-        // if (multiCBM != null) {
-        //   if (multiCBM.length > 0) {
-        //     for (var i = 0; i < multiCBM.length; i++) {
-        //       multiCBM.push({
-        //         PackageType: multiCBM[i].PackageType,
-        //         Quantity: multiCBM[i].Quantity,
-        //         Length: multiCBM[i].Lengths,
-        //         Width: multiCBM[i].Width,
-        //         height: multiCBM[i].Height,
-        //         Weight: multiCBM[i].GrossWt,
-        //         VolumeWeight: multiCBM[i].VolumeWeight,
-        //         Volume: 0
-        //       })}}}
+        if (multiCBM != null) {
+          if (multiCBM.length > 0) {
+            for (var i = 0; i < multiCBM.length; i++) {
+              MultiCBM.push({
+                PackageType: multiCBM[i].PackageType,
+                Quantity: multiCBM[i].Quantity,
+                Length: multiCBM[i].Lengths,
+                Width: multiCBM[i].Width,
+                height: multiCBM[i].Height,
+                Weight: multiCBM[i].GrossWt,
+                GrossWeight: multiCBM[i].GrossWt,
+                VolumeWeight: (containerLoadType.toUpperCase()==="AIR"?
+                              (multiCBM[i].VolumeWeight):0),
+                Volume: (containerLoadType.toUpperCase()==="LCL"?
+                        multiCBM[i].Volume:0)
+              })}}}
         
         this.setState({
           rateDetails: rateDetails,
@@ -503,7 +507,7 @@ class RateFinalizing extends Component {
           CommodityID: CommodityID,
           destAddress: destAddress,
           pickUpAddress: pickUpAddress,
-          multiCBM: multiCBM,
+          multiCBM: MultiCBM,
           TruckTypeData: TruckTypeData,
           cbmVal: cbmVal,
           packageTypeData: packageTypeData,
@@ -2353,10 +2357,10 @@ class RateFinalizing extends Component {
           ContainerType: multiCBM[i].PackageType,
           Packaging: "-",
           Quantity: multiCBM[i].Quantity,
-          Lenght: this.state.isCopy==true?multiCBM[i].Length || multiCBM[i].Lengths:multiCBM[i].Lengths,
+          Lenght: this.state.isCopy==true?multiCBM[i].Length || multiCBM[i].Lengths:multiCBM[i].Length,
           Width: multiCBM[i].Width,
-          Height: this.state.isCopy==true?multiCBM[i].height:multiCBM[i].Height,
-          Weight: this.state.isCopy==true?multiCBM[i].GrossWeight:multiCBM[i].GrossWt,
+          Height: this.state.isCopy==true?multiCBM[i].height:multiCBM[i].height,
+          Weight: this.state.isCopy==true?multiCBM[i].GrossWeight:multiCBM[i].GrossWeight,
           CBM: this.state.containerLoadType == "LCL"?multiCBM[i].Volume:multiCBM[i].VolumeWeight,
           Editable: true
         });
@@ -2973,7 +2977,7 @@ class RateFinalizing extends Component {
                 placeholder="H (cm)"
                 className="w-100"
                 name="height"
-                value={this.state.isCopy==true?el.height:el.Height || ""}
+                value={this.state.isCopy==true?el.height:el.height || ""}
                 //onBlur={this.cbmChange}
               />
             </div>
@@ -2987,7 +2991,7 @@ class RateFinalizing extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
               name="GrossWeight"
-              value={this.state.isCopy==true?el.GrossWeight:el.GrossWt || ""}
+              value={this.state.isCopy==true?el.GrossWeight:el.GrossWeight || ""}
               className="w-100"
             />
           </div>
