@@ -2352,8 +2352,8 @@ class RateTable extends Component {
     });
   }
 
-  HandleRangeSlider(value) {
-    this.setState({ value });
+  HandleRangeSlider(MaxTT) {
+    this.setState({ MaxTT });
     debugger;
     // this.filterAll(value, "R");
     var filteredData = [];
@@ -2364,7 +2364,7 @@ class RateTable extends Component {
     // ];
 
     var actualData = this.state.RateDetails;
-    var checkingValue = value;
+    var checkingValue = MaxTT;
 
     for (var j = 0; j < actualData.length; j++) {
       var colData = actualData[j].TransitTime; //0-5
@@ -3118,7 +3118,7 @@ class RateTable extends Component {
                   formatLabel={value => `${value} DAYS`}
                   maxValue={this.state.MaxTT}
                   minValue={this.state.MinTT}
-                  value={this.state.value}
+                  value={this.state.MaxTT}
                   onChange={this.HandleRangeSlider.bind(this)}
                 />
               </div>
