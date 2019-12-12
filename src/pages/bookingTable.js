@@ -196,8 +196,8 @@ class BookingTable extends Component {
             <div className="title-sect">
               <h2>Booking Table</h2>
             </div>
-            {/* <div className="d-flex justify-content-between align-items-center">
-              <div className="login-fields quote-to-from mb-0">
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="login-fields quote-to-from col-12 col-sm-4">
                 <span>From</span>
                 <DatePicker
                   id="datpicker-from-shipment"
@@ -208,7 +208,7 @@ class BookingTable extends Component {
                   showWeekNumbers
                 />
               </div>
-              <div className="login-fields quote-to-from mb-0">
+              <div className="login-fields quote-to-from col-12 col-sm-4">
                 <span>To</span>
                 <DatePicker
                   id="datpicker-to-shipment"
@@ -218,8 +218,8 @@ class BookingTable extends Component {
                   maxDate={new Date()}
                   showWeekNumbers
                 />
-              </div> */}
-              <div className="">
+              </div>
+              <div className="col-12 col-sm-4">
                 <input
                   type="search"
                   className="quote-txt-srch"
@@ -228,7 +228,7 @@ class BookingTable extends Component {
                   onChange={this.filterAll}
                 />
               </div>
-            {/* </div> */}
+            </div>
             <div className="ag-fresh">
               <ReactTable
                 data={bookingData}

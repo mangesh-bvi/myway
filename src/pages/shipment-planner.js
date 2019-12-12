@@ -29,6 +29,7 @@ import Delete from "./../assets/img/red-delete-icon.png";
 import Calen from "./../assets/img/calendar.png";
 import Download from "./../assets/img/csv.png";
 
+
 import YellowFlag from "./../assets/img/yellow-flag.png";
 import {
   withScriptjs,
@@ -1302,77 +1303,128 @@ class ShipmentPlanner extends Component {
                     </button>
                     <div
                       style={{
-                        backgroundColor: "#fff",
-                        padding: "15px",
+                        backgroundColor: "",
+                        padding: "0",
                         borderRadius: "15px"
                       }}
                     >
                       <div className="container-fluid p-0">
-                        {/* <div class="row">
-  <div class="column-a">
-    <div class="card-a">
-      <label className="total-label">Total Average Days</label>
-      <div className="mt-5">
-        <img src={Calen} alt="" className="calendar" />
-        <span className="total-span">37</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="column-a">
-    <div class="card-a">
-      <label className="total-label">Total Minimum Days</label>
-      <div className="mt-5">
-        <img src={Calen} alt="" className="calendar" />
-        <span className="total-span">34</span>
-      </div>
-    </div>
-  </div>
-  
-  <div class="column-a">
-    <div class="card-a">
-      <label className="total-label">Total Maximum Days</label>
-      <div className="mt-5">
-        <img src={Calen} alt="" className="calendar" />
-        <span className="total-span">45</span>
-      </div>
-    </div>
-  </div>
-</div> */}
+                     
                         <div className="transit-sect">
                           <div className="row" style={{ margin: "0" }}>
-                            <div className="col-md-4 details-border card-a">
-                              <div>
+                            <div className="col-md-4 details-border card-a px-2">
+                              <div className="car-a">
                                 <p className="details-title">
                                   Total Average Days
                                 </p>
-                                <p className="details-para">
+                                <div className="mt-5">
+                                <img src={Calen} alt="" className="calendar" />
+                                <p className="details-para details-para1">
                                   {this.state.totalAvgDays}
                                 </p>
                               </div>
+                                
+                              </div>
                             </div>
-                            <div className="col-md-4 details-border card-a">
-                              <div>
+                            <div className="col-md-4 details-border card-a px-2">
+                              <div className="car-a">
                                 <p className="details-title">
                                   Total Minimum Days
                                 </p>
-                                <p className="details-para">
+                                <div className="mt-5">
+                                <img src={Calen} alt="" className="calendar" />
+                                <p className="details-para details-para1">
                                   {this.state.totalMinDays}
                                 </p>
+                                </div>
                               </div>
                             </div>
-                            <div className="col-md-4 details-border card-a">
-                              <div>
+                            <div className="col-md-4 details-border card-a px-2">
+                              <div className="car-a">
                                 <p className="details-title">
                                   Total Maximum Days
                                 </p>
-                                <p className="details-para">
+                                <div className="mt-5">
+                                <img src={Calen} alt="" className="calendar" />
+                                <p className="details-para details-para1">
                                   {this.state.totalMaxDays}
                                 </p>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
+
+                      {/* <div className="Transitnew">
+                        <ul className="progressk">
+                             <li className="progress1">
+                               <span className="grey">
+                                 <img src={Ship} alt="" className="" />
+                               </span>
+                               <label className="turkey">Istanbul,Turkey</label>
+                              </li>
+                              <li className="progress1">
+                               <span className="grey">1</span>
+                               <button type="button" className="min1">Min.Days</button>
+                               <button type="button" className="min1">Min.Days</button>
+                               <button type="button" className="min1">Min.Days</button>
+                              </li>
+                              <li className="progress1">
+                               <span className="grey">
+                                 <span className="red"></span>
+                               </span>
+                               <label className="turkey1">Istanbul,Turkey</label>
+                              </li> 
+                        </ul>
+                      </div>
+                      <div className="Transitnew">
+                        <ul className="progressk">
+                             <li className="progress1">
+                               <span className="grey">
+                                 <img src={Ship} alt="" className="" />
+                               </span>
+                               <label className="turkey">Istanbul,Turkey</label>
+                              </li>
+                              <li className="progress1">
+                               <span className="grey">1</span>
+                               <button type="button" className="min1">Min.Days</button>
+                               <button type="button" className="min1">Min.Days</button>
+                               <button type="button" className="min1">Min.Days</button>
+                              </li>
+                              <li className="progress1">
+                               <span className="grey">
+                                 <span className="red"></span>
+                               </span>
+                               <label className="turkey1">Istanbul,Turkey</label>
+                              </li> 
+                        </ul>
+                      </div>
+
+                      <div className="Transitnew">
+                        <ul className="progressk">
+                             <li className="progress1">
+                               <span className="grey">
+                                 <img src={Ship} alt="" className="" />
+                               </span>
+                               <label className="turkey">Istanbul,Turkey</label>
+                              </li>
+                              <li className="progress1">
+                               <span className="grey">1</span>
+                               <button type="button" className="min1">Min.Days</button>
+                               <button type="button" className="min1">Min.Days</button>
+                               <button type="button" className="min1">Min.Days</button>
+                              </li>
+                              <li className="progress1">
+                               <span className="grey">
+                                 <span className="red"></span>
+                               </span>
+                               <label className="turkey1">Istanbul,Turkey</label>
+                              </li> 
+                        </ul>
+                      </div> */}
+
+
+
                         <div className="transit-sect-overflow">
                           {transitpopup.map((cell, i) => {
                             var imgSrc = "";

@@ -202,8 +202,8 @@ h2 span {
   font-family: "Medium Font";
 }
 .login-fields select {
-  background: #ededed url("./../img/down-arrow.png") no-repeat right 25px center;
-  padding-right: 50px;
+  background: #ededed url("./../img/down-arrow.png") no-repeat right 15px center;
+  padding-right: 15px;
 }
 .login-fields input::placeholder {
   font-family: "Italic Font";
@@ -478,7 +478,7 @@ table tbody tr:last-child {
   display: inline-block;
 }
 .cust-tabs-content > div {
-  padding: 20px 30px;
+  padding: 20px 15px;
 }
 .cust-tabs-content .tab-pane .row .details-border:last-child {
   border-right: 0;
@@ -590,7 +590,7 @@ table tbody tr:last-child {
 }
 .details-title {
   color: #002d73;
-  font-size: 14px;
+  font-size: 16px;
   font-family: "Medium Font";
   margin-bottom: 5px;
 }
@@ -864,6 +864,20 @@ table tbody tr:last-child {
 /* shipment planner starts */
 .title-border {
   border-bottom: 1px solid #d6d6d6;
+}
+.title-border-t {
+  border-top: 1px solid #d6d6d6;
+}
+.r-border {
+  border-right: 1px solid #d6d6d6;
+}
+.m0-p15 {
+  margin: 0 !important;
+  padding: 15px;
+}
+.br1-pd15 {
+  border:1px solid #d6d6d6;
+  padding: 15px;
 }
 .rate-title-cntr {
   position: relative;
@@ -2227,11 +2241,11 @@ table tbody tr:last-child {
   margin-bottom: 0;
 }
 .rate-final-contr .details-para {
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Medium Font";
 }
 .rate-final-contr .row > div {
-  margin-top: 20px;
+  margin: 0 0 20px;
 }
 .rate-final-contr .react-rate-table {
   background-color: #f1f2f2;
@@ -2315,7 +2329,7 @@ table tbody tr:last-child {
 
 /* add user starts */
 .add-user-cntr {
-  padding: 0 30px;
+  padding: 0 15px;
 }
 .add-user-cntr .remember-forgot > div:first-child label {
   margin-left: 0;
@@ -3128,7 +3142,7 @@ table tbody tr:last-child {
   color: #77787b;
 }
 .login-fields {
-  margin-bottom: 20px;
+  margin: 15px 0;
 }
 
 .mapIframe {
@@ -3175,12 +3189,12 @@ table tbody tr:last-child {
 
 .dynamic-remove {
   position: absolute;
-  left: 100%;
+  left: 93%;
   /* margin-left: 20px; */
   width: auto !important;
-  background-color: #fff;
+  background-color: #ededed;
   border: 0;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 .dynamic-remove img {
   width: 22px;
@@ -3830,10 +3844,10 @@ img {
   font-family: "Medium Font";
   font-size: 14px;
   width: 250px;
-  display: inline-block;
   float: right;
-  margin-top: -45px;
-  margin-right: 15px;
+  display: inline-block;
+  margin-top: 0;
+  margin-right: 0;
 }
 /* Quote css end by Shlok */
 .menubars {
@@ -3844,7 +3858,7 @@ img {
   cursor: pointer;
 }
 .title-secpad {
-  padding: 15px 30px;
+  padding: 20px;
 }
 /* Css Start Kalpesh */
 /* .column-a {
@@ -3873,6 +3887,7 @@ img {
   font-size: 15px;
   font-family: "Medium Font";
 } */
+/*  */
 .arwimg {
   height: auto;
   width: 18px;
@@ -3889,3 +3904,82 @@ img {
     max-width: 71.666667%;
   }
 }
+/* TransitSection css start kalpesh */
+.transit-sect .car-a {
+  width: 100%;
+  border: 1px solid #F1F2F2;
+  border-radius: 15px;
+  padding: 15px 20px;
+  background-color: #fff;
+}
+.transit-sect .details-border {
+  border: none;
+}
+.transit-sect .details-para1 {
+  float: right;
+}
+.transit-sect .calendar {
+  width: 35px;
+  height: 35px;
+}
+/*.Transitnew ul {
+  list-style: none;
+}
+.Transitnew .progressk {
+  padding: 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+}
+.Transitnew .progressk .progress1 {
+  position: relative;
+}
+.Transitnew .grey {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 3px;
+  border: 1px solid #999;
+  color: #999;
+  margin: 0 auto 6px;
+  font-size: 12px;
+  font-style: normal;
+}
+.Transitnew .min1 {
+    background-color: #29aae3;
+    color: #fff;
+    border: 1px solid #29aae3;
+    font-family: "Bold Font";
+    padding: 4px 8px;
+    border-radius: 50px;
+    margin: 0 3px;
+    font-size: 11px;
+    text-align: center;
+    font-weight: 300;
+    display: inline-block;
+    transition: all 0.3s ease-in-out;
+}
+.Transitnew .red {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  padding: 0;
+  border: 10px solid red;
+  margin: 1px;
+}
+.Transitnew .turkey1 {
+  color: red;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-family: "Regular Font";
+}
+.Transitnew .turkey {
+  color: #39b54a;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-family: "Regular Font";
+} */
+/* TransitSection css End kalpesh */
+    
