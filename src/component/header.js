@@ -131,7 +131,7 @@ class Header extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       // self.state.Notificationcount = response.data.Table.length;
       var today = new Date();
       today.setDate(today.getDate() - 8);
