@@ -2540,7 +2540,7 @@ class RateFinalizingStill extends Component {
           centered={true}
         >
           <ModalBody>
-            <p>Do you want Accept Quotestion ?</p>
+            <p>Do you want Accept Quotation ?</p>
             <div className="text-center">
               <Button
                 className="butn"
