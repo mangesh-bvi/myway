@@ -711,7 +711,7 @@ class ShipmentPlanner extends Component {
     debugger;
     let self = this;
     var selectComp = document.getElementById("drpCompany").selectedIndex;
-    let compArray = this.state.companydrp[selectComp];
+    let compArray = this.state.companydrp[selectComp - 1];
 
     // for (let index = 0; index < this.state.companydrp.length; index++) {
     //   if (this.state.companydrp[index].MyCompID == e.target.value) {
@@ -719,7 +719,7 @@ class ShipmentPlanner extends Component {
     //     break;
     //   }
     // }
-    if (compArray!==null) {
+    if (compArray !== null) {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/FetchConsigneeCompany`,
@@ -844,7 +844,7 @@ class ShipmentPlanner extends Component {
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
-      debugger
+      debugger;
       var deliveryData = response.data.Table1;
       if (deliveryData != "undefined" && deliveryData != null) {
         self.setState({ deliveryPopup: deliveryData });
@@ -881,11 +881,11 @@ class ShipmentPlanner extends Component {
   toggleDelivery() {
     debugger;
     if (this.state.deliveryPopup != null) {
-      if (this.state.deliveryPopup.length > 0) {
-        this.setState(prevState => ({
-          modalDelivery: !prevState.modalDelivery
-        }));
-      }
+      // if (this.state.deliveryPopup.length > 0) {
+      this.setState(prevState => ({
+        modalDelivery: !prevState.modalDelivery
+      }));
+      // }
     }
   }
   toggleVisual() {
@@ -953,7 +953,7 @@ class ShipmentPlanner extends Component {
       const imgType = props.imgType;
       if (imgType === "Road") {
         return <img src={Truck}></img>;
-      } else if (imgType === "Air-Midnight Wonder" ||imgType === "Air-Flash") {
+      } else if (imgType === "Air-Midnight Wonder" || imgType === "Air-Flash") {
         return <img src={Plane}></img>;
       } else {
         return <img src={Ship}></img>;
@@ -1099,9 +1099,15 @@ class ShipmentPlanner extends Component {
                   centered={true}
                 >
                   <ModalBody className="p-0">
-              <button type="button" style={{top:"-20px" , right:"-20px"}} className="close" data-dismiss="modal" onClick={this.toggleVisual}>
-                <span>&times;</span>
-              </button>
+                    <button
+                      type="button"
+                      style={{ top: "-20px", right: "-20px" }}
+                      className="close"
+                      data-dismiss="modal"
+                      onClick={this.toggleVisual}
+                    >
+                      <span>&times;</span>
+                    </button>
                     <table
                       width="100%"
                       border="0"
@@ -1113,7 +1119,7 @@ class ShipmentPlanner extends Component {
                         <tr>
                           <td
                             id="ContentPlaceHolder1_td_bg"
-                            style={{borderRadius: "15px"}}
+                            style={{ borderRadius: "15px" }}
                             className={this.state.imageClass}
                           >
                             <div className="row">
@@ -1190,74 +1196,92 @@ class ShipmentPlanner extends Component {
                   centered={true}
                 >
                   <ModalBody>
-              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleDelivery}>
-                <span>&times;</span>
-              </button>
-                <div style={{background:"#fff" , borderRadius:"15px" , padding:"15px"}}>
-                      {deliveryPopup.map((cell, i) => {
-                      if (cell.POLLocation == "") {
-                        return (
-                          <div className="container-fluid p-0 no-sched-avail">
-                            No Schedule Available
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div className="container-fluid p-0">
-                            <div className="transit-sect">
-                              <div className="d-flex justify-content-between align-items-center">
-                                <div className="d-flex align-items-center">
-                                  <div className="shipment-img mr-3">
-                                    <TransitionImage imgType={cell.Mode} />
+                    <button
+                      type="button"
+                      className="close"
+                      data-dismiss="modal"
+                      onClick={this.toggleDelivery}
+                    >
+                      <span>&times;</span>
+                    </button>
+                    <div
+                      style={{
+                        background: "#fff",
+                        borderRadius: "15px",
+                        padding: "15px"
+                      }}
+                    >
+                      {deliveryPopup.length > 0 ? (
+                        deliveryPopup.map((cell, i) => {
+                          debugger;
+                          if (cell.POLLocation == "") {
+                            return (
+                              <div className="container-fluid p-0 no-sched-avail">
+                                No Schedule Available
+                              </div>
+                            );
+                          } else {
+                            return (
+                              <div className="container-fluid p-0">
+                                <div className="transit-sect">
+                                  <div className="d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center">
+                                      <div className="shipment-img mr-3">
+                                        <TransitionImage imgType={cell.Mode} />
+                                      </div>
+                                      <div>
+                                        <p className="desti-name">
+                                          {cell.POLLocation}
+                                        </p>
+                                        <p className="desti-route">
+                                          to {cell.DestinationPort}
+                                          ,Carrier {cell.Carrier}
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <p className="desti-name">
-                                      {cell.POLLocation}
-                                    </p>
-                                    <p className="desti-route">
-                                      to {cell.DestinationPort}
-                                      ,Carrier {cell.Carrier}
-                                    </p>
+                                </div>
+                                <div className="delivery-inner">
+                                  <div className="row">
+                                    <div className="col-md-4 text-center">
+                                      <p className="details-title">
+                                        Departure Date
+                                      </p>
+                                      <p className="details-para">
+                                        <Moment format="DD/MM/YYYY">
+                                          {cell.SailingDate}
+                                        </Moment>
+                                      </p>
+                                    </div>
+                                    <div className="col-md-4 text-center">
+                                      <p className="details-title">ETA</p>
+                                      <p className="details-para">
+                                        <Moment format="DD/MM/YYYY">
+                                          {cell.ETA}
+                                        </Moment>
+                                      </p>
+                                    </div>
+                                    <div className="col-md-4 text-center">
+                                      <p className="details-title">
+                                        Estimated Delivery Date
+                                      </p>
+                                      <p className="details-para">
+                                        <Moment format="DD/MM/YYYY">
+                                          {cell.CargoArrivalDate}
+                                        </Moment>
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="delivery-inner">
-                              <div className="row">
-                                <div className="col-md-4 text-center">
-                                  <p className="details-title">
-                                    Departure Date
-                                  </p>
-                                  <p className="details-para">
-                                    <Moment format="DD/MM/YYYY">
-                                      {cell.SailingDate}
-                                    </Moment>
-                                  </p>
-                                </div>
-                                <div className="col-md-4 text-center">
-                                  <p className="details-title">ETA</p>
-                                  <p className="details-para">
-                                    <Moment format="DD/MM/YYYY">
-                                      {cell.ETA}
-                                    </Moment>
-                                  </p>
-                                </div>
-                                <div className="col-md-4 text-center">
-                                  <p className="details-title">
-                                    Estimated Delivery Date
-                                  </p>
-                                  <p className="details-para">
-                                    <Moment format="DD/MM/YYYY">
-                                      {cell.CargoArrivalDate}
-                                    </Moment>
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                    })}
+                            );
+                          }
+                        })
+                      ) : (
+                        <div className="container-fluid p-0 no-sched-avail">
+                          No Schedule Available
+                        </div>
+                      )}
                     </div>
                   </ModalBody>
                 </Modal>
@@ -1268,12 +1292,23 @@ class ShipmentPlanner extends Component {
                   centered={true}
                 >
                   <ModalBody>
-              <button type="button" className="close" data-dismiss="modal" onClick={this.toggleTransit}>
-                <span>&times;</span>
-              </button>
-                <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
-                    <div className="container-fluid p-0">
-{/* <div class="row">
+                    <button
+                      type="button"
+                      className="close"
+                      data-dismiss="modal"
+                      onClick={this.toggleTransit}
+                    >
+                      <span>&times;</span>
+                    </button>
+                    <div
+                      style={{
+                        backgroundColor: "#fff",
+                        padding: "15px",
+                        borderRadius: "15px"
+                      }}
+                    >
+                      <div className="container-fluid p-0">
+                        {/* <div class="row">
   <div class="column-a">
     <div class="card-a">
       <label className="total-label">Total Average Days</label>
@@ -1304,104 +1339,104 @@ class ShipmentPlanner extends Component {
     </div>
   </div>
 </div> */}
-                      <div className="transit-sect">
-                        <div className="row" style={{margin:"0"}}>
-                          <div className="col-md-4 details-border card-a">
-                            <div>
-                              <p className="details-title">
-                                Total Average Days
-                              </p>
-                              <p className="details-para">
-                                {this.state.totalAvgDays}
-                              </p>
+                        <div className="transit-sect">
+                          <div className="row" style={{ margin: "0" }}>
+                            <div className="col-md-4 details-border card-a">
+                              <div>
+                                <p className="details-title">
+                                  Total Average Days
+                                </p>
+                                <p className="details-para">
+                                  {this.state.totalAvgDays}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                          <div className="col-md-4 details-border card-a">
-                            <div>
-                              <p className="details-title">
-                                Total Minimum Days
-                              </p>
-                              <p className="details-para">
-                                {this.state.totalMinDays}
-                              </p>
+                            <div className="col-md-4 details-border card-a">
+                              <div>
+                                <p className="details-title">
+                                  Total Minimum Days
+                                </p>
+                                <p className="details-para">
+                                  {this.state.totalMinDays}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                          <div className="col-md-4 details-border card-a">
-                            <div>
-                              <p className="details-title">
-                                Total Maximum Days
-                              </p>
-                              <p className="details-para">
-                                {this.state.totalMaxDays}
-                              </p>
+                            <div className="col-md-4 details-border card-a">
+                              <div>
+                                <p className="details-title">
+                                  Total Maximum Days
+                                </p>
+                                <p className="details-para">
+                                  {this.state.totalMaxDays}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="transit-sect-overflow">
-                        {transitpopup.map((cell, i) => {
-                          var imgSrc = "";
+                        <div className="transit-sect-overflow">
+                          {transitpopup.map((cell, i) => {
+                            var imgSrc = "";
 
-                          return (
-                            <div className="transit-sect">
-                              <div className="d-flex justify-content-between align-items-center">
-                                <div className="d-flex align-items-center">
-                                  <div className="shipment-img mr-3">
-                                    <TransitionImage
-                                      imgType={cell.CModeOfTransport}
-                                    />
+                            return (
+                              <div className="transit-sect">
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <div className="d-flex align-items-center">
+                                    <div className="shipment-img mr-3">
+                                      <TransitionImage
+                                        imgType={cell.CModeOfTransport}
+                                      />
+                                    </div>
+                                    <div>
+                                      <p className="desti-name">
+                                        {cell.StartLocation}
+                                      </p>
+                                      <p className="desti-route">
+                                        to {cell.EndLocation}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <p className="desti-name">
-                                      {cell.StartLocation}
-                                    </p>
-                                    <p className="desti-route">
-                                      to {cell.EndLocation}
-                                    </p>
+                                  <button
+                                    className="butn cancel-butn"
+                                    onClick={() => {
+                                      this.HandleTransitTimeVIew(
+                                        cell.RouteLatLong
+                                      );
+                                    }}
+                                  >
+                                    View
+                                  </button>
+                                </div>
+                                <div className="row">
+                                  <div className="col-md-4">
+                                    <div className="days-cntr">
+                                      <p className="days-title">Average Days</p>
+                                      <span className="days-count">
+                                        {cell.NTransit_Time}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <div className="days-cntr">
+                                      <p className="days-title">Minimum Days</p>
+                                      <span className="days-count">
+                                        {cell.NMin_Transit_Time}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <div className="days-cntr">
+                                      <p className="days-title">Maximum Days</p>
+                                      <span className="days-count">
+                                        {cell.NMax_Transit_Time}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-                                <button
-                                  className="butn cancel-butn"
-                                  onClick={() => {
-                                    this.HandleTransitTimeVIew(
-                                      cell.RouteLatLong
-                                    );
-                                  }}
-                                >
-                                  View
-                                </button>
                               </div>
-                              <div className="row">
-                                <div className="col-md-4">
-                                  <div className="days-cntr">
-                                    <p className="days-title">Average Days</p>
-                                    <span className="days-count">
-                                      {cell.NTransit_Time}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="col-md-4">
-                                  <div className="days-cntr">
-                                    <p className="days-title">Minimum Days</p>
-                                    <span className="days-count">
-                                      {cell.NMin_Transit_Time}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="col-md-4">
-                                  <div className="days-cntr">
-                                    <p className="days-title">Maximum Days</p>
-                                    <span className="days-count">
-                                      {cell.NMax_Transit_Time}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
                     </div>
                   </ModalBody>
                 </Modal>

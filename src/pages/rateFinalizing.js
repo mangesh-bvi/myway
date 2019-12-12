@@ -29,7 +29,7 @@ class RateFinalizing extends Component {
     this.state = {
       modalProfit: false,
       modalRequest: false,
-      modalRequestMsg:false,
+      modalRequestMsg: false,
       modalEdit: false,
       modalNewConsignee: false,
       commoditySelect: "select",
@@ -118,7 +118,8 @@ class RateFinalizing extends Component {
       CustomClearance: 0,
       SalesQuoteNo: "",
       PickUpAddress: "",
-      DestinationAddress: ""
+      DestinationAddress: "",
+      multiCBM: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -132,8 +133,10 @@ class RateFinalizing extends Component {
     this.SubmitCargoDetails = this.SubmitCargoDetails.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
     this.SendRequestCopy = this.SendRequestCopy.bind(this);
-    this.RequestChangeMsgModal=this.RequestChangeMsgModal.bind(this);
-    this.RequestChangeMsgModalClose=this.RequestChangeMsgModalClose.bind(this);
+    this.RequestChangeMsgModal = this.RequestChangeMsgModal.bind(this);
+    this.RequestChangeMsgModalClose = this.RequestChangeMsgModalClose.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -172,6 +175,8 @@ class RateFinalizing extends Component {
         var contactName = this.props.location.state.contactName;
         var contactEmail = this.props.location.state.contactEmail;
         var customClearance = this.props.location.state.Custom_Clearance;
+        var specialEqtSelect = this.props.location.state.specialEqtSelect;
+        var specialEquipment = this.props.location.state.specialEquipment;
 
         var CargoDetailsArr = [];
         var equipmentTypeArr = [];
@@ -331,6 +336,17 @@ class RateFinalizing extends Component {
               CBM: multiCBM[i].Volume,
               Editable: true
             });
+
+            // multiCBM.push({
+            //     PackageType: "",
+            //     Quantity: 0,
+            //     Length: 0,
+            //     Width: 0,
+            //     height: 0,
+            //     Weight: 0,
+            //     VolumeWeight: 0,
+            //     Volume: 0
+            //   })
           }
         } else if (containerLoadType == "FTL") {
           // var cSelectedRow = this.props.location.state.selectedDataRow;
@@ -433,7 +449,20 @@ class RateFinalizing extends Component {
             }
           }
         }
-
+        // if (multiCBM != null) {
+        //   if (multiCBM.length > 0) {
+        //     for (var i = 0; i < multiCBM.length; i++) {
+        //       multiCBM.push({
+        //         PackageType: multiCBM[i].PackageType,
+        //         Quantity: multiCBM[i].Quantity,
+        //         Length: multiCBM[i].Lengths,
+        //         Width: multiCBM[i].Width,
+        //         height: multiCBM[i].Height,
+        //         Weight: multiCBM[i].GrossWt,
+        //         VolumeWeight: multiCBM[i].VolumeWeight,
+        //         Volume: 0
+        //       })}}}
+        
         this.setState({
           rateDetails: rateDetails,
           rateSubDetails: rateSubDetails,
@@ -447,7 +476,22 @@ class RateFinalizing extends Component {
           commodityData: commodityData,
           selected: selected,
           spacEqmtType: spacEqmtType,
-          flattack_openTop: flattack_openTop,
+          flattack_openTop:
+            flattack_openTop.length == 0
+              ? [
+                  {
+                    SpecialContainerCode: "",
+                    PackageType: "",
+                    Quantity: 0,
+                    Lengths: 0,
+                    Width: 0,
+                    Height: 0,
+                    Weight: 0,
+                    VolumeWeight: 0,
+                    Volume: 0
+                  }
+                ]
+              : flattack_openTop,
           polfullAddData: polfullAddData,
           podfullAddData: podfullAddData,
           currencyCode: currencyCode,
@@ -469,7 +513,9 @@ class RateFinalizing extends Component {
           CompanyAddress: companyAddress,
           ContactName: contactName,
           ContactEmail: contactEmail,
-          CustomClearance: customClearance
+          CustomClearance: customClearance,
+          specialEqtSelect: specialEqtSelect,
+          specialEquipment: specialEquipment
         });
 
         this.state.rateDetails = rateDetails;
@@ -552,6 +598,7 @@ class RateFinalizing extends Component {
         var PickUpAddress = "";
         var DestinationAddress = "";
         var multiCBM = [];
+        var flattack_openTop = [];
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -713,7 +760,7 @@ class RateFinalizing extends Component {
                 var cargoDetails = "";
                 for (var i = 0; i < table.length; i++) {
                   if (!cargoDetails.includes(table[i].PackageType)) {
-                    cargoDetails += table[i].PackageType + ","
+                    cargoDetails += table[i].PackageType + ",";
                     CargoDetailsArr.push({
                       PackageType: table[i].PackageType,
                       SpecialContainerCode: table[i].PackageType + "_" + i,
@@ -726,14 +773,18 @@ class RateFinalizing extends Component {
                       Weight: table[i].GrossWeight,
                       Gross_Weight: "-",
                       Temperature: "-",
-                      CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
-                          (table[i].ChgWeight)
-                          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                      CBM:
+                        response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                        "AIR"
+                          ? table[i].ChgWeight
+                          : table[i].CBM === undefined
+                          ? "-"
+                          : table[i].CBM,
                       Volume: "-",
                       VolumeWeight: "-",
                       Editable: true
                     });
-                  
+
                     PackageDetailsArr.push({
                       PackageType: table[i].PackageType,
                       // SpecialContainerCode:
@@ -744,13 +795,46 @@ class RateFinalizing extends Component {
                       Width: table[i].Width,
                       Height: table[i].height,
                       Weight: table[i].GrossWeight,
-                      CBM: (response.data.Table[0].ModeOfTransport.toUpperCase()==="AIR"?
-                          (table[i].ChgWeight)
-                          :(table[i].CBM === undefined?"-":table[i].CBM)),
+                      CBM:
+                        response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                        "AIR"
+                          ? table[i].ChgWeight
+                          : table[i].CBM === undefined
+                          ? "-"
+                          : table[i].CBM,
                       Editable: true
                     });
 
-                    multiCBM.push(table[i])
+                    multiCBM.push({
+                        PackageType: table[i].PackageType,
+                        Quantity: table[i].Quantity,
+                        Length: table[i].Length,
+                        Width: table[i].Width,
+                        height: table[i].height,
+                        Weight: table[i].GrossWeight,
+                        GrossWeight: table[i].GrossWeight,
+                        VolumeWeight: (param.type.toUpperCase()==="AIR"?
+                                      (table[i].ChgWeight):0),
+                        Volume: (param.type.toUpperCase()==="LCL"?
+                                table[i].CBM:0)
+                      })
+
+                    //multiCBM.push(table[i])
+
+                    if (param.type == "FCL") {
+                      flattack_openTop.push({
+                        SpecialContainerCode: "",
+                        PackageType: table[i].PackageType,
+                        Quantity: table[i].Quantity,
+                        length: table[i].Length,
+                        width: table[i].Width,
+                        height: table[i].height,
+                        Weight: table[i].GrossWeight,
+                        Gross_Weight: table[i].GrossWeight,
+                        VolumeWeight: 0,
+                        Volume: 0
+                      });
+                    }
                   }
                 }
               }
@@ -766,7 +850,11 @@ class RateFinalizing extends Component {
         self.setState({
           rateDetails: rateDetails,
           rateSubDetails: response.data.Table2,
-          multiCBM: multiCBM
+          multiCBM: multiCBM,
+          flattack_openTop: flattack_openTop
+          // specialEqtSelect: true,
+          // specialEquipment:true
+          
         });
         self.forceUpdate();
         self.HandleLocalCharges();
@@ -1047,15 +1135,15 @@ class RateFinalizing extends Component {
     this.RequestChangeMsgModalClose();
   }
 
-  RequestChangeMsgModal(){
+  RequestChangeMsgModal() {
     this.setState(prevState => ({
-      modalRequestMsg:!prevState.modalRequestMsg
+      modalRequestMsg: !prevState.modalRequestMsg
     }));
   }
-  RequestChangeMsgModalClose(){
+  RequestChangeMsgModalClose() {
     this.setState({
-      modalRequestMsg:false
-    })
+      modalRequestMsg: false
+    });
   }
 
   togglePreview() {
@@ -1931,7 +2019,7 @@ class RateFinalizing extends Component {
   }
 
   SendRequest() {
-    debugger
+    debugger;
     var txtRequestDiscount,
       txtRequestFreeTime,
       txtRequestComments = "";
@@ -2619,101 +2707,94 @@ class RateFinalizing extends Component {
       });
   }
 
-  SendRequestCopy(){
+  SendRequestCopy() {
     var txtRequestDiscount,
-    txtRequestFreeTime,
-    txtRequestComments = "";
-  txtRequestDiscount = 0;
-  txtRequestFreeTime = 0;
-  var containerLoadType = this.state.containerLoadType;
- 
-  var rateDetailsarr = this.state.rateDetails;
-  var rateSubDetailsarr = this.state.rateSubDetails;
+      txtRequestFreeTime,
+      txtRequestComments = "";
+    txtRequestDiscount = 0;
+    txtRequestFreeTime = 0;
+    var containerLoadType = this.state.containerLoadType;
 
-  var SQCopyChargesList = [];
+    var rateDetailsarr = this.state.rateDetails;
+    var rateSubDetailsarr = this.state.rateSubDetails;
 
- 
+    var SQCopyChargesList = [];
+
     for (var j = 0; j < rateSubDetailsarr.length; j++) {
       if (containerLoadType == "FCL") {
-          
-            SQCopyChargesList.push({
-                SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
-                SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-                Chargeitem:rateSubDetailsarr[j].Chargeitem,
-                Tax:rateSubDetailsarr[j].Tax,
-                ExRate:rateSubDetailsarr[j].ExRate,
-                ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-                Type:rateSubDetailsarr[j].Type,
-                SellRate:rateSubDetailsarr[j].SellRate,
-                BuyRate:rateSubDetailsarr[j].BuyRate,
-                Currency:rateSubDetailsarr[j].BaseCurrency                
-              });
-                  
-      }else if(containerLoadType == "LCL"){
-          SQCopyChargesList.push({
-            SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
-            SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
-            ChargeCode: rateSubDetailsarr[j].ChargeCode,
-            BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-            Chargeitem:rateSubDetailsarr[j].Chargeitem,
-            Tax:rateSubDetailsarr[j].Tax,
-            ExRate:rateSubDetailsarr[j].ExRate,
-            ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-            Type:rateSubDetailsarr[j].Type,
-            SellRate:rateSubDetailsarr[j].SellRate,
-            BuyRate:rateSubDetailsarr[j].BuyRate,
-            Currency:rateSubDetailsarr[j].BaseCurrency                
-          });
-      }else if (containerLoadType == "AIR") {
         SQCopyChargesList.push({
           SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
           SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
           ChargeCode: rateSubDetailsarr[j].ChargeCode,
           BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem:rateSubDetailsarr[j].Chargeitem,
-          Tax:rateSubDetailsarr[j].Tax,
-          ExRate:rateSubDetailsarr[j].Exrate,
-          ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-          Type:rateSubDetailsarr[j].Type,
-          SellRate:rateSubDetailsarr[j].SellRate,
-          BuyRate:rateSubDetailsarr[j].BuyRate,
-          Currency:rateSubDetailsarr[j].BaseCurrency              
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].ExRate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
         });
-      }else if (containerLoadType == "INLAND") {
+      } else if (containerLoadType == "LCL") {
+        SQCopyChargesList.push({
+          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+          SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+          ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].ExRate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
+        });
+      } else if (containerLoadType == "AIR") {
+        SQCopyChargesList.push({
+          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+          SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
+          ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].Exrate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
+        });
+      } else if (containerLoadType == "INLAND") {
         SQCopyChargesList.push({
           SaleQuoteID: rateSubDetailsarr[j].SaleQuoteIDD,
           SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
           ChargeCode: rateSubDetailsarr[j].ChargeCode,
           BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem:rateSubDetailsarr[j].Chargeitem,
-          Tax:rateSubDetailsarr[j].Tax,
-          ExRate:rateSubDetailsarr[j].ExRate,
-          ChargeDesc:rateSubDetailsarr[j].ChargeDesc,
-          Type:rateSubDetailsarr[j].Type,
-          SellRate:rateSubDetailsarr[j].SellRate,
-          BuyRate:rateSubDetailsarr[j].BuyRate,
-          Currency:rateSubDetailsarr[j].BaseCurrency              
+          Chargeitem: rateSubDetailsarr[j].Chargeitem,
+          Tax: rateSubDetailsarr[j].Tax,
+          ExRate: rateSubDetailsarr[j].ExRate,
+          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+          Type: rateSubDetailsarr[j].Type,
+          SellRate: rateSubDetailsarr[j].SellRate,
+          BuyRate: rateSubDetailsarr[j].BuyRate,
+          Currency: rateSubDetailsarr[j].BaseCurrency
         });
       }
-      
-     
     }
 
+    var Containerdetails = [];
+    var RateQueryDim = [];
+    // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+    var usesr = this.state.users;
+    var spacEqmtType = this.state.spacEqmtType;
+    var referType = this.state.referType;
+    var flattack_openTop = this.state.flattack_openTop;
 
-  var Containerdetails = [];
-  var RateQueryDim = [];
-  // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
-  var usesr = this.state.users;
-  var spacEqmtType = this.state.spacEqmtType;
-  var referType = this.state.referType;
-  var flattack_openTop = this.state.flattack_openTop;
-
- 
     debugger;
     var multiCBM = this.state.multiCBM;
-    
+
     for (var i = 0; i < multiCBM.length; i++) {
       if (this.state.containerLoadType == "FCL") {
         //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
@@ -2761,77 +2842,79 @@ class RateFinalizing extends Component {
           GrossWt: multiCBM[i].GrossWeight,
           VolumeWeight: multiCBM[i].VolumeWeight,
           Volume: 0,
-          PackageType: multiCBM[i].PackageType === null?"":multiCBM[i].PackageType
+          PackageType:
+            multiCBM[i].PackageType === null ? "" : multiCBM[i].PackageType
         });
       }
     }
-    
 
+    debugger;
+    var senrequestpara = {
+      Commodity: Number(this.state.CommodityID),
+      OldSaleQuoteNumber: this.props.location.state.Quote,
+      OldSaleQuoteID:
+        rateSubDetailsarr[0].SaleQuoteID == undefined
+          ? rateSubDetailsarr[0].SaleQuoteIDD
+          : rateSubDetailsarr[0].SaleQuoteID,
+      MailBody:
+        "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+      RateQueryDim: RateQueryDim,
+      SQCopyChargesList: SQCopyChargesList,
+      Mode: this.state.containerLoadType,
+      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+    };
 
-  debugger;
-  var senrequestpara = {
-    Commodity: Number(this.state.CommodityID),
-    OldSaleQuoteNumber: this.props.location.state.Quote,
-    OldSaleQuoteID: rateSubDetailsarr[0].SaleQuoteID==undefined?
-                    rateSubDetailsarr[0].SaleQuoteIDD:rateSubDetailsarr[0].SaleQuoteID,
-    MailBody:"Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
-    RateQueryDim: RateQueryDim,
-    SQCopyChargesList: SQCopyChargesList,
-    Mode: this.state.containerLoadType,
-    MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-  };
+    var url = "";
 
-  var url = "";
-
-  //if (this.state.containerLoadType == "FCL") {
+    //if (this.state.containerLoadType == "FCL") {
     //senrequestpara.NonStackable = 0;
     url = `${appSettings.APIURL}/SalesQuoteCopy`;
-  //} 
-  //return false;
-  // usertype
+    //}
+    //return false;
+    // usertype
 
-  var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
-  let self = this;
-  axios({
-    method: "post",
-    url: url,
-    data: senrequestpara,
-    headers: authHeader()
-  })
-    .then(function(response) {
-      debugger;
-      if (response != null) {
-        if (response.data != null) {
-          if (response.data.Table != null) {
-            if (response.data.Table.length > 0) {
-              NotificationManager.success(response.data.Table[0].Message);
-              var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
-              if (usertype !== "Sales User") {
-                self.setState({
-                  SalesQuoteNo
-                });
+    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
+    let self = this;
+    axios({
+      method: "post",
+      url: url,
+      data: senrequestpara,
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                NotificationManager.success(response.data.Table[0].Message);
+                var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
+                if (usertype !== "Sales User") {
+                  self.setState({
+                    SalesQuoteNo
+                  });
 
-                self.AcceptQuotes();
+                  self.AcceptQuotes();
 
-                setTimeout(function() {
-                  window.location.href = "quote-table";
-                }, 1000);
-              } else {
-                setTimeout(function() {
-                  window.location.href = "quote-table";
-                }, 1000);
+                  setTimeout(function() {
+                    window.location.href = "quote-table";
+                  }, 1000);
+                } else {
+                  setTimeout(function() {
+                    window.location.href = "quote-table";
+                  }, 1000);
+                }
+                // window.location.href = "quote-table";
               }
-              // window.location.href = "quote-table";
             }
           }
         }
-      }
-      //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
-    })
-    .catch(error => {
-      debugger;
-      console.log(error.response);
-    });
+        //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+      })
+      .catch(error => {
+        debugger;
+        console.log(error.response);
+      });
   }
 
   SendQuote() {}
@@ -3081,8 +3164,10 @@ class RateFinalizing extends Component {
     });
     this.forceUpdate();
   }
+
   SubmitCargoDetails(e) {
     debugger;
+    var PackageDetailsArr = [];
     if (
       this.state.containerLoadType == "AIR" ||
       this.state.containerLoadType == "LCL"
@@ -3095,6 +3180,20 @@ class RateFinalizing extends Component {
         ) {
           multiCBM[i].PackageType = this.state.currentPackageType;
         }
+
+        PackageDetailsArr.push({
+          PackageType: multiCBM[i].PackageType,
+          SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+          ContainerType: multiCBM[i].PackageType,
+          Packaging: "-",
+          Quantity: multiCBM[i].Quantity,
+          Lenght: this.state.isCopy==true?multiCBM[i].Length || multiCBM[i].Lengths:multiCBM[i].Lengths,
+          Width: multiCBM[i].Width,
+          Height: this.state.isCopy==true?multiCBM[i].height:multiCBM[i].Height,
+          Weight: this.state.isCopy==true?multiCBM[i].GrossWeight:multiCBM[i].GrossWt,
+          CBM: this.state.containerLoadType == "LCL"?multiCBM[i].Volume:multiCBM[i].VolumeWeight,
+          Editable: true
+        });
       }
 
       this.setState({
@@ -3109,6 +3208,23 @@ class RateFinalizing extends Component {
         ) {
           flattack_openTop[i].PackageType = this.state.currentPackageType;
         }
+
+        PackageDetailsArr.push({
+          PackageType: flattack_openTop[i].PackageType,
+          SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
+          ContainerType:
+            flattack_openTop[i].PackageType +
+            " (" +
+            flattack_openTop[i].SpecialContainerCode +
+            ")",
+          Quantity: flattack_openTop[i].Quantity,
+          Lenght: flattack_openTop[i].length,
+          Width: flattack_openTop[i].width,
+          Height: flattack_openTop[i].height,
+          Weight: flattack_openTop[i].Gross_Weight,
+          CBM: flattack_openTop[i].total,
+          Editable: true
+        });
       }
 
       this.setState({
@@ -3140,6 +3256,7 @@ class RateFinalizing extends Component {
     }
 
     this.setState({
+      PackageDetailsArr: PackageDetailsArr,
       CargoDetailsArr: CargoDetailsArr
     });
 
@@ -3325,6 +3442,443 @@ class RateFinalizing extends Component {
       }
     });
   }
+
+  newMultiCBMHandleChange(i, e) {
+    const { name, value } = e.target;
+    debugger;
+    let flattack_openTop = [...this.state.flattack_openTop];
+    if (name === "PackageType" || name === "SpecialContainerCode") {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: value
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        [name]: parseFloat(value)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+    var decVolumeWeight =
+      (flattack_openTop[i].Quantity *
+        (flattack_openTop[i].length *
+          flattack_openTop[i].width *
+          flattack_openTop[i].height)) /
+      6000;
+    if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(decVolumeWeight)
+      };
+    } else {
+      flattack_openTop[i] = {
+        ...flattack_openTop[i],
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+      };
+    }
+
+    this.setState({ flattack_openTop });
+  }
+
+  addMultiDim() {
+    this.setState(prevState => ({
+      flattack_openTop: [
+        ...prevState.flattack_openTop,
+        {
+          SpecialContainerCode: "",
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
+
+  removeMultiDim(i) {
+    let flattack_openTop = [...this.state.flattack_openTop];
+    flattack_openTop.splice(i, 1);
+    this.setState({ flattack_openTop });
+  }
+
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: 0,
+          Length: 0,
+          Width: 0,
+          height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
+
+  removeMultiCBM(i) {
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  MultiCreateCBM() {
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        {/* <div className="col-md">
+          <div className="spe-equ">
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
+          </div>
+        </div> */}
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="SpecialContainerCode"
+              value={el.SpecialContainerCode}
+            >
+              <option selected>Select</option>
+              {this.state.equipmentTypeArr.map((item, i) => (
+                <option key={i} value={item.ContainerType}>
+                  {item.ContainerType}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="Gross_Weight"
+              value={el.Gross_Weight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        {/* <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div> */}
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiDim.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.flattack_openTop.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiDim.bind(this, i)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {/* <div className="">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              aria-hidden="true"
+              //onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div> */}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value === "" ? 0 : parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
+        6000;
+      if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWeight
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Length / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: parseFloat(decVolume)
+      };
+    }
+
+    this.setState({ multiCBM });
+  }
+
+  CreateMultiCBM() {
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Length"
+              value={this.state.isCopy==true?el.Length:el.Length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          {(this.state.containerLoadType.toUpperCase() == "LCL" ||
+            "AIR" ||
+            "LTL") &&
+          this.state.NonStackable ? (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="height"
+                value={this.state.isCopy==true?el.height:el.height || ""}
+                disabled
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          ) : (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="height"
+                value={this.state.isCopy==true?el.height:el.Height || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
+              name="GrossWeight"
+              value={this.state.isCopy==true?el.GrossWeight:el.GrossWt || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
   //------------------------------------------------------------------//
 
   render() {
@@ -3835,13 +4389,26 @@ class RateFinalizing extends Component {
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-                                  if (row._original.LineName) {
-                                    olname = row._original.LineName;
+
+                                  var mode = this.state.ModeOfTransport;
+                                  if (row._original.lineName) {
+                                    olname = row._original.lineName;
                                     lname =
-                                      row._original.LineName.replace(
-                                        "  ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
+                                      row._original.lineName
+                                        .replace(" ", "_")
+                                        .replace(" ", "_") + ".png";
+                                  }
+                                  var mode = "";
+                                  if (this.state.ModeOfTransport) {
+                                    mode = this.state.ModeOfTransport;
+                                  }
+                                  if (this.state.modeoftransport) {
+                                    mode =
+                                      this.state.modeoftransport === "SEA"
+                                        ? "Ocean"
+                                        : this.state.modeoftransport === "AIR"
+                                        ? "Air"
+                                        : "Inlande";
                                   }
                                   var mode = this.state.ModeOfTransport;
                                   if (row._original.lineName) {
@@ -4492,6 +5059,14 @@ class RateFinalizing extends Component {
                     <div className="title-border py-3">
                       <h3>Cargo Details</h3>
                     </div>
+                    <div className="align-center">
+                      <button
+                        onClick={this.toggleEdit}
+                        className="butn more-padd m-0"
+                      >
+                        Add Cargo
+                      </button>
+                    </div>
                     <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (
                         <ReactTable
@@ -4554,7 +5129,12 @@ class RateFinalizing extends Component {
                             },
                             {
                               Header: "Quantity",
-                              accessor: "Quantity"
+                              accessor: "Quantity",
+                              show:
+                                this.state.containerLoadType.toUpperCase() ==
+                                "FCL"
+                                  ? false
+                                  : true
                             },
                             {
                               Header: "Lenght",
@@ -4584,46 +5164,50 @@ class RateFinalizing extends Component {
                                 "LCL"
                                   ? "CBM"
                                   : "Chargable Weight",
-                              accessor: "CBM"
-                              //show:  this.state.containerLoadType == "Air" ? false : true
-                            },
-                            {
-                              Header: "Action",
-                              sortable: false,
-                              accessor: "Editable",
-                              Cell: row => {
-                                debugger;
-                                if (row.original.Editable) {
-                                  return (
-                                    <div className="action-cntr">
-                                      {/* actionicon */}
-                                      <button onClick={this.toggleEdit}>
-                                        <img
-                                          className=""
-                                          src={Edit}
-                                          alt="booking-icon"
-                                          data-valuetype={
-                                            row.original.PackageType
-                                          }
-                                          data-valuequantity={
-                                            row.original.Quantity
-                                          }
-                                          data-valuelenght={row.original.Lenght}
-                                          data-valuewidth={row.original.Width}
-                                          data-valueheight={row.original.Height}
-                                          data-valueweight={row.original.Weight}
-                                          data-valuecbm={row.original.CBM}
-                                          data-valuespecialsontainersode={
-                                            row.original.SpecialContainerCode
-                                          }
-                                        />
-                                      </button>
-                                    </div>
-                                  );
-                                }
-                                return <div></div>;
-                              }
+                              accessor: "CBM",
+                              show:
+                                this.state.containerLoadType.toUpperCase() ==
+                                "FCL"
+                                  ? false
+                                  : true
                             }
+                            // {
+                            //   Header: "Action",
+                            //   sortable: false,
+                            //   accessor: "Editable",
+                            //   Cell: row => {
+                            //     debugger;
+                            //     if (row.original.Editable) {
+                            //       return (
+                            //         <div className="action-cntr">
+                            //           {/* actionicon */}
+                            //           <button onClick={this.toggleEdit}>
+                            //             <img
+                            //               className=""
+                            //               src={Edit}
+                            //               alt="booking-icon"
+                            //               data-valuetype={
+                            //                 row.original.PackageType
+                            //               }
+                            //               data-valuequantity={
+                            //                 row.original.Quantity
+                            //               }
+                            //               data-valuelenght={row.original.Lenght}
+                            //               data-valuewidth={row.original.Width}
+                            //               data-valueheight={row.original.Height}
+                            //               data-valueweight={row.original.Weight}
+                            //               data-valuecbm={row.original.CBM}
+                            //               data-valuespecialsontainersode={
+                            //                 row.original.SpecialContainerCode
+                            //               }
+                            //             />
+                            //           </button>
+                            //         </div>
+                            //       );
+                            //     }
+                            //     return <div></div>;
+                            //   }
+                            // }
                           ]}
                           className="-striped -highlight"
                           defaultPageSize={2000}
@@ -4789,7 +5373,11 @@ class RateFinalizing extends Component {
                       </a> */}
                       <button
                         // onClick={this.SendQuote}
-                        onClick={this.state.isCopy===true?this.SendRequestCopy:this.SendRequest}
+                        onClick={
+                          this.state.isCopy === true
+                            ? this.SendRequestCopy
+                            : this.SendRequest
+                        }
                         className={
                           this.state.commoditySelect == "select" // ||
                             ? // this.state.cargoSelect == "select"
@@ -4798,10 +5386,11 @@ class RateFinalizing extends Component {
                         }
                       >
                         {encryption(
-                              window.localStorage.getItem("usertype"),
-                              "desc"
-                            ) != "Customer"?
-                        "Send":"Confirm And Approve"}
+                          window.localStorage.getItem("usertype"),
+                          "desc"
+                        ) != "Customer"
+                          ? "Send"
+                          : "Confirm And Approve"}
                       </button>
                     </div>
                   </div>
@@ -4902,7 +5491,7 @@ class RateFinalizing extends Component {
               </div>
             </ModalBody>
           </Modal> */}
-         <Modal
+          <Modal
             className="delete-popup pol-pod-popup"
             isOpen={this.state.modalRequestMsg}
             toggle={this.RequestChangeMsgModal}
@@ -4913,7 +5502,10 @@ class RateFinalizing extends Component {
               <Button className="butn" onClick={this.toggleRequest}>
                 Yes
               </Button>
-              <Button className="butn cancel-butn" onClick={this.RequestChangeMsgModal}>
+              <Button
+                className="butn cancel-butn"
+                onClick={this.RequestChangeMsgModal}
+              >
                 No
               </Button>
             </ModalBody>
@@ -5959,7 +6551,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
           <Modal
-            className="delete-popup pol-pod-popup"
+            className="delete-popup pol-pod-popup large-popup"
             isOpen={this.state.modalEdit}
             toggle={this.toggleEdit}
             centered={true}
@@ -5981,82 +6573,226 @@ class RateFinalizing extends Component {
                 }}
               >
                 <h3 className="mb-4">Edit Cargo Details</h3>
+                <>
+                  {" "}
+                  {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                        <Select
+                          className="rate-dropdown"
+                          getOptionLabel={option =>
+                            option.StandardContainerCode
+                          }
+                          getOptionValue={option =>
+                            option.StandardContainerCode
+                          }
+                          isMulti
+                          options={this.state.EquipmentType}
+                          onChange={this.newaddClick.bind(this)}
+                          value={this.state.selected}
+                          showNewOptionAtTop={false}
+                        />
+                      </div> */}
+                  {/* <div className="d-flex flex-wrap justify-content-center">
+                        {this.NewcreateUI()}
+                      </div>
+                      <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                        <input
+                          id="Special-equType"
+                          type="checkbox"
+                          className="d-none"
+                          name={"Special-equType"}
+                          // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                        />
+                      </div> */}
+                      {this.state.containerLoadType === "FCL" ? (
+                      // this.state.specialEquipment === true ? (
+                        this.state.flattack_openTop.length > 0 ? (
+                        <div className="">
+                          {/* spe-equ mt-0 */}
+                          {/* <div className="equip-plus-cntr w-100">
+                            <Select
+                              className="rate-dropdown"
+                              getOptionLabel={option =>
+                                option.SpecialContainerCode
+                              }
+                              getOptionValue={option =>
+                                option.SpecialContainerCode
+                              }
+                              options={this.state.SpacialEqmt}
+                              placeholder="Select Kind of Special Equipment"
+                              onChange={this.specEquipChange}
+                              showNewOptionAtTop={false}
+                            />
+                          </div> */}
+                          <div id="cbmInner">
+                            {/* {this.state.specialEqtSelect === true ? ( */}
+                             {/* {this.state.flattack_openTop.length > 0 ? ( */}
+                                <>{this.MultiCreateCBM()}</>
+                              {/* //) : null */}
+                            {/* ) : null} */}
+                          </div>
+                        </div>
+                    ) : (
+                      <div className="row cbm-space" key={i}>
+                        {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <label className="mr-0 mt-2" name="SpecialContainerCode">
+                            {el.SpecialContainerCode}
+                          </label>
+                        </div>
+                      </div> */}
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <select
+                              className="select-text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              name="SpecialContainerCode"
+                              //value={el.SpecialContainerCode}
+                            >
+                              <option selected>Select</option>
+                              {this.state.equipmentTypeArr.map((item, i) => (
+                                <option key={i} value={item.ContainerType}>
+                                  {item.ContainerType}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <select
+                              className="select-text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              name="PackageType"
+                              //value={el.PackageType}
+                            >
+                              <option selected>Select</option>
+                              {this.state.packageTypeData.map((item, i) => (
+                                <option key={i} value={item.PackageName}>
+                                  {item.PackageName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              placeholder={"L (cm)"}
+                              className="w-100"
+                              name="length"
+                              //value={el.length || ""}
+                              // onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              placeholder={"W (cm)"}
+                              className="w-100"
+                              name="width"
+                              //value={el.width || ""}
+                              //onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              placeholder="H (cm)"
+                              className="w-100"
+                              name="height"
+                              //value={el.height || ""}
+                              //onBlur={this.cbmChange}
+                            />
+                          </div>
+                        </div>
 
-                <div className="rename-cntr login-fields">
-                  <select
-                    className="select-text"
-                    onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                    name="PackageType"
-                    value={this.state.currentPackageType}
-                  >
-                    <option selected>Select</option>
-                    {this.state.packageTypeData.map((item, i) => (
-                      <option key={i} value={item.PackageName}>
-                        {item.PackageName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Quantity</label>
-                  <input
-                    type="text"
-                    value={this.state.valuequantity}
-                    id="txtRequestFreeTime"
-                    placeholder="Quantity"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Lenght</label>
-                  <input
-                    type="text"
-                    value={this.state.valuelenght}
-                    id="txtRequestFreeTime"
-                    placeholder="Lenght"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Width</label>
-                  <input
-                    type="text"
-                    value={this.state.valuewidth}
-                    id="txtRequestFreeTime"
-                    placeholder="Width"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Height</label>
-                  <input
-                    type="text"
-                    value={this.state.valueheight}
-                    id="txtRequestFreeTime"
-                    placeholder="Height"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>Weight</label>
-                  <input
-                    type="text"
-                    value={this.state.valueweight}
-                    id="txtRequestFreeTime"
-                    placeholder="Weight"
-                  />
-                </div>
-
-                <div className="rename-cntr login-fields">
-                  <label>CBM</label>
-                  <input
-                    type="text"
-                    value={this.state.valuecbm}
-                    id="txtRequestFreeTime"
-                    placeholder="CBM"
-                  />
-                </div>
+                        <div className="col-md">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              onChange={this.newMultiCBMHandleChange.bind(
+                                this,
+                                i
+                              )}
+                              //placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                              name="Gross_Weight"
+                              //value={el.Gross_Weight}
+                              className="w-100"
+                            />
+                          </div>
+                        </div>
+                        {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            name="total"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+                            value={el.total || ""}
+                            className="w-100"
+                          />
+                        </div>
+                      </div> */}
+                        {i === 0 ? (
+                          <div className="">
+                            <div className="spe-equ">
+                              <i
+                                className="fa fa-plus mt-2"
+                                aria-hidden="true"
+                                onClick={this.addMultiDim.bind(this)}
+                              ></i>
+                            </div>
+                          </div>
+                        ) : null}
+                        {this.state.flattack_openTop.length > 1 ? (
+                          <div className="">
+                            <div className="spe-equ">
+                              <i
+                                className="fa fa-minus mt-2"
+                                aria-hidden="true"
+                                onClick={this.removeMultiDim.bind(this, i)}
+                              ></i>
+                            </div>
+                          </div>
+                        ) : null}
+                        {/* <div className="">
+                        <div className="spe-equ">
+                          <i
+                            className="fa fa-minus mt-2"
+                            aria-hidden="true"
+                            //onClick={this.removeClickMultiCBM.bind(this)}
+                          ></i>
+                        </div>
+                      </div> */}
+                      </div>
+                    )
+                  ) : (
+                    this.CreateMultiCBM()
+                  )}
+                </>
 
                 <div className="text-center">
                   <Button

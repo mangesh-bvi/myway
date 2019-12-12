@@ -711,8 +711,20 @@ class RateTable extends Component {
 
   HandleRateDetailsFCL(paramData) {
     var dataParameter = {};
-    var pickUpAddress = {Street:'',Country:'',State:'',City:'',ZipCode:''}
-    var destUpAddress = {Street:'',Country:'',State:'',City:'',ZipCode:''}
+    var pickUpAddress = {
+      Street: "",
+      Country: "",
+      State: "",
+      City: "",
+      ZipCode: ""
+    };
+    var destUpAddress = {
+      Street: "",
+      Country: "",
+      State: "",
+      City: "",
+      ZipCode: ""
+    };
     if (paramData.isSearch) {
       var rTypeofMove =
         paramData.typesofMove === "p2p"
@@ -789,14 +801,11 @@ class RateTable extends Component {
         cmbvalue = 0;
       }
 
-      if(paramData.typesofMove === "d2p")
-      {
+      if (paramData.typesofMove === "d2p") {
         pickUpAddress = paramData.fullAddressPOL[0];
-      }
-      else if (paramData.typesofMove === "p2d") {
+      } else if (paramData.typesofMove === "p2d") {
         destUpAddress = paramData.fullAddressPOD[0];
-      }
-      else if (paramData.typesofMove === "d2d"){
+      } else if (paramData.typesofMove === "d2d") {
         pickUpAddress = paramData.fullAddressPOL[0];
         destUpAddress = paramData.fullAddressPOD[0];
       }
@@ -862,14 +871,14 @@ class RateTable extends Component {
         dataParameter.RateQueryDim = paramData.multiCBM;
       }
 
-      if(encryption(
-        window.localStorage.getItem("usertype"),
-        "desc"
-      ) === "Customer"){
-        paramData.companyId = (encryption(
+      if (
+        encryption(window.localStorage.getItem("usertype"), "desc") ===
+        "Customer"
+      ) {
+        paramData.companyId = encryption(
           window.localStorage.getItem("companyid"),
           "desc"
-        ))
+        );
       }
 
       dataParameter.Commodity = this.state.CommodityID;
@@ -2691,7 +2700,6 @@ class RateTable extends Component {
     }
 
     this.setState({ multiCBM });
-
   }
 
   HandleCMBtextChange(e) {
@@ -3248,8 +3256,7 @@ class RateTable extends Component {
                                   mapPOL.POLGeoCordinate
                                 )}
                               />
-                              <label htmlFor={"pol" + (index + 1)}>
-                              </label>
+                              <label htmlFor={"pol" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
                                 {mapPOL.Address}
                               </h5>
@@ -3311,8 +3318,7 @@ class RateTable extends Component {
                                   mapPOD.PODGeoCordinate
                                 )}
                               />
-                              <label htmlFor={"pod" + (index + 1)}>
-                              </label>
+                              <label htmlFor={"pod" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
                                 {mapPOD.Address}
                               </h5>
@@ -3398,21 +3404,22 @@ class RateTable extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  debugger;
-                                  var mode = this.state.modeoftransport;
-                                  var lname="";
 
-                                  if(row._original.lineName){
-                                   lname =
-                                    row._original.lineName
+                                  var mode = this.state.modeoftransport;
+                                  var lname = "";
+
+                                  if (row._original.lineName) {
+                                    lname =
+                                      row._original.lineName
                                         .replace(" ", "_")
                                         .replace("  ", "_") + ".png";
                                   }
-                                 
+
                                   if (
                                     row._original.lineName !==
                                       "No Record Found" &&
-                                    mode == "SEA" &&lname!=="" 
+                                    mode == "SEA" &&
+                                    lname !== ""
                                   ) {
                                     return (
                                       <React.Fragment>
@@ -3422,12 +3429,6 @@ class RateTable extends Component {
                                               id={"maersk-logo" + i}
                                               type="checkbox"
                                               name={"rate-tab-check"}
-                                              // checked={
-                                              // this.state.RateDetails[i - 1].checkbx
-                                              // ? this.state.RateDetails[i - 1]
-                                              // .checkbx
-                                              // : false
-                                              // }
                                               checked={
                                                 this.state.cSelectedRow[
                                                   original.RateLineID ==
@@ -3466,7 +3467,8 @@ class RateTable extends Component {
                                   } else if (
                                     row._original.lineName !==
                                       "No Record Found" &&
-                                    mode == "AIR"&&lname!=="" 
+                                    mode == "AIR" &&
+                                    lname !== ""
                                   ) {
                                     return (
                                       <React.Fragment>
@@ -3501,8 +3503,7 @@ class RateTable extends Component {
                                         </div>
                                         <div className="rate-tab-img">
                                           <img
-                                              title={row._original.lineName}
-                                              
+                                            title={row._original.lineName}
                                             src={
                                               "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                                               lname
@@ -3512,7 +3513,11 @@ class RateTable extends Component {
                                         </div>
                                       </React.Fragment>
                                     );
-                                  } else {
+                                  } else if (
+                                    row._original.lineName !==
+                                      "No Record Found" &&
+                                    lname === ""
+                                  ) {
                                     return (
                                       <React.Fragment>
                                         <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -3545,11 +3550,21 @@ class RateTable extends Component {
                                           </div>
                                         </div>
                                         <div className="rate-tab-img">
-                                          <img title={row._original.lineName}
+                                          <img
+                                            title={row._original.lineName}
                                             src={
-                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"}
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
                                             alt={row._original.lineName}
                                           />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          {row._original.lineName}
                                         </div>
                                       </React.Fragment>
                                     );
@@ -3558,106 +3573,6 @@ class RateTable extends Component {
                                 accessor: "lineName"
                                 // minWidth: 200
                               },
-                              // {
-                              //   Cell: ({ original, row }) => {
-                              //     i++;
-                              //     var mode = this.state.modeoftransport;
-                              //     var lname =
-                              //       original.lineName
-                              //         .replace(" ", "_")
-                              //         .replace("  ", "_") + ".png";
-                              //     if (
-                              //       row._original.lineName !== "No Record Found" && mode=="Ocean"
-                              //     ) {
-                              //       return (
-                              //         <React.Fragment>
-                              //           <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                              //             <div className="remember-forgot rat-img d-block m-0">
-                              //               <input
-                              //                 id={"maersk-logo" + i}
-                              //                 type="checkbox"
-                              //                 name={"rate-tab-check"}
-                              //                 checked={
-                              //                   this.state.cSelectedRow[
-                              //                     original.RateLineID ==
-                              //                     undefined
-                              //                       ? original.RateLineId
-                              //                       : original.RateLineID
-                              //                   ] === true
-                              //                 }
-                              //                 onChange={e =>
-                              //                   this.toggleRow(
-                              //                     original.RateLineID ==
-                              //                       undefined
-                              //                       ? original.RateLineId
-                              //                       : original.RateLineID,
-                              //                     row
-                              //                   )
-                              //                 }
-                              //               />
-                              //               <label
-                              //                 htmlFor={"maersk-logo" + i}
-                              //               ></label>
-                              //             </div>
-                              //           </div>
-                              //           <div className="rate-tab-img">
-                              //             <img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/"+lname} alt="maersk icon" />
-                              //           </div>
-                              //         </React.Fragment>
-                              //       );
-                              //     }if (
-                              //       row._original.lineName !== "No Record Found" && mode=="AIR"
-                              //     ){
-                              //       return (
-                              //         <React.Fragment>
-                              //           <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                              //             <div className="remember-forgot rat-img d-block m-0">
-                              //               <input
-                              //                 id={"maersk-logo" + i}
-                              //                 type="checkbox"
-                              //                 name={"rate-tab-check"}
-                              //                 checked={
-                              //                   this.state.cSelectedRow[
-                              //                     original.RateLineID ==
-                              //                     undefined
-                              //                       ? original.RateLineId
-                              //                       : original.RateLineID
-                              //                   ] === true
-                              //                 }
-                              //                 onChange={e =>
-                              //                   this.toggleRow(
-                              //                     original.RateLineID ==
-                              //                       undefined
-                              //                       ? original.RateLineId
-                              //                       : original.RateLineID,
-                              //                     row
-                              //                   )
-                              //                 }
-                              //               />
-                              //               <label
-                              //                 htmlFor={"maersk-logo" + i}
-                              //               ></label>
-                              //             </div>
-                              //           </div>
-                              //           <div className="rate-tab-img">
-                              //             <img src={"https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/"+lname} alt="maersk icon" />
-                              //           </div>
-                              //         </React.Fragment>
-                              //       );
-                              //     } else {
-                              //       return (
-                              //         <>
-                              //           <p className="details-title"></p>
-                              //           <p className="details-para max2">
-                              //             No Record Found
-                              //           </p>
-                              //         </>
-                              //       );
-                              //     }
-                              //   },
-                              //   accessor: "lineName"
-                              //   // minWidth: 200
-                              // },
                               {
                                 Cell: row => {
                                   return (
@@ -3869,18 +3784,16 @@ class RateTable extends Component {
                                     columns: [
                                       {
                                         Header: "C. Description",
-                                        accessor: "ChargeDesc",
-                                        
+                                        accessor: "ChargeDesc"
                                       },
                                       {
                                         Header: "C. Name",
-                                        accessor: "ChargeCode",
-                                        
+                                        accessor: "ChargeCode"
                                       },
                                       {
                                         Header: "Unit Price",
                                         accessor: "Rate",
-                                        minWidth:70,
+                                        minWidth: 70,
                                         Cell: props => (
                                           <React.Fragment>
                                             {props.original.Rate}
@@ -3891,13 +3804,12 @@ class RateTable extends Component {
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "ChargeItem",
-                                        
+                                        accessor: "ChargeItem"
                                       },
                                       {
                                         Header: "Tax",
                                         accessor: "Tax",
-                                        minWidth:55,
+                                        minWidth: 55,
                                         Cell: props => (
                                           <React.Fragment>
                                             {props.original.Tax !== 0
@@ -3909,8 +3821,7 @@ class RateTable extends Component {
 
                                       {
                                         Header: "Exrate",
-                                        accessor: "Exrate",
-                                        
+                                        accessor: "Exrate"
                                       },
 
                                       {
@@ -3928,8 +3839,7 @@ class RateTable extends Component {
                                           );
                                         },
                                         Header: "Final Payment",
-                                        accessor: "TotalAmount",
-                                        
+                                        accessor: "TotalAmount"
                                       }
                                     ]
                                   }
