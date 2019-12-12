@@ -462,14 +462,20 @@ class SpotRateDetails extends Component {
       if (this.state.spotrateresponseTbl3.length > 0) {
         for (var i = 0; i < this.state.spotrateresponseTbl3.length; i++) {
           multiCBM.push({
-            PackageType: this.state.spotrateresponseTbl3[i].PackageType == null?"":this.state.spotrateresponseTbl3[i].PackageType,
+            PackageType:
+              this.state.spotrateresponseTbl3[i].PackageType == null
+                ? ""
+                : this.state.spotrateresponseTbl3[i].PackageType,
             Quantity: this.state.spotrateresponseTbl3[i].Quantity,
             Lengths: this.state.spotrateresponseTbl3[i].Lengths,
             Width: this.state.spotrateresponseTbl3[i].Width,
             Height: this.state.spotrateresponseTbl3[i].Height,
             GrossWt: this.state.spotrateresponseTbl3[i].GrossWt,
             VolumeWeight: 0,
-            Volume: this.state.spotrateresponseTbl3[i].Volume == null?0:this.state.spotrateresponseTbl3[i].Volume
+            Volume:
+              this.state.spotrateresponseTbl3[i].Volume == null
+                ? 0
+                : this.state.spotrateresponseTbl3[i].Volume
           });
         }
       }
@@ -676,7 +682,7 @@ class SpotRateDetails extends Component {
                           <p className="details-title">Special Equipment</p>
                           <p className="details-para"></p>
                         </div> */}
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                           <p className="details-title">
                             HazMat &amp; Unstackable
                           </p>
@@ -811,7 +817,7 @@ class SpotRateDetails extends Component {
                         <p className="details-title">Commodity</p>
                         {/* <input type="text" value="Dummy" disabled /> */}
                         <select
-                        value={this.state.spotrateresponseTbl.CommodityID}
+                          value={this.state.spotrateresponseTbl.CommodityID}
                         >
                           <option>Select</option>
                           <option>All</option>
@@ -820,7 +826,6 @@ class SpotRateDetails extends Component {
                               {item.Commodity}
                             </option>
                           ))}
-                          
                         </select>
                       </div>
                       <div className="col-md-12 login-fields">
@@ -830,34 +835,36 @@ class SpotRateDetails extends Component {
                             {/* {(() => {
                               if (spotrateresponseTbl1.length>0) {
                           */}
-                            <ReactTable
-                              data={spotrateresponseTbl1}
-                              noDataText="No Data Found"
-                              filterable
-                              columns={[
-                                {
-                                  columns: [
-                                    {
-                                      Header: "Container",
-                                      accessor: "Container"
-                                    },
-                                    {
-                                      Header: "Quantity",
-                                      accessor: "ContainerQty"
-                                    },
+                            {spotrateresponseTbl1.length > 0 ? (
+                              <ReactTable
+                                data={spotrateresponseTbl1}
+                                noDataText="No Data Found"
+                                filterable
+                                columns={[
+                                  {
+                                    columns: [
+                                      {
+                                        Header: "Container",
+                                        accessor: "Container"
+                                      },
+                                      {
+                                        Header: "Quantity",
+                                        accessor: "ContainerQty"
+                                      },
 
-                                    {
-                                      Header: "Temperature",
-                                      accessor: "Container_Temperature"
-                                    }
-                                  ]
-                                }
-                              ]}
-                              className="-striped -highlight"
-                              defaultPageSize={10}
-                              minRows={1}
-                              //getTrProps={this.HandleRowClickEvt}
-                            />
+                                      {
+                                        Header: "Temperature",
+                                        accessor: "Container_Temperature"
+                                      }
+                                    ]
+                                  }
+                                ]}
+                                className="-striped -highlight"
+                                defaultPageSize={10}
+                                minRows={1}
+                                //getTrProps={this.HandleRowClickEvt}
+                              />
+                            ) : null}
                           </div>
                           <div className="ag-fresh">
                             <ReactTable
@@ -946,44 +953,55 @@ class SpotRateDetails extends Component {
             centered={true}
           >
             <ModalBody>
-            <button type="button" className="close" data-dismiss="modal" onClick={this.toggleSpotHistory}>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                onClick={this.toggleSpotHistory}
+              >
                 <span>&times;</span>
               </button>
-              <div style={{backgroundColor:"#fff",padding:"15px",borderRadius:"15px"}}>
-              <ReactTable
-                data={this.state.historyModalData}
-                columns={[
-                  {
-                    columns: [
-                      {
-                        Header: "Status",
-                        accessor: "Status"
-                      },
-                      {
-                        Header: "CreatedBy",
-                        accessor: "CreatedBy"
-                      },
-                      // {
-                      //   Header: "CreatedDate(GMT)",
-                      //   accessor: "CreatedDate"
-                      // },
-                      {
-                        Header: "CreatedDate",
-                        accessor: "CreatedDate"
-                      }
-                    ]
-                  }
-                ]}
-                defaultPageSize={3}
-                minRows={1}
-                showPagination={false}
-              />
-              
-              <div className="text-center">
-                <Button className="butn" onClick={this.toggleSpotHistory}>
-                  Close
-                </Button>
-              </div>
+              <div
+                style={{
+                  backgroundColor: "#fff",
+                  padding: "15px",
+                  borderRadius: "15px"
+                }}
+              >
+                <ReactTable
+                  data={this.state.historyModalData}
+                  columns={[
+                    {
+                      columns: [
+                        {
+                          Header: "Status",
+                          accessor: "Status"
+                        },
+                        {
+                          Header: "CreatedBy",
+                          accessor: "CreatedBy"
+                        },
+                        // {
+                        //   Header: "CreatedDate(GMT)",
+                        //   accessor: "CreatedDate"
+                        // },
+                        {
+                          Header: "CreatedDate",
+                          accessor: "CreatedDate"
+                        }
+                      ]
+                    }
+                  ]}
+                  defaultPageSize={3}
+                  minRows={1}
+                  showPagination={false}
+                />
+
+                <div className="text-center">
+                  <Button className="butn" onClick={this.toggleSpotHistory}>
+                    Close
+                  </Button>
+                </div>
               </div>
             </ModalBody>
           </Modal>

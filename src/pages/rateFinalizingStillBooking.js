@@ -1130,6 +1130,72 @@ class RateFinalizingStillBooking extends Component {
     }
   }
 
+  notifyPartyAddressList() {
+    let self = this;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    var cusID = this.state.NotifyID;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerAddressList`,
+      data: {
+        UserID: userId,
+        CustomerID: cusID
+      },
+
+      headers: authHeader()
+    }).then(function(response) {
+      var notifyAddData = response.data.Table;
+      if (notifyAddData) {
+        self.setState({ notifyAddData });
+      }
+    });
+  }
+  
+  buyerAddressList() {
+    let self = this;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    var cusID = this.state.BuyerID;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerAddressList`,
+      data: {
+        UserID: userId,
+        CustomerID: cusID
+      },
+
+      headers: authHeader()
+    }).then(function(response) {
+      var buyerAddData = response.data.Table;
+      if (buyerAddData) {
+        self.setState({ buyerAddData });
+      }
+    });
+  }
+
+  conshineeAddressList() {
+    let self = this;
+    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    var cusID = this.state.BuyerID;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerAddressList`,
+      data: {
+        UserID: userId,
+        CustomerID: cusID
+      },
+
+      headers: authHeader()
+    }).then(function(response) {
+      var conshineeAddData = response.data.Table;
+      if (conshineeAddData) {
+        self.setState({ conshineeAddData });
+      }
+    });
+  }
+
   render() {
     const {
       Booking,

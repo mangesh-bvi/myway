@@ -1064,14 +1064,14 @@ class NewRateSearch extends Component {
               <div>
                 <input
                   type="radio"
-                  name="TemperatureType"
-                  id="exist-cust"
+                  name={"TemperatureType" + i}
+                  id={"exist-cust" + i}
                   value="C"
                   onChange={this.UISpecialChange.bind(this, i)}
                 />
                 <label
                   className="d-flex flex-column align-items-center"
-                  htmlFor="exist-cust"
+                  htmlFor={"exist-cust" + i}
                 >
                   Celcius
                 </label>
@@ -1079,14 +1079,14 @@ class NewRateSearch extends Component {
               <div>
                 <input
                   type="radio"
-                  name="TemperatureType"
-                  id="new-cust"
+                  name={"TemperatureType" + i}
+                  id={"new-cust" + i}
                   value="F"
                   onChange={this.UISpecialChange.bind(this, i)}
                 />
                 <label
                   className="d-flex flex-column align-items-center"
-                  htmlFor="new-cust"
+                  htmlFor={"new-cust" + i}
                 >
                   Farenheit
                 </label>

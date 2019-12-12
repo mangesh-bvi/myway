@@ -881,11 +881,11 @@ class ShipmentPlanner extends Component {
   toggleDelivery() {
     debugger;
     if (this.state.deliveryPopup != null) {
-      if (this.state.deliveryPopup.length > 0) {
-        this.setState(prevState => ({
-          modalDelivery: !prevState.modalDelivery
-        }));
-      }
+      // if (this.state.deliveryPopup.length > 0) {
+      this.setState(prevState => ({
+        modalDelivery: !prevState.modalDelivery
+      }));
+      // }
     }
   }
   toggleVisual() {
@@ -1211,70 +1211,77 @@ class ShipmentPlanner extends Component {
                         padding: "15px"
                       }}
                     >
-                      {deliveryPopup.map((cell, i) => {
-                        if (cell.POLLocation == "") {
-                          return (
-                            <div className="container-fluid p-0 no-sched-avail">
-                              No Schedule Available
-                            </div>
-                          );
-                        } else {
-                          return (
-                            <div className="container-fluid p-0">
-                              <div className="transit-sect">
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="d-flex align-items-center">
-                                    <div className="shipment-img mr-3">
-                                      <TransitionImage imgType={cell.Mode} />
+                      {deliveryPopup.length > 0 ? (
+                        deliveryPopup.map((cell, i) => {
+                          debugger;
+                          if (cell.POLLocation == "") {
+                            return (
+                              <div className="container-fluid p-0 no-sched-avail">
+                                No Schedule Available
+                              </div>
+                            );
+                          } else {
+                            return (
+                              <div className="container-fluid p-0">
+                                <div className="transit-sect">
+                                  <div className="d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center">
+                                      <div className="shipment-img mr-3">
+                                        <TransitionImage imgType={cell.Mode} />
+                                      </div>
+                                      <div>
+                                        <p className="desti-name">
+                                          {cell.POLLocation}
+                                        </p>
+                                        <p className="desti-route">
+                                          to {cell.DestinationPort}
+                                          ,Carrier {cell.Carrier}
+                                        </p>
+                                      </div>
                                     </div>
-                                    <div>
-                                      <p className="desti-name">
-                                        {cell.POLLocation}
+                                  </div>
+                                </div>
+                                <div className="delivery-inner">
+                                  <div className="row">
+                                    <div className="col-md-4 text-center">
+                                      <p className="details-title">
+                                        Departure Date
                                       </p>
-                                      <p className="desti-route">
-                                        to {cell.DestinationPort}
-                                        ,Carrier {cell.Carrier}
+                                      <p className="details-para">
+                                        <Moment format="DD/MM/YYYY">
+                                          {cell.SailingDate}
+                                        </Moment>
+                                      </p>
+                                    </div>
+                                    <div className="col-md-4 text-center">
+                                      <p className="details-title">ETA</p>
+                                      <p className="details-para">
+                                        <Moment format="DD/MM/YYYY">
+                                          {cell.ETA}
+                                        </Moment>
+                                      </p>
+                                    </div>
+                                    <div className="col-md-4 text-center">
+                                      <p className="details-title">
+                                        Estimated Delivery Date
+                                      </p>
+                                      <p className="details-para">
+                                        <Moment format="DD/MM/YYYY">
+                                          {cell.CargoArrivalDate}
+                                        </Moment>
                                       </p>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              <div className="delivery-inner">
-                                <div className="row">
-                                  <div className="col-md-4 text-center">
-                                    <p className="details-title">
-                                      Departure Date
-                                    </p>
-                                    <p className="details-para">
-                                      <Moment format="DD/MM/YYYY">
-                                        {cell.SailingDate}
-                                      </Moment>
-                                    </p>
-                                  </div>
-                                  <div className="col-md-4 text-center">
-                                    <p className="details-title">ETA</p>
-                                    <p className="details-para">
-                                      <Moment format="DD/MM/YYYY">
-                                        {cell.ETA}
-                                      </Moment>
-                                    </p>
-                                  </div>
-                                  <div className="col-md-4 text-center">
-                                    <p className="details-title">
-                                      Estimated Delivery Date
-                                    </p>
-                                    <p className="details-para">
-                                      <Moment format="DD/MM/YYYY">
-                                        {cell.CargoArrivalDate}
-                                      </Moment>
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }
-                      })}
+                            );
+                          }
+                        })
+                      ) : (
+                        <div className="container-fluid p-0 no-sched-avail">
+                          No Schedule Available
+                        </div>
+                      )}
                     </div>
                   </ModalBody>
                 </Modal>
