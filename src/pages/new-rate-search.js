@@ -138,8 +138,9 @@ class NewRateSearch extends Component {
       ],
       users: [],
       referType: [],
-      flattack_openTop: [{
-        SpecialContainerCode: "",
+      flattack_openTop: [
+        {
+          SpecialContainerCode: "",
           PackageType: "",
           Quantity: 0,
           Lengths: 0,
@@ -148,7 +149,8 @@ class NewRateSearch extends Component {
           Weight: 0,
           VolumeWeight: 0,
           Volume: 0
-      }],
+        }
+      ],
       spacEqmtType: [],
       TruckTypeSelect: [],
       TruckTypeData: [
@@ -365,8 +367,15 @@ class NewRateSearch extends Component {
 
   HandleCMBtextChange(e) {
     debugger;
-    var jiji = parseInt(e.target.value);
+    var jiji = e.target.value;
     var Textvalue = isNaN(jiji) ? 0 : parseInt(e.target.value);
+    // var validNumber = new RegExp(/^\d*\.?\d*$/);
+    //   if (e.target.value === "" || validNumber.test(e.target.value)) {
+    //     if ((parseFloat(e.target.value) * 100) % 1 > 0) {
+    //     } else {
+    //       var Textvalue = e.target.value;
+    //     }
+    //   }
     // var Textvalue = e.target.value;
 
     this.setState({ cbmVal: Textvalue });
@@ -446,7 +455,7 @@ class NewRateSearch extends Component {
     return this.state.TruckTypeData.map((el, i) => {
       return (
         <div key={i} className="equip-plus-cntr">
-          <div className="spe-equ" style={{margin: "auto"}}>
+          <div className="spe-equ" style={{ margin: "auto" }}>
             <select
               className="select-text mr-3"
               name="TruckName"
@@ -475,8 +484,8 @@ class NewRateSearch extends Component {
                 onChange={this.UITruckTypeChange.bind(this, i)}
               />
             ) : null}
-            
-          {i === 0 ? (
+
+            {i === 0 ? (
               <div className="spe-equ">
                 <i
                   className="fa fa-plus mt-2"
@@ -484,8 +493,8 @@ class NewRateSearch extends Component {
                   onClick={this.addClickTruckType.bind(this)}
                 ></i>
               </div>
-          ) : null}
-          {this.state.TruckTypeData.length > 1 ? (
+            ) : null}
+            {this.state.TruckTypeData.length > 1 ? (
               <div className="spe-equ mt-2">
                 <i
                   className="fa fa-minus"
@@ -493,7 +502,7 @@ class NewRateSearch extends Component {
                   onClick={this.removeClickTruckType.bind(this)}
                 ></i>
               </div>
-          ) : null}
+            ) : null}
           </div>
         </div>
       );
@@ -857,10 +866,28 @@ class NewRateSearch extends Component {
         [name]: value
       };
     } else {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value === "" ? 0 : parseFloat(value)
-      };
+      if (
+        name === "Lengths" ||
+        name === "Width" ||
+        name === "Height" ||
+        name === "GrossWt"
+      ) {
+        var validNumber = new RegExp(/^\d*\.?\d*$/);
+        if (value === "" || validNumber.test(value)) {
+          if ((parseFloat(value) * 100) % 1 > 0) {
+          } else {
+            multiCBM[i] = {
+              ...multiCBM[i],
+              [name]: value === "" ? 0 : value
+            };
+          }
+        }
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          [name]: value === "" ? 0 : parseFloat(value)
+        };
+      }
     }
 
     this.setState({ multiCBM });
@@ -1108,10 +1135,24 @@ class NewRateSearch extends Component {
     const { name, value } = e.target;
 
     let referType = [...this.state.referType];
-    referType[i] = {
-      ...referType[i],
-      [name]: name === "TemperatureType" ? value : parseFloat(value)
-    };
+
+    if (name === "Temperature") {
+      var validNumber = new RegExp(/^\d*\.?\d*$/);
+      if (value === "" || validNumber.test(value)) {
+        if ((parseFloat(value) * 100) % 1 > 0) {
+        } else {
+          referType[i] = {
+            ...referType[i],
+            [name]: value
+          };
+        }
+      }
+    } else {
+      referType[i] = {
+        ...referType[i],
+        [name]: name === "TemperatureType" ? value : parseFloat(value)
+      };
+    }
     this.setState({ referType });
   }
   removeClickSpecial(i) {
@@ -1252,6 +1293,22 @@ class NewRateSearch extends Component {
         ...flattack_openTop[i],
         [name]: value
       };
+    } else if (
+      name === "length" ||
+      name === "width" ||
+      name === "height" ||
+      name === "Gross_Weight"
+    ) {
+      var validNumber = new RegExp(/^\d*\.?\d*$/);
+      if (value === "" || validNumber.test(value)) {
+        if ((parseFloat(value) * 100) % 1 > 0) {
+        } else {
+          flattack_openTop[i] = {
+            ...flattack_openTop[i],
+            [name]: value
+          };
+        }
+      }
     } else {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
@@ -1282,7 +1339,7 @@ class NewRateSearch extends Component {
   }
   addClickMultiCBM(optionsVal) {
     debugger;
-    if(this.state.flattack_openTop.length == 0){
+    if (this.state.flattack_openTop.length == 0) {
       this.setState(prevState => ({
         flattack_openTop: [
           ...prevState.flattack_openTop,
@@ -3162,9 +3219,7 @@ class NewRateSearch extends Component {
                             <Select
                               isDisabled={self.state.isSpacialEqt}
                               className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.ContainerName
-                              }
+                              getOptionLabel={option => option.ContainerName}
                               isMulti
                               getOptionValue={option =>
                                 option.SpecialContainerCode
@@ -3293,8 +3348,11 @@ class NewRateSearch extends Component {
                             value={"p2p"}
                             onChange={this.HandleTypeofMove}
                           />
-                          <label htmlFor="p2p">Port
-                          <img src={Arrow} className="arwimg" alt="Arrow"/>Port</label>
+                          <label htmlFor="p2p">
+                            Port
+                            <img src={Arrow} className="arwimg" alt="Arrow" />
+                            Port
+                          </label>
                         </div>
                         <div>
                           <input
@@ -3304,8 +3362,11 @@ class NewRateSearch extends Component {
                             value={"d2p"}
                             onChange={this.HandleTypeofMove}
                           />
-                          <label htmlFor="d2p">Door
-                          <img src={Arrow} className="arwimg" alt="Arrow"/>Port</label>
+                          <label htmlFor="d2p">
+                            Door
+                            <img src={Arrow} className="arwimg" alt="Arrow" />
+                            Port
+                          </label>
                         </div>
                       </>
                     ) : null}
@@ -3317,8 +3378,11 @@ class NewRateSearch extends Component {
                         value={"d2d"}
                         onChange={this.HandleTypeofMove}
                       />
-                      <label htmlFor="d2d">Door
-                          <img src={Arrow} className="arwimg" alt="Arrow"/>Door</label>
+                      <label htmlFor="d2d">
+                        Door
+                        <img src={Arrow} className="arwimg" alt="Arrow" />
+                        Door
+                      </label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
                     this.state.containerLoadType === "AIR" ||
@@ -3332,9 +3396,11 @@ class NewRateSearch extends Component {
                             value={"p2d"}
                             onChange={this.HandleTypeofMove}
                           />
-                          <label htmlFor="p2d">Port
-                          <img src={Arrow} className="arwimg" alt="Arrow"/>
-                          Door</label>
+                          <label htmlFor="p2d">
+                            Port
+                            <img src={Arrow} className="arwimg" alt="Arrow" />
+                            Door
+                          </label>
                         </div>
                       </>
                     ) : null}
