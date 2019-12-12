@@ -25,15 +25,19 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { encryption } from "../helpers/encryption";
 import Moment from "react-moment";
-
+import DatePicker from "react-datepicker";
+import { NotificationManager } from "react-notifications";
 class SpotRateTable extends Component {
   constructor(props) {
+    var someDate = new Date();
     super(props);
     this.state = {
       modalDel: false,
       filterAll: "",
       spotRateGrid: [],
-      pageNo: 10
+      pageNo: 10,
+      startDate: someDate.setMonth(someDate.getMonth() - 1),
+      endDate: new Date().setHours(0, 0, 0, 0)
     };
     this.HandleListSpotRateGrid = this.HandleListSpotRateGrid.bind(this);
     this.filterAll = this.filterAll.bind(this);
@@ -131,8 +135,56 @@ class SpotRateTable extends Component {
     };
   };
 
+  // handleChangeStart = e => {
+  //   debugger;
+  //   var strt = this.state.startDate;
+  //   var thisE = e;
+  //   this.setState({
+  //     startDate: e
+  //   });
+  //   if (
+  //     thisE.setHours(0, 0, 0, 0) >
+  //     new Date(this.state.endDate).setHours(0, 0, 0, 0)
+  //   ) {
+  //     NotificationManager.error("From Date needs to be smaller than To Date");
+  //     this.setState({
+  //       startDate: strt
+  //     });
+  //   }
+  // };
+  // handleChangeEnd = e => {
+  //   debugger;
+  //   var ennd = this.state.endDate;
+  //   var thisE = e;
+  //   this.setState({
+  //     endDate: e
+  //   });
+  //   if (
+  //     new Date(this.state.startDate).setHours(0, 0, 0, 0) >
+  //     thisE.setHours(0, 0, 0, 0)
+  //   ) {
+  //     NotificationManager.error("To Date needs to be greater than From Date");
+  //     this.setState({
+  //       endDate: ennd
+  //     });
+  //   }
+  // };
   render() {
     const { spotRateGrid } = this.state;
+    // var dataQuote = [];
+    // var { quotesData } = this.state;
+
+    // const Moment = require("moment");
+    // const array = [
+    //   { date: "2018-05-11" },
+    //   { date: "2018-05-12" },
+    //   { date: "2018-05-10" }
+    // ];
+    // dataQuote = quotesData.sort(
+    //   (a, b) =>
+    //     new Moment(b.CreatedDate).format("YYYYMMDD") -
+    //     new Moment(a.CreatedDate).format("YYYYMMDD")
+    // );
     return (
       <div>
         <Headers />
@@ -144,6 +196,29 @@ class SpotRateTable extends Component {
             <div className="title-sect">
               <h2>Spot Rate</h2>
             </div>
+            <div className="d-flex justify-content-between align-items-center">
+                <div className="login-fields quote-to-from mb-0">
+                  <span>From</span>
+                  <DatePicker
+                    id="datpicker-from-shipment"
+                    className="ana-to"
+                    selected={this.state.startDate}
+                    onChange={this.handleChangeStart}
+                    maxDate={new Date()}
+                    showWeekNumbers
+                  />
+                </div>
+                <div className="login-fields quote-to-from mb-0">
+                  <span>To</span>
+                  <DatePicker
+                    id="datpicker-to-shipment"
+                    className="ana-to"
+                    selected={this.state.endDate}
+                    onChange={this.handleChangeEnd}
+                    maxDate={new Date()}
+                    showWeekNumbers
+                  />
+                </div>
             <div className="">
               <input
                 type="search"
@@ -152,6 +227,7 @@ class SpotRateTable extends Component {
                 value={this.state.filterAll}
                 onChange={this.filterAll}
               />
+            </div>
             </div>
             <div className="ag-fresh">
               <ReactTable
