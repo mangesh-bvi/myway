@@ -1,8 +1,5 @@
 /* Css Start Kalpesh*/
 @media (min-width: 1025px) and (max-width: 1350px) {
-<<<<<<< HEAD
-  
-=======
   .remember-forgot label {
     padding-left: 30px;
     font-size: 12px;
@@ -22,7 +19,6 @@
 .login-fields label {
   font-size: 12px;
 }
->>>>>>> 6afa5c7fc5dcbbbf0c165728ccfe7c83ec7da0b3
 }
 @media (min-width: 992px) and (max-width: 1024px) {
   .disblo {

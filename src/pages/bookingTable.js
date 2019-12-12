@@ -228,7 +228,7 @@ class BookingTable extends Component {
                   onChange={this.filterAll}
                 />
               </div>
-            {/* </div> */}
+            </div>
             <div className="ag-fresh">
               <ReactTable
                 data={bookingData}
