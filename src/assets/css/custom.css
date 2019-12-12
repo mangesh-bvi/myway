@@ -2761,6 +2761,9 @@ table tbody tr:last-child {
   color: #fff;
   font-size: 14px;
 }
+.shipment-ul li label:first-child {
+  cursor: pointer;
+}
 .shipment-ul li:hover,
 .shipment-ul li:focus {
   cursor: pointer;
@@ -3534,12 +3537,12 @@ table tbody tr:last-child {
   margin-top: 20px;
 }
 .reject-popup label {
-flex: 0 0 120px;
-    text-align: left;
-    margin-bottom: 0;
+  flex: 0 0 120px;
+  text-align: left;
+  margin-bottom: 0;
 }
 .large-popup {
-  max-width: 80%
+  max-width: 80%;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
