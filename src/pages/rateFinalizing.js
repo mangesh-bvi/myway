@@ -119,8 +119,7 @@ class RateFinalizing extends Component {
       SalesQuoteNo: "",
       PickUpAddress: "",
       DestinationAddress: "",
-      multiCBM: [],
-      users: []
+      multiCBM: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -178,7 +177,6 @@ class RateFinalizing extends Component {
         var customClearance = this.props.location.state.Custom_Clearance;
         var specialEqtSelect = this.props.location.state.specialEqtSelect;
         var specialEquipment = this.props.location.state.specialEquipment;
-        var users  = this.props.location.state.users;
 
         var CargoDetailsArr = [];
         var equipmentTypeArr = [];
@@ -521,8 +519,7 @@ class RateFinalizing extends Component {
           ContactEmail: contactEmail,
           CustomClearance: customClearance,
           specialEqtSelect: specialEqtSelect,
-          specialEquipment: specialEquipment,
-          users: users
+          specialEquipment: specialEquipment
         });
 
         this.state.rateDetails = rateDetails;
@@ -536,11 +533,13 @@ class RateFinalizing extends Component {
         this.state.incoTerm = incoTerms;
         this.state.commodityData = commodityData;
         this.state.selected = selected;
+        this.state.users = users;
         this.state.spacEqmtType = spacEqmtType;
         this.state.flattack_openTop = flattack_openTop;
         this.state.polfullAddData = polfullAddData;
         this.state.podfullAddData = podfullAddData;
         this.state.currencyCode = currencyCode;
+        this.state.multiCBM = multiCBM;
         this.HandleLocalCharges();
         this.HandleSurCharges();
       } else {
@@ -892,23 +891,25 @@ class RateFinalizing extends Component {
 
   HandleLocalCharges() {
     let self = this;
-
+    var Containerdetails = [];
+    for (let i = 0; i < this.state.users.length; i++) {
+      Containerdetails.push({
+        ProfileCodeID: this.state.users[i].ProfileCodeID,
+        ContainerCode: this.state.users[i].StandardContainerCode,
+        Type: this.state.users[i].ContainerName,
+        ContainerQuantity: this.state.users[i].ContainerQuantity,
+        Temperature: this.state.users[i].Temperature,
+        TemperatureType: this.state.users[i].TemperatureType
+      })     
+    }
+   
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
       ModeOfTransport: this.state.modeoftransport,
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
-      Containerdetails: [
-        {
-          ProfileCodeID: this.state.selected.ProfileCodeID,
-          ContainerCode: this.state.selected.StandardContainerCode,
-          Type: "",
-          ContainerQuantity: 2,
-          Temperature: 0,
-          TemperatureType: ""
-        }
-      ],
+      Containerdetails: Containerdetails,
       Currency: self.state.currencyCode,
       // MultiplePOLPOD:[
       // {POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
@@ -3923,9 +3924,11 @@ class RateFinalizing extends Component {
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
       let amtSign;
       if (item.Currency == "INR") {
-        amtSign = "";
+        amtSign = " INR";
       } else if (item.Currency == "USD") {
         amtSign = "$";
+      } else if (item.Currency == "TL") {
+        amtSign = " TL"
       }
       return (
         <div>
@@ -3945,8 +3948,11 @@ class RateFinalizing extends Component {
             <label htmlFor={"local" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
           <span>
+            {item.LineName}
+          </span>
+          <span>
             {item.Amount}
-            {amtSign}
+            {" "+item.Currency}
           </span>
         </div>
       );
@@ -3955,10 +3961,14 @@ class RateFinalizing extends Component {
     const checkSurCharges = this.state.arrSurCharges.map((item, index) => {
       let amtSign;
       if (item.Currency == "INR") {
-        amtSign = "";
+        amtSign = " INR";
       } else if (item.Currency == "USD") {
         amtSign = "$";
       }
+      else if (item.Currency == "TL") {
+        amtSign = " TL"
+      }
+
       return (
         <div>
           <div className="d-flex">
@@ -3977,8 +3987,11 @@ class RateFinalizing extends Component {
             <label htmlFor={"Sur" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
           <span>
+            {item.LineName}
+          </span>
+          <span>
             {item.Amount}
-            {amtSign}
+            {" "+item.Currency}
           </span>
         </div>
       );
@@ -6068,9 +6081,9 @@ class RateFinalizing extends Component {
                 </div>
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
-                    <h3>
+                    {/* <h3>
                       To, <span>{this.state.CompanyName}</span>
-                    </h3>
+                    </h3> */}
                     <label>
                       ATNN : <span>{this.state.ContactName}</span>
                     </label>
@@ -6253,7 +6266,7 @@ class RateFinalizing extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-4">
                             <label>
-                              Transit Time<span>{item.TransitTime}</span>
+                              Transit Time : <span>{item.TransitTime+" Days"}</span>
                             </label>
                           </div>
                           {/* <div className="col-12 col-sm-4">
@@ -6469,8 +6482,9 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                   </div>
-
-                  <div className="row">
+                  
+                  {DocumentCharges.length!==0?
+                  (<div className="row">
                     <div className="col-12">
                       <div className="thirdbox">
                         <h3>Documentation Charges</h3>
@@ -6511,7 +6525,7 @@ class RateFinalizing extends Component {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div>):null}
                 </>
               ))}
               <div className="row">

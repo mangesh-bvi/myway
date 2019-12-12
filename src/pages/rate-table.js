@@ -2338,30 +2338,35 @@ class RateTable extends Component {
   }
   filterAll(e, type) {
     debugger;
-    const { value } = e.target;
-    var filteval = e.target.selectedOptions[0].innerText;
-    if (typeof type !== "undefined" && type !== "" && type !== null) {
-    } else {
-      if (value !== "All") {
-        var filterData = this.state.RateDetails.filter(
-          x => x.commodities === filteval
-        );
-        if (filterData.length > 0) {
-          this.setState({
-            tempRateDetails: filterData,
-            Commodity: value,
-            CommodityID: value
-          });
-        } else {
-          this.setState({
-            tempRateDetails: [{ lineName: "No Record Found" }],
-            RateSubDetails: [{ ChargeType: "No Record Found" }]
-          });
-        }
-      } else {
-        this.setState({ tempRateDetails: this.state.RateDetails });
-      }
-    }
+    // const { value } = e.target;
+    // var filteval = e.target.selectedOptions[0].innerText;
+    // if (typeof type !== "undefined" && type !== "" && type !== null) {
+    // } else {
+    //   if (value !== "All") {
+    //     var filterData = this.state.RateDetails.filter(
+    //       x => x.commodities === filteval
+    //     );
+    //     if (filterData.length > 0) {
+    //       this.setState({
+    //         tempRateDetails: filterData,
+    //         Commodity: value,
+    //         CommodityID: value
+    //       });
+    //     } else {
+    //       this.setState({
+    //         tempRateDetails: [{ lineName: "No Record Found" }],
+    //         RateSubDetails: [{ ChargeType: "No Record Found" }]
+    //       });
+    //     }
+    //   } else {
+    //     this.setState({ tempRateDetails: this.state.RateDetails });
+    //   }
+    // }
+    this.state.CommodityID = parseInt(e.target.value)
+    this.setState({
+      CommodityID: this.state.CommodityID
+    })
+    this.HandleRateDetailsFCL(this.state)
   }
 
   custClearToggle() {
