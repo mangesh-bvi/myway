@@ -17,7 +17,7 @@ import Booked from "./../assets/img/booked.png";
 import Transit from "./../assets/img/transit-small.png";
 import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
-import Inland from "./../assets/img/inland.png";
+import ApprovedImg from "./../assets/img/approved-status.png";
 import Delivery from "./../assets/img/delivery.png";
 import Eye from "./../assets/img/eye.png";
 import Delete from "./../assets/img/red-delete-icon.png";
@@ -1951,7 +1951,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2010,7 +2010,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2078,7 +2078,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2110,12 +2110,12 @@ class ShippingDetailsTwo extends Component {
                             </p>
                           </div>
                           <div class="track-line-cntr active">
-                            {/* <div class="track-img-cntr">
+                            <div class="track-img-cntr">
                               <div class="track-img">
                                 <img src={Transit} alt="departed icon" />
                               </div>
-                            </div> */}
-                            <p style={{paddingLeft:"50px"}}>
+                            </div>
+                            <p>
                               <span>On the way</span>
                             </p>
                           </div>
@@ -2146,7 +2146,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2215,7 +2215,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
