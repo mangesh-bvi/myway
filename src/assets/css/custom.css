@@ -156,6 +156,9 @@ h3 {
   top: 0;
   z-index: 999;
 }
+.pdtop {
+  padding-top: 70px;
+}
 /* login starts */
 .login-sect {
   max-width: 500px;
@@ -2581,7 +2584,7 @@ table tbody tr:last-child {
   margin-top: 5px;
 }
 .cls-flside {
-  width: 250px;
+  width: 19%;
   float: left;
   height: auto;
   background-color: #0142aa;
@@ -3890,6 +3893,7 @@ img {
   left: 165px;
   position: absolute;
   width: 20px;
+  z-index: 99999999999;
   float: none;
   margin: 0 0 0 30px;
   cursor: pointer;
