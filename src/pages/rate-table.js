@@ -2395,7 +2395,7 @@ class RateTable extends Component {
       var tempData = colData.split("-");
 
       if (
-        parseInt(tempData[0]) <= parseInt(checkingValue) &&
+        parseInt(tempData[0]) <= parseInt(checkingValue) ||
         parseInt(tempData[1]) <= parseInt(checkingValue)
       ) {
         filteredData.push(actualData[j]);
@@ -3136,6 +3136,7 @@ class RateTable extends Component {
                 </select>
               </div>
               <div className="rate-table-range">
+                <p class="upto-days">Upto {this.state.value} days</p>
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
                 <InputRange

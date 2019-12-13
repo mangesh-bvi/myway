@@ -1901,6 +1901,14 @@ table tbody tr:last-child {
   display: flex;
   align-items: center;
 }
+.upto-days {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-family: "Bold Font";
+  top: 10px;
+}
 /* rate table ends */
 
 /* spot rate starts */
