@@ -876,7 +876,7 @@ table tbody tr:last-child {
   padding: 15px;
 }
 .br1-pd15 {
-  border:1px solid #d6d6d6;
+  border: 1px solid #d6d6d6;
   padding: 15px;
 }
 .rate-title-cntr {
@@ -1717,7 +1717,7 @@ table tbody tr:last-child {
 }
 .rate-table-range .input-range__track {
   border-radius: 0 !important;
-  background: #0042a9 !important;
+  /* background: #0042a9 !important; */
 }
 .rate-table-range .input-range__label {
   color: #050505 !important;
@@ -1900,6 +1900,14 @@ table tbody tr:last-child {
 .no-mid-align .rt-tr .rt-td.rt-expandable + .rt-td {
   display: flex;
   align-items: center;
+}
+.upto-days {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-family: "Bold Font";
+  top: 10px;
 }
 /* rate table ends */
 
@@ -3907,7 +3915,7 @@ img {
 /* TransitSection css start kalpesh */
 .transit-sect .car-a {
   width: 100%;
-  border: 1px solid #F1F2F2;
+  border: 1px solid #f1f2f2;
   border-radius: 15px;
   padding: 15px 20px;
   background-color: #fff;
@@ -3982,4 +3990,3 @@ img {
   font-family: "Regular Font";
 } */
 /* TransitSection css End kalpesh */
-    
