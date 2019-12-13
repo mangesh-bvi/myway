@@ -164,7 +164,7 @@ class SideMenu extends Component {
 
     return (
         <div className="d-flex flex-column justify-content-between h-100 sidemenubar" id="sidemenubar">
-              <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" />
+        <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" />
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
             <Link

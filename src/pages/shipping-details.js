@@ -597,9 +597,9 @@ class ShippingDetails extends Component {
           </div>
           <div className="cls-rt">
             <NotificationContainer />
-            <div className="title-sect">
+            <div className="title-sect d-block-xs btnxs">
               <h2>Shipments</h2>
-              <div className="d-flex align-items-center">
+              <div className="d-flex d-block-xs align-items-center">
                 <input
                   type="search"
                   value={this.state.filterAll}
@@ -633,7 +633,7 @@ class ShippingDetails extends Component {
                   style={{ marginLeft: "15px" }}
                   className="butn"
                 >
-                  Advanced Search
+                  Advance Search
                 </a>
                 <a
                   href="#!"
@@ -1395,10 +1395,10 @@ class ShippingDetails extends Component {
                             </div>
                           </div>
                         </div>
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-5">
+                        <div className="col-12 col-sm-12 col-md-12 col-lg-5">
                           <div className="login-fields divwd">
                             <div>
-                              <label style={{ padding: "11px" }}></label>
+                              <label className="hidden-xs" style={{ padding: "11px" }}></label>
                               <button
                                 type="button"
                                 className="butn mr-3"
@@ -1508,7 +1508,7 @@ class ShippingDetails extends Component {
                   <h3 className="mb-4 text-center">Share</h3>
                   <div className="txt-cntr">
                     <div className="d-flex align-items-center">
-                      <p className="details-title mr-3">Shareable Link</p>
+                      <p className="col-12 col-sm-12 details-title mr-3">Shareable Link</p>
                       <div class="spe-equ d-block m-0 flex-grow-1">
                         <input
                           type="text"
