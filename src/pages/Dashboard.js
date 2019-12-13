@@ -16,6 +16,7 @@ import BluePlane from "./../assets/img/circle-plane.png";
 import PlaneBlue from "./../assets/img/blue-plane.png";
 import BookingBlue from "./../assets/img/circle-booked.png";
 import DelayBlue from "./../assets/img/blue-delay.png";
+import WL from "./../assets/img/wl.png";
 import BookBlue from "./../assets/img/blue-booking.png";
 import LoadingImg from "./../assets/img/loading.gif";
 
@@ -1346,11 +1347,16 @@ class Dashboard extends Component {
                 // <span>{addkey.ModeOfTransport}</span>
               })()}
             </p>
-            <p>
-              <span className="shipment-status" title="Status">
-                {addkey.Status}
-              </span>
-            </p>
+            <div className="d-flex justify-content-between">
+              <p>
+                <span className="shipment-status" title="Status">
+                  {addkey.Status}
+                </span>
+              </p>
+              <div className="wl-cntr">
+                <img src={WL} alt="wl-icon" />
+              </div>
+            </div>
             <hr className="horizontal-line" />
             {/* <p>
               Mode of Transport :<span>{addkey.ModeOfTransport}</span>

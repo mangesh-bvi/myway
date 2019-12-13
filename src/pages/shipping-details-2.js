@@ -1520,136 +1520,144 @@ class ShippingDetailsTwo extends Component {
                           </div>
                         );
                       })}
-                      <div className="sect-padd">
-                        <p className="details-heading">Container Details</p>
-                        <div className="cont-det-outer">
-                          {containerDetails.map(function(cntrDet, i = 0) {
-                            i++;
-                            return (
-                              <div className="cont-det-cntr">
-                                <div className="row">
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">
-                                      Container Number
-                                    </p>
-                                    <p className="details-para">
-                                      {cntrDet["Container Number"]}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">
-                                      Container Code / Type
-                                    </p>
-                                    <p className="details-para">
-                                      {cntrDet.ContainerCode} {"/"}
-                                      {cntrDet.ContainerType}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">Seal NO.1</p>
-                                    <p className="details-para">
-                                      {cntrDet.SealNo1}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">Seal NO.2</p>
-                                    <p className="details-para">
-                                      {cntrDet.SealNo2}
-                                    </p>
-                                  </div>
-                                </div>
-                                <UncontrolledCollapse
-                                  className="cont-deta"
-                                  toggler={"#toggler" + i}
-                                >
-                                  <div className="collapse-sect">
-                                    <div className="row">
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Unit</p>
-                                        <p className="details-para">
-                                          {cntrDet.Unit}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Height</p>
-                                        <p className="details-para">
-                                          {cntrDet.height}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Width</p>
-                                        <p className="details-para">
-                                          {cntrDet.width}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Length</p>
-                                        <p className="details-para">
-                                          {cntrDet.length}
-                                        </p>
-                                      </div>
+                      {this.state.ModeType === "Air" ? (
+                        ""
+                      ) : (
+                        <div className="sect-padd">
+                          <p className="details-heading">Container Details</p>
+                          <div className="cont-det-outer">
+                            {containerDetails.map(function(cntrDet, i = 0) {
+                              i++;
+                              return (
+                                <div className="cont-det-cntr">
+                                  <div className="row">
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                      <p className="details-title">
+                                        Container Number
+                                      </p>
+                                      <p className="details-para">
+                                        {cntrDet["Container Number"]}
+                                      </p>
                                     </div>
-                                    <div className="row">
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">
-                                          Gross Weight
-                                        </p>
-                                        <p className="details-para">
-                                          {cntrDet["Gross Weight"]}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">
-                                          Net Weight
-                                        </p>
-                                        <p className="details-para">
-                                          {cntrDet.NetWeight}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">
-                                          Volume Weight
-                                        </p>
-                                        <p className="details-para">
-                                          {cntrDet.VolumeWeight}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">
-                                          Description
-                                        </p>
-                                        <p className="details-para">
-                                          {cntrDet.Description}
-                                        </p>
-                                      </div>
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                      <p className="details-title">
+                                        Container Code / Type
+                                      </p>
+                                      <p className="details-para">
+                                        {cntrDet.ContainerCode} {"/"}
+                                        {cntrDet.ContainerType}
+                                      </p>
+                                    </div>
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                      <p className="details-title">Seal NO.1</p>
+                                      <p className="details-para">
+                                        {cntrDet.SealNo1}
+                                      </p>
+                                    </div>
+                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                      <p className="details-title">Seal NO.2</p>
+                                      <p className="details-para">
+                                        {cntrDet.SealNo2}
+                                      </p>
                                     </div>
                                   </div>
-                                </UncontrolledCollapse>
-                                <div className="row">
-                                  <div className="col-md-12">
-                                    <a
-                                      href="#!"
-                                      id={"toggler" + i}
-                                      className="butn view-btn"
-                                      // onClick={() =>
-                                      //   self.setState({
-                                      //     showContent: !self.state.showContent
-                                      //   })
-                                      // }
-                                    >
-                                      {/* {self.state.showContent ? (
+                                  <UncontrolledCollapse
+                                    className="cont-deta"
+                                    toggler={"#toggler" + i}
+                                  >
+                                    <div className="collapse-sect">
+                                      <div className="row">
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">Unit</p>
+                                          <p className="details-para">
+                                            {cntrDet.Unit}
+                                          </p>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">
+                                            Height
+                                          </p>
+                                          <p className="details-para">
+                                            {cntrDet.height}
+                                          </p>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">Width</p>
+                                          <p className="details-para">
+                                            {cntrDet.width}
+                                          </p>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">
+                                            Length
+                                          </p>
+                                          <p className="details-para">
+                                            {cntrDet.length}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="row">
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">
+                                            Gross Weight
+                                          </p>
+                                          <p className="details-para">
+                                            {cntrDet["Gross Weight"]}
+                                          </p>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">
+                                            Net Weight
+                                          </p>
+                                          <p className="details-para">
+                                            {cntrDet.NetWeight}
+                                          </p>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">
+                                            Volume Weight
+                                          </p>
+                                          <p className="details-para">
+                                            {cntrDet.VolumeWeight}
+                                          </p>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                          <p className="details-title">
+                                            Description
+                                          </p>
+                                          <p className="details-para">
+                                            {cntrDet.Description}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </UncontrolledCollapse>
+                                  <div className="row">
+                                    <div className="col-md-12">
+                                      <a
+                                        href="#!"
+                                        id={"toggler" + i}
+                                        className="butn view-btn"
+                                        // onClick={() =>
+                                        //   self.setState({
+                                        //     showContent: !self.state.showContent
+                                        //   })
+                                        // }
+                                      >
+                                        {/* {self.state.showContent ? (
                                       <span>VIEW LESS</span>
                                     ) : (
                                       <span>VIEW MORE</span>
                                     )} */}
-                                    </a>
+                                      </a>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
+                      )}
                       <div className="sect-padd">
                         <p className="details-heading">Package Details</p>
                         {packageDetails.length === 0 ? (

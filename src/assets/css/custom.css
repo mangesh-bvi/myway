@@ -2152,6 +2152,10 @@ table tbody tr:last-child {
   background-size: 17px;
   background-position: right 10px center;
 }
+.wl-cntr {
+  flex: 0 0 20px;
+  line-height: 1;
+}
 /* dashboard ends */
 
 /* view user starts */
