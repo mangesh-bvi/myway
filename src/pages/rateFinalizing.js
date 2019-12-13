@@ -3991,6 +3991,7 @@ class RateFinalizing extends Component {
 
     var i = 0;
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
+      debugger;
       let amtSign;
       if (item.Currency == "INR") {
         amtSign = " INR";
@@ -4001,7 +4002,7 @@ class RateFinalizing extends Component {
       }
       return (
         <div>
-          <div className="d-flex">
+          <div className="d-flex line-first">
             <input
               id={"local" + (index + 1)}
               value={item.Amount}
@@ -4019,6 +4020,8 @@ class RateFinalizing extends Component {
             </label>
           </div>
           {/* <span>{item.LineName}</span> */}
+          {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
+          <span className="line-img"><img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" + item.LineName + '.png'} /></span>
           <span>
             {item.Amount}
             {" " + item.Currency}
@@ -4039,7 +4042,7 @@ class RateFinalizing extends Component {
 
       return (
         <div>
-          <div className="d-flex">
+          <div className="d-flex line-first">
             <input
               id={"Sur" + (index + 1)}
               type="checkbox"
@@ -4059,6 +4062,7 @@ class RateFinalizing extends Component {
           {/* <span>
             {item.LineName}
           </span> */}
+          <span className="line-img"><img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" + item.LineName + '.png'} /></span>
           <span>
             {item.Amount}
             {" " + item.Currency}
@@ -5153,11 +5157,10 @@ class RateFinalizing extends Component {
                     </div> */}
 
                     <div
-                      className="title-border py-3"
+                      className="title-border py-3 d-flex align-items-center justify-content-between"
                       style={{ marginBottom: "15px" }}
                     >
                       <h3>Cargo Details</h3>
-                    </div>
                     <div className="align-center">
                       <button
                         onClick={this.toggleEdit}
@@ -5165,6 +5168,7 @@ class RateFinalizing extends Component {
                       >
                         Add Cargo
                       </button>
+                    </div>
                     </div>
                     <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (
