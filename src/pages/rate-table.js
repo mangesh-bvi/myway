@@ -722,7 +722,7 @@ class RateTable extends Component {
   }
 
   HandleRateDetailsFCL(paramData) {
-    debugger
+    debugger;
     var dataParameter = {};
     var pickUpAddress = {
       Street: "",
@@ -2375,11 +2375,11 @@ class RateTable extends Component {
     //     this.setState({ tempRateDetails: this.state.RateDetails });
     //   }
     // }
-    this.state.CommodityID = parseInt(e.target.value)
+    this.state.CommodityID = parseInt(e.target.value);
     this.setState({
       CommodityID: this.state.CommodityID
-    })
-    this.HandleRateDetailsFCL(this.state)
+    });
+    this.HandleRateDetailsFCL(this.state);
   }
 
   custClearToggle() {
@@ -3129,9 +3129,9 @@ class RateTable extends Component {
               <div className="title-sect">
                 <h2>Rate Table</h2>
               </div>
-              <div className="login-fields mb-0 rate-tab-drop">
-                Commodity :
-                <select className="" onChange={this.filterAll}>
+              <div className="login-fields m-0 rate-tab-drop">
+                Commodity 
+                <select className="" onChange={this.filterAll} style={{marginLeft: "5px"}}>
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
                   {this.state.loading === true

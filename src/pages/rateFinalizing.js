@@ -4007,6 +4007,7 @@ class RateFinalizing extends Component {
 
     var i = 0;
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
+      debugger;
       let amtSign;
       if (item.Currency == "INR") {
         amtSign = " INR";
@@ -4017,7 +4018,7 @@ class RateFinalizing extends Component {
       }
       return (
         <div>
-          <div className="d-flex">
+          <div className="d-flex line-first">
             <input
               id={"local" + (index + 1)}
               value={item.Amount}
@@ -4035,6 +4036,8 @@ class RateFinalizing extends Component {
             </label>
           </div>
           {/* <span>{item.LineName}</span> */}
+          {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
+          <span className="line-img"><img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" + item.LineName + '.png'} /></span>
           <span>
             {item.Amount}
             {" " + item.Currency}
@@ -4055,7 +4058,7 @@ class RateFinalizing extends Component {
 
       return (
         <div>
-          <div className="d-flex">
+          <div className="d-flex line-first">
             <input
               id={"Sur" + (index + 1)}
               type="checkbox"
@@ -4075,6 +4078,7 @@ class RateFinalizing extends Component {
           {/* <span>
             {item.LineName}
           </span> */}
+          <span className="line-img"><img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" + item.LineName + '.png'} /></span>
           <span>
             {item.Amount}
             {" " + item.Currency}
@@ -4488,20 +4492,20 @@ class RateFinalizing extends Component {
                                   debugger;
                                   var lname = "";
                                   var olname = "";
-                                  if (row._original.LineName) {
-                                    olname = row._original.LineName;
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
                                     lname =
-                                      row._original.LineName.replace(
+                                      row._original.Linename.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
 
                                   var mode = this.state.ModeOfTransport;
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
                                     lname =
-                                      row._original.lineName
+                                      row._original.Linename
                                         .replace(" ", "_")
                                         .replace(" ", "_") + ".png";
                                   }
@@ -4518,25 +4522,35 @@ class RateFinalizing extends Component {
                                         : "Inlande";
                                   }
                                   var mode = this.state.ModeOfTransport;
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
                                     lname =
-                                      row._original.lineName
-                                        .replace(" ", "_")
-                                        .replace(" ", "_") + ".png";
-                                  }
-                                  var mode = "";
-                                  if (this.state.ModeOfTransport) {
+                                    row._original.Linename
+                                    .replace(" ", "_")
+                                    .replace(" ", "_") + ".png";
+                                    }
+                                    var mode = "";
+                                    if (this.state.ModeOfTransport) {
                                     mode = this.state.ModeOfTransport;
-                                  }
-                                  if (this.state.modeoftransport) {
-                                    mode =
-                                      this.state.modeoftransport === "SEA"
-                                        ? "Ocean"
-                                        : this.state.modeoftransport === "AIR"
-                                        ? "Air"
-                                        : "Inlande";
-                                  }
+                                    }
+                                    if (this.state.modeoftransport) {
+                                      if(this.state.modeoftransport==="SEA")
+                                      {
+                                        mode="Ocean"
+                                      }
+                                      else if(this.state.modeoftransport==="AIR")
+                                      {
+                                        mode="Air"
+                                      }
+                                      else
+                                      {
+                                        mode=this.state.modeoftransport;
+                                      }
+                                    // mode =
+                                    // this.state.modeoftransport === "SEA"
+                                    // ? "Ocean"
+                                    // : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                    }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
@@ -5169,11 +5183,10 @@ class RateFinalizing extends Component {
                     </div> */}
 
                     <div
-                      className="title-border py-3"
+                      className="title-border py-3 d-flex align-items-center justify-content-between"
                       style={{ marginBottom: "15px" }}
                     >
                       <h3>Cargo Details</h3>
-                    </div>
                     <div className="align-center">
                       <button
                         onClick={this.toggleEdit}
@@ -5181,6 +5194,7 @@ class RateFinalizing extends Component {
                       >
                         Add Cargo
                       </button>
+                    </div>
                     </div>
                     <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (

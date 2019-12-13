@@ -24,7 +24,7 @@ class BookingTable extends Component {
     this.state = {
       modalDel: false,
       filterAll: "",
-      bookingData: [],
+      bookingData: []
       // startDate: someDate.setMonth(someDate.getMonth() - 1),
       // endDate: new Date().setHours(0, 0, 0, 0)
     };
@@ -193,40 +193,42 @@ class BookingTable extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <div className="title-sect">
-              <h2>Booking Table</h2>
-            </div>
             <div className="d-flex justify-content-between align-items-center">
-              <div className="login-fields quote-to-from col-12 col-sm-4">
-                <span>From</span>
-                <DatePicker
-                  id="datpicker-from-shipment"
-                  className="ana-to"
-                  selected={this.state.startDate}
-                  onChange={this.handleChangeStart}
-                  maxDate={new Date()}
-                  showWeekNumbers
-                />
+              <div className="title-sect">
+                <h2>Booking Table</h2>
               </div>
-              <div className="login-fields quote-to-from col-12 col-sm-4">
-                <span>To</span>
-                <DatePicker
-                  id="datpicker-to-shipment"
-                  className="ana-to"
-                  selected={this.state.endDate}
-                  onChange={this.handleChangeEnd}
-                  maxDate={new Date()}
-                  showWeekNumbers
-                />
-              </div>
-              <div className="col-12 col-sm-4">
-                <input
-                  type="search"
-                  className="quote-txt-srch"
-                  placeholder="Search here"
-                  value={this.state.filterAll}
-                  onChange={this.filterAll}
-                />
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="login-fields quote-to-from col-12 col-sm-4">
+                  <span>From</span>
+                  <DatePicker
+                    id="datpicker-from-shipment"
+                    className="ana-to"
+                    selected={this.state.startDate}
+                    onChange={this.handleChangeStart}
+                    maxDate={new Date()}
+                    showWeekNumbers
+                  />
+                </div>
+                <div className="login-fields quote-to-from col-12 col-sm-4">
+                  <span>To</span>
+                  <DatePicker
+                    id="datpicker-to-shipment"
+                    className="ana-to"
+                    selected={this.state.endDate}
+                    onChange={this.handleChangeEnd}
+                    maxDate={new Date()}
+                    showWeekNumbers
+                  />
+                </div>
+                <div className="col-12 col-sm-4">
+                  <input
+                    type="search"
+                    className="quote-txt-srch"
+                    placeholder="Search here"
+                    value={this.state.filterAll}
+                    onChange={this.filterAll}
+                  />
+                </div>
               </div>
             </div>
             <div className="ag-fresh">

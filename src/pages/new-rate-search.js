@@ -368,15 +368,15 @@ class NewRateSearch extends Component {
 
   HandleCMBtextChange(e) {
     debugger;
-    var jiji = e.target.value;
-    var Textvalue = isNaN(jiji) ? 0 : parseInt(e.target.value);
-    // var validNumber = new RegExp(/^\d*\.?\d*$/);
-    //   if (e.target.value === "" || validNumber.test(e.target.value)) {
-    //     if ((parseFloat(e.target.value) * 100) % 1 > 0) {
-    //     } else {
-    //       var Textvalue = e.target.value;
-    //     }
-    //   }
+    // var jiji = e.target.value;
+    // var Textvalue = isNaN(jiji) ? 0 : parseInt(e.target.value);
+    var validNumber = new RegExp(/^\d*\.?\d*$/);
+      if (e.target.value === "" || validNumber.test(e.target.value)) {
+        if ((parseFloat(e.target.value) * 100) % 1 > 0) {
+        } else {
+          var Textvalue = e.target.value;
+        }
+      }
     // var Textvalue = e.target.value;
 
     this.setState({ cbmVal: Textvalue });

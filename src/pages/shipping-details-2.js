@@ -17,7 +17,7 @@ import Booked from "./../assets/img/booked.png";
 import Transit from "./../assets/img/transit-small.png";
 import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
-import Inland from "./../assets/img/inland.png";
+import ApprovedImg from "./../assets/img/approved-status.png";
 import Delivery from "./../assets/img/delivery.png";
 import Eye from "./../assets/img/eye.png";
 import Delete from "./../assets/img/red-delete-icon.png";
@@ -1116,7 +1116,6 @@ class ShippingDetailsTwo extends Component {
           <button
             onClick={this.handleChangePage.bind(this)}
             className="butn mt-0"
-            style={{ marginLeft: "140px" }}
           >
             Back
           </button>
@@ -1183,7 +1182,7 @@ class ShippingDetailsTwo extends Component {
           <div className="cls-rt">
             <div className="container-fluid">
               <div className="row">
-                <div className="col-md-7 p-0">
+                <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0">
                   <div className="title-sect">
                     <h2>Details View</h2>
                     <div>{Watchlist}</div>
@@ -1662,7 +1661,7 @@ class ShippingDetailsTwo extends Component {
                           return (
                             <>
                               <div className="row">
-                                <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <div className="col-12 col-sm-12 col-md-12 col-lg-3 details-border">
                                   <p className="details-title">Package Type</p>
                                   <p className="details-para">
                                     {packData.PackageType}
@@ -1895,7 +1894,7 @@ class ShippingDetailsTwo extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-5">
+                <div className="col-12 col-sm-12 col-md-12 col-lg-5">
                   <div className="ship-detail-maps">
                     <div className="ship-detail-map">
                       {/* <MapWithAMakredInfoWindow
@@ -1952,7 +1951,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2011,7 +2010,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2079,7 +2078,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2111,12 +2110,12 @@ class ShippingDetailsTwo extends Component {
                             </p>
                           </div>
                           <div class="track-line-cntr active">
-                            {/* <div class="track-img-cntr">
+                            <div class="track-img-cntr">
                               <div class="track-img">
                                 <img src={Transit} alt="departed icon" />
                               </div>
-                            </div> */}
-                            <p style={{paddingLeft:"50px"}}>
+                            </div>
+                            <p>
                               <span>On the way</span>
                             </p>
                           </div>
@@ -2147,7 +2146,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
@@ -2216,7 +2215,7 @@ class ShippingDetailsTwo extends Component {
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
                               <div class="track-img ">
-                                <img src={Booked} alt="booked icon" />
+                                <img src={ApprovedImg} alt="booked icon" />
                               </div>
                             </div>
                             <p>
