@@ -3120,8 +3120,8 @@ class RateTable extends Component {
                 <h2>Rate Table</h2>
               </div>
               <div className="login-fields m-0 rate-tab-drop">
-                Commodity :
-                <select className="" onChange={this.filterAll}>
+                Commodity 
+                <select className="" onChange={this.filterAll} style={{marginLeft: "5px"}}>
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
                   {this.state.loading === true

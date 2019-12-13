@@ -28,7 +28,7 @@ debugger
   }
 
   return (
-    <a onClick={(e) => exportToCSV(csvData,fileName)} download className="butn more-padd">
+    <a onClick={(e) => exportToCSV(csvData,fileName)} download className="butn more-padd cusbtn">
                   Download
                 </a>
     // <button variant="warning" onClick={(e) => exportToCSV(csvData,fileName)}>Export</button>

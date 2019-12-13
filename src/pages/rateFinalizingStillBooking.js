@@ -1742,11 +1742,11 @@ class RateFinalizingStillBooking extends Component {
                   <div className="rate-final-contr">
                     <Collapse in={this.state.showContent}>
                       <div>
-                        <div className="title-border py-3">
+                        <div className="title-border py-3" style={{marginBottom:"15px"}}>
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Shipment Type</p>
                             <p className="details-para">
                               {Booking.length > 0
@@ -1754,7 +1754,7 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Mode of Transport</p>
                             <p className="details-para">
                               {Booking.length > 0
@@ -1762,7 +1762,7 @@ class RateFinalizingStillBooking extends Component {
                                 : null}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].CargoType : null}
@@ -1771,17 +1771,17 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3">
                             <p className="details-title">Equipment Types</p>
                             <p className="details-para">
                               {this.state.EquipmentTypes}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Special Equipment</p>
                             <p className="details-para"></p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">
                               HazMat &amp; Unstackable
                             </p>
@@ -1789,7 +1789,7 @@ class RateFinalizingStillBooking extends Component {
                               {/* {this.state.EquipmentTypes} */}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].Incoterm : ""}
@@ -1799,14 +1799,14 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove}
                             </p>
                           </div>
 
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">POL</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].POL : null}
@@ -1815,7 +1815,7 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">POD</p>
                             <p className="details-para">
                               {Booking.length > 0 ? Booking[0].POD : null}
@@ -1824,7 +1824,7 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">PU Address</p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3">
@@ -1833,7 +1833,7 @@ class RateFinalizingStillBooking extends Component {
                         </div>
                       </div>
                     </Collapse>
-                    <div className="text-right">
+                    <div className="text-right" style={{marginBottom:"15px"}}>
                       <button
                         className={className}
                         id="toggler"
@@ -1935,7 +1935,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
                             <p className="details-title">Consignee Name</p>
                             {this.state.userType !== "Customer" ? (
                               <input
@@ -1996,9 +1996,11 @@ class RateFinalizingStillBooking extends Component {
                               }
                               <option>Other</option>
                             </select>
-                            <br />
+                          </div>
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <p className="details-title">&nbsp;</p>
                             {this.state.conshineeother === true ? (
-                              <textarea
+                              <textarea className="form-control"
                                 style={{ width: "100%", resize: "none" }}
                                 value={this.state.Consinee_Displayas}
                                 onChange={this.HandleConsineeAddressChange.bind(
@@ -2016,7 +2018,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
                             <p className="details-title">Shipper Name</p>
                             {this.state.userType !== "Customer" ? (
                               <input
@@ -2078,9 +2080,11 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                               <option>Other</option>
                             </select>
-                            <br />
+                          </div>
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <p className="details-title">&nbsp;</p>
                             {this.state.shipperother === true ? (
-                              <textarea
+                              <textarea className="form-control"
                                 style={{ width: "100%", resize: "none" }}
                                 value={this.state.Shipper_Displayas}
                                 onChange={this.HandleShipperAddressChange.bind(
@@ -2099,7 +2103,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
                               <Autocomplete
@@ -2147,9 +2151,11 @@ class RateFinalizingStillBooking extends Component {
                                 : ""}
                               <option>Other</option>
                             </select>
-                            <br />
+                          </div>
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <p className="details-title">&nbsp;</p>
                             {this.state.buyerother === true ? (
-                              <textarea
+                              <textarea className="form-control"
                                 style={{ width: "100%", resize: "none" }}
                                 value={this.state.Buyer_Displayas}
                                 onChange={this.HandleBuyerAddressChange.bind(
@@ -2167,7 +2173,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
                               <Autocomplete
@@ -2217,9 +2223,11 @@ class RateFinalizingStillBooking extends Component {
                               }
                               <option>Other</option>
                             </select>
-                            <br />
+                          </div>
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <p className="details-title">&nbsp;</p>
                             {this.state.notiother === true ? (
-                              <textarea
+                              <textarea className="form-control"
                                 style={{ width: "100%", resize: "none" }}
                                 value={this.state.Notify_Displayas}
                                 onChange={this.HandleNotifyAddressChange.bind(
