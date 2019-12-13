@@ -778,14 +778,20 @@ class Analytics extends Component {
   }
 
   render() {
+    debugger
+    var SortfrafShipmentData=this.state.grafShipmentlabels;
+    SortfrafShipmentData.sort();
+
     var buyerShipmentData = {
-      labels: this.state.grafShipmentlabels,
+      labels:SortfrafShipmentData, // this.state.grafShipmentlabels,
       datasets: this.state.graphShipmentdataset
     };
+    console.log(buyerShipmentData);
     var buyerData = {
       labels: this.state.graflabels,
       datasets: this.state.graphdataset
     };
+    
     let greenCounterdata = {
       labels: ["Green", "Red"],
       datasets: [
