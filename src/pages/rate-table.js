@@ -233,6 +233,7 @@ class RateTable extends Component {
       contactName: "",
       contactEmail: "",
       profitLossAmt: 0,
+      profitLossPer: 0,
       MinTT: 0,
       MaxTT: 0
     };
@@ -645,10 +646,13 @@ class RateTable extends Component {
       for (let j = 0; j < rateSubDetails.length; j++) {
         this.state.profitLossAmt +=
           rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+        this.state.profitLossPer += (this.state.profitLossAmt * 100)/rateSubDetails[j].BuyRate  
       }
+      
       this.setState({
         selectedDataRow: selectedRow,
-        profitLossAmt: this.state.profitLossAmt
+        profitLossAmt: this.state.profitLossAmt,
+        profitLossPer: this.state.profitLossPer
       });
     } else {
       if (newSelected[RateLineID] === true) {
@@ -679,7 +683,9 @@ class RateTable extends Component {
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt +=
             rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+            this.state.profitLossPer += (this.state.profitLossAmt * 100)/rateSubDetails[j].BuyRate
         }
+        
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
@@ -694,12 +700,16 @@ class RateTable extends Component {
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt -=
             rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+
+            this.state.profitLossPer -= (this.state.profitLossAmt * 100)/rateSubDetails[j].BuyRate
         }
+        
       }
     }
     this.setState({
       selectedDataRow: selectedRow,
-      profitLossAmt: this.state.profitLossAmt
+      profitLossAmt: this.state.profitLossAmt,
+      profitLossPer: this.state.profitLossPer
     });
   }
 
@@ -3120,8 +3130,8 @@ class RateTable extends Component {
                 <h2>Rate Table</h2>
               </div>
               <div className="login-fields m-0 rate-tab-drop">
-                Commodity :
-                <select className="" onChange={this.filterAll}>
+                Commodity 
+                <select className="" onChange={this.filterAll} style={{marginLeft: "5px"}}>
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
                   {this.state.loading === true
@@ -3889,8 +3899,7 @@ class RateTable extends Component {
                         "desc"
                       ) !== "Customer" ? (
                         <p className="bottom-profit">
-                          Profit -------{this.state.profitLossAmt}$ Customer
-                          Segment A Profit Margin %15
+                          Profit -------{this.state.profitLossAmt}$ / Profit Margin %{this.state.profitLossPer}
                         </p>
                       ) : null}
                     </div>

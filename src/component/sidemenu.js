@@ -8,6 +8,7 @@ import AnalyticsIcon from "./../assets/img/analytics-side.png";
 import RatesIcon from "./../assets/img/rates-side.png";
 import AdminIcon from "./../assets/img/admin-side.png";
 import ChatIcon from "./../assets/img/chat.png";
+import Menubars from "./../assets/img/menubars.png";
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
 import DashboardIcon from "./../assets/img/dashboard-side.png";
@@ -163,6 +164,7 @@ class SideMenu extends Component {
 
     return (
         <div className="d-flex flex-column justify-content-between h-100 sidemenubar" id="sidemenubar">
+        <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" />
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
             <Link

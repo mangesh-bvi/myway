@@ -7,7 +7,6 @@ import ChatIcon from "./../assets/img/chat-old.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import PhoneIcon from "./../assets/img/phone.png";
 import QRCode from "../pages/QRCode";
-import Menubars from "./../assets/img/menubars.png";
 import UserIcon from "./../assets/img/user.png";
 import ActivityLogIcon from "./../assets/img/activity-log.png";
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
@@ -326,14 +325,14 @@ class Header extends Component {
     let popupHBLNO = this.state.popupHBLNO;
 
     return (
-      <div>
+      <div className="pdtop">
+        <div className="header-fixed">
         <div className="cls-header-1">
           <div className="row">
             <div className="col-xs col-sm-3 col-md-4 col-lg-3">
               <Link to="/Dashboard">
                 <img src={Logo} alt="log-icon" className="header-log" />
               </Link>
-              <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" onclick="myFunction()" />
             </div>
             <div className="col-xs col-sm-9 col-md-8 col-lg-9">
               <ul className="header-ul">
@@ -386,7 +385,7 @@ class Header extends Component {
                     </div>
                   </div>
                 </li> */}
-                <li style={{ padding: "20px" }}>
+                <li className="br-none" style={{ padding: "20px" }}>
                   <img
                     src={ChatIcon}
                     alt="chat-icon"
@@ -684,6 +683,7 @@ class Header extends Component {
           </PopoverBody>
         </UncontrolledPopover>
         <NotificationContainer />
+      </div>
       </div>
     );
   }
