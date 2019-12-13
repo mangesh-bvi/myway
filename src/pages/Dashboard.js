@@ -1129,6 +1129,7 @@ class Dashboard extends Component {
   }
 
   HandleQuotesData() {
+    debugger
     let selt = this;
     axios({
       method: "post",

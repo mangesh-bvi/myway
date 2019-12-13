@@ -4500,15 +4500,15 @@ class RateFinalizing extends Component {
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-
-                                  var mode = this.state.ModeOfTransport;
-                                  if (row._original.Linename) {
-                                    olname = row._original.Linename;
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
                                     lname =
-                                      row._original.Linename
-                                        .replace(" ", "_")
-                                        .replace(" ", "_") + ".png";
+                                      row._original.LineName.replace(
+                                        "  ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
                                   }
+                                  var mode = this.state.ModeOfTransport;
                                   var mode = "";
                                   if (this.state.ModeOfTransport) {
                                     mode = this.state.ModeOfTransport;
@@ -4522,10 +4522,10 @@ class RateFinalizing extends Component {
                                         : "Inlande";
                                   }
                                   var mode = this.state.ModeOfTransport;
-                                  if (row._original.Linename) {
-                                    olname = row._original.Linename;
+                                  if (row._original.lineName) {
+                                    olname = row._original.lineName;
                                     lname =
-                                    row._original.Linename
+                                    row._original.lineName
                                     .replace(" ", "_")
                                     .replace(" ", "_") + ".png";
                                     }
