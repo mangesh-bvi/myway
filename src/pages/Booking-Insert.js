@@ -14,7 +14,7 @@ import {
   NotificationManager
 } from "react-notifications";
 import { encryption, convertToPlain } from "../helpers/encryption";
-import maersk from "./../assets/img/maersk.png";
+import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 
 class BookingInsert extends Component {
   constructor(props) {
@@ -118,12 +118,28 @@ class BookingInsert extends Component {
       shipperAddData: [],
       buyerAddData: [],
       notifyAddData: [],
-      Consinee_Displayas: ""
+      Consinee_Displayas: "",
+      cother: false,
+      sother: false,
+      nother: false,
+      bother: false,
+      isShipper: false,
+      isConshinee: false,
+      currentPackageType: "",
+      valuequantity: 0,
+      valuelenght: 0,
+      valuewidth: 0,
+      valueheight: 0,
+      valueweight: 0,
+      valuecbm: 0,
+      valuespecialsontainersode: "",
+      modalEdit: false
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
+    this.toggleEdit = this.toggleEdit.bind(this);
   }
   componentDidMount() {
-    debugger
+    debugger;
     var rData = this.props.location.state;
     if (
       // typeof rData.ContainerLoad !== "" &&
@@ -163,8 +179,7 @@ class BookingInsert extends Component {
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
         }, 100);
-      }
-      else{
+      } else {
         setTimeout(() => {
           this.HandleGetSalesQuotaionINLAND();
           this.NonCustomerList();
@@ -173,7 +188,6 @@ class BookingInsert extends Component {
         }, 100);
       }
     }
-    
   }
 
   HandleGetSalesQuotaionINLAND() {
@@ -238,7 +252,6 @@ class BookingInsert extends Component {
       }
     });
   }
-
 
   HandleGetSalesQuotaionLCL() {
     let self = this;
@@ -442,13 +455,31 @@ class BookingInsert extends Component {
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
     var MyWayUserID = Number(userId);
-    var ShipperID = Number(this.state.shipperData.Company_ID || 0);
 
     var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
 
-    var Shipper_Displayas = this.state.Shipper_Displayas || "";
-    var Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-    var ShipperName = this.state.shipperData.Company_Name || "";
+    if (this.state.isConshinee === true) {
+      var ConsigneeID = DefaultEntityTypeID;
+      var ConsigneeName = this.state.company_name;
+      var Consignee_AddressID = 0;
+      var Consignee_Displayas = this.state.Company_Address;
+    } else {
+      var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+      var ConsigneeName = this.state.consineeData.Company_Name || "";
+      var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+      var Consignee_Displayas = this.state.Consinee_Displayas;
+    }
+    if (this.state.isShipper === true) {
+      var ShipperID = DefaultEntityTypeID;
+      var Shipper_Displayas = this.state.Company_Address;
+      var Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+      var ShipperName = this.state.company_name;
+    } else {
+      var ShipperID = Number(this.state.shipperData.Company_ID || 0);
+      var Shipper_Displayas = this.state.Shipper_Displayas || "";
+      var Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+      var ShipperName = this.state.shipperData.Company_Name || "";
+    }
 
     var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
     var ConsigneeName = this.state.consineeData.Company_Name || "";
@@ -593,9 +624,43 @@ class BookingInsert extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data.Table[0].Message);
-      this.props.history.push("./booking-table")
+      this.props.history.push("./booking-table");
     });
   }
+
+  toggleEdit(e) {
+    debugger;
+
+    if (!this.state.modalEdit) {
+      var valuetype = e.target.getAttribute("data-valuetype");
+      var valuequantity = e.target.getAttribute("data-valuequantity");
+      var valuelenght = e.target.getAttribute("data-valuelenght");
+      var valuewidth = e.target.getAttribute("data-valuewidth");
+      var valueheight = e.target.getAttribute("data-valueheight");
+      var valueweight = e.target.getAttribute("data-valueweight");
+      var valuecbm = e.target.getAttribute("data-valuecbm");
+      var valuespecialsontainersode = e.target.getAttribute(
+        "data-valuespecialsontainersode"
+      );
+
+      this.setState(prevState => ({
+        currentPackageType: valuetype,
+        valuequantity: valuequantity,
+        valuelenght: valuelenght,
+        valuewidth: valuewidth,
+        valueheight: valueheight,
+        valueweight: valueweight,
+        valuecbm: valuecbm,
+        valuespecialsontainersode: valuespecialsontainersode
+      }));
+      this.forceUpdate();
+    }
+
+    this.setState(prevState => ({
+      modalEdit: !prevState.modalEdit
+    }));
+  }
+
   HandleCommodityDropdown() {
     let self = this;
 
@@ -971,121 +1036,742 @@ class BookingInsert extends Component {
   }
   ////end methos for multiple file element
 
-  HandleChangeConsinee(e) {
+  HandleChangeMultiCBM(i, e) {
     debugger;
-    var ConsineeName = e.target.selectedOptions[0].innerText;
-    if (ConsineeName !== "select") {
-      var ConsineeID = Number(e.target.selectedOptions[0].value);
+    const { name, value } = e.target;
 
-      var cutomerdata = this.state.NonCustomerData.filter(
-        x => x.Company_ID === ConsineeID
-      );
-      var Consinee_AddressID = cutomerdata[0].Consinee_AddressID;
-      var Consinee_Displayas = cutomerdata[0].Consinee_Address;
+    let multiCBM = [...this.state.multiCBM];
 
-      this.setState({
-        ConsineeID,
-        ConsineeName,
-        Consinee_AddressID,
-        Consinee_Displayas
-      });
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value === "" ? 0 : parseFloat(value)
+      };
     }
-  }
 
-  HandleChangeShipper(e) {
-    debugger;
-    var ShipperName = e.target.selectedOptions[0].innerText;
-    if (ShipperName !== "select") {
-      var ShipperID = Number(e.target.selectedOptions[0].value);
-
-      var cutomerdata = this.state.NonCustomerData.filter(
-        x => x.Company_ID === ShipperID
-      );
-      var Shipper_AddressID = cutomerdata[0].Shipper_AddressID;
-      var Shipper_Displayas = cutomerdata[0].Shipper_Address;
-
-      this.setState({
-        ShipperID,
-        ShipperName,
-        Shipper_AddressID,
-        Shipper_Displayas
-      });
-    }
-  }
-
-  HandleChangeBuyer(e) {
-    debugger;
-    var BuyerName = e.target.selectedOptions[0].innerText;
-    if (BuyerName !== "select") {
-      var BuyerID = Number(e.target.selectedOptions[0].value);
-
-      var cutomerdata = this.state.NonCustomerData.filter(
-        x => x.Company_ID === BuyerID
-      );
-      var Buyer_AddressID = cutomerdata[0].Company_AddressID;
-      var Buyer_Displayas = cutomerdata[0].Company_Address;
-
-      this.setState({
-        BuyerID,
-        BuyerName,
-        Buyer_AddressID,
-        Buyer_Displayas
-      });
-    }
-  }
-
-  HandleRadioBtn = e => {
-    debugger;
-    var selectedType = e.target.value;
-    this.setState({
-      // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
-      fields: {},
-      Consignee: [],
-      Shipper: [],
-      shipperData: {},
-      consineeData: {}
-    });
-    setTimeout(() => {
-      if (selectedType === "Consignee") {
-        this.setState({
-          selectedType,
-          fields: { Consignee: this.state.company_name }
-        });
-        this.HandleChangeCon(selectedType, this.state.company_name);
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
+        6000;
+      if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWeight
+        };
       } else {
-        this.setState({
-          selectedType,
-          fields: { Shipper: this.state.company_name }
-        });
-        this.HandleChangeCon(selectedType, this.state.company_name);
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
       }
-    }, 100);
-  };
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Length / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: parseFloat(decVolume)
+      };
+    }
+
+    this.setState({ multiCBM });
+  }
+
+  CreateMultiCBM() {
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Length"
+              value={this.state.isCopy == true ? el.Length : el.Length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          {(this.state.ContainerLoad == "LCL" ||
+            "AIR" ||
+            "LTL") &&
+          this.state.NonStackable ? (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="height"
+                value={this.state.isCopy == true ? el.height : el.height || ""}
+                disabled
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          ) : (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="height"
+                value={this.state.isCopy == true ? el.height : el.height || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
+              name="GrossWeight"
+              value={
+                this.state.isCopy == true
+                  ? el.GrossWeight
+                  : el.GrossWeight || ""
+              }
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+
+  
+  addMultiCBM() {
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: 0,
+          Length: 0,
+          Width: 0,
+          height: 0,
+          Weight: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
+
+  removeMultiCBM(i) {
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  MultiCreateCBM() {
+    return this.state.flattack_openTop.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        {/* <div className="col-md">
+          <div className="spe-equ">
+            <label className="mr-0 mt-2" name="SpecialContainerCode">
+              {el.SpecialContainerCode}
+            </label>
+          </div>
+        </div> */}
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="SpecialContainerCode"
+              value={el.SpecialContainerCode}
+            >
+              <option selected>Select</option>
+              {this.state.equipmentTypeArr.map((item, i) => (
+                <option key={i} value={item.ContainerType}>
+                  {item.ContainerType}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="length"
+              value={el.length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="width"
+              value={el.width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="height"
+              value={el.height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              name="Gross_Weight"
+              value={el.Gross_Weight}
+              className="w-100"
+            />
+          </div>
+        </div>
+        {/* <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              name="total"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+              value={el.total || ""}
+              className="w-100"
+            />
+          </div>
+        </div> */}
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiDim.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.flattack_openTop.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiDim.bind(this, i)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {/* <div className="">
+          <div className="spe-equ">
+            <i
+              className="fa fa-minus mt-2"
+              aria-hidden="true"
+              //onClick={this.removeClickMultiCBM.bind(this)}
+            ></i>
+          </div>
+        </div> */}
+      </div>
+    ));
+  }
+
+  HandleChangeMultiCBM(i, e) {
+    debugger;
+    const { name, value } = e.target;
+
+    let multiCBM = [...this.state.multiCBM];
+
+    if ("PackageType" === name) {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value
+      };
+    } else {
+      multiCBM[i] = {
+        ...multiCBM[i],
+        [name]: value === "" ? 0 : parseFloat(value)
+      };
+    }
+
+    this.setState({ multiCBM });
+    if (this.state.containerLoadType !== "LCL") {
+      var decVolumeWeight =
+        (multiCBM[i].Quantity *
+          (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
+        6000;
+      if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: multiCBM[i].GrossWeight
+        };
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+        };
+      }
+    } else {
+      var decVolume =
+        multiCBM[i].Quantity *
+        ((multiCBM[i].Length / 100) *
+          (multiCBM[i].Width / 100) *
+          (multiCBM[i].height / 100));
+      multiCBM[i] = {
+        ...multiCBM[i],
+        ["Volume"]: parseFloat(decVolume)
+      };
+    }
+
+    this.setState({ multiCBM });
+  }
+
+  CreateMultiCBM() {
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Length"
+              value={this.state.isCopy==true?el.Length:el.Length || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          {(this.state.ContainerLoad == "LCL" ||
+            "AIR" ||
+            "LTL") &&
+          this.state.NonStackable ? (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="height"
+                value={this.state.isCopy==true?el.height:el.height || ""}
+                disabled
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          ) : (
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="H (cm)"
+                className="w-100"
+                name="height"
+                value={this.state.isCopy==true?el.height:el.height || ""}
+                //onBlur={this.cbmChange}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
+              name="GrossWeight"
+              value={this.state.isCopy==true?el.GrossWeight:el.GrossWeight || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+  SubmitCargoDetails(e) {
+    debugger;
+    var PackageDetailsArr = [];
+    if (
+      this.state.ContainerLoad == "AIR" ||
+      this.state.ContainerLoad == "LCL"
+    ) {
+      let multiCBM = [...this.state.multiCBM];
+      for (var i = 0; i < multiCBM.length; i++) {
+        if (
+          multiCBM[i].PackageType + "_" + i ==
+          e.target.getAttribute("data-valuespecialsontainersode")
+        ) {
+          multiCBM[i].PackageType = this.state.currentPackageType;
+        }
+
+        PackageDetailsArr.push({
+          PackageType: multiCBM[i].PackageType,
+          SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+          ContainerType: multiCBM[i].PackageType,
+          Packaging: "-",
+          Quantity: multiCBM[i].Quantity,
+          Lenght:
+            this.state.isCopy == true
+              ? multiCBM[i].Length || multiCBM[i].Lengths
+              : multiCBM[i].Length,
+          Width: multiCBM[i].Width,
+          Height:
+            this.state.isCopy == true ? multiCBM[i].height : multiCBM[i].height,
+          Weight:
+            this.state.isCopy == true
+              ? multiCBM[i].GrossWeight
+              : multiCBM[i].GrossWeight,
+          CBM:
+            this.state.containerLoadType == "LCL"
+              ? multiCBM[i].Volume
+              : multiCBM[i].VolumeWeight,
+          Editable: true
+        });
+      }
+
+      this.setState({
+        multiCBM: multiCBM
+      });
+    } else {
+      let flattack_openTop = [...this.state.flattack_openTop];
+      for (var i = 0; i < flattack_openTop.length; i++) {
+        if (
+          flattack_openTop[i].SpecialContainerCode ==
+          e.target.getAttribute("data-valuespecialsontainersode")
+        ) {
+          flattack_openTop[i].PackageType = this.state.currentPackageType;
+        }
+
+        PackageDetailsArr.push({
+          PackageType: flattack_openTop[i].PackageType,
+          SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
+          ContainerType:
+            flattack_openTop[i].PackageType +
+            " (" +
+            flattack_openTop[i].SpecialContainerCode +
+            ")",
+          Quantity: flattack_openTop[i].Quantity,
+          Lenght: flattack_openTop[i].length,
+          Width: flattack_openTop[i].width,
+          Height: flattack_openTop[i].height,
+          Weight: flattack_openTop[i].Gross_Weight,
+          CBM: flattack_openTop[i].total,
+          Editable: true
+        });
+      }
+
+      this.setState({
+        flattack_openTop: flattack_openTop
+      });
+    }
+
+    let CargoDetailsArr = [...this.state.CargoDetailsArr];
+
+    for (var i = 0; i < CargoDetailsArr.length; i++) {
+      if (
+        CargoDetailsArr[i].SpecialContainerCode ==
+        e.target.getAttribute("data-valuespecialsontainersode")
+      ) {
+        CargoDetailsArr[i].PackageType = this.state.currentPackageType;
+        if (
+          this.state.ContainerLoad == "AIR" ||
+          this.state.ContainerLoad == "LCL"
+        ) {
+          CargoDetailsArr[i].ContainerType = this.state.currentPackageType;
+        } else {
+          CargoDetailsArr[i].ContainerType =
+            this.state.currentPackageType +
+            " (" +
+            CargoDetailsArr[i].SpecialContainerCode +
+            ")";
+        }
+      }
+    }
+
+    this.setState({
+      PackageDetailsArr: PackageDetailsArr,
+      CargoDetailsArr: CargoDetailsArr
+    });
+
+    // this.props.location.state.flattack_openTop = flattack_openTop;
+
+    this.forceUpdate();
+    this.toggleEdit();
+  }
+
+  HandleRadioBtn(type, e) {
+    debugger;
+    var selectedType = e.target.checked;
+
+    if (type === "Conshinee") {
+      this.setState({ isConshinee: !this.state.isConshinee });
+    } else {
+      this.setState({ isShipper: !this.state.isShipper });
+    }
+    // this.setState({
+    //   // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
+    //   fields: {},
+    //   Consignee: [],
+    //   Shipper: [],
+    //   shipperData: {},
+    //   consineeData: {}
+    // });
+    // setTimeout(() => {
+    //   if (selectedType === "Consignee") {
+    //     this.setState({
+    //       selectedType,
+    //       fields: { Consignee: this.state.company_name }
+    //     });
+    //     this.HandleChangeCon(selectedType, this.state.company_name);
+    //   } else {
+    //     this.setState({
+    //       selectedType,
+    //       fields: { Shipper: this.state.company_name }
+    //     });
+    //     this.HandleChangeCon(selectedType, this.state.company_name);
+    //   }
+    // }, 100);
+  }
 
   ////this method for party change value
 
-  HandleChangeParty(e) {
-    debugger;
-    var NotifyName = e.target.selectedOptions[0].innerText;
-    if (NotifyName !== "select") {
-      var NotifyID = Number(e.target.selectedOptions[0].value);
-
-      var cutomerdata = this.state.NonCustomerData.filter(
-        x => x.Company_ID === NotifyID
-      );
-      var Notify_AddressID = cutomerdata[0].Company_AddressID;
-      var Notify_Displayas = cutomerdata[0].Company_Address;
-
-      this.setState({
-        NotifyID,
-        NotifyName,
-        Notify_AddressID,
-        Notify_Displayas
-      });
-    }
-  }
   HandleConsineeAddressChange(e) {
+    debugger;
     var addval = e.target.value;
+
     this.setState({ Consinee_Displayas: addval });
   }
   HandleShipperAddressChange(e) {
@@ -1344,13 +2030,13 @@ class BookingInsert extends Component {
                           </div>
                           {this.state.ContainerLoad === "FCL" ? (
                             <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                                 <p className="details-title">Equipment Types</p>
                                 <p className="details-para">
                                   {this.state.ContainerCode}
                                 </p>
                               </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                                 <p className="details-title">
                                   Special Equipment
                                 </p>
@@ -1453,47 +2139,36 @@ class BookingInsert extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="rate-radio-cntr">
-                        <div>
-                          <input
-                            type="radio"
-                            onChange={this.HandleRadioBtn}
-                            name="cust-select"
-                            id="exist-cust"
-                            checked={
-                              this.state.selectedType === "Consignee"
-                                ? true
-                                : false
-                            }
-                            value="Consignee"
-                          />
-                          <label
-                            className="d-flex flex-column align-items-center"
-                            htmlFor="exist-cust"
-                          >
-                            Consignee
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            onChange={this.HandleRadioBtn}
-                            name="cust-select"
-                            id="new-cust"
-                            checked={
-                              this.state.selectedType === "Shipper"
-                                ? true
-                                : false
-                            }
-                            value="Shipper"
-                          />
-                          <label
-                            className="d-flex flex-column align-items-center"
-                            htmlFor="new-cust"
-                          >
-                            Shipper
-                          </label>
-                        </div>
+                      <div className="remember-forgot rate-checkbox justify-content-center">
+                        <input
+                          type="checkbox"
+                          onChange={this.HandleRadioBtn.bind(this, "Conshinee")}
+                          name="cust-select"
+                          id="exist-cust"
+                          checked={this.state.isConshinee}
+                          value="Consignee"
+                        />
+                        <label
+                          className="d-flex flex-column align-items-center"
+                          htmlFor="exist-cust"
+                        >
+                          Consignee
+                        </label>
+
+                        <input
+                          type="checkbox"
+                          onChange={this.HandleRadioBtn.bind(this, "Shipper")}
+                          name="cust-select"
+                          id="new-cust"
+                          checked={this.state.isShipper}
+                          value="Shipper"
+                        />
+                        <label
+                          className="d-flex flex-column align-items-center"
+                          htmlFor="new-cust"
+                        >
+                          Shipper
+                        </label>
                       </div>
                     </div>
                     <div>
@@ -1501,70 +2176,100 @@ class BookingInsert extends Component {
                         <h3>Consignee Details</h3>
                       </div>
                       <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Consignee Name</p>
-                            <Autocomplete
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.Consignee}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    // width:"100%",
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                  value={item.Company_ID}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Consignee"
-                              )}
-                              // menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                item => item.Company_ID,
-                                "Consignee"
-                              )}
-                              value={this.state.fields["Consignee"]}
-                            />
-                          </div>
-
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
-
-                            <select
-                              onChange={this.AddressChange.bind(
-                                this,
-                                "Consignee"
-                              )}
-                            >
-                              <option>Select</option>
-
-                              {this.state.conshineeAddData.length > 0
-                                ? this.state.conshineeAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""}
-                              <option>Other</option>
-                            </select>
-                            <br />
-                            {this.state.conshineeother === true ? (
-                              <textarea
-                                value={this.state.Consinee_Displayas}
-                                onChange={this.HandleConsineeAddressChange.bind(
-                                  this
+                        {this.state.isConshinee === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Consignee Name</p>
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Consignee}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      // width:"100%",
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                    value={item.Company_ID}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
                                 )}
-                              ></textarea>
-                            ) : null}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Consignee"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Consignee"
+                                )}
+                                value={this.state.fields["Consignee"]}
+                              />
+                            </div>
+
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
+
+                              <select
+                                onChange={this.AddressChange.bind(
+                                  this,
+                                  "Consignee"
+                                )}
+                              >
+                                <option>Select</option>
+
+                                {this.state.conshineeAddData.length > 0
+                                  ? this.state.conshineeAddData.map(
+                                      (item, i) => (
+                                        <option key={i} value={item.AddressID}>
+                                          {item.Cust_Address}
+                                        </option>
+                                      )
+                                    )
+                                  : ""}
+                                <option>Other</option>
+                              </select>
+                              <br />
+                              {this.state.conshineeother === true ? (
+                                <textarea
+                                  value={this.state.Consinee_Displayas}
+                                  onChange={this.HandleConsineeAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Consignee Name</p>
+
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">
+                                  Notification Person
+                                </p>
+                                <p className="details-para">
+                                  {this.state.contact_name}
+                                </p>
+                              </div> */}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div>
@@ -1572,69 +2277,96 @@ class BookingInsert extends Component {
                         <h3>Shipper Details</h3>
                       </div>
                       <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Shipper Name</p>
-                            <Autocomplete
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.Shipper}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              value={this.state.fields["Shipper"]}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Shipper"
-                              )}
-                              // menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                item => item.Company_ID,
-                                "Shipper"
-                              )}
-                            />
-                          </div>
-
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
-
-                            <select
-                              onChange={this.AddressChange.bind(
-                                this,
-                                "Shipper"
-                              )}
-                            >
-                              <option>Select</option>
-
-                              {this.state.shipperAddData.length > 0
-                                ? this.state.shipperAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""}
-                              <option>Other</option>
-                            </select>
-                            <br />
-                            {this.state.shipperother === true ? (
-                              <textarea
-                                value={this.state.Shipper_Displayas}
-                                onChange={this.HandleConsineeAddressChange.bind(
-                                  this
+                        {this.state.isShipper === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Shipper Name</p>
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Shipper}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
                                 )}
-                              ></textarea>
-                            ) : null}
+                                value={this.state.fields["Shipper"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Shipper"
+                                )}
+                                // menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Shipper"
+                                )}
+                              />
                             </div>
-                       
-                        </div>
+
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
+
+                              <select
+                                onChange={this.AddressChange.bind(
+                                  this,
+                                  "Shipper"
+                                )}
+                              >
+                                <option>Select</option>
+
+                                {this.state.shipperAddData.length > 0
+                                  ? this.state.shipperAddData.map((item, i) => (
+                                      <option key={i} value={item.AddressID}>
+                                        {item.Cust_Address}
+                                      </option>
+                                    ))
+                                  : ""}
+                                <option>Other</option>
+                              </select>
+                              <br />
+                              {this.state.shipperother === true ? (
+                                <textarea
+                                  value={this.state.Shipper_Displayas}
+                                  onChange={this.HandleConsineeAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Shipper Name</p>
+
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">
+                                  Notification Person
+                                </p>
+                                <p className="details-para">
+                                  {this.state.contact_name}
+                                </p>
+                              </div> */}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -1647,7 +2379,6 @@ class BookingInsert extends Component {
                           <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
-                               
                               <Autocomplete
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.Buyer}
@@ -1720,8 +2451,6 @@ class BookingInsert extends Component {
                           <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
-                              
-
                               <Autocomplete
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.Notify}
@@ -1752,7 +2481,7 @@ class BookingInsert extends Component {
                           </div>
                           <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">Address</p>
-                    
+
                             <select
                               onChange={this.AddressChange.bind(this, "Notify")}
                             >
@@ -1783,7 +2512,7 @@ class BookingInsert extends Component {
                       </div>
                     </div>
                     <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                      <div className="col-12 col-sm-6 col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
                         <select
                           disabled={true}
@@ -1805,6 +2534,14 @@ class BookingInsert extends Component {
                       >
                         <h3>Cargo Details</h3>
                       </div>
+                    </div>
+                    <div className="align-center">
+                      <button
+                        onClick={this.toggleEdit}
+                        className="butn more-padd m-0"
+                      >
+                        Add Cargo
+                      </button>
                     </div>
                     <div className="row ratefinalpgn">
                       {this.state.eqmtType.length > 0 ? (
@@ -1905,7 +2642,7 @@ class BookingInsert extends Component {
                     onClick={this.HandleBookigInsert.bind(this)}
                     className="butn more-padd mt-4"
                   >
-                    Booking Create
+                    Send Booking
                   </button>
                 </center>
               </div>
@@ -1913,6 +2650,266 @@ class BookingInsert extends Component {
           </div>
         </div>
         <NotificationContainer />
+
+        {/* -------------------------------------Edit Modal----------------------------- */}
+        <Modal
+          className="delete-popup pol-pod-popup large-popup"
+          isOpen={this.state.modalEdit}
+          toggle={this.toggleEdit}
+          centered={true}
+        >
+          <ModalBody>
+            <button
+              type="button"
+              className="close"
+              data-dismiss="modal"
+              onClick={this.toggleEdit}
+            >
+              <span>&times;</span>
+            </button>
+            <div
+              style={{
+                backgroundColor: "#fff",
+                padding: "15px",
+                borderRadius: "15px"
+              }}
+            >
+              <h3 className="mb-4">Edit Cargo Details</h3>
+              <>
+                {" "}
+                {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
+                        <Select
+                          className="rate-dropdown"
+                          getOptionLabel={option =>
+                            option.StandardContainerCode
+                          }
+                          getOptionValue={option =>
+                            option.StandardContainerCode
+                          }
+                          isMulti
+                          options={this.state.EquipmentType}
+                          onChange={this.newaddClick.bind(this)}
+                          value={this.state.selected}
+                          showNewOptionAtTop={false}
+                        />
+                      </div> */}
+                {/* <div className="d-flex flex-wrap justify-content-center">
+                        {this.NewcreateUI()}
+                      </div>
+                      <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
+                        <input
+                          id="Special-equType"
+                          type="checkbox"
+                          className="d-none"
+                          name={"Special-equType"}
+                          // onChange={this.HandleSpecialEqtCheck.bind(this)}
+                        />
+                      </div> */}
+                {this.state.ModeofTransport === "FCL" ? (
+                  // this.state.specialEquipment === true ? (
+                  this.state.flattack_openTop.length > 0 ? (
+                    <div className="">
+                      {/* spe-equ mt-0 */}
+                      {/* <div className="equip-plus-cntr w-100">
+                            <Select
+                              className="rate-dropdown"
+                              getOptionLabel={option =>
+                                option.SpecialContainerCode
+                              }
+                              getOptionValue={option =>
+                                option.SpecialContainerCode
+                              }
+                              options={this.state.SpacialEqmt}
+                              placeholder="Select Kind of Special Equipment"
+                              onChange={this.specEquipChange}
+                              showNewOptionAtTop={false}
+                            />
+                          </div> */}
+                      <div id="cbmInner">
+                        {/* {this.state.specialEqtSelect === true ? ( */}
+                        {/* {this.state.flattack_openTop.length > 0 ? ( */}
+                        <>{this.MultiCreateCBM()}</>
+                        {/* //) : null */}
+                        {/* ) : null} */}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="row cbm-space" key={i}>
+                      {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <label className="mr-0 mt-2" name="SpecialContainerCode">
+                            {el.SpecialContainerCode}
+                          </label>
+                        </div>
+                      </div> */}
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <select
+                            className="select-text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            name="SpecialContainerCode"
+                            //value={el.SpecialContainerCode}
+                          >
+                            <option selected>Select</option>
+                            {this.state.equipmentTypeArr.map((item, i) => (
+                              <option key={i} value={item.ContainerType}>
+                                {item.ContainerType}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <select
+                            className="select-text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            name="PackageType"
+                            //value={el.PackageType}
+                          >
+                            <option selected>Select</option>
+                            {this.state.packageTypeData.map((item, i) => (
+                              <option key={i} value={item.PackageName}>
+                                {item.PackageName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            placeholder={"L (cm)"}
+                            className="w-100"
+                            name="length"
+                            //value={el.length || ""}
+                            // onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            placeholder={"W (cm)"}
+                            className="w-100"
+                            name="width"
+                            //value={el.width || ""}
+                            //onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            placeholder="H (cm)"
+                            className="w-100"
+                            name="height"
+                            //value={el.height || ""}
+                            //onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            //placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                            name="Gross_Weight"
+                            //value={el.Gross_Weight}
+                            className="w-100"
+                          />
+                        </div>
+                      </div>
+                      {/* <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            name="total"
+                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                            placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
+                            value={el.total || ""}
+                            className="w-100"
+                          />
+                        </div>
+                      </div> */}
+                      {i === 0 ? (
+                        <div className="">
+                          <div className="spe-equ">
+                            <i
+                              className="fa fa-plus mt-2"
+                              aria-hidden="true"
+                              onClick={this.addMultiDim.bind(this)}
+                            ></i>
+                          </div>
+                        </div>
+                      ) : null}
+                      {this.state.flattack_openTop.length > 1 ? (
+                        <div className="">
+                          <div className="spe-equ">
+                            <i
+                              className="fa fa-minus mt-2"
+                              aria-hidden="true"
+                              onClick={this.removeMultiDim.bind(this, i)}
+                            ></i>
+                          </div>
+                        </div>
+                      ) : null}
+                      {/* <div className="">
+                        <div className="spe-equ">
+                          <i
+                            className="fa fa-minus mt-2"
+                            aria-hidden="true"
+                            //onClick={this.removeClickMultiCBM.bind(this)}
+                          ></i>
+                        </div>
+                      </div> */}
+                    </div>
+                  )
+                ) : (
+                  this.CreateMultiCBM()
+                )}
+              </>
+
+              <div className="text-center">
+                <Button
+                  className="butn"
+                  data-valuespecialsontainersode={
+                    this.state.valuespecialsontainersode
+                  }
+                  onClick={this.SubmitCargoDetails.bind(this)}
+                >
+                  Submit
+                </Button>
+              </div>
+            </div>
+          </ModalBody>
+        </Modal>
       </React.Fragment>
     );
   }

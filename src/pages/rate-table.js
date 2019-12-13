@@ -2396,7 +2396,7 @@ class RateTable extends Component {
 
       if (
         parseInt(tempData[0]) <= parseInt(checkingValue) &&
-        parseInt(tempData[1]) >= parseInt(checkingValue)
+        parseInt(tempData[1]) <= parseInt(checkingValue)
       ) {
         filteredData.push(actualData[j]);
       }
