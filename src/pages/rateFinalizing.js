@@ -4674,13 +4674,8 @@ class RateFinalizing extends Component {
                                   if (row._original.LineName) {
                                     olname = row._original.LineName;
                                     lname =
-<<<<<<< HEAD
-                                      row._original.LineName.replace(
-                                        "  ",
-=======
                                       row._original.Linename.replace(
                                         " ",
->>>>>>> aa17fa3440a2806c33a6667deaec314b7c6e54de
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
@@ -4701,14 +4696,6 @@ class RateFinalizing extends Component {
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
-<<<<<<< HEAD
-                                    row._original.lineName
-                                    .replace(" ", "_")
-                                    .replace(" ", "_") + ".png";
-                                    }
-                                    var mode = "";
-                                    if (this.state.ModeOfTransport) {
-=======
                                       row._original.Linename.replace(
                                         " ",
                                         "_"
@@ -4716,7 +4703,6 @@ class RateFinalizing extends Component {
                                   }
                                   var mode = "";
                                   if (this.state.ModeOfTransport) {
->>>>>>> aa17fa3440a2806c33a6667deaec314b7c6e54de
                                     mode = this.state.ModeOfTransport;
                                   }
                                   if (this.state.modeoftransport) {
@@ -4729,29 +4715,11 @@ class RateFinalizing extends Component {
                                     } else {
                                       mode = this.state.modeoftransport;
                                     }
-<<<<<<< HEAD
-                                    if (this.state.modeoftransport) {
-                                      if(this.state.modeoftransport==="SEA")
-                                      {
-                                        mode="Ocean"
-                                      }
-                                      else if(this.state.modeoftransport==="AIR")
-                                      {
-                                        mode="Air"
-                                      }
-                                      else
-                                      {
-                                        mode=this.state.modeoftransport;
-                                      }
-                                    
-                                    }
-=======
                                     // mode =
                                     // this.state.modeoftransport === "SEA"
                                     // ? "Ocean"
                                     // : this.state.modeoftransport === "AIR"?"Air":"Inlande";
                                   }
->>>>>>> 030e9805f7bf0e6e552120097f73e819f1a56850
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
