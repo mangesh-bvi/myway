@@ -4429,20 +4429,20 @@ class RateFinalizing extends Component {
                                   debugger;
                                   var lname = "";
                                   var olname = "";
-                                  if (row._original.LineName) {
-                                    olname = row._original.LineName;
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
                                     lname =
-                                      row._original.LineName.replace(
+                                      row._original.Linename.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
 
                                   var mode = this.state.ModeOfTransport;
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
                                     lname =
-                                      row._original.lineName
+                                      row._original.Linename
                                         .replace(" ", "_")
                                         .replace(" ", "_") + ".png";
                                   }
@@ -4459,10 +4459,10 @@ class RateFinalizing extends Component {
                                         : "Inlande";
                                   }
                                   var mode = this.state.ModeOfTransport;
-                                  if (row._original.lineName) {
-                                    olname = row._original.lineName;
+                                  if (row._original.Linename) {
+                                    olname = row._original.Linename;
                                     lname =
-                                    row._original.lineName
+                                    row._original.Linename
                                     .replace(" ", "_")
                                     .replace(" ", "_") + ".png";
                                     }
@@ -4471,10 +4471,22 @@ class RateFinalizing extends Component {
                                     mode = this.state.ModeOfTransport;
                                     }
                                     if (this.state.modeoftransport) {
-                                    mode =
-                                    this.state.modeoftransport === "SEA"
-                                    ? "Ocean"
-                                    : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                      if(this.state.modeoftransport==="SEA")
+                                      {
+                                        mode="Ocean"
+                                      }
+                                      else if(this.state.modeoftransport==="AIR")
+                                      {
+                                        mode="Air"
+                                      }
+                                      else
+                                      {
+                                        mode=this.state.modeoftransport;
+                                      }
+                                    // mode =
+                                    // this.state.modeoftransport === "SEA"
+                                    // ? "Ocean"
+                                    // : this.state.modeoftransport === "AIR"?"Air":"Inlande";
                                     }
 
                                   if (mode === "Ocean" && lname !== "") {

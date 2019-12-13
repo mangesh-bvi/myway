@@ -1064,11 +1064,12 @@ class Dashboard extends Component {
   //Booking Card Bind Api Call
   HandleBookingCardApi() {
     let self = this;
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchNewbooking`,
       data: {
-        UserID: 874588
+        UserID: userid
       },
       headers: authHeader()
     }).then(function(response) {
@@ -1107,6 +1108,7 @@ class Dashboard extends Component {
   }
 
   HandleWatchListData() {
+    debugger
     let selt = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
@@ -1498,7 +1500,7 @@ class Dashboard extends Component {
                     <div className="col-12 col-sm-12 col-md-6 col-lg-3">
                       <div className="dash-sects">
                         <div className="dashboard-loader">
-                          <h3>Watchlist Shipments</h3>
+                          <h3>Active Shipments</h3>
                           {this.state.watchlistLoading === true ? (
                             <div className="loader-icon"></div>
                           ) : (
