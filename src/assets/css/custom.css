@@ -150,7 +150,12 @@ h3 {
 .clr-black {
   color: #000;
 }
-
+.header-fixed {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 999;
+}
 /* login starts */
 .login-sect {
   max-width: 500px;
@@ -338,6 +343,15 @@ h2 span {
 .title-sect .butn {
   margin-right: 15px;
   margin-top: 0;
+}
+.cusbtn {
+  color: #fff !important;
+}
+.cusbtn:hover, .cusbtn:focus {
+  color: #39b54a !important;
+}
+.title-sect .butn:hover, .title-sect .butn:focus {
+  cursor: pointer;
 }
 .title-sect .butn:last-child {
   margin-right: 0px;
@@ -1138,7 +1152,7 @@ table tbody tr:last-child {
 /* rate search starts */
 .rate-radio-cntr {
   display: flex;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 .rate-search .butn {
   padding: 15px;
@@ -3852,6 +3866,9 @@ img {
 /* Quote css end by Shlok */
 .menubars {
   height: auto;
+  top: 25px;
+  left: 165px;
+  position: absolute;
   width: 20px;
   float: none;
   margin: 0 0 0 30px;
@@ -3982,3 +3999,16 @@ img {
   font-family: "Regular Font";
 } */
 /* TransitSection css End kalpesh */
+
+/*  */
+.mystyle {
+  width: 100%;
+  padding: 25px;
+  background-color: coral;
+  color: white;
+  font-size: 25px;
+  box-sizing: border-box;
+}
+.divblock div {
+ display: block !important;
+}

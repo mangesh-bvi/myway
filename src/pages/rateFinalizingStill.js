@@ -2026,7 +2026,7 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <Collapse in={this.state.showContent}>
                       <div>
-                        <div className="title-border py-3">
+                        <div className="title-border py-3" style={{marginBottom:"15px"}}>
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
@@ -2131,7 +2131,7 @@ class RateFinalizingStill extends Component {
                         </div>
                       </div>
                     </Collapse>
-                    <div className="text-right">
+                    <div className="text-right" style={{marginBottom:"15px"}}>
                       <button
                         className={className}
                         id="toggler"
