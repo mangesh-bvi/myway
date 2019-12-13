@@ -1109,7 +1109,7 @@ class Dashboard extends Component {
   }
 
   HandleWatchListData() {
-    debugger
+    debugger;
     let selt = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
@@ -1353,9 +1353,13 @@ class Dashboard extends Component {
                   {addkey.Status}
                 </span>
               </p>
-              <div className="wl-cntr">
-                <img src={WL} alt="wl-icon" />
-              </div>
+              {addkey.DataFor === "W" ? (
+                <div className="wl-cntr">
+                  <img src={WL} alt="wl-icon" />
+                </div>
+              ) : (
+                ""
+              )}
             </div>
             <hr className="horizontal-line" />
             {/* <p>

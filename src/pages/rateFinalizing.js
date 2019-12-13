@@ -286,31 +286,34 @@ class RateFinalizing extends Component {
                   Editable: true
                 });
 
-                if (flattack_openTop[i].PackageType !=="" && 
-                flattack_openTop[i].SpecialContainerCode !=="" &&
-                flattack_openTop[i].Quantity !==0 || "" && 
-                flattack_openTop[i].length !==0 || "" &&
-                flattack_openTop[i].width !==0 || "" &&
-                flattack_openTop[i].height !==0 || "" &&
-                flattack_openTop[i].Gross_Weight !==0 || "") {
-                PackageDetailsArr.push({
-                  PackageType: flattack_openTop[i].PackageType,
-                  SpecialContainerCode:
-                    flattack_openTop[i].SpecialContainerCode,
-                  ContainerType:
-                    flattack_openTop[i].PackageType +
-                    " (" +
-                    flattack_openTop[i].SpecialContainerCode +
-                    ")",
-                  Quantity: flattack_openTop[i].Quantity,
-                  Lenght: flattack_openTop[i].length,
-                  Width: flattack_openTop[i].width,
-                  Height: flattack_openTop[i].height,
-                  Weight: flattack_openTop[i].Gross_Weight,
-                  CBM: flattack_openTop[i].total,
-                  Editable: true
-                });
-              }
+                if (
+                  (flattack_openTop[i].PackageType !== "" &&
+                    flattack_openTop[i].SpecialContainerCode !== "" &&
+                    flattack_openTop[i].Quantity !== 0) ||
+                  ("" && flattack_openTop[i].length !== 0) ||
+                  ("" && flattack_openTop[i].width !== 0) ||
+                  ("" && flattack_openTop[i].height !== 0) ||
+                  ("" && flattack_openTop[i].Gross_Weight !== 0) ||
+                  ""
+                ) {
+                  PackageDetailsArr.push({
+                    PackageType: flattack_openTop[i].PackageType,
+                    SpecialContainerCode:
+                      flattack_openTop[i].SpecialContainerCode,
+                    ContainerType:
+                      flattack_openTop[i].PackageType +
+                      " (" +
+                      flattack_openTop[i].SpecialContainerCode +
+                      ")",
+                    Quantity: flattack_openTop[i].Quantity,
+                    Lenght: flattack_openTop[i].length,
+                    Width: flattack_openTop[i].width,
+                    Height: flattack_openTop[i].height,
+                    Weight: flattack_openTop[i].Gross_Weight,
+                    CBM: flattack_openTop[i].total,
+                    Editable: true
+                  });
+                }
               }
             }
           }
@@ -1872,42 +1875,41 @@ class RateFinalizing extends Component {
     for (var i = 0; i < rateDetailsarr.length; i++) {
       var AIRObjdata = new Object();
 
-      AIRObjdata.RateID=rateDetailsarr[i].RateLineId;
-      AIRObjdata.RateType=rateDetailsarr[i].TypeOfRate;
-      
+      AIRObjdata.RateID = rateDetailsarr[i].RateLineId;
+      AIRObjdata.RateType = rateDetailsarr[i].TypeOfRate;
+
       RateDataArr.push(AIRObjdata);
     }
-    if(RateQueryDim.length == 0)
-    {
-      var RequestRateDim=new Object();
-      
-      RequestRateDim.PackageType="";
-      RequestRateDim.Quantity=0;
-      RequestRateDim.Lengths=0;
-      RequestRateDim.Width=0;
-      RequestRateDim.Height=0;
-      RequestRateDim.GrossWt=0;
-      RequestRateDim.VolumeWeight=0;
-      RequestRateDim.Volume=0;
+    if (RateQueryDim.length == 0) {
+      var RequestRateDim = new Object();
+
+      RequestRateDim.PackageType = "";
+      RequestRateDim.Quantity = 0;
+      RequestRateDim.Lengths = 0;
+      RequestRateDim.Width = 0;
+      RequestRateDim.Height = 0;
+      RequestRateDim.GrossWt = 0;
+      RequestRateDim.VolumeWeight = 0;
+      RequestRateDim.Volume = 0;
       RateQueryDim.push(RequestRateDim);
     }
-    var SendRequestparaAIR={
-      Mode:this.state.containerLoadType.toUpperCase(),
-      ShipmentType :this.state.shipmentType,
-      Inco_terms:this.state.incoTerm,
-      TypesOfMove :this.state.typeofMove, 
-      PickUpAddress :PickUpAddress,
-      DestinationAddress :DestinationAddress, 
-      HazMat :this.state.HazMat == true ? 1 : 0,
-      ChargeableWt :this.props.location.state.ChargeableWeight,
-      Containerdetails:Containerdetails,
-      PickUpAddressDetails:PickUpAddressDetails,
-      DestinationAddressDetails:DestinationAddressDetails,
-      RateQueryDim:RateQueryDim,
-      MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-      CompanyID:this.state.CompanyID,
-      CommodityID:this.state.CommodityID,
-      OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
+    var SendRequestparaAIR = {
+      Mode: this.state.containerLoadType.toUpperCase(),
+      ShipmentType: this.state.shipmentType,
+      Inco_terms: this.state.incoTerm,
+      TypesOfMove: this.state.typeofMove,
+      PickUpAddress: PickUpAddress,
+      DestinationAddress: DestinationAddress,
+      HazMat: this.state.HazMat == true ? 1 : 0,
+      ChargeableWt: this.props.location.state.ChargeableWeight,
+      Containerdetails: Containerdetails,
+      PickUpAddressDetails: PickUpAddressDetails,
+      DestinationAddressDetails: DestinationAddressDetails,
+      RateQueryDim: RateQueryDim,
+      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+      CompanyID: this.state.CompanyID,
+      CommodityID: this.state.CommodityID,
+      OriginGeoCordinates: this.props.location.state.OriginGeoCordinates,
       DestGeoCordinate: this.props.location.state.DestGeoCordinate,
       BaseCurrency: rateSubDetailsarr[0].BaseCurrency,
       NonStackable: this.props.location.state.NonStackable,
@@ -3290,30 +3292,32 @@ class RateFinalizing extends Component {
         ) {
           flattack_openTop[i].PackageType = this.state.currentPackageType;
         }
-        if (flattack_openTop[i].PackageType !=="" && 
-        flattack_openTop[i].SpecialContainerCode !=="" &&
-        flattack_openTop[i].length !==0 || "" &&
-        flattack_openTop[i].width !==0 || "" &&
-        flattack_openTop[i].height !==0 || "" &&
-        flattack_openTop[i].Gross_Weight !==0 || "") {
-
-        PackageDetailsArr.push({
-          PackageType: flattack_openTop[i].PackageType,
-          SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
-          ContainerType:
-            flattack_openTop[i].PackageType +
-            " (" +
-            flattack_openTop[i].SpecialContainerCode +
-            ")",
-          Quantity: flattack_openTop[i].Quantity,
-          Lenght: flattack_openTop[i].length,
-          Width: flattack_openTop[i].width,
-          Height: flattack_openTop[i].height,
-          Weight: flattack_openTop[i].Gross_Weight,
-          CBM: flattack_openTop[i].total,
-          Editable: true
-        });
-      }
+        if (
+          (flattack_openTop[i].PackageType !== "" &&
+            flattack_openTop[i].SpecialContainerCode !== "" &&
+            flattack_openTop[i].length !== 0) ||
+          ("" && flattack_openTop[i].width !== 0) ||
+          ("" && flattack_openTop[i].height !== 0) ||
+          ("" && flattack_openTop[i].Gross_Weight !== 0) ||
+          ""
+        ) {
+          PackageDetailsArr.push({
+            PackageType: flattack_openTop[i].PackageType,
+            SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
+            ContainerType:
+              flattack_openTop[i].PackageType +
+              " (" +
+              flattack_openTop[i].SpecialContainerCode +
+              ")",
+            Quantity: flattack_openTop[i].Quantity,
+            Lenght: flattack_openTop[i].length,
+            Width: flattack_openTop[i].width,
+            Height: flattack_openTop[i].height,
+            Weight: flattack_openTop[i].Gross_Weight,
+            CBM: flattack_openTop[i].total,
+            Editable: true
+          });
+        }
       }
 
       this.setState({
@@ -3539,12 +3543,12 @@ class RateFinalizing extends Component {
     if (name === "PackageType" || name === "SpecialContainerCode") {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        [name]: value=="Select"?"":value
+        [name]: value == "Select" ? "" : value
       };
     } else {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        [name]: value==""?0:parseFloat(value)
+        [name]: value == "" ? 0 : parseFloat(value)
       };
     }
 
@@ -3582,7 +3586,7 @@ class RateFinalizing extends Component {
           width: 0,
           height: 0,
           Gross_Weight: 0,
-          total:0,
+          total: 0,
           VolumeWeight: 0,
           Volume: 0
         }
@@ -4016,37 +4020,121 @@ class RateFinalizing extends Component {
       } else if (item.Currency == "TL") {
         amtSign = " TL";
       }
-      return (
-        <div>
-          <div className="d-flex line-first">
-            <input
-              id={"local" + (index + 1)}
-              value={item.Amount}
-              type="checkbox"
-              name={"localCharge"}
-              data-chargeitem={item.ChargeItem}
-              data-chargedesc={item.ChargeDesc}
-              data-currency={item.Currency}
-              data-amountinbasecurrency={item.AmountInBaseCurrency}
-              data-chargetype="Localcharge"
-              onChange={this.HandleLocalSearchCharges.bind(this, item)}
-            />
-            <label title={item.LineName} htmlFor={"local" + (index + 1)}>
-              {item.ChargeDesc}
-            </label>
+      debugger;
+      if (this.state.modeoftransport === "SEA") {
+        return (
+          <div>
+            <div className="d-flex line-first">
+              <input
+                id={"local" + (index + 1)}
+                value={item.Amount}
+                type="checkbox"
+                name={"localCharge"}
+                data-chargeitem={item.ChargeItem}
+                data-chargedesc={item.ChargeDesc}
+                data-currency={item.Currency}
+                data-amountinbasecurrency={item.AmountInBaseCurrency}
+                data-chargetype="Localcharge"
+                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+              />
+              <label title={item.LineName} htmlFor={"local" + (index + 1)}>
+                {item.ChargeDesc}
+              </label>
+            </div>
+            {/* <span>{item.LineName}</span> */}
+            {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
+            <span className="line-img">
+              <img
+                src={
+                  "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                  item.LineName +
+                  ".png"
+                }
+              />
+            </span>
+            <span>
+              {item.Amount}
+              {" " + item.Currency}
+            </span>
           </div>
-          {/* <span>{item.LineName}</span> */}
-          {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
-          <span className="line-img"><img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" + item.LineName + '.png'} /></span>
-          <span>
-            {item.Amount}
-            {" " + item.Currency}
-          </span>
-        </div>
-      );
+        );
+      } else if (this.state.modeoftransport === "AIR") {
+        return (
+          <div>
+            <div className="d-flex line-first">
+              <input
+                id={"local" + (index + 1)}
+                value={item.Amount}
+                type="checkbox"
+                name={"localCharge"}
+                data-chargeitem={item.ChargeItem}
+                data-chargedesc={item.ChargeDesc}
+                data-currency={item.Currency}
+                data-amountinbasecurrency={item.AmountInBaseCurrency}
+                data-chargetype="Localcharge"
+                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+              />
+              <label title={item.LineName} htmlFor={"local" + (index + 1)}>
+                {item.ChargeDesc}
+              </label>
+            </div>
+            {/* <span>{item.LineName}</span> */}
+            {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
+            <span className="line-img">
+              <img
+                src={
+                  "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                  item.LineName +
+                  ".png"
+                }
+              />
+            </span>
+            <span>
+              {item.Amount}
+              {" " + item.Currency}
+            </span>
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <div className="d-flex line-first">
+              <input
+                id={"local" + (index + 1)}
+                value={item.Amount}
+                type="checkbox"
+                name={"localCharge"}
+                data-chargeitem={item.ChargeItem}
+                data-chargedesc={item.ChargeDesc}
+                data-currency={item.Currency}
+                data-amountinbasecurrency={item.AmountInBaseCurrency}
+                data-chargetype="Localcharge"
+                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+              />
+              <label title={item.LineName} htmlFor={"local" + (index + 1)}>
+                {item.ChargeDesc}
+              </label>
+            </div>
+            {/* <span>{item.LineName}</span> */}
+            {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
+            <span className="line-img">
+              <img
+                src={
+                  "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                }
+              />
+            </span>
+            <span>
+              {item.Amount}
+              {" " + item.Currency}
+            </span>
+          </div>
+        );
+      }
     });
 
     const checkSurCharges = this.state.arrSurCharges.map((item, index) => {
+      debugger;
       let amtSign;
       if (item.Currency == "INR") {
         amtSign = " INR";
@@ -4055,36 +4143,119 @@ class RateFinalizing extends Component {
       } else if (item.Currency == "TL") {
         amtSign = " TL";
       }
-
-      return (
-        <div>
-          <div className="d-flex line-first">
-            <input
-              id={"Sur" + (index + 1)}
-              type="checkbox"
-              name={"surcharges"}
-              value={item.Amount}
-              data-chargeitem={item.ChargeItem}
-              data-chargedesc={item.ChargeDesc}
-              data-currency={item.Currency}
-              data-amountinbasecurrency={item.AmountInBaseCurrency}
-              data-chargetype="surcharge"
-              onChange={this.HandleLocalSearchCharges.bind(this, item)}
-            />
-            <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
-              {item.ChargeDesc}
-            </label>
-          </div>
-          {/* <span>
+      if (this.state.modeoftransport === "SEA") {
+        return (
+          <div>
+            <div className="d-flex line-first">
+              <input
+                id={"Sur" + (index + 1)}
+                type="checkbox"
+                name={"surcharges"}
+                value={item.Amount}
+                data-chargeitem={item.ChargeItem}
+                data-chargedesc={item.ChargeDesc}
+                data-currency={item.Currency}
+                data-amountinbasecurrency={item.AmountInBaseCurrency}
+                data-chargetype="surcharge"
+                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+              />
+              <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
+                {item.ChargeDesc}
+              </label>
+            </div>
+            {/* <span>
             {item.LineName}
           </span> */}
-          <span className="line-img"><img src={"https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" + item.LineName + '.png'} /></span>
-          <span>
-            {item.Amount}
-            {" " + item.Currency}
-          </span>
-        </div>
-      );
+            <span className="line-img">
+              <img
+                src={
+                  "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                  item.LineName +
+                  ".png"
+                }
+              />
+            </span>
+            <span>
+              {item.Amount}
+              {" " + item.Currency}
+            </span>
+          </div>
+        );
+      } else if (this.state.modeoftransport === "AIR") {
+        return (
+          <div>
+            <div className="d-flex line-first">
+              <input
+                id={"Sur" + (index + 1)}
+                type="checkbox"
+                name={"surcharges"}
+                value={item.Amount}
+                data-chargeitem={item.ChargeItem}
+                data-chargedesc={item.ChargeDesc}
+                data-currency={item.Currency}
+                data-amountinbasecurrency={item.AmountInBaseCurrency}
+                data-chargetype="surcharge"
+                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+              />
+              <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
+                {item.ChargeDesc}
+              </label>
+            </div>
+            {/* <span>
+                    {item.LineName}
+                  </span> */}
+            <span className="line-img">
+              <img
+                src={
+                  "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                  item.LineName +
+                  ".png"
+                }
+              />
+            </span>
+            <span>
+              {item.Amount}
+              {" " + item.Currency}
+            </span>
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <div className="d-flex line-first">
+              <input
+                id={"Sur" + (index + 1)}
+                type="checkbox"
+                name={"surcharges"}
+                value={item.Amount}
+                data-chargeitem={item.ChargeItem}
+                data-chargedesc={item.ChargeDesc}
+                data-currency={item.Currency}
+                data-amountinbasecurrency={item.AmountInBaseCurrency}
+                data-chargetype="surcharge"
+                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+              />
+              <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
+                {item.ChargeDesc}
+              </label>
+            </div>
+            {/* <span>
+                    {item.LineName}
+                  </span> */}
+            <span className="line-img">
+              <img
+                src={
+                  "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                }
+              />
+            </span>
+            <span>
+              {item.Amount}
+              {" " + item.Currency}
+            </span>
+          </div>
+        );
+      }
     });
     var self = this;
 
@@ -4505,9 +4676,10 @@ class RateFinalizing extends Component {
                                   if (row._original.Linename) {
                                     olname = row._original.Linename;
                                     lname =
-                                      row._original.Linename
-                                        .replace(" ", "_")
-                                        .replace(" ", "_") + ".png";
+                                      row._original.Linename.replace(
+                                        " ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
                                   }
                                   var mode = "";
                                   if (this.state.ModeOfTransport) {
@@ -4525,32 +4697,30 @@ class RateFinalizing extends Component {
                                   if (row._original.Linename) {
                                     olname = row._original.Linename;
                                     lname =
-                                    row._original.Linename
-                                    .replace(" ", "_")
-                                    .replace(" ", "_") + ".png";
-                                    }
-                                    var mode = "";
-                                    if (this.state.ModeOfTransport) {
+                                      row._original.Linename.replace(
+                                        " ",
+                                        "_"
+                                      ).replace(" ", "_") + ".png";
+                                  }
+                                  var mode = "";
+                                  if (this.state.ModeOfTransport) {
                                     mode = this.state.ModeOfTransport;
+                                  }
+                                  if (this.state.modeoftransport) {
+                                    if (this.state.modeoftransport === "SEA") {
+                                      mode = "Ocean";
+                                    } else if (
+                                      this.state.modeoftransport === "AIR"
+                                    ) {
+                                      mode = "Air";
+                                    } else {
+                                      mode = this.state.modeoftransport;
                                     }
-                                    if (this.state.modeoftransport) {
-                                      if(this.state.modeoftransport==="SEA")
-                                      {
-                                        mode="Ocean"
-                                      }
-                                      else if(this.state.modeoftransport==="AIR")
-                                      {
-                                        mode="Air"
-                                      }
-                                      else
-                                      {
-                                        mode=this.state.modeoftransport;
-                                      }
                                     // mode =
                                     // this.state.modeoftransport === "SEA"
                                     // ? "Ocean"
                                     // : this.state.modeoftransport === "AIR"?"Air":"Inlande";
-                                    }
+                                  }
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
@@ -5187,14 +5357,14 @@ class RateFinalizing extends Component {
                       style={{ marginBottom: "15px" }}
                     >
                       <h3>Cargo Details</h3>
-                    <div className="align-center">
-                      <button
-                        onClick={this.toggleEdit}
-                        className="butn more-padd m-0"
-                      >
-                        Add Cargo
-                      </button>
-                    </div>
+                      <div className="align-center">
+                        <button
+                          onClick={this.toggleEdit}
+                          className="butn more-padd m-0"
+                        >
+                          Add Cargo
+                        </button>
+                      </div>
                     </div>
                     <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (
