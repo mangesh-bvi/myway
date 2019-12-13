@@ -451,11 +451,13 @@ class RateTable extends Component {
               IsFilter: true
             });
           }
+          this.state.flattack_openTop = paramData.flattack_openTop
           this.setState({
             polArray: this.state.polArray,
             podArray: this.state.podArray,
             polFilterArray: this.state.polFilterArray,
-            podFilterArray: this.state.podFilterArray
+            podFilterArray: this.state.podFilterArray,
+            flattack_openTop: this.state.flattack_openTop
           });
           this.HandleRateDetailsFCL(paramData);
         }
