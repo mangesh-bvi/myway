@@ -3290,6 +3290,12 @@ class RateFinalizing extends Component {
         ) {
           flattack_openTop[i].PackageType = this.state.currentPackageType;
         }
+        if (flattack_openTop[i].PackageType !=="" && 
+        flattack_openTop[i].SpecialContainerCode !=="" &&
+        flattack_openTop[i].length !==0 || "" &&
+        flattack_openTop[i].width !==0 || "" &&
+        flattack_openTop[i].height !==0 || "" &&
+        flattack_openTop[i].Gross_Weight !==0 || "") {
 
         PackageDetailsArr.push({
           PackageType: flattack_openTop[i].PackageType,
@@ -3307,6 +3313,7 @@ class RateFinalizing extends Component {
           CBM: flattack_openTop[i].total,
           Editable: true
         });
+      }
       }
 
       this.setState({
@@ -3532,12 +3539,12 @@ class RateFinalizing extends Component {
     if (name === "PackageType" || name === "SpecialContainerCode") {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        [name]: value
+        [name]: value=="Select"?"":value
       };
     } else {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        [name]: parseFloat(value)
+        [name]: value==""?0:parseFloat(value)
       };
     }
 
