@@ -451,11 +451,13 @@ class RateTable extends Component {
               IsFilter: true
             });
           }
+          this.state.flattack_openTop = paramData.flattack_openTop
           this.setState({
             polArray: this.state.polArray,
             podArray: this.state.podArray,
             polFilterArray: this.state.polFilterArray,
-            podFilterArray: this.state.podFilterArray
+            podFilterArray: this.state.podFilterArray,
+            flattack_openTop: this.state.flattack_openTop
           });
           this.HandleRateDetailsFCL(paramData);
         }
@@ -710,7 +712,7 @@ class RateTable extends Component {
   }
 
   HandleRateDetailsFCL(paramData) {
-    debugger
+    debugger;
     var dataParameter = {};
     var pickUpAddress = {
       Street: "",
@@ -2363,11 +2365,11 @@ class RateTable extends Component {
     //     this.setState({ tempRateDetails: this.state.RateDetails });
     //   }
     // }
-    this.state.CommodityID = parseInt(e.target.value)
+    this.state.CommodityID = parseInt(e.target.value);
     this.setState({
       CommodityID: this.state.CommodityID
-    })
-    this.HandleRateDetailsFCL(this.state)
+    });
+    this.HandleRateDetailsFCL(this.state);
   }
 
   custClearToggle() {
@@ -2395,7 +2397,7 @@ class RateTable extends Component {
       var tempData = colData.split("-");
 
       if (
-        parseInt(tempData[0]) <= parseInt(checkingValue) &&
+        parseInt(tempData[0]) <= parseInt(checkingValue) ||
         parseInt(tempData[1]) <= parseInt(checkingValue)
       ) {
         filteredData.push(actualData[j]);
@@ -3117,7 +3119,7 @@ class RateTable extends Component {
               <div className="title-sect">
                 <h2>Rate Table</h2>
               </div>
-              <div className="login-fields mb-0 rate-tab-drop">
+              <div className="login-fields m-0 rate-tab-drop">
                 Commodity :
                 <select className="" onChange={this.filterAll}>
                   {/* <option>Select</option> */}
@@ -3136,6 +3138,7 @@ class RateTable extends Component {
                 </select>
               </div>
               <div className="rate-table-range">
+                <p class="upto-days">Upto {this.state.value} days</p>
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
                 <InputRange

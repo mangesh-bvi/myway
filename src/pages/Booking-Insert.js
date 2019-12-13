@@ -458,6 +458,10 @@ class BookingInsert extends Component {
 
     var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
 
+    var ConsigneeID = 0;
+    var ConsigneeName = "";
+    var Consignee_AddressID = 0;
+    var Consignee_Displayas = "";
     if (this.state.isConshinee === true) {
       var ConsigneeID = DefaultEntityTypeID;
       var ConsigneeName = this.state.company_name;
@@ -469,22 +473,26 @@ class BookingInsert extends Component {
       var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
       var Consignee_Displayas = this.state.Consinee_Displayas;
     }
+    var ShipperID = 0;
+    var ShipperName = "";
+    var Shipper_AddressID = 0;
+    var Shipper_Displayas = "";
     if (this.state.isShipper === true) {
-      var ShipperID = DefaultEntityTypeID;
-      var Shipper_Displayas = this.state.Company_Address;
-      var Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-      var ShipperName = this.state.company_name;
+      ShipperID = DefaultEntityTypeID;
+      ShipperName = this.state.company_name;
+      Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+      Shipper_Displayas = this.state.Company_Address;
     } else {
-      var ShipperID = Number(this.state.shipperData.Company_ID || 0);
-      var Shipper_Displayas = this.state.Shipper_Displayas || "";
-      var Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-      var ShipperName = this.state.shipperData.Company_Name || "";
+      ShipperID = Number(this.state.shipperData.Company_ID || 0);
+      ShipperName = this.state.shipperData.Company_Name || "";
+      Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+      Shipper_Displayas = this.state.Shipper_Displayas || "";
     }
 
-    var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-    var ConsigneeName = this.state.consineeData.Company_Name || "";
-    var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-    var Consignee_Displayas = this.state.Consinee_Displayas;
+    // var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+    // var ConsigneeName = this.state.consineeData.Company_Name || "";
+    // var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+    // var Consignee_Displayas = this.state.Consinee_Displayas;
 
     var BuyerID = Number(this.state.buyerData.Company_ID || 0);
     var Buyer_AddressID = this.state.Buyer_AddressID;
@@ -609,22 +617,30 @@ class BookingInsert extends Component {
     var BookingID = this.state.BookingNo;
     var DocumentID = 0;
     var DocumnetFile = this.state.FileDataArry;
+    let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    var formdata = new FormData();
+    formdata.append("BookingID", BookingID);
+    formdata.append("DocumentID", DocumentID);
+    formdata.append("BookingDoc", DocumnetFile);
+    formdata.append("MyWayUserID", userId);
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookigFileUpload`,
-      data: {
-        BookingID: BookingID,
-        DocumentID: DocumentID,
-        BookingDoc: DocumnetFile,
-        MyWayUserID: userId
-      },
-
+      // data: {
+      //   BookingID: BookingID,
+      //   DocumentID: DocumentID,
+      //   BookingDoc: DocumnetFile,
+      //   MyWayUserID: userId
+      // },
+      data: formdata,
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      NotificationManager.success(response.data.Table[0].Message);
-      this.props.history.push("./booking-table");
+      NotificationManager.success(response.data.Table[0].Result);
+      // this.props.history.push("./booking-table");
+      self.props.history.push("booking-table");
     });
   }
 
@@ -1146,9 +1162,7 @@ class BookingInsert extends Component {
           </div>
         </div>
         <div className="col-md">
-          {(this.state.ContainerLoad == "LCL" ||
-            "AIR" ||
-            "LTL") &&
+          {(this.state.ContainerLoad == "LCL" || "AIR" || "LTL") &&
           this.state.NonStackable ? (
             <div className="spe-equ">
               <input
@@ -1246,8 +1260,6 @@ class BookingInsert extends Component {
     ));
   }
 
-
-  
   addMultiCBM() {
     this.setState(prevState => ({
       multiCBM: [
@@ -1506,7 +1518,7 @@ class BookingInsert extends Component {
               placeholder={"L (cm)"}
               className="w-100"
               name="Length"
-              value={this.state.isCopy==true?el.Length:el.Length || ""}
+              value={this.state.isCopy == true ? el.Length : el.Length || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -1525,9 +1537,7 @@ class BookingInsert extends Component {
           </div>
         </div>
         <div className="col-md">
-          {(this.state.ContainerLoad == "LCL" ||
-            "AIR" ||
-            "LTL") &&
+          {(this.state.ContainerLoad == "LCL" || "AIR" || "LTL") &&
           this.state.NonStackable ? (
             <div className="spe-equ">
               <input
@@ -1536,7 +1546,7 @@ class BookingInsert extends Component {
                 placeholder="H (cm)"
                 className="w-100"
                 name="height"
-                value={this.state.isCopy==true?el.height:el.height || ""}
+                value={this.state.isCopy == true ? el.height : el.height || ""}
                 disabled
                 //onBlur={this.cbmChange}
               />
@@ -1549,7 +1559,7 @@ class BookingInsert extends Component {
                 placeholder="H (cm)"
                 className="w-100"
                 name="height"
-                value={this.state.isCopy==true?el.height:el.height || ""}
+                value={this.state.isCopy == true ? el.height : el.height || ""}
                 //onBlur={this.cbmChange}
               />
             </div>
@@ -1563,7 +1573,11 @@ class BookingInsert extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
               name="GrossWeight"
-              value={this.state.isCopy==true?el.GrossWeight:el.GrossWeight || ""}
+              value={
+                this.state.isCopy == true
+                  ? el.GrossWeight
+                  : el.GrossWeight || ""
+              }
               className="w-100"
             />
           </div>
@@ -2235,6 +2249,7 @@ class BookingInsert extends Component {
                               <br />
                               {this.state.conshineeother === true ? (
                                 <textarea
+                                  style={{ width: "100%", resize: "none" }}
                                   value={this.state.Consinee_Displayas}
                                   onChange={this.HandleConsineeAddressChange.bind(
                                     this
@@ -2332,8 +2347,9 @@ class BookingInsert extends Component {
                               <br />
                               {this.state.shipperother === true ? (
                                 <textarea
+                                  style={{ width: "100%", resize: "none" }}
                                   value={this.state.Shipper_Displayas}
-                                  onChange={this.HandleConsineeAddressChange.bind(
+                                  onChange={this.HandleShipperAddressChange.bind(
                                     this
                                   )}
                                 ></textarea>
@@ -2432,8 +2448,9 @@ class BookingInsert extends Component {
                             <br />
                             {this.state.buyerother === true ? (
                               <textarea
+                                style={{ width: "100%", resize: "none" }}
                                 value={this.state.Buyer_Displayas}
-                                onChange={this.HandleConsineeAddressChange.bind(
+                                onChange={this.HandleBuyerAddressChange.bind(
                                   this
                                 )}
                               ></textarea>
@@ -2501,8 +2518,9 @@ class BookingInsert extends Component {
                             <br />
                             {this.state.notiother === true ? (
                               <textarea
+                                style={{ width: "100%", resize: "none" }}
                                 value={this.state.Notify_Displayas}
-                                onChange={this.HandleConsineeAddressChange.bind(
+                                onChange={this.HandleNotifyAddressChange.bind(
                                   this
                                 )}
                               ></textarea>
