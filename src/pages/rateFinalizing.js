@@ -119,8 +119,7 @@ class RateFinalizing extends Component {
       SalesQuoteNo: "",
       PickUpAddress: "",
       DestinationAddress: "",
-      multiCBM: [],
-      users: []
+      multiCBM: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -178,7 +177,8 @@ class RateFinalizing extends Component {
         var customClearance = this.props.location.state.Custom_Clearance;
         var specialEqtSelect = this.props.location.state.specialEqtSelect;
         var specialEquipment = this.props.location.state.specialEquipment;
-        var users  = this.props.location.state.users;
+        var polArray = this.props.location.state.polArray;
+        var podArray = this.props.location.state.podArray;
 
         var CargoDetailsArr = [];
         var equipmentTypeArr = [];
@@ -522,7 +522,8 @@ class RateFinalizing extends Component {
           CustomClearance: customClearance,
           specialEqtSelect: specialEqtSelect,
           specialEquipment: specialEquipment,
-          users: users
+          polArray: polArray,
+          podArray: podArray
         });
 
         this.state.rateDetails = rateDetails;
@@ -536,11 +537,15 @@ class RateFinalizing extends Component {
         this.state.incoTerm = incoTerms;
         this.state.commodityData = commodityData;
         this.state.selected = selected;
+        this.state.users = users;
         this.state.spacEqmtType = spacEqmtType;
         this.state.flattack_openTop = flattack_openTop;
         this.state.polfullAddData = polfullAddData;
         this.state.podfullAddData = podfullAddData;
         this.state.currencyCode = currencyCode;
+        this.state.multiCBM = multiCBM;
+        this.state.polArray = polArray;
+        this.state.podArray = podArray;
         this.HandleLocalCharges();
         this.HandleSurCharges();
       } else {
@@ -892,35 +897,54 @@ class RateFinalizing extends Component {
 
   HandleLocalCharges() {
     let self = this;
-
+    var Containerdetails = [];
+    var MultiplePOLPOD = [];
+    for (let i = 0; i < this.state.users.length; i++) {
+      Containerdetails.push({
+        ProfileCodeID: this.state.users[i].ProfileCodeID,
+        ContainerCode: this.state.users[i].StandardContainerCode,
+        Type: this.state.users[i].ContainerName,
+        ContainerQuantity: this.state.users[i].ContainerQuantity,
+        Temperature: this.state.users[i].Temperature,
+        TemperatureType: this.state.users[i].TemperatureType
+      })     
+    }
+    
+    if ((this.state.polArray.length > this.state.podArray.length) || 
+        (this.state.polArray.length==this.state.podArray.length)) {
+      for (let i = 0; i < this.state.polArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL: this.state.polArray[i].POL,
+          POD: this.state.podArray[i]==undefined?"":this.state.podArray[i].POD,
+          POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate: this.state.podArray[i]==undefined?"":this.state.podArray[i].PODGeoCordinate
+        })     
+      }
+    }
+    else if(this.state.podArray.length > this.state.polArray.length)
+    {
+      for (let i = 0; i < this.state.podArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL: this.state.polArray[i]==undefined?"":this.state.polArray[i].POL,
+          POD: this.state.podArray[i].POD,
+          POLGeoCordinate: this.state.polArray[i]==undefined?"":this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
+        })     
+      }
+    }
+   
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
       ModeOfTransport: this.state.modeoftransport,
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
-      Containerdetails: [
-        {
-          ProfileCodeID: this.state.selected.ProfileCodeID,
-          ContainerCode: this.state.selected.StandardContainerCode,
-          Type: "",
-          ContainerQuantity: 2,
-          Temperature: 0,
-          TemperatureType: ""
-        }
-      ],
+      Containerdetails: Containerdetails,
       Currency: self.state.currencyCode,
       // MultiplePOLPOD:[
       // {POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
       // {POL:'INBOM',POD:'TRPAM',POLGeoCordinate:'19.078682,72.879144',PODGeoCordinate:'40.968456,28.674417'}],
-      MultiplePOLPOD: [
-        {
-          POL: this.state.polfullAddData.UNECECode,
-          POD: this.state.podfullAddData.UNECECode,
-          POLGeoCordinate: this.state.polfullAddData.GeoCoordinate,
-          PODGeoCordinate: this.state.podfullAddData.GeoCoordinate
-        }
-      ],
+      MultiplePOLPOD: MultiplePOLPOD,
       RateQueryDim: [
         {
           Quantity: 0,
@@ -983,15 +1007,41 @@ class RateFinalizing extends Component {
 
   HandleSurCharges() {
     let self = this;
-    //var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    // var MultiplePOLPOD = [];
-    // for(var i=0; i < polfullAddData.length; i++)
-    // {
-    //   for(var j=i; j< podfullAddData.length;)
-    //   {
-    //     MultiplePOLPOD.push([{POL: polfullAddData[i].UNECECode, POD: podfullAddData}])
-    //   }
-    // }
+    var Containerdetails = [];
+    var MultiplePOLPOD = [];
+    for (let i = 0; i < this.state.users.length; i++) {
+      Containerdetails.push({
+        ProfileCodeID: this.state.users[i].ProfileCodeID,
+        ContainerCode: this.state.users[i].StandardContainerCode,
+        Type: this.state.users[i].ContainerName,
+        ContainerQuantity: this.state.users[i].ContainerQuantity,
+        Temperature: this.state.users[i].Temperature,
+        TemperatureType: this.state.users[i].TemperatureType
+      })     
+    }
+    
+    if ((this.state.polArray.length > this.state.podArray.length) || 
+        (this.state.polArray.length==this.state.podArray.length)) {
+      for (let i = 0; i < this.state.polArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL: this.state.polArray[i].POL,
+          POD: this.state.podArray[i]==undefined?"":this.state.podArray[i].POD,
+          POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate: this.state.podArray[i]==undefined?"":this.state.podArray[i].PODGeoCordinate
+        })     
+      }
+    }
+    else if(this.state.podArray.length > this.state.polArray.length)
+    {
+      for (let i = 0; i < this.state.podArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL: this.state.polArray[i]==undefined?"":this.state.polArray[i].POL,
+          POD: this.state.podArray[i].POD,
+          POLGeoCordinate: this.state.polArray[i]==undefined?"":this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
+        })     
+      }
+    }
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SurChargesSalesQuote`,
@@ -1001,31 +1051,9 @@ class RateFinalizing extends Component {
         Type: this.state.shipmentType,
         TypeOfMove: this.state.typeofMove,
         ChargeableWeight: 0,
-        Containerdetails: [
-          {
-            ProfileCodeID: this.state.selected.ProfileCodeID,
-            ContainerCode: this.state.selected.StandardContainerCode,
-            Type: "",
-            ContainerQuantity: 2,
-            Temperature: 0,
-            TemperatureType: ""
-          }
-        ],
-        Currency: "INR",
-        MultiplePOLPOD: [
-          {
-            POL: "INNSA",
-            POD: "TRPAM",
-            POLGeoCordinate: "18.950123,72.950055",
-            PODGeoCordinate: "40.968456,28.674417"
-          },
-          {
-            POL: "INBOM",
-            POD: "TRPAM",
-            POLGeoCordinate: "19.078682,72.879144",
-            PODGeoCordinate: "40.968456,28.674417"
-          }
-        ],
+        Containerdetails: Containerdetails,
+        Currency: self.state.currencyCode,
+        MultiplePOLPOD: MultiplePOLPOD,
         RateQueryDim: [
           {
             Quantity: 0,
@@ -1037,7 +1065,7 @@ class RateFinalizing extends Component {
             Volume: 0
           }
         ],
-        MyWayUserID: 874588
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
     }).then(function(response) {
@@ -1832,8 +1860,8 @@ class RateFinalizing extends Component {
       ShipmentType :this.state.shipmentType,
       Inco_terms:this.state.incoTerm,
       TypesOfMove :this.state.typeofMove, 
-      PickUpAddress :this.state.PickUpAddress,
-      DestinationAddress :this.state.DestinationAddress, 
+      PickUpAddress :PickUpAddress,
+      DestinationAddress :DestinationAddress, 
       HazMat :this.state.HazMat == true ? 1 : 0,
       ChargeableWt :this.props.location.state.ChargeableWeight,
       Containerdetails:Containerdetails,
@@ -3923,9 +3951,11 @@ class RateFinalizing extends Component {
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
       let amtSign;
       if (item.Currency == "INR") {
-        amtSign = "";
+        amtSign = " INR";
       } else if (item.Currency == "USD") {
         amtSign = "$";
+      } else if (item.Currency == "TL") {
+        amtSign = " TL"
       }
       return (
         <div>
@@ -3945,8 +3975,11 @@ class RateFinalizing extends Component {
             <label htmlFor={"local" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
           <span>
+            {item.LineName}
+          </span>
+          <span>
             {item.Amount}
-            {amtSign}
+            {" "+item.Currency}
           </span>
         </div>
       );
@@ -3955,10 +3988,14 @@ class RateFinalizing extends Component {
     const checkSurCharges = this.state.arrSurCharges.map((item, index) => {
       let amtSign;
       if (item.Currency == "INR") {
-        amtSign = "";
+        amtSign = " INR";
       } else if (item.Currency == "USD") {
         amtSign = "$";
       }
+      else if (item.Currency == "TL") {
+        amtSign = " TL"
+      }
+
       return (
         <div>
           <div className="d-flex">
@@ -3977,8 +4014,11 @@ class RateFinalizing extends Component {
             <label htmlFor={"Sur" + (index + 1)}>{item.ChargeDesc}</label>
           </div>
           <span>
+            {item.LineName}
+          </span>
+          <span>
             {item.Amount}
-            {amtSign}
+            {" "+item.Currency}
           </span>
         </div>
       );
@@ -6068,9 +6108,9 @@ class RateFinalizing extends Component {
                 </div>
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
-                    <h3>
+                    {/* <h3>
                       To, <span>{this.state.CompanyName}</span>
-                    </h3>
+                    </h3> */}
                     <label>
                       ATNN : <span>{this.state.ContactName}</span>
                     </label>
@@ -6253,7 +6293,7 @@ class RateFinalizing extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-4">
                             <label>
-                              Transit Time<span>{item.TransitTime}</span>
+                              Transit Time : <span>{item.TransitTime+" Days"}</span>
                             </label>
                           </div>
                           {/* <div className="col-12 col-sm-4">
@@ -6469,8 +6509,9 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                   </div>
-
-                  <div className="row">
+                  
+                  {DocumentCharges.length!==0?
+                  (<div className="row">
                     <div className="col-12">
                       <div className="thirdbox">
                         <h3>Documentation Charges</h3>
@@ -6511,7 +6552,7 @@ class RateFinalizing extends Component {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div>):null}
                 </>
               ))}
               <div className="row">

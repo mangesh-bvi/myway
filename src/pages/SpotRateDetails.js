@@ -364,6 +364,7 @@ class SpotRateDetails extends Component {
   }
 
   toggleViewRate() {
+    debugger;
     let self = this;
     let fields = this.state.fields;
     let mapPositionPOD = this.state.mapPositionPOD;
@@ -376,34 +377,57 @@ class SpotRateDetails extends Component {
     var multiCBM = [];
     fields["pod"] = this.state.spotrateresponseTbl.DestinationAddress;
     fields["pol"] = this.state.spotrateresponseTbl.PickUpAddress;
-    mapPositionPOD["lat"] = parseFloat(
-      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
-    );
+    if (this.state.spotrateresponseTbl.DeliveryGeoCordinate !== null) {
+      mapPositionPOD["lat"] = parseFloat(
+        this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
+      );
+    }
+
     //mapPositionPOD["lat"] = 40.968456;
-    mapPositionPOD["lng"] = parseFloat(
-      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[1]
-    );
+    if (this.state.spotrateresponseTbl.DeliveryGeoCordinate !== null) {
+      mapPositionPOD["lng"] = parseFloat(
+        this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[1]
+      );
+    }
+
     //mapPositionPOD["lng"] = 28.674417;
-    mapPositionPOL["lat"] = parseFloat(
-      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[0]
-    );
+    if (this.state.spotrateresponseTbl.PickupGeoCordinate !== null) {
+      mapPositionPOL["lat"] = parseFloat(
+        this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[0]
+      );
+    }
+
+    if (this.state.spotrateresponseTbl.PickupGeoCordinate !== null) {
+      mapPositionPOL["lng"] = parseFloat(
+        this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
+      );
+    }
     //mapPositionPOL["lat"] = 18.950123;
-    mapPositionPOL["lng"] = parseFloat(
-      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
-    );
+
     //mapPositionPOL["lng"] = 72.950055;
-    markerPositionPOD["lat"] = parseFloat(
-      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
-    );
-    markerPositionPOD["lat"] = parseFloat(
-      this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
-    );
-    markerPositionPOD["lng"] = parseFloat(
-      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
-    );
-    markerPositionPOD["lng"] = parseFloat(
-      this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
-    );
+    if (this.state.spotrateresponseTbl.DeliveryGeoCordinate !== null) {
+      markerPositionPOD["lat"] = parseFloat(
+        this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
+      );
+    }
+
+    if (this.state.spotrateresponseTbl.DeliveryGeoCordinate !== null) {
+      markerPositionPOD["lat"] = parseFloat(
+        this.state.spotrateresponseTbl.DeliveryGeoCordinate.split(",")[0]
+      );
+    }
+
+    if (this.state.spotrateresponseTbl.PickupGeoCordinate !== null) {
+      markerPositionPOD["lng"] = parseFloat(
+        this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
+      );
+    }
+
+    if (this.state.spotrateresponseTbl.PickupGeoCordinate !== null) {
+      markerPositionPOD["lng"] = parseFloat(
+        this.state.spotrateresponseTbl.PickupGeoCordinate.split(",")[1]
+      );
+    }
     //podfullAddData["GeoCoordinate"] = "40.968456,28.674417";
     podfullAddData[
       "GeoCoordinate"
@@ -518,6 +542,7 @@ class SpotRateDetails extends Component {
     }
     this.state.currencyCode = this.state.spotrateresponseTbl.BaseCurrency;
     this.state.NonStackable = this.state.spotrateresponseTbl.NonStackable;
+    debugger;
     self.setState({
       Custom_Clearance: this.state.Custom_Clearance,
       DeliveryCity: this.state.DeliveryCity,
@@ -577,7 +602,8 @@ class SpotRateDetails extends Component {
       values: [],
       values1: [],
       zoomPOD: 0,
-      zoomPOL: 0
+      zoomPOL: 0,
+      RatequeryID: this.state.spotrateresponseTbl.RateQueryId
     });
     this.HandleViewRateData();
   }
@@ -684,7 +710,8 @@ class SpotRateDetails extends Component {
                         </div> */}
                         <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                           <p className="details-title">
-                            HazMat &amp; Unstackable
+                            {/* HazMat &amp; Unstackable */}
+                            HazMat
                           </p>
 
                           {this.state.spotrateresponseTbl.HAZMAT && (
@@ -694,7 +721,19 @@ class SpotRateDetails extends Component {
                             <p className="details-para">No</p>
                           )}
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <p className="details-title">NonStackable</p>
+
+                          {this.state.spotrateresponseTbl.NonStackable && (
+                            <p className="details-para">Yes</p>
+                          )}
+                          {!this.state.spotrateresponseTbl.NonStackable && (
+                            <p className="details-para">No</p>
+                          )}
+                        </div>
+
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Custom Clearance</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl

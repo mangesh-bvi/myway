@@ -123,6 +123,7 @@ class BookingInsert extends Component {
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
   componentDidMount() {
+    debugger
     var rData = this.props.location.state;
     if (
       // typeof rData.ContainerLoad !== "" &&
@@ -163,8 +164,81 @@ class BookingInsert extends Component {
           this.HandlePackgeTypeData();
         }, 100);
       }
+      else{
+        setTimeout(() => {
+          this.HandleGetSalesQuotaionINLAND();
+          this.NonCustomerList();
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+        }, 100);
+      }
     }
+    
   }
+
+  HandleGetSalesQuotaionINLAND() {
+    let self = this;
+    debugger;
+    var ContainerLoad = this.state.ContainerLoad;
+    var salesQuotaNo = this.state.salesQuotaNo;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SalesQuoteView`,
+      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var QuotationData = response.data.Table1;
+      var QuotationSubData = response.data.Table2;
+      var Booking = response.data.Table;
+      var multiCBM = response.data.Table3;
+
+      //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
+
+      if (QuotationData.length > 0) {
+        var selectedCommodity = QuotationData[0].Commodity;
+        var IncoTerms = QuotationData[0].IncoTerm;
+        var POL = QuotationData[0].POL;
+        var POD = QuotationData[0].POD;
+        var SaleQuoteID = QuotationData[0].SaleQuoteID;
+        var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
+        var TypeofMove = QuotationData[0].TypeOfMove;
+        self.setState({
+          multiCBM,
+          QuotationData,
+          QuotationSubData,
+          selectedCommodity,
+          IncoTerms,
+          POL,
+          POD,
+          SaleQuoteID,
+          SaleQuoteIDLineID,
+          TypeofMove
+        });
+      }
+      if (Booking.length > 0) {
+        var ModeofTransport = Booking[0].ModeOfTransport;
+        var companyID = Booking[0].companyID;
+        var company_name = Booking[0].company_name;
+        var contact_name = Booking[0].contact_name;
+        var Company_Address = Booking[0].Company_Address;
+        var SaleQuoteNo = Booking[0].SaleQuoteID;
+        var ShipmentType = Booking[0].ShipmentType;
+
+        self.setState({
+          ModeofTransport,
+          companyID,
+          company_name,
+          contact_name,
+          Company_Address,
+          SaleQuoteNo,
+          ShipmentType
+        });
+      }
+    });
+  }
+
 
   HandleGetSalesQuotaionLCL() {
     let self = this;
@@ -519,6 +593,7 @@ class BookingInsert extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data.Table[0].Message);
+      this.props.history.push("./booking-table")
     });
   }
   HandleCommodityDropdown() {
@@ -695,8 +770,8 @@ class BookingInsert extends Component {
       this.state.NotifyID = id.Company_ID;
       this.HandleCompanyAddress(field, id.Company_ID);
     } else {
-      var Shipper_Displayas = id.Company_Address;
-      this.setState({ buyerData: id, Shipper_Displayas });
+      var Buyer_AddressID = id.Company_Address;
+      this.setState({ buyerData: id, Buyer_AddressID });
       this.state.BuyerID = id.Company_ID;
       this.HandleCompanyAddress(field, id.Company_ID);
     }
