@@ -156,23 +156,21 @@ class BookingInsert extends Component {
         salesQuotaNo: rData.salesQuotaNo,
         userType
       });
-      if (rData.ContainerLoad === "LCL") {
+      if (rData.ContainerLoad.trim() === "LCL") {
         setTimeout(() => {
           this.HandleGetSalesQuotaionLCL();
           this.NonCustomerList();
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
         }, 100);
-      }
-      if (rData.ContainerLoad === "FCL") {
+      } else if (rData.ContainerLoad.trim() === "FCL") {
         setTimeout(() => {
           this.HandleGetSalesQuotaionFCL();
           this.NonCustomerList();
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
         }, 100);
-      }
-      if (rData.ContainerLoad === "AIR") {
+      } else if (rData.ContainerLoad.trim() === "AIR") {
         setTimeout(() => {
           this.HandleGetSalesQuotaionAIR();
           this.NonCustomerList();
@@ -2694,72 +2692,14 @@ class BookingInsert extends Component {
             >
               <h3 className="mb-4">Edit Cargo Details</h3>
               <>
-                {" "}
-                {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                        <Select
-                          className="rate-dropdown"
-                          getOptionLabel={option =>
-                            option.StandardContainerCode
-                          }
-                          getOptionValue={option =>
-                            option.StandardContainerCode
-                          }
-                          isMulti
-                          options={this.state.EquipmentType}
-                          onChange={this.newaddClick.bind(this)}
-                          value={this.state.selected}
-                          showNewOptionAtTop={false}
-                        />
-                      </div> */}
-                {/* <div className="d-flex flex-wrap justify-content-center">
-                        {this.NewcreateUI()}
-                      </div>
-                      <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                        <input
-                          id="Special-equType"
-                          type="checkbox"
-                          className="d-none"
-                          name={"Special-equType"}
-                          // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                        />
-                      </div> */}
                 {this.state.ModeofTransport === "FCL" ? (
                   // this.state.specialEquipment === true ? (
                   this.state.flattack_openTop.length > 0 ? (
                     <div className="">
-                      {/* spe-equ mt-0 */}
-                      {/* <div className="equip-plus-cntr w-100">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.SpecialContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.SpecialContainerCode
-                              }
-                              options={this.state.SpacialEqmt}
-                              placeholder="Select Kind of Special Equipment"
-                              onChange={this.specEquipChange}
-                              showNewOptionAtTop={false}
-                            />
-                          </div> */}
-                      <div id="cbmInner">
-                        {/* {this.state.specialEqtSelect === true ? ( */}
-                        {/* {this.state.flattack_openTop.length > 0 ? ( */}
-                        <>{this.MultiCreateCBM()}</>
-                        {/* //) : null */}
-                        {/* ) : null} */}
-                      </div>
+                      <div id="cbmInner"></div>
                     </div>
                   ) : (
                     <div className="row cbm-space" key={i}>
-                      {/* <div className="col-md">
-                        <div className="spe-equ">
-                          <label className="mr-0 mt-2" name="SpecialContainerCode">
-                            {el.SpecialContainerCode}
-                          </label>
-                        </div>
-                      </div> */}
                       <div className="col-md">
                         <div className="spe-equ">
                           <select
@@ -2864,18 +2804,7 @@ class BookingInsert extends Component {
                           />
                         </div>
                       </div>
-                      {/* <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            name="total"
-                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                            placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
-                            value={el.total || ""}
-                            className="w-100"
-                          />
-                        </div>
-                      </div> */}
+
                       {i === 0 ? (
                         <div className="">
                           <div className="spe-equ">
@@ -2898,15 +2827,6 @@ class BookingInsert extends Component {
                           </div>
                         </div>
                       ) : null}
-                      {/* <div className="">
-                        <div className="spe-equ">
-                          <i
-                            className="fa fa-minus mt-2"
-                            aria-hidden="true"
-                            //onClick={this.removeClickMultiCBM.bind(this)}
-                          ></i>
-                        </div>
-                      </div> */}
                     </div>
                   )
                 ) : (

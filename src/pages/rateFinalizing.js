@@ -4539,10 +4539,7 @@ class RateFinalizing extends Component {
                                       {
                                         mode=this.state.modeoftransport;
                                       }
-                                    // mode =
-                                    // this.state.modeoftransport === "SEA"
-                                    // ? "Ocean"
-                                    // : this.state.modeoftransport === "AIR"?"Air":"Inlande";
+                                    
                                     }
 
                                   if (mode === "Ocean" && lname !== "") {
