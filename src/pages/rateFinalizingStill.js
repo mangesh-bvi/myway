@@ -1373,6 +1373,7 @@ class RateFinalizingStill extends Component {
                 //  }
               })()}
               {/* <h2>Rate Query Details</h2> */}
+              <h2>{this.props.location.state.detail.Status}</h2>
             </div>
             <div className="row">
               {/* <div className="col-md-4">
