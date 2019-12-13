@@ -376,57 +376,55 @@ class RateFinalizingStill extends Component {
     }
     var RejectResontxt = document.getElementById("RejectResontxt").value;
     debugger;
-    if(RejectResontxt!=="")
-    {
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/SalesQuoteReject`,
-      data: {
-        Mode: QuoteType,
-        SalesQuoteNumber: SalesQuoteNumber,
-        isReject: 1,
-        RejectReason: RejectResontxt,
-        MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
-      },
-      headers: authHeader()
-    })
-      .then(function(response) {
-        debugger;
+    if (RejectResontxt !== "") {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/SalesQuoteReject`,
+        data: {
+          Mode: QuoteType,
+          SalesQuoteNumber: SalesQuoteNumber,
+          isReject: 1,
+          RejectReason: RejectResontxt,
+          MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
+        },
+        headers: authHeader()
+      })
+        .then(function(response) {
+          debugger;
 
-        //self.toggleRejectPop();
+          //self.toggleRejectPop();
 
-        if (response != null) {
-          if (response.data != null) {
-            if (response.data.Table != null) {
-              if (response.data.Table.length > 0) {
-                NotificationManager.success(response.data.Table[0].Message);
-                self.toggleRejectModal();
-                setTimeout(function() {
-                  window.location.href = "quote-table";
-                }, 1000);
+          if (response != null) {
+            if (response.data != null) {
+              if (response.data.Table != null) {
+                if (response.data.Table.length > 0) {
+                  NotificationManager.success(response.data.Table[0].Message);
+                  self.toggleRejectModal();
+                  setTimeout(function() {
+                    window.location.href = "quote-table";
+                  }, 1000);
+                }
               }
             }
           }
-        }
 
-        var Messagebody =
-          "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
+          var Messagebody =
+            "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
 
-        self.SendMail(SalesQuoteNumber, Messagebody);
-      })
-      .catch(error => {
-        debugger;
-        var temperror = error.response.data;
-        var err = temperror.split(":");
-        //alert(err[1].replace("}", ""))
-        NotificationManager.error(err[1].replace("}", ""));
-      });
-    }
-    else{
-      var errorRejReson = "Please enter rejection reason"
+          self.SendMail(SalesQuoteNumber, Messagebody);
+        })
+        .catch(error => {
+          debugger;
+          var temperror = error.response.data;
+          var err = temperror.split(":");
+          //alert(err[1].replace("}", ""))
+          NotificationManager.error(err[1].replace("}", ""));
+        });
+    } else {
+      var errorRejReson = "Please enter rejection reason";
       self.setState({
-        errorRejReson:errorRejReson 
-      })
+        errorRejReson: errorRejReson
+      });
     }
   }
 
@@ -1800,7 +1798,7 @@ class RateFinalizingStill extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">TT</p>
+                                      <p className="details-title">TT (Days)</p>
                                       {this.state.ContainerLoad !== "INLAND" ? (
                                         <p className="details-para">
                                           {row.original.TransitTime}
@@ -1953,8 +1951,10 @@ class RateFinalizingStill extends Component {
                                         accessor: "ChargeItem",
                                         Cell: props => (
                                           <React.Fragment>
-                                            {props.original.Chargeitem !== undefined?
-                                            props.original.Chargeitem:props.original.ChargeItem}
+                                            {props.original.Chargeitem !==
+                                            undefined
+                                              ? props.original.Chargeitem
+                                              : props.original.ChargeItem}
                                           </React.Fragment>
                                         )
                                       },
@@ -2026,7 +2026,10 @@ class RateFinalizingStill extends Component {
                   <div className="rate-final-contr">
                     <Collapse in={this.state.showContent}>
                       <div>
-                        <div className="title-border py-3" style={{marginBottom:"15px"}}>
+                        <div
+                          className="title-border py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
@@ -2069,7 +2072,7 @@ class RateFinalizingStill extends Component {
 
                           {this.state.ContainerLoad !== "FCL" && "LTL" ? (
                             <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                                 <p className="details-title">Non Stackable</p>
                                 <p className="details-para">
                                   {this.state.HazMatUnstackable == 1
@@ -2077,7 +2080,7 @@ class RateFinalizingStill extends Component {
                                     : "No"}
                                 </p>
                               </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                                 <p className="details-title">CustomClearance</p>
                                 <p className="details-para">
                                   {this.state.CustomClearance == 1
@@ -2087,7 +2090,7 @@ class RateFinalizingStill extends Component {
                               </div>
                             </>
                           ) : (
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                               <p className="details-title">CustomClearance</p>
                               <p className="details-para">
                                 {this.state.CustomClearance == 1 ? "Yes" : "No"}
@@ -2131,7 +2134,10 @@ class RateFinalizingStill extends Component {
                         </div>
                       </div>
                     </Collapse>
-                    <div className="text-right" style={{marginBottom:"15px"}}>
+                    <div
+                      className="text-right"
+                      style={{ marginBottom: "15px" }}
+                    >
                       <button
                         className={className}
                         id="toggler"
@@ -2156,19 +2162,19 @@ class RateFinalizingStill extends Component {
                     </div>
                     <div className="">
                       <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                           <p className="details-title">Account/Customer</p>
                           <p className="details-para">
                             {this.state.accountcustname}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                           <p className="details-title">Address</p>
                           <p className="details-para">
                             {this.state.custAddress}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                           <p className="details-title">Notification Person</p>
                           <p className="details-para">
                             {this.state.custNotification}
@@ -2353,15 +2359,14 @@ class RateFinalizingStill extends Component {
                       Save File
                     </Button> */}
 
-                      {this.state.toggleCustomerType &&
-                        this.state.Bookingcreation && (
-                          <button
-                            onClick={this.toggleBook}
-                            className="butn more-padd mt-4"
-                          >
-                            Create Booking
-                          </button>
-                        )}
+                      {this.state.Bookingcreation && (
+                        <button
+                          onClick={this.toggleBook}
+                          className="butn more-padd mt-4"
+                        >
+                          Create Booking
+                        </button>
+                      )}
                     </center>
                   </div>
                 </div>
@@ -2572,11 +2577,9 @@ class RateFinalizingStill extends Component {
             <p>Do You Want to Reject Quotation ?</p>
             <div className="text-center">
               <div className="rename-cntr reject-popup login-fields">
-                  <label>Reject Reason</label>
-                  <input type="text" id="RejectResontxt" />
-                  <span style={{ color: "red" }}>
-                      {this.state.errorRejReson}
-                  </span>
+                <label>Reject Reason</label>
+                <input type="text" id="RejectResontxt" />
+                <span style={{ color: "red" }}>{this.state.errorRejReson}</span>
               </div>
               <Button
                 className="butn"

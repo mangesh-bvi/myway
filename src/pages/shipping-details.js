@@ -633,7 +633,7 @@ class ShippingDetails extends Component {
                   style={{ marginLeft: "15px" }}
                   className="butn"
                 >
-                  Advanced Search
+                  Advance Search
                 </a>
                 <a
                   href="#!"
