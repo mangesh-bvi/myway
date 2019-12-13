@@ -77,7 +77,7 @@ class ActivityLog extends Component {
           </div>
 
           <div className="cls-rt no-bg min-hei-auto">
-            <div className="title-sect">
+            <div className="title-sect d-block-xs">
               <div>
                 <h2>Activity Log</h2>
               </div>

@@ -515,7 +515,7 @@ class Header extends Component {
                                 alt="user-icon"
                               />
                             </li>
-                            <li>
+                            <li style={{position: "static"}}>
                               <label className="lbl-cursor">
                                 Last Login
                                 <span
@@ -574,7 +574,7 @@ class Header extends Component {
                             <QRCode />
                           </div>
                         </li> */}
-                        <li
+                        <li  style={{position: "static"}}
                           className="logout-li"
                           onClick={this.onLogout.bind(this)}
                         >

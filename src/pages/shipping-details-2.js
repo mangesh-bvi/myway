@@ -1183,11 +1183,11 @@ class ShippingDetailsTwo extends Component {
             <div className="container-fluid">
               <div className="row">
                 <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0">
-                  <div className="title-sect">
+                  <div className="title-sect d-block-xs">
                     <h2>Details View</h2>
                     <div>{Watchlist}</div>
                   </div>
-                  <ul className="nav cust-tabs" role="tablist">
+                  <ul className="nav cust-tabs d-block-xs" role="tablist">
                     <li>
                       <a
                         className="active"

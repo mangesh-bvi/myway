@@ -154,7 +154,7 @@ h3 {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 999;
+  z-index: 2;
 }
 .pdtop {
   padding-top: 70px;
@@ -2584,7 +2584,7 @@ table tbody tr:last-child {
   margin-top: 5px;
 }
 .cls-flside {
-  width: 19%;
+  width: 20%;
   float: left;
   height: auto;
   background-color: #0142aa;
@@ -3893,7 +3893,7 @@ img {
   left: 165px;
   position: absolute;
   width: 20px;
-  z-index: 99999999999;
+  z-index: 3;
   float: none;
   margin: 0 0 0 30px;
   cursor: pointer;

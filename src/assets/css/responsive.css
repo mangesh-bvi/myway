@@ -206,6 +206,10 @@
   /* .cls-rt {
     width: calc(94% - 40px);
   } */
+  .dynamic-remove {
+    left: 91%;
+    margin-top: 3px;
+}
 }
 @media (min-width: 576px) and (max-width: 767px) {
   .header-ul li {
@@ -219,6 +223,19 @@
   .header-chat-icon {
     padding: 0 4px;
   }
+  .details-border {
+    align-items: flex-start;
+    flex-direction: column;
+}
+.dynamic-remove {
+    left: 80%;
+    margin-top: 12px;
+}
+}
+@media (min-width: 576px) and (max-width: 640px) {
+  .menubars {
+    left: 120px;
+  }
 }
 @media (min-width: 461px) and (max-width: 575px) {
   .header-log {
@@ -230,11 +247,13 @@
     margin: auto;
     border-top: 1px solid #d6d6d6;
   }
+  .header-ul li {
+    padding: 10px 15px;
+}
+}
+@media (min-width: 320px) and (max-width: 575px) {
   .br-none {
     border-right: none !important;
-  }
-  .header-ul li:last-child {
-    display: none;
   }
   .header-btn {
     padding: 5px 10px;
@@ -247,6 +266,172 @@
     z-index: 99999999999;
     margin: 0;
   }
+  .header-fixed {
+    position: static;
+  }
+  .pdtop {
+    padding-top: 0;
+  }
+  .amnt-popup .txt-cntr .d-flex:last-child {
+    display: block !important;
+  }
+  .cls-ofl {
+    padding: 15px;
+}
+.cls-flside {
+  display: none;
+}
+.cls-rt {
+  width: 100%;
+  margin: 0;
+}
+.title-sect h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.title-sect .butn {
+  margin: 0 0 15px 0;
+  display: block;
+  width: 100%;
+}
+.d-block-xs {
+  display: block !important;
+}
+.btnxs .title-sect .butn {
+  margin: 15px 0 0 0 !important;
+  width: 100%;
+}
+.hidden-xs {
+  display: none !important;
+}
+.advsearch-sect .butn {
+  font-size: 12px;
+  padding: 7px 10px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+.cust-tabs a {
+  margin-right: 0;
+  display: block;
+  text-align: center;
+}
+.details-border {
+  border-right: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: block;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+.view-btn {
+  width: 100%;
+}
+.add-docu-btn .butn {
+  width: 100%;
+}
+.butn {
+  width: 100%;
+}
+.new-radio-rate-cntr {
+  display: block;
+}
+.rate-bg .new-radio-rate-cntr label {
+  width: 100%;
+  margin: 0 0 15px 0;
+}
+.new-rate-cntr h3 {
+  text-align: left;
+  font-size: 14px;
+}
+.rate-dropdown {
+  width: 100%;
+}
+.rate-table-header {
+  display: block;
+}
+.rate-table-header h2 {
+  margin: 0;
+}
+.rate-tab-drop select {
+  width: 100%;
+  margin: 0 !important;
+}
+.rate-table-range {
+  border: none;
+}
+.blue-butn {
+  margin: 15px 0 !important;
+}
+.ReactTable {
+  display: block !important;
+}
+.quote-to-from .react-datepicker-wrapper {
+  width: 100%;
+  margin-right: 0;
+}
+.quote-txt-srch {
+  width: 100%;
+  margin-bottom: 15px;
+}
+.rate-fin-tit {
+  display: block !important;
+}
+.r-border {
+  border-right: none;
+}
+.thirdbox .table-responsive {
+  display: block;
+}
+.pl-0, .px-0 {
+  padding-left: 15px !important;
+}
+.planner-cntr {
+  padding: 5px;
+}
+.planner-top-butns .butn {
+  width: 100%;
+  margin: 0 0 15px 0;
+}
+.planner-cntr .butn {
+  margin: 15px 0 0 0;
+  width: 100%;
+  padding: 7px;
+}
+.cls-ofl {
+  overflow: auto;
+}
+.cust-tabs li {
+  display: block;
+  width: 100%;
+}
+.ana-radio-cntr {
+  display: block;
+  margin-bottom: 20px;
+}
+.ana-radio-cntr > div {
+  margin-right: 0;
+}
+.ana-viw {
+  margin-bottom: 15px;
+}
+.grncuntr .row {
+  margin-left: -15px !important;
+}
+.greenchartlbl1 {
+  font-size: 16px;
+  width: 100%;
+  margin-left: 0;
+}
+.dot {
+  height: 192px;
+  width: 100%;
+  margin-left: 0;
+}
+.login-fields select {
+  margin: 0 0 15px 0 !important;
+}
 }
 @media (min-width: 320px) and (max-width: 460px) {
   .login-between {
@@ -256,7 +441,7 @@
     margin-right: 10px;
   }
   .header-log {
-    margin: auto;
+    margin: 0;
     display: block;
   }
   .header-ul {
@@ -264,21 +449,10 @@
     margin: auto;
     border-top: 1px solid #d6d6d6;
   }
-  .br-none {
-    border-right: none !important;
-  }
   .header-ul li:last-child {
-    display: none;
-  }
-  .header-btn {
-    padding: 5px 10px;
-    margin: 10px 0px 0 0px;
-  }
-  .menubars {
-    top: 25px;
-    left: auto;
-    right: 15px;
-    z-index: 99999999999;
-    margin: 0;
-  }
+    display: block;
+    position: absolute;
+    top: -70px;
+    right: 0;
+}
 }
