@@ -1929,13 +1929,18 @@ class ShippingDetailsTwo extends Component {
                     </div>
                     <div className="shipment-track-cntr">
                       <div className="shipment-track">
-                        <div>
+                        <div className="flex-grow-1">
                           <p className="est-title">Estimated Time of Arrival</p>
-                          <p className="est-time">
-                            {/* {this.state.containerData[0].DepartureDate} */}
-                            {this.state.DData}
-                            {/* 4545 */}
-                          </p>
+                          <div className="d-flex justify-content-between">
+                            <p className="est-time">
+                              {/* {this.state.containerData[0].DepartureDate} */}
+                              {this.state.DData}
+                              {/* 4545 */}
+                            </p>
+                            <p className="est-time eve-clr" color={eventColor}>
+                              {this.state.eve}
+                            </p>
+                          </div>
                         </div>
                         <div className="ship-white-cntr">
                           <div className="ship-white">

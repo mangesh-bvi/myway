@@ -2020,7 +2020,10 @@ class BookingInsert extends Component {
                   <div className="rate-final-contr">
                     <Collapse in={this.state.showContent}>
                       <div>
-                        <div className="title-border py-3" style={{marginBottom:"15px"}}>
+                        <div
+                          className="title-border py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
@@ -2104,7 +2107,10 @@ class BookingInsert extends Component {
                         </div>
                       </div>
                     </Collapse>
-                    <div className="text-right" style={{marginBottom:"15px"}}>
+                    <div
+                      className="text-right"
+                      style={{ marginBottom: "15px" }}
+                    >
                       <button
                         className={className}
                         id="toggler"
@@ -2158,7 +2164,7 @@ class BookingInsert extends Component {
                     </div> */}
                     <div>
                       <div className="title-border-t py-3 remember-forgot rate-checkbox">
-                        <h3 style={{display:"inline"}}>Consignee Details</h3>
+                        <h3 style={{ display: "inline" }}>Consignee Details</h3>
                         <input
                           type="checkbox"
                           onChange={this.HandleRadioBtn.bind(this, "Conshinee")}
@@ -2167,10 +2173,7 @@ class BookingInsert extends Component {
                           checked={this.state.isConshinee}
                           value="Consignee"
                         />
-                        <label
-                          className="d-flex"
-                          htmlFor="exist-cust"
-                        >
+                        <label className="d-flex" htmlFor="exist-cust">
                           Consignee
                         </label>
                       </div>
@@ -2231,12 +2234,12 @@ class BookingInsert extends Component {
                                   : ""}
                                 <option>Other</option>
                               </select>
-                              
                             </div>
                             <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
+                              <p className="details-title">&nbsp;</p>
                               {this.state.conshineeother === true ? (
-                              <textarea className="form-control"
+                                <textarea
+                                  className="form-control"
                                   style={{ width: "100%", resize: "none" }}
                                   value={this.state.Consinee_Displayas}
                                   onChange={this.HandleConsineeAddressChange.bind(
@@ -2244,7 +2247,7 @@ class BookingInsert extends Component {
                                   )}
                                 ></textarea>
                               ) : null}
-                          </div>
+                            </div>
                           </div>
                         ) : (
                           <div className="">
@@ -2277,22 +2280,22 @@ class BookingInsert extends Component {
                     </div>
                     <div>
                       <div className="title-border-t py-3 remember-forgot rate-checkbox">
-                        <h3 style={{display:"inline"}}>Shipper Details</h3>
-                        <div style={{display:"inline" , float:"left"}}>
+                        <h3 style={{ display: "inline" }}>Shipper Details</h3>
+                        <div style={{ display: "inline", float: "left" }}>
                           <input
-                          type="checkbox"
-                          onChange={this.HandleRadioBtn.bind(this, "Shipper")}
-                          name="cust-select"
-                          id="new-cust"
-                          checked={this.state.isShipper}
-                          value="Shipper"
-                        />
-                        <label
-                          className="d-flex flex-column align-items-center"
-                          htmlFor="new-cust"
-                        >
-                          Shipper
-                        </label>
+                            type="checkbox"
+                            onChange={this.HandleRadioBtn.bind(this, "Shipper")}
+                            name="cust-select"
+                            id="new-cust"
+                            checked={this.state.isShipper}
+                            value="Shipper"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            Shipper
+                          </label>
                         </div>
                       </div>
                       <div>
@@ -2348,12 +2351,12 @@ class BookingInsert extends Component {
                                   : ""}
                                 <option>Other</option>
                               </select>
-                              
                             </div>
                             <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
+                              <p className="details-title">&nbsp;</p>
                               {this.state.shipperother === true ? (
-                              <textarea className="form-control"
+                                <textarea
+                                  className="form-control"
                                   style={{ width: "100%", resize: "none" }}
                                   value={this.state.Shipper_Displayas}
                                   onChange={this.HandleShipperAddressChange.bind(
@@ -2361,7 +2364,7 @@ class BookingInsert extends Component {
                                   )}
                                 ></textarea>
                               ) : null}
-                          </div>
+                            </div>
                           </div>
                         ) : (
                           <div className="">
@@ -2453,10 +2456,11 @@ class BookingInsert extends Component {
                               <option>Other</option>
                             </select>
                           </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">&nbsp;</p>
                             {this.state.buyerother === true ? (
-                              <textarea className="form-control"
+                              <textarea
+                                className="form-control"
                                 style={{ width: "100%", resize: "none" }}
                                 value={this.state.Buyer_Displayas}
                                 onChange={this.HandleBuyerAddressChange.bind(
@@ -2525,10 +2529,11 @@ class BookingInsert extends Component {
                               <option>Other</option>
                             </select>
                           </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields">
                             <p className="details-title">&nbsp;</p>
                             {this.state.notiother === true ? (
-                              <textarea className="form-control"
+                              <textarea
+                                className="form-control"
                                 style={{ width: "100%", resize: "none" }}
                                 value={this.state.Notify_Displayas}
                                 onChange={this.HandleNotifyAddressChange.bind(
@@ -2567,10 +2572,10 @@ class BookingInsert extends Component {
                     <div className="align-center">
                       <button
                         onClick={this.toggleEdit}
-                        style={{margin: "0 0 15px 0"}}
+                        style={{ margin: "0 0 15px 0" }}
                         className="butn more-padd"
                       >
-                        Add Cargo
+                        Cargo Details
                       </button>
                     </div>
                     <div className="row ratefinalpgn">

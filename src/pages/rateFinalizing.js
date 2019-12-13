@@ -4938,7 +4938,7 @@ class RateFinalizing extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">TT</p>
+                                      <p className="details-title">TT (Days)</p>
                                       <p className="details-para">
                                         {row.original.TransitTime}
                                       </p>
@@ -4946,7 +4946,7 @@ class RateFinalizing extends Component {
                                   );
                                 },
                                 accessor: "TransitTime",
-                                minWidth: 60
+                                minWidth: 90
                               },
                               {
                                 Cell: row => {
@@ -5362,7 +5362,7 @@ class RateFinalizing extends Component {
                           onClick={this.toggleEdit}
                           className="butn more-padd m-0"
                         >
-                          Add Cargo
+                          Cargo Details
                         </button>
                       </div>
                     </div>
