@@ -6,8 +6,8 @@ import Select from "react-select";
 
 import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
-import Pencil from "./../assets/img/pencil.png";
-import Weight from "./../assets/img/weight.png";
+// import Pencil from "./../assets/img/pencil.png";
+// import Weight from "./../assets/img/weight.png";
 import Arrow from "./../assets/img/arw.png";
 
 import axios from "axios";
@@ -25,7 +25,7 @@ const {
   withGoogleMap,
   GoogleMap,
   Marker,
-  InfoWindow
+  // InfoWindow
 } = require("react-google-maps");
 
 const Map1WithAMakredInfoWindowSearchBooks = compose(
@@ -287,10 +287,10 @@ class NewRateSearch extends Component {
     let formIsValid = true;
 
     if (
-      this.state.specialEquipment == true &&
-      this.state.flattack_openTop.length == 0 &&
-      this.state.spacEqmtType.length == 0 &&
-      this.state.referType == 0
+      this.state.specialEquipment === true &&
+      this.state.flattack_openTop.length === 0 &&
+      this.state.spacEqmtType.length ===0 &&
+      this.state.referType === 0
     ) {
       formIsValid = false;
       errors["equipmenttype"] = "Please select equipment type";
