@@ -634,6 +634,7 @@ class RateTable extends Component {
     debugger;
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[RateLineID] = !this.state.cSelectedRow[RateLineID];
+    var BuyRate = 0;
     this.setState({
       cSelectedRow: RateLineID ? newSelected : false
     });
@@ -645,9 +646,11 @@ class RateTable extends Component {
       selectedRow.push(rowData._original);
       for (let j = 0; j < rateSubDetails.length; j++) {
         this.state.profitLossAmt +=
-          rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
-        this.state.profitLossPer += (this.state.profitLossAmt * 100)/rateSubDetails[j].BuyRate  
+          rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;    
+        BuyRate += rateSubDetails[j].BuyRate  
       }
+      this.state.profitLossPer += (this.state.profitLossAmt * 100)/
+                                  BuyRate  
       
       this.setState({
         selectedDataRow: selectedRow,
@@ -683,8 +686,10 @@ class RateTable extends Component {
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt +=
             rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
-            this.state.profitLossPer += (this.state.profitLossAmt * 100)/rateSubDetails[j].BuyRate
+          BuyRate += rateSubDetails[j].BuyRate
         }
+        this.state.profitLossPer = (this.state.profitLossAmt * 100)/
+                                   BuyRate
         
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
@@ -700,9 +705,11 @@ class RateTable extends Component {
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt -=
             rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
-
-            this.state.profitLossPer -= (this.state.profitLossAmt * 100)/rateSubDetails[j].BuyRate
+            BuyRate -= rateSubDetails[j].BuyRate           
         }
+
+        this.state.profitLossPer = (this.state.profitLossAmt * 100)/
+                                   BuyRate
         
       }
     }
