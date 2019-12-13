@@ -1646,7 +1646,7 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-
+                                    debugger
                                   var lname = "";
                                   var olname = "";
                                   if (row._original.Linename) {
@@ -1657,10 +1657,10 @@ class RateFinalizingStillBooking extends Component {
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
-                                  if (row._original.Linename) {
-                                    olname = row._original.Linename;
+                                  if (row._original.LineName) {
+                                    olname = row._original.LineName;
                                     lname =
-                                      row._original.Linename.replace(
+                                      row._original.LineName.replace(
                                         "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";

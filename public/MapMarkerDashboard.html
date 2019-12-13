@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <link rel="stylesheet" href="./../src/assets/css/responsive.css">
+    <link rel="stylesheet" href="./../src/assets/css/responsive.css" />
     <style type="text/css">
       html {
         height: 100%;
@@ -108,6 +108,20 @@
           center;
         background-size: 60px;
         z-index: 5;
+      }
+      @media (min-width: 320px) and (max-width: 575px) {
+        .map-filter .map-icon-cntr:nth-child(2) {
+          top: 150px;
+          left: 0;
+        }
+        .map-filter .map-icon-cntr:nth-child(3) {
+          top: 100px;
+          left: 0;
+        }
+        .map-filter .map-icon-cntr:nth-child(4) {
+          top: 50px;
+          left: 0;
+        }
       }
     </style>
     <script
@@ -265,6 +279,40 @@
                     //alert('Success-2');
                     debugger;
                     var datas = data.Table1;
+                    var filterData =[];
+                    for (var j = 0; j < datas.length; j++) {
+                      var mycontainerType = datas[j]["CargoType"];
+                      var myContainerNo = datas[j]["ContainerNo"];
+                      
+                      if (mycontainerType == "Consolidated") {
+                        if (filterData.length > 0) {
+                          var checkExist = filterData.includes(myContainerNo);
+                          if (!checkExist) {
+                            filterData.push(myContainerNo);
+                          }
+                        } else {
+                          filterData.push(myContainerNo);
+                        }
+                      }
+                    }
+
+                    var FinalData=[];
+                    ////for loop - filterData 
+
+                    if(filterData.length > 0)
+                    {
+                      for(var k=0;k<filterData.length;k++)
+                      {
+                         var ContNo=filterData[k];
+                         var tempData=datas.filter(x=>x.ContainerNo === ContNo & x.CargoType === "Consolidated");
+
+                      }
+
+
+                    }
+
+
+                    debugger;
                     if (datas.length > 0) {
                       console.log(datas.length);
                       var marketContent = "<div id='rootElement'>";

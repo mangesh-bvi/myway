@@ -24,7 +24,7 @@ const {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker,
+  Marker
   // InfoWindow
 } = require("react-google-maps");
 
@@ -143,11 +143,10 @@ class NewRateSearch extends Component {
           SpecialContainerCode: "",
           PackageType: "",
           Quantity: 0,
-          length: 0,
-          width: 0,
-          height: 0,
-          Gross_Weight: 0,
-          total:0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
           VolumeWeight: 0,
           Volume: 0
         }
@@ -290,7 +289,7 @@ class NewRateSearch extends Component {
     if (
       this.state.specialEquipment === true &&
       this.state.flattack_openTop.length === 0 &&
-      this.state.spacEqmtType.length ===0 &&
+      this.state.spacEqmtType.length === 0 &&
       this.state.referType === 0
     ) {
       formIsValid = false;
@@ -368,15 +367,15 @@ class NewRateSearch extends Component {
 
   HandleCMBtextChange(e) {
     debugger;
-    // var jiji = e.target.value;
-    // var Textvalue = isNaN(jiji) ? 0 : parseInt(e.target.value);
-    var validNumber = new RegExp(/^\d*\.?\d*$/);
-      if (e.target.value === "" || validNumber.test(e.target.value)) {
-        if ((parseFloat(e.target.value) * 100) % 1 > 0) {
-        } else {
-          var Textvalue = e.target.value;
-        }
-      }
+    var jiji = e.target.value;
+    var Textvalue = isNaN(jiji) ? 0 : parseInt(e.target.value);
+    // var validNumber = new RegExp(/^\d*\.?\d*$/);
+    //   if (e.target.value === "" || validNumber.test(e.target.value)) {
+    //     if ((parseFloat(e.target.value) * 100) % 1 > 0) {
+    //     } else {
+    //       var Textvalue = e.target.value;
+    //     }
+    //   }
     // var Textvalue = e.target.value;
 
     this.setState({ cbmVal: Textvalue });
@@ -1346,22 +1345,21 @@ class NewRateSearch extends Component {
           ...prevState.flattack_openTop,
           {
             SpecialContainerCode: optionsVal[0].SpecialContainerCode,
-            // PackageType: "",
-            // Quantity: 0,
-            // Lengths: 0,
-            // Width: 0,
-            // Height: 0,
-            // Weight: 0,
-
             PackageType: "",
-            length: "",
-            width: "",
-            height: "",
-            Quantity: "1",
-            Gross_Weight: "",
-            total: "",
+            Quantity: 0,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            Weight: 0,
             VolumeWeight: 0,
             Volume: 0
+            // PackageType: "",
+            // length: "",
+            // width: "",
+            // height: "",
+            // Quantity: "1",
+            // Gross_Weight: "",
+            // total: ""
           }
         ]
       }));
@@ -2039,20 +2037,7 @@ class NewRateSearch extends Component {
         ],
         users: [],
         referType: [],
-        flattack_openTop: [
-          {
-            SpecialContainerCode: "",
-            PackageType: "",
-            Quantity: 0,
-            length: 0,
-            width: 0,
-            height: 0,
-            Gross_Weight: 0,
-            total:0,
-            VolumeWeight: 0,
-            Volume: 0
-          }
-        ],
+        flattack_openTop: [],
         spacEqmtType: [],
 
         TruckTypeData: [

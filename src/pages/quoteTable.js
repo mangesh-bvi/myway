@@ -232,11 +232,11 @@ class QuoteTable extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex d-block-xs justify-content-between align-items-center">
               <div className="title-sect">
                 <h2>Quote Table</h2>
               </div>
-              <div className="d-flex justify-content-between align-items-center">
+              <div className="d-flex d-block-xs justify-content-between align-items-center">
                 <div className="login-fields quote-to-from col-12 col-sm-4">
                   <span>From</span>
                   <DatePicker

@@ -660,12 +660,20 @@ class SpotRateDetails extends Component {
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Spot Rate Details</h2>
+              <div>
+              <button
+                onClick={this.toggleViewRate}
+                className="butn more-padd"
+              >
+                  View Rate
+              </button>
               <button
                 onClick={this.toggleSpotHistory}
                 className="butn more-padd"
               >
                 Rate Query History
               </button>
+              </div>
             </div>
             <div className="row">
               <div className="col-md-12">

@@ -154,7 +154,10 @@ h3 {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 999;
+  z-index: 2;
+}
+.pdtop {
+  padding-top: 70px;
 }
 /* login starts */
 .login-sect {
@@ -347,10 +350,12 @@ h2 span {
 .cusbtn {
   color: #fff !important;
 }
-.cusbtn:hover, .cusbtn:focus {
+.cusbtn:hover,
+.cusbtn:focus {
   color: #39b54a !important;
 }
-.title-sect .butn:hover, .title-sect .butn:focus {
+.title-sect .butn:hover,
+.title-sect .butn:focus {
   cursor: pointer;
 }
 .title-sect .butn:last-child {
@@ -872,6 +877,15 @@ table tbody tr:last-child {
 }
 .cont-det-outer .cont-det-cntr:first-child {
   margin-top: 0;
+}
+.eve-clr[color="green"] {
+  color: #39b54a;
+}
+.eve-clr[color="yellow"] {
+  color: #ffb400;
+}
+.eve-clr[color="red"] {
+  color: #eb0029;
 }
 /* shipping details 2 ends */
 
@@ -1639,7 +1653,7 @@ table tbody tr:last-child {
 .cont-costs .remember-forgot label {
   padding-left: 28px;
   color: #696969;
-  margin-right: 0;
+  margin: 0;
   letter-spacing: 0;
   font-size: 12px;
 }
@@ -2149,6 +2163,10 @@ table tbody tr:last-child {
   background-size: 17px;
   background-position: right 10px center;
 }
+.wl-cntr {
+  flex: 0 0 20px;
+  line-height: 1;
+}
 /* dashboard ends */
 
 /* view user starts */
@@ -2357,7 +2375,7 @@ table tbody tr:last-child {
   width: 25px;
 }
 .line-first {
-  flex: 0 0 120px;
+  flex: 0 0 100px;
 }
 /* rate finalizing ends */
 
@@ -2581,7 +2599,7 @@ table tbody tr:last-child {
   margin-top: 5px;
 }
 .cls-flside {
-  width: 250px;
+  width: 20%;
   float: left;
   height: auto;
   background-color: #0142aa;
@@ -3890,6 +3908,7 @@ img {
   left: 165px;
   position: absolute;
   width: 20px;
+  z-index: 3;
   float: none;
   margin: 0 0 0 30px;
   cursor: pointer;
@@ -4030,5 +4049,5 @@ img {
   box-sizing: border-box;
 }
 .divblock div {
- display: block !important;
+  display: block !important;
 }

@@ -325,7 +325,7 @@ class Header extends Component {
     let popupHBLNO = this.state.popupHBLNO;
 
     return (
-      <div style={{paddingTop:"70px"}}>
+      <div className="pdtop">
         <div className="header-fixed">
         <div className="cls-header-1">
           <div className="row">
@@ -385,7 +385,7 @@ class Header extends Component {
                     </div>
                   </div>
                 </li> */}
-                <li style={{ padding: "20px" }}>
+                <li className="br-none" style={{ padding: "20px" }}>
                   <img
                     src={ChatIcon}
                     alt="chat-icon"
@@ -515,7 +515,7 @@ class Header extends Component {
                                 alt="user-icon"
                               />
                             </li>
-                            <li>
+                            <li style={{position: "static"}}>
                               <label className="lbl-cursor">
                                 Last Login
                                 <span
@@ -574,7 +574,7 @@ class Header extends Component {
                             <QRCode />
                           </div>
                         </li> */}
-                        <li
+                        <li  style={{position: "static"}}
                           className="logout-li"
                           onClick={this.onLogout.bind(this)}
                         >

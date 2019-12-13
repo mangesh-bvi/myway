@@ -1798,7 +1798,7 @@ class RateFinalizingStill extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">TT</p>
+                                      <p className="details-title">TT (Days)</p>
                                       {this.state.ContainerLoad !== "INLAND" ? (
                                         <p className="details-para">
                                           {row.original.TransitTime}

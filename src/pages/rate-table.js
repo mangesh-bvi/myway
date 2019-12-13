@@ -233,6 +233,7 @@ class RateTable extends Component {
       contactName: "",
       contactEmail: "",
       profitLossAmt: 0,
+      profitLossPer: 0,
       MinTT: 0,
       MaxTT: 0
     };
@@ -451,7 +452,7 @@ class RateTable extends Component {
               IsFilter: true
             });
           }
-          this.state.flattack_openTop = paramData.flattack_openTop
+          this.state.flattack_openTop = paramData.flattack_openTop;
           this.setState({
             polArray: this.state.polArray,
             podArray: this.state.podArray,
@@ -633,6 +634,7 @@ class RateTable extends Component {
     debugger;
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[RateLineID] = !this.state.cSelectedRow[RateLineID];
+    var BuyRate = 0;
     this.setState({
       cSelectedRow: RateLineID ? newSelected : false
     });
@@ -645,10 +647,14 @@ class RateTable extends Component {
       for (let j = 0; j < rateSubDetails.length; j++) {
         this.state.profitLossAmt +=
           rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+        BuyRate += rateSubDetails[j].BuyRate;
       }
+      this.state.profitLossPer += (this.state.profitLossAmt * 100) / BuyRate;
+
       this.setState({
         selectedDataRow: selectedRow,
-        profitLossAmt: this.state.profitLossAmt
+        profitLossAmt: this.state.profitLossAmt,
+        profitLossPer: this.state.profitLossPer
       });
     } else {
       if (newSelected[RateLineID] === true) {
@@ -679,7 +685,9 @@ class RateTable extends Component {
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt +=
             rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+          BuyRate += rateSubDetails[j].BuyRate;
         }
+        this.state.profitLossPer = (this.state.profitLossAmt * 100) / BuyRate;
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
@@ -694,12 +702,16 @@ class RateTable extends Component {
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt -=
             rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+          BuyRate -= rateSubDetails[j].BuyRate;
         }
+
+        this.state.profitLossPer = (this.state.profitLossAmt * 100) / BuyRate;
       }
     }
     this.setState({
       selectedDataRow: selectedRow,
-      profitLossAmt: this.state.profitLossAmt
+      profitLossAmt: this.state.profitLossAmt,
+      profitLossPer: this.state.profitLossPer
     });
   }
 
@@ -3120,8 +3132,12 @@ class RateTable extends Component {
                 <h2>Rate Table</h2>
               </div>
               <div className="login-fields m-0 rate-tab-drop">
-                Commodity 
-                <select className="" onChange={this.filterAll} style={{marginLeft: "5px"}}>
+                Commodity
+                <select
+                  className=""
+                  onChange={this.filterAll}
+                  style={{ marginLeft: "5px" }}
+                >
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
                   {this.state.loading === true
@@ -3708,7 +3724,7 @@ class RateTable extends Component {
                                 Cell: row => {
                                   return (
                                     <>
-                                      <p className="details-title">TT</p>
+                                      <p className="details-title">TT (Days)</p>
                                       <p className="details-para">
                                         {row.original.TransitTime}
                                       </p>
@@ -3716,7 +3732,7 @@ class RateTable extends Component {
                                   );
                                 },
                                 accessor: "TransitTime",
-                                minWidth: 60
+                                minWidth: 90
                               },
                               {
                                 Cell: row => {
@@ -3889,8 +3905,8 @@ class RateTable extends Component {
                         "desc"
                       ) !== "Customer" ? (
                         <p className="bottom-profit">
-                          Profit -------{this.state.profitLossAmt}$ Customer
-                          Segment A Profit Margin %15
+                          Profit -------{this.state.profitLossAmt}$ / Profit
+                          Margin %{this.state.profitLossPer}
                         </p>
                       ) : null}
                     </div>
