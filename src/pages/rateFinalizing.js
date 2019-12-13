@@ -4518,7 +4518,6 @@ class RateFinalizing extends Component {
                                   if (row._original.Linename) {
                                     olname = row._original.Linename;
                                     lname =
-<<<<<<< HEAD
                                     row._original.Linename
                                     .replace(" ", "_")
                                     .replace(" ", "_") + ".png";
@@ -4545,24 +4544,6 @@ class RateFinalizing extends Component {
                                     // ? "Ocean"
                                     // : this.state.modeoftransport === "AIR"?"Air":"Inlande";
                                     }
-=======
-                                      row._original.lineName
-                                        .replace(" ", "_")
-                                        .replace(" ", "_") + ".png";
-                                  }
-                                  var mode = "";
-                                  if (this.state.ModeOfTransport) {
-                                    mode = this.state.ModeOfTransport;
-                                  }
-                                  if (this.state.modeoftransport) {
-                                    mode =
-                                      this.state.modeoftransport === "SEA"
-                                        ? "Ocean"
-                                        : this.state.modeoftransport === "AIR"
-                                        ? "Air"
-                                        : "Inlande";
-                                  }
->>>>>>> 6334bc25cc3980a56403a17250942c1e86ba288c
 
                                   if (mode === "Ocean" && lname !== "") {
                                     return (
