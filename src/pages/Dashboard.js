@@ -1064,11 +1064,12 @@ class Dashboard extends Component {
   //Booking Card Bind Api Call
   HandleBookingCardApi() {
     let self = this;
+    var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchNewbooking`,
       data: {
-        UserID: 874588
+        UserID: userid
       },
       headers: authHeader()
     }).then(function(response) {
