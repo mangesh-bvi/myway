@@ -1077,7 +1077,7 @@ table tbody tr:last-child {
   margin-top: 15px;
 }
 .transit-sect-overflow {
-  height: calc(100vh - 105px);
+  /* height: calc(100vh - 105px); */
   overflow: auto;
 }
 .delivery-popup {
