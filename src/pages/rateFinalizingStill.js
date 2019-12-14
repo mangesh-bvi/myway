@@ -2359,15 +2359,14 @@ class RateFinalizingStill extends Component {
                       Save File
                     </Button> */}
 
-                      {this.state.toggleCustomerType &&
-                        this.state.Bookingcreation && (
-                          <button
-                            onClick={this.toggleBook}
-                            className="butn more-padd mt-4"
-                          >
-                            Create Booking
-                          </button>
-                        )}
+                      {this.state.Bookingcreation && (
+                        <button
+                          onClick={this.toggleBook}
+                          className="butn more-padd mt-4"
+                        >
+                          Create Booking
+                        </button>
+                      )}
                     </center>
                   </div>
                 </div>
