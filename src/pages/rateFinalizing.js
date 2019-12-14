@@ -918,63 +918,51 @@ class RateFinalizing extends Component {
     let self = this;
     var Containerdetails = [];
     var MultiplePOLPOD = [];
-    var RateDetails = this.state.rateDetails;
-    var RoutingInformation = [];
-    // for (let i = 0; i < this.state.users.length; i++) {
-    //   Containerdetails.push({
-    //     ProfileCodeID: this.state.users[i].ProfileCodeID,
-    //     ContainerCode: this.state.users[i].StandardContainerCode,
-    //     Type: this.state.users[i].ContainerName,
-    //     ContainerQuantity: this.state.users[i].ContainerQuantity,
-    //     Temperature: this.state.users[i].Temperature,
-    //     TemperatureType: this.state.users[i].TemperatureType
-    //   });
-    // }
-
-    // if (
-    //   this.state.polArray.length > this.state.podArray.length ||
-    //   this.state.polArray.length == this.state.podArray.length
-    // ) {
-    //   for (let i = 0; i < this.state.polArray.length; i++) {
-    //     MultiplePOLPOD.push({
-    //       POL: this.state.polArray[i].POL,
-    //       POD:
-    //         this.state.podArray[i] == undefined
-    //           ? ""
-    //           : this.state.podArray[i].POD,
-    //       POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
-    //       PODGeoCordinate:
-    //         this.state.podArray[i] == undefined
-    //           ? ""
-    //           : this.state.podArray[i].PODGeoCordinate
-    //     });
-    //   }
-    // } else if (this.state.podArray.length > this.state.polArray.length) {
-    //   for (let i = 0; i < this.state.podArray.length; i++) {
-    //     MultiplePOLPOD.push({
-    //       POL:
-    //         this.state.polArray[i] == undefined
-    //           ? ""
-    //           : this.state.polArray[i].POL,
-    //       POD: this.state.podArray[i].POD,
-    //       POLGeoCordinate:
-    //         this.state.polArray[i] == undefined
-    //           ? ""
-    //           : this.state.polArray[i].POLGeoCordinate,
-    //       PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
-    //     });
-    //   }
-    // }
-    for (let i = 0; i < RateDetails.length; i++) {
-      RoutingInformation.push({
-        POL: RateDetails.POLCode,
-        POD: RateDetails.PODCode,
-        LineName: RateDetails.lineName,
-        ContainerType: RateDetails.ContainerType,
-        ContainerQty: RateDetails.ContainerQuantity
-      })     
+    for (let i = 0; i < this.state.users.length; i++) {
+      Containerdetails.push({
+        ProfileCodeID: this.state.users[i].ProfileCodeID,
+        ContainerCode: this.state.users[i].StandardContainerCode,
+        Type: this.state.users[i].ContainerName,
+        ContainerQuantity: this.state.users[i].ContainerQuantity,
+        Temperature: this.state.users[i].Temperature,
+        TemperatureType: this.state.users[i].TemperatureType
+      });
     }
-      
+
+    if (
+      this.state.polArray.length > this.state.podArray.length ||
+      this.state.polArray.length == this.state.podArray.length
+    ) {
+      for (let i = 0; i < this.state.polArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL: this.state.polArray[i].POL,
+          POD:
+            this.state.podArray[i] == undefined
+              ? ""
+              : this.state.podArray[i].POD,
+          POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate:
+            this.state.podArray[i] == undefined
+              ? ""
+              : this.state.podArray[i].PODGeoCordinate
+        });
+      }
+    } else if (this.state.podArray.length > this.state.polArray.length) {
+      for (let i = 0; i < this.state.podArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL:
+            this.state.polArray[i] == undefined
+              ? ""
+              : this.state.polArray[i].POL,
+          POD: this.state.podArray[i].POD,
+          POLGeoCordinate:
+            this.state.polArray[i] == undefined
+              ? ""
+              : this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
+        });
+      }
+    }
 
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
@@ -982,11 +970,12 @@ class RateFinalizing extends Component {
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
-      RoutingInformation: RoutingInformation,
+      Containerdetails: Containerdetails,
       Currency: self.state.currencyCode,
       // MultiplePOLPOD:[
       // {POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
       // {POL:'INBOM',POD:'TRPAM',POLGeoCordinate:'19.078682,72.879144',PODGeoCordinate:'40.968456,28.674417'}],
+      MultiplePOLPOD: MultiplePOLPOD,
       RateQueryDim: [
         {
           Quantity: 0,
@@ -999,8 +988,8 @@ class RateFinalizing extends Component {
         }
       ],
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-      PickupGeoCordinate:'',
-      DeliveryGeoCordinate:''
+      PickupGeoCordinate: this.props.location.state.OriginGeoCordinates,
+      DeliveryGeoCordinate: this.props.location.state.DestGeoCordinate
 
     };
 
@@ -1328,35 +1317,16 @@ class RateFinalizing extends Component {
     for (var i = 0; i < rateDetailsarr.length; i++) {
       if (containerLoadType == "FCL") {
         FCLSQBaseFreight.push({
-          RateID:
-            this.state.isCopy === true
-              ? rateDetailsarr[i].saleQuoteLineID
-              : rateDetailsarr[i].RateLineId,
-          RateType:
-            this.state.isCopy === true
-              ? "BuyRate"
-              : rateDetailsarr[i].TypeOfRate
+          RateID: rateDetailsarr[i].RateLineId,
+          RateType: rateDetailsarr[i].TypeOfRate
         });
       }
       if (containerLoadType == "LCL") {
-        if (rateDetailsarr[i].RateLineID == undefined) {
-          if (rateDetailsarr[i].saleQuoteLineID != undefined) {
-            FCLSQBaseFreight.push({
-              RateID: rateDetailsarr[i].saleQuoteLineID,
-              RateType: rateDetailsarr[i].TypeOfRate
-            });
-          } else {
-            FCLSQBaseFreight.push({
-              RateID: rateDetailsarr[i].RateLineId,
-              RateType: rateDetailsarr[i].TypeOfRate
-            });
-          }
-        } else {
           FCLSQBaseFreight.push({
             RateID: rateDetailsarr[i].RateLineID,
             RateType: rateDetailsarr[i].TypeOfRate
           });
-        }
+        
       } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
         FCLSQBaseFreight.push({
           RateID: rateDetailsarr[i].RateLineID,
@@ -1364,14 +1334,8 @@ class RateFinalizing extends Component {
         });
       } else if (containerLoadType == "AIR") {
         FCLSQBaseFreight.push({
-          RateID:
-            this.state.isCopy === true
-              ? rateDetailsarr[i].saleQuoteLineID
-              : rateDetailsarr[i].RateLineId,
-          RateType:
-            this.state.isCopy === true
-              ? rateDetailsarr[i].TypeOfRate
-              : rateDetailsarr[i].TypeOfRate
+          RateID: rateDetailsarr[i].RateLineId,
+          RateType: rateDetailsarr[i].TypeOfRate
         });
       }
     }
@@ -1381,31 +1345,31 @@ class RateFinalizing extends Component {
     for (var i = 0; i < rateDetailsarr.length; i++) {
       for (var j = 0; j < rateSubDetailsarr.length; j++) {
         if (containerLoadType == "FCL") {
-          if (rateDetailsarr[i].RateLineId == undefined) {
-            if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
-              if (
-                rateSubDetailsarr[j].saleQuoteLineID ==
-                rateDetailsarr[i].saleQuoteLineID
-              ) {
-                FCLSQCharges.push({
-                  ChargeID: 0,
-                  Rate: parseFloat(
-                    rateSubDetailsarr[j].Amount.split("U")[0].trim()
-                  ),
-                  Currency: rateSubDetailsarr[j].BaseCurrency,
-                  RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
-                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                  Tax: rateSubDetailsarr[j].Tax,
-                  ChargeItem: rateSubDetailsarr[j].Chargeitem,
-                  Exrate: rateSubDetailsarr[j].ExRate,
-                  ChargeType: rateSubDetailsarr[j].Type,
-                  TotalAmount: parseFloat(
-                    rateSubDetailsarr[j].Total.split("U")[0].trim()
-                  )
-                });
-              }
-            }
-          } else {
+          // if (rateDetailsarr[i].RateLineId == undefined) {
+          //   if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
+          //     if (
+          //       rateSubDetailsarr[j].saleQuoteLineID ==
+          //       rateDetailsarr[i].saleQuoteLineID
+          //     ) {
+          //       FCLSQCharges.push({
+          //         ChargeID: 0,
+          //         Rate: parseFloat(
+          //           rateSubDetailsarr[j].Amount.split("U")[0].trim()
+          //         ),
+          //         Currency: rateSubDetailsarr[j].BaseCurrency,
+          //         RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
+          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          //         Tax: rateSubDetailsarr[j].Tax,
+          //         ChargeItem: rateSubDetailsarr[j].Chargeitem,
+          //         Exrate: rateSubDetailsarr[j].ExRate,
+          //         ChargeType: rateSubDetailsarr[j].Type,
+          //         TotalAmount: parseFloat(
+          //           rateSubDetailsarr[j].Total.split("U")[0].trim()
+          //         )
+          //       });
+          //     }
+          //   }
+          // } else {
             if (
               rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
             ) {
@@ -1424,69 +1388,69 @@ class RateFinalizing extends Component {
                 ChargeType: rateSubDetailsarr[j].ChargeType,
                 TotalAmount: rateSubDetailsarr[j].TotalAmount
               });
-            }
+            // }
           }
         }
 
         if (containerLoadType == "LCL") {
-          if (rateDetailsarr[i].RateLineID == undefined) {
-            if (rateSubDetailsarr[j].SaleQuoteIDLineID != undefined) {
-              if (
-                rateSubDetailsarr[j].SaleQuoteIDLineID ==
-                rateDetailsarr[i].saleQuoteLineID
-              ) {
-                FCLSQCharges.push({
-                  ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
-                  Rate:
-                    rateSubDetailsarr[j].Amount == null
-                      ? 0
-                      : rateSubDetailsarr[j].Amount,
-                  Currency: "USD",
-                  RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
-                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                  Tax:
-                    rateSubDetailsarr[j].Tax == null
-                      ? 0
-                      : rateSubDetailsarr[j].Tax,
-                  ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                  Exrate:
-                    rateSubDetailsarr[j].ExRate == undefined
-                      ? ""
-                      : rateSubDetailsarr[j].ExRate,
-                  ChargeType: rateSubDetailsarr[j].Type,
-                  TotalAmount: parseFloat(
-                    rateSubDetailsarr[j].Total.split(" ")[0].trim()
-                  )
-                });
-              }
-            } else {
-              if (
-                rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
-              ) {
-                FCLSQCharges.push({
-                  ChargeID: rateSubDetailsarr[j].ChargeID,
-                  Rate:
-                    rateSubDetailsarr[j].Rate == null
-                      ? 0
-                      : rateSubDetailsarr[j].Rate,
-                  Currency: rateSubDetailsarr[j].Currency,
-                  RateLineID: rateSubDetailsarr[j].RateLineID,
-                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                  Tax:
-                    rateSubDetailsarr[j].Tax == null
-                      ? 0
-                      : rateSubDetailsarr[j].Tax,
-                  ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                  Exrate: rateSubDetailsarr[j].Exrate,
-                  ChargeType: rateSubDetailsarr[j].ChargeType,
-                  TotalAmount:
-                    rateSubDetailsarr[j].TotalAmount == null
-                      ? 0
-                      : rateSubDetailsarr[j].TotalAmount
-                });
-              }
-            }
-          } else {
+          // if (rateDetailsarr[i].RateLineID == undefined) {
+          //   if (rateSubDetailsarr[j].SaleQuoteIDLineID != undefined) {
+          //     if (
+          //       rateSubDetailsarr[j].SaleQuoteIDLineID ==
+          //       rateDetailsarr[i].saleQuoteLineID
+          //     ) {
+          //       FCLSQCharges.push({
+          //         ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
+          //         Rate:
+          //           rateSubDetailsarr[j].Amount == null
+          //             ? 0
+          //             : rateSubDetailsarr[j].Amount,
+          //         Currency: "USD",
+          //         RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          //         Tax:
+          //           rateSubDetailsarr[j].Tax == null
+          //             ? 0
+          //             : rateSubDetailsarr[j].Tax,
+          //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
+          //         Exrate:
+          //           rateSubDetailsarr[j].ExRate == undefined
+          //             ? ""
+          //             : rateSubDetailsarr[j].ExRate,
+          //         ChargeType: rateSubDetailsarr[j].Type,
+          //         TotalAmount: parseFloat(
+          //           rateSubDetailsarr[j].Total.split(" ")[0].trim()
+          //         )
+          //       });
+          //     }
+          //   } else {
+          //     if (
+          //       rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
+          //     ) {
+          //       FCLSQCharges.push({
+          //         ChargeID: rateSubDetailsarr[j].ChargeID,
+          //         Rate:
+          //           rateSubDetailsarr[j].Rate == null
+          //             ? 0
+          //             : rateSubDetailsarr[j].Rate,
+          //         Currency: rateSubDetailsarr[j].Currency,
+          //         RateLineID: rateSubDetailsarr[j].RateLineID,
+          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          //         Tax:
+          //           rateSubDetailsarr[j].Tax == null
+          //             ? 0
+          //             : rateSubDetailsarr[j].Tax,
+          //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
+          //         Exrate: rateSubDetailsarr[j].Exrate,
+          //         ChargeType: rateSubDetailsarr[j].ChargeType,
+          //         TotalAmount:
+          //           rateSubDetailsarr[j].TotalAmount == null
+          //             ? 0
+          //             : rateSubDetailsarr[j].TotalAmount
+          //       });
+          //     }
+          //   }
+          // } else {
             if (
               rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
             ) {
@@ -1506,7 +1470,7 @@ class RateFinalizing extends Component {
                 TotalAmount: rateSubDetailsarr[j].TotalAmount
               });
             }
-          }
+          // }
         }
         if (containerLoadType == "FTL" || containerLoadType == "LTL") {
           if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
@@ -1532,37 +1496,37 @@ class RateFinalizing extends Component {
           }
         }
         if (containerLoadType == "AIR") {
-          if (rateDetailsarr[i].RateLineId == undefined) {
-            if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
-              if (
-                rateSubDetailsarr[j].saleQuoteLineID ==
-                rateDetailsarr[i].saleQuoteLineID
-              ) {
-                FCLSQCharges.push({
-                  ChargeID: 0,
-                  Rate: parseFloat(
-                    rateSubDetailsarr[j].Amount.split(" ")[0].trim()
-                  ),
-                  Currency:
-                    rateSubDetailsarr[j].BaseCurrency == undefined
-                      ? "USD"
-                      : rateSubDetailsarr[j].BaseCurrency,
-                  RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
-                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                  Tax:
-                    rateSubDetailsarr[j].Tax == undefined
-                      ? 0
-                      : rateSubDetailsarr[j].Tax,
-                  ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                  Exrate: rateSubDetailsarr[j].Exrate,
-                  ChargeType: rateSubDetailsarr[j].ChargeType,
-                  TotalAmount: parseFloat(
-                    rateSubDetailsarr[j].Total.split(" ")[0].trim()
-                  )
-                });
-              }
-            }
-          } else {
+          // if (rateDetailsarr[i].RateLineId == undefined) {
+          //   if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
+          //     if (
+          //       rateSubDetailsarr[j].saleQuoteLineID ==
+          //       rateDetailsarr[i].saleQuoteLineID
+          //     ) {
+          //       FCLSQCharges.push({
+          //         ChargeID: 0,
+          //         Rate: parseFloat(
+          //           rateSubDetailsarr[j].Amount.split(" ")[0].trim()
+          //         ),
+          //         Currency:
+          //           rateSubDetailsarr[j].BaseCurrency == undefined
+          //             ? "USD"
+          //             : rateSubDetailsarr[j].BaseCurrency,
+          //         RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
+          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+          //         Tax:
+          //           rateSubDetailsarr[j].Tax == undefined
+          //             ? 0
+          //             : rateSubDetailsarr[j].Tax,
+          //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
+          //         Exrate: rateSubDetailsarr[j].Exrate,
+          //         ChargeType: rateSubDetailsarr[j].ChargeType,
+          //         TotalAmount: parseFloat(
+          //           rateSubDetailsarr[j].Total.split(" ")[0].trim()
+          //         )
+          //       });
+          //     }
+          //   }
+          // } else {
             if (
               rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
             ) {
@@ -1588,7 +1552,7 @@ class RateFinalizing extends Component {
                     : rateSubDetailsarr[j].TotalAmount
               });
             }
-          }
+          // }
         }
       }
     }
@@ -1931,8 +1895,8 @@ class RateFinalizing extends Component {
       MyWayDiscount: txtRequestDiscount,
       MyWayFreeTime: txtRequestFreeTime,
       IsRequestForChange: 1,
-      SQCharges: this.props.location.state.RateSubDetails,
-      RateTypes: RateDataArr
+      SQCharges: FCLSQCharges,
+      RateTypes: FCLSQBaseFreight
     };
     // var SendRequestparaFCL={
     //   Mode:this.state.modeoftransport,
@@ -3727,7 +3691,7 @@ class RateFinalizing extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              placeholder={el.Gross_Weight === 0 ? "GW (kg)" : "GW (kg)"}
               name="Gross_Weight"
               value={el.Gross_Weight}
               className="w-100"
@@ -4688,8 +4652,8 @@ class RateFinalizing extends Component {
                                   if (row._original.LineName) {
                                     olname = row._original.LineName;
                                     lname =
-                                      row._original.Linename.replace(
-                                        " ",
+                                      row._original.LineName.replace(
+                                        "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
@@ -4710,7 +4674,7 @@ class RateFinalizing extends Component {
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
-                                      row._original.Linename.replace(
+                                      row._original.lineName.replace(
                                         " ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
@@ -6555,7 +6519,7 @@ class RateFinalizing extends Component {
                           </div>
                           <div className="col-12 col-sm-4">
                             <label>
-                              Liner : <span>{item.lineName}</span>
+                              Liner : <span>{this.state.isCopy==true?item.Linename:item.lineName}</span>
                             </label>
                           </div>
                         </div>

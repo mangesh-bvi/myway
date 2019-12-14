@@ -89,7 +89,11 @@ class BookingView extends Component {
       Shipper_Displayas: "",
       Shipper_Name: "",
       CargoType: "",
-      Incoterm: ""
+      Incoterm: "",
+      contact_name: "",
+      company_name: "",
+      Company_Address: "",
+      HAZMAT: ""
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
@@ -367,10 +371,18 @@ class BookingView extends Component {
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
             var ShipmentType = QuotationData[0].ShipmentType;
+            var Company_Address = QuotationData[0].Company_Address;
+            var contact_name = QuotationData[0].contact_name;
+            var company_name = QuotationData[0].company_name;
+            var HAZMAT = QuotationData[0].HAZMAT;
             self.setState({
               QuotationData,
               QuotationSubData,
-              ShipmentType
+              ShipmentType,
+              Company_Address,
+              contact_name,
+              company_name,
+              HAZMAT
             });
           }
         }
@@ -531,10 +543,16 @@ class BookingView extends Component {
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
             var ShipmentType = QuotationData[0].ShipmentType;
+            var Company_Address = QuotationData[0].Company_Address;
+            var contact_name = QuotationData[0].contact_name;
+            var company_name = QuotationData[0].company_name;
             self.setState({
               QuotationData,
               QuotationSubData,
-              ShipmentType
+              ShipmentType,
+              Company_Address,
+              contact_name,
+              company_name
             });
           }
         }
@@ -990,7 +1008,10 @@ class BookingView extends Component {
                   <div className="rate-final-contr">
                     <Collapse in={this.state.showContent}>
                       <div>
-                        <div className="title-border py-3" style={{marginBottom:"15px"}}>
+                        <div
+                          className="title-border py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
                           <h3>Rate Query</h3>
                         </div>
                         <div className="row">
@@ -1016,7 +1037,7 @@ class BookingView extends Component {
                                 <p className="details-title">Equipment Types</p>
                                 <p className="details-para"></p>
                               </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                                 <p className="details-title">
                                   Special Equipment
                                 </p>
@@ -1027,9 +1048,17 @@ class BookingView extends Component {
                             ""
                           )}
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">
-                              HazMat &amp; Unstackable
+                            <p className="details-title">HazMat</p>
+                            <p className="details-para">
+                              {this.state.HAZMAT === 1
+                                ? "Yes"
+                                : this.state.HAZMAT === 0
+                                ? "No"
+                                : ""}
                             </p>
+                          </div>
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                            <p className="details-title">Unstackable</p>
                             <p className="details-para"></p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
@@ -1067,7 +1096,10 @@ class BookingView extends Component {
                         </div>
                       </div>
                     </Collapse>
-                    <div className="text-right" style={{marginBottom:"15px"}}>
+                    <div
+                      className="text-right"
+                      style={{ marginBottom: "15px" }}
+                    >
                       <button
                         className={className}
                         id="toggler"
@@ -1095,15 +1127,21 @@ class BookingView extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Account/Customer</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.company_name}
+                            </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Address</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.Company_Address}
+                            </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">Notification Person</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.contact_name}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1326,7 +1364,7 @@ class BookingView extends Component {
                       </div>
                     </div>
                     <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                      <div className="col-12 col-sm-6 col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
                         <p className="details-para">{commodityName}</p>
                         {/* <select

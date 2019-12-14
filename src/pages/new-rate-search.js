@@ -904,7 +904,7 @@ class NewRateSearch extends Component {
       } else {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+          ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
         };
       }
     } else {
@@ -915,7 +915,7 @@ class NewRateSearch extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
+        ["Volume"]: parseFloat(decVolume.toFixed(2))
       };
     }
 
@@ -1251,7 +1251,7 @@ class NewRateSearch extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              placeholder={el.Gross_Weight === 0 ? "GW (kg)" : "GW (kg)"}
               name="Gross_Weight"
               value={el.Gross_Weight}
               className="w-100"

@@ -1077,7 +1077,7 @@ table tbody tr:last-child {
   margin-top: 15px;
 }
 .transit-sect-overflow {
-  height: calc(100vh - 105px);
+  /* height: calc(100vh - 105px); */
   overflow: auto;
 }
 .delivery-popup {
@@ -1160,6 +1160,15 @@ table tbody tr:last-child {
   top: 10px;
   right: 10px;
   /* color: #9dafbd; */
+}
+.planner-below-cards {
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+.planner-below-cards:last-child {
+  margin-bottom: 0;
 }
 /* shipment planner ends */
 
@@ -3973,6 +3982,7 @@ img {
 }
 .transit-sect .details-para1 {
   float: right;
+  font-size: 28px;
 }
 .transit-sect .calendar {
   width: 35px;

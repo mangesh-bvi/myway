@@ -1713,7 +1713,7 @@ class RateTable extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              placeholder={el.Gross_Weight === 0 ? "GW (kg)" : "GW (kg)"}
               name="Gross_Weight"
               value={el.Gross_Weight}
               className="w-100"
@@ -2616,7 +2616,7 @@ class RateTable extends Component {
               <input
                 type="text"
                 onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                placeholder={el.Gross_Weight === 0 ? "GW (kg)" : "GW (kg)"}
                 name="GrossWt"
                 value={el.GrossWt || ""}
                 className="w-100"
@@ -2701,6 +2701,22 @@ class RateTable extends Component {
         ...multiCBM[i],
         [name]: value
       };
+    } else if (
+      name === "Lengths" ||
+      name === "Width" ||
+      name === "Height" ||
+      name === "GrossWt"
+    ) {
+      var validNumber = new RegExp(/^\d*\.?\d*$/);
+      if (value === "" || validNumber.test(value)) {
+        if ((parseFloat(value) * 100) % 1 > 0) {
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            [name]: value
+          };
+        }
+      }
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
@@ -2722,7 +2738,7 @@ class RateTable extends Component {
       } else {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+          ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
         };
       }
     } else {
@@ -2733,7 +2749,7 @@ class RateTable extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
+        ["Volume"]: parseFloat(decVolume.toFixed(2))
       };
     }
 
@@ -3098,6 +3114,10 @@ class RateTable extends Component {
       .then(function(response) {
         debugger;
         NotificationManager.success(response.data.Table[0].Message);
+
+          setTimeout(function() {
+              self.props.history.push("./spot-rate-table")
+          }, 1000);
         // self.setState({
         //   arrLocalsCharges: response.data.Table,
         //   fltLocalCharges: response.data.Table

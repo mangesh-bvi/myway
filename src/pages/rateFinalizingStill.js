@@ -544,7 +544,7 @@ class RateFinalizingStill extends Component {
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.GrossWeight === 0 ? "G W" : "G W"}
+              placeholder={el.GrossWeight === 0 ? "GW (kg)" : "GW (kg)"}
               name="GrossWeight"
               value={"" + el.GrossWeight || ""}
               className="w-100"
@@ -1077,7 +1077,7 @@ class RateFinalizingStill extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.GrossWeight === 0 ? "G W" : "G W"}
+              placeholder={el.GrossWeight === 0 ? "GW (kg)" : "GW (kg)"}
               name="Gross_Weight"
               value={el.GrossWeight}
               className="w-100"

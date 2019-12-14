@@ -614,6 +614,7 @@ class ShippingDetailsTwo extends Component {
   }
   HandleDownloadFile(evt, row) {
     debugger;
+    let self = this;
     var HblNo = row.original["HBL#"];
     var downloadFilePath = row.original["FilePath"];
 
@@ -622,19 +623,19 @@ class ShippingDetailsTwo extends Component {
       url: `${appSettings.APIURL}/DownloadFTPFile`,
       data: {
         MywayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        FilePath: row.original["FilePath"]
+        FilePath: downloadFilePath
       },
       headers: authHeader()
     })
       .then(function(response) {
         debugger;
-        // var documentdata = [];
-        // documentdata = response.data;
+        var documentdata = [];
+        documentdata = response.config.data;
         // documentdata.forEach(function(file, i) {
         //   file.sr_no = i + 1;
         // });
-
-        // self.setState({ documentData: documentdata });
+        
+        self.setState({ documentData: documentdata });
       })
       .catch(error => {
         debugger;
@@ -1144,10 +1145,9 @@ class ShippingDetailsTwo extends Component {
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
-                <p style={{ fontWeight: "600" }}>{team.Message}</p>
-
+                <p>{team.Message}</p>
                 <div class="d-flex justify-content-between">
-                  <div>
+                  {/* <div>
                     <span>
                       Created by:
                       {encryption(
@@ -1155,8 +1155,8 @@ class ShippingDetailsTwo extends Component {
                         "desc"
                       )}
                     </span>
-                  </div>
-                  ({team.MessageCreationTime})
+                  </div> */}
+                  {team.MessageCreationTime}
                 </div>
                 <hr />
               </div>
