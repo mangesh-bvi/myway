@@ -4674,13 +4674,8 @@ class RateFinalizing extends Component {
                                   if (row._original.LineName) {
                                     olname = row._original.LineName;
                                     lname =
-<<<<<<< HEAD
                                       row._original.LineName.replace(
                                         "  ",
-=======
-                                      row._original.Linename.replace(
-                                        " ",
->>>>>>> aa17fa3440a2806c33a6667deaec314b7c6e54de
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
@@ -4701,22 +4696,13 @@ class RateFinalizing extends Component {
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
-<<<<<<< HEAD
-                                    row._original.lineName
-                                    .replace(" ", "_")
-                                    .replace(" ", "_") + ".png";
-                                    }
-                                    var mode = "";
-                                    if (this.state.ModeOfTransport) {
-=======
-                                      row._original.Linename.replace(
+                                      row._original.lineName.replace(
                                         " ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
                                   var mode = "";
                                   if (this.state.ModeOfTransport) {
->>>>>>> aa17fa3440a2806c33a6667deaec314b7c6e54de
                                     mode = this.state.ModeOfTransport;
                                   }
                                   if (this.state.modeoftransport) {
