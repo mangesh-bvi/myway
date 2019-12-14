@@ -1165,9 +1165,10 @@ table tbody tr:last-child {
   background-color: #fff;
   padding: 10px;
   margin-bottom: 10px;
+  border-radius: 10px;
 }
 .planner-below-cards:last-child {
-margin-bottom: 0;
+  margin-bottom: 0;
 }
 /* shipment planner ends */
 
