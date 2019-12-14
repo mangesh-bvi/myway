@@ -1161,6 +1161,14 @@ table tbody tr:last-child {
   right: 10px;
   /* color: #9dafbd; */
 }
+.planner-below-cards {
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.planner-below-cards:last-child {
+margin-bottom: 0;
+}
 /* shipment planner ends */
 
 /* rate search starts */
@@ -3973,6 +3981,7 @@ img {
 }
 .transit-sect .details-para1 {
   float: right;
+  font-size: 28px;
 }
 .transit-sect .calendar {
   width: 35px;
