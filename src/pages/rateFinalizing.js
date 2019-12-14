@@ -918,63 +918,51 @@ class RateFinalizing extends Component {
     let self = this;
     var Containerdetails = [];
     var MultiplePOLPOD = [];
-    var RateDetails = this.state.rateDetails;
-    var RoutingInformation = [];
-    // for (let i = 0; i < this.state.users.length; i++) {
-    //   Containerdetails.push({
-    //     ProfileCodeID: this.state.users[i].ProfileCodeID,
-    //     ContainerCode: this.state.users[i].StandardContainerCode,
-    //     Type: this.state.users[i].ContainerName,
-    //     ContainerQuantity: this.state.users[i].ContainerQuantity,
-    //     Temperature: this.state.users[i].Temperature,
-    //     TemperatureType: this.state.users[i].TemperatureType
-    //   });
-    // }
-
-    // if (
-    //   this.state.polArray.length > this.state.podArray.length ||
-    //   this.state.polArray.length == this.state.podArray.length
-    // ) {
-    //   for (let i = 0; i < this.state.polArray.length; i++) {
-    //     MultiplePOLPOD.push({
-    //       POL: this.state.polArray[i].POL,
-    //       POD:
-    //         this.state.podArray[i] == undefined
-    //           ? ""
-    //           : this.state.podArray[i].POD,
-    //       POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
-    //       PODGeoCordinate:
-    //         this.state.podArray[i] == undefined
-    //           ? ""
-    //           : this.state.podArray[i].PODGeoCordinate
-    //     });
-    //   }
-    // } else if (this.state.podArray.length > this.state.polArray.length) {
-    //   for (let i = 0; i < this.state.podArray.length; i++) {
-    //     MultiplePOLPOD.push({
-    //       POL:
-    //         this.state.polArray[i] == undefined
-    //           ? ""
-    //           : this.state.polArray[i].POL,
-    //       POD: this.state.podArray[i].POD,
-    //       POLGeoCordinate:
-    //         this.state.polArray[i] == undefined
-    //           ? ""
-    //           : this.state.polArray[i].POLGeoCordinate,
-    //       PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
-    //     });
-    //   }
-    // }
-    for (let i = 0; i < RateDetails.length; i++) {
-      RoutingInformation.push({
-        POL: RateDetails.POLCode,
-        POD: RateDetails.PODCode,
-        LineName: RateDetails.lineName,
-        ContainerType: RateDetails.ContainerType,
-        ContainerQty: RateDetails.ContainerQuantity
-      })     
+    for (let i = 0; i < this.state.users.length; i++) {
+      Containerdetails.push({
+        ProfileCodeID: this.state.users[i].ProfileCodeID,
+        ContainerCode: this.state.users[i].StandardContainerCode,
+        Type: this.state.users[i].ContainerName,
+        ContainerQuantity: this.state.users[i].ContainerQuantity,
+        Temperature: this.state.users[i].Temperature,
+        TemperatureType: this.state.users[i].TemperatureType
+      });
     }
-      
+
+    if (
+      this.state.polArray.length > this.state.podArray.length ||
+      this.state.polArray.length == this.state.podArray.length
+    ) {
+      for (let i = 0; i < this.state.polArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL: this.state.polArray[i].POL,
+          POD:
+            this.state.podArray[i] == undefined
+              ? ""
+              : this.state.podArray[i].POD,
+          POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate:
+            this.state.podArray[i] == undefined
+              ? ""
+              : this.state.podArray[i].PODGeoCordinate
+        });
+      }
+    } else if (this.state.podArray.length > this.state.polArray.length) {
+      for (let i = 0; i < this.state.podArray.length; i++) {
+        MultiplePOLPOD.push({
+          POL:
+            this.state.polArray[i] == undefined
+              ? ""
+              : this.state.polArray[i].POL,
+          POD: this.state.podArray[i].POD,
+          POLGeoCordinate:
+            this.state.polArray[i] == undefined
+              ? ""
+              : this.state.polArray[i].POLGeoCordinate,
+          PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
+        });
+      }
+    }
 
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
@@ -982,11 +970,12 @@ class RateFinalizing extends Component {
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
-      RoutingInformation: RoutingInformation,
+      Containerdetails: Containerdetails,
       Currency: self.state.currencyCode,
       // MultiplePOLPOD:[
       // {POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
       // {POL:'INBOM',POD:'TRPAM',POLGeoCordinate:'19.078682,72.879144',PODGeoCordinate:'40.968456,28.674417'}],
+      MultiplePOLPOD: MultiplePOLPOD,
       RateQueryDim: [
         {
           Quantity: 0,
@@ -3702,7 +3691,7 @@ class RateFinalizing extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+              placeholder={el.Gross_Weight === 0 ? "GW (kg)" : "GW (kg)"}
               name="Gross_Weight"
               value={el.Gross_Weight}
               className="w-100"
@@ -4663,8 +4652,8 @@ class RateFinalizing extends Component {
                                   if (row._original.LineName) {
                                     olname = row._original.LineName;
                                     lname =
-                                      row._original.Linename.replace(
-                                        " ",
+                                      row._original.LineName.replace(
+                                        "  ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }

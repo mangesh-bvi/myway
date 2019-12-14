@@ -29,7 +29,6 @@ import Delete from "./../assets/img/red-delete-icon.png";
 import Calen from "./../assets/img/calendar.png";
 import Download from "./../assets/img/csv.png";
 
-
 import YellowFlag from "./../assets/img/yellow-flag.png";
 import {
   withScriptjs,
@@ -1309,7 +1308,6 @@ class ShipmentPlanner extends Component {
                       }}
                     >
                       <div className="container-fluid p-0">
-                     
                         <div className="transit-sect">
                           <div className="row" style={{ margin: "0" }}>
                             <div className="col-md-4 details-border card-a px-2">
@@ -1318,12 +1316,15 @@ class ShipmentPlanner extends Component {
                                   Total Average Days
                                 </p>
                                 <div className="mt-5">
-                                <img src={Calen} alt="" className="calendar" />
-                                <p className="details-para details-para1">
-                                  {this.state.totalAvgDays}
-                                </p>
-                              </div>
-                                
+                                  <img
+                                    src={Calen}
+                                    alt=""
+                                    className="calendar"
+                                  />
+                                  <p className="details-para details-para1">
+                                    {this.state.totalAvgDays}
+                                  </p>
+                                </div>
                               </div>
                             </div>
                             <div className="col-md-4 details-border card-a px-2">
@@ -1332,10 +1333,14 @@ class ShipmentPlanner extends Component {
                                   Total Minimum Days
                                 </p>
                                 <div className="mt-5">
-                                <img src={Calen} alt="" className="calendar" />
-                                <p className="details-para details-para1">
-                                  {this.state.totalMinDays}
-                                </p>
+                                  <img
+                                    src={Calen}
+                                    alt=""
+                                    className="calendar"
+                                  />
+                                  <p className="details-para details-para1">
+                                    {this.state.totalMinDays}
+                                  </p>
                                 </div>
                               </div>
                             </div>
@@ -1345,17 +1350,21 @@ class ShipmentPlanner extends Component {
                                   Total Maximum Days
                                 </p>
                                 <div className="mt-5">
-                                <img src={Calen} alt="" className="calendar" />
-                                <p className="details-para details-para1">
-                                  {this.state.totalMaxDays}
-                                </p>
+                                  <img
+                                    src={Calen}
+                                    alt=""
+                                    className="calendar"
+                                  />
+                                  <p className="details-para details-para1">
+                                    {this.state.totalMaxDays}
+                                  </p>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
 
-                      {/* <div className="Transitnew">
+                        {/* <div className="Transitnew">
                         <ul className="progressk">
                              <li className="progress1">
                                <span className="grey">
@@ -1423,14 +1432,12 @@ class ShipmentPlanner extends Component {
                         </ul>
                       </div> */}
 
-
-
-                        <div className="transit-sect-overflow">
+                        <div className="transit-sect-overflow px-2">
                           {transitpopup.map((cell, i) => {
                             var imgSrc = "";
 
                             return (
-                              <div className="transit-sect">
+                              <div className="transit-sect planner-below-cards">
                                 <div className="d-flex justify-content-between align-items-center">
                                   <div className="d-flex align-items-center">
                                     <div className="shipment-img mr-3">
