@@ -374,11 +374,7 @@ class BookingView extends Component {
             });
           }
         }
-        // for (let qd of self.state.QuotationData) {
-        //   if (qd.Linename) {
-        //     self.GetImageURL(qd);
-        //   }
-        // }
+     
         if (typeof eqmtType !== "undefined") {
           if (eqmtType.length > 0) {
             self.setState({ eqmtType });

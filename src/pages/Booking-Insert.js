@@ -13,8 +13,8 @@ import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
-import { encryption, convertToPlain } from "../helpers/encryption";
-import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
+import { encryption } from "../helpers/encryption";
+import { Button, Modal, ModalBody } from "reactstrap";
 
 class BookingInsert extends Component {
   constructor(props) {
@@ -620,7 +620,7 @@ class BookingInsert extends Component {
     var formdata = new FormData();
     formdata.append("BookingID", BookingID);
     formdata.append("DocumentID", DocumentID);
-    formdata.append("BookingDoc", DocumnetFile);
+    formdata.append("BookingDoc", DocumnetFile[0]);
     formdata.append("MyWayUserID", userId);
 
     axios({
