@@ -4696,7 +4696,7 @@ class RateFinalizing extends Component {
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
-                                      row._original.Linename.replace(
+                                      row._original.lineName.replace(
                                         " ",
                                         "_"
                                       ).replace(" ", "_") + ".png";
