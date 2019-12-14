@@ -2701,6 +2701,22 @@ class RateTable extends Component {
         ...multiCBM[i],
         [name]: value
       };
+    } else if (
+      name === "Lengths" ||
+      name === "Width" ||
+      name === "Height" ||
+      name === "GrossWt"
+    ) {
+      var validNumber = new RegExp(/^\d*\.?\d*$/);
+      if (value === "" || validNumber.test(value)) {
+        if ((parseFloat(value) * 100) % 1 > 0) {
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            [name]: value
+          };
+        }
+      }
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
@@ -2722,7 +2738,7 @@ class RateTable extends Component {
       } else {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+          ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
         };
       }
     } else {
@@ -2733,7 +2749,7 @@ class RateTable extends Component {
           (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
+        ["Volume"]: parseFloat(decVolume.toFixed(2))
       };
     }
 
