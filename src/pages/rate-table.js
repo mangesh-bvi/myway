@@ -3098,6 +3098,10 @@ class RateTable extends Component {
       .then(function(response) {
         debugger;
         NotificationManager.success(response.data.Table[0].Message);
+
+          setTimeout(function() {
+              self.props.history.push("./spot-rate-table")
+          }, 1000);
         // self.setState({
         //   arrLocalsCharges: response.data.Table,
         //   fltLocalCharges: response.data.Table
