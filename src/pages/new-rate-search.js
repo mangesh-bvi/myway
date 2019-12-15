@@ -228,7 +228,8 @@ class NewRateSearch extends Component {
       showCurr: false,
       testSelection: false,
       errors: {},
-      heightData: []
+      heightData: [],
+      isViewRate: false
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);

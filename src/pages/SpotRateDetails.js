@@ -139,7 +139,8 @@ class SpotRateDetails extends Component {
       currencyData: [],
       currencyCode: "",
       TruckType: [],
-      testSelection: false
+      testSelection: false,
+      isViewRate: true
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -431,7 +432,7 @@ class SpotRateDetails extends Component {
     //podfullAddData["GeoCoordinate"] = "40.968456,28.674417";
     podfullAddData[
       "GeoCoordinate"
-    ] = this.state.spotrateresponseTbl.DeliveryGeoCordinate;
+    ] = this.state.spotrateresponseTbl1[0].PODGeoCordinate;
     podfullAddData["Location"] = "AMB";
     podfullAddData[
       "NameWoDiacritics"
@@ -447,7 +448,7 @@ class SpotRateDetails extends Component {
     //polfullAddData["GeoCoordinate"] = "18.950123,72.950055";
     polfullAddData[
       "GeoCoordinate"
-    ] = this.state.spotrateresponseTbl.PickupGeoCordinate;
+    ] = this.state.spotrateresponseTbl1[0].POLGeoCordinate;
     polfullAddData["Location"] = "NSA";
     polfullAddData[
       "NameWoDiacritics"

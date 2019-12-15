@@ -6494,13 +6494,13 @@ class RateFinalizing extends Component {
                             <label>
                               POL :{" "}
                               <span>
-                                {this.state.polfullAddData.OceanPortLongName}
+                                {this.state.isCopy == true?this.state.PickUpAddress:this.state.polfullAddData.OceanPortLongName}
                               </span>
                             </label>
                             <label>
                               POD :{" "}
                               <span>
-                                {this.state.podfullAddData.OceanPortLongName}
+                                {this.state.isCopy == true?this.state.DestinationAddress:this.state.podfullAddData.OceanPortLongName}
                               </span>
                             </label>
                           </div>
@@ -6733,9 +6733,9 @@ class RateFinalizing extends Component {
                                 <th>
                                   {this.state.filterrateSubDetails.reduce(
                                     (sum, filterrateSubDetails) =>
-                                      sum + filterrateSubDetails.TotalAmount,
+                                      this.state.isCopy==true?sum + parseFloat(filterrateSubDetails.Total.split(" ")[0]): sum + filterrateSubDetails.TotalAmount,
                                     0
-                                  )}
+                                  ) + " "+this.state.filterrateSubDetails[0].BaseCurrency}
                                 </th>
                               </tr>
                             </thead>

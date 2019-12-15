@@ -3619,6 +3619,11 @@ table tbody tr:last-child {
 .large-popup {
   max-width: 80%;
 }
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+}
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
 /*-----myWayMessage Devesh CSS (Start)-----*/

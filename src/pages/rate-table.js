@@ -235,7 +235,8 @@ class RateTable extends Component {
       profitLossAmt: 0,
       profitLossPer: 0,
       MinTT: 0,
-      MaxTT: 0
+      MaxTT: 0,
+      isViewRate: false
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -458,7 +459,8 @@ class RateTable extends Component {
             podArray: this.state.podArray,
             polFilterArray: this.state.polFilterArray,
             podFilterArray: this.state.podFilterArray,
-            flattack_openTop: this.state.flattack_openTop
+            flattack_openTop: this.state.flattack_openTop,
+            isViewRate: paramData.isViewRate
           });
           this.HandleRateDetailsFCL(paramData);
         }
@@ -3134,7 +3136,14 @@ class RateTable extends Component {
   }
   render() {
     var i = 0;
+    var classname = "";
 
+    if (this.state.isViewRate == true) {
+      classname = "butn btn-sizeRate disabled"
+    }
+    else{
+      classname = "butn btn-sizeRate"
+    }
     return (
       <div>
         <Headers />
@@ -3210,16 +3219,16 @@ class RateTable extends Component {
                 <div className="col-12 col-md-5 col-lg-3 less-right-rate">
                   <div className="rate-table-left">
                     <div className="top-select d-flex justify-content-between disblo">
-                      <a href="new-rate-search" className="butn btn-sizeRate">
+                      <a href="new-rate-search" className={classname}>
                         {this.state.shipmentType}
                       </a>
-                      <a href="new-rate-search" className="butn btn-sizeRate">
+                      <a href="new-rate-search" className={classname}>
                         {this.state.modeoftransport}
                       </a>
-                      <a href="new-rate-search" className="butn btn-sizeRate">
+                      <a href="new-rate-search" className={classname}>
                         {this.state.containerLoadType}
                       </a>
-                      <a href="new-rate-search" className="butn btn-sizeRate">
+                      <a href="new-rate-search" className={classname}>
                         {this.state.typeofMove === 1
                           ? "P2P"
                           : this.state.typeofMove === 2
@@ -3442,14 +3451,23 @@ class RateTable extends Component {
                         ></PODMaps>
                       </div>
                     </div>
-                    <button
+                    {this.state.isViewRate == true?
+                    (<button
+                      onClick={this.toggleQuant}
+                      className="butn white-butn w-100 mt-0"
+                      disabled
+                    >
+                      {this.state.containerLoadType === "FCL"
+                        ? "Container Details"
+                        : "Cargo Details"}
+                    </button>): (<button
                       onClick={this.toggleQuant}
                       className="butn white-butn w-100 mt-0"
                     >
                       {this.state.containerLoadType === "FCL"
                         ? "Container Details"
                         : "Cargo Details"}
-                    </button>
+                    </button>)}
                   </div>
                 </div>
 
