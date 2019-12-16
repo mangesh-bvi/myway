@@ -3117,9 +3117,9 @@ class RateTable extends Component {
         debugger;
         NotificationManager.success(response.data.Table[0].Message);
 
-          setTimeout(function() {
-              self.props.history.push("./spot-rate-table")
-          }, 1000);
+        setTimeout(function() {
+          self.props.history.push("./spot-rate-table");
+        }, 1000);
         // self.setState({
         //   arrLocalsCharges: response.data.Table,
         //   fltLocalCharges: response.data.Table
@@ -3139,10 +3139,9 @@ class RateTable extends Component {
     var classname = "";
 
     if (this.state.isViewRate == true) {
-      classname = "butn btn-sizeRate disabled"
-    }
-    else{
-      classname = "butn btn-sizeRate"
+      classname = "butn btn-sizeRate disabled";
+    } else {
+      classname = "butn btn-sizeRate";
     }
     return (
       <div>
@@ -3451,23 +3450,26 @@ class RateTable extends Component {
                         ></PODMaps>
                       </div>
                     </div>
-                    {this.state.isViewRate == true?
-                    (<button
-                      onClick={this.toggleQuant}
-                      className="butn white-butn w-100 mt-0"
-                      disabled
-                    >
-                      {this.state.containerLoadType === "FCL"
-                        ? "Container Details"
-                        : "Cargo Details"}
-                    </button>): (<button
-                      onClick={this.toggleQuant}
-                      className="butn white-butn w-100 mt-0"
-                    >
-                      {this.state.containerLoadType === "FCL"
-                        ? "Container Details"
-                        : "Cargo Details"}
-                    </button>)}
+                    {this.state.isViewRate == true ? (
+                      <button
+                        onClick={this.toggleQuant}
+                        className="butn white-butn w-100 mt-0"
+                        disabled
+                      >
+                        {this.state.containerLoadType === "FCL"
+                          ? "Container Details"
+                          : "Cargo Details"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={this.toggleQuant}
+                        className="butn white-butn w-100 mt-0"
+                      >
+                        {this.state.containerLoadType === "FCL"
+                          ? "Container Details"
+                          : "Cargo Details"}
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -3943,8 +3945,8 @@ class RateTable extends Component {
                         "desc"
                       ) !== "Customer" ? (
                         <p className="bottom-profit">
-                          Profit -------{this.state.profitLossAmt}$ / Profit
-                          Margin %{this.state.profitLossPer}
+                          Profit -------{this.state.profitLossAmt.toFixed(2)}$ /
+                          Profit Margin {this.state.profitLossPer.toFixed(2)}%
                         </p>
                       ) : null}
                     </div>

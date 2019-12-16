@@ -916,52 +916,14 @@ class RateFinalizing extends Component {
 
   HandleLocalCharges() {
     let self = this;
-    var Containerdetails = [];
-    var MultiplePOLPOD = [];
-    for (let i = 0; i < this.state.users.length; i++) {
-      Containerdetails.push({
-        ProfileCodeID: this.state.users[i].ProfileCodeID,
-        ContainerCode: this.state.users[i].StandardContainerCode,
-        Type: this.state.users[i].ContainerName,
-        ContainerQuantity: this.state.users[i].ContainerQuantity,
-        Temperature: this.state.users[i].Temperature,
-        TemperatureType: this.state.users[i].TemperatureType
-      });
+    var RoutingInformation = [];
+    var rateDetails = this.state.rateDetails;
+    var modeOfTransport = "";
+    if (this.state.modeoftransport.toUpperCase() == "SEA") {
+      modeOfTransport = "ocean"
     }
-
-    if (
-      this.state.polArray.length > this.state.podArray.length ||
-      this.state.polArray.length == this.state.podArray.length
-    ) {
-      for (let i = 0; i < this.state.polArray.length; i++) {
-        MultiplePOLPOD.push({
-          POL: this.state.polArray[i].POL,
-          POD:
-            this.state.podArray[i] == undefined
-              ? ""
-              : this.state.podArray[i].POD,
-          POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
-          PODGeoCordinate:
-            this.state.podArray[i] == undefined
-              ? ""
-              : this.state.podArray[i].PODGeoCordinate
-        });
-      }
-    } else if (this.state.podArray.length > this.state.polArray.length) {
-      for (let i = 0; i < this.state.podArray.length; i++) {
-        MultiplePOLPOD.push({
-          POL:
-            this.state.polArray[i] == undefined
-              ? ""
-              : this.state.polArray[i].POL,
-          POD: this.state.podArray[i].POD,
-          POLGeoCordinate:
-            this.state.polArray[i] == undefined
-              ? ""
-              : this.state.polArray[i].POLGeoCordinate,
-          PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
-        });
-      }
+    else{
+      modeOfTransport = this.state.modeoftransport
     }
     var ModeOfTransport =
       this.state.modeoftransport === "SEA"
@@ -972,18 +934,24 @@ class RateFinalizing extends Component {
     var RoutingInformation=[];
     
 
+    for (let i = 0; i < rateDetails.length; i++) {
+      RoutingInformation.push({
+        POL:rateDetails[i].POLCode,
+        POD:rateDetails[i].PODCode,
+        LineID:rateDetails[i].RateLineId,
+        LineName:rateDetails[i].lineName,
+        ContainerType:rateDetails[i].ContainerType,
+        ContainerQty:rateDetails[i].ContainerQuantity        
+      })
+      
+    }
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
-      ModeOfTransport: ModeOfTransport,
+      ModeOfTransport: modeOfTransport,
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
-      Containerdetails: Containerdetails,
-      Currency: self.state.currencyCode,
-      // MultiplePOLPOD:[
-      // {POL:'INNSA',POD:'TRPAM',POLGeoCordinate:'18.950123,72.950055',PODGeoCordinate:'40.968456,28.674417'},
-      // {POL:'INBOM',POD:'TRPAM',POLGeoCordinate:'19.078682,72.879144',PODGeoCordinate:'40.968456,28.674417'}],
-      MultiplePOLPOD: MultiplePOLPOD,
+      RoutingInformation: RoutingInformation,
       RateQueryDim: [
         {
           Quantity: 0,
@@ -996,6 +964,7 @@ class RateFinalizing extends Component {
         }
       ],
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+      BaseCurrency: self.state.currencyCode,
       PickupGeoCordinate: this.props.location.state.OriginGeoCordinates,
       DeliveryGeoCordinate: this.props.location.state.DestGeoCordinate
     };
@@ -1050,63 +1019,81 @@ class RateFinalizing extends Component {
     let self = this;
     var Containerdetails = [];
     var MultiplePOLPOD = [];
-    for (let i = 0; i < this.state.users.length; i++) {
-      Containerdetails.push({
-        ProfileCodeID: this.state.users[i].ProfileCodeID,
-        ContainerCode: this.state.users[i].StandardContainerCode,
-        Type: this.state.users[i].ContainerName,
-        ContainerQuantity: this.state.users[i].ContainerQuantity,
-        Temperature: this.state.users[i].Temperature,
-        TemperatureType: this.state.users[i].TemperatureType
-      });
+    var RoutingInformation = [];
+    var rateDetails = this.state.rateDetails;
+    var modeOfTransport = "";
+    if (this.state.modeoftransport.toUpperCase() == "SEA") {
+      modeOfTransport = "ocean"
+    }
+    else{
+      modeOfTransport = this.state.modeoftransport
     }
 
-    if (
-      this.state.polArray.length > this.state.podArray.length ||
-      this.state.polArray.length == this.state.podArray.length
-    ) {
-      for (let i = 0; i < this.state.polArray.length; i++) {
-        MultiplePOLPOD.push({
-          POL: this.state.polArray[i].POL,
-          POD:
-            this.state.podArray[i] == undefined
-              ? ""
-              : this.state.podArray[i].POD,
-          POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
-          PODGeoCordinate:
-            this.state.podArray[i] == undefined
-              ? ""
-              : this.state.podArray[i].PODGeoCordinate
-        });
-      }
-    } else if (this.state.podArray.length > this.state.polArray.length) {
-      for (let i = 0; i < this.state.podArray.length; i++) {
-        MultiplePOLPOD.push({
-          POL:
-            this.state.polArray[i] == undefined
-              ? ""
-              : this.state.polArray[i].POL,
-          POD: this.state.podArray[i].POD,
-          POLGeoCordinate:
-            this.state.polArray[i] == undefined
-              ? ""
-              : this.state.polArray[i].POLGeoCordinate,
-          PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
-        });
-      }
+    for (let i = 0; i < rateDetails.length; i++) {
+      RoutingInformation.push({
+        POL:rateDetails[i].POLCode,
+        POD:rateDetails[i].PODCode,
+        LineID:rateDetails[i].RateLineId,
+        LineName:rateDetails[i].lineName,
+        ContainerType:rateDetails[i].ContainerType,
+        ContainerQty:rateDetails[i].ContainerQuantity        
+      })
+      
     }
+    // for (let i = 0; i < this.state.users.length; i++) {
+    //   Containerdetails.push({
+    //     ProfileCodeID: this.state.users[i].ProfileCodeID,
+    //     ContainerCode: this.state.users[i].StandardContainerCode,
+    //     Type: this.state.users[i].ContainerName,
+    //     ContainerQuantity: this.state.users[i].ContainerQuantity,
+    //     Temperature: this.state.users[i].Temperature,
+    //     TemperatureType: this.state.users[i].TemperatureType
+    //   });
+    // }
+
+    // if (
+    //   this.state.polArray.length > this.state.podArray.length ||
+    //   this.state.polArray.length == this.state.podArray.length
+    // ) {
+    //   for (let i = 0; i < this.state.polArray.length; i++) {
+    //     MultiplePOLPOD.push({
+    //       POL: this.state.polArray[i].POL,
+    //       POD:
+    //         this.state.podArray[i] == undefined
+    //           ? ""
+    //           : this.state.podArray[i].POD,
+    //       POLGeoCordinate: this.state.polArray[i].POLGeoCordinate,
+    //       PODGeoCordinate:
+    //         this.state.podArray[i] == undefined
+    //           ? ""
+    //           : this.state.podArray[i].PODGeoCordinate
+    //     });
+    //   }
+    // } else if (this.state.podArray.length > this.state.polArray.length) {
+    //   for (let i = 0; i < this.state.podArray.length; i++) {
+    //     MultiplePOLPOD.push({
+    //       POL:
+    //         this.state.polArray[i] == undefined
+    //           ? ""
+    //           : this.state.polArray[i].POL,
+    //       POD: this.state.podArray[i].POD,
+    //       POLGeoCordinate:
+    //         this.state.polArray[i] == undefined
+    //           ? ""
+    //           : this.state.polArray[i].POLGeoCordinate,
+    //       PODGeoCordinate: this.state.podArray[i].PODGeoCordinate
+    //     });
+    //   }
+    // }
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SurChargesSalesQuote`,
       data: {
         QuoteType: this.state.containerLoadType,
-        ModeOfTransport: this.state.modeoftransport,
+        ModeOfTransport: modeOfTransport,
         Type: this.state.shipmentType,
         TypeOfMove: this.state.typeofMove,
         ChargeableWeight: 0,
-        Containerdetails: Containerdetails,
-        Currency: self.state.currencyCode,
-        MultiplePOLPOD: MultiplePOLPOD,
         RateQueryDim: [
           {
             Quantity: 0,
@@ -1118,7 +1105,11 @@ class RateFinalizing extends Component {
             Volume: 0
           }
         ],
-        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+        RoutingInformation: RoutingInformation,
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        BaseCurrency: self.state.currencyCode,
+        PickupGeoCordinate: this.props.location.state.OriginGeoCordinates,
+        DeliveryGeoCordinate: this.props.location.state.DestGeoCordinate
       },
       headers: authHeader()
     }).then(function(response) {
