@@ -963,10 +963,18 @@ class RateFinalizing extends Component {
         });
       }
     }
+    var ModeOfTransport =
+      this.state.modeoftransport === "SEA"
+        ? "Ocean"
+        : this.state.modeoftransport;
+
+
+    var RoutingInformation=[];
+    
 
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
-      ModeOfTransport: this.state.modeoftransport,
+      ModeOfTransport: ModeOfTransport,
       Type: this.state.shipmentType,
       TypeOfMove: this.state.typeofMove,
       ChargeableWeight: 0,
@@ -990,7 +998,6 @@ class RateFinalizing extends Component {
       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
       PickupGeoCordinate: this.props.location.state.OriginGeoCordinates,
       DeliveryGeoCordinate: this.props.location.state.DestGeoCordinate
-
     };
 
     axios({
@@ -1322,11 +1329,10 @@ class RateFinalizing extends Component {
         });
       }
       if (containerLoadType == "LCL") {
-          FCLSQBaseFreight.push({
-            RateID: rateDetailsarr[i].RateLineID,
-            RateType: rateDetailsarr[i].TypeOfRate
-          });
-        
+        FCLSQBaseFreight.push({
+          RateID: rateDetailsarr[i].RateLineID,
+          RateType: rateDetailsarr[i].TypeOfRate
+        });
       } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
         FCLSQBaseFreight.push({
           RateID: rateDetailsarr[i].RateLineID,
@@ -1370,24 +1376,20 @@ class RateFinalizing extends Component {
           //     }
           //   }
           // } else {
-            if (
-              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
-            ) {
-              FCLSQCharges.push({
-                ChargeID: rateSubDetailsarr[j].ChargeID,
-                Rate: rateSubDetailsarr[j].Rate,
-                Currency: rateSubDetailsarr[j].Currency,
-                RateLineID: rateSubDetailsarr[j].RateLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                Tax:
-                  rateSubDetailsarr[j].Tax == null
-                    ? 0
-                    : rateSubDetailsarr[j].Tax,
-                ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                Exrate: rateSubDetailsarr[j].Exrate,
-                ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount: rateSubDetailsarr[j].TotalAmount
-              });
+          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
+            FCLSQCharges.push({
+              ChargeID: rateSubDetailsarr[j].ChargeID,
+              Rate: rateSubDetailsarr[j].Rate,
+              Currency: rateSubDetailsarr[j].Currency,
+              RateLineID: rateSubDetailsarr[j].RateLineID,
+              ChargeCode: rateSubDetailsarr[j].ChargeCode,
+              Tax:
+                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+              ChargeItem: rateSubDetailsarr[j].ChargeItem,
+              Exrate: rateSubDetailsarr[j].Exrate,
+              ChargeType: rateSubDetailsarr[j].ChargeType,
+              TotalAmount: rateSubDetailsarr[j].TotalAmount
+            });
             // }
           }
         }
@@ -1451,25 +1453,21 @@ class RateFinalizing extends Component {
           //     }
           //   }
           // } else {
-            if (
-              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
-            ) {
-              FCLSQCharges.push({
-                ChargeID: rateSubDetailsarr[j].ChargeID,
-                Rate: rateSubDetailsarr[j].Rate,
-                Currency: rateSubDetailsarr[j].Currency,
-                RateLineID: rateSubDetailsarr[j].RateLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                Tax:
-                  rateSubDetailsarr[j].Tax == null
-                    ? 0
-                    : rateSubDetailsarr[j].Tax,
-                ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                Exrate: rateSubDetailsarr[j].Exrate,
-                ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount: rateSubDetailsarr[j].TotalAmount
-              });
-            }
+          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
+            FCLSQCharges.push({
+              ChargeID: rateSubDetailsarr[j].ChargeID,
+              Rate: rateSubDetailsarr[j].Rate,
+              Currency: rateSubDetailsarr[j].Currency,
+              RateLineID: rateSubDetailsarr[j].RateLineID,
+              ChargeCode: rateSubDetailsarr[j].ChargeCode,
+              Tax:
+                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+              ChargeItem: rateSubDetailsarr[j].ChargeItem,
+              Exrate: rateSubDetailsarr[j].Exrate,
+              ChargeType: rateSubDetailsarr[j].ChargeType,
+              TotalAmount: rateSubDetailsarr[j].TotalAmount
+            });
+          }
           // }
         }
         if (containerLoadType == "FTL" || containerLoadType == "LTL") {
@@ -1527,31 +1525,27 @@ class RateFinalizing extends Component {
           //     }
           //   }
           // } else {
-            if (
-              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
-            ) {
-              FCLSQCharges.push({
-                ChargeID: rateSubDetailsarr[j].ChargeID,
-                Rate:
-                  rateSubDetailsarr[j].Rate == null
-                    ? 0
-                    : rateSubDetailsarr[j].Rate,
-                Currency: rateSubDetailsarr[j].Currency,
-                RateLineID: rateSubDetailsarr[j].RateLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                Tax:
-                  rateSubDetailsarr[j].Tax == null
-                    ? 0
-                    : rateSubDetailsarr[j].Tax,
-                ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                Exrate: rateSubDetailsarr[j].Exrate,
-                ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount:
-                  rateSubDetailsarr[j].TotalAmount == null
-                    ? 0
-                    : rateSubDetailsarr[j].TotalAmount
-              });
-            }
+          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
+            FCLSQCharges.push({
+              ChargeID: rateSubDetailsarr[j].ChargeID,
+              Rate:
+                rateSubDetailsarr[j].Rate == null
+                  ? 0
+                  : rateSubDetailsarr[j].Rate,
+              Currency: rateSubDetailsarr[j].Currency,
+              RateLineID: rateSubDetailsarr[j].RateLineID,
+              ChargeCode: rateSubDetailsarr[j].ChargeCode,
+              Tax:
+                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
+              ChargeItem: rateSubDetailsarr[j].ChargeItem,
+              Exrate: rateSubDetailsarr[j].Exrate,
+              ChargeType: rateSubDetailsarr[j].ChargeType,
+              TotalAmount:
+                rateSubDetailsarr[j].TotalAmount == null
+                  ? 0
+                  : rateSubDetailsarr[j].TotalAmount
+            });
+          }
           // }
         }
       }
@@ -4674,10 +4668,9 @@ class RateFinalizing extends Component {
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
-                                      row._original.lineName.replace(
-                                        " ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
+                                      row._original.lineName
+                                        .replace(" ", "_")
+                                        .replace(" ", "_") + ".png";
                                   }
                                   var mode = "";
                                   if (this.state.ModeOfTransport) {
@@ -6494,13 +6487,17 @@ class RateFinalizing extends Component {
                             <label>
                               POL :{" "}
                               <span>
-                                {this.state.isCopy == true?this.state.PickUpAddress:this.state.polfullAddData.OceanPortLongName}
+                                {this.state.isCopy == true
+                                  ? this.state.PickUpAddress
+                                  : this.state.polfullAddData.OceanPortLongName}
                               </span>
                             </label>
                             <label>
                               POD :{" "}
                               <span>
-                                {this.state.isCopy == true?this.state.DestinationAddress:this.state.podfullAddData.OceanPortLongName}
+                                {this.state.isCopy == true
+                                  ? this.state.DestinationAddress
+                                  : this.state.podfullAddData.OceanPortLongName}
                               </span>
                             </label>
                           </div>
@@ -6519,7 +6516,12 @@ class RateFinalizing extends Component {
                           </div>
                           <div className="col-12 col-sm-4">
                             <label>
-                              Liner : <span>{this.state.isCopy==true?item.Linename:item.lineName}</span>
+                              Liner :{" "}
+                              <span>
+                                {this.state.isCopy == true
+                                  ? item.Linename
+                                  : item.lineName}
+                              </span>
                             </label>
                           </div>
                         </div>
@@ -6733,9 +6735,20 @@ class RateFinalizing extends Component {
                                 <th>
                                   {this.state.filterrateSubDetails.reduce(
                                     (sum, filterrateSubDetails) =>
-                                      this.state.isCopy==true?sum + parseFloat(filterrateSubDetails.Total.split(" ")[0]): sum + filterrateSubDetails.TotalAmount,
+                                      this.state.isCopy == true
+                                        ? sum +
+                                          parseFloat(
+                                            filterrateSubDetails.Total.split(
+                                              " "
+                                            )[0]
+                                          )
+                                        : sum +
+                                          filterrateSubDetails.TotalAmount,
                                     0
-                                  ) + " "+this.state.filterrateSubDetails[0].BaseCurrency}
+                                  ) +
+                                    " " +
+                                    this.state.filterrateSubDetails[0]
+                                      .BaseCurrency}
                                 </th>
                               </tr>
                             </thead>
