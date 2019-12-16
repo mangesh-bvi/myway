@@ -2189,7 +2189,7 @@ class BookingInsert extends Component {
                       </div>
                     </div> */}
                     <div>
-                      <div className="title-border-t py-3 remember-forgot rate-checkbox">
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                         <h3 style={{ display: "inline" }}>Consignee Details</h3>
                         <input
                           type="checkbox"
@@ -2206,10 +2206,9 @@ class BookingInsert extends Component {
                       <div>
                         {this.state.isConshinee === false ? (
                           <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
                               <p className="details-title">Consignee Name</p>
                               <Autocomplete
-                                style={{ zIndex: 2 }}
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.Consignee}
                                 renderItem={(item, isHighlighted) => (
@@ -2306,7 +2305,7 @@ class BookingInsert extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3 remember-forgot rate-checkbox">
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                         <h3 style={{ display: "inline" }}>Shipper Details</h3>
                         <div style={{ display: "inline", float: "left" }}>
                           <input
@@ -2328,7 +2327,7 @@ class BookingInsert extends Component {
                       <div>
                         {this.state.isShipper === false ? (
                           <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
                               <p className="details-title">Shipper Name</p>
                               <Autocomplete
                                 getItemValue={item => item.Company_Name}
@@ -2429,9 +2428,9 @@ class BookingInsert extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
                             <p className="details-title">Buyer Name</p>
-                            <p className="details-para">
+                            <p className="details-para position-relative">
                               <Autocomplete
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.Buyer}
@@ -2505,9 +2504,9 @@ class BookingInsert extends Component {
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
                             <p className="details-title">Notify Party Name</p>
-                            <p className="details-para">
+                            <p className="details-para position-relative">
                               <Autocomplete
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.Notify}

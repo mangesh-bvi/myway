@@ -2481,6 +2481,25 @@ table tbody tr:last-child {
 }
 /* side menu ends */
 
+/* booking insert starts */
+.insert-drpdwn input + div {
+  z-index: 2;
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  max-height: 200px !important;
+}
+.insert-drpdwn p + div {
+  position: relative;
+}
+.book-ins-sect {
+  justify-content: initial;
+}
+.book-ins-sect h3 {
+  min-width: 160px;
+}
+/* booking insert ends */
+
 .quote-to-from {
   display: flex;
   align-items: center;
