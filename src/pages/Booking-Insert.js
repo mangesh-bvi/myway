@@ -2209,6 +2209,7 @@ class BookingInsert extends Component {
                             <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
                               <p className="details-title">Consignee Name</p>
                               <Autocomplete
+                                style={{ zIndex: 2 }}
                                 getItemValue={item => item.Company_Name}
                                 items={this.state.Consignee}
                                 renderItem={(item, isHighlighted) => (

@@ -154,7 +154,7 @@ h3 {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 2;
+  z-index: 9;
 }
 .pdtop {
   padding-top: 70px;
@@ -2456,6 +2456,29 @@ table tbody tr:last-child {
   background-color: #002d73 !important;
   color: #4e87df !important;
 }
+.colap {
+  /* width: 0 !important; */
+  width: 40px !important;
+}
+.colap .sidemenu-ul2 > li {
+  border-right-color: transparent;
+}
+.colap .menuname {
+  display: none;
+}
+.colap .sidemenu-ul-li a {
+  padding-right: 2px;
+  padding-left: 2px;
+}
+.side-arrow {
+  position: absolute;
+  left: 100%;
+  transform: rotate(180deg);
+  font-size: 18px !important;
+}
+.colap .side-arrow {
+  transform: rotate(0);
+}
 /* side menu ends */
 
 .quote-to-from {
@@ -2614,6 +2637,7 @@ table tbody tr:last-child {
   background-color: #0142aa;
   border: none;
   transition: 0.5s;
+  white-space: nowrap;
 }
 /* .cls-flside {
   border: none;
@@ -3922,10 +3946,11 @@ img {
   left: 165px;
   position: absolute;
   width: 20px;
-  z-index: 3;
+  z-index: 9;
   float: none;
   margin: 0 0 0 30px;
   cursor: pointer;
+  pointer-events: initial;
 }
 .title-secpad {
   padding: 20px;

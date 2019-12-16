@@ -21,6 +21,7 @@ import LogoutIcon from "./../assets/img/logout.png";
 import QuotesIcon from "./../assets/img/quotes-side.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
+import "font-awesome/css/font-awesome.css";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
@@ -90,6 +91,16 @@ class SideMenu extends Component {
     this.setState(prevState => ({
       modalProfile: !prevState.modalProfile
     }));
+  }
+
+  sidebarCollapse(e) {
+    // alert(e.classList.contains("abc"));
+    // console.log(e.currentTarget.parentNode);
+    if (e.currentTarget.parentNode.parentNode.classList.contains("colap")) {
+      e.currentTarget.parentNode.parentNode.classList.remove("colap");
+    } else {
+      e.currentTarget.parentNode.parentNode.classList.add("colap");
+    }
   }
 
   highlightClass(e) {
@@ -163,8 +174,21 @@ class SideMenu extends Component {
     // }
 
     return (
-        <div className="d-flex flex-column justify-content-between h-100 sidemenubar" id="sidemenubar">
-        <img src={Menubars} alt="Menu Bars" className="menubars" id="menubars" />
+      <div
+        className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
+        id="sidemenubar"
+      >
+        {/* <i
+          class="fa fa-arrow-right side-arrow"
+          aria-hidden="true"
+          onClick={this.sidebarCollapse.bind(this)}
+        ></i> */}
+        {/* <img
+          src={Menubars}
+          alt="Menu Bars"
+          className="menubars"
+          id="menubars"
+        /> */}
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
             <Link
@@ -282,8 +306,8 @@ class SideMenu extends Component {
                           alt="green-counter-icon"
                           className="header-greencounter-icon"
                         />
-                        
-                      <span className="menuname">Rates</span>
+
+                        <span className="menuname">Rates</span>
                       </Accordion.Toggle>
                     </Link>
                   )}
@@ -371,7 +395,6 @@ class SideMenu extends Component {
                         className="header-greencounter-icon"
                       />
                       <span className="menuname">Quotes</span>
-                      
                     </Accordion.Toggle>
                   </Link>
                 </Card.Header>
@@ -445,8 +468,10 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          <li className="sidemenu-ul-li shipmentli"
-           style={{ borderTop: "1px solid #265eb5" }}>
+          <li
+            className="sidemenu-ul-li shipmentli"
+            style={{ borderTop: "1px solid #265eb5" }}
+          >
             {/* <Link to="/booking-table">
               <img
                 src={GreenCounterIcon}
@@ -468,7 +493,7 @@ class SideMenu extends Component {
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
-                      
+
                       <span className="menuname">Bookings</span>
                     </Accordion.Toggle>
                   </Link>
@@ -506,8 +531,10 @@ class SideMenu extends Component {
               "Customer"
             ) {
               return (
-                <li className="sidemenu-ul-li"
-           style={{ borderTop: "1px solid #265eb5" }}>
+                <li
+                  className="sidemenu-ul-li"
+                  style={{ borderTop: "1px solid #265eb5" }}
+                >
                   <Link
                     to="/shipment-planner"
                     onClick={this.highlightClass.bind(this)}
@@ -517,8 +544,7 @@ class SideMenu extends Component {
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
-                      <span className="menuname">Shipment Planner</span>
-                    
+                    <span className="menuname">Shipment Planner</span>
                   </Link>
                 </li>
               );
@@ -536,8 +562,8 @@ class SideMenu extends Component {
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />
-              
-                      <span className="menuname">Analytics</span>
+
+              <span className="menuname">Analytics</span>
             </Link>
           </li>
           {/* <li className="sidemenu-ul-li">
@@ -563,8 +589,8 @@ class SideMenu extends Component {
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
-                    
-                      <span className="menuname">Green Counter</span>
+
+                    <span className="menuname">Green Counter</span>
                   </Link>
                 </li>
               );
@@ -588,8 +614,8 @@ class SideMenu extends Component {
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
-                    
-                      <span className="menuname">Admin</span>
+
+                    <span className="menuname">Admin</span>
                   </Link>
                 </li>
               );
@@ -678,63 +704,77 @@ class SideMenu extends Component {
           centered={true}
         >
           <ModalBody>
-          <button type="button" className="close" data-dismiss="modal" onClick={this.toggleProfile}>
-                <span>&times;</span>
-              </button>
-            <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
-            <div className="d-flex align-items-center text-left">
-              <div className="prof-img">
-                <img src={LoginActore} />
-              </div>
-              <div className="pl-3">
-                <p className="prof-name">
-                  {encryption(window.localStorage.getItem("username"), "desc")}
-                </p>
-                <p className="prof-comp">
-                  {encryption(
-                    window.localStorage.getItem("companyname"),
-                    "desc"
-                  )}
-                </p>
-              </div>
-            </div>
-            <div className="rename-cntr login-fields d-block mt-4">
-              <div className="d-flex w-100 align-items-center">
-                <label>Change Image</label>
-                <div className="w-100">
-                  <input
-                    id="file-upload"
-                    className="file-upload d-none"
-                    type="file"
-                    onChange={this.onDocumentChangeHandler}
-                  />
-                  <label htmlFor="file-upload">
-                    <div className="file-icon">
-                      <img src={FileUpload} alt="file-upload" />
-                    </div>
-                    Upload Image
-                  </label>
+            <button
+              type="button"
+              className="close"
+              data-dismiss="modal"
+              onClick={this.toggleProfile}
+            >
+              <span>&times;</span>
+            </button>
+            <div
+              style={{
+                background: "#fff",
+                padding: "15px",
+                borderRadius: "15px"
+              }}
+            >
+              <div className="d-flex align-items-center text-left">
+                <div className="prof-img">
+                  <img src={LoginActore} />
+                </div>
+                <div className="pl-3">
+                  <p className="prof-name">
+                    {encryption(
+                      window.localStorage.getItem("username"),
+                      "desc"
+                    )}
+                  </p>
+                  <p className="prof-comp">
+                    {encryption(
+                      window.localStorage.getItem("companyname"),
+                      "desc"
+                    )}
+                  </p>
                 </div>
               </div>
-              <p className="file-name">{this.state.selectedFileName}</p>
-            </div>
-            <Button
-              className="butn"
-              onClick={() => {
-                this.toggleProfile();
-                // this.onDocumentClickHandler();
-              }}
-            >
-              Submit
-            </Button>
-            <Button
-              className="butn cancel-butn"
-              onClick={() => {
-                this.toggleProfile();
-              }}
-            >
-              Cancel
-            </Button>
+              <div className="rename-cntr login-fields d-block mt-4">
+                <div className="d-flex w-100 align-items-center">
+                  <label>Change Image</label>
+                  <div className="w-100">
+                    <input
+                      id="file-upload"
+                      className="file-upload d-none"
+                      type="file"
+                      onChange={this.onDocumentChangeHandler}
+                    />
+                    <label htmlFor="file-upload">
+                      <div className="file-icon">
+                        <img src={FileUpload} alt="file-upload" />
+                      </div>
+                      Upload Image
+                    </label>
+                  </div>
+                </div>
+                <p className="file-name">{this.state.selectedFileName}</p>
+              </div>
+              <Button
+                className="butn"
+                onClick={() => {
+                  this.toggleProfile();
+                  // this.onDocumentClickHandler();
+                }}
+              >
+                Submit
+              </Button>
+              <Button
+                className="butn cancel-butn"
+                onClick={() => {
+                  this.toggleProfile();
+                }}
+              >
+                Cancel
+              </Button>
             </div>
           </ModalBody>
         </Modal>
