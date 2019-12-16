@@ -93,7 +93,9 @@ class BookingView extends Component {
       contact_name: "",
       company_name: "",
       Company_Address: "",
-      HAZMAT: ""
+      HAZMAT: 0,
+      eqtType: "",
+      NonStackable:0
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
@@ -365,16 +367,27 @@ class BookingView extends Component {
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
-
-        console.log(Booking);
-
+        var Table6 = response.data.Table6;
+        var Company_Address = "";
+        var contact_name = "";
+        var company_name = "";
+        var HAZMAT = 0;
+        var ShipmentType = "";
+        var eqtType = "";
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
-            var ShipmentType = QuotationData[0].ShipmentType;
-            var Company_Address = QuotationData[0].Company_Address;
-            var contact_name = QuotationData[0].contact_name;
-            var company_name = QuotationData[0].company_name;
-            var HAZMAT = QuotationData[0].HAZMAT;
+            ShipmentType = QuotationData[0].ShipmentType;
+            Company_Address = QuotationData[0].Company_Address;
+            contact_name = QuotationData[0].contact_name;
+            company_name = QuotationData[0].company_name;
+            HAZMAT = QuotationData[0].HAZMAT;
+            if (QuotationData.length === 1) {
+              eqtType = QuotationData[0].ContainerType;
+            } else {
+              for (let i = 0; i < QuotationData.length; i++) {
+                eqtType = eqtType + QuotationData[i].ContainerType + ",";
+              }
+            }
             self.setState({
               QuotationData,
               QuotationSubData,
@@ -382,11 +395,12 @@ class BookingView extends Component {
               Company_Address,
               contact_name,
               company_name,
-              HAZMAT
+              HAZMAT,
+              eqtType
             });
           }
         }
-     
+
         if (typeof eqmtType !== "undefined") {
           if (eqmtType.length > 0) {
             self.setState({ eqmtType });
@@ -507,10 +521,25 @@ class BookingView extends Component {
             self.setState({ FileData });
           }
         }
-        self.setState({
-          HazMat: "",
-          Unstackable: ""
-        });
+
+        if (Table6.length>0) {
+          Company_Address = Table6[0].Company_Address;
+          contact_name = Table6[0].contact_name;
+          company_name = Table6[0].company_name;
+          ShipmentType = Table6[0].ShipmentType;
+          HAZMAT = Table6[0].HAZMAT;
+          self.setState({
+            Company_Address,
+            contact_name,
+            company_name,
+            ShipmentType,
+            HAZMAT
+          });
+        }
+        // self.setState({
+        //   HazMat: "",
+        //   Unstackable: ""
+        // });
       });
     }
   }
@@ -537,22 +566,38 @@ class BookingView extends Component {
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
+        var Table6 = response.data.Table6;
+        var Company_Address = "";
+        var contact_name = "";
+        var company_name = "";
+        var HAZMAT = 0;
+        var ShipmentType = "";
+        var eqtType = "";
+        var NonStackable=0;
 
         console.log(Booking);
 
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
-            var ShipmentType = QuotationData[0].ShipmentType;
-            var Company_Address = QuotationData[0].Company_Address;
-            var contact_name = QuotationData[0].contact_name;
-            var company_name = QuotationData[0].company_name;
+            ShipmentType = QuotationData[0].ShipmentType;
+            Company_Address = QuotationData[0].Company_Address;
+            contact_name = QuotationData[0].contact_name;
+            company_name = QuotationData[0].company_name;
+            if (QuotationData.length === 1) {
+              eqtType = QuotationData[0].ContainerType;
+            } else {
+              for (let i = 0; i < QuotationData.length; i++) {
+                eqtType = eqtType + QuotationData[i].ContainerType + ",";
+              }
+            }
             self.setState({
               QuotationData,
               QuotationSubData,
               ShipmentType,
               Company_Address,
               contact_name,
-              company_name
+              company_name,
+              eqtType
             });
           }
         }
@@ -607,42 +652,37 @@ class BookingView extends Component {
             var ModeofTransport = Booking[0].ModeofTransport;
 
             var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
-            var companyID = 0;
-            var CompanyAddress = "";
-            var Company_Name = "";
-            var Company_AddressID = 0;
-            if (DefaultEntityTypeID === ShipperID) {
-              companyID = ShipperID;
-              CompanyAddress = Shipper_Displayas;
-              Company_Name = Shipper_Name;
-              Company_AddressID = Shipper_AddressID;
-            }
-            if (DefaultEntityTypeID === BuyerID) {
-              companyID = BuyerID;
-              CompanyAddress = Buyer_Displayas;
-              Company_Name = BuyerName;
-              Company_AddressID = Buyer_AddressID;
-            }
 
-            if (DefaultEntityTypeID === Consignee) {
-              companyID = Consignee;
-              CompanyAddress = Consignee_Displayas;
-              Company_Name = Consignee_Name;
-              Company_AddressID = Consignee_AddressID;
-            }
+            // if (DefaultEntityTypeID === ShipperID) {
+            //   companyID = ShipperID;
+            //   CompanyAddress = Shipper_Displayas;
+            //   Company_Name = Shipper_Name;
+            //   Company_AddressID = Shipper_AddressID;
+            // }
+            // if (DefaultEntityTypeID === BuyerID) {
+            //   companyID = BuyerID;
+            //   CompanyAddress = Buyer_Displayas;
+            //   Company_Name = BuyerName;
+            //   Company_AddressID = Buyer_AddressID;
+            // }
 
-            if (DefaultEntityTypeID === NotifyID) {
-              companyID = NotifyID;
-              CompanyAddress = Notify_Displayas;
-              Company_Name = NotifyName;
-              Company_AddressID = Notify_AddressID;
-            }
+            // if (DefaultEntityTypeID === Consignee) {
+            //   companyID = Consignee;
+            //   CompanyAddress = Consignee_Displayas;
+            //   Company_Name = Consignee_Name;
+            //   Company_AddressID = Consignee_AddressID;
+            // }
+
+            // if (DefaultEntityTypeID === NotifyID) {
+            //   companyID = NotifyID;
+            //   CompanyAddress = Notify_Displayas;
+            //   Company_Name = NotifyName;
+            //   Company_AddressID = Notify_AddressID;
+            // }
 
             self.setState({
               DefaultEntityTypeID,
-              companyID,
-              Company_Name,
-              Company_AddressID,
+              
               ModeofTransport,
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
@@ -680,10 +720,27 @@ class BookingView extends Component {
             self.setState({ FileData });
           }
         }
-        self.setState({
-          HazMat: "",
-          Unstackable: ""
-        });
+
+        if (Table6.length>0) {
+          Company_Address = Table6[0].Company_Address;
+          contact_name = Table6[0].contact_name;
+          company_name = Table6[0].company_name;
+          ShipmentType = Table6[0].ShipmentType;
+          HAZMAT = Table6[0].HAZMAT;
+          NonStackable= Table6[0].NonStackable;
+          self.setState({
+            NonStackable,
+            Company_Address,
+            contact_name,
+            company_name,
+            ShipmentType,
+            HAZMAT
+          });
+        }
+        // self.setState({
+        //   HazMat: "",
+        //   Unstackable: ""
+        // });
       });
     }
   }
@@ -1023,7 +1080,9 @@ class BookingView extends Component {
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Mode of Transport</p>
-                            <p className="details-para"></p>
+                            <p className="details-para">
+                              {this.state.ModeofTransport}
+                            </p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Container Load</p>
@@ -1035,7 +1094,9 @@ class BookingView extends Component {
                             <>
                               <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                                 <p className="details-title">Equipment Types</p>
-                                <p className="details-para"></p>
+                                <p className="details-para">
+                                  {this.state.eqtType}
+                                </p>
                               </div>
                               <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                                 <p className="details-title">
@@ -1057,10 +1118,14 @@ class BookingView extends Component {
                                 : ""}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Unstackable</p>
-                            <p className="details-para"></p>
-                          </div>
+                          {this.state.CargoType === "FCL" ||this.state.CargoType === "FTL" ? (
+                            ""
+                          ) : (
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">Unstackable</p>
+                          <p className="details-para">{this.state.NonStackable===0?"No":"Yes"}</p>
+                            </div>
+                          )}
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">

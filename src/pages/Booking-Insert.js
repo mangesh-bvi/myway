@@ -113,7 +113,9 @@ class BookingInsert extends Component {
       Company_Address: "",
       FileDataArry: [],
       ContainerCode: "",
-      HAZMAT: "",
+      HAZMAT: 0,
+      NonStackable:0,
+      Customs_Clearance:0,
       conshineeAddData: [],
       shipperAddData: [],
       buyerAddData: [],
@@ -133,7 +135,8 @@ class BookingInsert extends Component {
       valueweight: 0,
       valuecbm: 0,
       valuespecialsontainersode: "",
-      modalEdit: false
+      modalEdit: false,
+      
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -300,6 +303,9 @@ class BookingInsert extends Component {
         var Company_Address = Booking[0].Company_Address;
         var SaleQuoteNo = Booking[0].SaleQuoteID;
         var ShipmentType = Booking[0].ShipmentType;
+        var NonStackable=Booking[0].NonStackable;
+        var HAZMAT=Booking[0].HAZMAT;
+        var NonStackable=Booking[0].NonStackable;
 
         self.setState({
           ModeofTransport,
@@ -308,7 +314,10 @@ class BookingInsert extends Component {
           contact_name,
           Company_Address,
           SaleQuoteNo,
-          ShipmentType
+          ShipmentType,
+          NonStackable,
+          HAZMAT,
+          NonStackable
         });
       }
     });
@@ -787,6 +796,7 @@ class BookingInsert extends Component {
           if (response.data.Table.length == 1) {
             if (field == "Consignee") {
               self.setState({
+                
                 Consignee: response.data.Table,
                 fields,
                 consineeData: response.data.Table[0]
@@ -814,9 +824,47 @@ class BookingInsert extends Component {
               });
             }
           } else {
-            self.setState({
-              fields
-            });
+
+            if (field == "Consignee") {
+              self.setState({
+                ConsineeName:fields[field],
+                ConsineeID:0,
+                Consignee: response.data.Table,
+                fields,
+                consineeData: response.data.Table[0]
+              });
+            }
+            if (field == "Shipper") {
+              self.setState({
+                ShipperName:fields[field],
+                SHipperID:0,
+                Shipper: response.data.Table,
+                fields,
+                shipperData: response.data.Table[0]
+              });
+            }
+            if (field == "Notify") {
+              self.setState({
+                NotifyName:fields[field],
+                NotifyID:0,
+                Notify: response.data.Table,
+                fields,
+                notifyData: response.data.Table[0]
+              });
+            }
+            if (field == "Buyer") {
+              self.setState({
+                BuyerName:fields[field],
+                BuyerID:0,
+                Buyer: response.data.Table,
+                fields,
+                buyerData: response.data.Table[0]
+              });
+            }
+
+            // self.setState({
+            //   fields
+            // });
           }
         }
       });
@@ -1635,113 +1683,113 @@ class BookingInsert extends Component {
 
   SubmitCargoDetails(e) {
     debugger;
-    var PackageDetailsArr = [];
-    if (
-      this.state.ContainerLoad == "AIR" ||
-      this.state.ContainerLoad == "LCL"
-    ) {
-      let multiCBM = [...this.state.multiCBM];
-      for (var i = 0; i < multiCBM.length; i++) {
-        if (
-          multiCBM[i].PackageType + "_" + i ==
-          e.target.getAttribute("data-valuespecialsontainersode")
-        ) {
-          multiCBM[i].PackageType = this.state.currentPackageType;
-        }
+    // var PackageDetailsArr = [];
+    // if (
+    //   this.state.ContainerLoad == "AIR" ||
+    //   this.state.ContainerLoad == "LCL"
+    // ) {
+    //   let multiCBM = [...this.state.multiCBM];
+    //   for (var i = 0; i < multiCBM.length; i++) {
+    //     if (
+    //       multiCBM[i].PackageType + "_" + i ==
+    //       e.target.getAttribute("data-valuespecialsontainersode")
+    //     ) {
+    //       multiCBM[i].PackageType = this.state.currentPackageType;
+    //     }
 
-        PackageDetailsArr.push({
-          PackageType: multiCBM[i].PackageType,
-          SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
-          ContainerType: multiCBM[i].PackageType,
-          Packaging: "-",
-          Quantity: multiCBM[i].Quantity,
-          Lenght:
-            this.state.isCopy == true
-              ? multiCBM[i].Length || multiCBM[i].Lengths
-              : multiCBM[i].Length,
-          Width: multiCBM[i].Width,
-          Height:
-            this.state.isCopy == true ? multiCBM[i].height : multiCBM[i].height,
-          Weight:
-            this.state.isCopy == true
-              ? multiCBM[i].GrossWeight
-              : multiCBM[i].GrossWeight,
-          CBM:
-            this.state.containerLoadType == "LCL"
-              ? multiCBM[i].Volume
-              : multiCBM[i].VolumeWeight,
-          Editable: true
-        });
-      }
+    //     PackageDetailsArr.push({
+    //       PackageType: multiCBM[i].PackageType,
+    //       SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+    //       ContainerType: multiCBM[i].PackageType,
+    //       Packaging: "-",
+    //       Quantity: multiCBM[i].Quantity,
+    //       Lenght:
+    //         this.state.isCopy == true
+    //           ? multiCBM[i].Length || multiCBM[i].Lengths
+    //           : multiCBM[i].Length,
+    //       Width: multiCBM[i].Width,
+    //       Height:
+    //         this.state.isCopy == true ? multiCBM[i].height : multiCBM[i].height,
+    //       Weight:
+    //         this.state.isCopy == true
+    //           ? multiCBM[i].GrossWeight
+    //           : multiCBM[i].GrossWeight,
+    //       CBM:
+    //         this.state.containerLoadType == "LCL"
+    //           ? multiCBM[i].Volume
+    //           : multiCBM[i].VolumeWeight,
+    //       Editable: true
+    //     });
+    //   }
 
-      this.setState({
-        multiCBM: multiCBM
-      });
-    } else {
-      let flattack_openTop = [...this.state.flattack_openTop];
-      for (var i = 0; i < flattack_openTop.length; i++) {
-        if (
-          flattack_openTop[i].SpecialContainerCode ==
-          e.target.getAttribute("data-valuespecialsontainersode")
-        ) {
-          flattack_openTop[i].PackageType = this.state.currentPackageType;
-        }
+    //   this.setState({
+    //     multiCBM: multiCBM
+    //   });
+    // } else {
+    //   let flattack_openTop = [...this.state.flattack_openTop];
+    //   for (var i = 0; i < flattack_openTop.length; i++) {
+    //     if (
+    //       flattack_openTop[i].SpecialContainerCode ==
+    //       e.target.getAttribute("data-valuespecialsontainersode")
+    //     ) {
+    //       flattack_openTop[i].PackageType = this.state.currentPackageType;
+    //     }
 
-        PackageDetailsArr.push({
-          PackageType: flattack_openTop[i].PackageType,
-          SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
-          ContainerType:
-            flattack_openTop[i].PackageType +
-            " (" +
-            flattack_openTop[i].SpecialContainerCode +
-            ")",
-          Quantity: flattack_openTop[i].Quantity,
-          Lenght: flattack_openTop[i].length,
-          Width: flattack_openTop[i].width,
-          Height: flattack_openTop[i].height,
-          Weight: flattack_openTop[i].Gross_Weight,
-          CBM: flattack_openTop[i].total,
-          Editable: true
-        });
-      }
+    //     PackageDetailsArr.push({
+    //       PackageType: flattack_openTop[i].PackageType,
+    //       SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
+    //       ContainerType:
+    //         flattack_openTop[i].PackageType +
+    //         " (" +
+    //         flattack_openTop[i].SpecialContainerCode +
+    //         ")",
+    //       Quantity: flattack_openTop[i].Quantity,
+    //       Lenght: flattack_openTop[i].length,
+    //       Width: flattack_openTop[i].width,
+    //       Height: flattack_openTop[i].height,
+    //       Weight: flattack_openTop[i].Gross_Weight,
+    //       CBM: flattack_openTop[i].total,
+    //       Editable: true
+    //     });
+    //   }
 
-      this.setState({
-        flattack_openTop: flattack_openTop
-      });
-    }
+    //   this.setState({
+    //     flattack_openTop: flattack_openTop
+    //   });
+    // }
 
-    let CargoDetailsArr = [...this.state.CargoDetailsArr];
+    // let CargoDetailsArr = [...this.state.CargoDetailsArr];
 
-    for (var i = 0; i < CargoDetailsArr.length; i++) {
-      if (
-        CargoDetailsArr[i].SpecialContainerCode ==
-        e.target.getAttribute("data-valuespecialsontainersode")
-      ) {
-        CargoDetailsArr[i].PackageType = this.state.currentPackageType;
-        if (
-          this.state.ContainerLoad == "AIR" ||
-          this.state.ContainerLoad == "LCL"
-        ) {
-          CargoDetailsArr[i].ContainerType = this.state.currentPackageType;
-        } else {
-          CargoDetailsArr[i].ContainerType =
-            this.state.currentPackageType +
-            " (" +
-            CargoDetailsArr[i].SpecialContainerCode +
-            ")";
-        }
-      }
-    }
+    // for (var i = 0; i < CargoDetailsArr.length; i++) {
+    //   if (
+    //     CargoDetailsArr[i].SpecialContainerCode ==
+    //     e.target.getAttribute("data-valuespecialsontainersode")
+    //   ) {
+    //     CargoDetailsArr[i].PackageType = this.state.currentPackageType;
+    //     if (
+    //       this.state.ContainerLoad == "AIR" ||
+    //       this.state.ContainerLoad == "LCL"
+    //     ) {
+    //       CargoDetailsArr[i].ContainerType = this.state.currentPackageType;
+    //     } else {
+    //       CargoDetailsArr[i].ContainerType =
+    //         this.state.currentPackageType +
+    //         " (" +
+    //         CargoDetailsArr[i].SpecialContainerCode +
+    //         ")";
+    //     }
+    //   }
+    // }
 
-    this.setState({
-      PackageDetailsArr: PackageDetailsArr,
-      CargoDetailsArr: CargoDetailsArr
-    });
+    // this.setState({
+    //   PackageDetailsArr: PackageDetailsArr,
+    //   CargoDetailsArr: CargoDetailsArr
+    // });
 
     // this.props.location.state.flattack_openTop = flattack_openTop;
 
     this.forceUpdate();
-    this.toggleEdit();
+    this.setState({ modalEdit: !this.state.modalEdit });
   }
 
   HandleRadioBtn(type, e) {
@@ -2095,7 +2143,7 @@ class BookingInsert extends Component {
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Unstackable</p>
-                            <p className="details-para"></p>
+                          <p className="details-para">{this.state.NonStackable}</p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Inco Terms</p>
