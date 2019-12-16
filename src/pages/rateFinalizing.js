@@ -5,6 +5,7 @@ import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
 import ATA from "./../assets/img/ATAFreight_console.png";
 import Dummy from "./../assets/dummy.pdf";
+import Moment from "react-moment";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -119,7 +120,8 @@ class RateFinalizing extends Component {
       SalesQuoteNo: "",
       PickUpAddress: "",
       DestinationAddress: "",
-      multiCBM: []
+      multiCBM: [],
+      todayDate: new Date()
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -920,30 +922,26 @@ class RateFinalizing extends Component {
     var rateDetails = this.state.rateDetails;
     var modeOfTransport = "";
     if (this.state.modeoftransport.toUpperCase() == "SEA") {
-      modeOfTransport = "ocean"
-    }
-    else{
-      modeOfTransport = this.state.modeoftransport
+      modeOfTransport = "ocean";
+    } else {
+      modeOfTransport = this.state.modeoftransport;
     }
     var ModeOfTransport =
       this.state.modeoftransport === "SEA"
         ? "Ocean"
         : this.state.modeoftransport;
 
-
-    var RoutingInformation=[];
-    
+    var RoutingInformation = [];
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL:rateDetails[i].POLCode,
-        POD:rateDetails[i].PODCode,
-        LineID:rateDetails[i].RateLineId,
-        LineName:rateDetails[i].lineName,
-        ContainerType:rateDetails[i].ContainerType,
-        ContainerQty:rateDetails[i].ContainerQuantity        
-      })
-      
+        POL: rateDetails[i].POLCode,
+        POD: rateDetails[i].PODCode,
+        LineID: rateDetails[i].RateLineId,
+        LineName: rateDetails[i].lineName,
+        ContainerType: rateDetails[i].ContainerType,
+        ContainerQty: rateDetails[i].ContainerQuantity
+      });
     }
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
@@ -1023,22 +1021,20 @@ class RateFinalizing extends Component {
     var rateDetails = this.state.rateDetails;
     var modeOfTransport = "";
     if (this.state.modeoftransport.toUpperCase() == "SEA") {
-      modeOfTransport = "ocean"
-    }
-    else{
-      modeOfTransport = this.state.modeoftransport
+      modeOfTransport = "ocean";
+    } else {
+      modeOfTransport = this.state.modeoftransport;
     }
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL:rateDetails[i].POLCode,
-        POD:rateDetails[i].PODCode,
-        LineID:rateDetails[i].RateLineId,
-        LineName:rateDetails[i].lineName,
-        ContainerType:rateDetails[i].ContainerType,
-        ContainerQty:rateDetails[i].ContainerQuantity        
-      })
-      
+        POL: rateDetails[i].POLCode,
+        POD: rateDetails[i].PODCode,
+        LineID: rateDetails[i].RateLineId,
+        LineName: rateDetails[i].lineName,
+        ContainerType: rateDetails[i].ContainerType,
+        ContainerQty: rateDetails[i].ContainerQuantity
+      });
     }
     // for (let i = 0; i < this.state.users.length; i++) {
     //   Containerdetails.push({
@@ -6276,13 +6272,16 @@ class RateFinalizing extends Component {
               </button>
               <div className="row" style={{ margin: 0 }}>
                 <div className="logohheader">
-                  <div className="row" style={{ margin: 0 }}>
+                  <div className="row align-items-center" style={{ margin: 0 }}>
                     <div className="col-12 col-md-6">
                       <img src={ATA} alt="ATAFreight Console" />
                     </div>
-                    {/* <div className="col-12 col-md-6">
-                      <label className="headerlabel">Hello</label>
-                    </div> */}
+                    <div className="col-12 col-md-6 preview-date-num">
+                      <p>
+          Date : <span><Moment format="DD-MMM-YYYY">{this.state.todayDate.toString()}</Moment></span>
+                      </p>
+                      <p>Sales Quote No. :</p>
+                    </div>
                   </div>
                 </div>
               </div>

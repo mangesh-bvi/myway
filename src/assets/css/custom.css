@@ -2386,6 +2386,15 @@ table tbody tr:last-child {
 .line-first {
   flex: 0 0 100px;
 }
+.preview-date-num p {
+  font-family: "Medium Font";
+  font-size: 14px;
+  color: #8f8f8f;
+  margin: 5px 0;
+}
+.preview-date-num p span {
+  color: #333333;
+}
 /* rate finalizing ends */
 
 /* add user starts */
