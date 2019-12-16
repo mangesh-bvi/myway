@@ -1085,7 +1085,7 @@ class ShippingDetails extends Component {
                         </div>
                         {/* </div> */}
 
-                      {/* </div> */}
+                        {/* </div> */}
 
                         <div className="col-12 col-sm-6 col-md-6 col-lg-3">
                           <div className="login-fields">
@@ -1398,7 +1398,10 @@ class ShippingDetails extends Component {
                         <div className="col-12 col-sm-12 col-md-12 col-lg-5">
                           <div className="login-fields divwd">
                             <div>
-                              <label className="hidden-xs" style={{ padding: "11px" }}></label>
+                              <label
+                                className="hidden-xs"
+                                style={{ padding: "11px" }}
+                              ></label>
                               <button
                                 type="button"
                                 className="butn mr-3"
@@ -1508,7 +1511,9 @@ class ShippingDetails extends Component {
                   <h3 className="mb-4 text-center">Share</h3>
                   <div className="txt-cntr">
                     <div className="d-flex align-items-center">
-                      <p className="col-12 col-sm-12 details-title mr-3">Shareable Link</p>
+                      <p className="col-12 col-sm-12 details-title mr-3">
+                        Shareable Link
+                      </p>
                       <div class="spe-equ d-block m-0 flex-grow-1">
                         <input
                           type="text"

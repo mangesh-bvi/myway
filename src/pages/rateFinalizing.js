@@ -5,6 +5,7 @@ import ReactTable from "react-table";
 import Edit from "./../assets/img/pencil.png";
 import ATA from "./../assets/img/ATAFreight_console.png";
 import Dummy from "./../assets/dummy.pdf";
+import Moment from "react-moment";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -96,7 +97,7 @@ class RateFinalizing extends Component {
         borderRadius: "3px",
         boxShadow: "0 2px 12px rgba(0, 0, 0, 0.1)",
         background: "rgba(255, 255, 255, 0.9)",
-        padding: "2px 0 0 10px",
+        padding: "0px",
         fontSize: "90%",
         position: "absolute",
         top: "100%",
@@ -119,7 +120,8 @@ class RateFinalizing extends Component {
       SalesQuoteNo: "",
       PickUpAddress: "",
       DestinationAddress: "",
-      multiCBM: []
+      multiCBM: [],
+      todayDate: new Date()
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -3096,53 +3098,121 @@ class RateFinalizing extends Component {
         // }
         // else
         // {
-        if (
-          element.LineName ==
-          (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
-        ) {
-          this.state.rateDetails[i].TotalAmount =
-            parseFloat(
-              this.state.rateDetails[i].TotalAmount == null
-                ? 0
-                : this.state.rateDetails[i].TotalAmount
-            ) + parseFloat(e.target.value);
-          // }
-
-          var newrateSubDetails = {
-            BaseCurrency: e.target.getAttribute("data-currency"),
-            ChargeCode: e.target.getAttribute("data-chargedesc"),
-            ChargeID: 0,
-            ChargeItem: e.target.getAttribute("data-chargeitem"),
-            ChargeType: e.target.getAttribute("data-chargetype"),
-            Currency: e.target.getAttribute("data-currency"),
-            Exrate: 0,
-            Rate: parseFloat(e.target.value),
-            RateLineID: this.state.rateDetails[i].RateLineId,
-            SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
-            Tax: 0,
-            TotalAmount: parseFloat(
-              e.target.getAttribute("data-amountinbasecurrency")
-            ),
-            Extracharge: true
-          };
-
+        if (this.state.containerLoadType=="FCL"?element.ContainerType!=="ALL" && element.LineId!==0:element.LineId!==0) {
           if (
-            this.state.containerLoadType == "FTL" ||
-            this.state.containerLoadType == "LTL"
+            element.LineName ==
+            (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
           ) {
-            newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
-          }
+            this.state.rateDetails[i].TotalAmount =
+              parseFloat(
+                this.state.rateDetails[i].TotalAmount == null
+                  ? 0
+                  : this.state.rateDetails[i].TotalAmount
+              ) + parseFloat(e.target.value);
+            // }
 
-          this.state.rateSubDetails = this.state.rateSubDetails.concat(
-            newrateSubDetails
-          );
+            var newrateSubDetails = {
+              BaseCurrency: e.target.getAttribute("data-currency"),
+              ChargeCode: e.target.getAttribute("data-chargedesc"),
+              ChargeDesc: e.target.getAttribute("data-chargedesc"),
+              ChargeID: 0,
+              ChargeItem: e.target.getAttribute("data-chargeitem"),
+              ChargeType: e.target.getAttribute("data-chargetype"),
+              Currency: e.target.getAttribute("data-currency"),
+              Exrate: 0,
+              Rate: parseFloat(e.target.value),
+              RateLineID: this.state.rateDetails[i].RateLineId,
+              SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+              Tax: 0,
+              TotalAmount: parseFloat(
+                e.target.getAttribute("data-amountinbasecurrency")
+              ),
+              Extracharge: true
+            };
+
+            if (
+              this.state.containerLoadType == "FTL" ||
+              this.state.containerLoadType == "LTL"
+            ) {
+              newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+            }
+
+            this.state.rateSubDetails = this.state.rateSubDetails.concat(
+              newrateSubDetails
+            );
+          }
+        }
+        else{
+          this.state.rateDetails[i].TotalAmount =
+              parseFloat(
+                this.state.rateDetails[i].TotalAmount == null
+                  ? 0
+                  : this.state.rateDetails[i].TotalAmount
+              ) + parseFloat(e.target.value);
+            // }
+
+            var newrateSubDetails = {
+              BaseCurrency: e.target.getAttribute("data-currency"),
+              ChargeCode: e.target.getAttribute("data-chargedesc"),
+              ChargeDesc: e.target.getAttribute("data-chargedesc"),
+              ChargeID: 0,
+              ChargeItem: e.target.getAttribute("data-chargeitem"),
+              ChargeType: e.target.getAttribute("data-chargetype"),
+              Currency: e.target.getAttribute("data-currency"),
+              Exrate: 0,
+              Rate: parseFloat(e.target.value),
+              RateLineID: this.state.rateDetails[i].RateLineId,
+              SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+              Tax: 0,
+              TotalAmount: parseFloat(
+                e.target.getAttribute("data-amountinbasecurrency")
+              ),
+              Extracharge: true
+            };
+
+            if (
+              this.state.containerLoadType == "FTL" ||
+              this.state.containerLoadType == "LTL"
+            ) {
+              newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+            }
+
+            this.state.rateSubDetails = this.state.rateSubDetails.concat(
+              newrateSubDetails
+            );
         }
       }
       this.forceUpdate();
     }
     if (!e.target.checked) {
       for (var i = 0; i < rateDetailsarr.length; i++) {
-        if (element.LineName == rateDetailsarr[i].lineName) {
+        if (this.state.containerLoadType=="FCL"?element.ContainerType!=="ALL" && element.LineId!==0:element.LineId!==0) {
+          if (element.LineName == rateDetailsarr[i].lineName) {
+            if (this.state.rateDetails[i].TotalAmount == undefined) {
+              var amount = this.processText(this.state.rateDetails[i].Total);
+
+              this.state.rateDetails[i].Total =
+                parseFloat(amount[0]) -
+                parseFloat(e.target.value) +
+                " " +
+                amount[1];
+            } else {
+              this.state.rateDetails[i].TotalAmount =
+                parseFloat(this.state.rateDetails[i].TotalAmount) -
+                parseFloat(e.target.value);
+            }
+
+            for (var i = 0; i <= this.state.rateSubDetails.length - 1; i++) {
+              if (
+                this.state.rateSubDetails[i]["ChargeCode"] ==
+                e.target.getAttribute("data-chargedesc")
+              ) {
+                this.state.rateSubDetails.splice(i--, 1);
+              }
+            }
+          }
+        }
+        else{
           if (this.state.rateDetails[i].TotalAmount == undefined) {
             var amount = this.processText(this.state.rateDetails[i].Total);
 
@@ -5482,7 +5552,7 @@ class RateFinalizing extends Component {
                     </div>
                     <div className="">
                       <div className="row">
-                        <div className="col-12 col-sm-4 col-md-3 col-xl-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock">
                           <p className="details-title">Account/Customer</p>
                           {this.state.toggleAddProfitBtn && (
                             <p className="details-para">
@@ -5503,36 +5573,39 @@ class RateFinalizing extends Component {
                           ) != "Customer" ? (
                             // this.state.CompanyName == "" ||
                             // this.state.isCopy ? (
-                            <Autocomplete
-                              id="searchtxt"
-                              className="title-sect p-0 pt-2"
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.customerData}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              value={this.state.fields["Company_Name"]}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Company_Name"
-                              )}
-                              menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                "Company_Name"
-                              )}
-                              inputProps={{
-                                placeholder: "Search Account/Consignee"
-                              }}
-                            />
+                            <div className="position-relative">
+                              <Autocomplete
+                                id="searchtxt"
+                                className="title-sect p-0 pt-2"
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.customerData}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white",
+                                        padding: '5px'
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Company_Name"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                inputProps={{
+                                  placeholder: "Search Account/Consignee"
+                                }}
+                              />
+                            </div>
                           ) : // ) : null
                           null}
                         </div>
@@ -6271,13 +6344,21 @@ class RateFinalizing extends Component {
               </button>
               <div className="row" style={{ margin: 0 }}>
                 <div className="logohheader">
-                  <div className="row" style={{ margin: 0 }}>
+                  <div className="row align-items-center" style={{ margin: 0 }}>
                     <div className="col-12 col-md-6">
                       <img src={ATA} alt="ATAFreight Console" />
                     </div>
-                    {/* <div className="col-12 col-md-6">
-                      <label className="headerlabel">Hello</label>
-                    </div> */}
+                    <div className="col-12 col-md-6 preview-date-num">
+                      <p>
+                        Date :{" "}
+                        <span>
+                          <Moment format="DD-MMM-YYYY">
+                            {this.state.todayDate.toString()}
+                          </Moment>
+                        </span>
+                      </p>
+                      <p>Sales Quote No. :</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -6719,7 +6800,7 @@ class RateFinalizing extends Component {
                                 <th></th>
                                 <th></th>
                                 <th>
-                                  {this.state.filterrateSubDetails.reduce(
+                                  {this.state.filterrateSubDetails.length!==0?(this.state.filterrateSubDetails.reduce(
                                     (sum, filterrateSubDetails) =>
                                       this.state.isCopy == true
                                         ? sum +
@@ -6731,10 +6812,7 @@ class RateFinalizing extends Component {
                                         : sum +
                                           filterrateSubDetails.TotalAmount,
                                     0
-                                  ) +
-                                    " " +
-                                    this.state.filterrateSubDetails[0]
-                                      .BaseCurrency}
+                                  ) + " "+this.state.filterrateSubDetails[0].BaseCurrency):null}
                                 </th>
                               </tr>
                             </thead>
