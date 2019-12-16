@@ -97,7 +97,7 @@ class RateFinalizing extends Component {
         borderRadius: "3px",
         boxShadow: "0 2px 12px rgba(0, 0, 0, 0.1)",
         background: "rgba(255, 255, 255, 0.9)",
-        padding: "2px 0 0 10px",
+        padding: "0px",
         fontSize: "90%",
         position: "absolute",
         top: "100%",
@@ -5483,7 +5483,7 @@ class RateFinalizing extends Component {
                     </div>
                     <div className="">
                       <div className="row">
-                        <div className="col-12 col-sm-4 col-md-3 col-xl-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock">
                           <p className="details-title">Account/Customer</p>
                           {this.state.toggleAddProfitBtn && (
                             <p className="details-para">
@@ -5504,36 +5504,39 @@ class RateFinalizing extends Component {
                           ) != "Customer" ? (
                             // this.state.CompanyName == "" ||
                             // this.state.isCopy ? (
-                            <Autocomplete
-                              id="searchtxt"
-                              className="title-sect p-0 pt-2"
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.customerData}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              value={this.state.fields["Company_Name"]}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Company_Name"
-                              )}
-                              menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                "Company_Name"
-                              )}
-                              inputProps={{
-                                placeholder: "Search Account/Consignee"
-                              }}
-                            />
+                            <div className="position-relative">
+                              <Autocomplete
+                                id="searchtxt"
+                                className="title-sect p-0 pt-2"
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.customerData}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white",
+                                        padding: '5px'
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Company_Name"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                inputProps={{
+                                  placeholder: "Search Account/Consignee"
+                                }}
+                              />
+                            </div>
                           ) : // ) : null
                           null}
                         </div>
@@ -6278,7 +6281,12 @@ class RateFinalizing extends Component {
                     </div>
                     <div className="col-12 col-md-6 preview-date-num">
                       <p>
-          Date : <span><Moment format="DD-MMM-YYYY">{this.state.todayDate.toString()}</Moment></span>
+                        Date :{" "}
+                        <span>
+                          <Moment format="DD-MMM-YYYY">
+                            {this.state.todayDate.toString()}
+                          </Moment>
+                        </span>
                       </p>
                       <p>Sales Quote No. :</p>
                     </div>
