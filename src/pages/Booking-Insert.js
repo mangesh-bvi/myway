@@ -517,10 +517,10 @@ class BookingInsert extends Component {
       this.state.QuotationData[0].saleQuoteLineID || 0
     );
 
-    var NotifyID = Number(this.state.buyerData.Company_ID || 0);
+    var NotifyID = Number(this.state.notifyData.Company_ID || 0);
     var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
     var Notify_Displayas = this.state.Notify_Displayas || "";
-    var NotifyName = this.state.buyerData.Company_Name || "";
+    var NotifyName = this.state.notifyData.Company_Name || "";
 
     var BookingDim = [];
 
@@ -1900,30 +1900,58 @@ class BookingInsert extends Component {
                                 width: 200
                               },
                               {
-                                accessor: "POL",
                                 Cell: row => {
                                   return (
-                                    <React.Fragment>
+                                    <>
                                       <p className="details-title">POL</p>
-                                      <p className="details-para">
-                                        {row.original.POL}
-                                      </p>
-                                    </React.Fragment>
+                                      {this.state.ContainerLoad === "INLAND" ? (
+                                        <p
+                                          title={row.original.OriginName}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.OriginName}
+                                        </p>
+                                      ) : (
+                                        <p
+                                          title={row.original.POL}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.POL}
+                                        </p>
+                                      )}
+                                    </>
                                   );
-                                }
+                                },
+                                accessor: "POLName",
+                                //  minWidth: 175
+                                filterable: true
                               },
                               {
-                                accessor: "POD",
                                 Cell: row => {
                                   return (
-                                    <React.Fragment>
+                                    <>
                                       <p className="details-title">POD</p>
-                                      <p className="details-para">
-                                        {row.original.POD}
-                                      </p>
-                                    </React.Fragment>
+                                      {this.state.ContainerLoad === "INLAND" ? (
+                                        <p
+                                          title={row.original.DestinationName}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.DestinationName}
+                                        </p>
+                                      ) : (
+                                        <p
+                                          title={row.original.POD}
+                                          className="details-para max2"
+                                        >
+                                          {row.original.POD}
+                                        </p>
+                                      )}
+                                    </>
                                   );
-                                }
+                                },
+                                accessor: "PODName",
+                                filterable: true
+                                // minWidth: 175
                               },
 
                               {

@@ -24,6 +24,7 @@
         left: 215px;
         z-index: 1;
       }
+
       .dash-search-cntr2 input {
         height: 40px;
         padding-left: 16px;
@@ -32,6 +33,7 @@
         padding-right: 45px;
         /* box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1); */
       }
+
       .dash-search-cntr2 .fa-search {
         background: #002d73;
         border-radius: 50%;
@@ -46,29 +48,36 @@
         color: #fff;
         cursor: pointer;
       }
+
       .map-filter {
         position: absolute;
         top: 10px;
         right: 60px;
       }
+
       .map-filter .map-icon-cntr:first-child {
         position: relative;
         z-index: 2;
         line-height: 28px;
       }
+
       .map-filter .map-icon-cntr:nth-child(5) {
         left: -50px;
         display: none;
       }
+
       .map-filter .map-icon-cntr:nth-child(4) {
         left: -50px;
       }
+
       .map-filter .map-icon-cntr:nth-child(3) {
         left: -100px;
       }
+
       .map-filter .map-icon-cntr:nth-child(2) {
         left: -150px;
       }
+
       .map-icon-cntr {
         width: 45px;
         height: 45px;
@@ -82,21 +91,26 @@
         cursor: pointer;
         z-index: 1;
       }
+
       .map-icon-cntr:first-child {
         background: #0142aa;
         padding: 10px;
       }
+
       .map-icon-cntr img {
         width: 100%;
       }
+
       .map-icon-cntr .fa-bars {
         color: #fff;
         padding-top: 3px;
         font-size: 21px;
       }
+
       .rem-icon {
         left: 0 !important;
       }
+
       #loader-icon {
         position: absolute;
         top: 0;
@@ -108,20 +122,6 @@
           center;
         background-size: 60px;
         z-index: 5;
-      }
-      @media (min-width: 320px) and (max-width: 575px) {
-        .map-filter .map-icon-cntr:nth-child(2) {
-          top: 150px;
-          left: 0;
-        }
-        .map-filter .map-icon-cntr:nth-child(3) {
-          top: 100px;
-          left: 0;
-        }
-        .map-filter .map-icon-cntr:nth-child(4) {
-          top: 50px;
-          left: 0;
-        }
       }
     </style>
     <script
@@ -279,11 +279,11 @@
                     //alert('Success-2');
                     debugger;
                     var datas = data.Table1;
-                    var filterData =[];
+                    var filterData = [];
                     for (var j = 0; j < datas.length; j++) {
                       var mycontainerType = datas[j]["CargoType"];
                       var myContainerNo = datas[j]["ContainerNo"];
-                      
+
                       if (mycontainerType == "Consolidated") {
                         if (filterData.length > 0) {
                           var checkExist = filterData.includes(myContainerNo);
@@ -296,21 +296,73 @@
                       }
                     }
 
-                    var FinalData=[];
-                    ////for loop - filterData 
+                    var FinalData = [];
+                    ////for loop - filterData
+                    var innerConsolidateData = "";
+                    if (filterData.length > 0) {
+                      for (var k = 0; k < filterData.length; k++) {
+                        debugger;
 
-                    if(filterData.length > 0)
-                    {
-                      for(var k=0;k<filterData.length;k++)
-                      {
-                         var ContNo=filterData[k];
-                         var tempData=datas.filter(x=>x.ContainerNo === ContNo & x.CargoType === "Consolidated");
+                        var CinnerContentDatas = "";
+                        var ContNo = filterData[k];
+                        var tempData = datas.filter(
+                          x =>
+                            (x.ContainerNo === ContNo) &
+                            (x.CargoType === "Consolidated")
+                        );
+                        CinnerContentDatas =
+                          "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                        CinnerContentDatas =
+                          CinnerContentDatas +
+                          "<div role='button' data-toggle='collapse' href='#" +
+                          ContNo +
+                          "' aria-expanded='false' aria-controls='" +
+                          ContNo +
+                          "'>";
+                        CinnerContentDatas =
+                          CinnerContentDatas +
+                          "<a href='#'> " +
+                          "<p title='Container No.' class='mapcontainerno'>" +
+                          ContNo +
+                          "</p></a></div></h5></div>"; //<hr/>
+                        CinnerContentDatas =
+                          CinnerContentDatas +
+                          "<div id='" +
+                          ContNo +
+                          "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        CinnerContentDatas =
+                          CinnerContentDatas +
+                          "<div class='card-header hbl-bor' id='heading-1-1'><h5>";
+                        ////Multiple HBL and Invoice No for the same container
+                        for (var p = 0; p < tempData.length; p++) {
+                          var CHBLNum = tempData[p]["HBL#"];
+                          var CinvoiceIds =
+                            tempData[p]["InvoiceNumber/Productid"];
 
+                          // CinnerContentDatas += " <div role='button' href='#" + CHBLNum + "'>" + "<div>CBLNum:-" + CHBLNum + "</div>";
+                          CinnerContentDatas +=
+                            " <div role='button' href='#" +
+                            CHBLNum +
+                            "'>" +
+                            "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                            CHBLNum +
+                            "' target='_parent'>" +
+                            CHBLNum +
+                            "</a>";
+                          CinnerContentDatas +=
+                            "<p title='MyWay No.' class='mapinvoice ml-2'>" +
+                            "" +
+                            CinvoiceIds +
+                            "</p></div></p>";
+                          //CinnerContentDatas += "</div>"
+                        }
+                        CinnerContentDatas +=
+                          "</h5></div></div></div></div></div>";
+                        innerConsolidateData =
+                          innerConsolidateData + CinnerContentDatas; //+ "<br/> </div>";
                       }
-
-
+                      //alert(innerConsolidateData);
                     }
-
 
                     debugger;
                     if (datas.length > 0) {
@@ -321,52 +373,64 @@
                         var HBLNum = datas[i]["HBL#"];
                         var ContainerNo = datas[i]["ContainerNo"];
                         var invoiceIds = datas[i]["InvoiceNumber/Productid"];
+                        var myDatacontainerType = datas[i]["CargoType"];
+                        if (myDatacontainerType != "Consolidated") {
+                          //////Actual Content
+                          var innerContentDatas =
+                            "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div role='button' data-toggle='collapse' href='#" +
+                            ContainerNo +
+                            "' aria-expanded='false' aria-controls='" +
+                            ContainerNo +
+                            "'>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<a href='shipment-details?hblno=" +
+                            HBLNum +
+                            "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
+                            ContainerNo +
+                            "</p></a></div></h5></div>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div id='" +
+                            ContainerNo +
+                            "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
+                            HBLNum +
+                            "'>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                            HBLNum +
+                            "' target='_parent'>" +
+                            HBLNum +
+                            " </a>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                            invoiceIds +
+                            ",</p> </div> </p></div></h5></div></div></div></div></div>";
 
-                        //////Actual Content
-                        var innerContentDatas =
-                          "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div role='button' data-toggle='collapse' href='#" +
-                          ContainerNo +
-                          "' aria-expanded='false' aria-controls='" +
-                          ContainerNo +
-                          "'>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<a href='shipment-details?hblno=" +
-                          HBLNum +
-                          "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
-                          ContainerNo +
-                          "</p></a></div></h5></div>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div id='" +
-                          ContainerNo +
-                          "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
-                          HBLNum +
-                          "'>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
-                          HBLNum +
-                          "' target='_parent'>" +
-                          HBLNum +
-                          " </a>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div><p title='MyWay No.' class='mapinvoice ml-2'> " +
-                          invoiceIds +
-                          ",</p> </div> </p></div></h5></div></div></div></div></div>";
-
-                        marketInnerContent =
-                          marketInnerContent + innerContentDatas;
+                          marketInnerContent =
+                            marketInnerContent + innerContentDatas;
+                        }
                       }
-                      marketContent =
-                        marketContent + marketInnerContent + "</div>";
+
+                      if (innerConsolidateData != "") {
+                        marketContent =
+                          // marketContent + innerConsolidateData + "<hr/>" + marketInnerContent + "</div>";
+                          marketContent +
+                          innerConsolidateData +
+                          marketInnerContent +
+                          "</div>";
+                      } else {
+                        marketContent =
+                          marketContent + marketInnerContent + "</div>";
+                      }
 
                       //alert(marketContent);
                       content = marketContent;
@@ -477,8 +541,93 @@
               },
               success: function(data) {
                 debugger;
-                //alert('Success - Receive content on search');
                 var datas = data.Table1;
+                var filterData = [];
+                for (var j = 0; j < datas.length; j++) {
+                  var mycontainerType = datas[j]["CargoType"];
+                  var myContainerNo = datas[j]["ContainerNo"];
+
+                  if (mycontainerType == "Consolidated") {
+                    if (filterData.length > 0) {
+                      var checkExist = filterData.includes(myContainerNo);
+                      if (!checkExist) {
+                        filterData.push(myContainerNo);
+                      }
+                    } else {
+                      filterData.push(myContainerNo);
+                    }
+                  }
+                }
+
+                var FinalData = [];
+                ////for loop - filterData
+                var innerConsolidateData = "";
+                if (filterData.length > 0) {
+                  for (var k = 0; k < filterData.length; k++) {
+                    debugger;
+
+                    var CinnerContentDatas = "";
+                    var ContNo = filterData[k];
+                    var tempData = datas.filter(
+                      x =>
+                        (x.ContainerNo === ContNo) &
+                        (x.CargoType === "Consolidated")
+                    );
+                    CinnerContentDatas =
+                      "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                    CinnerContentDatas =
+                      CinnerContentDatas +
+                      "<div role='button' data-toggle='collapse' href='#" +
+                      ContNo +
+                      "' aria-expanded='false' aria-controls='" +
+                      ContNo +
+                      "'>";
+                    CinnerContentDatas =
+                      CinnerContentDatas +
+                      "<a href='#'> " +
+                      "<p title='Container No.' class='mapcontainerno'>" +
+                      ContNo +
+                      "</p></a></div></h5></div>"; //<hr/>
+                    CinnerContentDatas =
+                      CinnerContentDatas +
+                      "<div id='" +
+                      ContNo +
+                      "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                    CinnerContentDatas =
+                      CinnerContentDatas +
+                      "<div class='card-header hbl-bor' id='heading-1-1'><h5>";
+                    ////Multiple HBL and Invoice No for the same container
+                    for (var p = 0; p < tempData.length; p++) {
+                      var CHBLNum = tempData[p]["HBL#"];
+                      var CinvoiceIds = tempData[p]["InvoiceNumber/Productid"];
+
+                      // CinnerContentDatas += " <div role='button' href='#" + CHBLNum + "'>" + "<div>CBLNum:-" + CHBLNum + "</div>";
+                      CinnerContentDatas +=
+                        " <div role='button' href='#" +
+                        CHBLNum +
+                        "'>" +
+                        "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                        CHBLNum +
+                        "' target='_parent'>" +
+                        CHBLNum +
+                        "</a>";
+                      CinnerContentDatas +=
+                        "<p title='MyWay No.' class='mapinvoice ml-2'>" +
+                        "" +
+                        CinvoiceIds +
+                        "</p></div></p>";
+                      //CinnerContentDatas += "</div>"
+                    }
+                    CinnerContentDatas += "</h5></div></div></div></div></div>";
+                    innerConsolidateData =
+                      innerConsolidateData + CinnerContentDatas; //+ "<br/> </div>";
+                  }
+                  //alert(innerConsolidateData);
+                }
+
+                debugger;
+                //alert('Success - Receive content on search');
+                //var datas = data.Table1;
                 if (datas.length > 0) {
                   var marketContent = "<div id='rootElement'>";
                   var marketInnerContent = "";
@@ -486,60 +635,75 @@
                     var HBLNum = datas[i]["HBL#"];
                     var ContainerNo = datas[i]["ContainerNo"];
                     var invoiceIds = datas[i]["InvoiceNumber/Productid"];
+                    var myDatacontainerType = datas[i]["CargoType"];
+                    if (myDatacontainerType != "Consolidated") {
+                      //////Actual Content
+                      var innerContentDatas =
+                        "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<div role='button' data-toggle='collapse' href='#" +
+                        ContainerNo +
+                        "' aria-expanded='false' aria-controls='" +
+                        ContainerNo +
+                        "'>";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<a href='shipment-details?hblno=" +
+                        HBLNum +
+                        "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
+                        ContainerNo +
+                        "</p></a></div></h5></div>";
+                      //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                      if (HBLNum == enteredHBLNum) {
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<div id='" +
+                          ContainerNo +
+                          "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
+                      } else {
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<div id='" +
+                          ContainerNo +
+                          "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                      }
 
-                    //////Actual Content
-                    var innerContentDatas =
-                      "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
-                    innerContentDatas =
-                      innerContentDatas +
-                      "<div role='button' data-toggle='collapse' href='#" +
-                      ContainerNo +
-                      "' aria-expanded='false' aria-controls='" +
-                      ContainerNo +
-                      "'>";
-                    innerContentDatas =
-                      innerContentDatas +
-                      "<a href='shipment-details?hblno=" +
-                      HBLNum +
-                      "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
-                      ContainerNo +
-                      "</p></a></div></h5></div>";
-                    //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
-                    if (HBLNum == enteredHBLNum) {
                       innerContentDatas =
                         innerContentDatas +
-                        "<div id='" +
-                        ContainerNo +
-                        "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
-                    } else {
+                        "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
+                        HBLNum +
+                        "' >";
                       innerContentDatas =
                         innerContentDatas +
-                        "<div id='" +
-                        ContainerNo +
-                        "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                        HBLNum +
+                        "' target='_parent'>" +
+                        HBLNum +
+                        " </a>";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<div><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                        invoiceIds +
+                        ",</p> </div> </p></div></h5></div></div></div></div></div>";
+
+                      marketInnerContent =
+                        marketInnerContent + innerContentDatas;
                     }
-
-                    innerContentDatas =
-                      innerContentDatas +
-                      "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
-                      HBLNum +
-                      "' >";
-                    innerContentDatas =
-                      innerContentDatas +
-                      "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
-                      HBLNum +
-                      "' target='_parent'>" +
-                      HBLNum +
-                      " </a>";
-                    innerContentDatas =
-                      innerContentDatas +
-                      "<div><p title='MyWay No.' class='mapinvoice ml-2'> " +
-                      invoiceIds +
-                      ",</p> </div> </p></div></h5></div></div></div></div></div>";
-
-                    marketInnerContent = marketInnerContent + innerContentDatas;
                   }
-                  marketContent = marketContent + marketInnerContent + "</div>";
+                  //marketContent = marketContent + marketInnerContent + "</div>";
+
+                  if (innerConsolidateData != "") {
+                    marketContent =
+                      // marketContent + innerConsolidateData + "<hr/>" + marketInnerContent + "</div>";
+                      marketContent +
+                      innerConsolidateData +
+                      marketInnerContent +
+                      "</div>";
+                  } else {
+                    marketContent =
+                      marketContent + marketInnerContent + "</div>";
+                  }
 
                   //alert(marketContent);
                   content = marketContent;
@@ -726,6 +890,7 @@
       }
     </script>
   </head>
+
   <body>
     <!-- AQTY158984 -->
     <div style="position: relative;">
