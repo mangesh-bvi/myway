@@ -6722,11 +6722,11 @@ class RateFinalizing extends Component {
                                 <th></th>
                                 <th></th>
                                 <th>
-                                  {this.state.filterrateSubDetails.reduce(
+                                  {this.state.filterrateSubDetails.length!==0?(this.state.filterrateSubDetails.reduce(
                                     (sum, filterrateSubDetails) =>
                                       this.state.isCopy==true?sum + parseFloat(filterrateSubDetails.Total.split(" ")[0]): sum + filterrateSubDetails.TotalAmount,
                                     0
-                                  ) + " "+this.state.filterrateSubDetails[0].BaseCurrency}
+                                  ) + " "+this.state.filterrateSubDetails[0].BaseCurrency):null}
                                 </th>
                               </tr>
                             </thead>
