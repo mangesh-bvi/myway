@@ -920,30 +920,26 @@ class RateFinalizing extends Component {
     var rateDetails = this.state.rateDetails;
     var modeOfTransport = "";
     if (this.state.modeoftransport.toUpperCase() == "SEA") {
-      modeOfTransport = "ocean"
-    }
-    else{
-      modeOfTransport = this.state.modeoftransport
+      modeOfTransport = "ocean";
+    } else {
+      modeOfTransport = this.state.modeoftransport;
     }
     var ModeOfTransport =
       this.state.modeoftransport === "SEA"
         ? "Ocean"
         : this.state.modeoftransport;
 
-
-    var RoutingInformation=[];
-    
+    var RoutingInformation = [];
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL:rateDetails[i].POLCode,
-        POD:rateDetails[i].PODCode,
-        LineID:rateDetails[i].RateLineId,
-        LineName:rateDetails[i].lineName,
-        ContainerType:rateDetails[i].ContainerType,
-        ContainerQty:rateDetails[i].ContainerQuantity        
-      })
-      
+        POL: rateDetails[i].POLCode,
+        POD: rateDetails[i].PODCode,
+        LineID: rateDetails[i].RateLineId,
+        LineName: rateDetails[i].lineName,
+        ContainerType: rateDetails[i].ContainerType,
+        ContainerQty: rateDetails[i].ContainerQuantity
+      });
     }
     var LocalChargeData = {
       QuoteType: this.state.containerLoadType,
@@ -1023,22 +1019,20 @@ class RateFinalizing extends Component {
     var rateDetails = this.state.rateDetails;
     var modeOfTransport = "";
     if (this.state.modeoftransport.toUpperCase() == "SEA") {
-      modeOfTransport = "ocean"
-    }
-    else{
-      modeOfTransport = this.state.modeoftransport
+      modeOfTransport = "ocean";
+    } else {
+      modeOfTransport = this.state.modeoftransport;
     }
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL:rateDetails[i].POLCode,
-        POD:rateDetails[i].PODCode,
-        LineID:rateDetails[i].RateLineId,
-        LineName:rateDetails[i].lineName,
-        ContainerType:rateDetails[i].ContainerType,
-        ContainerQty:rateDetails[i].ContainerQuantity        
-      })
-      
+        POL: rateDetails[i].POLCode,
+        POD: rateDetails[i].PODCode,
+        LineID: rateDetails[i].RateLineId,
+        LineName: rateDetails[i].lineName,
+        ContainerType: rateDetails[i].ContainerType,
+        ContainerQty: rateDetails[i].ContainerQuantity
+      });
     }
     // for (let i = 0; i < this.state.users.length; i++) {
     //   Containerdetails.push({
@@ -3943,6 +3937,7 @@ class RateFinalizing extends Component {
   //------------------------------------------------------------------//
 
   render() {
+    
     // var data1 = [
     //   { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
     //   { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }

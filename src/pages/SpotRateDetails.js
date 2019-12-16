@@ -140,7 +140,12 @@ class SpotRateDetails extends Component {
       currencyCode: "",
       TruckType: [],
       testSelection: false,
-      isViewRate: true
+      isViewRate: true,
+      QuotationData: [],
+      QuotationSubData: [],
+      MyWayComments: "",
+      MyWayDiscount: 0,
+      MyWayFreeTime: 0
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -184,14 +189,37 @@ class SpotRateDetails extends Component {
             //self.s .spotrateresponse = response.data;
             var spotrateresponseTbl1 = [];
             var spotrateresponseTbl1 = response.data.Table1;
+            var QuotationData = response.data.Table1;
+            var QuotationSubData = response.data.Table2;
+            var RateQueryData = response.data.Table;
+
             if (response != null) {
               if (response.data != null) {
+                if (QuotationData.length > 0 && QuotationSubData.length > 0) {
+                  var POL = QuotationData[0].OriginPort_Name;
+                  var POD = QuotationData[0].DestinationPort_Name;
+                  self.setState({ QuotationData, QuotationSubData, POL, POD });
+                }
+
                 if (response.data.Table != null) {
                   if (response.data.Table.length > 0) {
                     self.setState({
                       spotrateresponseTbl: response.data.Table[0]
                     });
                   }
+                }
+                if (RateQueryData.length > 0) {
+                  var ModeofTransport = RateQueryData[0].Mode;
+                  var MyWayComments = RateQueryData[0].MyWayComments;
+                  var MyWayDiscount = RateQueryData[0].MyWayDiscount;
+                  var MyWayFreeTime = RateQueryData[0].MyWayFreeTime;
+
+                  self.setState({
+                    ModeofTransport,
+                    MyWayComments,
+                    MyWayDiscount,
+                    MyWayFreeTime
+                  });
                 }
                 if (response.data.Table1 != null) {
                   if (response.data.Table1.length > 0) {
@@ -614,33 +642,6 @@ class SpotRateDetails extends Component {
   }
 
   render() {
-    var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
-    ];
-    var data2 = [
-      {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        finalPayment: "$45,986.00"
-      },
-      {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
-      },
-      {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
-      }
-    ];
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -662,18 +663,18 @@ class SpotRateDetails extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Spot Rate Details</h2>
               <div>
-              <button
-                onClick={this.toggleViewRate}
-                className="butn more-padd"
-              >
+                <button
+                  onClick={this.toggleViewRate}
+                  className="butn more-padd"
+                >
                   View Rate
-              </button>
-              <button
-                onClick={this.toggleSpotHistory}
-                className="butn more-padd"
-              >
-                Rate Query History
-              </button>
+                </button>
+                <button
+                  onClick={this.toggleSpotHistory}
+                  className="butn more-padd"
+                >
+                  Rate Query History
+                </button>
               </div>
             </div>
             <div className="row">
@@ -688,22 +689,23 @@ class SpotRateDetails extends Component {
                         </h3>
                       </div>
                       <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Shipment Type</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.ShipmentType}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Mode of Transport</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Mode}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Container Load</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Trade_terms}
+                            
                           </p>
                         </div>
                         {/* <div className="col-md-4">
@@ -755,83 +757,146 @@ class SpotRateDetails extends Component {
                             )}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Inco Terms</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Trade_terms}
                           </p>
                         </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Type of Move</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.TypeofMove}
                           </p>
                         </div>
-                        
-                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "port to port"?(
-                          <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
-                            <p className="details-title">POL</p>
-                            <p className="details-para">
-                                {this.state.spotrateresponseTbl.PickUpAddress}
-                            </p>                          
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">POD</p>
-                            <p className="details-para">
-                                {this.state.spotrateresponseTbl.DestinationAddress}
-                            </p>
-                          </div>
-                          </>
-                         ):null):""}
-                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to door"?(
-                          <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">PU Address</p>
-                            <p className="details-para">
-                              {this.state.spotrateresponseTbl.PickUpAddress}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Delivery Address</p>
-                            <p className="details-para">
-                              {this.state.spotrateresponseTbl.DestinationAddress}
-                            </p>
-                          </div>
-                          </>
-                         ):null):""}
-                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "port to door"?(
-                          <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
-                            <p className="details-title">POL</p>
-                            <p className="details-para">
-                                {this.state.spotrateresponseTbl.PickUpAddress}
-                            </p>                          
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Delivery Address</p>
-                            <p className="details-para">
-                              {this.state.spotrateresponseTbl.DestinationAddress}
-                            </p>
-                          </div>
-                          </>
-                         ):null):""}
-                         {this.state.spotrateresponseTbl.TypeofMove != undefined?(this.state.spotrateresponseTbl.TypeofMove.toLowerCase() === "door to port"?(
-                          <>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">PU Address</p>
-                            <p className="details-para">
-                              {this.state.spotrateresponseTbl.PickUpAddress}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">POD</p>
-                            <p className="details-para">
-                                {this.state.spotrateresponseTbl.DestinationAddress}
-                            </p>
-                          </div>
-                          </>
-                         ):null):""}
+
+                        {this.state.spotrateresponseTbl.TypeofMove !=
+                        undefined ? (
+                          this.state.spotrateresponseTbl.TypeofMove.toLowerCase() ===
+                          "port to port" ? (
+                            <>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                                <p className="details-title">POL</p>
+                                <p className="details-para">
+                                  {this.state.spotrateresponseTbl.PickUpAddress}
+                                  {this.state.POL}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                <p className="details-title">POD</p>
+                                <p className="details-para">
+                                  {
+                                    this.state.spotrateresponseTbl
+                                      .DestinationAddress
+                                  }
+                                  {this.state.POD}
+                                </p>
+                              </div>
+                            </>
+                          ) : null
+                        ) : (
+                          ""
+                        )}
+                        {this.state.spotrateresponseTbl.TypeofMove !=
+                        undefined ? (
+                          this.state.spotrateresponseTbl.TypeofMove.toLowerCase() ===
+                          "door to door" ? (
+                            <>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                <p className="details-title">PU Address</p>
+                                <p className="details-para">
+                                  {this.state.spotrateresponseTbl.PickUpAddress}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                <p className="details-title">
+                                  Delivery Address
+                                </p>
+                                <p className="details-para">
+                                  {
+                                    this.state.spotrateresponseTbl
+                                      .DestinationAddress
+                                  }
+                                </p>
+                              </div>
+                            </>
+                          ) : null
+                        ) : (
+                          ""
+                        )}
+                        {this.state.spotrateresponseTbl.TypeofMove !=
+                        undefined ? (
+                          this.state.spotrateresponseTbl.TypeofMove.toLowerCase() ===
+                          "port to door" ? (
+                            <>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                                <p className="details-title">POL</p>
+                                <p className="details-para">
+                                  {this.state.spotrateresponseTbl.PickUpAddress}
+                                  {this.state.POL}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                <p className="details-title">
+                                  Delivery Address
+                                </p>
+                                <p className="details-para">
+                                  {
+                                    this.state.spotrateresponseTbl
+                                      .DestinationAddress
+                                  }
+                                  {this.state.POD}
+                                </p>
+                              </div>
+                            </>
+                          ) : null
+                        ) : (
+                          ""
+                        )}
+                        {this.state.spotrateresponseTbl.TypeofMove !=
+                        undefined ? (
+                          this.state.spotrateresponseTbl.TypeofMove.toLowerCase() ===
+                          "door to port" ? (
+                            <>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                <p className="details-title">PU Address</p>
+                                <p className="details-para">
+                                  {this.state.spotrateresponseTbl.PickUpAddress}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                <p className="details-title">POD</p>
+                                <p className="details-para">
+                                  {
+                                    this.state.spotrateresponseTbl
+                                      .DestinationAddress
+                                  }
+                                </p>
+                              </div>
+                            </>
+                          ) : null
+                        ) : (
+                          ""
+                        )}
+
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <p className="details-title">MyWay Comments</p>
+                          <p className="details-para">
+                            {this.state.MyWayComments}
+                          </p>
+                        </div>
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <p className="details-title">MyWay Discount</p>
+                          <p className="details-para">
+                            {this.state.MyWayDiscount}
+                          </p>
+                        </div>
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                          <p className="details-title">MyWay FreeTime</p>
+                          <p className="details-para">
+                            {this.state.MyWayFreeTime}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -842,7 +907,7 @@ class SpotRateDetails extends Component {
                     </div>
                     <div className="">
                       <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4">
+                        <div className="col-12 col-sm-6 col-md-4">
                           <p className="details-title">Account/Customer</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.Customer}
@@ -861,7 +926,7 @@ class SpotRateDetails extends Component {
                       </div>
                     </div>
                     <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4">
+                      <div className="col-12 col-sm-6 col-md-4">
                         <p className="details-title">Commodity</p>
                         {/* <input type="text" value="Dummy" disabled /> */}
                         <select
@@ -876,9 +941,11 @@ class SpotRateDetails extends Component {
                           ))}
                         </select>
                       </div>
+                    </div>
+                    <div>
                       <div className="col-md-12 login-fields">
                         <p className="details-title">Cargo Details</p>
-                        <div className="cls-rt" style={{ width: "100%" }}>
+                        <div className="" style={{ width: "100%" }}>
                           <div className="ag-fresh">
                             {/* {(() => {
                               if (spotrateresponseTbl1.length>0) {
@@ -969,8 +1036,252 @@ class SpotRateDetails extends Component {
                           {/* }})()} */}
                         </div>
                         {/* <input type="text" value="Dummy" disabled /> */}
+
+                        <p className="details-title">Quotation Details</p>
+
+                        <ReactTable
+                          columns={[
+                            {
+                              columns: [
+                                {
+                                  Cell: ({ original, row }) => {
+                                    i++;
+                                    debugger;
+                                    var lname = "";
+                                    var olname = "";
+                                    if (row._original.Linename) {
+                                      olname = row._original.Linename;
+                                      lname =
+                                        row._original.Linename.replace(
+                                          "  ",
+                                          "_"
+                                        ).replace(" ", "_") + ".png";
+                                    }
+                                    if (row._original.LineName) {
+                                      olname = row._original.LineName;
+                                      lname =
+                                        row._original.LineName.replace(
+                                          "  ",
+                                          "_"
+                                        ).replace(" ", "_") + ".png";
+                                    }
+                                    var mode = this.state.ModeofTransport;
+
+                                    if (mode === "Ocean" && lname !== "") {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              alt={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                                lname
+                                              }
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    } else if (mode == "Air" && lname !== "") {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              alt={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                lname
+                                              }
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                              }
+                                              alt={olname}
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  },
+                                  accessor: "lineName",
+                                  Header: "Line Name"
+                                  // minWidth: 200
+                                },
+                                {
+                                  Header: "POL",
+                                  accessor: "POL",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        {/* <p className="details-title">POL</p> */}
+                                        <p className=" ">
+                                          {row.original.OriginPort_Name}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+                                {
+                                  Header: "POD",
+                                  accessor: "POD",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        {/* <p className="details-title">POL</p> */}
+                                        <p className=" ">
+                                          {row.original.DestinationPort_Name}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+
+                                {
+                                  Header: "Transshipment Port",
+                                  accessor: "TranshipmentPorts",
+                                  Cell: row => {
+                                    debugger;
+                                    return (
+                                      <React.Fragment>
+                                        {/* <p className="details-title">
+                                            Container
+                                          </p> */}
+                                        <p className=" ">
+                                          {row.original.TranshipmentPorts}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+
+                                {
+                                  Header: "Free Time",
+                                  accessor: "FreeTime",
+                                  Cell: row => {
+                                    debugger;
+                                    return (
+                                      <React.Fragment>
+                                        {/* <p className="details-title">
+                                            Container
+                                          </p> */}
+                                        <p className=" ">
+                                          {row.original.FreeTime}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+
+                                {
+                                  Header: "Container Type",
+                                  accessor: "ContainerType",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        {/* <p className="details-title">
+                                            Container
+                                          </p> */}
+                                        <p className=" ">
+                                          {row.original.ContainerType}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+                                {
+                                  Header: "Expiry Date",
+                                  accessor: "ExpiryDate",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        {/* <p className="details-title">
+                                            Expiry
+                                          </p> */}
+                                        <p className=" ">
+                                          {new Date(
+                                            row.original.ExpiryDate
+                                          ).toLocaleDateString("en-US")}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+
+                                {
+                                  Header: "Price",
+                                  accessor: "Total",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        <p className=" ">
+                                          {
+                                            row.original
+                                              .TotalAmountInBaseCureency
+                                          }
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                }
+                              ]
+                            }
+                          ]}
+                          data={this.state.QuotationData}
+                          minRows={0}
+                          showPagination={false}
+                          className="-striped -highlight no-mid-align"
+                          SubComponent={row => {
+                            return (
+                              <div style={{ padding: "20px 0" }}>
+                                <ReactTable
+                                  data={this.state.QuotationSubData}
+                                  columns={[
+                                    {
+                                      columns: [
+                                        {
+                                          Header: "C. Description",
+                                          accessor: "ChargeType"
+                                        },
+                                        {
+                                          Header: "C.Name",
+                                          accessor: "ChargeCode"
+                                        },
+                                        {
+                                          Header: "Units",
+                                          accessor: "ChargeItem"
+                                        },
+                                        {
+                                          Header: "Unit Price",
+                                          accessor: "Rate"
+                                        },
+                                        {
+                                          Header: "Final Payment",
+                                          accessor: "TotalAmount"
+                                        }
+                                      ]
+                                    }
+                                  ]}
+                                  minRows={1}
+                                  // defaultPageSize={3}
+                                  showPagination={false}
+                                />
+                              </div>
+                            );
+                          }}
+                        />
                       </div>
                     </div>
+
                     {/* <div>
                       <button
                         onClick={this.toggleViewRate}
