@@ -971,14 +971,14 @@ class SpotRateDetails extends Component {
                         {/* <input type="text" value="Dummy" disabled /> */}
                       </div>
                     </div>
-                    <div>
+                    {/* <div>
                       <button
                         onClick={this.toggleViewRate}
                         className="butn more-padd"
                       >
                         View Rate
                       </button>
-                    </div>
+                    </div> */}
                     {/* <center>
                       <button
                         onClick={this.toggleBook}
