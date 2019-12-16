@@ -3098,53 +3098,121 @@ class RateFinalizing extends Component {
         // }
         // else
         // {
-        if (
-          element.LineName ==
-          (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
-        ) {
-          this.state.rateDetails[i].TotalAmount =
-            parseFloat(
-              this.state.rateDetails[i].TotalAmount == null
-                ? 0
-                : this.state.rateDetails[i].TotalAmount
-            ) + parseFloat(e.target.value);
-          // }
-
-          var newrateSubDetails = {
-            BaseCurrency: e.target.getAttribute("data-currency"),
-            ChargeCode: e.target.getAttribute("data-chargedesc"),
-            ChargeID: 0,
-            ChargeItem: e.target.getAttribute("data-chargeitem"),
-            ChargeType: e.target.getAttribute("data-chargetype"),
-            Currency: e.target.getAttribute("data-currency"),
-            Exrate: 0,
-            Rate: parseFloat(e.target.value),
-            RateLineID: this.state.rateDetails[i].RateLineId,
-            SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
-            Tax: 0,
-            TotalAmount: parseFloat(
-              e.target.getAttribute("data-amountinbasecurrency")
-            ),
-            Extracharge: true
-          };
-
+        if (this.state.containerLoadType=="FCL"?element.ContainerType!=="ALL" && element.LineId!==0:element.LineId!==0) {
           if (
-            this.state.containerLoadType == "FTL" ||
-            this.state.containerLoadType == "LTL"
+            element.LineName ==
+            (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
           ) {
-            newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
-          }
+            this.state.rateDetails[i].TotalAmount =
+              parseFloat(
+                this.state.rateDetails[i].TotalAmount == null
+                  ? 0
+                  : this.state.rateDetails[i].TotalAmount
+              ) + parseFloat(e.target.value);
+            // }
 
-          this.state.rateSubDetails = this.state.rateSubDetails.concat(
-            newrateSubDetails
-          );
+            var newrateSubDetails = {
+              BaseCurrency: e.target.getAttribute("data-currency"),
+              ChargeCode: e.target.getAttribute("data-chargedesc"),
+              ChargeDesc: e.target.getAttribute("data-chargedesc"),
+              ChargeID: 0,
+              ChargeItem: e.target.getAttribute("data-chargeitem"),
+              ChargeType: e.target.getAttribute("data-chargetype"),
+              Currency: e.target.getAttribute("data-currency"),
+              Exrate: 0,
+              Rate: parseFloat(e.target.value),
+              RateLineID: this.state.rateDetails[i].RateLineId,
+              SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+              Tax: 0,
+              TotalAmount: parseFloat(
+                e.target.getAttribute("data-amountinbasecurrency")
+              ),
+              Extracharge: true
+            };
+
+            if (
+              this.state.containerLoadType == "FTL" ||
+              this.state.containerLoadType == "LTL"
+            ) {
+              newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+            }
+
+            this.state.rateSubDetails = this.state.rateSubDetails.concat(
+              newrateSubDetails
+            );
+          }
+        }
+        else{
+          this.state.rateDetails[i].TotalAmount =
+              parseFloat(
+                this.state.rateDetails[i].TotalAmount == null
+                  ? 0
+                  : this.state.rateDetails[i].TotalAmount
+              ) + parseFloat(e.target.value);
+            // }
+
+            var newrateSubDetails = {
+              BaseCurrency: e.target.getAttribute("data-currency"),
+              ChargeCode: e.target.getAttribute("data-chargedesc"),
+              ChargeDesc: e.target.getAttribute("data-chargedesc"),
+              ChargeID: 0,
+              ChargeItem: e.target.getAttribute("data-chargeitem"),
+              ChargeType: e.target.getAttribute("data-chargetype"),
+              Currency: e.target.getAttribute("data-currency"),
+              Exrate: 0,
+              Rate: parseFloat(e.target.value),
+              RateLineID: this.state.rateDetails[i].RateLineId,
+              SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+              Tax: 0,
+              TotalAmount: parseFloat(
+                e.target.getAttribute("data-amountinbasecurrency")
+              ),
+              Extracharge: true
+            };
+
+            if (
+              this.state.containerLoadType == "FTL" ||
+              this.state.containerLoadType == "LTL"
+            ) {
+              newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+            }
+
+            this.state.rateSubDetails = this.state.rateSubDetails.concat(
+              newrateSubDetails
+            );
         }
       }
       this.forceUpdate();
     }
     if (!e.target.checked) {
       for (var i = 0; i < rateDetailsarr.length; i++) {
-        if (element.LineName == rateDetailsarr[i].lineName) {
+        if (this.state.containerLoadType=="FCL"?element.ContainerType!=="ALL" && element.LineId!==0:element.LineId!==0) {
+          if (element.LineName == rateDetailsarr[i].lineName) {
+            if (this.state.rateDetails[i].TotalAmount == undefined) {
+              var amount = this.processText(this.state.rateDetails[i].Total);
+
+              this.state.rateDetails[i].Total =
+                parseFloat(amount[0]) -
+                parseFloat(e.target.value) +
+                " " +
+                amount[1];
+            } else {
+              this.state.rateDetails[i].TotalAmount =
+                parseFloat(this.state.rateDetails[i].TotalAmount) -
+                parseFloat(e.target.value);
+            }
+
+            for (var i = 0; i <= this.state.rateSubDetails.length - 1; i++) {
+              if (
+                this.state.rateSubDetails[i]["ChargeCode"] ==
+                e.target.getAttribute("data-chargedesc")
+              ) {
+                this.state.rateSubDetails.splice(i--, 1);
+              }
+            }
+          }
+        }
+        else{
           if (this.state.rateDetails[i].TotalAmount == undefined) {
             var amount = this.processText(this.state.rateDetails[i].Total);
 
