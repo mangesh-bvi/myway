@@ -178,11 +178,11 @@ class SideMenu extends Component {
         className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
         id="sidemenubar"
       >
-        {/* <i
+        <i
           class="fa fa-arrow-right side-arrow"
           aria-hidden="true"
           onClick={this.sidebarCollapse.bind(this)}
-        ></i> */}
+        ></i>
         {/* <img
           src={Menubars}
           alt="Menu Bars"
