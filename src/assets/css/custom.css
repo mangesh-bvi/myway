@@ -2482,10 +2482,17 @@ table tbody tr:last-child {
 .side-arrow {
   position: absolute;
   left: 100%;
-  transform: rotate(180deg);
   font-size: 18px !important;
+  width: 15px;
+  display: flex;
+  background: #0142aa;
+  border-radius: 0 5px 5px 0;
+  overflow: hidden;
 }
-.colap .side-arrow {
+.side-arrow img {
+  transform: rotate(180deg);
+}
+.colap .side-arrow img {
   transform: rotate(0);
 }
 /* side menu ends */

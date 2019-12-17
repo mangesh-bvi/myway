@@ -33,34 +33,34 @@ class Reports extends Component {
       values: [],
       RateSubDetails: [],
       checkSelection: [],
-      reportName:[],
-      ModeOfTransport:[],
-      OriginCountry:[],
-      DestinationCountry:[],
-      OriginAirport:[],
-      acctualOriginAirport:[],
-      DestinationAirport:[],
-      acctualDestinationAirport:[],
-      PortOfLoading:[],
-      acctualPortOfLoading:[],
-      PortOfDeparture:[],
-      acctualPortOfDeparture:[],
-      RegCompany:[],
+      reportName: [],
+      ModeOfTransport: [],
+      OriginCountry: [],
+      DestinationCountry: [],
+      OriginAirport: [],
+      acctualOriginAirport: [],
+      DestinationAirport: [],
+      acctualDestinationAirport: [],
+      PortOfLoading: [],
+      acctualPortOfLoading: [],
+      PortOfDeparture: [],
+      acctualPortOfDeparture: [],
+      RegCompany: [],
       toggleExtraModeofAirFilter: false,
       toggleExtraModeofOceanFilter: false,
       toggleExtraInvoiceNoFilter: false,
       toggleExtraModeTransportFilter: false,
 
-      valReportName:"",
-      valRegCompany:"",
-      TextReportName:"",
-      valModeOfTransport:"",
-      valOriginCountry:"",
-      valDestinationCountry:"",
-      valOriginAirport:"",
-      valDestinationAirport:"",
-      valPortOfLoading:"",
-      valPortOfDeparture:""
+      valReportName: "",
+      valRegCompany: "",
+      TextReportName: "",
+      valModeOfTransport: "",
+      valOriginCountry: "",
+      valDestinationCountry: "",
+      valOriginAirport: "",
+      valDestinationAirport: "",
+      valPortOfLoading: "",
+      valPortOfDeparture: ""
     };
   }
 
@@ -68,479 +68,444 @@ class Reports extends Component {
     this.setReportName();
   }
 
-  setReportName()
-  {
+  setReportName() {
     let self = this;
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ReportListAPI`,
       data: {
-       // UserID: encryption(window.localStorage.getItem("userid"), "desc")
-       UserID: 341
+        // UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        UserID: 341
       },
       headers: authHeader()
-    }).then(function(response) {
-
-      var optionItems = [];
-      if(response != null)
-      {
-        if(response.data != null)
-        {
-          if(response.data.Table != null)
-          {
-            if(response.data.Table.length > 0)
-            {
-              response.data.Table.map(comp => (
-                optionItems.push({value: comp.ReportID, label: comp.ReportName})
-              ));
+    })
+      .then(function(response) {
+        var optionItems = [];
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                response.data.Table.map(comp =>
+                  optionItems.push({
+                    value: comp.ReportID,
+                    label: comp.ReportName
+                  })
+                );
+              }
+            } else {
+              optionItems.push({ value: 0, label: "No Data Found" });
             }
           }
-          else
-          {
-            optionItems.push({value: 0, label: "No Data Found"})
-          }
         }
-      }
-      self.setState({reportName: optionItems});
-
-    }).catch(error => {
-      debugger;
-      var temperror = error.response.data;
-      var err = temperror.split(":");
-      //alert(err[1].replace("}", ""))
-      var optionItems = [];
-      optionItems.push({value: 0, label: "No Data Found"})
-      self.setState({
-        reportName: optionItems
+        self.setState({ reportName: optionItems });
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+        var optionItems = [];
+        optionItems.push({ value: 0, label: "No Data Found" });
+        self.setState({
+          reportName: optionItems
+        });
       });
-    });
   }
 
-  changesReportName(val)
-  {
+  changesReportName(val) {
     let self = this;
 
-    this.setState({valReportName : val.value})
-    this.setState({TextReportName : val.label})
+    this.setState({ valReportName: val.value });
+    this.setState({ TextReportName: val.label });
 
-
-    this.setState({toggleExtraModeofAirFilter : false})
-    this.setState({toggleExtraModeofOceanFilter : false})
-    this.setState({toggleExtraInvoiceNoFilter : false})
-    this.setState({toggleExtraModeTransportFilter : false})
-
+    this.setState({ toggleExtraModeofAirFilter: false });
+    this.setState({ toggleExtraModeofOceanFilter: false });
+    this.setState({ toggleExtraInvoiceNoFilter: false });
+    this.setState({ toggleExtraModeTransportFilter: false });
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ReportFiltersAPI`,
       data: {
-       // UserID: encryption(window.localStorage.getItem("userid"), "desc")
-       UserID: 341,
-       ReportID:val.value
+        // UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        UserID: 341,
+        ReportID: val.value
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
+    })
+      .then(function(response) {
+        debugger;
 
+        var ModeOfTransport = [];
+        var OriginCountry = [];
+        var DestinationCountry = [];
+        var OriginAirport = [];
+        var DestinationAirport = [];
+        var RegCompany = [];
+        var PortOfLoading = [];
+        var PortOfDeparture = [];
 
-      var ModeOfTransport = [];
-      var OriginCountry = [];
-      var DestinationCountry = [];
-      var OriginAirport = [];
-      var  DestinationAirport = [];
-      var RegCompany = [];
-      var PortOfLoading = [];
-      var PortOfDeparture = [];
+        var InvoiceNo = false;
+        var ModeTransport = false;
 
-      var InvoiceNo = false;
-      var ModeTransport = false;
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                var Table = response.data.Table;
 
-      if(response != null)
-      {
-        if(response.data != null)
-        {
-          if(response.data.Table != null)
-          {
-            if(response.data.Table.length > 0)
-            {
-              var Table = response.data.Table;
-
-              for(var i = 0; i < Table.length; i++)
-              {
-                if(Table[i].ColumnName == "InvoiceNo")
-                {
-                  InvoiceNo = true;
-                }
-                if(Table[i].ColumnName == "ModeTransport")
-                {
-                  ModeTransport = true;
-                }
-              }
-            }
-
-            if(!InvoiceNo)
-            {//For those who don't have Invoice No
-              if(!ModeTransport)
-              {//For those who don't have Mode Of Transport
-                if(response.data.Table1 != null)
-                {//Reg. Company
-
-                  if(response.data.Table1.length > 0)
-                  {
-                    response.data.Table1.map(comp => (
-                      RegCompany.push({value: comp.ID, label: comp.Name})
-                    ));
+                for (var i = 0; i < Table.length; i++) {
+                  if (Table[i].ColumnName == "InvoiceNo") {
+                    InvoiceNo = true;
                   }
-                  else
-                  {
-                    RegCompany.push({value: 0, label: "No Data Found"})
+                  if (Table[i].ColumnName == "ModeTransport") {
+                    ModeTransport = true;
                   }
-                  self.setState({RegCompany: RegCompany});
                 }
               }
 
-            }
+              if (!InvoiceNo) {
+                //For those who don't have Invoice No
+                if (!ModeTransport) {
+                  //For those who don't have Mode Of Transport
+                  if (response.data.Table1 != null) {
+                    //Reg. Company
 
-            if(ModeTransport)
-            {//For those who have Mode Of Transport
-              if(response.data.Table4 != null)
-              {//Reg. Company
-                self.setState({RegCompany: []});
-                if(response.data.Table4.length > 0)
-                {
-                  response.data.Table4.map(comp => (
-                    RegCompany.push({value: comp.ID, label: comp.Name})
-                  ));
+                    if (response.data.Table1.length > 0) {
+                      response.data.Table1.map(comp =>
+                        RegCompany.push({ value: comp.ID, label: comp.Name })
+                      );
+                    } else {
+                      RegCompany.push({ value: 0, label: "No Data Found" });
+                    }
+                    self.setState({ RegCompany: RegCompany });
+                  }
                 }
-                else
-                {
-                  RegCompany.push({value: 0, label: "No Data Found"})
-                }
-                self.setState({RegCompany: RegCompany});
               }
 
-              if(response.data.Table2 != null)
-              {//Mode Of Transport
-                self.setState({ModeOfTransport: []});
-                if(response.data.Table2.length > 0)
-                {
-                  response.data.Table2.map(comp => (
-                    ModeOfTransport.push({value: comp.ID, label: comp.Name})
-                  ));
+              if (ModeTransport) {
+                //For those who have Mode Of Transport
+                if (response.data.Table4 != null) {
+                  //Reg. Company
+                  self.setState({ RegCompany: [] });
+                  if (response.data.Table4.length > 0) {
+                    response.data.Table4.map(comp =>
+                      RegCompany.push({ value: comp.ID, label: comp.Name })
+                    );
+                  } else {
+                    RegCompany.push({ value: 0, label: "No Data Found" });
+                  }
+                  self.setState({ RegCompany: RegCompany });
                 }
-                else
-                {
-                  ModeOfTransport.push({value: 0, label: "No Data Found"})
+
+                if (response.data.Table2 != null) {
+                  //Mode Of Transport
+                  self.setState({ ModeOfTransport: [] });
+                  if (response.data.Table2.length > 0) {
+                    response.data.Table2.map(comp =>
+                      ModeOfTransport.push({ value: comp.ID, label: comp.Name })
+                    );
+                  } else {
+                    ModeOfTransport.push({ value: 0, label: "No Data Found" });
+                  }
+                  self.setState({ ModeOfTransport: ModeOfTransport });
                 }
-                self.setState({ModeOfTransport: ModeOfTransport});
+
+                if (response.data.Table1 != null) {
+                  //Destination Country
+
+                  if (response.data.Table1.length > 0) {
+                    response.data.Table1.map(comp =>
+                      DestinationCountry.push({
+                        value: comp.ID,
+                        label: comp.Name
+                      })
+                    );
+                  } else {
+                    DestinationCountry.push({
+                      value: 0,
+                      label: "No Data Found"
+                    });
+                  }
+                  self.setState({ DestinationCountry: DestinationCountry });
+                }
+
+                if (response.data.Table3 != null) {
+                  //Origin Country
+                  self.setState({ OriginCountry: [] });
+                  if (response.data.Table3.length > 0) {
+                    response.data.Table3.map(comp =>
+                      OriginCountry.push({ value: comp.ID, label: comp.Name })
+                    );
+                  } else {
+                    OriginCountry.push({ value: 0, label: "No Data Found" });
+                  }
+                  self.setState({ OriginCountry: OriginCountry });
+                }
               }
 
-              if(response.data.Table1 != null)
-              {//Destination Country
+              if (InvoiceNo) {
+                //For those who have Invoice No
+                if (response.data.Table5 != null) {
+                  //Port Of Loading (ocean)
+                  self.setState({ acctualPortOfLoading: [] });
+                  if (response.data.Table5.length > 0) {
+                    response.data.Table5.map(comp =>
+                      PortOfLoading.push({
+                        value: comp.ID,
+                        label: comp.Name,
+                        compcode: comp.CountryCode
+                      })
+                    );
+                  } else {
+                    PortOfLoading.push({
+                      value: 0,
+                      label: "No Data Found",
+                      compcode: "Null"
+                    });
+                  }
+                  self.setState({ acctualPortOfLoading: PortOfLoading });
+                }
 
-                if(response.data.Table1.length > 0)
-                {
-                  response.data.Table1.map(comp => (
-                    DestinationCountry.push({value: comp.ID, label: comp.Name})
-                  ));
+                if (response.data.Table6 != null) {
+                  //Port Of Departure (ocean)
+                  self.setState({ acctualPortOfDeparture: [] });
+                  if (response.data.Table6.length > 0) {
+                    response.data.Table6.map(comp =>
+                      PortOfDeparture.push({
+                        value: comp.ID,
+                        label: comp.Name,
+                        compcode: comp.CountryCode
+                      })
+                    );
+                  } else {
+                    PortOfDeparture.push({
+                      value: 0,
+                      label: "No Data Found",
+                      compcode: "Null"
+                    });
+                  }
+                  self.setState({ acctualPortOfDeparture: PortOfDeparture });
                 }
-                else
-                {
-                  DestinationCountry.push({value: 0, label: "No Data Found"})
-                }
-                self.setState({DestinationCountry: DestinationCountry});
-              }
 
-              if(response.data.Table3 != null)
-              {//Origin Country
-                self.setState({OriginCountry: []});
-                if(response.data.Table3.length > 0)
-                {
-                  response.data.Table3.map(comp => (
-                    OriginCountry.push({value: comp.ID, label: comp.Name})
-                  ));
+                if (response.data.Table7 != null) {
+                  //Origin Airport
+                  self.setState({ acctualOriginAirport: [] });
+                  if (response.data.Table7.length > 0) {
+                    response.data.Table7.map(comp =>
+                      OriginAirport.push({
+                        value: comp.ID,
+                        label: comp.Name,
+                        compcode: comp.CountryCode
+                      })
+                    );
+                  } else {
+                    OriginAirport.push({ value: 0, label: "No Data Found" });
+                  }
+                  self.setState({
+                    acctualOriginAirport: OriginAirport,
+                    compcode: "Null"
+                  });
                 }
-                else
-                {
-                  OriginCountry.push({value: 0, label: "No Data Found"})
-                }
-                self.setState({OriginCountry: OriginCountry});
-              }
-            }
 
-            if(InvoiceNo)
-            {//For those who have Invoice No
-              if(response.data.Table5 != null)
-              {//Port Of Loading (ocean)
-                self.setState({acctualPortOfLoading: []});
-                if(response.data.Table5.length > 0)
-                {
-                  response.data.Table5.map(comp => (
-                    PortOfLoading.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
-                  ));
+                if (response.data.Table8 != null) {
+                  //Destination Airport
+                  self.setState({ acctualDestinationAirport: [] });
+                  if (response.data.Table8.length > 0) {
+                    response.data.Table8.map(comp =>
+                      DestinationAirport.push({
+                        value: comp.ID,
+                        label: comp.Name,
+                        compcode: comp.CountryCode
+                      })
+                    );
+                  } else {
+                    DestinationAirport.push({
+                      value: 0,
+                      label: "No Data Found",
+                      compcode: "Null"
+                    });
+                  }
+                  self.setState({
+                    acctualDestinationAirport: DestinationAirport
+                  });
                 }
-                else
-                {
-                  PortOfLoading.push({value: 0, label: "No Data Found", compcode: "Null"})
-                }
-                self.setState({acctualPortOfLoading: PortOfLoading});
-              }
-
-              if(response.data.Table6 != null)
-              {//Port Of Departure (ocean)
-                self.setState({acctualPortOfDeparture: []});
-                if(response.data.Table6.length > 0)
-                {
-                  response.data.Table6.map(comp => (
-                    PortOfDeparture.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
-                  ));
-                }
-                else
-                {
-                  PortOfDeparture.push({value: 0, label: "No Data Found", compcode: "Null"})
-                }
-                self.setState({acctualPortOfDeparture: PortOfDeparture});
-              }
-
-              if(response.data.Table7 != null)
-              {//Origin Airport
-                self.setState({acctualOriginAirport: []});
-                if(response.data.Table7.length > 0)
-                {
-                  response.data.Table7.map(comp => (
-                      OriginAirport.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
-                  ));
-                }
-                else
-                {
-                  OriginAirport.push({value: 0, label: "No Data Found"})
-                }
-                self.setState({acctualOriginAirport: OriginAirport, compcode: "Null"});
-              }
-
-              if(response.data.Table8 != null)
-              {//Destination Airport
-                self.setState({acctualDestinationAirport: []});
-                if(response.data.Table8.length > 0)
-                {
-                  response.data.Table8.map(comp => (
-                     DestinationAirport.push({value: comp.ID, label: comp.Name, compcode: comp.CountryCode})
-                  ));
-                }
-                else
-                {
-                  DestinationAirport.push({value: 0, label: "No Data Found", compcode: "Null"})
-                }
-                self.setState({acctualDestinationAirport : DestinationAirport});
               }
             }
           }
         }
-      }
 
+        self.setState({ toggleExtraInvoiceNoFilter: InvoiceNo });
+        self.setState({ toggleExtraModeTransportFilter: ModeTransport });
 
-      self.setState({toggleExtraInvoiceNoFilter: InvoiceNo});
-      self.setState({toggleExtraModeTransportFilter : ModeTransport})
-
-
-     // alert(ModeTransport)
-    }).catch(error => {
-      debugger;
-      var temperror = error.response.data;
-      var err = temperror.split(":");
-      //alert(err[1].replace("}", ""))
-      var optionItems = [];
-
-    });
+        // alert(ModeTransport)
+      })
+      .catch(error => {
+        debugger;
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        //alert(err[1].replace("}", ""))
+        var optionItems = [];
+      });
   }
 
-  changesModeOfTransport(val)
-  {
+  changesModeOfTransport(val) {
     debugger;
 
-    this.setState({valModeOfTransport:val.value})
+    this.setState({ valModeOfTransport: val.value });
 
     var oceanPortDepature = false;
     var airPortDepature = false;
 
-    if(this.state.toggleExtraInvoiceNoFilter)
-    {
-        if(val.value == "Air")
-        {
-          airPortDepature = true;
-        }
-        if(val.value == "Ocean")
-        {
-          oceanPortDepature = true;
-
-        }
-        if(val.value == "Land")
-        {
-          this.setState({toggleExtraInvoiceNoFilter: false});
-          this.setState({toggleExtraModeTransportFilter : false})
-        }
-    }
-
-    this.setState({toggleExtraModeofAirFilter: airPortDepature});
-    this.setState({toggleExtraModeofOceanFilter: oceanPortDepature});
-
-  }
-
-  changesRegCompany(val)
-  {
-    this.setState({valRegCompany : val.value})
-  }
-
-  changesOriginCountry(val)
-  {
-    debugger;
-    var OriginCountryarr = ""
-    var filterpo = [];
-    if(val != null)
-    {
-      if(val.length > 0)
-      {
-        for(var i = 0; i < val.length; i++)
-        {
-          OriginCountryarr +=  val[i].value + ",";
-
-          if(this.state.toggleExtraModeofAirFilter)
-          {
-            filterpo = filterpo.concat(
-              this.state.acctualOriginAirport.filter(item => item.compcode == val[i].value)
-            );
-          }
-          if(this.state.toggleExtraModeofOceanFilter)
-          {
-            filterpo = filterpo.concat(
-              this.state.acctualPortOfLoading.filter(item => item.compcode == val[i].value)
-            );
-          }
-        }
-
+    if (this.state.toggleExtraInvoiceNoFilter) {
+      if (val.value == "Air") {
+        airPortDepature = true;
+      }
+      if (val.value == "Ocean") {
+        oceanPortDepature = true;
+      }
+      if (val.value == "Land") {
+        this.setState({ toggleExtraInvoiceNoFilter: false });
+        this.setState({ toggleExtraModeTransportFilter: false });
       }
     }
-    if(this.state.toggleExtraModeofAirFilter)
-    {
-      this.setState({OriginAirport : filterpo})
-    }
-    if(this.state.toggleExtraModeofOceanFilter)
-    {
-      this.setState({PortOfLoading : filterpo})
-    }
-    this.setState({valOriginCountry : OriginCountryarr.replace(/,\s*$/, "")})
+
+    this.setState({ toggleExtraModeofAirFilter: airPortDepature });
+    this.setState({ toggleExtraModeofOceanFilter: oceanPortDepature });
   }
 
-  changesDestinationCountry(val)
-  {
+  changesRegCompany(val) {
+    this.setState({ valRegCompany: val.value });
+  }
+
+  changesOriginCountry(val) {
+    debugger;
+    var OriginCountryarr = "";
+    var filterpo = [];
+    if (val != null) {
+      if (val.length > 0) {
+        for (var i = 0; i < val.length; i++) {
+          OriginCountryarr += val[i].value + ",";
+
+          if (this.state.toggleExtraModeofAirFilter) {
+            filterpo = filterpo.concat(
+              this.state.acctualOriginAirport.filter(
+                item => item.compcode == val[i].value
+              )
+            );
+          }
+          if (this.state.toggleExtraModeofOceanFilter) {
+            filterpo = filterpo.concat(
+              this.state.acctualPortOfLoading.filter(
+                item => item.compcode == val[i].value
+              )
+            );
+          }
+        }
+      }
+    }
+    if (this.state.toggleExtraModeofAirFilter) {
+      this.setState({ OriginAirport: filterpo });
+    }
+    if (this.state.toggleExtraModeofOceanFilter) {
+      this.setState({ PortOfLoading: filterpo });
+    }
+    this.setState({ valOriginCountry: OriginCountryarr.replace(/,\s*$/, "") });
+  }
+
+  changesDestinationCountry(val) {
     var DestinationCountryryarr = "";
     var filterpo = [];
-    if(val != null)
-    {
-      if(val.length > 0)
-      {
-        for(var i = 0; i < val.length; i++)
-        {
-          DestinationCountryryarr +=  val[i].value + ",";
+    if (val != null) {
+      if (val.length > 0) {
+        for (var i = 0; i < val.length; i++) {
+          DestinationCountryryarr += val[i].value + ",";
 
-          if(this.state.toggleExtraModeofAirFilter)
-          {
+          if (this.state.toggleExtraModeofAirFilter) {
             filterpo = filterpo.concat(
-              this.state.acctualDestinationAirport.filter(item => item.compcode == val[i].value)
+              this.state.acctualDestinationAirport.filter(
+                item => item.compcode == val[i].value
+              )
             );
           }
-          if(this.state.toggleExtraModeofOceanFilter)
-          {
+          if (this.state.toggleExtraModeofOceanFilter) {
             filterpo = filterpo.concat(
-              this.state.acctualPortOfDeparture.filter(item => item.compcode == val[i].value)
+              this.state.acctualPortOfDeparture.filter(
+                item => item.compcode == val[i].value
+              )
             );
           }
         }
       }
     }
-    if(this.state.toggleExtraModeofAirFilter)
-    {
-      this.setState({DestinationAirport : filterpo})
+    if (this.state.toggleExtraModeofAirFilter) {
+      this.setState({ DestinationAirport: filterpo });
     }
-    if(this.state.toggleExtraModeofOceanFilter)
-    {
-      this.setState({PortOfDeparture : filterpo})
+    if (this.state.toggleExtraModeofOceanFilter) {
+      this.setState({ PortOfDeparture: filterpo });
     }
-    this.setState({valDestinationCountry : DestinationCountryryarr.replace(/,\s*$/, "")})
+    this.setState({
+      valDestinationCountry: DestinationCountryryarr.replace(/,\s*$/, "")
+    });
   }
 
-  changesDestinationAirport(val)
-  {
+  changesDestinationAirport(val) {
     var DestinationAirportarr = "";
-    if(val != null)
-    {
-      if(val.length > 0)
-      {
-        for(var i = 0; i < val.length; i++)
-        {
-          DestinationAirportarr +=  val[i].value + ",";
+    if (val != null) {
+      if (val.length > 0) {
+        for (var i = 0; i < val.length; i++) {
+          DestinationAirportarr += val[i].value + ",";
         }
       }
     }
-    this.setState({valDestinationAirport : DestinationAirportarr.replace(/,\s*$/, "")})
+    this.setState({
+      valDestinationAirport: DestinationAirportarr.replace(/,\s*$/, "")
+    });
   }
-  changesOriginAirport(val)
-  {
+  changesOriginAirport(val) {
     var OriginAirportarr = "";
-    if(val != null)
-    {
-      if(val.length > 0)
-      {
-        for(var i = 0; i < val.length; i++)
-        {
-          OriginAirportarr +=  val[i].value + ",";
+    if (val != null) {
+      if (val.length > 0) {
+        for (var i = 0; i < val.length; i++) {
+          OriginAirportarr += val[i].value + ",";
         }
       }
     }
-    this.setState({valOriginAirport : OriginAirportarr.replace(/,\s*$/, "")})
+    this.setState({ valOriginAirport: OriginAirportarr.replace(/,\s*$/, "") });
   }
-  changesPortOfDeparture(val)
-  {
+  changesPortOfDeparture(val) {
     var PortOfDeparturearr = "";
-    if(val != null)
-    {
-      if(val.length > 0)
-      {
-        for(var i = 0; i < val.length; i++)
-        {
-          PortOfDeparturearr +=  val[i].value + ",";
+    if (val != null) {
+      if (val.length > 0) {
+        for (var i = 0; i < val.length; i++) {
+          PortOfDeparturearr += val[i].value + ",";
         }
       }
     }
-    this.setState({valPortOfDeparture : PortOfDeparturearr.replace(/,\s*$/, "")})
+    this.setState({
+      valPortOfDeparture: PortOfDeparturearr.replace(/,\s*$/, "")
+    });
   }
-  changesPortOfLoading(val)
-  {
+  changesPortOfLoading(val) {
     var PortOfLoadingearr = "";
-    if(val != null)
-    {
-      if(val.length > 0)
-      {
-        for(var i = 0; i < val.length; i++)
-        {
-          PortOfLoadingearr +=  val[i].value + ",";
+    if (val != null) {
+      if (val.length > 0) {
+        for (var i = 0; i < val.length; i++) {
+          PortOfLoadingearr += val[i].value + ",";
         }
       }
     }
-    this.setState({valPortOfLoading : PortOfLoadingearr.replace(/,\s*$/, "")})
+    this.setState({ valPortOfLoading: PortOfLoadingearr.replace(/,\s*$/, "") });
   }
 
   handleSubmit = () => {
-
-    if(this.state.valReportName == null || this.state.valReportName == "")
-    {
+    if (this.state.valReportName == null || this.state.valReportName == "") {
       //alert("Select Report Name")
       NotificationManager.error("Select Report Name");
       return false;
     }
-    if(this.state.valRegCompany == null || this.state.valRegCompany == "")
-    {
+    if (this.state.valRegCompany == null || this.state.valRegCompany == "") {
       //alert("Select Reg. Company")
       NotificationManager.error("Select Reg. Company");
       return false;
@@ -550,42 +515,39 @@ class Reports extends Component {
     var valPONumber = "";
     var valInvoiceNumber = "";
 
-    if(document.getElementById("txtProductID") != undefined)
-    {
+    if (document.getElementById("txtProductID") != undefined) {
       valProductID = document.getElementById("txtProductID").value;
     }
-    if(document.getElementById("txtPONumber") != undefined)
-    {
+    if (document.getElementById("txtPONumber") != undefined) {
       valPONumber = document.getElementById("txtPONumber").value;
     }
-    if(document.getElementById("txtInvoiceNumber") != undefined)
-    {
+    if (document.getElementById("txtInvoiceNumber") != undefined) {
       valInvoiceNumber = document.getElementById("txtInvoiceNumber").value;
     }
 
-
-    var detailid = {valReportName:this.state.valReportName,
-                    valRegCompany:this.state.valRegCompany,
-                    TextReportName:this.state.TextReportName,
-                    ModeTransportFilter:this.state.toggleExtraModeTransportFilter,
-                    InvoiceNoFilter:this.state.toggleExtraInvoiceNoFilter,
-                    valModeOfTransport:this.state.valModeOfTransport,
-                    valOriginCountry:this.state.valOriginCountry,
-                    valDestinationCountry:this.state.valDestinationCountry,
-                    valOriginAirport:this.state.valOriginAirport,
-                    valDestinationAirport:this.state.valDestinationAirport,
-                    valPortOfLoading:this.state.valPortOfLoading,
-                    valPortOfDeparture:this.state.valPortOfDeparture,
-                    valProductID:valProductID,
-                    valPONumber:valPONumber,
-                    valInvoiceNumber:valInvoiceNumber};
-
+    var detailid = {
+      valReportName: this.state.valReportName,
+      valRegCompany: this.state.valRegCompany,
+      TextReportName: this.state.TextReportName,
+      ModeTransportFilter: this.state.toggleExtraModeTransportFilter,
+      InvoiceNoFilter: this.state.toggleExtraInvoiceNoFilter,
+      valModeOfTransport: this.state.valModeOfTransport,
+      valOriginCountry: this.state.valOriginCountry,
+      valDestinationCountry: this.state.valDestinationCountry,
+      valOriginAirport: this.state.valOriginAirport,
+      valDestinationAirport: this.state.valDestinationAirport,
+      valPortOfLoading: this.state.valPortOfLoading,
+      valPortOfDeparture: this.state.valPortOfDeparture,
+      valProductID: valProductID,
+      valPONumber: valPONumber,
+      valInvoiceNumber: valInvoiceNumber
+    };
 
     this.props.history.push({
       pathname: "report-details",
       state: { detail: detailid }
     });
-  }
+  };
 
   render() {
     return (
@@ -604,7 +566,6 @@ class Reports extends Component {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="login-fields">
-
                       <label>Report Name</label>
                       <Select
                         className="rate-dropdown w-100 m-0"
@@ -616,136 +577,136 @@ class Reports extends Component {
                     </div>
                   </div>
                   {this.state.toggleExtraModeTransportFilter && (
-                  <div className="col-md-6">
-                    <div className="login-fields">
-                      <label>Mode Of Transport</label>
-                      <Select
-                        className="rate-dropdown w-100 m-0"
-                        components={animatedComponents}
-                        options={this.state.ModeOfTransport}
-                        onChange={this.changesModeOfTransport.bind(this)}
-                      />
+                    <div className="col-md-6">
+                      <div className="login-fields">
+                        <label>Mode Of Transport</label>
+                        <Select
+                          className="rate-dropdown w-100 m-0"
+                          components={animatedComponents}
+                          options={this.state.ModeOfTransport}
+                          onChange={this.changesModeOfTransport.bind(this)}
+                        />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraModeTransportFilter && (
-                  <div className="col-md-6">
-                    <div className="login-fields">
-                      <label>Origin Country</label>
-                      <Select
-                        className="rate-dropdown w-100 m-0"
-                        closeMenuOnSelect={false}
-                        components={animatedComponents}
-                        isMulti
-                        options={this.state.OriginCountry}
-                        onChange={this.changesOriginCountry.bind(this)}
-                      />
+                    <div className="col-md-6">
+                      <div className="login-fields">
+                        <label>Origin Country</label>
+                        <Select
+                          className="rate-dropdown w-100 m-0"
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={this.state.OriginCountry}
+                          onChange={this.changesOriginCountry.bind(this)}
+                        />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraModeTransportFilter && (
-                  <div className="col-md-6">
-                    <div className="login-fields">
-                      <label>Destination Country</label>
-                      <Select
-                        className="rate-dropdown w-100 m-0"
-                        closeMenuOnSelect={false}
-                        components={animatedComponents}
-                        isMulti
-                        options={this.state.DestinationCountry}
-                        onChange={this.changesDestinationCountry.bind(this)}
-                      />
+                    <div className="col-md-6">
+                      <div className="login-fields">
+                        <label>Destination Country</label>
+                        <Select
+                          className="rate-dropdown w-100 m-0"
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={this.state.DestinationCountry}
+                          onChange={this.changesDestinationCountry.bind(this)}
+                        />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraModeofOceanFilter && (
-                  <div className="col-md-6">
-                    <div className="login-fields">
-                      <label>Port Of Loading</label>
-                      <Select
-                        className="rate-dropdown w-100 m-0"
-                        closeMenuOnSelect={false}
-                        components={animatedComponents}
-                        isMulti
-                        options={this.state.PortOfLoading}
-                        onChange={this.changesPortOfLoading.bind(this)}
-                      />
+                    <div className="col-md-6">
+                      <div className="login-fields">
+                        <label>Port Of Loading</label>
+                        <Select
+                          className="rate-dropdown w-100 m-0"
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={this.state.PortOfLoading}
+                          onChange={this.changesPortOfLoading.bind(this)}
+                        />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraModeofOceanFilter && (
-                  <div className="col-md-6">
-                    <div className="login-fields">
-                      <label>Port Of Departure</label>
-                      <Select
-                        className="rate-dropdown w-100 m-0"
-                        closeMenuOnSelect={false}
-                        components={animatedComponents}
-                        isMulti
-                        options={this.state.PortOfDeparture}
-                        onChange={this.changesPortOfDeparture.bind(this)}
-                      />
+                    <div className="col-md-6">
+                      <div className="login-fields">
+                        <label>Port Of Departure</label>
+                        <Select
+                          className="rate-dropdown w-100 m-0"
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={this.state.PortOfDeparture}
+                          onChange={this.changesPortOfDeparture.bind(this)}
+                        />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraModeofAirFilter && (
-                  <div className="col-md-6">
-                    <div className="login-fields">
-                      <label>Origin Airport</label>
-                      <Select
-                        className="rate-dropdown w-100 m-0"
-                        closeMenuOnSelect={false}
-                        components={animatedComponents}
-                        isMulti
-                        options={this.state.OriginAirport}
-                        onChange={this.changesOriginAirport.bind(this)}
-                      />
+                    <div className="col-md-6">
+                      <div className="login-fields">
+                        <label>Origin Airport</label>
+                        <Select
+                          className="rate-dropdown w-100 m-0"
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={this.state.OriginAirport}
+                          onChange={this.changesOriginAirport.bind(this)}
+                        />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraModeofAirFilter && (
-                  <div className="col-md-6">
-                    <div className="login-fields">
-                      <label>Destination Airport</label>
-                      <Select
-                        className="rate-dropdown w-100 m-0"
-                        closeMenuOnSelect={false}
-                        components={animatedComponents}
-                        isMulti
-                        options={this.state.DestinationAirport}
-                        onChange={this.changesDestinationAirport.bind(this)}
-                      />
+                    <div className="col-md-6">
+                      <div className="login-fields">
+                        <label>Destination Airport</label>
+                        <Select
+                          className="rate-dropdown w-100 m-0"
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={this.state.DestinationAirport}
+                          onChange={this.changesDestinationAirport.bind(this)}
+                        />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraInvoiceNoFilter && (
-                  <div className="col-md-4">
-                    <div className="login-fields">
-                      <label>Product ID</label>
-                      <input type="text" id="txtProductID" />
+                    <div className="col-md-4">
+                      <div className="login-fields">
+                        <label>Product ID</label>
+                        <input type="text" id="txtProductID" />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraInvoiceNoFilter && (
-                  <div className="col-md-4">
-                    <div className="login-fields">
-                      <label>PO Number</label>
-                      <input type="text" id="txtPONumber" />
+                    <div className="col-md-4">
+                      <div className="login-fields">
+                        <label>PO Number</label>
+                        <input type="text" id="txtPONumber" />
+                      </div>
                     </div>
-                  </div>
                   )}
                   {this.state.toggleExtraInvoiceNoFilter && (
-                  <div className="col-md-4">
-                    <div className="login-fields">
-                      <label>Invoice Number</label>
-                      <input type="text" id="txtInvoiceNumber" />
+                    <div className="col-md-4">
+                      <div className="login-fields">
+                        <label>Invoice Number</label>
+                        <input type="text" id="txtInvoiceNumber" />
+                      </div>
                     </div>
-                  </div>
                   )}
 
                   <div className="col-md-6">
                     <div className="login-fields">
-                      <label>Reg. Company</label>
+                      <label>Registered Company</label>
                       <Select
                         className="rate-dropdown w-100 m-0"
                         //closeMenuOnSelect={false}
@@ -762,12 +723,9 @@ class Reports extends Component {
                     {/* <a href="#!" onClick={this.handleView}  className="butn mt-3">
                       View
                     </a> */}
-                    <button
-                        onClick={this.handleSubmit}
-                        className="butn mt-3"
-                      >
-                        View
-                      </button>
+                    <button onClick={this.handleSubmit} className="butn mt-3">
+                      View
+                    </button>
                   </div>
                 </div>
               </div>

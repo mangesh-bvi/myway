@@ -259,20 +259,19 @@ class TrackShipment2 extends Component {
       "GreenLineData"
     );
     let self = this;
-    var url = window.location.href
-      .slice(window.location.href.indexOf("?") + 1)
+    var url = window.location.href.slice(window.location.href.indexOf("?") + 1);
     // if (url != "" && url != null) {
-      self.HandleShipmentDetails(url);
-      self.setState({
-        addWat: url
-      });
+    self.HandleShipmentDetails(url);
+    self.setState({
+      addWat: url
+    });
     //  if (typeof this.props.location.state != "undefined") {
     //   var hblno = this.props.location.state.detail;
     //   self.HandleShipmentDetails(hblno);
     //   //self.handleActivityList();
     //   self.setState({ HblNo: hblno });
     //  }
-    }
+  }
 
   SendMessage = () => {
     debugger;
@@ -559,7 +558,7 @@ class TrackShipment2 extends Component {
       url: `${appSettings.APIURL}/AnonymousBindShipmentSummaryMap`,
       params: {
         Token: Encodedhblno
-      },
+      }
       //headers: authHeader()
     }).then(function(response) {
       debugger;
@@ -628,12 +627,12 @@ class TrackShipment2 extends Component {
       method: "get",
       url: `${appSettings.APIURL}/AnonymousShipmentSummaryDetailsAPI`,
       params: {
-        Token:Encodedhblno
+        Token: Encodedhblno
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
         // UserId: 874588,
         // HBLNo: hblno //HblNo
-      },
+      }
       //headers: authHeader()
     }).then(function(response) {
       debugger;
@@ -667,7 +666,7 @@ class TrackShipment2 extends Component {
     });
   };
   onDocumentClickHandler = () => {
-    debugger
+    debugger;
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
     var docDesc = document.getElementById("docDesc").value;
@@ -746,7 +745,7 @@ class TrackShipment2 extends Component {
     // this.setState({ status: "Opened" });
     console.log(1);
   }
-  handleChangePage(){
+  handleChangePage() {
     window.history.back();
   }
 
@@ -833,7 +832,6 @@ class TrackShipment2 extends Component {
       self.setState({ ShipmentExistsInWatchList: 0 });
     });
   };
-
 
   render() {
     let self = this;
@@ -948,16 +946,16 @@ class TrackShipment2 extends Component {
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
-                <p style={{fontWeight: "600"}}>{team.Message}</p>
+                <p style={{ fontWeight: "600" }}>{team.Message}</p>
 
                 <div class="d-flex justify-content-between">
                   <div>
                     <span>
-                      Created by: 
+                      Created by:
                       {encryption(
-                          window.localStorage.getItem("username"),
-                          "desc"
-                        )}
+                        window.localStorage.getItem("username"),
+                        "desc"
+                      )}
                     </span>
                   </div>
                   ({team.MessageCreationTime})
@@ -1108,10 +1106,9 @@ class TrackShipment2 extends Component {
                           </div>
                         </div>
                       </div>
-                      <div className="sect-padd">
+                      {/* <div className="sect-padd">
                         <div className="row">
                           {addressData.map(function(addkey, i) {
-                            //  <p className="details-heading" key={i}>{addkey.EntityType}</p>
                             return (
                               <div
                                 className="col-md-6 details-border shipper-details"
@@ -1120,23 +1117,13 @@ class TrackShipment2 extends Component {
                                 <p className="details-heading">
                                   {addkey.EntityType}
                                 </p>
-                                {/* <p className="details-title">
-                                  Blueground Turizm Ve Services Hizmetleri
-                                  Ticaret A.S.
-                                </p> */}
                                 <p className="details-para">{addkey.Address}</p>
                               </div>
                             );
                           })}
                         </div>
-                        {/* <div className="row">
-                          <div className="col-md-12">
-                            <a href="#!" className="butn view-btn">
-                              View more
-                            </a>
-                          </div>
-                        </div> */}
-                      </div>
+                      </div> */}
+
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
                           <span className="clr-green">POL</span>
@@ -1339,7 +1326,7 @@ class TrackShipment2 extends Component {
                           </div>
                         );
                       })}
-                      <div className="sect-padd">
+                      {/* <div className="sect-padd">
                         <p className="details-heading">Container Details</p>
                         <div className="cont-det-outer">
                           {containerDetails.map(function(cntrDet, i = 0) {
@@ -1450,26 +1437,16 @@ class TrackShipment2 extends Component {
                                       href="#!"
                                       id={"toggler" + i}
                                       className="butn view-btn"
-                                      // onClick={() =>
-                                      //   self.setState({
-                                      //     showContent: !self.state.showContent
-                                      //   })
-                                      // }
-                                    >
-                                      {/* {self.state.showContent ? (
-                                      <span>VIEW LESS</span>
-                                    ) : (
-                                      <span>VIEW MORE</span>
-                                    )} */}
-                                    </a>
+                                    ></a>
                                   </div>
                                 </div>
                               </div>
                             );
                           })}
                         </div>
-                      </div>
-                      <div className="sect-padd">
+                      </div> */}
+
+                      {/* <div className="sect-padd">
                         <p className="details-heading">Package Details</p>
                         {packageDetails.length === 0 ? (
                           <p className="text-center">No details found</p>
@@ -1593,7 +1570,6 @@ class TrackShipment2 extends Component {
                                     id={"package" + i}
                                     className="butn view-btn mr-2"
                                   >
-                                    {/* Show Less */}
                                   </a>
                                   <button
                                     onClick={() =>
@@ -1608,7 +1584,7 @@ class TrackShipment2 extends Component {
                             </>
                           );
                         })}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
