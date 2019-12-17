@@ -114,8 +114,8 @@ class BookingInsert extends Component {
       FileDataArry: [],
       ContainerCode: "",
       HAZMAT: 0,
-      NonStackable:0,
-      Customs_Clearance:0,
+      NonStackable: 0,
+      Customs_Clearance: 0,
       conshineeAddData: [],
       shipperAddData: [],
       buyerAddData: [],
@@ -135,8 +135,7 @@ class BookingInsert extends Component {
       valueweight: 0,
       valuecbm: 0,
       valuespecialsontainersode: "",
-      modalEdit: false,
-      
+      modalEdit: false
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -214,11 +213,12 @@ class BookingInsert extends Component {
       if (QuotationData.length > 0) {
         var selectedCommodity = QuotationData[0].Commodity;
         var IncoTerms = QuotationData[0].IncoTerm;
-        var POL = QuotationData[0].POL;
-        var POD = QuotationData[0].POD;
+        var POL = QuotationData[0].OriginName;
+        var POD = QuotationData[0].DestinationName;
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var TypeofMove = QuotationData[0].TypeOfMove;
+
         self.setState({
           multiCBM,
           QuotationData,
@@ -234,14 +234,17 @@ class BookingInsert extends Component {
       }
       if (Booking.length > 0) {
         var ModeofTransport = Booking[0].ModeOfTransport;
-        var companyID = Booking[0].companyID;
-        var company_name = Booking[0].company_name;
-        var contact_name = Booking[0].contact_name;
+        var companyID = Booking[0].CompanyID;
+        var company_name = Booking[0].CompanyName;
+        var contact_name = Booking[0].ContactName;
         var Company_Address = Booking[0].Company_Address;
         var SaleQuoteNo = Booking[0].SaleQuoteID;
         var ShipmentType = Booking[0].ShipmentType;
-
+        var Customs_Clearance = Booking[0].Customs_Clearance;
+        var HAZMAT = Booking[0].HAZMAT;
         self.setState({
+          HAZMAT,
+          Customs_Clearance,
           ModeofTransport,
           companyID,
           company_name,
@@ -303,9 +306,9 @@ class BookingInsert extends Component {
         var Company_Address = Booking[0].Company_Address;
         var SaleQuoteNo = Booking[0].SaleQuoteID;
         var ShipmentType = Booking[0].ShipmentType;
-        var NonStackable=Booking[0].NonStackable;
-        var HAZMAT=Booking[0].HAZMAT;
-        var NonStackable=Booking[0].NonStackable;
+        var NonStackable = Booking[0].NonStackable;
+        var HAZMAT = Booking[0].HAZMAT;
+        var NonStackable = Booking[0].NonStackable;
 
         self.setState({
           ModeofTransport,
@@ -537,6 +540,18 @@ class BookingInsert extends Component {
       for (let i = 0; i < this.state.multiCBM.length; i++) {
         var cargoData = new Object();
         if (Mode === "AIR") {
+          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+          cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
+          cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+          cargoData.Width = this.state.multiCBM[i].Width || 0;
+          cargoData.Height = this.state.multiCBM[i].height || 0;
+          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+        }
+        else if(Mode === "INLAND"){
+          
           cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
           cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
           cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
@@ -796,7 +811,6 @@ class BookingInsert extends Component {
           if (response.data.Table.length == 1) {
             if (field == "Consignee") {
               self.setState({
-                
                 Consignee: response.data.Table,
                 fields,
                 consineeData: response.data.Table[0]
@@ -824,11 +838,10 @@ class BookingInsert extends Component {
               });
             }
           } else {
-
             if (field == "Consignee") {
               self.setState({
-                ConsineeName:fields[field],
-                ConsineeID:0,
+                ConsineeName: fields[field],
+                ConsineeID: 0,
                 Consignee: response.data.Table,
                 fields,
                 consineeData: response.data.Table[0]
@@ -836,8 +849,8 @@ class BookingInsert extends Component {
             }
             if (field == "Shipper") {
               self.setState({
-                ShipperName:fields[field],
-                SHipperID:0,
+                ShipperName: fields[field],
+                SHipperID: 0,
                 Shipper: response.data.Table,
                 fields,
                 shipperData: response.data.Table[0]
@@ -845,8 +858,8 @@ class BookingInsert extends Component {
             }
             if (field == "Notify") {
               self.setState({
-                NotifyName:fields[field],
-                NotifyID:0,
+                NotifyName: fields[field],
+                NotifyID: 0,
                 Notify: response.data.Table,
                 fields,
                 notifyData: response.data.Table[0]
@@ -854,8 +867,8 @@ class BookingInsert extends Component {
             }
             if (field == "Buyer") {
               self.setState({
-                BuyerName:fields[field],
-                BuyerID:0,
+                BuyerName: fields[field],
+                BuyerID: 0,
                 Buyer: response.data.Table,
                 fields,
                 buyerData: response.data.Table[0]
@@ -2141,9 +2154,19 @@ class BookingInsert extends Component {
                             <p className="details-title">HazMat</p>
                             <p className="details-para">{this.state.HAZMAT}</p>
                           </div>
+                          {this.state.ContainerLoad==="AIR" ||this.state.ContainerLoad==="LCL"?
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Unstackable</p>
-                          <p className="details-para">{this.state.NonStackable}</p>
+                            <p className="details-para">
+                              {this.state.NonStackable}
+                            </p>
+                          </div>
+                          :""}
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                            <p className="details-title">Customs Clearance</p>
+                            <p className="details-para">
+                              {this.state.Customs_Clearance}
+                            </p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Inco Terms</p>
