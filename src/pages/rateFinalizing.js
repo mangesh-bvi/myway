@@ -4112,7 +4112,7 @@ class RateFinalizing extends Component {
               <img
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                  this.state.isCopy==true?item.Linename:item.LineName +
+                  item.LineName +
                   ".png"
                 }
               />
