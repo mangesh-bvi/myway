@@ -570,7 +570,9 @@ class RateFinalizing extends Component {
         this.HandleSurCharges();
       } else {
         var qData = this.props.location.state;
-        this.setState({ isCopy: this.props.location.state.isCopy });
+        this.setState({ isCopy: this.props.location.state.isCopy,
+                        containerLoadType: this.props.location.state.type });
+        this.state.containerLoadType = this.props.location.state.type;
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
@@ -894,6 +896,7 @@ class RateFinalizing extends Component {
         self.forceUpdate();
         self.HandleLocalCharges();
         self.HandleSurCharges();
+        self.HandleSalesQuoteConditions();
         //console.log(response);
       })
       .catch(error => {
@@ -926,10 +929,6 @@ class RateFinalizing extends Component {
     } else {
       modeOfTransport = this.state.modeoftransport;
     }
-    var ModeOfTransport =
-      this.state.modeoftransport === "SEA"
-        ? "Ocean"
-        : this.state.modeoftransport;
 
     var RoutingInformation = [];
 
