@@ -4910,7 +4910,7 @@ class RateFinalizing extends Component {
                                 },
                                 accessor: "TransshipmentPort",
                                 filterable: true,
-                                minWidth: 150
+                                minWidth: 114
                               },
                               {
                                 Cell: row => {
@@ -4925,7 +4925,7 @@ class RateFinalizing extends Component {
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
-                                minWidth: 100
+                                minWidth: 80
                               },
                               {
                                 Cell: row => {
