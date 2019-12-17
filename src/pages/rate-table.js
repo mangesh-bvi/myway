@@ -1562,13 +1562,14 @@ class RateTable extends Component {
               />
             </div>
           </div>
-          <div className="col-md mt-2">
-            <div className="rate-radio-cntr">
+          <div className="col-md mt-4">
+            <div className="rate-radio-cntr mb-0">
               <div>
                 <input
                   type="radio"
                   name="TemperatureType"
                   id="exist-cust"
+                  className="d-none"
                   value="C"
                   onChange={this.UISpecialChange.bind(this, i)}
                   checked={el.TemperatureType === "C" ? true : false}
@@ -1585,6 +1586,7 @@ class RateTable extends Component {
                   type="radio"
                   name="TemperatureType"
                   id="new-cust"
+                  className="d-none"
                   value="F"
                   onChange={this.UISpecialChange.bind(this, i)}
                   checked={el.TemperatureType === "F" ? true : false}
@@ -1598,7 +1600,7 @@ class RateTable extends Component {
               </div>
             </div>
           </div>
-          <div className="spe-equ">
+          <div className="spe-equ mt-0">
             <i
               className="fa fa-minus mt-2"
               onClick={this.removeClickSpecial.bind(this, i)}
