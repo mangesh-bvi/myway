@@ -242,7 +242,9 @@ class BookingInsert extends Component {
         var ShipmentType = Booking[0].ShipmentType;
         var Customs_Clearance = Booking[0].Customs_Clearance;
         var HAZMAT = Booking[0].HAZMAT;
+        var TypeofMove = QuotationData[0].TypeOfMove;
         self.setState({
+          TypeofMove,
           HAZMAT,
           Customs_Clearance,
           ModeofTransport,
@@ -525,10 +527,19 @@ class BookingInsert extends Component {
 
     var saleQuoteID = Number(this.state.QuotationData[0].SaleQuoteID || 0);
     var saleQuoteNo = this.state.salesQuotaNo || "";
-    var saleQuoteLineID = Number(
-      this.state.QuotationData[0].saleQuoteLineID || 0
-    );
-
+    var saleQuoteLineID = 0;
+if(this.state.QuotationData[0].saleQuoteLineID)
+{
+  saleQuoteLineID= Number(
+    this.state.QuotationData[0].saleQuoteLineID || 0
+  );
+}
+else{
+  saleQuoteLineID= Number(
+    this.state.QuotationData[0].SaleQuoteIDLineID || 0
+  );
+}
+     
     var NotifyID = Number(this.state.notifyData.Company_ID || 0);
     var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
     var Notify_Displayas = this.state.Notify_Displayas || "";
