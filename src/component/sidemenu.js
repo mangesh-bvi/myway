@@ -8,6 +8,7 @@ import AnalyticsIcon from "./../assets/img/analytics-side.png";
 import RatesIcon from "./../assets/img/rates-side.png";
 import AdminIcon from "./../assets/img/admin-side.png";
 import ChatIcon from "./../assets/img/chat.png";
+import sideArrow from "./../assets/img/side-arr.png";
 import Menubars from "./../assets/img/menubars.png";
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
@@ -178,11 +179,14 @@ class SideMenu extends Component {
         className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
         id="sidemenubar"
       >
-        <i
+        {/* <i
           class="fa fa-arrow-right side-arrow"
           aria-hidden="true"
           onClick={this.sidebarCollapse.bind(this)}
-        ></i>
+        ></i> */}
+        <div className="side-arrow" onClick={this.sidebarCollapse.bind(this)}>
+          <img src={sideArrow} alt="side arrow" />
+        </div>
         {/* <img
           src={Menubars}
           alt="Menu Bars"

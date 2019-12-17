@@ -377,7 +377,7 @@ class GreenCounter extends Component {
                 </div>
                 <div className="card">
                   <div>
-                    <label className="grncuntr-lbl">Green Conuter</label>
+                    <label className="grncuntr-lbl">Green Counter</label>
                   </div>
                   <div className="row" style={{ "margin-left": "107px" }}>
                     <div className="col-md-7">
@@ -397,7 +397,7 @@ class GreenCounter extends Component {
                         />
                         <label className="greenchartlbl">
                           Tons of
-                          <br /> CO<sub>2</sub> Emission
+                          <br /> CO<sub>2</sub> Emissions
                         </label>
                         <label className="counterval">
                           {this.state.cotowemission}
@@ -420,7 +420,7 @@ class GreenCounter extends Component {
                   </div> */}
                   </div>
                   <label className="greenchartlbl1">
-                    {this.state.treecount} tree Planted
+                    {this.state.treecount} trees Planted
                   </label>
                 </div>
               </div>

@@ -574,10 +574,10 @@ class RateFinalizing extends Component {
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
-      if (this.props.location.state.isCopy === true) {
-        debugger;
+      // if (this.props.location.state.isCopy === true) {
+      //   debugger;
         this.HandleCommodityDropdown();
-      }
+      // }
       this.HandleSalesQuoteConditions();
     }
 
