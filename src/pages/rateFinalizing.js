@@ -935,10 +935,10 @@ class RateFinalizing extends Component {
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL: rateDetails[i].POLCode,
-        POD: rateDetails[i].PODCode,
-        LineID: rateDetails[i].RateLineId,
-        LineName: rateDetails[i].lineName,
+        POL: this.state.isCopy==true?rateDetails[i].POLCODE:rateDetails[i].POLCode,
+        POD: this.state.isCopy==true?rateDetails[i].PODCODE:rateDetails[i].PODCode,
+        LineID: this.state.isCopy==true?rateDetails[i].saleQuoteLineID:rateDetails[i].RateLineId,
+        LineName: this.state.isCopy==true?rateDetails[i].Linename:rateDetails[i].lineName,
         ContainerType: rateDetails[i].ContainerType,
         ContainerQty: rateDetails[i].ContainerQuantity
       });
@@ -1028,10 +1028,10 @@ class RateFinalizing extends Component {
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL: rateDetails[i].POLCode,
-        POD: rateDetails[i].PODCode,
-        LineID: rateDetails[i].RateLineId,
-        LineName: rateDetails[i].lineName,
+        POL: this.state.isCopy==true?rateDetails[i].POLCODE:rateDetails[i].POLCode,
+        POD: this.state.isCopy==true?rateDetails[i].PODCODE:rateDetails[i].PODCode,
+        LineID: this.state.isCopy==true?rateDetails[i].saleQuoteLineID:rateDetails[i].RateLineId,
+        LineName: this.state.isCopy==true?rateDetails[i].Linename:rateDetails[i].lineName,
         ContainerType: rateDetails[i].ContainerType,
         ContainerQty: rateDetails[i].ContainerQuantity
       });
