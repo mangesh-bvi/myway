@@ -4049,7 +4049,7 @@ class RateFinalizing extends Component {
         amtSign = " TL";
       }
       debugger;
-      if (this.state.modeoftransport === "SEA") {
+      if (this.state.modeoftransport === "SEA" || this.state.modeoftransport=="Ocean") {
         return (
           <div>
             <div className="d-flex line-first">
@@ -4112,7 +4112,7 @@ class RateFinalizing extends Component {
               <img
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                  item.LineName +
+                  this.state.isCopy==true?item.Linename:item.LineName +
                   ".png"
                 }
               />
@@ -4171,7 +4171,7 @@ class RateFinalizing extends Component {
       } else if (item.Currency == "TL") {
         amtSign = " TL";
       }
-      if (this.state.modeoftransport === "SEA") {
+      if (this.state.modeoftransport === "SEA" || this.state.modeoftransport=="Ocean") {
         return (
           <div>
             <div className="d-flex line-first">
