@@ -570,7 +570,9 @@ class RateFinalizing extends Component {
         this.HandleSurCharges();
       } else {
         var qData = this.props.location.state;
-        this.setState({ isCopy: this.props.location.state.isCopy });
+        this.setState({ isCopy: this.props.location.state.isCopy,
+                        containerLoadType: this.props.location.state.type });
+        this.state.containerLoadType = this.props.location.state.type;
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
@@ -894,6 +896,7 @@ class RateFinalizing extends Component {
         self.forceUpdate();
         self.HandleLocalCharges();
         self.HandleSurCharges();
+        self.HandleSalesQuoteConditions();
         //console.log(response);
       })
       .catch(error => {
@@ -926,19 +929,15 @@ class RateFinalizing extends Component {
     } else {
       modeOfTransport = this.state.modeoftransport;
     }
-    var ModeOfTransport =
-      this.state.modeoftransport === "SEA"
-        ? "Ocean"
-        : this.state.modeoftransport;
 
     var RoutingInformation = [];
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL: rateDetails[i].POLCode,
-        POD: rateDetails[i].PODCode,
-        LineID: rateDetails[i].RateLineId,
-        LineName: rateDetails[i].lineName,
+        POL: this.state.isCopy==true?rateDetails[i].POLCODE:rateDetails[i].POLCode,
+        POD: this.state.isCopy==true?rateDetails[i].PODCODE:rateDetails[i].PODCode,
+        LineID: this.state.isCopy==true?rateDetails[i].saleQuoteLineID:rateDetails[i].RateLineId,
+        LineName: this.state.isCopy==true?rateDetails[i].Linename:rateDetails[i].lineName,
         ContainerType: rateDetails[i].ContainerType,
         ContainerQty: rateDetails[i].ContainerQuantity
       });
@@ -1028,10 +1027,10 @@ class RateFinalizing extends Component {
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL: rateDetails[i].POLCode,
-        POD: rateDetails[i].PODCode,
-        LineID: rateDetails[i].RateLineId,
-        LineName: rateDetails[i].lineName,
+        POL: this.state.isCopy==true?rateDetails[i].POLCODE:rateDetails[i].POLCode,
+        POD: this.state.isCopy==true?rateDetails[i].PODCODE:rateDetails[i].PODCode,
+        LineID: this.state.isCopy==true?rateDetails[i].saleQuoteLineID:rateDetails[i].RateLineId,
+        LineName: this.state.isCopy==true?rateDetails[i].Linename:rateDetails[i].lineName,
         ContainerType: rateDetails[i].ContainerType,
         ContainerQty: rateDetails[i].ContainerQuantity
       });
@@ -4049,7 +4048,7 @@ class RateFinalizing extends Component {
         amtSign = " TL";
       }
       debugger;
-      if (this.state.modeoftransport === "SEA") {
+      if (this.state.modeoftransport === "SEA" || this.state.modeoftransport=="Ocean") {
         return (
           <div>
             <div className="d-flex line-first">
@@ -4171,7 +4170,7 @@ class RateFinalizing extends Component {
       } else if (item.Currency == "TL") {
         amtSign = " TL";
       }
-      if (this.state.modeoftransport === "SEA") {
+      if (this.state.modeoftransport === "SEA" || this.state.modeoftransport=="Ocean") {
         return (
           <div>
             <div className="d-flex line-first">

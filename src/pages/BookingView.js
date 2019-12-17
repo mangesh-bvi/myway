@@ -90,12 +90,13 @@ class BookingView extends Component {
       Shipper_Name: "",
       CargoType: "",
       Incoterm: "",
+      companyID:0,
       contact_name: "",
       company_name: "",
       Company_Address: "",
       HAZMAT: 0,
       eqtType: "",
-      NonStackable:0
+      NonStackable: 0
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
@@ -522,13 +523,25 @@ class BookingView extends Component {
           }
         }
 
-        if (Table6.length>0) {
+        if (Table6.length > 0) {
+          var companyID=0;
+          if(Table6[0].contact_name)
+          {
           Company_Address = Table6[0].Company_Address;
           contact_name = Table6[0].contact_name;
           company_name = Table6[0].company_name;
+          }
+          else
+          {
+            var companyID= Table6[0].CompanyID
+            Company_Address = Table6[0].Company_Address;
+            contact_name = Table6[0].ContactName;
+            company_name = Table6[0].CompanyName;
+          }
           ShipmentType = Table6[0].ShipmentType;
           HAZMAT = Table6[0].HAZMAT;
           self.setState({
+            companyID,
             Company_Address,
             contact_name,
             company_name,
@@ -573,7 +586,7 @@ class BookingView extends Component {
         var HAZMAT = 0;
         var ShipmentType = "";
         var eqtType = "";
-        var NonStackable=0;
+        var NonStackable = 0;
 
         console.log(Booking);
 
@@ -682,7 +695,7 @@ class BookingView extends Component {
 
             self.setState({
               DefaultEntityTypeID,
-              
+
               ModeofTransport,
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
@@ -721,13 +734,13 @@ class BookingView extends Component {
           }
         }
 
-        if (Table6.length>0) {
+        if (Table6.length > 0) {
           Company_Address = Table6[0].Company_Address;
           contact_name = Table6[0].contact_name;
           company_name = Table6[0].company_name;
           ShipmentType = Table6[0].ShipmentType;
           HAZMAT = Table6[0].HAZMAT;
-          NonStackable= Table6[0].NonStackable;
+          NonStackable = Table6[0].NonStackable;
           self.setState({
             NonStackable,
             Company_Address,
@@ -876,7 +889,7 @@ class BookingView extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  debugger;
+                               
                                   var lname = "";
                                   var olname = "";
                                   if (row._original.Linename) {
@@ -949,27 +962,49 @@ class BookingView extends Component {
                               {
                                 accessor: "POL",
                                 Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">POL</p>
-                                      <p className="details-para">
-                                        {row.original.POL}
-                                      </p>
-                                    </React.Fragment>
-                                  );
+                                  if (this.state.ModeofTransport === "inland") {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POL</p>
+                                        <p className="details-para">
+                                          {row.original.OriginName}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POL</p>
+                                        <p className="details-para">
+                                          {row.original.POL}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 }
                               },
                               {
                                 accessor: "POD",
                                 Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">POD</p>
-                                      <p className="details-para">
-                                        {row.original.POD}
-                                      </p>
-                                    </React.Fragment>
-                                  );
+                                  if (this.state.ModeofTransport === "inland") {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POD</p>
+                                        <p className="details-para">
+                                          {row.original.DestinationName}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POD</p>
+                                        <p className="details-para">
+                                          {row.original.POL}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 }
                               },
 
@@ -1118,12 +1153,15 @@ class BookingView extends Component {
                                 : ""}
                             </p>
                           </div>
-                          {this.state.CargoType === "FCL" ||this.state.CargoType === "FTL" ? (
+                          {this.state.CargoType === "FCL" ||
+                          this.state.CargoType === "FTL" ? (
                             ""
                           ) : (
                             <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                               <p className="details-title">Unstackable</p>
-                          <p className="details-para">{this.state.NonStackable===0?"No":"Yes"}</p>
+                              <p className="details-para">
+                                {this.state.NonStackable === 0 ? "No" : "Yes"}
+                              </p>
                             </div>
                           )}
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">

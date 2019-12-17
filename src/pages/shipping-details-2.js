@@ -547,17 +547,21 @@ class ShippingDetailsTwo extends Component {
       }
 
       ///Line data
-
-      var RouteLatLong = mydata[i]["RouteLatLong"];
-      var splitRouteLatLong = RouteLatLong.split(";");
-      for (var j = 0; j < splitRouteLatLong.length; j++) {
-        var lineData = {};
-        var tempSData = splitRouteLatLong[j].split(",");
-        lineData.lat = Number(tempSData[0]);
-        lineData.lng = Number(tempSData[1]);
-        allLineData.push(lineData);
+      debugger;
+      var RouteLatLong = mydata[i]["GeoCoord"];
+      if (RouteLatLong) {
+        var splitRouteLatLong = RouteLatLong.split(";");
+        for (var j = 0; j < splitRouteLatLong.length; j++) {
+          var lineData = {};
+          var tempSData = splitRouteLatLong[j].split(",");
+          if (tempSData.length > 1) {
+            lineData.lat = Number(tempSData[0]);
+            lineData.lng = Number(tempSData[1]);
+            allLineData.push(lineData);
+          }
+        }
+      } else {
       }
-
       //mainLineData = allLineData;
     }
 
@@ -634,7 +638,7 @@ class ShippingDetailsTwo extends Component {
         // documentdata.forEach(function(file, i) {
         //   file.sr_no = i + 1;
         // });
-        
+
         self.setState({ documentData: documentdata });
       })
       .catch(error => {

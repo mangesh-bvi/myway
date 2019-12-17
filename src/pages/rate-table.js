@@ -2419,6 +2419,7 @@ class RateTable extends Component {
     }
 
     if (filteredData.length > 0) {
+      // var sortfiltedata=filteredData.sort()
       this.setState({ tempRateDetails: filteredData });
     } else {
       this.setState({

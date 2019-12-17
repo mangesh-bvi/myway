@@ -206,7 +206,8 @@ class RateFinalizingStillBooking extends Component {
 
     if (
       this.props.location.state.BookingNo != "" &&
-      this.props.location.state.BookingNo != undefined
+      this.props.location.state.BookingNo != undefined &&
+      this.props.location.state.Copy === undefined
     ) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -234,7 +235,6 @@ class RateFinalizingStillBooking extends Component {
     }
   }
 
- 
   ////get sales quotation detsils
 
   // HandleGetSalesQuotaion() {
@@ -321,7 +321,6 @@ class RateFinalizingStillBooking extends Component {
     this.BindShipmentStage();
   }
   HandleChangeCon(field, e) {
-    debugger;
     let self = this;
     var customerName = "";
     let fields = this.state.fields;
@@ -345,8 +344,6 @@ class RateFinalizingStillBooking extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
-
         if (response.data.Table.length > 1) {
           if (field == "Consignee") {
             self.setState({
@@ -417,7 +414,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   handleSelectCon(e, field, value, id) {
-    debugger;
     let fields = this.state.fields;
     fields[field] = value;
     if (field == "Consignee") {
@@ -451,7 +447,6 @@ class RateFinalizingStillBooking extends Component {
     });
   }
   HandleConsineeAddressChange(e) {
-    debugger;
     var addval = e.target.value;
     this.setState({ Consinee_Displayas: addval });
   }
@@ -668,7 +663,7 @@ class RateFinalizingStillBooking extends Component {
       var BookingID = self.state.BookingNo;
       var DocumentID = 0;
       var DocumnetFile = self.state.selectedFile[0];
-     
+
       var userId = encryption(window.localStorage.getItem("userid"), "desc");
       var formdata = new FormData();
       formdata.append("BookingID", BookingID);
@@ -693,9 +688,7 @@ class RateFinalizingStillBooking extends Component {
         // this.props.history.push("./booking-table");
         self.props.history.push("booking-table");
       });
-    }
-    else
-    {
+    } else {
       self.props.history.push("booking-table");
     }
   }
@@ -712,7 +705,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    debugger;
     var FileData = event.target.files;
     // var filesArr = this.state.selectedFile;
     var f_data = this.state.FileData;
@@ -733,7 +725,6 @@ class RateFinalizingStillBooking extends Component {
   ////change value of SelectType methiod
 
   HandleRadioBtn(type, e) {
-    debugger;
     var selectedType = e.target.checked;
 
     if (type === "Conshinee") {
@@ -852,7 +843,6 @@ class RateFinalizingStillBooking extends Component {
     var saleQuoteID = Number(bookingDetails[0].saleQuoteID || 0);
     var saleQuoteNo = bookingDetails[0].saleQuoteNo || "";
     var saleQuoteLineID = Number(bookingDetails[0].saleQuoteLineID || 0);
- 
 
     var BookingDocs = [];
     var BookingDim = [];
@@ -922,7 +912,6 @@ class RateFinalizingStillBooking extends Component {
       NotificationManager.success(response.data.Table[0].Message);
 
       self.HandleFileUpload();
-      
     });
   }
 
@@ -1300,11 +1289,20 @@ class RateFinalizingStillBooking extends Component {
           }
         }
         if (Table6.length > 0) {
+          var companyID = 0;
+          if (Table6[0].contact_name) {
+            companyID = Table6[0].companyID;
+            Company_Address = Table6[0].Company_Address;
+            contact_name = Table6[0].contact_name;
+            company_name = Table6[0].company_name;
+          } else {
+            companyID = Table6[0].CompanyID;
+            Company_Address = Table6[0].Company_Address;
+            contact_name = Table6[0].ContactName;
+            company_name = Table6[0].CompanyName;
+          }
           ShipmentType = Table6[0].ShipmentType;
-          companyID = Table6[0].companyID;
-          company_name = Table6[0].company_name;
-          contact_name = Table6[0].contact_name;
-          Company_Address = Table6[0].Company_Address;
+
           var HAZMAT = Table6[0].HAZMAT;
           var Customs_Clearance = Table6[0].Customs_Clearance;
           var ModeofTransport = Table6[0].ModeOfTransport;
@@ -1365,7 +1363,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   AddressChange(type, e) {
-    debugger;
     var companyID = e.target.value;
     if (e.target.selectedOptions[0].label === "Other") {
       if (type == "Consignee") {
@@ -1432,7 +1429,6 @@ class RateFinalizingStillBooking extends Component {
   HandleFileOpen(filePath) {
     var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    debugger;
 
     axios({
       method: "post",
@@ -1444,10 +1440,7 @@ class RateFinalizingStillBooking extends Component {
       responseType: "blob",
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       if (response.data) {
-        console.log(response.data);
-
         var blob = new Blob([response.data], { type: "application/pdf" });
         var link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
@@ -1463,7 +1456,6 @@ class RateFinalizingStillBooking extends Component {
 
   ////this method for multiple file element create
   CreateFileElement() {
-    debugger;
     return this.state.FileData.map((el, i) => (
       <div key={i}>
         {/* <a href={el.FilePath || ""}>
@@ -1540,8 +1532,6 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-
       var notifyAddData = response.data.Table;
       if (notifyAddData) {
         var Notify_AddressID = n_AddressID;
@@ -1565,7 +1555,6 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var buyerAddData = response.data.Table;
       if (buyerAddData) {
         var Buyer_AddressID = b_AddressID;
@@ -1590,7 +1579,6 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var conshineeAddData = response.data.Table;
       if (conshineeAddData.length > 0) {
         var Conshinee_AddressID = c_AddressID;
@@ -1617,7 +1605,6 @@ class RateFinalizingStillBooking extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var shipperAddData = response.data.Table;
       if (shipperAddData) {
         var Shipper_AddressID = s_AddressID;
@@ -1631,7 +1618,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   HandleChangeMultiCBM(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -1863,7 +1849,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   SubmitCargoDetails(e) {
-    debugger;
     // var PackageDetailsArr = [];
     // if (
     //   this.state.ContainerLoad == "AIR" ||
@@ -1978,8 +1963,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   toggleEdit(e) {
-    debugger;
-
     if (!this.state.modalEdit) {
       var valuetype = e.target.getAttribute("data-valuetype");
       var valuequantity = e.target.getAttribute("data-valuequantity");
@@ -2011,11 +1994,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   render() {
-    const {
-      Booking,
-
-      selectedType
-    } = this.state;
+    const { Booking } = this.state;
     var bNumber = "";
     if (Booking.length > 0) {
       bNumber = Booking[0].strBooking_No;
@@ -2027,20 +2006,6 @@ class RateFinalizingStillBooking extends Component {
     } else {
       className = "butn m-0";
     }
-    console.log(this.setState.typeofMove);
-    // if (
-    //   this.state.commodityData.length > 0 && this.state.salesQuotaNo === ""
-    //     ? this.state.QuotationData.length > 0
-    //     : this.state.Booking.length > 0
-    // ) {
-    //   if (this.state.salesQuotaNo === "") {
-    //     selectedCommodity = this.state.commodityData.filter(
-    //       x => x.id === this.state.Booking[0].Commodity
-    //     )[0].Commodity;
-    //   } else {
-    //     selectedCommodity = this.state.QuotationData[0].Commodity;
-    //   }
-    // }
 
     let i = 0;
 
@@ -2066,82 +2031,6 @@ class RateFinalizingStillBooking extends Component {
               </h2>
             </div>
             <div className="row">
-              {/* <div className="col-md-4">
-                <div className="rate-table-left rate-final-left">
-                  <div>
-                    <h3>Locals</h3>
-                    <div className="cont-costs">
-                      <div className="remember-forgot d-block m-0">
-                        <div>
-                          <div className="d-flex">
-                            <input id="ugm" type="checkbox" name={"local"} />
-                            <label htmlFor="ugm">UGM</label>
-                          </div>
-                          <span>50$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input id="bl" type="checkbox" name={"local"} />
-                            <label htmlFor="bl">B/L</label>
-                          </div>
-                          <span>25$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="stuffing"
-                              type="checkbox"
-                              name={"local"}
-                            />
-                            <label htmlFor="stuffing">Stuffing</label>
-                          </div>
-                          <span>100$</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h3>Subcharges</h3>
-                    <div className="cont-costs">
-                      <div className="remember-forgot d-block m-0">
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="cont-clean"
-                              type="checkbox"
-                              name={"subcharges"}
-                            />
-                            <label htmlFor="cont-clean">Container Clean</label>
-                          </div>
-                          <span>50$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="fumi"
-                              type="checkbox"
-                              name={"subcharges"}
-                            />
-                            <label htmlFor="fumi">Fumigation</label>
-                          </div>
-                          <span>25$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="tarpau"
-                              type="checkbox"
-                              name={"subcharges"}
-                            />
-                            <label htmlFor="tarpau">Tarpaulin</label>
-                          </div>
-                          <span>100$</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
               <div className="col-md-12">
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
@@ -2156,7 +2045,7 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                                  debugger;
+
                                   var lname = "";
                                   var olname = "";
                                   if (row._original.Linename) {
@@ -2228,28 +2117,61 @@ class RateFinalizingStillBooking extends Component {
                               },
                               {
                                 accessor: "POL",
+
                                 Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">POL</p>
-                                      <p className="details-para">
-                                        {row.original.POL}
-                                      </p>
-                                    </React.Fragment>
-                                  );
+                                  
+                                  if (
+                                    this.state.Booking[0].CargoType === "LCL" ||                                     
+                                    this.state.Booking[0].CargoType === "FCL" ||
+                                    this.state.Booking[0].CargoType === "AIR" 
+                                  ) {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POL</p>
+                                        <p className="details-para">
+                                          {row.original.POL}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POL</p>
+                                        <p className="details-para">
+                                          {row.original.OriginName}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 }
                               },
                               {
                                 accessor: "POD",
                                 Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">POD</p>
-                                      <p className="details-para">
-                                        {row.original.POD}
-                                      </p>
-                                    </React.Fragment>
-                                  );
+                                  debugger;
+                                  if (
+                                    this.state.Booking[0].CargoType === "LCL" ||                                     
+                                    this.state.Booking[0].CargoType === "FCL" ||
+                                    this.state.Booking[0].CargoType === "AIR"
+                                  ) {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POD</p>
+                                        <p className="details-para">
+                                          {row.original.POD}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">POD</p>
+                                        <p className="details-para">
+                                          {row.original.DestinationName}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
                                 }
                               },
 

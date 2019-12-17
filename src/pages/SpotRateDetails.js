@@ -145,7 +145,9 @@ class SpotRateDetails extends Component {
       QuotationSubData: [],
       MyWayComments: "",
       MyWayDiscount: 0,
-      MyWayFreeTime: 0
+      MyWayFreeTime: 0,
+      Mode: "",
+      ModeOfTransport: ""
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -195,12 +197,26 @@ class SpotRateDetails extends Component {
 
             if (response != null) {
               if (response.data != null) {
-                if (QuotationData.length > 0 && QuotationSubData.length > 0) {
+                if (QuotationData.length > 0) {
                   var POL = QuotationData[0].OriginPort_Name;
                   var POD = QuotationData[0].DestinationPort_Name;
-                  self.setState({ QuotationData, QuotationSubData, POL, POD });
-                }
 
+                  setTimeout(() => {
+                    self.setState({
+                      QuotationData,
+
+                      POL,
+                      POD
+                    });
+                  }, 100);
+                }
+                if (QuotationSubData.length > 0) {
+                  self.setState({ QuotationSubData });
+                } else {
+                  self.setState({
+                    QuotationSubData: [{ ChargeType: "No Record Found" }]
+                  });
+                }
                 if (response.data.Table != null) {
                   if (response.data.Table.length > 0) {
                     self.setState({
@@ -209,13 +225,14 @@ class SpotRateDetails extends Component {
                   }
                 }
                 if (RateQueryData.length > 0) {
-                  var ModeofTransport = RateQueryData[0].Mode;
+                  var Mode = RateQueryData[0].Mode;
                   var MyWayComments = RateQueryData[0].MyWayComments;
                   var MyWayDiscount = RateQueryData[0].MyWayDiscount;
                   var MyWayFreeTime = RateQueryData[0].MyWayFreeTime;
-
+                  var ModeOfTransport = RateQueryData[0].ModeOfTransport;
                   self.setState({
-                    ModeofTransport,
+                    Mode,
+                    ModeOfTransport,
                     MyWayComments,
                     MyWayDiscount,
                     MyWayFreeTime
@@ -698,14 +715,14 @@ class SpotRateDetails extends Component {
                         <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Mode of Transport</p>
                           <p className="details-para">
-                            {this.state.spotrateresponseTbl.Mode}
+                            {this.state.ModeOfTransport}
                           </p>
                         </div>
                         <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Container Load</p>
                           <p className="details-para">
-                            {this.state.spotrateresponseTbl.Trade_terms}
-                            
+                            {/* {this.state.spotrateresponseTbl.Trade_terms} */}
+                            {this.state.Mode}
                           </p>
                         </div>
                         {/* <div className="col-md-4">
@@ -1036,7 +1053,7 @@ class SpotRateDetails extends Component {
                           {/* }})()} */}
                         </div>
                         {/* <input type="text" value="Dummy" disabled /> */}
-
+                        <br />
                         <p className="details-title">Quotation Details</p>
 
                         <ReactTable
@@ -1198,6 +1215,23 @@ class SpotRateDetails extends Component {
                                     );
                                   }
                                 },
+                                {
+                                  Header: "Transit Time",
+                                  accessor: "TransitTime",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        {/* <p className="details-title">
+                                            Container
+                                          </p> */}
+                                        <p className=" ">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+
                                 {
                                   Header: "Expiry Date",
                                   accessor: "ExpiryDate",
