@@ -3491,8 +3491,10 @@ class RateTable extends Component {
 
                                   var mode = this.state.modeoftransport;
                                   var lname = "";
+                                  var olname="";
 
                                   if (row._original.lineName) {
+                                    olname=row._original.lineName;
                                     lname =
                                       row._original.lineName
                                         .replace(" ", "_")
@@ -3543,7 +3545,7 @@ class RateTable extends Component {
                                               "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
                                               lname
                                             }
-                                            alt="maersk icon"
+                                            alt={olname}
                                           />
                                         </div>
                                       </React.Fragment>

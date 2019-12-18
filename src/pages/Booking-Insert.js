@@ -528,18 +528,16 @@ class BookingInsert extends Component {
     var saleQuoteID = Number(this.state.QuotationData[0].SaleQuoteID || 0);
     var saleQuoteNo = this.state.salesQuotaNo || "";
     var saleQuoteLineID = 0;
-if(this.state.QuotationData[0].saleQuoteLineID)
-{
-  saleQuoteLineID= Number(
-    this.state.QuotationData[0].saleQuoteLineID || 0
-  );
-}
-else{
-  saleQuoteLineID= Number(
-    this.state.QuotationData[0].SaleQuoteIDLineID || 0
-  );
-}
-     
+    if (this.state.QuotationData[0].saleQuoteLineID) {
+      saleQuoteLineID = Number(
+        this.state.QuotationData[0].saleQuoteLineID || 0
+      );
+    } else {
+      saleQuoteLineID = Number(
+        this.state.QuotationData[0].SaleQuoteIDLineID || 0
+      );
+    }
+
     var NotifyID = Number(this.state.notifyData.Company_ID || 0);
     var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
     var Notify_Displayas = this.state.Notify_Displayas || "";
@@ -560,9 +558,7 @@ else{
           cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
           cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
           cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-        }
-        else if(Mode === "INLAND"){
-          
+        } else if (Mode === "INLAND") {
           cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
           cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
           cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
@@ -2165,14 +2161,17 @@ else{
                             <p className="details-title">HazMat</p>
                             <p className="details-para">{this.state.HAZMAT}</p>
                           </div>
-                          {this.state.ContainerLoad==="AIR" ||this.state.ContainerLoad==="LCL"?
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Unstackable</p>
-                            <p className="details-para">
-                              {this.state.NonStackable}
-                            </p>
-                          </div>
-                          :""}
+                          {this.state.ContainerLoad === "AIR" ||
+                          this.state.ContainerLoad === "LCL" ? (
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">Unstackable</p>
+                              <p className="details-para">
+                                {this.state.NonStackable}
+                              </p>
+                            </div>
+                          ) : (
+                            ""
+                          )}
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Customs Clearance</p>
                             <p className="details-para">

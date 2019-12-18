@@ -157,7 +157,7 @@ class NewRateSearch extends Component {
         {
           TruckID: "",
           TruckName: "",
-          Quantity: "1",
+          Quantity: 1,
           TruckDesc: ""
         }
       ],
@@ -369,17 +369,41 @@ class NewRateSearch extends Component {
   HandleCMBtextChange(e) {
     debugger;
     var jiji = e.target.value;
-    var Textvalue = isNaN(jiji) ? 0 : parseInt(e.target.value);
-    // var validNumber = new RegExp(/^\d*\.?\d*$/);
+
+    if (isNaN(jiji)) {
+      return false;
+    }
+    var splitText = jiji.split(".");
+    var index = jiji.indexOf(".");
+    if (index != -1) {
+      if (splitText) {
+        if (splitText[1].length <= 2) {
+          if (index != -1 && splitText.length === 2) {
+            this.setState({ cbmVal: jiji });
+          }
+        } else {
+          return false;
+        }
+      } else {
+        this.setState({ cbmVal: jiji });
+      }
+    } else {
+      this.setState({ cbmVal: jiji });
+    }
+
+    // var Textvalue = isNaN(jiji) ? 0 : parseFloat(e.target.value);
+    // var validNumber = new RegExp(/^\d+(\.\d{1,2})?$/);
     //   if (e.target.value === "" || validNumber.test(e.target.value)) {
     //     if ((parseFloat(e.target.value) * 100) % 1 > 0) {
     //     } else {
     //       var Textvalue = e.target.value;
+    //       this.setState({ cbmVal: Textvalue });
+
     //     }
     //   }
+
     // var Textvalue = e.target.value;
 
-    this.setState({ cbmVal: Textvalue });
     document.getElementById("cbm").classList.add("cbm");
     document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
     document.getElementById("containerLoad").classList.add("less-padd");
@@ -445,7 +469,7 @@ class NewRateSearch extends Component {
         {
           TruckID: "",
           TruckName: "",
-          Quantity: "1",
+          Quantity: 1,
           TruckDesc: ""
         }
       ]
@@ -474,6 +498,7 @@ class NewRateSearch extends Component {
               className="mr-3"
               type="text"
               name="Quantity"
+              value={el.Quantity || 1}
               placeholder="Quantity"
               onChange={this.UITruckTypeChange.bind(this, i)}
             />
@@ -511,12 +536,26 @@ class NewRateSearch extends Component {
   }
 
   UITruckTypeChange(i, e) {
+    debugger;
     const { name, value } = e.target;
+    // var finalVal=0;
+    // if (isNaN(value)) {
+    //   return false;
+    // }
+    // else
+    // {
+    //   finalVal=value;
+    // }
 
     let TruckTypeData = [...this.state.TruckTypeData];
     TruckTypeData[i] = {
       ...TruckTypeData[i],
-      [name]: name === "Quantity" ? parseInt(value) : value,
+      [name]:
+        name === "Quantity"
+          ? isNaN(value) === true
+            ? 0
+            : parseInt(value)
+          : value,
       ["TruckDesc"]:
         name === "TruckName"
           ? e.target.options[e.target.selectedIndex].text

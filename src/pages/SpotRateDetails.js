@@ -230,7 +230,9 @@ class SpotRateDetails extends Component {
                   var MyWayDiscount = RateQueryData[0].MyWayDiscount;
                   var MyWayFreeTime = RateQueryData[0].MyWayFreeTime;
                   var ModeOfTransport = RateQueryData[0].ModeOfTransport;
+                  var shipmentType=RateQueryData[0].ShipmentType;
                   self.setState({
+                    shipmentType,
                     Mode,
                     ModeOfTransport,
                     MyWayComments,
@@ -710,6 +712,7 @@ class SpotRateDetails extends Component {
                           <p className="details-title">Shipment Type</p>
                           <p className="details-para">
                             {this.state.spotrateresponseTbl.ShipmentType}
+                            {/* {this.state.shipmentType} */}
                           </p>
                         </div>
                         <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
