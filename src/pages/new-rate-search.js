@@ -1126,7 +1126,7 @@ class NewRateSearch extends Component {
               />
             </div>
           </div>
-          <div className="col-md mt-2">
+          <div className="col-md mt-4 mb-0">
             <div className="rate-radio-cntr">
               <div>
                 <input
@@ -1160,7 +1160,7 @@ class NewRateSearch extends Component {
               </div>
             </div>
           </div>
-          <div className="spe-equ">
+          <div className="spe-equ mt-0">
             <i
               className="fa fa-minus mt-2"
               onClick={this.removeClickSpecial.bind(this, i)}

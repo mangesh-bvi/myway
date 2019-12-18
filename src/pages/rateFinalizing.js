@@ -5570,9 +5570,9 @@ class RateFinalizing extends Component {
                             window.localStorage.getItem("usertype"),
                             "desc"
                           ) != "Customer" ? (
-                            // this.state.CompanyName == "" ||
-                            // this.state.isCopy ? (
-                            <div className="position-relative">
+                            this.state.CompanyName == "" ||
+                            this.state.isCopy ? (
+                            <div className="position-relative mt-2">
                               <Autocomplete
                                 id="searchtxt"
                                 className="title-sect p-0 pt-2"
@@ -5606,7 +5606,7 @@ class RateFinalizing extends Component {
                               />
                             </div>
                           ) : // ) : null
-                          null}
+                          null): null}
                         </div>
                         <div className="col-12 col-sm-4 col-md-4 col-lg-6">
                           <p className="details-title">Address</p>
