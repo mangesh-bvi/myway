@@ -19,6 +19,7 @@ import matchSorter from "match-sorter";
 import Eye from "./../assets/img/eye.png";
 import Moment from "react-moment";
 import ATA from "./../assets/img/ATAFreight_console.png";
+import Download from "./../assets/img/csv.png";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -76,7 +77,8 @@ class RateFinalizingStill extends Component {
       errorRejReson: "",
       modalPreview: false,
       todayDate: new Date(),
-      filterrateSubDetails: []
+      filterrateSubDetails: [],
+      DocumentDetails: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -263,7 +265,8 @@ class RateFinalizingStill extends Component {
         self.setState({
           RateDetails: response.data.Table1,
           SubRateDetails: response.data.Table2,
-          multiCBM: response.data.Table3
+          multiCBM: response.data.Table3,
+          DocumentDetails: response.data.Table4
         });
         self.forceUpdate();
         self.HandleSalesQuoteConditions();
@@ -890,20 +893,28 @@ class RateFinalizingStill extends Component {
       });
   };
 
-  HandleDowloadFile = () => {
+  HandleDowloadFile = (e, item) => {
+    debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/DownloadFTPFile`,
       data: {
         MywayUserID: 874588,
-        FilePath:
-          "ftp://vizio.atafreight.com/BookingDoc/11130Nov2019001100_526.pdf"
+        FilePath: item.original.FilePath
       },
+      responseType: "blob",
       headers: authHeader()
     })
       .then(function(response) {
         debugger;
-        NotificationManager.success(response.data.Table[0].Result);
+        if (response.data) {
+          var blob = new Blob([response.data], { type: "application/pdf" });
+          var link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = item.original.FileName;
+          link.click();
+        }
+        //NotificationManager.success(response.data.Table[0].Result);
       })
       .catch(error => {
         debugger;
@@ -1396,7 +1407,7 @@ class RateFinalizingStill extends Component {
     }
     var DocumentCharges = [];
     var i = 0;
-    const { CargoDetailsArr } = this.state;
+    const { CargoDetailsArr, DocumentDetails } = this.state;
     return (
       <React.Fragment>
         <Headers />
@@ -2356,6 +2367,61 @@ class RateFinalizingStill extends Component {
                     >
                       Preview
                     </button>
+                    <div className="row">
+                      {" "}
+                      <div className="col-md-12 login-fields">
+                        <p className="details-title">Documents</p>
+                        <div className="ag-fresh redirect-row">
+                          <ReactTable
+                            data={DocumentDetails}
+                            filterable
+                            minRows={1}
+                            showPagination={false}
+                            columns={[
+                              {
+                                Header: "File Name",
+                                accessor: "FileName"
+                              },                              
+                              {
+                                Header: "Action",
+                                sortable: false,
+                                Cell: row => {
+                                  // var abc = new Date(row.original.CreatedDate);
+                                  // var current = new Date();
+                                  // var x = abc.getTime();
+                                  // var y = current.getTime();
+                                  // console.log(x);
+                                  // console.log(y);                                
+                                      return (
+                                        <div className="action-cntr">
+                                          <a
+                                            onClick={e =>
+                                              this.HandleDowloadFile(e, row)
+                                            }
+                                          >
+                                            <img
+                                              className="actionicon"
+                                              src={Download}
+                                              alt="download-icon"
+                                            />
+                                          </a>
+        
+                                          
+                                        </div>
+                                      );
+                                    
+                                  
+                                }
+                              }
+                            ]}
+                            className="-striped -highlight"
+                            defaultPageSize={2000}
+                            //getTrProps={this.HandleRowClickEvt}
+                            //minRows={1}
+                          />
+                        </div>
+                      </div>
+                    </div>
                     {/* <div className="row">
                       {" "}
                       <div className="col-md-12 login-fields">
