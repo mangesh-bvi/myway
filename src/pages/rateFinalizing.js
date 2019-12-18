@@ -3111,22 +3111,36 @@ class RateFinalizing extends Component {
             // }
 
             var newrateSubDetails = {
-              BaseCurrency: e.target.getAttribute("data-currency"),
+              // BaseCurrency: e.target.getAttribute("data-currency"),
+              // ChargeCode: e.target.getAttribute("data-chargedesc"),
+              // ChargeDesc: e.target.getAttribute("data-chargedesc"),
+              // ChargeID: 0,
+              // ChargeItem: e.target.getAttribute("data-chargeitem"),
+              // ChargeType: e.target.getAttribute("data-chargetype"),
+              // Currency: e.target.getAttribute("data-currency"),
+              // Exrate: 0,
+              // Rate: parseFloat(e.target.value),
+              // RateLineID: this.state.rateDetails[i].RateLineId,
+              // SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+              // Tax: 0,
+              // TotalAmount: parseFloat(
+              //   e.target.getAttribute("data-amountinbasecurrency")
+              // ),
+              // Extracharge: true
+
+              ChargeID: 0,
+              BuyRate: parseFloat(e.target.value),
+              Rate: parseFloat(e.target.value),
+              Currency: e.target.getAttribute("data-currency"),
+              RateLineID: this.state.rateDetails[i].RateLineId,
               ChargeCode: e.target.getAttribute("data-chargedesc"),
               ChargeDesc: e.target.getAttribute("data-chargedesc"),
-              ChargeID: 0,
-              ChargeItem: e.target.getAttribute("data-chargeitem"),
-              ChargeType: e.target.getAttribute("data-chargetype"),
-              Currency: e.target.getAttribute("data-currency"),
-              Exrate: 0,
-              Rate: parseFloat(e.target.value),
-              RateLineID: this.state.rateDetails[i].RateLineId,
-              SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
               Tax: 0,
-              TotalAmount: parseFloat(
-                e.target.getAttribute("data-amountinbasecurrency")
-              ),
-              Extracharge: true
+              ChargeItem: e.target.getAttribute("data-chargeitem"),
+              Exrate: 1,
+              ChargeType: e.target.getAttribute("data-chargetype"),
+              TotalAmount: parseFloat(e.target.getAttribute("data-amountinbasecurrency")),
+              BaseCurrency: e.target.getAttribute("data-currency")
             };
 
             if (
@@ -3151,22 +3165,36 @@ class RateFinalizing extends Component {
             // }
 
             var newrateSubDetails = {
-              BaseCurrency: e.target.getAttribute("data-currency"),
+              // BaseCurrency: e.target.getAttribute("data-currency"),
+              // ChargeCode: e.target.getAttribute("data-chargedesc"),
+              // ChargeDesc: e.target.getAttribute("data-chargedesc"),
+              // ChargeID: 0,
+              // ChargeItem: e.target.getAttribute("data-chargeitem"),
+              // ChargeType: e.target.getAttribute("data-chargetype"),
+              // Currency: e.target.getAttribute("data-currency"),
+              // Exrate: 0,
+              // Rate: parseFloat(e.target.value),
+              // RateLineID: this.state.rateDetails[i].RateLineId,
+              // SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+              // Tax: 0,
+              // TotalAmount: parseFloat(
+              //   e.target.getAttribute("data-amountinbasecurrency")
+              // ),
+              // Extracharge: true
+
+              ChargeID: 0,
+              BuyRate: parseFloat(e.target.value),
+              Rate: parseFloat(e.target.value),
+              Currency: e.target.getAttribute("data-currency"),
+              RateLineID: this.state.rateDetails[i].RateLineId,
               ChargeCode: e.target.getAttribute("data-chargedesc"),
               ChargeDesc: e.target.getAttribute("data-chargedesc"),
-              ChargeID: 0,
-              ChargeItem: e.target.getAttribute("data-chargeitem"),
-              ChargeType: e.target.getAttribute("data-chargetype"),
-              Currency: e.target.getAttribute("data-currency"),
-              Exrate: 0,
-              Rate: parseFloat(e.target.value),
-              RateLineID: this.state.rateDetails[i].RateLineId,
-              SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
               Tax: 0,
-              TotalAmount: parseFloat(
-                e.target.getAttribute("data-amountinbasecurrency")
-              ),
-              Extracharge: true
+              ChargeItem: e.target.getAttribute("data-chargeitem"),
+              Exrate: 1,
+              ChargeType: e.target.getAttribute("data-chargetype"),
+              TotalAmount: parseFloat(e.target.getAttribute("data-amountinbasecurrency")),
+              BaseCurrency: e.target.getAttribute("data-currency")
             };
 
             if (
@@ -4189,7 +4217,7 @@ class RateFinalizing extends Component {
                 data-chargedesc={item.ChargeDesc}
                 data-currency={item.Currency}
                 data-amountinbasecurrency={item.AmountInBaseCurrency}
-                data-chargetype="surcharge"
+                data-chargetype="Surcharge"
                 onChange={this.HandleLocalSearchCharges.bind(this, item)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
@@ -4229,7 +4257,7 @@ class RateFinalizing extends Component {
                 data-chargedesc={item.ChargeDesc}
                 data-currency={item.Currency}
                 data-amountinbasecurrency={item.AmountInBaseCurrency}
-                data-chargetype="surcharge"
+                data-chargetype="Surcharge"
                 onChange={this.HandleLocalSearchCharges.bind(this, item)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
@@ -4269,7 +4297,7 @@ class RateFinalizing extends Component {
                 data-chargedesc={item.ChargeDesc}
                 data-currency={item.Currency}
                 data-amountinbasecurrency={item.AmountInBaseCurrency}
-                data-chargetype="surcharge"
+                data-chargetype="Surcharge"
                 onChange={this.HandleLocalSearchCharges.bind(this, item)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
