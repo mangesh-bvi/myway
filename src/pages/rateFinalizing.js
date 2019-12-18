@@ -4072,9 +4072,11 @@ class RateFinalizing extends Component {
             {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
             <span className="line-img">
               <img
+              title={item.LineName}
+              alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                  item.LineName +
+                  (item.LineName).replace(" ","_")+
                   ".png"
                 }
               />
@@ -4109,9 +4111,11 @@ class RateFinalizing extends Component {
             {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
             <span className="line-img">
               <img
+              alt={item.LineName}
+              title={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                  item.LineName +
+                  (item.LineName).replace(" ","_")+
                   ".png"
                 }
               />
@@ -4146,6 +4150,8 @@ class RateFinalizing extends Component {
             {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
             <span className="line-img">
               <img
+              title={item.LineName}
+              alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                 }
@@ -4195,9 +4201,11 @@ class RateFinalizing extends Component {
           </span> */}
             <span className="line-img">
               <img
+              title={item.LineName}
+              alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                  item.LineName +
+                  (item.LineName).replace(" ","_") +
                   ".png"
                 }
               />
@@ -4233,9 +4241,11 @@ class RateFinalizing extends Component {
                   </span> */}
             <span className="line-img">
               <img
+              title={item.LineName}
+              alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                  item.LineName +
+                  (item.LineName).replace(" ","_") +
                   ".png"
                 }
               />
@@ -4271,6 +4281,8 @@ class RateFinalizing extends Component {
                   </span> */}
             <span className="line-img">
               <img
+              title={item.LineName}
+              alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                 }

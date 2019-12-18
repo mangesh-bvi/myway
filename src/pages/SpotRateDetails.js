@@ -147,7 +147,8 @@ class SpotRateDetails extends Component {
       MyWayDiscount: 0,
       MyWayFreeTime: 0,
       Mode: "",
-      ModeOfTransport: ""
+      ModeOfTransport: "",
+      PageName:"SportRateView"
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -291,7 +292,7 @@ class SpotRateDetails extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
 
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
@@ -504,7 +505,7 @@ class SpotRateDetails extends Component {
     polfullAddData[
       "OceanPortLongName"
     ] = this.state.spotrateresponseTbl.PickUpAddress;
-    podfullAddData[
+    polfullAddData[
       "UNECECode"
     ] = this.state.spotrateresponseTbl1[0].OriginPort_ID;
 
@@ -652,6 +653,7 @@ class SpotRateDetails extends Component {
       zoomPOD: 0,
       zoomPOL: 0,
       RatequeryID: this.state.spotrateresponseTbl.RateQueryId
+      
     });
     this.HandleViewRateData();
   }
@@ -1204,7 +1206,7 @@ class SpotRateDetails extends Component {
 
                                 {
                                   Header: "Container Type",
-                                  accessor: "ContainerType",
+                                  accessor: "Container",
                                   Cell: row => {
                                     return (
                                       <React.Fragment>
@@ -1212,7 +1214,7 @@ class SpotRateDetails extends Component {
                                             Container
                                           </p> */}
                                         <p className=" ">
-                                          {row.original.ContainerType}
+                                          {row.original.Container}
                                         </p>
                                       </React.Fragment>
                                     );
@@ -1281,7 +1283,7 @@ class SpotRateDetails extends Component {
                             return (
                               <div style={{ padding: "20px 0" }}>
                                 <ReactTable
-                                  data={this.state.QuotationSubData}
+                                  data={this.state.QuotationSubData.filter(x=>x.RateLineID===row.original.RateLineID)}
                                   columns={[
                                     {
                                       columns: [

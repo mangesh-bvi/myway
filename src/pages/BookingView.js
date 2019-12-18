@@ -1061,7 +1061,7 @@ class BookingView extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={this.state.QuotationSubData}
+                                data={this.state.QuotationSubData.filter(x=>x.SaleQuoteID===row.original.SaleQuoteID1)}
                                 columns={[
                                   {
                                     columns: [
@@ -1088,7 +1088,8 @@ class BookingView extends Component {
                                     ]
                                   }
                                 ]}
-                                defaultPageSize={3}
+                                // defaultPageSize={3}
+                                minRows={1}
                                 showPagination={false}
                               />
                             </div>

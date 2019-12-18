@@ -2102,7 +2102,8 @@ class BookingInsert extends Component {
                                     ]
                                   }
                                 ]}
-                                defaultPageSize={3}
+                                // defaultPageSize={3}
+                                minRows={1}
                                 showPagination={false}
                               />
                             </div>

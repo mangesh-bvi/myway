@@ -270,12 +270,12 @@ class SpotRateTable extends Component {
                       },
                       {
                         Header: "POL",
-                        accessor: "PickUpAddress"
+                        accessor: "OriginPort_Name"
                       },
 
                       {
                         Header: "POD",
-                        accessor: "DestinationAddress"
+                        accessor: "DestinationPort_Name"
                       },
                       {
                         Header: "Expiry Date",
@@ -302,14 +302,18 @@ class SpotRateTable extends Component {
                           var RateQueryId = row.original["RateQueryId"];
                           debugger;
                           if (noData != "No Data Found") {
-                            return (
-                              <div
-                                onClick={e => this.toggleDel(RateQueryId)}
-                                className="tab-icon-view"
-                              >
-                                <img src={Eye} alt="eye icon" />
-                              </div>
-                            );
+                            if (row.original.STATUS === "Pending") {
+                              return <></>;
+                            } else {
+                              return (
+                                <div
+                                  onClick={e => this.toggleDel(RateQueryId)}
+                                  className="tab-icon-view"
+                                >
+                                  <img src={Eye} alt="eye icon" />
+                                </div>
+                              );
+                            }
                           } else {
                             return (
                               <div
