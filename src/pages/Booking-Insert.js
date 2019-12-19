@@ -135,7 +135,8 @@ class BookingInsert extends Component {
       valueweight: 0,
       valuecbm: 0,
       valuespecialsontainersode: "",
-      modalEdit: false
+      modalEdit: false,
+      FileData: []
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -207,6 +208,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
+      var FileData= response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
@@ -244,6 +246,7 @@ class BookingInsert extends Component {
         var HAZMAT = Booking[0].HAZMAT;
         var TypeofMove = QuotationData[0].TypeOfMove;
         self.setState({
+          FileData,
           TypeofMove,
           HAZMAT,
           Customs_Clearance,
@@ -276,7 +279,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
-
+      var FileData = response.data.Table4;
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
       if (QuotationData.length > 0) {
@@ -313,6 +316,7 @@ class BookingInsert extends Component {
         var NonStackable = Booking[0].NonStackable;
 
         self.setState({
+          FileData,
           ModeofTransport,
           companyID,
           company_name,
@@ -345,6 +349,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
+      var FileData = response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
@@ -360,6 +365,7 @@ class BookingInsert extends Component {
         var IncoTerms = Booking[0].IncoTerm;
         var HAZMAT = Booking[0].HAZMAT;
         self.setState({
+          FileData,
           Booking,
           HAZMAT,
           multiCBM,
@@ -412,6 +418,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
+      var FileData = response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
@@ -446,6 +453,7 @@ class BookingInsert extends Component {
         var ShipmentType = Booking[0].ShipmentType;
 
         self.setState({
+          FileData,
           ModeofTransport,
           companyID,
           company_name,
@@ -596,6 +604,17 @@ class BookingInsert extends Component {
       BookingDim.push(cargoData);
     }
 
+    var BookingDocs = [];
+    for (let i = 0; i < this.state.FileData.length; i++) {
+      if (this.state.FileData[i].QuoteID) {
+        var objFile = new Object();
+        objFile.BookingID = 0;
+        objFile.DocumentID = this.state.FileData[i].DocumentID;
+        objFile.FTPFilePath = this.state.FileData[i].FilePath;
+        BookingDocs.push(objFile);
+      } else {
+      }
+    }
     var paramData = {
       MyWayUserID: MyWayUserID,
       ShipperID: ShipperID,
@@ -621,7 +640,7 @@ class BookingInsert extends Component {
       Notify_Displayas: Notify_Displayas,
       NotifyName: NotifyName,
       BookingDim: BookingDim,
-      BookingDocs: []
+      BookingDocs: BookingDocs
     };
 
     axios({
@@ -1056,22 +1075,38 @@ class BookingInsert extends Component {
 
   onDocumentChangeHandler = event => {
     debugger;
+    // var FileData = event.target.files;
+    // var FileDataArry = [];
+    // var filesArr = this.state.selectedFile;
+    // for (let i = 0; i < FileData.length; i++) {
+    //   var objeFile = new Object();
+    //   objeFile.FileName = event.target.files[i].name;
+
+    //   FileDataArry.push(event.target.files[i]);
+    //   filesArr.push(objeFile);
+
+    //   this.setState({
+    //     selectedFile: filesArr,
+    //     FileDataArry
+    //   });
+    // }
+    // this.CreateFileElement();
+
     var FileData = event.target.files;
-    var FileDataArry = [];
-    var filesArr = this.state.selectedFile;
-    for (let i = 0; i < FileData.length; i++) {
-      var objeFile = new Object();
-      objeFile.FileName = event.target.files[i].name;
+    // var filesArr = this.state.selectedFile;
+    var f_data = this.state.FileData;
+    var objFile = new Object();
+    objFile.FileName = event.target.files[0].name;
+    this.setState({ FileDataArry: FileData });
+    // for (let i = 0; i < FileData.length; i++) {
+    //   var selectedFile = event.target.files[i];
+    //   filesArr.push(selectedFile);
+    //   var fileName = event.target.files[i].name;
 
-      FileDataArry.push(event.target.files[i]);
-      filesArr.push(objeFile);
-
-      this.setState({
-        selectedFile: filesArr,
-        FileDataArry
-      });
-    }
-    this.CreateFileElement();
+    //   // this.addClickTruckType(fileName);
+    // }
+    f_data.push(objFile);
+    this.setState({ FileData: f_data });
   };
 
   ////this methos for bookig details BookigGridDetailsList
@@ -1103,19 +1138,19 @@ class BookingInsert extends Component {
   }
 
   ////this method for multiple file element create
-  CreateFileElement() {
-    return this.state.selectedFile.map((el, i) => (
-      <div key={i}>
-        <span
-        //   onClick={e => {
-        //     this.HandleFileOpen(el.FilePath);
-        //   }}
-        >
-          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
-        </span>
-      </div>
-    ));
-  }
+  // CreateFileElement() {
+  //   return this.state.selectedFile.map((el, i) => (
+  //     <div key={i}>
+  //       <span
+  //       //   onClick={e => {
+  //       //     this.HandleFileOpen(el.FilePath);
+  //       //   }}
+  //       >
+  //         <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+  //       </span>
+  //     </div>
+  //   ));
+  // }
   ////end methos for multiple file element
 
   HandleChangeMultiCBM(i, e) {
@@ -1865,6 +1900,25 @@ class BookingInsert extends Component {
   HandleBuyerAddressChange(e) {
     var addval = e.target.value;
     this.setState({ Buyer_Displayas: addval });
+  }
+
+  CreateFileElement() {
+    return this.state.FileData.map((el, i) => (
+      <div key={i}>
+        {/* <a href={el.FilePath || ""}>
+          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+
+
+        </a> */}
+        <span
+          onClick={e => {
+            this.HandleFileOpen(el.FilePath);
+          }}
+        >
+          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+        </span>
+      </div>
+    ));
   }
 
   render() {

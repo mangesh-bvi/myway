@@ -511,117 +511,527 @@ class RateTable extends Component {
 
   toggleQuantPOLSave() {
     debugger;
-    this.state.polFilterArray = this.state.polArray;
-    this.setState(prevState => ({
-      polFilterArray: this.state.polFilterArray,
-      modalPOL: !this.state.modalPOL
-      //modalQuant: !prevState.modalQuant
-    }));
+
+    if (this.props.location.state.PageName === "SportRateView") {
+      this.state.polFilterArray = this.state.polArray.slice(1);
+      this.setState(prevState => ({
+        polFilterArray: this.state.polFilterArray,
+        modalPOL: !this.state.modalPOL
+        //modalQuant: !prevState.modalQuant
+      }));
+    } else {
+      this.state.polFilterArray = this.state.polArray;
+      this.setState(prevState => ({
+        polFilterArray: this.state.polFilterArray,
+        modalPOL: !this.state.modalPOL
+        //modalQuant: !prevState.modalQuant
+      }));
+    }
+
     this.HandleMultiPOLPODFilter();
   }
 
   toggleQuantPODSave() {
     debugger;
-    this.state.podFilterArray = this.state.podArray;
-    this.setState(prevState => ({
-      podFilterArray: this.state.podFilterArray,
-      modalPOD: !this.state.modalPOD
-      //modalQuant: !prevState.modalQuant
-    }));
+
+    if (this.props.location.state.PageName === "SportRateView") {
+      this.state.podFilterArray = this.state.podArray.slice(1);
+      this.setState(prevState => ({
+        podFilterArray: this.state.podFilterArray,
+        modalPOD: !this.state.modalPOD
+        //modalQuant: !prevState.modalQuant
+      }));
+    } else {
+      this.state.podFilterArray = this.state.podArray;
+      this.setState(prevState => ({
+        podFilterArray: this.state.podFilterArray,
+        modalPOD: !this.state.modalPOD
+        //modalQuant: !prevState.modalQuant
+      }));
+    }
 
     this.HandleMultiPOLPODFilter();
   }
 
   HandleMultiPOLPODFilter() {
-    this.setState({
-      loading: true
-    });
+    var paramData;
     let self = this;
-    var rModeofTransport =
-      this.state.modeoftransport === "SEA"
-        ? "Ocean"
-        : this.state.modeoftransport === "AIR"
-        ? "Air"
-        : this.state.modeoftransport === "ROAD"
-        ? "inland"
-        : "";
-    var multiPOL = [];
-    var multiPOD = [];
-    var containerdetails = [];
-    for (var i = 0; i < this.state.polFilterArray.length; i++) {
-      if (this.state.polFilterArray[i].IsFilter == true) {
-        multiPOL.push({
-          POL: this.state.polFilterArray[i].POL,
-          POLGeoCordinate: this.state.polFilterArray[i].POLGeoCordinate
-        });
-      }
-    }
-    for (var i = 0; i < this.state.podFilterArray.length; i++) {
-      if (this.state.podFilterArray[i].IsFilter == true) {
-        multiPOD.push({
-          POD: this.state.podFilterArray[i].POD,
-          PODGeoCordinate: this.state.podFilterArray[i].PODGeoCordinate
-        });
-      }
-    }
+    // if (self.props.location.state) {
+    //   paramData = self.props.location.state;
+    //   if (self.props.location.state.PageName === "SportRateView") {
+    //     debugger;
+    //     var dataParameter = {};
+    //     var pickUpAddress = {
+    //       Street: "",
+    //       Country: "",
+    //       State: "",
+    //       City: "",
+    //       ZipCode: ""
+    //     };
+    //     var destUpAddress = {
+    //       Street: "",
+    //       Country: "",
+    //       State: "",
+    //       City: "",
+    //       ZipCode: ""
+    //     };
+    //     if (paramData.isSearch) {
+    //       var rTypeofMove =
+    //         paramData.typesofMove === "p2p"
+    //           ? 1
+    //           : paramData.typesofMove === "d2p"
+    //           ? 2
+    //           : paramData.typesofMove === "d2d"
+    //           ? 4
+    //           : paramData.typesofMove === "p2d"
+    //           ? 3
+    //           : 0;
 
-    if (this.state.users.length != 0) {
-      for (var i = 0; i < this.state.users.length; i++) {
-        containerdetails.push({
-          ProfileCodeID: this.state.users[i].ProfileCodeID,
-          ContainerCode: this.state.users[i].StandardContainerCode,
-          Type: this.state.users[i].ContainerName,
-          ContainerQuantity: this.state.users[i].ContainerQuantity,
-          Temperature: this.state.users[i].Temperature
-        });
-      }
-    }
+    //       var rModeofTransport =
+    //         paramData.modeoftransport === "SEA"
+    //           ? "Ocean"
+    //           : paramData.modeoftransport === "AIR"
+    //           ? "Air"
+    //           : paramData.modeoftransport === "ROAD"
+    //           ? "inland"
+    //           : "";
+    //       var polAddress = paramData.polfullAddData;
+    //       var podAddress = paramData.podfullAddData;
 
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
-      data: {
-        QuoteType: this.state.containerLoadType,
-        ModeOfTransport: rModeofTransport,
-        Type: this.state.shipmentType,
-        TypeOfMove: this.state.typeofMove,
-        Containerdetails: containerdetails,
-        Currency: this.state.currencyCode,
-        MultiplePOL: multiPOL,
-        MultiplePOD: multiPOD,
-        MyWayUserID: 874588,
-        RateQueryDim: [
-          {
-            Quantity: 0,
-            Lengths: 0,
-            Width: 0,
-            Height: 0,
-            GrossWt: 0,
-            VolumeWeight: 0,
-            Volume: 0
-          }
-        ]
-      },
-      headers: authHeader()
-    }).then(function(response) {
+    //       var containerdetails = paramData.users;
+
+    //       var polLatLng = new Object();
+    //       var podLatLng = new Object();
+
+    //       var polmapData = polAddress.GeoCoordinate;
+    //       var polmarkerData = [];
+    //       if (typeof polmapData !== "undefined" && polmapData !== null) {
+    //         polLatLng.lat = Number(polmapData.split(",")[0]);
+    //         polLatLng.lng = Number(polmapData.split(",")[1]);
+
+    //         polmarkerData.push(polLatLng);
+    //       } else {
+    //         var mapPositionPOL = paramData.mapPositionPOL;
+    //         if (
+    //           mapPositionPOL !== null &&
+    //           typeof mapPositionPOL !== "undefined"
+    //         ) {
+    //           polmarkerData.push(mapPositionPOL);
+    //         }
+    //       }
+    //       var podmapData = podAddress.GeoCoordinate;
+    //       var podmarkerData = [];
+    //       if (typeof podmapData !== "undefined" && podmapData !== null) {
+    //         podLatLng.lat = Number(podmapData.split(",")[0]);
+    //         podLatLng.lng = Number(podmapData.split(",")[1]);
+
+    //         podmarkerData.push(podLatLng);
+    //       } else {
+    //         var mapPositionPOD = paramData.mapPositionPOD;
+    //         if (
+    //           mapPositionPOD !== null &&
+    //           typeof mapPositionPOD !== "undefined"
+    //         ) {
+    //           podmarkerData.push(mapPositionPOD);
+    //         }
+    //       }
+
+    //       self.setState({
+    //         mapPositionPOL: polmarkerData,
+    //         markerPositionPOD: podmarkerData,
+    //         users: paramData.users,
+    //         selected: paramData.selected
+    //       });
+
+    //       var selectedPOL =
+    //         paramData.polfullAddData.NameWoDiacritics || paramData.PickupCity;
+    //       var SelectPOD =
+    //         paramData.podfullAddData.NameWoDiacritics || paramData.DeliveryCity;
+    //       var selectedPOLPOD = selectedPOL + " To " + SelectPOD;
+
+    //       var cmbvalue = paramData.cbmVal;
+    //       if (cmbvalue != "") {
+    //         cmbvalue = parseInt(cmbvalue);
+    //       } else {
+    //         cmbvalue = 0;
+    //       }
+
+    //       if (paramData.typesofMove === "d2p") {
+    //         pickUpAddress = paramData.fullAddressPOL[0];
+    //       } else if (paramData.typesofMove === "p2d") {
+    //         destUpAddress = paramData.fullAddressPOD[0];
+    //       } else if (paramData.typesofMove === "d2d") {
+    //         pickUpAddress = paramData.fullAddressPOL[0];
+    //         destUpAddress = paramData.fullAddressPOD[0];
+    //       }
+
+    //       dataParameter = {
+    //         QuoteType: paramData.containerLoadType,
+    //         ModeOfTransport: rModeofTransport,
+    //         Type: paramData.shipmentType,
+    //         TypeOfMove: rTypeofMove,
+    //         BaseCurrency: paramData.currencyCode,
+
+    //         Containerdetails: containerdetails,
+
+    //         Currency: paramData.currencyCode,
+
+    //         RateQueryDim: paramData.multiCBM,
+    //         MyWayUserID: encryption(
+    //           window.localStorage.getItem("userid"),
+    //           "desc"
+    //         )
+    //       };
+
+    //       if (
+    //         encryption(window.localStorage.getItem("usertype"), "desc") ===
+    //         "Customer"
+    //       ) {
+    //         paramData.companyId = encryption(
+    //           window.localStorage.getItem("companyid"),
+    //           "desc"
+    //         );
+    //       }
+
+    //       dataParameter.Commodity = self.state.CommodityID;
+    //       dataParameter.CustomerId = parseInt(paramData.companyId);
+    //       dataParameter.PickUpAddressDetails = pickUpAddress;
+    //       dataParameter.DestinationAddressDetails = destUpAddress;
+    //       dataParameter.HazMat = paramData.HazMat === false ? 0 : 1;
+    //       dataParameter.IsSearchFromSpotRate = 1;
+
+    //       if (self.props.location.state.spotrateresponseTbl) {
+    //         var rateid = self.props.location.state.spotrateresponseTbl;
+    //         dataParameter.RatequeryID = rateid.RateQueryId;
+    //       } else {
+    //         dataParameter.RatequeryID = 0;
+    //       }
+
+    //       if (paramData.Custom_Clearance) {
+    //         dataParameter.CustomClearance =
+    //           paramData.Custom_Clearance === true ? 1 : 0;
+    //       } else {
+    //         dataParameter.CustomClearance = 0;
+    //       }
+
+    //       dataParameter.NonStackable = paramData.NonStackable === false ? 0 : 1;
+
+    //       var EquipmentType = [];
+    //       if (paramData.StandardContainerCode != undefined) {
+    //         EquipmentType = paramData.StandardContainerCode;
+    //       } else {
+    //         EquipmentType = paramData.EquipmentType;
+    //       }
+    //       var sportMultiPOL = [];
+    //       var sportMultiPOD = [];
+
+    //       if (self.props.location.state.spotrateresponseTbl1) {
+    //         var sdata = self.props.location.state.spotrateresponseTbl1;
+    //         for (let i = 0; i < sdata.length; i++) {
+    //           var objPOL = new Object();
+    //           objPOL.POL = sdata[i].OriginPort_Name;
+    //           objPOL.POLGeoCordinate = sdata[i].POLGeoCordinate;
+
+    //           sportMultiPOL.push(objPOL);
+
+    //           var objPOD = new Object();
+    //           objPOD.POD = sdata[i].DestinationPort_Name;
+    //           objPOD.PODGeoCordinate = sdata[i].PODGeoCordinate;
+
+    //           sportMultiPOD.push(objPOD);
+    //         }
+    //       }
+
+    //       for (var i = 0; i < self.state.polFilterArray.length; i++) {
+    //         if (self.state.polFilterArray[i].IsFilter == true) {
+    //           if (self.state.polFilterArray[i].POL === "") {
+    //             sportMultiPOL.push({
+    //               POL: self.state.polFilterArray[i].Address,
+    //               POLGeoCordinate: self.state.polFilterArray[i].POLGeoCordinate
+    //             });
+    //           } else {
+    //             sportMultiPOL.push({
+    //               POL: self.state.polFilterArray[i].POL,
+    //               POLGeoCordinate: self.state.polFilterArray[i].POLGeoCordinate
+    //             });
+    //           }
+    //         } else {
+    //           sportMultiPOL = [];
+    //           sportMultiPOL=self.state.polFilterArray;
+    //           break;
+    //         }
+    //       }
+    //       for (var i = 0; i < self.state.podFilterArray.length; i++) {
+    //         if (self.state.podFilterArray[i].IsFilter == true) {
+    //           if (self.state.podFilterArray[i].POD === "") {
+    //             sportMultiPOD.push({
+    //               POD: self.state.podFilterArray[i].Address,
+    //               PODGeoCordinate: self.state.podFilterArray[i].PODGeoCordinate
+    //             });
+    //           } else {
+    //             sportMultiPOD.push({
+    //               POD: self.state.podFilterArray[i].POD,
+    //               PODGeoCordinate: self.state.podFilterArray[i].PODGeoCordinate
+    //             });
+    //           }
+    //         } else {
+    //           sportMultiPOD = [];
+    //           sportMultiPOD=self.state.podFilterArray;
+              
+    //         }
+    //       }
+
+    //       dataParameter.MultiplePOL = sportMultiPOL;
+
+    //       dataParameter.MultiplePOD = sportMultiPOD;
+
+    //       var incoTerms = paramData.incoTerms;
+    //       self.setState({
+    //         polFilterArray: sportMultiPOL,
+    //         podFilterArray: sportMultiPOD,
+    //         shipmentType: paramData.shipmentType,
+    //         modeoftransport: paramData.modeoftransport,
+    //         containerLoadType: paramData.containerLoadType,
+    //         typeofMove: rTypeofMove,
+    //         selectaddress: selectedPOLPOD,
+    //         HazMat: paramData.HazMat,
+    //         NonStackable: paramData.NonStackable,
+    //         Custom_Clearance: paramData.Custom_Clearance,
+    //         SpacialEqmt: paramData.SpacialEqmt,
+    //         EquipmentType: EquipmentType,
+    //         spacEqmtType: paramData.spacEqmtType,
+    //         referType: paramData.referType,
+    //         flattack_openTop: paramData.flattack_openTop,
+    //         spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
+    //         specialEqtSelect: paramData.specialEqtSelect,
+    //         refertypeSelect: paramData.refertypeSelect,
+    //         specialEquipment: paramData.specialEquipment,
+    //         incoTerms,
+    //         polfullAddData: paramData.polfullAddData,
+    //         podfullAddData: paramData.podfullAddData,
+    //         currencyCode: paramData.currencyCode,
+    //         TruckType: paramData.TruckType,
+    //         TruckTypeData: paramData.TruckTypeData,
+
+    //         pickUpAddress: paramData.fullAddressPOL,
+    //         destAddress: paramData.fullAddressPOD,
+    //         multiCBM: paramData.multiCBM,
+    //         packageTypeData: paramData.packageTypeData,
+    //         fields: paramData.fields,
+    //         puAdd: paramData.puAdd,
+    //         DeliveryCity: paramData.DeliveryCity,
+    //         typesofMove: paramData.typesofMove,
+
+    //         ChargeableWeight: cmbvalue,
+    //         ModeOfTransport: rModeofTransport,
+    //         TypeOfMove: rTypeofMove,
+    //         PortOfDischargeCode:
+    //           paramData.containerLoadType == "AIR"
+    //             ? podAddress.Location !== "" &&
+    //               podAddress.Location !== undefined
+    //               ? podAddress.Location
+    //               : ""
+    //             : podAddress.UNECECode !== "" &&
+    //               podAddress.UNECECode !== undefined
+    //             ? podAddress.UNECECode
+    //             : "",
+    //         PortOfLoadingCode:
+    //           paramData.containerLoadType == "AIR"
+    //             ? polAddress.Location !== "" &&
+    //               polAddress.Location !== undefined
+    //               ? polAddress.Location
+    //               : ""
+    //             : polAddress.UNECECode !== "" &&
+    //               polAddress.UNECECode !== undefined
+    //             ? polAddress.UNECECode
+    //             : "",
+    //         Containerdetails: containerdetails,
+    //         OriginGeoCordinates:
+    //           polAddress.GeoCoordinate !== "" &&
+    //           polAddress.GeoCoordinate !== undefined
+    //             ? polAddress.GeoCoordinate
+    //             : paramData.OriginGeoCordinates,
+    //         DestGeoCordinate:
+    //           podAddress.GeoCoordinate !== "" &&
+    //           podAddress.GeoCoordinate !== undefined
+    //             ? podAddress.GeoCoordinate
+    //             : paramData.DestGeoCordinate,
+    //         PickupCity:
+    //           polAddress.NameWoDiacritics !== "" &&
+    //           polAddress.NameWoDiacritics !== undefined
+    //             ? polAddress.NameWoDiacritics
+    //             : "",
+    //         DeliveryCity:
+    //           podAddress.NameWoDiacritics !== "" &&
+    //           podAddress.NameWoDiacritics !== undefined
+    //             ? podAddress.NameWoDiacritics
+    //             : paramData.DeliveryCity,
+    //         Currency: paramData.currencyCode,
+    //         isSearch: paramData.isSearch,
+    //         cbmVal: paramData.cbmVal,
+    //         companyId: paramData.companyId,
+    //         companyName: paramData.companyName,
+    //         companyAddress: paramData.companyAddress,
+    //         contactName: paramData.contactName,
+    //         contactEmail: paramData.contactEmail
+    //       });
+    //     }
+
+    //     debugger;
+
+    //     axios({
+    //       method: "post",
+    //       url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
+    //       data: dataParameter,
+    //       headers: authHeader()
+    //     })
+    //       .then(function(response) {
+    //         debugger;
+    //         //console.log(response);
+    //         var ratetable = response.data.Table;
+    //         var ratetable1 = response.data.Table1;
+    //         var ratetable2 = response.data.Table2;
+
+    //         if (ratetable.length > 0) {
+    //           if (ratetable != null) {
+    //             var MinTTArray = [];
+    //             var MaxTTArray = [];
+    //             for (let i = 0; i < ratetable.length; i++) {
+    //               MinTTArray.push(
+    //                 parseInt(ratetable[i].TransitTime.split("-")[0])
+    //               );
+    //               MaxTTArray.push(
+    //                 parseInt(ratetable[i].TransitTime.split("-")[1])
+    //               );
+    //             }
+    //             self.setState({
+    //               RateDetails: ratetable,
+    //               tempRateDetails: ratetable,
+    //               loading: false,
+    //               commodityData: ratetable2,
+    //               MinTT: Math.min(...MinTTArray),
+    //               MaxTT: Math.max(...MaxTTArray),
+    //               value: Math.max(...MaxTTArray)
+    //             });
+    //           }
+    //           if (ratetable1 != null) {
+    //             self.setState({
+    //               RateSubDetails: ratetable1
+    //             });
+    //           }
+    //         } else {
+    //           self.setState({
+    //             loading: false
+    //           });
+    //         }
+    //       })
+    //       .catch(error => {
+    //         debugger;
+    //         var edata = error.response.data.split(":")[1];
+    //         var errorData = edata
+    //           .replace("}", "")
+    //           .replace(/'/g, "")
+    //           .replace(/ +/g, "");
+    //         if (errorData == "No Records Found") {
+    //           var RateDetails = [];
+    //           setTimeout(() => {
+    //             self.setState({ RateDetails });
+    //           }, 100);
+    //         }
+    //       });
+    //   }
+    // } else {
       debugger;
-      console.log(response);
-      var ratetable = response.data.Table;
-      var ratetable1 = response.data.Table1;
+      this.setState({
+        loading: true
+      });
+      // let self = this;
+      var rModeofTransport =
+        this.state.modeoftransport === "SEA"
+          ? "Ocean"
+          : this.state.modeoftransport === "AIR"
+          ? "Air"
+          : this.state.modeoftransport === "ROAD"
+          ? "inland"
+          : "";
+      var multiPOL = [];
+      var multiPOD = [];
+      var containerdetails = [];
+      for (var i = 0; i < this.state.polFilterArray.length; i++) {
+        if (this.state.polFilterArray[i].IsFilter == true) {
+          multiPOL.push({
+            POL: this.state.polFilterArray[i].POL,
+            POLGeoCordinate: this.state.polFilterArray[i].POLGeoCordinate
+          });
+        }
+      }
+      for (var i = 0; i < this.state.podFilterArray.length; i++) {
+        if (this.state.podFilterArray[i].IsFilter == true) {
+          multiPOD.push({
+            POD: this.state.podFilterArray[i].POD,
+            PODGeoCordinate: this.state.podFilterArray[i].PODGeoCordinate
+          });
+        }
+      }
 
-      if (ratetable != null) {
-        self.setState({
-          RateDetails: ratetable,
-          tempRateDetails: ratetable,
-          loading: false
-        });
+      if (this.state.users.length != 0) {
+        for (var i = 0; i < this.state.users.length; i++) {
+          containerdetails.push({
+            ProfileCodeID: this.state.users[i].ProfileCodeID,
+            ContainerCode: this.state.users[i].StandardContainerCode,
+            Type: this.state.users[i].ContainerName,
+            ContainerQuantity: this.state.users[i].ContainerQuantity,
+            Temperature: this.state.users[i].Temperature
+          });
+        }
       }
-      if (ratetable1 != null) {
-        self.setState({
-          RateSubDetails: ratetable1
-        });
-      }
-    });
+
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
+        data: {
+          QuoteType: this.state.containerLoadType,
+          ModeOfTransport: rModeofTransport,
+          Type: this.state.shipmentType,
+          TypeOfMove: this.state.typeofMove,
+          Containerdetails: containerdetails,
+          Currency: this.state.currencyCode,
+          MultiplePOL: multiPOL,
+          MultiplePOD: multiPOD,
+          MyWayUserID: 874588,
+          RateQueryDim: [
+            {
+              Quantity: 0,
+              Lengths: 0,
+              Width: 0,
+              Height: 0,
+              GrossWt: 0,
+              VolumeWeight: 0,
+              Volume: 0
+            }
+          ]
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        console.log(response);
+        var ratetable = response.data.Table;
+        var ratetable1 = response.data.Table1;
+
+        if (ratetable != null) {
+          self.setState({
+            RateDetails: ratetable,
+            tempRateDetails: ratetable,
+            loading: false
+          });
+        }
+        if (ratetable1 != null) {
+          self.setState({
+            RateSubDetails: ratetable1
+          });
+        }
+      });
+    // // }
   }
 
   handleCheck() {
@@ -1188,60 +1598,14 @@ class RateTable extends Component {
         Type: paramData.shipmentType,
         TypeOfMove: rTypeofMove,
         BaseCurrency: paramData.currencyCode,
-        // PortOfDischargeCode:
-        //   paramData.containerLoadType == "AIR"
-        //     ? podAddress.Location !== "" && podAddress.Location !== undefined
-        //       ? podAddress.Location
-        //       : ""
-        //     : podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
-        //     ? podAddress.UNECECode
-        //     : "",
-        // PortOfLoadingCode:
-        //   paramData.containerLoadType == "AIR"
-        //     ? polAddress.Location !== "" && polAddress.Location !== undefined
-        //       ? polAddress.Location
-        //       : ""
-        //     : polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
-        //     ? polAddress.UNECECode
-        //     : "",
+
         Containerdetails: containerdetails,
-        // OriginGeoCordinates:
-        //   polAddress.GeoCoordinate !== "" &&
-        //   polAddress.GeoCoordinate !== undefined
-        //     ? polAddress.GeoCoordinate
-        //     : paramData.OriginGeoCordinates,
-        // DestGeoCordinate:
-        //   podAddress.GeoCoordinate !== "" &&
-        //   podAddress.GeoCoordinate !== undefined
-        //     ? podAddress.GeoCoordinate
-        //     : paramData.DestGeoCordinate,
-        // PickupCity:
-        //   polAddress.NameWoDiacritics !== "" &&
-        //   polAddress.NameWoDiacritics !== undefined
-        //     ? polAddress.NameWoDiacritics
-        //     : paramData.fullAddressPOL[0].City,
-        // DeliveryCity:
-        //   podAddress.NameWoDiacritics !== "" &&
-        //   podAddress.NameWoDiacritics !== undefined
-        //     ? podAddress.NameWoDiacritics
-        //     : paramData.fullAddressPOD[0].City,
+
         Currency: paramData.currencyCode,
-        //ChargeableWeight: cmbvalue,
+
         RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
-
-      // if (
-      //   cmbvalue != null &&
-      //   cmbvalue != 0 &&
-      //   cmbvalue != undefined &&
-      //   cmbvalue != ""
-      // ) {
-      //   dataParameter.ChargeableWeight = cmbvalue;
-      // } else {
-      //   dataParameter.ChargeableWeight = cmbvalue;
-      //   dataParameter.RateQueryDim = paramData.multiCBM;
-      // }
 
       if (
         encryption(window.localStorage.getItem("usertype"), "desc") ===
@@ -1258,7 +1622,7 @@ class RateTable extends Component {
       dataParameter.PickUpAddressDetails = pickUpAddress;
       dataParameter.DestinationAddressDetails = destUpAddress;
       dataParameter.HazMat = paramData.HazMat === false ? 0 : 1;
-      dataParameter.IsSearchFromSpotRate = 0;
+      dataParameter.IsSearchFromSpotRate = 1;
 
       if (this.props.location.state.spotrateresponseTbl) {
         var rateid = this.props.location.state.spotrateresponseTbl;
@@ -1306,30 +1670,6 @@ class RateTable extends Component {
 
       dataParameter.MultiplePOD = sportMultiPOD;
 
-      // if(paramData.typesofMove === "p2p")
-      // {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      // this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      // this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "d2p") {
-      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "d2d") {
-      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "p2d") {
-      //   this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      // }
       var incoTerms = paramData.incoTerms;
       this.setState({
         polFilterArray: sportMultiPOL,
@@ -1469,15 +1809,16 @@ class RateTable extends Component {
       .catch(error => {
         debugger;
         var edata = error.response.data.split(":")[1];
-        var errorData = ((edata.replace("}", "")).replace(/'/g,'')).replace(/ +/g, "");
+        var errorData = edata
+          .replace("}", "")
+          .replace(/'/g, "")
+          .replace(/ +/g, "");
         if (errorData == "No Records Found") {
           var RateDetails = [];
           setTimeout(() => {
-            self.setState({ RateDetails });  
+            self.setState({ RateDetails });
           }, 100);
-          
         }
-        
       });
   }
 
@@ -2610,7 +2951,6 @@ class RateTable extends Component {
   }
 
   onPlaceSelected = place => {
-    console.log("plc", place);
     var arrPOL = "";
     for (let i = 0; i < this.state.polArray.length; i++) {
       arrPOL += this.state.polArray[i].Address + ",";
@@ -2677,7 +3017,6 @@ class RateTable extends Component {
   };
 
   onPlaceSelectedPOD = place => {
-    console.log("plc", place);
     var arrPOD = "";
     for (let i = 0; i < this.state.podArray.length; i++) {
       arrPOD += this.state.podArray[i].Address + ",";
