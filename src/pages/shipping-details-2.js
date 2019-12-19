@@ -241,7 +241,7 @@ class ShippingDetailsTwo extends Component {
       MessagesActivityDetails: [],
       iframeKey: 0,
       ModaType: "",
-      eve: "N/A",
+      eve: "",
       pageName: "",
       viewFilePath: "",
       delDocuId: "",
@@ -582,7 +582,7 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var shipperId = sid;
     var consigneeId = cid;
-    var hblno = self.state.addWat || this.state.HblNo;
+    var hblno = self.state.addWat.replace(/%20/g, " ") || this.state.HblNo.replace(/%20/g, " ")
     var SwitchConsigneeID = 0;
     var SwitchShipperID = 0;
 
@@ -708,7 +708,7 @@ class ShippingDetailsTwo extends Component {
       "GreenLineData"
     );
     localStorage.removeItem("GreenLineData");
-    var HblNo = hblno;
+    var HblNo = hblno.replace(/%20/g, " ");;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
@@ -1942,7 +1942,7 @@ class ShippingDetailsTwo extends Component {
                               {/* 4545 */}
                             </p>
                             <p className="est-time eve-clr" color={eventColor}>
-                              {this.state.eve}
+                              {this.state.eve !== "N/A" ? this.state.eve : ""}
                             </p>
                           </div>
                         </div>

@@ -4071,8 +4071,8 @@ class RateTable extends Component {
                               />
                               <label htmlFor={"pol" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
-                                {mapPOL.Address}
-                                {mapPOL.POL}
+                                {mapPOL.Address!==""?mapPOL.Address:mapPOL.POL}
+                                {/* {mapPOL.POL} */}
                               </h5>
                             </div>
                           ))}
@@ -4134,8 +4134,8 @@ class RateTable extends Component {
                               />
                               <label htmlFor={"pod" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
-                                {mapPOD.Address}
-                                {mapPOD.POD}
+                                {mapPOD.Address!==""?mapPOD.Address:mapPOD.POD}
+                                {/* {mapPOD.POD} */}
                               </h5>
                             </div>
                           ))}

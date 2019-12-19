@@ -106,7 +106,7 @@ class RateFinalizingStillBooking extends Component {
       EquipmentTypes: "",
       HAZMAT: 0,
       Customs_Clearance: 0,
-      Unstackable: "",
+      Unstackable: 0,
       conshineeAddData: [],
       shipperAddData: [],
       buyerAddData: [],
@@ -2119,11 +2119,10 @@ class RateFinalizingStillBooking extends Component {
                                 accessor: "POL",
 
                                 Cell: row => {
-                                  
                                   if (
-                                    this.state.Booking[0].CargoType === "LCL" ||                                     
+                                    this.state.Booking[0].CargoType === "LCL" ||
                                     this.state.Booking[0].CargoType === "FCL" ||
-                                    this.state.Booking[0].CargoType === "AIR" 
+                                    this.state.Booking[0].CargoType === "AIR"
                                   ) {
                                     return (
                                       <React.Fragment>
@@ -2150,7 +2149,7 @@ class RateFinalizingStillBooking extends Component {
                                 Cell: row => {
                                   debugger;
                                   if (
-                                    this.state.Booking[0].CargoType === "LCL" ||                                     
+                                    this.state.Booking[0].CargoType === "LCL" ||
                                     this.state.Booking[0].CargoType === "FCL" ||
                                     this.state.Booking[0].CargoType === "AIR"
                                   ) {
@@ -2228,7 +2227,10 @@ class RateFinalizingStillBooking extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={this.state.QuotationSubData.filter(x=>x.SaleQuoteID===row.original.SaleQuoteID1)}
+                                data={this.state.QuotationSubData.filter(
+                                  x =>
+                                    x.SaleQuoteID === row.original.SaleQuoteID1
+                                )}
                                 columns={[
                                   {
                                     columns: [
@@ -2328,7 +2330,7 @@ class RateFinalizingStillBooking extends Component {
                             </p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">Unstackable</p>
+                            <p className="details-title">Customs Clearance</p>
                             <p className="details-para">
                               {/* {this.state.EquipmentTypes} */}
                               {this.state.Customs_Clearance === 0
@@ -2336,6 +2338,20 @@ class RateFinalizingStillBooking extends Component {
                                 : "Yes"}
                             </p>
                           </div>
+                          {this.state.ContainerLoad == "LCL" ||
+                          this.state.ContainerLoad == "AIR" ? (
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">Unstackable</p>
+                              <p className="details-para">
+                                {/* {this.state.EquipmentTypes} */}
+                                {this.state.Unstackable === 0
+                                  ? "No"
+                                  : "Yes"}
+                              </p>
+                            </div>
+                          ) : (
+                            ""
+                          )}
                           <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
