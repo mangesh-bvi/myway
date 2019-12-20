@@ -1766,6 +1766,7 @@ table tbody tr:last-child {
 .rate-table-range .input-range__slider {
   border: 2px solid #0042a9 !important;
   background-color: #fff !important;
+  z-index: 9;
 }
 .rate-table-range .input-range {
   width: 250px !important;
@@ -3682,6 +3683,10 @@ table tbody tr:last-child {
 a.disabled {
   pointer-events: none;
   cursor: default;
+}
+
+#reversedRange {
+  direction: rtl
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 

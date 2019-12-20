@@ -148,7 +148,8 @@ class SpotRateDetails extends Component {
       MyWayFreeTime: 0,
       Mode: "",
       ModeOfTransport: "",
-      PageName:"SportRateView"
+      PageName:"SportRateView",
+      RatequeryID: 0
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -497,11 +498,11 @@ class SpotRateDetails extends Component {
     polfullAddData[
       "GeoCoordinate"
     ] = this.state.spotrateresponseTbl1[0].POLGeoCordinate;
-    polfullAddData["Location"] = "NSA";
+    polfullAddData["Location"] = "";
     polfullAddData[
       "NameWoDiacritics"
     ] = this.state.spotrateresponseTbl1[0].OriginPort_Name;
-    polfullAddData["OceanPortID"] = 1500;
+    polfullAddData["OceanPortID"] = 0;
     polfullAddData[
       "OceanPortLongName"
     ] = this.state.spotrateresponseTbl.PickUpAddress;
@@ -591,6 +592,7 @@ class SpotRateDetails extends Component {
     }
     this.state.currencyCode = this.state.spotrateresponseTbl.BaseCurrency;
     this.state.NonStackable = this.state.spotrateresponseTbl.NonStackable;
+    this.state.RatequeryID = this.state.spotrateresponseTbl.RateQueryId;
     debugger;
     self.setState({
       Custom_Clearance: this.state.Custom_Clearance,
@@ -652,7 +654,7 @@ class SpotRateDetails extends Component {
       values1: [],
       zoomPOD: 0,
       zoomPOL: 0,
-      RatequeryID: this.state.spotrateresponseTbl.RateQueryId
+      RatequeryID: this.state.RatequeryID
       
     });
     this.HandleViewRateData();
