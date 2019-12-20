@@ -295,12 +295,12 @@ class BookingTable extends Component {
                                 />
                                 {/* </a> */}
                                 {/* <a href="/rate-finalizing-still-booking"> */}
-                                <img
+                                {/* <img
                                   className="actionicon"
                                   src={Edit}
                                   alt="view-icon"
                                   onClick={e => this.HandleDocumentView(e, row)}
-                                />
+                                /> */}
                                 {/* </a> */}
 
                                 <img

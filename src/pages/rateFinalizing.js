@@ -7533,6 +7533,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
         </div>
+        <NotificationContainer/>
       </React.Fragment>
     );
   }

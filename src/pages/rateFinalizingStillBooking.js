@@ -2020,7 +2020,7 @@ class RateFinalizingStillBooking extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>
                 {this.state.copy === true
-                  ? "Clone Booking "
+                  ? "Booking Clone"
                   : this.state.isInsert === true
                   ? "Create Booking"
                   : this.state.BookingNo !== "" && this.state.isView === false
@@ -2943,7 +2943,7 @@ class RateFinalizingStillBooking extends Component {
                         ? this.CreateFileElement()
                         : null}
                     </div>
-                    {this.state.isView === true ? (
+                    {this.state.isView === false ? (
                       <center>
                         <button
                           onClick={

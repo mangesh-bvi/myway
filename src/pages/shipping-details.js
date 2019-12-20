@@ -113,7 +113,8 @@ class ShippingDetails extends Component {
       destCountry: [],
       ConsigneeID: 0,
       ShipperID: 0,
-      modalShare: false
+      modalShare: false,
+      loading: false
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.MapButn = this.MapButn.bind(this);
@@ -241,7 +242,10 @@ class ShippingDetails extends Component {
       onClick: e => {
         var hblNo = column.original["HBL#"];
         var eventManage = column.original["Event"];
-        this.HandleChangeShipmentDetails(hblNo, eventManage);
+        var pol = column.original["POL"];
+        if (pol !== "No record found" && pol !== "No Record Found") {
+          this.HandleChangeShipmentDetails(hblNo, eventManage);
+        }
       }
     };
   };
@@ -494,12 +498,21 @@ class ShippingDetails extends Component {
   handleSubmit = () => {
     debugger;
     let self = this;
+
     var FromETDDate = document.getElementById("FrDepDate").value;
     var ToETDDate = document.getElementById("ToDepDate").value;
     var FromETADate = document.getElementById("FrArrDate").value;
     var ToETADate = document.getElementById("ToArrDate").value;
-    var OriginCountry = this.state.originCountry;
-    var DestCntry = this.state.destCountry;
+    var OriginCountry = "";
+    if (this.state.originCountry.length > 0) {
+      OriginCountry = this.state.originCountry;
+    }
+
+    var DestCntry = "";
+    if (this.state.destCountry.length > 0) {
+      DestCntry = this.state.destCountry;
+    }
+
     var Consignee = this.state.ConsigneeID;
     var Shipper = this.state.ShipperID;
     var pol = this.state.fields["POL"] || "";
@@ -507,6 +520,7 @@ class ShippingDetails extends Component {
     var ShipmentStage = this.state.fields["ShipmentStage"] || "";
     var ModeOfTransport = this.state.fields["ModeOfTransport"] || "";
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
+    // self.setState({loading:false});
 
     axios({
       method: "post",
@@ -539,33 +553,40 @@ class ShippingDetails extends Component {
         ConsigneeID: Consignee
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      self.setState({ shipmentSummary: [] });
-      for (let i = 0; i < response.data.Table.length; i++) {
-        self.state.shipmentSummary.push({
-          "BL/HBL": response.data.Table[0]["BL#/HBL#"],
-          Consignee: response.data.Table[i]["Consignee"],
-          ConsigneeID: response.data.Table[i]["ConsigneeID"],
-          ETA: response.data.Table[i]["ETA"],
-          ETD: response.data.Table[i]["ETD"],
-          Event: "N/A",
-          "HBL#": response.data.Table[i]["HBL#"],
-          ModeOfTransport: response.data.Table[i]["ModeOfTransport"],
-          POD: response.data.Table[i]["POD"],
-          POL: response.data.Table[i]["POL"],
-          SR_No: i + 1,
-          Shipper: response.data.Table[i]["Shipper"],
-          ShipperID: response.data.Table[i]["ShipperID"],
-          Status: response.data.Table[i]["Current_Status"]
-        });
-      }
-      // self.setState({  });
-      self.setState(prevState => ({
-        modalAdvSearch: !prevState.modalAdvSearch,
-        shipmentSummary: self.state.shipmentSummary
-      }));
-    });
+    })
+      .then(function(response) {
+        debugger;
+        self.setState({ shipmentSummary: [], loading: false });
+        for (let i = 0; i < response.data.Table.length; i++) {
+          self.state.shipmentSummary.push({
+            "BL/HBL": response.data.Table[0]["BL#/HBL#"],
+            Consignee: response.data.Table[i]["Consignee"],
+            ConsigneeID: response.data.Table[i]["ConsigneeID"],
+            ETA: response.data.Table[i]["ETA"],
+            ETD: response.data.Table[i]["ETD"],
+            Event: "N/A",
+            "HBL#": response.data.Table[i]["HBL#"],
+            ModeOfTransport: response.data.Table[i]["ModeOfTransport"],
+            POD: response.data.Table[i]["POD"],
+            POL: response.data.Table[i]["POL"],
+            SR_No: i + 1,
+            Shipper: response.data.Table[i]["Shipper"],
+            ShipperID: response.data.Table[i]["ShipperID"],
+            Status: response.data.Table[i]["Current_Status"]
+          });
+        }
+        // self.setState({  });
+        self.setState(prevState => ({
+          shipmentSummary: self.state.shipmentSummary
+        }));
+      })
+      .catch(error => {
+        var data = error.response.data;
+        if (data) {
+          self.setState({ shipmentSummary: [{ POL: "No Record Found" }] });
+        }
+      });
+    this.setState({ shipmentSummary: [] });
     this.handleAdvanceSearchModalClose();
   };
 
@@ -595,22 +616,27 @@ class ShippingDetails extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt">
-            <NotificationContainer />
-            <div className="title-sect d-block-xs btnxs">
-              <h2>Shipments</h2>
-              <div className="d-flex d-block-xs align-items-center">
-                <input
-                  type="search"
-                  value={this.state.filterAll}
-                  onChange={this.filterAll}
-                  placeholder="Search here"
-                />
-                {/* <button
+          {this.state.loading === true ? (
+            <div className="position-relative h-100">
+              <div className="loader-icon"></div>
+            </div>
+          ) : (
+            <div className="cls-rt">
+              <NotificationContainer />
+              <div className="title-sect d-block-xs btnxs">
+                <h2>Shipments</h2>
+                <div className="d-flex d-block-xs align-items-center">
+                  <input
+                    type="search"
+                    value={this.state.filterAll}
+                    onChange={this.filterAll}
+                    placeholder="Search here"
+                  />
+                  {/* <button
                   onClick={this.toggleAdvSearch}
                   className="fa fa-search-plus advsearchicon"
                 ></button> */}
-                {/* <a
+                  {/* <a
                   href="#!"
                   onClick={this.toggleAdvSearch}
                   //style={{ display: this.state.mapDis }}
@@ -618,435 +644,445 @@ class ShippingDetails extends Component {
                 >
                   +
                 </a> */}
-                {/* <i class="fa fa-search-plus advsearchicon" aria-hidden="true"></i> */}
-                <a
-                  href="#!"
-                  onClick={this.listButn}
-                  style={{ display: this.state.listDis }}
-                  className="butn light-blue-butn mr-0"
-                >
-                  List View
-                </a>
-                <a
-                  href="#!"
-                  onClick={this.toggleAdvSearch}
-                  style={{ marginLeft: "15px" }}
-                  className="butn"
-                >
-                  Advance Search
-                </a>
-                <a
-                  href="#!"
-                  onClick={this.MapButn}
-                  style={{ display: this.state.mapDis }}
-                  className="butn"
-                >
-                  Map View
-                </a>
+                  {/* <i class="fa fa-search-plus advsearchicon" aria-hidden="true"></i> */}
+                  <a
+                    href="#!"
+                    onClick={this.listButn}
+                    style={{ display: this.state.listDis }}
+                    className="butn light-blue-butn mr-0"
+                  >
+                    List View
+                  </a>
+                  <button
+                    // href="#!"
+                    onClick={this.toggleAdvSearch}
+                    style={{ marginLeft: "15px" }}
+                    className="butn"
+                  >
+                    Advance Search
+                  </button>
+                  <a
+                    href="#!"
+                    onClick={this.MapButn}
+                    style={{ display: this.state.mapDis }}
+                    className="butn"
+                  >
+                    Map View
+                  </a>
+                </div>
               </div>
-            </div>
-            <div style={{ display: this.state.listDis }} className="map-tab">
-              <div className="full-map">
-                <GoogleMapReact
-                  bootstrapURLKeys={{
-                    key: appSettings.Keys
-                  }}
-                  defaultCenter={this.props.center}
-                  defaultZoom={this.props.zoom}
-                >
-                  <SourceIcon lat={59.955413} lng={30.337844} />
-                  <DestiIcon lat={59.9} lng={30.3} />
-                </GoogleMapReact>
+              <div style={{ display: this.state.listDis }} className="map-tab">
+                <div className="full-map">
+                  <GoogleMapReact
+                    bootstrapURLKeys={{
+                      key: appSettings.Keys
+                    }}
+                    defaultCenter={this.props.center}
+                    defaultZoom={this.props.zoom}
+                  >
+                    <SourceIcon lat={59.955413} lng={30.337844} />
+                    <DestiIcon lat={59.9} lng={30.3} />
+                  </GoogleMapReact>
+                </div>
               </div>
-            </div>
-            <div
-              style={{ display: this.state.mapDis }}
-              className="ag-fresh redirect-row"
-            >
-              <ReactTable
-                data={shipmentSummary}
-                // noDataText="<i className='fa fa-refresh fa-spin'></i>"
-                noDataText=""
-                onFilteredChange={this.onFilteredChange.bind(this)}
-                filtered={this.state.filtered}
-                defaultFilterMethod={(filter, row) =>
-                  String(row[filter.id]) === filter.value
-                }
-                columns={[
-                  {
-                    columns: [
-                      {
-                        Header: "BL/HBL",
-                        accessor: "BL/HBL",
-                        sortable: true
-                      },
-                      {
-                        Header: "HBL",
-                        accessor: "HBL#",
-                        sortable: true,
-                        show: false,
-                        Cell: row => {
-                          return row.value.trim();
-                        }
-                      },
-                      {
-                        Cell: row => {
-                          if (row.value === "Air") {
-                            return (
-                              <>
-                                <div
-                                  title="Plane"
-                                  id="transit"
-                                  className="shipment-img"
-                                >
-                                  <img src={PlaneColor} />
-                                </div>
-                              </>
-                            );
-                          } else if (row.value === "Ocean") {
-                            return (
-                              <div title="Ship" className="shipment-img">
-                                <img src={OceanColor} />
-                              </div>
-                            );
-                          } else if (row.value === "Inland") {
-                            return (
-                              <div title="Truck" className="shipment-img">
-                                <img src={TruckColor} />
-                              </div>
-                            );
-                          } else if (row.value === "Railway") {
-                            return (
-                              <div title="Rail" className="shipment-img">
-                                <img src={Rail} />
-                              </div>
-                            );
-                          } else {
-                            return row.value || "";
-                          }
-                        },
-                        Header: "Mode",
-                        accessor: "ModeOfTransport",
-                        sortable: true,
-                        filterable: true
-                      },
-                      {
-                        Header: "Consignee",
-                        accessor: "Consignee",
-                        Cell: row => {
-                          return (
-                            <span title={row.value} className="max3">
-                              {row.value || ""}
-                            </span>
-                          );
-                        }
-                      },
-                      {
-                        Header: "Shipper",
-                        accessor: "Shipper",
-                        Cell: row => {
-                          return (
-                            <span title={row.value} className="max3">
-                              {row.value || ""}
-                            </span>
-                          );
-                        }
-                      },
-                      {
-                        Header: "POL",
-                        accessor: "POL",
-                        Cell: row => {
-                          return (
-                            <span title={row.value} className="max3">
-                              {row.value || ""}
-                            </span>
-                          );
-                        }
-                      },
-
-                      {
-                        Header: "POD",
-                        accessor: "POD",
-                        Cell: row => {
-                          return (
-                            <span title={row.value} className="max3">
-                              {row.value || ""}
-                            </span>
-                          );
-                        }
-                      },
-                      {
-                        Cell: row => {
-                          if (row.value == "Planning in Progress") {
-                            return (
-                              <div
-                                title="Planning in Progress"
-                                className="status-img"
-                              >
-                                <img src={Delivered} />
-                              </div>
-                            );
-                          } else if (row.value === "Departed") {
-                            return (
-                              <div title="Departed" className="status-img">
-                                <img src={DepartedStatusColor} />
-                              </div>
-                            );
-                          } else if (row.value === "Transshipped") {
-                            return (
-                              <div title="Transshipped" className="status-img">
-                                <img src={TransshippedStatus} />
-                              </div>
-                            );
-                          } else if (row.value === "Arrived") {
-                            return (
-                              <div title="Arrived" className="status-img">
-                                <img src={ArrivedStatusColor} />
-                              </div>
-                            );
-                          } else if (row.value === "Booked") {
-                            return (
-                              <div title="Booked" className="status-img">
-                                <img src={BookedStatusColor} />
-                              </div>
-                            );
-                          } else if (row.value === "Gate In") {
-                            return (
-                              <div title="Gate In" className="status-img">
-                                <img src={GateInStatus} />
-                              </div>
-                            );
-                          } else if (row.value === "Approved") {
-                            return (
-                              <div title="Approved" className="status-img">
-                                <img src={ApprovedStatusColor} />
-                              </div>
-                            );
-                          } else if (row.value === "In Transit") {
-                            return (
-                              <div title="In Transit" className="status-img">
-                                <img src={InTransitStatus} />
-                              </div>
-                            );
-                          } else if (row.value === "Inland Transportation") {
-                            return (
-                              <div
-                                title="Inland Transportation"
-                                className="status-img"
-                              >
-                                <img src={InlandTransportStatusColor} />
-                              </div>
-                            );
-                          } else if (row.value === "Delivered") {
-                            return (
-                              <div title="Delivered" className="status-img">
-                                <img src={DeliveredStatusColor} />
-                              </div>
-                            );
-                          } else if (row.value === "DO Issued") {
-                            return <div title="DO Issued">{row.value}</div>;
-                          } else {
-                            return row.value || "";
-                          }
-                        },
-                        Header: "Status",
-                        accessor: "Status"
-                      },
-                      {
-                        Header: "ETA",
-                        accessor: "ETA"
-                      },
-                      {
-                        Header: "Event",
-                        accessor: "Event",
-                        Cell: row => {
-                          if (row.value == "N/A") {
-                            return (
-                              <div>
-                                <label className="">{row.value}</label>
-                              </div>
-                            );
-                          } else if (row.value === "On Time") {
-                            return (
-                              <div>
-                                <label className="girdevtgreen">
-                                  {row.value}
-                                </label>
-                              </div>
-                            );
-                          } else if (row.value === "Behind Schedule") {
-                            return (
-                              <div>
-                                <label className="girdevtred">
-                                  {row.value}
-                                </label>
-                              </div>
-                            );
-                          } else if (row.value === "Delay Risk") {
-                            return (
-                              <div>
-                                <label className="girdevtyellow">
-                                  {row.value}
-                                </label>
-                              </div>
-                            );
-                          } else {
-                            return row.value || "";
-                          }
-                        }
-                      },
-                      {
-                        Cell: row => {
-                          if (row.original.POL !== "No record found") {
-                            return (
-                              <i
-                                className="fa fa-share-alt shareicon"
-                                // onClick={this.toggleShare}
-                                onClick={e => this.HandleDocumentView(e, row)}
-                                aria-hidden="true"
-                              ></i>
-                            );
-                          } else {
-                            return <div></div>;
-                          }
-                        },
-                        Header: row => {
-                          return <span>&nbsp;</span>;
-                        },
-                        width: 40
-                      }
-                    ]
-                  },
-                  {
-                    show: false,
-                    Header: "All",
-                    id: "all",
-                    width: 0,
-                    resizable: false,
-                    sortable: false,
-                    Filter: () => {},
-                    getProps: () => {
-                      return {
-                        // style: { padding: "0px"}
-                      };
-                    },
-                    filterMethod: (filter, rows) => {
-                      const result = matchSorter(rows, filter.value, {
-                        keys: [
-                          "BL/HBL",
-                          "HBL#",
-                          "Consignee",
-                          "ConsigneeID",
-                          "Event",
-                          "ETA",
-                          "Status",
-                          "POD",
-                          "POL",
-                          "Shipper",
-                          "ModeOfTransport"
-                        ],
-                        threshold: matchSorter.rankings.WORD_STARTS_WITH
-                      });
-
-                      return result;
-                    },
-                    filterAll: true
+              <div
+                style={{ display: this.state.mapDis }}
+                className="ag-fresh redirect-row"
+              >
+                <ReactTable
+                  data={shipmentSummary}
+                  // noDataText="<i className='fa fa-refresh fa-spin'></i>"
+                  noDataText=""
+                  onFilteredChange={this.onFilteredChange.bind(this)}
+                  filtered={this.state.filtered}
+                  defaultFilterMethod={(filter, row) =>
+                    String(row[filter.id]) === filter.value
                   }
-                ]}
-                className="ship-summ-table -striped -highlight"
-                defaultPageSize={10}
-                getTrProps={this.HandleRowClickEvt}
-                minRows={1}
-              />
-            </div>
-            <Modal
-              className="advsearch-popup"
-              isOpen={this.state.modalAdvSearch}
-              toggle={this.toggleAdvSearch}
-              centered={true}
-            >
-              <ModalBody className="p-0">
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  onClick={this.toggleAdvSearch}
-                >
-                  <span>&times;</span>
-                </button>
-                <div className="container-fluid p-0">
-                  <div className="advsearch-sect">
-                    {/* <div className="">
+                  columns={[
+                    {
+                      columns: [
+                        {
+                          Header: "BL/HBL",
+                          accessor: "BL/HBL",
+                          sortable: true
+                        },
+                        {
+                          Header: "HBL",
+                          accessor: "HBL#",
+                          sortable: true,
+                          show: false,
+                          Cell: row => {
+                            return row.value.trim();
+                          }
+                        },
+                        {
+                          Cell: row => {
+                            if (row.value === "Air") {
+                              return (
+                                <>
+                                  <div
+                                    title="Plane"
+                                    id="transit"
+                                    className="shipment-img"
+                                  >
+                                    <img src={PlaneColor} />
+                                  </div>
+                                </>
+                              );
+                            } else if (row.value === "Ocean") {
+                              return (
+                                <div title="Ship" className="shipment-img">
+                                  <img src={OceanColor} />
+                                </div>
+                              );
+                            } else if (row.value === "Inland") {
+                              return (
+                                <div title="Truck" className="shipment-img">
+                                  <img src={TruckColor} />
+                                </div>
+                              );
+                            } else if (row.value === "Railway") {
+                              return (
+                                <div title="Rail" className="shipment-img">
+                                  <img src={Rail} />
+                                </div>
+                              );
+                            } else {
+                              return row.value || "";
+                            }
+                          },
+                          Header: "Mode",
+                          accessor: "ModeOfTransport",
+                          sortable: true,
+                          filterable: true
+                        },
+                        {
+                          Header: "Consignee",
+                          accessor: "Consignee",
+                          Cell: row => {
+                            return (
+                              <span title={row.value} className="max3">
+                                {row.value || ""}
+                              </span>
+                            );
+                          }
+                        },
+                        {
+                          Header: "Shipper",
+                          accessor: "Shipper",
+                          Cell: row => {
+                            return (
+                              <span title={row.value} className="max3">
+                                {row.value || ""}
+                              </span>
+                            );
+                          }
+                        },
+                        {
+                          Header: "POL",
+                          accessor: "POL",
+                          Cell: row => {
+                            return (
+                              <span title={row.value} className="max3">
+                                {row.value || ""}
+                              </span>
+                            );
+                          }
+                        },
+
+                        {
+                          Header: "POD",
+                          accessor: "POD",
+                          Cell: row => {
+                            return (
+                              <span title={row.value} className="max3">
+                                {row.value || ""}
+                              </span>
+                            );
+                          }
+                        },
+                        {
+                          Cell: row => {
+                            if (row.value == "Planning in Progress") {
+                              return (
+                                <div
+                                  title="Planning in Progress"
+                                  className="status-img"
+                                >
+                                  <img src={Delivered} />
+                                </div>
+                              );
+                            } else if (row.value === "Departed") {
+                              return (
+                                <div title="Departed" className="status-img">
+                                  <img src={DepartedStatusColor} />
+                                </div>
+                              );
+                            } else if (row.value === "Transshipped") {
+                              return (
+                                <div
+                                  title="Transshipped"
+                                  className="status-img"
+                                >
+                                  <img src={TransshippedStatus} />
+                                </div>
+                              );
+                            } else if (row.value === "Arrived") {
+                              return (
+                                <div title="Arrived" className="status-img">
+                                  <img src={ArrivedStatusColor} />
+                                </div>
+                              );
+                            } else if (row.value === "Booked") {
+                              return (
+                                <div title="Booked" className="status-img">
+                                  <img src={BookedStatusColor} />
+                                </div>
+                              );
+                            } else if (row.value === "Gate In") {
+                              return (
+                                <div title="Gate In" className="status-img">
+                                  <img src={GateInStatus} />
+                                </div>
+                              );
+                            } else if (row.value === "Approved") {
+                              return (
+                                <div title="Approved" className="status-img">
+                                  <img src={ApprovedStatusColor} />
+                                </div>
+                              );
+                            } else if (row.value === "In Transit") {
+                              return (
+                                <div title="In Transit" className="status-img">
+                                  <img src={InTransitStatus} />
+                                </div>
+                              );
+                            } else if (row.value === "Inland Transportation") {
+                              return (
+                                <div
+                                  title="Inland Transportation"
+                                  className="status-img"
+                                >
+                                  <img src={InlandTransportStatusColor} />
+                                </div>
+                              );
+                            } else if (row.value === "Delivered") {
+                              return (
+                                <div title="Delivered" className="status-img">
+                                  <img src={DeliveredStatusColor} />
+                                </div>
+                              );
+                            } else if (row.value === "DO Issued") {
+                              return <div title="DO Issued">{row.value}</div>;
+                            } else {
+                              return row.value || "";
+                            }
+                          },
+                          Header: "Status",
+                          accessor: "Status"
+                        },
+                        {
+                          Header: "ETA",
+                          accessor: "ETA"
+                        },
+                        {
+                          Header: "Event",
+                          accessor: "Event",
+                          Cell: row => {
+                            if (row.value == "N/A") {
+                              return (
+                                <div>
+                                  <label className="">{row.value}</label>
+                                </div>
+                              );
+                            } else if (row.value === "On Time") {
+                              return (
+                                <div>
+                                  <label className="girdevtgreen">
+                                    {row.value}
+                                  </label>
+                                </div>
+                              );
+                            } else if (row.value === "Behind Schedule") {
+                              return (
+                                <div>
+                                  <label className="girdevtred">
+                                    {row.value}
+                                  </label>
+                                </div>
+                              );
+                            } else if (row.value === "Delay Risk") {
+                              return (
+                                <div>
+                                  <label className="girdevtyellow">
+                                    {row.value}
+                                  </label>
+                                </div>
+                              );
+                            } else {
+                              return row.value || "";
+                            }
+                          }
+                        },
+                        {
+                          Cell: row => {
+                            debugger;
+                            if (
+                              row.original.POL !== "No record found" &&
+                              row.original.POL !== "No Record Found"
+                            ) {
+                              return (
+                                <i
+                                  className="fa fa-share-alt shareicon"
+                                  // onClick={this.toggleShare}
+                                  onClick={e => this.HandleDocumentView(e, row)}
+                                  aria-hidden="true"
+                                ></i>
+                              );
+                            } else {
+                              return <div></div>;
+                            }
+                          },
+                          Header: row => {
+                            return <span>&nbsp;</span>;
+                          },
+                          width: 40
+                        }
+                      ]
+                    },
+                    {
+                      show: false,
+                      Header: "All",
+                      id: "all",
+                      width: 0,
+                      resizable: false,
+                      sortable: false,
+                      Filter: () => {},
+                      getProps: () => {
+                        return {
+                          // style: { padding: "0px"}
+                        };
+                      },
+                      filterMethod: (filter, rows) => {
+                        const result = matchSorter(rows, filter.value, {
+                          keys: [
+                            "BL/HBL",
+                            "HBL#",
+                            "Consignee",
+                            "ConsigneeID",
+                            "Event",
+                            "ETA",
+                            "Status",
+                            "POD",
+                            "POL",
+                            "Shipper",
+                            "ModeOfTransport"
+                          ],
+                          threshold: matchSorter.rankings.WORD_STARTS_WITH
+                        });
+
+                        return result;
+                      },
+                      filterAll: true
+                    }
+                  ]}
+                  className="ship-summ-table -striped -highlight"
+                  defaultPageSize={10}
+                  getTrProps={this.HandleRowClickEvt}
+                  minRows={1}
+                />
+              </div>
+              <Modal
+                className="advsearch-popup"
+                isOpen={this.state.modalAdvSearch}
+                toggle={this.toggleAdvSearch}
+                centered={true}
+              >
+                <ModalBody className="p-0">
+                  <button
+                    type="button"
+                    className="close"
+                    data-dismiss="modal"
+                    onClick={this.toggleAdvSearch}
+                  >
+                    <span>&times;</span>
+                  </button>
+                  <div className="container-fluid p-0">
+                    <div className="advsearch-sect">
+                      {/* <div className="">
                       <h3>Advanced Search</h3>
                     </div> */}
-                    <div
-                      style={{
-                        background: "#fff",
-                        padding: "15px",
-                        borderRadius: "15px"
-                      }}
-                    >
-                      <div className="row">
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            <label>Mode Of Transport</label>
-                            <select
-                              onChange={this.HandleChangeSelect.bind(
-                                this,
-                                "ModeOfTransport"
-                              )}
-                              name={"ModeOfTransport"}
-                              value={this.state.fields["ModeOfTransport"]}
-                            >
-                              {this.state.selectMOT.map(team => (
-                                <option key={team.key} value={team.key}>
-                                  {team.value}
-                                </option>
-                              ))}
-                            </select>
+                      <div
+                        style={{
+                          background: "#fff",
+                          padding: "15px",
+                          borderRadius: "15px"
+                        }}
+                      >
+                        <div className="row">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              <label>Mode Of Transport</label>
+                              <select
+                                onChange={this.HandleChangeSelect.bind(
+                                  this,
+                                  "ModeOfTransport"
+                                )}
+                                name={"ModeOfTransport"}
+                                value={this.state.fields["ModeOfTransport"]}
+                              >
+                                {this.state.selectMOT.map(team => (
+                                  <option key={team.key} value={team.key}>
+                                    {team.value}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            <label>Shipment Stage</label>
-                            <select
-                              onChange={this.HandleChangeSelect.bind(
-                                this,
-                                "ShipmentStage"
-                              )}
-                              name={"ShipmentStage"}
-                              value={this.state.fields["ShipmentStage"]}
-                            >
-                              <option value="Select">Select Stage</option>
-                              {this.state.selectShipStage.map(team => (
-                                <option key={team.StageId} value={team.StageId}>
-                                  {team.StageName}
-                                </option>
-                              ))}
-                            </select>
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              <label>Shipment Stage</label>
+                              <select
+                                onChange={this.HandleChangeSelect.bind(
+                                  this,
+                                  "ShipmentStage"
+                                )}
+                                name={"ShipmentStage"}
+                                value={this.state.fields["ShipmentStage"]}
+                              >
+                                <option value="Select">Select Stage</option>
+                                {this.state.selectShipStage.map(team => (
+                                  <option
+                                    key={team.StageId}
+                                    value={team.StageId}
+                                  >
+                                    {team.StageName}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                           </div>
-                        </div>
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-6">
-                          {/* <div class="rate-radio-cntr"> */}
-                          <div
-                            className="login-fields"
-                            style={{ width: "100%" }}
-                          >
-                            <label
-                              className="auto-cmp"
-                              style={{ padding: "0" }}
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-6">
+                            {/* <div class="rate-radio-cntr"> */}
+                            <div
+                              className="login-fields"
+                              style={{ width: "100%" }}
                             >
-                              Consignee
-                            </label>
-                            {/* <Select
+                              <label
+                                className="auto-cmp"
+                                style={{ padding: "0" }}
+                              >
+                                Consignee
+                              </label>
+                              {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
                             isMulti
                             options={optionsOrigin}
                             /> */}
-                            {/* <Autosuggest
+                              {/* <Autosuggest
                             suggestions={suggestions1}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested1}
                             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -1054,43 +1090,43 @@ class ShippingDetails extends Component {
                             renderSuggestion={this.renderSuggestion1}
                             inputProps={inputProps}
                           /> */}
-                            <Autocomplete
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.Consignee}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                  //value={item.Company_ID}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Consignee"
-                              )}
-                              //menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                item => item.Company_ID,
-                                "Consignee"
-                              )}
-                              value={this.state.fields["Consignee"]}
-                            />
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Consignee}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                    //value={item.Company_ID}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Consignee"
+                                )}
+                                //menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Consignee"
+                                )}
+                                value={this.state.fields["Consignee"]}
+                              />
+                            </div>
                           </div>
-                        </div>
-                        {/* </div> */}
+                          {/* </div> */}
 
-                        {/* </div> */}
+                          {/* </div> */}
 
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            {/* <label>SELECT</label> */}
-                            {/* <div>
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              {/* <label>SELECT</label> */}
+                              {/* <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
                             <label for="exist-cust">ETD</label>
                           </div>
@@ -1098,52 +1134,52 @@ class ShippingDetails extends Component {
                             <input type="radio" name="cust-select" id="new-cust" />
                             <label for="new-cust">ATD</label>
                         </div> */}
-                            <div>
-                              <label>From Date Of Departure</label>
-                              <DatePicker
-                                id="FrDepDate"
-                                selected={this.state.FrDepDate}
-                                showMonthDropdown
-                                showYearDropdown
-                                onChange={this.handleChange.bind(
-                                  this,
-                                  "FromDeparture"
-                                )}
-                              />
+                              <div>
+                                <label>From Date Of Departure</label>
+                                <DatePicker
+                                  id="FrDepDate"
+                                  selected={this.state.FrDepDate}
+                                  showMonthDropdown
+                                  showYearDropdown
+                                  onChange={this.handleChange.bind(
+                                    this,
+                                    "FromDeparture"
+                                  )}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            <div>
-                              <label>To Date Of Departure</label>
-                              <DatePicker
-                                id="ToDepDate"
-                                selected={this.state.ToDepDate}
-                                showMonthDropdown
-                                showYearDropdown
-                                onChange={this.handleChange.bind(
-                                  this,
-                                  "ToDeparture"
-                                )}
-                              />
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              <div>
+                                <label>To Date Of Departure</label>
+                                <DatePicker
+                                  id="ToDepDate"
+                                  selected={this.state.ToDepDate}
+                                  showMonthDropdown
+                                  showYearDropdown
+                                  onChange={this.handleChange.bind(
+                                    this,
+                                    "ToDeparture"
+                                  )}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        {/* <div class=" login-fields col-md-4"> */}
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-6">
-                          {/* <div class="rate-radio-cntr"> */}
-                          <div
-                            className="login-fields"
-                            style={{ width: "100%" }}
-                          >
-                            <label
-                              className="auto-cmp"
-                              style={{ padding: "0" }}
+                          {/* <div class=" login-fields col-md-4"> */}
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-6">
+                            {/* <div class="rate-radio-cntr"> */}
+                            <div
+                              className="login-fields"
+                              style={{ width: "100%" }}
                             >
-                              Shipper
-                            </label>
-                            {/* <Select
+                              <label
+                                className="auto-cmp"
+                                style={{ padding: "0" }}
+                              >
+                                Shipper
+                              </label>
+                              {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
@@ -1151,7 +1187,7 @@ class ShippingDetails extends Component {
                             options={optionsOrigin}
                             /> */}
 
-                            {/* <Autosuggest
+                              {/* <Autosuggest
                             suggestions={suggestions}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
@@ -1159,41 +1195,41 @@ class ShippingDetails extends Component {
                             renderSuggestion={this.renderSuggestion}
                             inputProps={inputShip}
                           /> */}
-                            <Autocomplete
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.Shipper}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              value={this.state.fields["Shipper"]}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Shipper"
-                              )}
-                              //menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                item => item.Company_ID,
-                                "Shipper"
-                              )}
-                            />
+                              <Autocomplete
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.Shipper}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Shipper"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Shipper"
+                                )}
+                                //menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  item => item.Company_ID,
+                                  "Shipper"
+                                )}
+                              />
+                            </div>
+                            {/* </div> */}
                           </div>
                           {/* </div> */}
                         </div>
-                        {/* </div> */}
-                      </div>
-                      <div className="row">
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            {/* <label>SELECT PARAMETER</label>
+                        <div className="row">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              {/* <label>SELECT PARAMETER</label>
                           <div>
                             <input type="radio" name="cust-select" id="exist-cust"/>
                             <label for="exist-cust">ETA</label>
@@ -1202,49 +1238,49 @@ class ShippingDetails extends Component {
                             <input type="radio" name="cust-select" id="new-cust" />
                             <label for="new-cust">ATA</label>
                         </div> */}
-                            <div>
-                              <label>From Date Of Arrival</label>
-                              <DatePicker
-                                id="FrArrDate"
-                                selected={this.state.FrArrDate}
-                                showMonthDropdown
-                                showYearDropdown
-                                onChange={this.handleChange.bind(
-                                  this,
-                                  "FromArrival"
-                                )}
-                              />
+                              <div>
+                                <label>From Date Of Arrival</label>
+                                <DatePicker
+                                  id="FrArrDate"
+                                  selected={this.state.FrArrDate}
+                                  showMonthDropdown
+                                  showYearDropdown
+                                  onChange={this.handleChange.bind(
+                                    this,
+                                    "FromArrival"
+                                  )}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            <div>
-                              <label>To Date Of Arrival</label>
-                              <DatePicker
-                                id="ToArrDate"
-                                selected={this.state.ToArrDate}
-                                showMonthDropdown
-                                showYearDropdown
-                                onChange={this.handleChange.bind(
-                                  this,
-                                  "ToArrival"
-                                )}
-                              />
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              <div>
+                                <label>To Date Of Arrival</label>
+                                <DatePicker
+                                  id="ToArrDate"
+                                  selected={this.state.ToArrDate}
+                                  showMonthDropdown
+                                  showYearDropdown
+                                  onChange={this.handleChange.bind(
+                                    this,
+                                    "ToArrival"
+                                  )}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            {/* <div class="rate-radio-cntr"> */}
-                            <div
-                              className="login-fields"
-                              style={{ width: "100%" }}
-                            >
-                              <label style={{ padding: "0" }}>
-                                Origin Country
-                              </label>
-                              {/* <Select
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              {/* <div class="rate-radio-cntr"> */}
+                              <div
+                                className="login-fields"
+                                style={{ width: "100%" }}
+                              >
+                                <label style={{ padding: "0" }}>
+                                  Origin Country
+                                </label>
+                                {/* <Select
                             className="rate-dropdown track-dropdown"
                             id = "originCountry"
                             closeMenuOnSelect={false}
@@ -1256,37 +1292,37 @@ class ShippingDetails extends Component {
                             onChange = {this.handleChangeCountry.bind(this,"OriginCountry")}
                             value = {this.state.originCountry}
                             /> */}
-                              <select
-                                onChange={this.handleChangeCountry.bind(
-                                  this,
-                                  "OriginCountry"
-                                )}
-                                name={"originCountry"}
-                                value={this.state.fields["OriginCountry"]}
-                              >
-                                <option value="Select">Select Country</option>
-                                {this.state.optionsOrigin.map(team => (
-                                  <option key={team.value} value={team.label}>
-                                    {team.label}
-                                  </option>
-                                ))}
-                              </select>
+                                <select
+                                  onChange={this.handleChangeCountry.bind(
+                                    this,
+                                    "OriginCountry"
+                                  )}
+                                  name={"originCountry"}
+                                  value={this.state.fields["OriginCountry"]}
+                                >
+                                  <option value="Select">Select Country</option>
+                                  {this.state.optionsOrigin.map(team => (
+                                    <option key={team.value} value={team.label}>
+                                      {team.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              {/* </div> */}
                             </div>
-                            {/* </div> */}
                           </div>
-                        </div>
-                        {/* </div> */}
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields">
-                            {/* <div class="rate-radio-cntr"> */}
-                            <div
-                              className="login-fields"
-                              style={{ width: "100%" }}
-                            >
-                              <label style={{ padding: "0" }}>
-                                Destination Country
-                              </label>
-                              {/* <Select
+                          {/* </div> */}
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields">
+                              {/* <div class="rate-radio-cntr"> */}
+                              <div
+                                className="login-fields"
+                                style={{ width: "100%" }}
+                              >
+                                <label style={{ padding: "0" }}>
+                                  Destination Country
+                                </label>
+                                {/* <Select
                             className="rate-dropdown track-dropdown"
                             id = "destinCountry"
                             closeMenuOnSelect={false}
@@ -1296,135 +1332,137 @@ class ShippingDetails extends Component {
                             onChange = {this.handleChangeCountry.bind(this,"DestinationCountry")}
                             value = {this.state.destCountry}
                             /> */}
-                              <select
-                                onChange={this.handleChangeCountry.bind(
-                                  this,
-                                  "DestinationCountry"
-                                )}
-                                name={"destinCountry"}
-                                value={this.state.fields["DestinationCountry"]}
-                              >
-                                <option value="Select">Select Country</option>
-                                {this.state.optionsOrigin.map(team => (
-                                  <option key={team.value} value={team.label}>
-                                    {team.label}
-                                  </option>
-                                ))}
-                              </select>
+                                <select
+                                  onChange={this.handleChangeCountry.bind(
+                                    this,
+                                    "DestinationCountry"
+                                  )}
+                                  name={"destinCountry"}
+                                  value={
+                                    this.state.fields["DestinationCountry"]
+                                  }
+                                >
+                                  <option value="Select">Select Country</option>
+                                  {this.state.optionsOrigin.map(team => (
+                                    <option key={team.value} value={team.label}>
+                                      {team.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              {/* </div> */}
                             </div>
-                            {/* </div> */}
                           </div>
                         </div>
-                      </div>
-                      {/* </div> */}
+                        {/* </div> */}
 
-                      <div className="row">
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields divwd">
-                            {/* <div class="rate-radio-cntr"> */}
-                            <div style={{ width: "100%" }}>
-                              <label style={{ padding: "0" }}>POL</label>
-                              <Autocomplete
-                                getItemValue={item => item.NameWoDiacritics}
-                                items={this.state.POL}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.NameWoDiacritics}
-                                  </div>
-                                )}
-                                value={this.state.fields["POL"]}
-                                onChange={this.HandleChangePOLPOD.bind(
-                                  this,
-                                  "POL"
-                                )}
-                                menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectPOLPOD.bind(
-                                  this,
-                                  "POL"
-                                )}
-                                isMulti={true}
-                              />
+                        <div className="row">
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields divwd">
+                              {/* <div class="rate-radio-cntr"> */}
+                              <div style={{ width: "100%" }}>
+                                <label style={{ padding: "0" }}>POL</label>
+                                <Autocomplete
+                                  getItemValue={item => item.NameWoDiacritics}
+                                  items={this.state.POL}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                    >
+                                      {item.NameWoDiacritics}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["POL"]}
+                                  onChange={this.HandleChangePOLPOD.bind(
+                                    this,
+                                    "POL"
+                                  )}
+                                  menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectPOLPOD.bind(
+                                    this,
+                                    "POL"
+                                  )}
+                                  isMulti={true}
+                                />
+                              </div>
+                              {/* </div> */}
                             </div>
-                            {/* </div> */}
                           </div>
-                        </div>
-                        <div className="col-12 col-sm-6 col-md-6 col-lg-3">
-                          <div className="login-fields divwd">
-                            {/* <div class="rate-radio-cntr"> */}
-                            <div style={{ width: "100%" }}>
-                              <label style={{ padding: "0" }}>POD</label>
-                              {/* <Select
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+                            <div className="login-fields divwd">
+                              {/* <div class="rate-radio-cntr"> */}
+                              <div style={{ width: "100%" }}>
+                                <label style={{ padding: "0" }}>POD</label>
+                                {/* <Select
                             className="rate-dropdown track-dropdown"
                             closeMenuOnSelect={false}
                             components={animatedComponents}
                             isMulti
                             options={this.state.optionsOrigin}
                             /> */}
-                              <Autocomplete
-                                getItemValue={item => item.NameWoDiacritics}
-                                items={this.state.POD}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.NameWoDiacritics}
-                                  </div>
-                                )}
-                                value={this.state.fields["POD"]}
-                                onChange={this.HandleChangePOLPOD.bind(
-                                  this,
-                                  "POD"
-                                )}
-                                menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectPOLPOD.bind(
-                                  this,
-                                  "POD"
-                                )}
-                                isMulti
-                              />
+                                <Autocomplete
+                                  getItemValue={item => item.NameWoDiacritics}
+                                  items={this.state.POD}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                    >
+                                      {item.NameWoDiacritics}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["POD"]}
+                                  onChange={this.HandleChangePOLPOD.bind(
+                                    this,
+                                    "POD"
+                                  )}
+                                  menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectPOLPOD.bind(
+                                    this,
+                                    "POD"
+                                  )}
+                                  isMulti
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-12 col-sm-12 col-md-12 col-lg-5">
-                          <div className="login-fields divwd">
-                            <div>
-                              <label
-                                className="hidden-xs"
-                                style={{ padding: "11px" }}
-                              ></label>
-                              <button
-                                type="button"
-                                className="butn mr-3"
-                                onClick={this.handleSubmit}
-                              >
-                                Submit
-                              </button>
-                              <button
-                                type="button"
-                                className="butn cancel-butn"
-                                onClick={this.handleAdvanceSearchModalClose.bind(
-                                  this
-                                )}
-                              >
-                                Cancel
-                              </button>
+                          <div className="col-12 col-sm-12 col-md-12 col-lg-5">
+                            <div className="login-fields divwd">
+                              <div>
+                                <label
+                                  className="hidden-xs"
+                                  style={{ padding: "11px" }}
+                                ></label>
+                                <button
+                                  type="button"
+                                  className="butn mr-3"
+                                  onClick={this.handleSubmit}
+                                >
+                                  Submit
+                                </button>
+                                <button
+                                  type="button"
+                                  className="butn cancel-butn"
+                                  onClick={this.handleAdvanceSearchModalClose.bind(
+                                    this
+                                  )}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* <div className="transit-sect-overflow">
+                      {/* <div className="transit-sect-overflow">
                         {transitpopup.map((cell, i) => {
                           debugger;
                           var imgSrc = "";
@@ -1481,96 +1519,97 @@ class ShippingDetails extends Component {
                           );
                         })}
                       </div> */}
-                  </div>
-                </div>
-              </ModalBody>
-            </Modal>
-
-            <Modal
-              className="amnt-popup"
-              isOpen={this.state.modalShare}
-              toggle={this.toggleShare}
-              centered={true}
-            >
-              <ModalBody>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  onClick={this.toggleShare}
-                >
-                  <span>&times;</span>
-                </button>
-                <div
-                  style={{
-                    background: "#fff",
-                    borderRadius: "15px",
-                    padding: "15px"
-                  }}
-                >
-                  <h3 className="mb-4 text-center">Share</h3>
-                  <div className="txt-cntr">
-                    <div className="d-flex align-items-center">
-                      <p className="col-12 col-sm-12 details-title mr-3">
-                        Shareable Link
-                      </p>
-                      <div class="spe-equ d-block m-0 flex-grow-1">
-                        <input
-                          type="text"
-                          disabled
-                          class="w-100"
-                          style={{ border: "none" }}
-                          value={this.state.shareLink}
-                        />
-                      </div>
                     </div>
                   </div>
-                  <div className="text-right d-flex justify-content-end mb-0">
-                    <Button
-                      className="butn cancel-butn"
-                      onClick={this.toggleShare}
-                    >
-                      Cancel
-                    </Button>
-                    <a
-                      href={
-                        "mailto:username@example.com?subject=Shipment Details&body=Check the link :" +
-                        this.state.shareLink
-                      }
-                      className="butn mx-3"
-                      onClick={this.onShare}
-                    >
-                      Share
-                    </a>
-                    <CopyToClipboard
-                      onCopy={this.onCopy}
-                      text={this.state.shareLink}
-                    >
+                </ModalBody>
+              </Modal>
+
+              <Modal
+                className="amnt-popup"
+                isOpen={this.state.modalShare}
+                toggle={this.toggleShare}
+                centered={true}
+              >
+                <ModalBody>
+                  <button
+                    type="button"
+                    className="close"
+                    data-dismiss="modal"
+                    onClick={this.toggleShare}
+                  >
+                    <span>&times;</span>
+                  </button>
+                  <div
+                    style={{
+                      background: "#fff",
+                      borderRadius: "15px",
+                      padding: "15px"
+                    }}
+                  >
+                    <h3 className="mb-4 text-center">Share</h3>
+                    <div className="txt-cntr">
+                      <div className="d-flex align-items-center">
+                        <p className="col-12 col-sm-12 details-title mr-3">
+                          Shareable Link
+                        </p>
+                        <div class="spe-equ d-block m-0 flex-grow-1">
+                          <input
+                            type="text"
+                            disabled
+                            class="w-100"
+                            style={{ border: "none" }}
+                            value={this.state.shareLink}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right d-flex justify-content-end mb-0">
                       <Button
-                        className="butn blue-butn"
-                        // onClick={this.toggleShare}
+                        className="butn cancel-butn"
+                        onClick={this.toggleShare}
                       >
-                        Copy
+                        Cancel
                       </Button>
-                    </CopyToClipboard>
-                  </div>
-                  <div className="text-right">
-                    {this.state.copied ? (
-                      <span
-                        style={{
-                          color: "#39b54a",
-                          marginTop: "5px",
-                          display: "block"
-                        }}
+                      <a
+                        href={
+                          "mailto:username@example.com?subject=Shipment Details&body=Check the link :" +
+                          this.state.shareLink
+                        }
+                        className="butn mx-3"
+                        onClick={this.onShare}
                       >
-                        Copied.
-                      </span>
-                    ) : null}
+                        Share
+                      </a>
+                      <CopyToClipboard
+                        onCopy={this.onCopy}
+                        text={this.state.shareLink}
+                      >
+                        <Button
+                          className="butn blue-butn"
+                          // onClick={this.toggleShare}
+                        >
+                          Copy
+                        </Button>
+                      </CopyToClipboard>
+                    </div>
+                    <div className="text-right">
+                      {this.state.copied ? (
+                        <span
+                          style={{
+                            color: "#39b54a",
+                            marginTop: "5px",
+                            display: "block"
+                          }}
+                        >
+                          Copied.
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              </ModalBody>
-            </Modal>
-          </div>
+                </ModalBody>
+              </Modal>
+            </div>
+          )}
         </div>
       </div>
     );
