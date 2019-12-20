@@ -575,31 +575,50 @@ class RateTable extends Component {
 
   toggleQuantPOLSave() {
     debugger;
-    this.state.polFilterArray = this.state.polArray;
-    this.setState(prevState => ({
-      polFilterArray: this.state.polFilterArray,
-      modalPOL: !this.state.modalPOL
-      //modalQuant: !prevState.modalQuant
-    }));
+
+    if (this.props.location.state.PageName === "SportRateView") {
+      this.state.polFilterArray = this.state.polArray.slice(1);
+      this.setState(prevState => ({
+        polFilterArray: this.state.polFilterArray,
+        modalPOL: !this.state.modalPOL
+        //modalQuant: !prevState.modalQuant
+      }));
+    } else {
+      this.state.polFilterArray = this.state.polArray;
+      this.setState(prevState => ({
+        polFilterArray: this.state.polFilterArray,
+        modalPOL: !this.state.modalPOL
+        //modalQuant: !prevState.modalQuant
+      }));
+    }
+
     this.HandleMultiPOLPODFilter();
   }
 
   toggleQuantPODSave() {
     debugger;
-    this.state.podFilterArray = this.state.podArray;
-    this.setState(prevState => ({
-      podFilterArray: this.state.podFilterArray,
-      modalPOD: !this.state.modalPOD
-      //modalQuant: !prevState.modalQuant
-    }));
+
+    if (this.props.location.state.PageName === "SportRateView") {
+      this.state.podFilterArray = this.state.podArray.slice(1);
+      this.setState(prevState => ({
+        podFilterArray: this.state.podFilterArray,
+        modalPOD: !this.state.modalPOD
+        //modalQuant: !prevState.modalQuant
+      }));
+    } else {
+      this.state.podFilterArray = this.state.podArray;
+      this.setState(prevState => ({
+        podFilterArray: this.state.podFilterArray,
+        modalPOD: !this.state.modalPOD
+        //modalQuant: !prevState.modalQuant
+      }));
+    }
 
     this.HandleMultiPOLPODFilter();
   }
 
   HandleMultiPOLPODFilter() {
-    this.setState({
-      loading: true
-    });
+    var paramData;
     let self = this;
     var rModeofTransport =
       this.state.modeoftransport === "SEA"
@@ -711,24 +730,25 @@ class RateTable extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-      console.log(response);
-      var ratetable = response.data.Table;
-      var ratetable1 = response.data.Table1;
+        debugger;
+        console.log(response);
+        var ratetable = response.data.Table;
+        var ratetable1 = response.data.Table1;
 
-      if (ratetable != null) {
-        self.setState({
-          RateDetails: ratetable,
-          tempRateDetails: ratetable,
-          loading: false
-        });
-      }
-      if (ratetable1 != null) {
-        self.setState({
-          RateSubDetails: ratetable1
-        });
-      }
-    });
+        if (ratetable != null) {
+          self.setState({
+            RateDetails: ratetable,
+            tempRateDetails: ratetable,
+            loading: false
+          });
+        }
+        if (ratetable1 != null) {
+          self.setState({
+            RateSubDetails: ratetable1
+          });
+        }
+      });
+    // // }
   }
 
   handleCheck() {
@@ -1301,60 +1321,14 @@ class RateTable extends Component {
         Type: paramData.shipmentType,
         TypeOfMove: rTypeofMove,
         BaseCurrency: paramData.currencyCode,
-        // PortOfDischargeCode:
-        //   paramData.containerLoadType == "AIR"
-        //     ? podAddress.Location !== "" && podAddress.Location !== undefined
-        //       ? podAddress.Location
-        //       : ""
-        //     : podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
-        //     ? podAddress.UNECECode
-        //     : "",
-        // PortOfLoadingCode:
-        //   paramData.containerLoadType == "AIR"
-        //     ? polAddress.Location !== "" && polAddress.Location !== undefined
-        //       ? polAddress.Location
-        //       : ""
-        //     : polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
-        //     ? polAddress.UNECECode
-        //     : "",
+
         Containerdetails: containerdetails,
-        // OriginGeoCordinates:
-        //   polAddress.GeoCoordinate !== "" &&
-        //   polAddress.GeoCoordinate !== undefined
-        //     ? polAddress.GeoCoordinate
-        //     : paramData.OriginGeoCordinates,
-        // DestGeoCordinate:
-        //   podAddress.GeoCoordinate !== "" &&
-        //   podAddress.GeoCoordinate !== undefined
-        //     ? podAddress.GeoCoordinate
-        //     : paramData.DestGeoCordinate,
-        // PickupCity:
-        //   polAddress.NameWoDiacritics !== "" &&
-        //   polAddress.NameWoDiacritics !== undefined
-        //     ? polAddress.NameWoDiacritics
-        //     : paramData.fullAddressPOL[0].City,
-        // DeliveryCity:
-        //   podAddress.NameWoDiacritics !== "" &&
-        //   podAddress.NameWoDiacritics !== undefined
-        //     ? podAddress.NameWoDiacritics
-        //     : paramData.fullAddressPOD[0].City,
+
         Currency: paramData.currencyCode,
-        //ChargeableWeight: cmbvalue,
+
         RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
-
-      // if (
-      //   cmbvalue != null &&
-      //   cmbvalue != 0 &&
-      //   cmbvalue != undefined &&
-      //   cmbvalue != ""
-      // ) {
-      //   dataParameter.ChargeableWeight = cmbvalue;
-      // } else {
-      //   dataParameter.ChargeableWeight = cmbvalue;
-      //   dataParameter.RateQueryDim = paramData.multiCBM;
-      // }
 
       if (
         encryption(window.localStorage.getItem("usertype"), "desc") ===
@@ -1371,7 +1345,7 @@ class RateTable extends Component {
       dataParameter.PickUpAddressDetails = pickUpAddress;
       dataParameter.DestinationAddressDetails = destUpAddress;
       dataParameter.HazMat = paramData.HazMat === false ? 0 : 1;
-      dataParameter.IsSearchFromSpotRate = 0;
+      dataParameter.IsSearchFromSpotRate = 1;
 
       if (this.props.location.state.spotrateresponseTbl) {
         var rateid = this.props.location.state.spotrateresponseTbl;
@@ -1419,30 +1393,6 @@ class RateTable extends Component {
 
       dataParameter.MultiplePOD = sportMultiPOD;
 
-      // if(paramData.typesofMove === "p2p")
-      // {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      // this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      // this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "d2p") {
-      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "d2d") {
-      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "p2d") {
-      //   this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      // }
       var incoTerms = paramData.incoTerms;
       this.setState({
         polFilterArray: sportMultiPOL,
@@ -1587,15 +1537,16 @@ class RateTable extends Component {
       .catch(error => {
         debugger;
         var edata = error.response.data.split(":")[1];
-        var errorData = ((edata.replace("}", "")).replace(/'/g,'')).replace(/ +/g, "");
+        var errorData = edata
+          .replace("}", "")
+          .replace(/'/g, "")
+          .replace(/ +/g, "");
         if (errorData == "No Records Found") {
           var RateDetails = [];
           setTimeout(() => {
-            self.setState({ RateDetails });  
+            self.setState({ RateDetails });
           }, 100);
-          
         }
-        
       });
   }
 
@@ -2749,7 +2700,6 @@ class RateTable extends Component {
   }
 
   onPlaceSelected = place => {
-    console.log("plc", place);
     var arrPOL = "";
     for (let i = 0; i < this.state.polArray.length; i++) {
       arrPOL += this.state.polArray[i].Address + ",";
@@ -2816,7 +2766,6 @@ class RateTable extends Component {
   };
 
   onPlaceSelectedPOD = place => {
-    console.log("plc", place);
     var arrPOD = "";
     for (let i = 0; i < this.state.podArray.length; i++) {
       arrPOD += this.state.podArray[i].Address + ",";
@@ -3920,8 +3869,8 @@ class RateTable extends Component {
                               />
                               <label htmlFor={"pol" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
-                                {mapPOL.Address}
-                                {mapPOL.POL}
+                                {mapPOL.Address!==""?mapPOL.Address:mapPOL.POL}
+                                {/* {mapPOL.POL} */}
                               </h5>
                             </div>
                           ))}
@@ -3983,8 +3932,8 @@ class RateTable extends Component {
                               />
                               <label htmlFor={"pod" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
-                                {mapPOD.Address}
-                                {mapPOD.POD}
+                                {mapPOD.Address!==""?mapPOD.Address:mapPOD.POD}
+                                {/* {mapPOD.POD} */}
                               </h5>
                             </div>
                           ))}

@@ -21,6 +21,7 @@ class BookingInsert extends Component {
     super(props);
 
     this.state = {
+      cSelectedRow: {},
       copy: false,
       modalProfit: false,
       modalRequest: false,
@@ -78,7 +79,7 @@ class BookingInsert extends Component {
       buyerData: {},
 
       buyerId: 0,
-
+      errormessage: "",
       //---------------sales quotation details
       multiCBM: [],
       ContainerLoad: "",
@@ -135,10 +136,13 @@ class BookingInsert extends Component {
       valueweight: 0,
       valuecbm: 0,
       valuespecialsontainersode: "",
-      modalEdit: false
+      modalEdit: false,
+      FileData: [],
+      checkList: ""
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.toggleRow = this.toggleRow.bind(this);
   }
   componentDidMount() {
     debugger;
@@ -207,6 +211,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
+      var FileData = response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
@@ -244,6 +249,7 @@ class BookingInsert extends Component {
         var HAZMAT = Booking[0].HAZMAT;
         var TypeofMove = QuotationData[0].TypeOfMove;
         self.setState({
+          FileData,
           TypeofMove,
           HAZMAT,
           Customs_Clearance,
@@ -276,7 +282,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
-
+      var FileData = response.data.Table4;
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
       if (QuotationData.length > 0) {
@@ -313,6 +319,7 @@ class BookingInsert extends Component {
         var NonStackable = Booking[0].NonStackable;
 
         self.setState({
+          FileData,
           ModeofTransport,
           companyID,
           company_name,
@@ -345,6 +352,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
+      var FileData = response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
@@ -360,6 +368,7 @@ class BookingInsert extends Component {
         var IncoTerms = Booking[0].IncoTerm;
         var HAZMAT = Booking[0].HAZMAT;
         self.setState({
+          FileData,
           Booking,
           HAZMAT,
           multiCBM,
@@ -412,6 +421,7 @@ class BookingInsert extends Component {
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
+      var FileData = response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
@@ -446,6 +456,7 @@ class BookingInsert extends Component {
         var ShipmentType = Booking[0].ShipmentType;
 
         self.setState({
+          FileData,
           ModeofTransport,
           companyID,
           company_name,
@@ -462,183 +473,208 @@ class BookingInsert extends Component {
 
   HandleBookigInsert() {
     let self = this;
-    debugger;
 
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (this.state.checkList !== "") {
+      debugger;
 
-    var MyWayUserID = Number(userId);
+      var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
-    var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
+      var MyWayUserID = Number(userId);
 
-    var ConsigneeID = 0;
-    var ConsigneeName = "";
-    var Consignee_AddressID = 0;
-    var Consignee_Displayas = "";
-    if (this.state.isConshinee === true) {
-      var ConsigneeID = DefaultEntityTypeID;
-      var ConsigneeName = this.state.company_name;
+      var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
+
+      var ConsigneeID = 0;
+      var ConsigneeName = "";
       var Consignee_AddressID = 0;
-      var Consignee_Displayas = this.state.Company_Address;
-    } else {
-      var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-      var ConsigneeName = this.state.consineeData.Company_Name || "";
-      var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-      var Consignee_Displayas = this.state.Consinee_Displayas;
-    }
-    var ShipperID = 0;
-    var ShipperName = "";
-    var Shipper_AddressID = 0;
-    var Shipper_Displayas = "";
-    if (this.state.isShipper === true) {
-      ShipperID = DefaultEntityTypeID;
-      ShipperName = this.state.company_name;
-      Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-      Shipper_Displayas = this.state.Company_Address;
-    } else {
-      ShipperID = Number(this.state.shipperData.Company_ID || 0);
-      ShipperName = this.state.shipperData.Company_Name || "";
-      Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-      Shipper_Displayas = this.state.Shipper_Displayas || "";
-    }
+      var Consignee_Displayas = "";
+      if (this.state.isConshinee === true) {
+        var ConsigneeID = DefaultEntityTypeID;
+        var ConsigneeName = this.state.company_name;
+        var Consignee_AddressID = 0;
+        var Consignee_Displayas = this.state.Company_Address;
+      } else {
+        var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+        var ConsigneeName = this.state.consineeData.Company_Name || "";
+        var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+        var Consignee_Displayas = this.state.Consinee_Displayas;
+      }
+      var ShipperID = 0;
+      var ShipperName = "";
+      var Shipper_AddressID = 0;
+      var Shipper_Displayas = "";
+      if (this.state.isShipper === true) {
+        ShipperID = DefaultEntityTypeID;
+        ShipperName = this.state.company_name;
+        Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+        Shipper_Displayas = this.state.Company_Address;
+      } else {
+        ShipperID = Number(this.state.shipperData.Company_ID || 0);
+        ShipperName = this.state.shipperData.Company_Name || "";
+        Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+        Shipper_Displayas = this.state.Shipper_Displayas || "";
+      }
 
-    // var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-    // var ConsigneeName = this.state.consineeData.Company_Name || "";
-    // var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-    // var Consignee_Displayas = this.state.Consinee_Displayas;
+      // var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+      // var ConsigneeName = this.state.consineeData.Company_Name || "";
+      // var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+      // var Consignee_Displayas = this.state.Consinee_Displayas;
 
-    var BuyerID = Number(this.state.buyerData.Company_ID || 0);
-    var Buyer_AddressID = this.state.Buyer_AddressID;
-    var Buyer_Displayas = this.state.Buyer_Displayas;
-    var BuyerName = this.state.buyerData.Company_Name;
+      var BuyerID = Number(this.state.buyerData.Company_ID || 0);
+      var Buyer_AddressID = this.state.Buyer_AddressID;
+      var Buyer_Displayas = this.state.Buyer_Displayas;
+      var BuyerName = this.state.buyerData.Company_Name;
 
-    var Mode = this.state.ContainerLoad;
-    var Commodity = 0;
-    if (this.state.selectedCommodity) {
-      Commodity = this.state.commodityData.filter(
-        x => x.Commodity === this.state.selectedCommodity
-      )[0].id;
-    }
-    // var Commodity = Number(
-    //   this.state.commodityData.filter(
-    //     x => x.Commodity === this.state.Commodity
-    //   )[0].id || 0
-    // );
-    // var Commodity = 49;
+      var Mode = this.state.ContainerLoad;
+      var Commodity = 0;
+      if (this.state.selectedCommodity) {
+        Commodity = this.state.commodityData.filter(
+          x => x.Commodity === this.state.selectedCommodity
+        )[0].id;
+      }
+      // var Commodity = Number(
+      //   this.state.commodityData.filter(
+      //     x => x.Commodity === this.state.Commodity
+      //   )[0].id || 0
+      // );
+      // var Commodity = 49;
 
-    var saleQuoteID = Number(this.state.QuotationData[0].SaleQuoteID || 0);
-    var saleQuoteNo = this.state.salesQuotaNo || "";
-    var saleQuoteLineID = 0;
-    if (this.state.QuotationData[0].saleQuoteLineID) {
-      saleQuoteLineID = Number(
-        this.state.QuotationData[0].saleQuoteLineID || 0
-      );
-    } else {
-      saleQuoteLineID = Number(
-        this.state.QuotationData[0].SaleQuoteIDLineID || 0
-      );
-    }
+      var saleQuoteID = 0;
+      var saleQuoteNo = this.state.salesQuotaNo || "";
+      var saleQuoteLineID = 0;
+      if (this.state.QuotationData) {
+        var qdata = this.state.QuotationData.filter(
+          x => x.saleQuoteLineID === Number(this.state.checkList)
+        );
+        saleQuoteLineID = qdata[0].saleQuoteLineID;
+        saleQuoteID = qdata[0].SaleQuoteID;
+      } else {
+        var qdata = this.state.QuotationData.filter(
+          x => x.SaleQuoteIDLineID === Number(this.state.checkList)
+        );
+        saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
+      }
 
-    var NotifyID = Number(this.state.notifyData.Company_ID || 0);
-    var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
-    var Notify_Displayas = this.state.Notify_Displayas || "";
-    var NotifyName = this.state.notifyData.Company_Name || "";
+      var NotifyID = Number(this.state.notifyData.Company_ID || 0);
+      var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+      var Notify_Displayas = this.state.Notify_Displayas || "";
+      var NotifyName = this.state.notifyData.Company_Name || "";
 
-    var BookingDim = [];
+      var BookingDim = [];
 
-    if (this.state.multiCBM.length > 0) {
-      for (let i = 0; i < this.state.multiCBM.length; i++) {
-        var cargoData = new Object();
-        if (Mode === "AIR") {
-          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-          cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
-          cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-          cargoData.Width = this.state.multiCBM[i].Width || 0;
-          cargoData.Height = this.state.multiCBM[i].height || 0;
-          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-        } else if (Mode === "INLAND") {
-          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-          cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
-          cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-          cargoData.Width = this.state.multiCBM[i].Width || 0;
-          cargoData.Height = this.state.multiCBM[i].height || 0;
-          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-        } else {
-          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-          cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-          cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-          cargoData.Width = this.state.multiCBM[i].Width || 0;
-          cargoData.Height = this.state.multiCBM[i].Height || 0;
-          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+      if (this.state.multiCBM.length > 0) {
+        for (let i = 0; i < this.state.multiCBM.length; i++) {
+          var cargoData = new Object();
+          if (Mode === "AIR") {
+            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+            cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
+            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+            cargoData.Width = this.state.multiCBM[i].Width || 0;
+            cargoData.Height = this.state.multiCBM[i].height || 0;
+            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+          } else if (Mode === "INLAND") {
+            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+            cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
+            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+            cargoData.Width = this.state.multiCBM[i].Width || 0;
+            cargoData.Height = this.state.multiCBM[i].height || 0;
+            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+          } else {
+            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+            cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
+            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+            cargoData.Width = this.state.multiCBM[i].Width || 0;
+            cargoData.Height = this.state.multiCBM[i].Height || 0;
+            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+          }
+          BookingDim.push(cargoData);
         }
+      } else {
+        var cargoData = new Object();
+
+        cargoData.BookingPackID = 0;
+        cargoData.PackageType = "";
+        cargoData.Quantity = 0;
+        cargoData.Lengths = 0;
+        cargoData.Width = 0;
+        cargoData.Height = 0;
+        cargoData.GrossWt = 0;
+        cargoData.VolumeWeight = 0;
+        cargoData.Volume = 0;
         BookingDim.push(cargoData);
       }
-    } else {
-      var cargoData = new Object();
 
-      cargoData.BookingPackID = 0;
-      cargoData.PackageType = "";
-      cargoData.Quantity = 0;
-      cargoData.Lengths = 0;
-      cargoData.Width = 0;
-      cargoData.Height = 0;
-      cargoData.GrossWt = 0;
-      cargoData.VolumeWeight = 0;
-      cargoData.Volume = 0;
-      BookingDim.push(cargoData);
-    }
-
-    var paramData = {
-      MyWayUserID: MyWayUserID,
-      ShipperID: ShipperID,
-      Shipper_Displayas: Shipper_Displayas,
-      Shipper_AddressID: Shipper_AddressID,
-      ShipperName: ShipperName,
-      ConsigneeID: ConsigneeID,
-      ConsigneeName: ConsigneeName,
-      Consignee_AddressID: Consignee_AddressID,
-      Consignee_Displayas: Consignee_Displayas,
-      BuyerID: BuyerID,
-      Buyer_AddressID: Buyer_AddressID,
-      Buyer_Displayas: Buyer_Displayas,
-      BuyerName: BuyerName,
-      Mode: Mode,
-      Commodity: Commodity,
-      saleQuoteID: saleQuoteID,
-      saleQuoteNo: saleQuoteNo,
-      saleQuoteLineID: saleQuoteLineID,
-      DefaultEntityTypeID: DefaultEntityTypeID,
-      NotifyID: NotifyID,
-      Notify_AddressID: Notify_AddressID,
-      Notify_Displayas: Notify_Displayas,
-      NotifyName: NotifyName,
-      BookingDim: BookingDim,
-      BookingDocs: []
-    };
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookingInsertion`,
-      data: paramData,
-
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      if (response.data.Table) {
-        var BookingNo = response.data.Table[0].BookingID;
-        NotificationManager.success(response.data.Table[0].Message);
-        self.setState({ BookingNo });
-        self.HandleFileUpload();
+      var BookingDocs = [];
+      for (let i = 0; i < this.state.FileData.length; i++) {
+        if (this.state.FileData[i].QuoteID) {
+          var objFile = new Object();
+          objFile.BookingID = 0;
+          objFile.DocumentID = this.state.FileData[i].DocumentID;
+          objFile.FTPFilePath = this.state.FileData[i].FilePath;
+          BookingDocs.push(objFile);
+        } else {
+        }
       }
-    });
+      var paramData = {
+        MyWayUserID: MyWayUserID,
+        ShipperID: ShipperID,
+        Shipper_Displayas: Shipper_Displayas,
+        Shipper_AddressID: Shipper_AddressID,
+        ShipperName: ShipperName,
+        ConsigneeID: ConsigneeID,
+        ConsigneeName: ConsigneeName,
+        Consignee_AddressID: Consignee_AddressID,
+        Consignee_Displayas: Consignee_Displayas,
+        BuyerID: BuyerID,
+        Buyer_AddressID: Buyer_AddressID,
+        Buyer_Displayas: Buyer_Displayas,
+        BuyerName: BuyerName,
+        Mode: Mode,
+        Commodity: Commodity,
+        saleQuoteID: saleQuoteID,
+        saleQuoteNo: saleQuoteNo,
+        saleQuoteLineID: saleQuoteLineID,
+        DefaultEntityTypeID: DefaultEntityTypeID,
+        NotifyID: NotifyID,
+        Notify_AddressID: Notify_AddressID,
+        Notify_Displayas: Notify_Displayas,
+        NotifyName: NotifyName,
+        BookingDim: BookingDim,
+        BookingDocs: BookingDocs
+      };
+
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookingInsertion`,
+        data: paramData,
+
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        if (response.data.Table) {
+          var BookingNo = response.data.Table[0].BookingID;
+          NotificationManager.success(response.data.Table[0].Message);
+          self.setState({ BookingNo });
+          if (self.state.FileDataArry.length > 0) {
+            self.HandleFileUpload();
+          } else {
+            self.props.history.push("booking-table");
+          }
+        }
+      });
+    } else {
+      // self.setState({ errormessage: "Please atleas one select quotation." });
+      NotificationManager.error("Please select one quotation.");
+      return false;
+    }
   }
 
   HandleFileUpload() {
@@ -1056,22 +1092,38 @@ class BookingInsert extends Component {
 
   onDocumentChangeHandler = event => {
     debugger;
+    // var FileData = event.target.files;
+    // var FileDataArry = [];
+    // var filesArr = this.state.selectedFile;
+    // for (let i = 0; i < FileData.length; i++) {
+    //   var objeFile = new Object();
+    //   objeFile.FileName = event.target.files[i].name;
+
+    //   FileDataArry.push(event.target.files[i]);
+    //   filesArr.push(objeFile);
+
+    //   this.setState({
+    //     selectedFile: filesArr,
+    //     FileDataArry
+    //   });
+    // }
+    // this.CreateFileElement();
+
     var FileData = event.target.files;
-    var FileDataArry = [];
-    var filesArr = this.state.selectedFile;
-    for (let i = 0; i < FileData.length; i++) {
-      var objeFile = new Object();
-      objeFile.FileName = event.target.files[i].name;
+    // var filesArr = this.state.selectedFile;
+    var f_data = this.state.FileData;
+    var objFile = new Object();
+    objFile.FileName = event.target.files[0].name;
+    this.setState({ FileDataArry: FileData });
+    // for (let i = 0; i < FileData.length; i++) {
+    //   var selectedFile = event.target.files[i];
+    //   filesArr.push(selectedFile);
+    //   var fileName = event.target.files[i].name;
 
-      FileDataArry.push(event.target.files[i]);
-      filesArr.push(objeFile);
-
-      this.setState({
-        selectedFile: filesArr,
-        FileDataArry
-      });
-    }
-    this.CreateFileElement();
+    //   // this.addClickTruckType(fileName);
+    // }
+    f_data.push(objFile);
+    this.setState({ FileData: f_data });
   };
 
   ////this methos for bookig details BookigGridDetailsList
@@ -1103,19 +1155,19 @@ class BookingInsert extends Component {
   }
 
   ////this method for multiple file element create
-  CreateFileElement() {
-    return this.state.selectedFile.map((el, i) => (
-      <div key={i}>
-        <span
-        //   onClick={e => {
-        //     this.HandleFileOpen(el.FilePath);
-        //   }}
-        >
-          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
-        </span>
-      </div>
-    ));
-  }
+  // CreateFileElement() {
+  //   return this.state.selectedFile.map((el, i) => (
+  //     <div key={i}>
+  //       <span
+  //       //   onClick={e => {
+  //       //     this.HandleFileOpen(el.FilePath);
+  //       //   }}
+  //       >
+  //         <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+  //       </span>
+  //     </div>
+  //   ));
+  // }
   ////end methos for multiple file element
 
   HandleChangeMultiCBM(i, e) {
@@ -1867,6 +1919,38 @@ class BookingInsert extends Component {
     this.setState({ Buyer_Displayas: addval });
   }
 
+  CreateFileElement() {
+    return this.state.FileData.map((el, i) => (
+      <div key={i}>
+        {/* <a href={el.FilePath || ""}>
+          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+
+
+        </a> */}
+        <span
+          onClick={e => {
+            this.HandleFileOpen(el.FilePath);
+          }}
+        >
+          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
+        </span>
+      </div>
+    ));
+  }
+
+  toggleRow(saleQuoteLineID) {
+    debugger;
+    if (this.state.checkList === "") {
+      this.setState({ checkList: saleQuoteLineID });
+    } else {
+      if (this.state.checkList === saleQuoteLineID) {
+        this.setState({ checkList: "" });
+      } else {
+        NotificationManager.error("Please select only one quotation.");
+      }
+    }
+  }
+
   render() {
     let i = 0;
     let className = "butn m-0";
@@ -1902,7 +1986,7 @@ class BookingInsert extends Component {
                               {
                                 Cell: row => {
                                   i++;
-
+                                  debugger;
                                   var olname = "";
                                   var lname = "";
                                   if (row.original.Linename) {
@@ -1921,6 +2005,29 @@ class BookingInsert extends Component {
                                   if (mode == "Ocean" && lname !== "") {
                                     return (
                                       <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.checkList ===
+                                                row.original.saleQuoteLineID
+                                                  ? true
+                                                  : false
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  row.original.saleQuoteLineID
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
                                         <div className="rate-tab-img">
                                           <img
                                             title={olname}
@@ -2788,6 +2895,11 @@ class BookingInsert extends Component {
                     Send Booking
                   </button>
                 </center>
+                <p>
+                  {this.state.errormessage !== ""
+                    ? this.state.errormessage
+                    : ""}
+                </p>
               </div>
             </div>
           </div>

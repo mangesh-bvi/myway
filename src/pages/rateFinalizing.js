@@ -121,7 +121,9 @@ class RateFinalizing extends Component {
       PickUpAddress: "",
       DestinationAddress: "",
       multiCBM: [],
-      todayDate: new Date()
+      todayDate: new Date(),
+      cSelectedRow: {},
+      selectedDataRow: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -570,15 +572,17 @@ class RateFinalizing extends Component {
         this.HandleSurCharges();
       } else {
         var qData = this.props.location.state;
-        this.setState({ isCopy: this.props.location.state.isCopy,
-                        containerLoadType: this.props.location.state.type });
+        this.setState({
+          isCopy: this.props.location.state.isCopy,
+          containerLoadType: this.props.location.state.type
+        });
         this.state.containerLoadType = this.props.location.state.type;
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
       // if (this.props.location.state.isCopy === true) {
       //   debugger;
-        this.HandleCommodityDropdown();
+      this.HandleCommodityDropdown();
       // }
       this.HandleSalesQuoteConditions();
     }
@@ -934,10 +938,22 @@ class RateFinalizing extends Component {
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL: this.state.isCopy==true?rateDetails[i].POLCODE:rateDetails[i].POLCode,
-        POD: this.state.isCopy==true?rateDetails[i].PODCODE:rateDetails[i].PODCode,
-        LineID: this.state.isCopy==true?rateDetails[i].saleQuoteLineID:rateDetails[i].RateLineId,
-        LineName: this.state.isCopy==true?rateDetails[i].Linename:rateDetails[i].lineName,
+        POL:
+          this.state.isCopy == true
+            ? rateDetails[i].POLCODE
+            : rateDetails[i].POLCode,
+        POD:
+          this.state.isCopy == true
+            ? rateDetails[i].PODCODE
+            : rateDetails[i].PODCode,
+        LineID:
+          this.state.isCopy == true
+            ? rateDetails[i].saleQuoteLineID
+            : rateDetails[i].RateLineId,
+        LineName:
+          this.state.isCopy == true
+            ? rateDetails[i].Linename
+            : rateDetails[i].lineName,
         ContainerType: rateDetails[i].ContainerType,
         ContainerQty: rateDetails[i].ContainerQuantity
       });
@@ -1027,10 +1043,22 @@ class RateFinalizing extends Component {
 
     for (let i = 0; i < rateDetails.length; i++) {
       RoutingInformation.push({
-        POL: this.state.isCopy==true?rateDetails[i].POLCODE:rateDetails[i].POLCode,
-        POD: this.state.isCopy==true?rateDetails[i].PODCODE:rateDetails[i].PODCode,
-        LineID: this.state.isCopy==true?rateDetails[i].saleQuoteLineID:rateDetails[i].RateLineId,
-        LineName: this.state.isCopy==true?rateDetails[i].Linename:rateDetails[i].lineName,
+        POL:
+          this.state.isCopy == true
+            ? rateDetails[i].POLCODE
+            : rateDetails[i].POLCode,
+        POD:
+          this.state.isCopy == true
+            ? rateDetails[i].PODCODE
+            : rateDetails[i].PODCode,
+        LineID:
+          this.state.isCopy == true
+            ? rateDetails[i].saleQuoteLineID
+            : rateDetails[i].RateLineId,
+        LineName:
+          this.state.isCopy == true
+            ? rateDetails[i].Linename
+            : rateDetails[i].lineName,
         ContainerType: rateDetails[i].ContainerType,
         ContainerQty: rateDetails[i].ContainerQuantity
       });
@@ -1121,10 +1149,15 @@ class RateFinalizing extends Component {
   }
 
   toggleProfit() {
-    this.setState(prevState => ({
-      modalProfit: !prevState.modalProfit,
-      ProfitAmount: this.state.Addedprofit
-    }));
+    debugger;
+    if (this.state.selectedDataRow.length > 0) {
+      this.setState(prevState => ({
+        modalProfit: !prevState.modalProfit,
+        ProfitAmount: this.state.Addedprofit
+      }));
+    } else {
+      NotificationManager.error("Please select atleast one rate");
+    }
   }
   toggleNewConsignee() {
     // if(window.confirm('Are you sure to save this record?'))
@@ -1212,9 +1245,13 @@ class RateFinalizing extends Component {
   }
 
   RequestChangeMsgModal() {
-    this.setState(prevState => ({
-      modalRequestMsg: !prevState.modalRequestMsg
-    }));
+    if (this.state.selectedDataRow.length > 0) {
+      this.setState(prevState => ({
+        modalRequestMsg: !prevState.modalRequestMsg
+      }));
+    } else {
+      NotificationManager.error("Please select atleast one rate");
+    }
   }
   RequestChangeMsgModalClose() {
     this.setState({
@@ -1263,920 +1300,131 @@ class RateFinalizing extends Component {
 
   SendRequestChange() {
     debugger;
-    var txtRequestDiscount,
-      txtRequestFreeTime,
-      txtRequestComments = "";
-    txtRequestDiscount = 0;
-    txtRequestFreeTime = 0;
-    var containerLoadType = this.state.containerLoadType;
-    if (document.getElementById("txtRequestDiscount") != undefined) {
-      txtRequestDiscount = document.getElementById("txtRequestDiscount").value;
-    }
-    if (document.getElementById("txtRequestFreeTime") != undefined) {
-      txtRequestFreeTime = document.getElementById("txtRequestFreeTime").value;
-    }
 
-    if (document.getElementById("txtRequestComments") != undefined) {
-      txtRequestComments = document.getElementById("txtRequestComments").value;
-    }
-
-    //alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
-
-    var FCLSQLocalChargesarr = [];
-    var FCLSQSurChargesarr = [];
-
-    var chkslocalcharge = document.getElementsByName("localCharge");
-    for (var i = 0; i < chkslocalcharge.length; i++) {
-      if (chkslocalcharge[i].checked) {
-        FCLSQLocalChargesarr.push({
-          LocalChargeID: 0,
-          Description: chkslocalcharge[0].attributes["data-chargedesc"].value,
-          Amount:
-            chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
-          Currency: chkslocalcharge[0].attributes["data-currency"].value,
-          Minimum: 0,
-          Tax: 0,
-          ChargeItem: chkslocalcharge[0].attributes["data-chargeitem"].value,
-          RateID: 0,
-          Exrate: 0
-        });
+    if (this.state.selectedDataRow.length > 0) {
+      var txtRequestDiscount,
+        txtRequestFreeTime,
+        txtRequestComments = "";
+      txtRequestDiscount = 0;
+      txtRequestFreeTime = 0;
+      var containerLoadType = this.state.containerLoadType;
+      if (document.getElementById("txtRequestDiscount") != undefined) {
+        txtRequestDiscount = document.getElementById("txtRequestDiscount")
+          .value;
       }
-    }
-    debugger;
-    var rateDetailsarr = this.state.rateDetails;
-    var rateSubDetailsarr = this.state.rateSubDetails;
-    var FCLSQBaseFreight = [];
-
-    for (var i = 0; i < rateDetailsarr.length; i++) {
-      if (containerLoadType == "FCL") {
-        FCLSQBaseFreight.push({
-          RateID: rateDetailsarr[i].RateLineId,
-          RateType: rateDetailsarr[i].TypeOfRate
-        });
+      if (document.getElementById("txtRequestFreeTime") != undefined) {
+        txtRequestFreeTime = document.getElementById("txtRequestFreeTime")
+          .value;
       }
-      if (containerLoadType == "LCL") {
-        FCLSQBaseFreight.push({
-          RateID: rateDetailsarr[i].RateLineID,
-          RateType: rateDetailsarr[i].TypeOfRate
-        });
-      } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
-        FCLSQBaseFreight.push({
-          RateID: rateDetailsarr[i].RateLineID,
-          RateType: rateDetailsarr[i].TypeOfRate
-        });
-      } else if (containerLoadType == "AIR") {
-        FCLSQBaseFreight.push({
-          RateID: rateDetailsarr[i].RateLineId,
-          RateType: rateDetailsarr[i].TypeOfRate
-        });
+
+      if (document.getElementById("txtRequestComments") != undefined) {
+        txtRequestComments = document.getElementById("txtRequestComments")
+          .value;
       }
-    }
 
-    var FCLSQCharges = [];
+      //alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
 
-    for (var i = 0; i < rateDetailsarr.length; i++) {
-      for (var j = 0; j < rateSubDetailsarr.length; j++) {
-        if (containerLoadType == "FCL") {
-          // if (rateDetailsarr[i].RateLineId == undefined) {
-          //   if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
-          //     if (
-          //       rateSubDetailsarr[j].saleQuoteLineID ==
-          //       rateDetailsarr[i].saleQuoteLineID
-          //     ) {
-          //       FCLSQCharges.push({
-          //         ChargeID: 0,
-          //         Rate: parseFloat(
-          //           rateSubDetailsarr[j].Amount.split("U")[0].trim()
-          //         ),
-          //         Currency: rateSubDetailsarr[j].BaseCurrency,
-          //         RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
-          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          //         Tax: rateSubDetailsarr[j].Tax,
-          //         ChargeItem: rateSubDetailsarr[j].Chargeitem,
-          //         Exrate: rateSubDetailsarr[j].ExRate,
-          //         ChargeType: rateSubDetailsarr[j].Type,
-          //         TotalAmount: parseFloat(
-          //           rateSubDetailsarr[j].Total.split("U")[0].trim()
-          //         )
-          //       });
-          //     }
-          //   }
-          // } else {
-          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
-            FCLSQCharges.push({
-              ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate: rateSubDetailsarr[j].Rate,
-              Currency: rateSubDetailsarr[j].Currency,
-              RateLineID: rateSubDetailsarr[j].RateLineID,
-              ChargeCode: rateSubDetailsarr[j].ChargeCode,
-              Tax:
-                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
-              ChargeItem: rateSubDetailsarr[j].ChargeItem,
-              Exrate: rateSubDetailsarr[j].Exrate,
-              ChargeType: rateSubDetailsarr[j].ChargeType,
-              TotalAmount: rateSubDetailsarr[j].TotalAmount
-            });
-            // }
-          }
-        }
+      var FCLSQLocalChargesarr = [];
+      var FCLSQSurChargesarr = [];
 
-        if (containerLoadType == "LCL") {
-          // if (rateDetailsarr[i].RateLineID == undefined) {
-          //   if (rateSubDetailsarr[j].SaleQuoteIDLineID != undefined) {
-          //     if (
-          //       rateSubDetailsarr[j].SaleQuoteIDLineID ==
-          //       rateDetailsarr[i].saleQuoteLineID
-          //     ) {
-          //       FCLSQCharges.push({
-          //         ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
-          //         Rate:
-          //           rateSubDetailsarr[j].Amount == null
-          //             ? 0
-          //             : rateSubDetailsarr[j].Amount,
-          //         Currency: "USD",
-          //         RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
-          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          //         Tax:
-          //           rateSubDetailsarr[j].Tax == null
-          //             ? 0
-          //             : rateSubDetailsarr[j].Tax,
-          //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
-          //         Exrate:
-          //           rateSubDetailsarr[j].ExRate == undefined
-          //             ? ""
-          //             : rateSubDetailsarr[j].ExRate,
-          //         ChargeType: rateSubDetailsarr[j].Type,
-          //         TotalAmount: parseFloat(
-          //           rateSubDetailsarr[j].Total.split(" ")[0].trim()
-          //         )
-          //       });
-          //     }
-          //   } else {
-          //     if (
-          //       rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
-          //     ) {
-          //       FCLSQCharges.push({
-          //         ChargeID: rateSubDetailsarr[j].ChargeID,
-          //         Rate:
-          //           rateSubDetailsarr[j].Rate == null
-          //             ? 0
-          //             : rateSubDetailsarr[j].Rate,
-          //         Currency: rateSubDetailsarr[j].Currency,
-          //         RateLineID: rateSubDetailsarr[j].RateLineID,
-          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          //         Tax:
-          //           rateSubDetailsarr[j].Tax == null
-          //             ? 0
-          //             : rateSubDetailsarr[j].Tax,
-          //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
-          //         Exrate: rateSubDetailsarr[j].Exrate,
-          //         ChargeType: rateSubDetailsarr[j].ChargeType,
-          //         TotalAmount:
-          //           rateSubDetailsarr[j].TotalAmount == null
-          //             ? 0
-          //             : rateSubDetailsarr[j].TotalAmount
-          //       });
-          //     }
-          //   }
-          // } else {
-          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
-            FCLSQCharges.push({
-              ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate: rateSubDetailsarr[j].Rate,
-              Currency: rateSubDetailsarr[j].Currency,
-              RateLineID: rateSubDetailsarr[j].RateLineID,
-              ChargeCode: rateSubDetailsarr[j].ChargeCode,
-              Tax:
-                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
-              ChargeItem: rateSubDetailsarr[j].ChargeItem,
-              Exrate: rateSubDetailsarr[j].Exrate,
-              ChargeType: rateSubDetailsarr[j].ChargeType,
-              TotalAmount: rateSubDetailsarr[j].TotalAmount
-            });
-          }
-          // }
-        }
-        if (containerLoadType == "FTL" || containerLoadType == "LTL") {
-          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
-            FCLSQCharges.push({
-              ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate:
-                rateSubDetailsarr[j].Rate == null
-                  ? 0
-                  : rateSubDetailsarr[j].Rate,
-              Currency: rateSubDetailsarr[j].Currency,
-              RateLineID: rateSubDetailsarr[j].RateLineID,
-              ChargeCode: rateSubDetailsarr[j].ChargeCode,
-              Tax:
-                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
-              ChargeItem: rateSubDetailsarr[j].ChargeItem,
-              Exrate: rateSubDetailsarr[j].Exrate,
-              ChargeType: rateSubDetailsarr[j].ChargeType,
-              TotalAmount:
-                rateSubDetailsarr[j].TotalAmount == null
-                  ? 0
-                  : rateSubDetailsarr[j].TotalAmount
-            });
-          }
-        }
-        if (containerLoadType == "AIR") {
-          // if (rateDetailsarr[i].RateLineId == undefined) {
-          //   if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
-          //     if (
-          //       rateSubDetailsarr[j].saleQuoteLineID ==
-          //       rateDetailsarr[i].saleQuoteLineID
-          //     ) {
-          //       FCLSQCharges.push({
-          //         ChargeID: 0,
-          //         Rate: parseFloat(
-          //           rateSubDetailsarr[j].Amount.split(" ")[0].trim()
-          //         ),
-          //         Currency:
-          //           rateSubDetailsarr[j].BaseCurrency == undefined
-          //             ? "USD"
-          //             : rateSubDetailsarr[j].BaseCurrency,
-          //         RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
-          //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          //         Tax:
-          //           rateSubDetailsarr[j].Tax == undefined
-          //             ? 0
-          //             : rateSubDetailsarr[j].Tax,
-          //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
-          //         Exrate: rateSubDetailsarr[j].Exrate,
-          //         ChargeType: rateSubDetailsarr[j].ChargeType,
-          //         TotalAmount: parseFloat(
-          //           rateSubDetailsarr[j].Total.split(" ")[0].trim()
-          //         )
-          //       });
-          //     }
-          //   }
-          // } else {
-          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId) {
-            FCLSQCharges.push({
-              ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate:
-                rateSubDetailsarr[j].Rate == null
-                  ? 0
-                  : rateSubDetailsarr[j].Rate,
-              Currency: rateSubDetailsarr[j].Currency,
-              RateLineID: rateSubDetailsarr[j].RateLineID,
-              ChargeCode: rateSubDetailsarr[j].ChargeCode,
-              Tax:
-                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
-              ChargeItem: rateSubDetailsarr[j].ChargeItem,
-              Exrate: rateSubDetailsarr[j].Exrate,
-              ChargeType: rateSubDetailsarr[j].ChargeType,
-              TotalAmount:
-                rateSubDetailsarr[j].TotalAmount == null
-                  ? 0
-                  : rateSubDetailsarr[j].TotalAmount
-            });
-          }
-          // }
+      var chkslocalcharge = document.getElementsByName("localCharge");
+      for (var i = 0; i < chkslocalcharge.length; i++) {
+        if (chkslocalcharge[i].checked) {
+          FCLSQLocalChargesarr.push({
+            LocalChargeID: 0,
+            Description: chkslocalcharge[0].attributes["data-chargedesc"].value,
+            Amount:
+              chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
+            Currency: chkslocalcharge[0].attributes["data-currency"].value,
+            Minimum: 0,
+            Tax: 0,
+            ChargeItem: chkslocalcharge[0].attributes["data-chargeitem"].value,
+            RateID: 0,
+            Exrate: 0
+          });
         }
       }
-    }
-
-    var chksurcharges = document.getElementsByName("surcharges");
-    for (var i = 0; i < chksurcharges.length; i++) {
-      if (chksurcharges[i].checked) {
-        FCLSQSurChargesarr.push({
-          SurchargeID: 0,
-          ChargeCode: chksurcharges[0].attributes["data-chargedesc"].value,
-          Amount:
-            chksurcharges[0].attributes["data-amountinbasecurrency"].value,
-          Currency: chksurcharges[0].attributes["data-currency"].value,
-          Tax: 0,
-          ChargeItem: chksurcharges[0].attributes["data-chargeitem"].value,
-          RateID: 0,
-          Exrate: 0
-        });
-      }
-    }
-
-    var Containerdetails = [];
-    var RateQueryDim = [];
-    // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
-    var usesr = this.state.users;
-    var spacEqmtType = this.state.spacEqmtType;
-    var referType = this.state.referType;
-    var flattack_openTop = this.state.flattack_openTop;
-
-    if (containerLoadType == "FCL") {
-      if (usesr != null) {
-        if (usesr.length > 0) {
-          for (var i = 0; i < usesr.length; i++) {
-            Containerdetails.push({
-              ProfileCodeID: usesr[i].ProfileCodeID,
-              ContainerCode: usesr[i].StandardContainerCode,
-              Type: usesr[i].ContainerName,
-              ContainerQuantity: usesr[i].ContainerQuantity,
-              Temperature:
-                usesr[i].Temperature == undefined ? 0 : usesr[i].Temperature
-            });
-          }
-        }
-      }
-
-      if (spacEqmtType != null) {
-        if (spacEqmtType.length > 0) {
-          for (var i = 0; i < spacEqmtType.length; i++) {
-            Containerdetails.push({
-              ProfileCodeID: spacEqmtType[i].ProfileCodeID,
-              ContainerCode: spacEqmtType[i].StandardContainerCode,
-              Type: spacEqmtType[i].ContainerName,
-              ContainerQuantity: spacEqmtType[i].Quantity,
-              Temperature: 0
-            });
-          }
-        }
-      }
-
-      if (referType != null) {
-        if (referType.length > 0) {
-          for (var i = 0; i < referType.length; i++) {
-            Containerdetails.push({
-              ProfileCodeID: referType[i].ProfileCodeID,
-              ContainerCode: referType[i].ContainerCode,
-              Type: referType[i].Type,
-              ContainerQuantity: referType[i].ContainerQuantity,
-              Temperature: referType[i].Temperature
-            });
-          }
-        }
-      }
-
-      if (flattack_openTop != null) {
-        if (flattack_openTop.length > 0) {
-          for (var i = 0; i < flattack_openTop.length; i++) {
-            RateQueryDim.push({
-              Quantity: flattack_openTop[i].Quantity,
-              Lengths: flattack_openTop[i].length,
-              Width: flattack_openTop[i].width,
-              Height: flattack_openTop[i].height,
-              GrossWt: flattack_openTop[i].Gross_Weight,
-              VolumeWeight: 0,
-              Volume: 0,
-              PackageType:
-                flattack_openTop[i].PackageType == undefined
-                  ? ""
-                  : flattack_openTop[i].PackageType
-            });
-          }
-        }
-      }
-    } else if (containerLoadType == "LCL") {
       debugger;
-      var multiCBM = this.state.multiCBM;
-      if (this.state.isediting) {
-        for (var i = 0; i < multiCBM.length; i++) {
-          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-          RateQueryDim.push({
-            Quantity: multiCBM[i].Quantity,
-            Lengths: multiCBM[i].Length,
-            Width: multiCBM[i].Width,
-            Height: multiCBM[i].height,
-            GrossWt: multiCBM[i].GrossWeight,
-            VolumeWeight: 0,
-            Volume: 0,
-            PackageType: multiCBM[i].PackageType
-          });
-        }
-      } else {
-        for (var i = 0; i < multiCBM.length; i++) {
-          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-          RateQueryDim.push({
-            Quantity: multiCBM[i].Quantity,
-            Lengths: multiCBM[i].Lengths,
-            Width: multiCBM[i].Width,
-            Height: multiCBM[i].Height,
-            GrossWt: multiCBM[i].GrossWt,
-            VolumeWeight: multiCBM[i].VolumeWeight,
-            Volume: multiCBM[i].Volume,
-            PackageType: multiCBM[i].PackageType
-          });
-        }
-      }
-    } else if (containerLoadType == "FTL") {
-      var TruckTypeData = this.state.TruckTypeData;
-      for (var i = 0; i < TruckTypeData.length; i++) {
-        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({
-          Quantity: TruckTypeData[i].Quantity,
-          Lengths: 0,
-          Width: 0,
-          Height: 0,
-          GrossWt: 0,
-          VolumeWeight: 0,
-          Volume: 0,
-          PackageType: TruckTypeData[i].TruckDesc
-        });
-      }
-      //
-    } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
-      var multiCBM = this.state.multiCBM;
-      for (var i = 0; i < multiCBM.length; i++) {
-        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({
-          Quantity: multiCBM[i].Quantity,
-          Lengths:
-            containerLoadType == "AIR"
-              ? multiCBM[i].Length
-              : multiCBM[i].Lengths,
-          Width: multiCBM[i].Width,
-          Height:
-            containerLoadType == "AIR"
-              ? multiCBM[i].height
-              : multiCBM[i].Height,
-          GrossWt:
-            containerLoadType == "AIR"
-              ? multiCBM[i].GrossWeight
-              : multiCBM[i].GrossWt,
-          VolumeWeight: multiCBM[i].VolumeWeight,
-          Volume: containerLoadType == "AIR" ? 0 : multiCBM[i].Volume,
-          PackageType: multiCBM[i].PackageType
-        });
-      }
-      var cbmVal = this.state.cbmVal;
+      // var rateDetailsarr = this.state.rateDetails;
+      // var rateSubDetailsarr = this.state.rateSubDetails;
 
-      if (cbmVal != null) {
-        if (cbmVal != "") {
-          if (cbmVal != "0") {
-            RateQueryDim.push({
-              Quantity: TruckTypeData[i].Quantity,
-              Lengths: 0,
-              Width: 0,
-              Height: 0,
-              GrossWt: 0,
-              VolumeWeight: 0,
-              Volume: 0,
-              PackageType: TruckTypeData[i].TruckDesc
-            });
-          }
-        }
-      }
-    }
+      var rateDetailsarr = this.state.selectedDataRow;
 
-    var PickUpAddress = "";
-    var DestinationAddress = "";
-    var PickUpAddressDetails = {
-      Street: "",
-      Country: "",
-      State: "",
-      City: "",
-      ZipCode: 0
-    };
-    var DestinationAddressDetails = {
-      Street: "",
-      Country: "",
-      State: "",
-      City: "",
-      ZipCode: 0
-    };
-
-    if (this.state.typeofMove == 1) {
-      PickUpAddress =
-        this.state.isCopy === true
-          ? this.state.PickUpAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.polfullAddData.AirportLongName
-          : this.state.polfullAddData.OceanPortLongName;
-
-      DestinationAddress =
-        this.state.isCopy === true
-          ? this.state.DestinationAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.podfullAddData.AirportLongName
-          : this.state.podfullAddData.OceanPortLongName;
-    }
-    if (this.state.typeofMove == 2) {
-      PickUpAddressDetails = {
-        Street: this.props.location.state.pickUpAddress[0].Area,
-        Country: this.props.location.state.pickUpAddress[0].Country,
-        State: this.props.location.state.pickUpAddress[0].State,
-        City: this.props.location.state.pickUpAddress[0].City,
-        ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
-      };
-
-      DestinationAddress =
-        this.state.isCopy === true
-          ? this.state.DestinationAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.podfullAddData.AirportLongName
-          : this.state.podfullAddData.OceanPortLongName;
-    }
-
-    if (this.state.typeofMove == 4) {
-      PickUpAddressDetails = {
-        Street: this.props.location.state.pickUpAddress[0].Area,
-        Country: this.props.location.state.pickUpAddress[0].Country,
-        State: this.props.location.state.pickUpAddress[0].State,
-        City: this.props.location.state.pickUpAddress[0].City,
-        ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
-      };
-      DestinationAddressDetails = {
-        Street: this.props.location.state.destAddress[0].Area,
-        Country: this.props.location.state.destAddress[0].Country,
-        State: this.props.location.state.destAddress[0].State,
-        City: this.props.location.state.destAddress[0].City,
-        ZipCode: this.props.location.state.destAddress[0].ZipCode
-      };
-    }
-    if (this.state.typeofMove == 3) {
-      PickUpAddress =
-        this.state.isCopy === true
-          ? this.state.PickUpAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.polfullAddData.AirportLongName
-          : this.state.polfullAddData.OceanPortLongName;
-
-      DestinationAddressDetails = {
-        Street: this.props.location.state.destAddress[0].Area,
-        Country: this.props.location.state.destAddress[0].Country,
-        State: this.props.location.state.destAddress[0].State,
-        City: this.props.location.state.destAddress[0].City,
-        ZipCode: this.props.location.state.destAddress[0].ZipCode
-      };
-    }
-
-    debugger;
-    // var senrequestpara = {
-    //   ShipmentType: this.state.shipmentType,
-    //   Inco_terms: this.state.incoTerm,
-    //   TypesOfMove: this.state.typeofMove,
-    //   PickUpAddress: PickUpAddress,
-    //   DestinationAddress: DestinationAddress,
-    //   HazMat: this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt: 0,
-    //   //Containerdetails: Containerdetails,
-    //   PickUpAddressDetails: PickUpAddressDetails,
-    //   DestinationAddressDetails: DestinationAddressDetails,
-    //   MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID: this.state.CompanyID,
-    //   BaseCurrency: this.state.currencyCode,
-    //   MywayProfit: this.state.Addedprofit,
-    //   MywayDiscount: txtRequestDiscount,
-    //   // FCLSQBaseFreight:FCLSQBaseFreightarr,
-    //   // FCLSQLocalCharges: FCLSQLocalChargesarr,
-    //   // FCLSQSurCharges: FCLSQSurChargesarr,
-
-    //   Comments: txtRequestComments,
-    //   FreeTime: txtRequestFreeTime,
-    //   RateQueryDim: RateQueryDim,
-    //   MailBody:
-    //     "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
-    //   Commodity: Number(this.state.CommodityID)
-    // };
-
-    debugger;
-    var RateDataArr = [];
-    for (var i = 0; i < rateDetailsarr.length; i++) {
-      var AIRObjdata = new Object();
-
-      AIRObjdata.RateID = rateDetailsarr[i].RateLineId;
-      AIRObjdata.RateType = rateDetailsarr[i].TypeOfRate;
-
-      RateDataArr.push(AIRObjdata);
-    }
-    if (RateQueryDim.length == 0) {
-      var RequestRateDim = new Object();
-
-      RequestRateDim.PackageType = "";
-      RequestRateDim.Quantity = 0;
-      RequestRateDim.Lengths = 0;
-      RequestRateDim.Width = 0;
-      RequestRateDim.Height = 0;
-      RequestRateDim.GrossWt = 0;
-      RequestRateDim.VolumeWeight = 0;
-      RequestRateDim.Volume = 0;
-      RateQueryDim.push(RequestRateDim);
-    }
-    var SendRequestparaAIR = {
-      Mode: this.state.containerLoadType.toUpperCase(),
-      ShipmentType: this.state.shipmentType,
-      Inco_terms: this.state.incoTerm,
-      TypesOfMove: this.state.typeofMove,
-      PickUpAddress: PickUpAddress,
-      DestinationAddress: DestinationAddress,
-      HazMat: this.state.HazMat == true ? 1 : 0,
-      ChargeableWt: this.props.location.state.ChargeableWeight,
-      Containerdetails: Containerdetails,
-      PickUpAddressDetails: PickUpAddressDetails,
-      DestinationAddressDetails: DestinationAddressDetails,
-      RateQueryDim: RateQueryDim,
-      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-      CompanyID: this.state.CompanyID,
-      CommodityID: this.state.CommodityID,
-      OriginGeoCordinates: this.props.location.state.OriginGeoCordinates,
-      DestGeoCordinate: this.props.location.state.DestGeoCordinate,
-      BaseCurrency: rateSubDetailsarr[0].BaseCurrency,
-      NonStackable: this.props.location.state.NonStackable,
-      MyWayComments: txtRequestComments,
-      MyWayDiscount: txtRequestDiscount,
-      MyWayFreeTime: txtRequestFreeTime,
-      IsRequestForChange: 1,
-      SQCharges: FCLSQCharges,
-      RateTypes: FCLSQBaseFreight
-    };
-    // var SendRequestparaFCL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   // OriginPort_ID :,
-    //   // DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   // Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   Containerdetails:Containerdetails,
-    //   PickUpAddressDetails:PickUpAddressDetails,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.state.DestGeoCordinate,
-    //   BaseCurrency:rateSubDetailsarr[0].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:0,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-    // var SendRequestparaLCL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   // OriginPort_ID :,
-    //   // DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   // Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   PickUpAddressDetails:PickUpAddressDetails,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.state.DestGeoCordinate,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:0,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-    // var SendRequestparaFTL={
-    //   Mode:this.state.modeoftransport,
-    //   ShipmentType :this.state.shipmentType,
-    //   Inco_terms:this.state.incoTerm,
-    //   TypesOfMove :this.state.typeofMove,
-    //   // OriginPort_ID :,
-    //   // DestinationPort_ID : ,
-    //   PickUpAddress :this.state.PickUpAddress,
-    //   DestinationAddress :this.state.DestinationAddress,
-    //   // Total_Weight_Unit : 'Kgs',
-    //   SalesPerson :this.state.CustomerID ,
-    //   HazMat :this.state.HazMat == true ? 1 : 0,
-    //   ChargeableWt :this.props.location.state.ChargeableWeight,
-    //   PickUpAddressDetails:PickUpAddressDetails,
-    //   DestinationAddressDetails:DestinationAddressDetails,
-    //   RateQueryDim:RateQueryDim,
-    //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
-    //   CompanyID:this.state.CompanyID,
-    //   CommodityID:this.state.CommodityID,
-    //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
-    //   DestGeoCordinate: this.props.location.state.DestGeoCordinate,
-    //   // FTLTruckDetails:,
-    //   BaseCurrency:rateSubDetailsarr[0].BaseCurrency,
-    //   NonStackable:this.state.NonStackable,
-    //   MyWayComments:txtRequestComments,
-    //   MyWayDiscount:txtRequestDiscount,
-    //   MyWayFreeTime:txtRequestFreeTime,
-    //   IsRequestForChange:0,
-    //   SQCharges:this.state.RateSubDetails
-    // };
-    var url = "";
-
-    // if (this.state.containerLoadType == "FCL") {
-    //   senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
-    //   senrequestpara.FCLSQCharges = FCLSQCharges;
-    //   senrequestpara.CustomClearance =
-    //     this.state.CustomClearance == true ? 1 : 0;
-    //   senrequestpara.Containerdetails = Containerdetails;
-    //   //senrequestpara.NonStackable = 0;
-    //   // url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
-    // } else if (this.state.containerLoadType == "LCL") {
-    //   senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
-    //   senrequestpara.LCLSQCharges = FCLSQCharges;
-    //   senrequestpara.CustomClearance =
-    //     this.state.CustomClearance == true ? 1 : 0;
-    //   senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
-    //   senrequestpara.Containerdetails = Containerdetails;
-    //   // url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
-    // } else if (
-    //   this.state.containerLoadType == "FTL" ||
-    //   this.state.containerLoadType == "LTL"
-    // ) {
-    //   senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
-    //   senrequestpara.InlandSQCharges = FCLSQCharges;
-    //   senrequestpara.CustomClearance =
-    //     this.state.CustomClearance == true ? 1 : 0;
-
-    //   // url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
-    // } else if (this.state.containerLoadType == "AIR") {
-    //   senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
-    //   senrequestpara.AirSQCharges = FCLSQCharges;
-    //   senrequestpara.CustomClearance =
-    //     this.state.CustomClearance == true ? 1 : 0;
-    //   senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
-    //   senrequestpara.Containerdetails = Containerdetails;
-    //   // url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
-    // }
-    //return false;
-    // usertype
-
-    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
-    let self = this;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/SpotRateRequestChangesInsertion`,
-      data: SendRequestparaAIR,
-      headers: authHeader()
-    })
-      .then(function(response) {
-        debugger;
-        if (response != null) {
-          if (response.data != null) {
-            if (response.data.Table != null) {
-              if (response.data.Table.length > 0) {
-                NotificationManager.success(response.data.Table[0].Message);
-                var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
-                if (usertype !== "Sales User") {
-                  self.setState({
-                    SalesQuoteNo
-                  });
-
-                  self.AcceptQuotes();
-                  self.props.history.push("./spot-rate-table");
-                  // setTimeout(function() {
-                  //   // window.location.href = "spot-rate-table";
-                  //   self.props.history.push("./spot-rate-table")
-                  // }, 1000);
-                } else {
-                  // setTimeout(function() {
-                  //   self.props.history.push("./spot-rate-table")
-                  // }, 1000);
-                  self.props.history.push("./spot-rate-table");
-                }
-              }
-            }
-          }
-        }
-      })
-      .catch(error => {
-        debugger;
-        console.log(error.response);
-      });
-  }
-
-  SendRequest() {
-    debugger;
-    var txtRequestDiscount,
-      txtRequestFreeTime,
-      txtRequestComments = "";
-    txtRequestDiscount = 0;
-    txtRequestFreeTime = 0;
-    var containerLoadType = this.state.containerLoadType;
-    if (document.getElementById("txtRequestDiscount") != undefined) {
-      txtRequestDiscount = document.getElementById("txtRequestDiscount").value;
-    }
-    if (document.getElementById("txtRequestFreeTime") != undefined) {
-      txtRequestFreeTime = document.getElementById("txtRequestFreeTime").value;
-    }
-
-    if (document.getElementById("txtRequestComments") != undefined) {
-      txtRequestComments = document.getElementById("txtRequestComments").value;
-    }
-
-    //alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
-
-    var FCLSQLocalChargesarr = [];
-    var FCLSQSurChargesarr = [];
-
-    var chkslocalcharge = document.getElementsByName("localCharge");
-    for (var i = 0; i < chkslocalcharge.length; i++) {
-      if (chkslocalcharge[i].checked) {
-        FCLSQLocalChargesarr.push({
-          LocalChargeID: 0,
-          Description: chkslocalcharge[0].attributes["data-chargedesc"].value,
-          Amount:
-            chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
-          Currency: chkslocalcharge[0].attributes["data-currency"].value,
-          Minimum: 0,
-          Tax: 0,
-          ChargeItem: chkslocalcharge[0].attributes["data-chargeitem"].value,
-          RateID: 0,
-          Exrate: 0
-        });
-      }
-    }
-    debugger;
-    var rateDetailsarr = this.state.rateDetails;
-    var rateSubDetailsarr = this.state.rateSubDetails;
-    var FCLSQBaseFreight = [];
-
-    for (var i = 0; i < rateDetailsarr.length; i++) {
-      if (containerLoadType == "FCL") {
-        FCLSQBaseFreight.push({
-          RateID:
-            this.state.isCopy === true
-              ? rateDetailsarr[i].saleQuoteLineID
-              : rateDetailsarr[i].RateLineId,
-          RateType:
-            this.state.isCopy === true
-              ? "BuyRate"
-              : rateDetailsarr[i].TypeOfRate
-        });
-      }
-      if (containerLoadType == "LCL") {
-        if (rateDetailsarr[i].RateLineID == undefined) {
-          if (rateDetailsarr[i].saleQuoteLineID != undefined) {
-            FCLSQBaseFreight.push({
-              RateID: rateDetailsarr[i].saleQuoteLineID,
-              RateType: rateDetailsarr[i].TypeOfRate
-            });
-          } else {
-            FCLSQBaseFreight.push({
-              RateID: rateDetailsarr[i].RateLineId,
-              RateType: rateDetailsarr[i].TypeOfRate
-            });
-          }
+      var subratedetails = [];
+      for (let i = 0; i < rateDetailsarr.length; i++) {
+        if (this.state.isCopy === true) {
+          var data = this.state.rateSubDetails.filter(
+            x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
+          );
+          subratedetails.push(data);
         } else {
+          var data = this.state.rateSubDetails.filter(
+            x => x.RateLineID === rateDetailsarr[i].RateLineId
+          );
+          for (let i = 0; i < data.length; i++) {
+            subratedetails.push(data[i]);
+          }
+          // subratedetails.push(data);
+        }
+      }
+      var rateSubDetailsarr = subratedetails;
+      var FCLSQBaseFreight = [];
+
+      for (var i = 0; i < rateDetailsarr.length; i++) {
+        if (containerLoadType == "FCL") {
+          FCLSQBaseFreight.push({
+            RateID: rateDetailsarr[i].RateLineId,
+            RateType: rateDetailsarr[i].TypeOfRate
+          });
+        }
+        if (containerLoadType == "LCL") {
           FCLSQBaseFreight.push({
             RateID: rateDetailsarr[i].RateLineID,
             RateType: rateDetailsarr[i].TypeOfRate
           });
+        } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+          FCLSQBaseFreight.push({
+            RateID: rateDetailsarr[i].RateLineID,
+            RateType: rateDetailsarr[i].TypeOfRate
+          });
+        } else if (containerLoadType == "AIR") {
+          FCLSQBaseFreight.push({
+            RateID: rateDetailsarr[i].RateLineId,
+            RateType: rateDetailsarr[i].TypeOfRate
+          });
         }
-      } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
-        FCLSQBaseFreight.push({
-          RateID: rateDetailsarr[i].RateLineID,
-          RateType: rateDetailsarr[i].TypeOfRate
-        });
-      } else if (containerLoadType == "AIR") {
-        FCLSQBaseFreight.push({
-          RateID:
-            this.state.isCopy === true
-              ? rateDetailsarr[i].saleQuoteLineID
-              : rateDetailsarr[i].RateLineId,
-          RateType:
-            this.state.isCopy === true
-              ? rateDetailsarr[i].TypeOfRate
-              : rateDetailsarr[i].TypeOfRate
-        });
       }
-    }
 
-    var FCLSQCharges = [];
+      var FCLSQCharges = [];
 
-    for (var i = 0; i < rateDetailsarr.length; i++) {
-      for (var j = 0; j < rateSubDetailsarr.length; j++) {
-        if (containerLoadType == "FCL") {
-          if (rateDetailsarr[i].RateLineId == undefined) {
-            if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
-              if (
-                rateSubDetailsarr[j].saleQuoteLineID ==
-                rateDetailsarr[i].saleQuoteLineID
-              ) {
-                FCLSQCharges.push({
-                  ChargeID: 0,
-                  Rate: parseFloat(
-                    rateSubDetailsarr[j].Amount.split("U")[0].trim()
-                  ),
-                  Currency: rateSubDetailsarr[j].BaseCurrency,
-                  RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
-                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                  Tax: rateSubDetailsarr[j].Tax,
-                  ChargeItem: rateSubDetailsarr[j].Chargeitem,
-                  Exrate: rateSubDetailsarr[j].ExRate,
-                  ChargeType: rateSubDetailsarr[j].Type,
-                  TotalAmount: parseFloat(
-                    rateSubDetailsarr[j].Total.split("U")[0].trim()
-                  )
-                });
-              }
-            }
-          } else {
+      for (var i = 0; i < rateDetailsarr.length; i++) {
+        for (var j = 0; j < rateSubDetailsarr.length; j++) {
+          if (containerLoadType == "FCL") {
+            // if (rateDetailsarr[i].RateLineId == undefined) {
+            //   if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
+            //     if (
+            //       rateSubDetailsarr[j].saleQuoteLineID ==
+            //       rateDetailsarr[i].saleQuoteLineID
+            //     ) {
+            //       FCLSQCharges.push({
+            //         ChargeID: 0,
+            //         Rate: parseFloat(
+            //           rateSubDetailsarr[j].Amount.split("U")[0].trim()
+            //         ),
+            //         Currency: rateSubDetailsarr[j].BaseCurrency,
+            //         RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
+            //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            //         Tax: rateSubDetailsarr[j].Tax,
+            //         ChargeItem: rateSubDetailsarr[j].Chargeitem,
+            //         Exrate: rateSubDetailsarr[j].ExRate,
+            //         ChargeType: rateSubDetailsarr[j].Type,
+            //         TotalAmount: parseFloat(
+            //           rateSubDetailsarr[j].Total.split("U")[0].trim()
+            //         )
+            //       });
+            //     }
+            //   }
+            // } else {
             if (
               rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
             ) {
@@ -2195,40 +1443,1011 @@ class RateFinalizing extends Component {
                 ChargeType: rateSubDetailsarr[j].ChargeType,
                 TotalAmount: rateSubDetailsarr[j].TotalAmount
               });
+              // }
+            }
+          }
+
+          if (containerLoadType == "LCL") {
+            // if (rateDetailsarr[i].RateLineID == undefined) {
+            //   if (rateSubDetailsarr[j].SaleQuoteIDLineID != undefined) {
+            //     if (
+            //       rateSubDetailsarr[j].SaleQuoteIDLineID ==
+            //       rateDetailsarr[i].saleQuoteLineID
+            //     ) {
+            //       FCLSQCharges.push({
+            //         ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
+            //         Rate:
+            //           rateSubDetailsarr[j].Amount == null
+            //             ? 0
+            //             : rateSubDetailsarr[j].Amount,
+            //         Currency: "USD",
+            //         RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+            //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            //         Tax:
+            //           rateSubDetailsarr[j].Tax == null
+            //             ? 0
+            //             : rateSubDetailsarr[j].Tax,
+            //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
+            //         Exrate:
+            //           rateSubDetailsarr[j].ExRate == undefined
+            //             ? ""
+            //             : rateSubDetailsarr[j].ExRate,
+            //         ChargeType: rateSubDetailsarr[j].Type,
+            //         TotalAmount: parseFloat(
+            //           rateSubDetailsarr[j].Total.split(" ")[0].trim()
+            //         )
+            //       });
+            //     }
+            //   } else {
+            //     if (
+            //       rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
+            //     ) {
+            //       FCLSQCharges.push({
+            //         ChargeID: rateSubDetailsarr[j].ChargeID,
+            //         Rate:
+            //           rateSubDetailsarr[j].Rate == null
+            //             ? 0
+            //             : rateSubDetailsarr[j].Rate,
+            //         Currency: rateSubDetailsarr[j].Currency,
+            //         RateLineID: rateSubDetailsarr[j].RateLineID,
+            //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            //         Tax:
+            //           rateSubDetailsarr[j].Tax == null
+            //             ? 0
+            //             : rateSubDetailsarr[j].Tax,
+            //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
+            //         Exrate: rateSubDetailsarr[j].Exrate,
+            //         ChargeType: rateSubDetailsarr[j].ChargeType,
+            //         TotalAmount:
+            //           rateSubDetailsarr[j].TotalAmount == null
+            //             ? 0
+            //             : rateSubDetailsarr[j].TotalAmount
+            //       });
+            //     }
+            //   }
+            // } else {
+            if (
+              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
+            ) {
+              FCLSQCharges.push({
+                ChargeID: rateSubDetailsarr[j].ChargeID,
+                Rate: rateSubDetailsarr[j].Rate,
+                Currency: rateSubDetailsarr[j].Currency,
+                RateLineID: rateSubDetailsarr[j].RateLineID,
+                ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                Tax:
+                  rateSubDetailsarr[j].Tax == null
+                    ? 0
+                    : rateSubDetailsarr[j].Tax,
+                ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                Exrate: rateSubDetailsarr[j].Exrate,
+                ChargeType: rateSubDetailsarr[j].ChargeType,
+                TotalAmount: rateSubDetailsarr[j].TotalAmount
+              });
+            }
+            // }
+          }
+          if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+            if (
+              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
+            ) {
+              FCLSQCharges.push({
+                ChargeID: rateSubDetailsarr[j].ChargeID,
+                Rate:
+                  rateSubDetailsarr[j].Rate == null
+                    ? 0
+                    : rateSubDetailsarr[j].Rate,
+                Currency: rateSubDetailsarr[j].Currency,
+                RateLineID: rateSubDetailsarr[j].RateLineID,
+                ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                Tax:
+                  rateSubDetailsarr[j].Tax == null
+                    ? 0
+                    : rateSubDetailsarr[j].Tax,
+                ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                Exrate: rateSubDetailsarr[j].Exrate,
+                ChargeType: rateSubDetailsarr[j].ChargeType,
+                TotalAmount:
+                  rateSubDetailsarr[j].TotalAmount == null
+                    ? 0
+                    : rateSubDetailsarr[j].TotalAmount
+              });
+            }
+          }
+          if (containerLoadType == "AIR") {
+            // if (rateDetailsarr[i].RateLineId == undefined) {
+            //   if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
+            //     if (
+            //       rateSubDetailsarr[j].saleQuoteLineID ==
+            //       rateDetailsarr[i].saleQuoteLineID
+            //     ) {
+            //       FCLSQCharges.push({
+            //         ChargeID: 0,
+            //         Rate: parseFloat(
+            //           rateSubDetailsarr[j].Amount.split(" ")[0].trim()
+            //         ),
+            //         Currency:
+            //           rateSubDetailsarr[j].BaseCurrency == undefined
+            //             ? "USD"
+            //             : rateSubDetailsarr[j].BaseCurrency,
+            //         RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
+            //         ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            //         Tax:
+            //           rateSubDetailsarr[j].Tax == undefined
+            //             ? 0
+            //             : rateSubDetailsarr[j].Tax,
+            //         ChargeItem: rateSubDetailsarr[j].ChargeItem,
+            //         Exrate: rateSubDetailsarr[j].Exrate,
+            //         ChargeType: rateSubDetailsarr[j].ChargeType,
+            //         TotalAmount: parseFloat(
+            //           rateSubDetailsarr[j].Total.split(" ")[0].trim()
+            //         )
+            //       });
+            //     }
+            //   }
+            // } else {
+            if (
+              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
+            ) {
+              FCLSQCharges.push({
+                ChargeID: rateSubDetailsarr[j].ChargeID,
+                Rate:
+                  rateSubDetailsarr[j].Rate == null
+                    ? 0
+                    : rateSubDetailsarr[j].Rate,
+                Currency: rateSubDetailsarr[j].Currency,
+                RateLineID: rateSubDetailsarr[j].RateLineID,
+                ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                Tax:
+                  rateSubDetailsarr[j].Tax == null
+                    ? 0
+                    : rateSubDetailsarr[j].Tax,
+                ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                Exrate: rateSubDetailsarr[j].Exrate,
+                ChargeType: rateSubDetailsarr[j].ChargeType,
+                TotalAmount:
+                  rateSubDetailsarr[j].TotalAmount == null
+                    ? 0
+                    : rateSubDetailsarr[j].TotalAmount
+              });
+            }
+            // }
+          }
+        }
+      }
+
+      var chksurcharges = document.getElementsByName("surcharges");
+      for (var i = 0; i < chksurcharges.length; i++) {
+        if (chksurcharges[i].checked) {
+          FCLSQSurChargesarr.push({
+            SurchargeID: 0,
+            ChargeCode: chksurcharges[0].attributes["data-chargedesc"].value,
+            Amount:
+              chksurcharges[0].attributes["data-amountinbasecurrency"].value,
+            Currency: chksurcharges[0].attributes["data-currency"].value,
+            Tax: 0,
+            ChargeItem: chksurcharges[0].attributes["data-chargeitem"].value,
+            RateID: 0,
+            Exrate: 0
+          });
+        }
+      }
+
+      var Containerdetails = [];
+      var RateQueryDim = [];
+      // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+      var usesr = this.state.users;
+      var spacEqmtType = this.state.spacEqmtType;
+      var referType = this.state.referType;
+      var flattack_openTop = this.state.flattack_openTop;
+
+      if (containerLoadType == "FCL") {
+        if (usesr != null) {
+          if (usesr.length > 0) {
+            for (var i = 0; i < usesr.length; i++) {
+              Containerdetails.push({
+                ProfileCodeID: usesr[i].ProfileCodeID,
+                ContainerCode: usesr[i].StandardContainerCode,
+                Type: usesr[i].ContainerName,
+                ContainerQuantity: usesr[i].ContainerQuantity,
+                Temperature:
+                  usesr[i].Temperature == undefined ? 0 : usesr[i].Temperature
+              });
             }
           }
         }
 
+        if (spacEqmtType != null) {
+          if (spacEqmtType.length > 0) {
+            for (var i = 0; i < spacEqmtType.length; i++) {
+              Containerdetails.push({
+                ProfileCodeID: spacEqmtType[i].ProfileCodeID,
+                ContainerCode: spacEqmtType[i].StandardContainerCode,
+                Type: spacEqmtType[i].ContainerName,
+                ContainerQuantity: spacEqmtType[i].Quantity,
+                Temperature: 0
+              });
+            }
+          }
+        }
+
+        if (referType != null) {
+          if (referType.length > 0) {
+            for (var i = 0; i < referType.length; i++) {
+              Containerdetails.push({
+                ProfileCodeID: referType[i].ProfileCodeID,
+                ContainerCode: referType[i].ContainerCode,
+                Type: referType[i].Type,
+                ContainerQuantity: referType[i].ContainerQuantity,
+                Temperature: referType[i].Temperature
+              });
+            }
+          }
+        }
+
+        if (flattack_openTop != null) {
+          if (flattack_openTop.length > 0) {
+            for (var i = 0; i < flattack_openTop.length; i++) {
+              RateQueryDim.push({
+                Quantity: flattack_openTop[i].Quantity,
+                Lengths: flattack_openTop[i].length,
+                Width: flattack_openTop[i].width,
+                Height: flattack_openTop[i].height,
+                GrossWt: flattack_openTop[i].Gross_Weight,
+                VolumeWeight: 0,
+                Volume: 0,
+                PackageType:
+                  flattack_openTop[i].PackageType == undefined
+                    ? ""
+                    : flattack_openTop[i].PackageType
+              });
+            }
+          }
+        }
+      } else if (containerLoadType == "LCL") {
+        debugger;
+        var multiCBM = this.state.multiCBM;
+        if (this.state.isediting) {
+          for (var i = 0; i < multiCBM.length; i++) {
+            //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+            RateQueryDim.push({
+              Quantity: multiCBM[i].Quantity,
+              Lengths: multiCBM[i].Length,
+              Width: multiCBM[i].Width,
+              Height: multiCBM[i].height,
+              GrossWt: multiCBM[i].GrossWeight,
+              VolumeWeight: 0,
+              Volume: 0,
+              PackageType: multiCBM[i].PackageType
+            });
+          }
+        } else {
+          for (var i = 0; i < multiCBM.length; i++) {
+            //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+            RateQueryDim.push({
+              Quantity: multiCBM[i].Quantity,
+              Lengths: multiCBM[i].Lengths,
+              Width: multiCBM[i].Width,
+              Height: multiCBM[i].Height,
+              GrossWt: multiCBM[i].GrossWt,
+              VolumeWeight: multiCBM[i].VolumeWeight,
+              Volume: multiCBM[i].Volume,
+              PackageType: multiCBM[i].PackageType
+            });
+          }
+        }
+      } else if (containerLoadType == "FTL") {
+        var TruckTypeData = this.state.TruckTypeData;
+        for (var i = 0; i < TruckTypeData.length; i++) {
+          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+          RateQueryDim.push({
+            Quantity: TruckTypeData[i].Quantity,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            GrossWt: 0,
+            VolumeWeight: 0,
+            Volume: 0,
+            PackageType: TruckTypeData[i].TruckDesc
+          });
+        }
+        //
+      } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
+        var multiCBM = this.state.multiCBM;
+        for (var i = 0; i < multiCBM.length; i++) {
+          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+          RateQueryDim.push({
+            Quantity: multiCBM[i].Quantity,
+            Lengths:
+              containerLoadType == "AIR"
+                ? multiCBM[i].Length
+                : multiCBM[i].Lengths,
+            Width: multiCBM[i].Width,
+            Height:
+              containerLoadType == "AIR"
+                ? multiCBM[i].height
+                : multiCBM[i].Height,
+            GrossWt:
+              containerLoadType == "AIR"
+                ? multiCBM[i].GrossWeight
+                : multiCBM[i].GrossWt,
+            VolumeWeight: multiCBM[i].VolumeWeight,
+            Volume: containerLoadType == "AIR" ? 0 : multiCBM[i].Volume,
+            PackageType: multiCBM[i].PackageType
+          });
+        }
+        var cbmVal = this.state.cbmVal;
+
+        if (cbmVal != null) {
+          if (cbmVal != "") {
+            if (cbmVal != "0") {
+              RateQueryDim.push({
+                Quantity: TruckTypeData[i].Quantity,
+                Lengths: 0,
+                Width: 0,
+                Height: 0,
+                GrossWt: 0,
+                VolumeWeight: 0,
+                Volume: 0,
+                PackageType: TruckTypeData[i].TruckDesc
+              });
+            }
+          }
+        }
+      }
+
+      var PickUpAddress = "";
+      var DestinationAddress = "";
+      var PickUpAddressDetails = {
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: 0
+      };
+      var DestinationAddressDetails = {
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: 0
+      };
+
+      if (this.state.typeofMove == 1) {
+        PickUpAddress =
+          this.state.isCopy === true
+            ? this.state.PickUpAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.polfullAddData.AirportLongName
+            : this.state.polfullAddData.OceanPortLongName;
+
+        DestinationAddress =
+          this.state.isCopy === true
+            ? this.state.DestinationAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.podfullAddData.AirportLongName
+            : this.state.podfullAddData.OceanPortLongName;
+      }
+      if (this.state.typeofMove == 2) {
+        PickUpAddressDetails = {
+          Street: this.props.location.state.pickUpAddress[0].Area,
+          Country: this.props.location.state.pickUpAddress[0].Country,
+          State: this.props.location.state.pickUpAddress[0].State,
+          City: this.props.location.state.pickUpAddress[0].City,
+          ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+        };
+
+        DestinationAddress =
+          this.state.isCopy === true
+            ? this.state.DestinationAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.podfullAddData.AirportLongName
+            : this.state.podfullAddData.OceanPortLongName;
+      }
+
+      if (this.state.typeofMove == 4) {
+        PickUpAddressDetails = {
+          Street: this.props.location.state.pickUpAddress[0].Area,
+          Country: this.props.location.state.pickUpAddress[0].Country,
+          State: this.props.location.state.pickUpAddress[0].State,
+          City: this.props.location.state.pickUpAddress[0].City,
+          ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+        };
+        DestinationAddressDetails = {
+          Street: this.props.location.state.destAddress[0].Area,
+          Country: this.props.location.state.destAddress[0].Country,
+          State: this.props.location.state.destAddress[0].State,
+          City: this.props.location.state.destAddress[0].City,
+          ZipCode: this.props.location.state.destAddress[0].ZipCode
+        };
+      }
+      if (this.state.typeofMove == 3) {
+        PickUpAddress =
+          this.state.isCopy === true
+            ? this.state.PickUpAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.polfullAddData.AirportLongName
+            : this.state.polfullAddData.OceanPortLongName;
+
+        DestinationAddressDetails = {
+          Street: this.props.location.state.destAddress[0].Area,
+          Country: this.props.location.state.destAddress[0].Country,
+          State: this.props.location.state.destAddress[0].State,
+          City: this.props.location.state.destAddress[0].City,
+          ZipCode: this.props.location.state.destAddress[0].ZipCode
+        };
+      }
+
+      debugger;
+      // var senrequestpara = {
+      //   ShipmentType: this.state.shipmentType,
+      //   Inco_terms: this.state.incoTerm,
+      //   TypesOfMove: this.state.typeofMove,
+      //   PickUpAddress: PickUpAddress,
+      //   DestinationAddress: DestinationAddress,
+      //   HazMat: this.state.HazMat == true ? 1 : 0,
+      //   ChargeableWt: 0,
+      //   //Containerdetails: Containerdetails,
+      //   PickUpAddressDetails: PickUpAddressDetails,
+      //   DestinationAddressDetails: DestinationAddressDetails,
+      //   MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+      //   CompanyID: this.state.CompanyID,
+      //   BaseCurrency: this.state.currencyCode,
+      //   MywayProfit: this.state.Addedprofit,
+      //   MywayDiscount: txtRequestDiscount,
+      //   // FCLSQBaseFreight:FCLSQBaseFreightarr,
+      //   // FCLSQLocalCharges: FCLSQLocalChargesarr,
+      //   // FCLSQSurCharges: FCLSQSurChargesarr,
+
+      //   Comments: txtRequestComments,
+      //   FreeTime: txtRequestFreeTime,
+      //   RateQueryDim: RateQueryDim,
+      //   MailBody:
+      //     "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+      //   Commodity: Number(this.state.CommodityID)
+      // };
+
+      debugger;
+      var RateDataArr = [];
+      for (var i = 0; i < rateDetailsarr.length; i++) {
+        var AIRObjdata = new Object();
+
+        AIRObjdata.RateID = rateDetailsarr[i].RateLineId;
+        AIRObjdata.RateType = rateDetailsarr[i].TypeOfRate;
+
+        RateDataArr.push(AIRObjdata);
+      }
+      if (RateQueryDim.length == 0) {
+        var RequestRateDim = new Object();
+
+        RequestRateDim.PackageType = "";
+        RequestRateDim.Quantity = 0;
+        RequestRateDim.Lengths = 0;
+        RequestRateDim.Width = 0;
+        RequestRateDim.Height = 0;
+        RequestRateDim.GrossWt = 0;
+        RequestRateDim.VolumeWeight = 0;
+        RequestRateDim.Volume = 0;
+        RateQueryDim.push(RequestRateDim);
+      }
+      var SendRequestparaAIR = {
+        Mode: this.state.containerLoadType.toUpperCase(),
+        ShipmentType: this.state.shipmentType,
+        Inco_terms: this.state.incoTerm,
+        TypesOfMove: this.state.typeofMove,
+        PickUpAddress: PickUpAddress,
+        DestinationAddress: DestinationAddress,
+        HazMat: this.state.HazMat == true ? 1 : 0,
+        ChargeableWt: this.props.location.state.ChargeableWeight,
+        Containerdetails: Containerdetails,
+        PickUpAddressDetails: PickUpAddressDetails,
+        DestinationAddressDetails: DestinationAddressDetails,
+        RateQueryDim: RateQueryDim,
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        CompanyID: this.state.CompanyID,
+        CommodityID: this.state.CommodityID,
+        OriginGeoCordinates: this.props.location.state.OriginGeoCordinates,
+        DestGeoCordinate: this.props.location.state.DestGeoCordinate,
+        BaseCurrency: rateSubDetailsarr[0].BaseCurrency,
+        NonStackable: this.props.location.state.NonStackable,
+        MyWayComments: txtRequestComments,
+        MyWayDiscount: txtRequestDiscount,
+        MyWayFreeTime: txtRequestFreeTime,
+        IsRequestForChange: 1,
+        SQCharges: FCLSQCharges,
+        RateTypes: FCLSQBaseFreight
+      };
+      // var SendRequestparaFCL={
+      //   Mode:this.state.modeoftransport,
+      //   ShipmentType :this.state.shipmentType,
+      //   Inco_terms:this.state.incoTerm,
+      //   TypesOfMove :this.state.typeofMove,
+      //   // OriginPort_ID :,
+      //   // DestinationPort_ID : ,
+      //   PickUpAddress :this.state.PickUpAddress,
+      //   DestinationAddress :this.state.DestinationAddress,
+      //   // Total_Weight_Unit : 'Kgs',
+      //   SalesPerson :this.state.CustomerID ,
+      //   HazMat :this.state.HazMat == true ? 1 : 0,
+      //   ChargeableWt :this.props.location.state.ChargeableWeight,
+      //   Containerdetails:Containerdetails,
+      //   PickUpAddressDetails:PickUpAddressDetails,
+      //   DestinationAddressDetails:DestinationAddressDetails,
+      //   RateQueryDim:RateQueryDim,
+      //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
+      //   CompanyID:this.state.CompanyID,
+      //   CommodityID:this.state.CommodityID,
+      //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
+      //   DestGeoCordinate: this.props.location.state.DestGeoCordinate,
+      //   BaseCurrency:rateSubDetailsarr[0].BaseCurrency,
+      //   NonStackable:this.state.NonStackable,
+      //   MyWayComments:txtRequestComments,
+      //   MyWayDiscount:txtRequestDiscount,
+      //   MyWayFreeTime:txtRequestFreeTime,
+      //   IsRequestForChange:0,
+      //   SQCharges:this.state.RateSubDetails
+      // };
+      // var SendRequestparaLCL={
+      //   Mode:this.state.modeoftransport,
+      //   ShipmentType :this.state.shipmentType,
+      //   Inco_terms:this.state.incoTerm,
+      //   TypesOfMove :this.state.typeofMove,
+      //   // OriginPort_ID :,
+      //   // DestinationPort_ID : ,
+      //   PickUpAddress :this.state.PickUpAddress,
+      //   DestinationAddress :this.state.DestinationAddress,
+      //   // Total_Weight_Unit : 'Kgs',
+      //   SalesPerson :this.state.CustomerID ,
+      //   HazMat :this.state.HazMat == true ? 1 : 0,
+      //   ChargeableWt :this.props.location.state.ChargeableWeight,
+      //   PickUpAddressDetails:PickUpAddressDetails,
+      //   DestinationAddressDetails:DestinationAddressDetails,
+      //   RateQueryDim:RateQueryDim,
+      //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
+      //   CompanyID:this.state.CompanyID,
+      //   CommodityID:this.state.CommodityID,
+      //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
+      //   DestGeoCordinate: this.props.location.state.DestGeoCordinate,
+      //   NonStackable:this.state.NonStackable,
+      //   MyWayComments:txtRequestComments,
+      //   MyWayDiscount:txtRequestDiscount,
+      //   MyWayFreeTime:txtRequestFreeTime,
+      //   IsRequestForChange:0,
+      //   SQCharges:this.state.RateSubDetails
+      // };
+      // var SendRequestparaFTL={
+      //   Mode:this.state.modeoftransport,
+      //   ShipmentType :this.state.shipmentType,
+      //   Inco_terms:this.state.incoTerm,
+      //   TypesOfMove :this.state.typeofMove,
+      //   // OriginPort_ID :,
+      //   // DestinationPort_ID : ,
+      //   PickUpAddress :this.state.PickUpAddress,
+      //   DestinationAddress :this.state.DestinationAddress,
+      //   // Total_Weight_Unit : 'Kgs',
+      //   SalesPerson :this.state.CustomerID ,
+      //   HazMat :this.state.HazMat == true ? 1 : 0,
+      //   ChargeableWt :this.props.location.state.ChargeableWeight,
+      //   PickUpAddressDetails:PickUpAddressDetails,
+      //   DestinationAddressDetails:DestinationAddressDetails,
+      //   RateQueryDim:RateQueryDim,
+      //   MyWayUserID:encryption(window.localStorage.getItem("userid"), "desc"),
+      //   CompanyID:this.state.CompanyID,
+      //   CommodityID:this.state.CommodityID,
+      //   OriginGeoCordinates:this.props.location.state.OriginGeoCordinates,
+      //   DestGeoCordinate: this.props.location.state.DestGeoCordinate,
+      //   // FTLTruckDetails:,
+      //   BaseCurrency:rateSubDetailsarr[0].BaseCurrency,
+      //   NonStackable:this.state.NonStackable,
+      //   MyWayComments:txtRequestComments,
+      //   MyWayDiscount:txtRequestDiscount,
+      //   MyWayFreeTime:txtRequestFreeTime,
+      //   IsRequestForChange:0,
+      //   SQCharges:this.state.RateSubDetails
+      // };
+      var url = "";
+
+      // if (this.state.containerLoadType == "FCL") {
+      //   senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
+      //   senrequestpara.FCLSQCharges = FCLSQCharges;
+      //   senrequestpara.CustomClearance =
+      //     this.state.CustomClearance == true ? 1 : 0;
+      //   senrequestpara.Containerdetails = Containerdetails;
+      //   //senrequestpara.NonStackable = 0;
+      //   // url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
+      // } else if (this.state.containerLoadType == "LCL") {
+      //   senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
+      //   senrequestpara.LCLSQCharges = FCLSQCharges;
+      //   senrequestpara.CustomClearance =
+      //     this.state.CustomClearance == true ? 1 : 0;
+      //   senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
+      //   senrequestpara.Containerdetails = Containerdetails;
+      //   // url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
+      // } else if (
+      //   this.state.containerLoadType == "FTL" ||
+      //   this.state.containerLoadType == "LTL"
+      // ) {
+      //   senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
+      //   senrequestpara.InlandSQCharges = FCLSQCharges;
+      //   senrequestpara.CustomClearance =
+      //     this.state.CustomClearance == true ? 1 : 0;
+
+      //   // url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
+      // } else if (this.state.containerLoadType == "AIR") {
+      //   senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
+      //   senrequestpara.AirSQCharges = FCLSQCharges;
+      //   senrequestpara.CustomClearance =
+      //     this.state.CustomClearance == true ? 1 : 0;
+      //   senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
+      //   senrequestpara.Containerdetails = Containerdetails;
+      //   // url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
+      // }
+      //return false;
+      // usertype
+
+      var usertype = encryption(
+        window.localStorage.getItem("usertype"),
+        "desc"
+      );
+      let self = this;
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/SpotRateRequestChangesInsertion`,
+        data: SendRequestparaAIR,
+        headers: authHeader()
+      })
+        .then(function(response) {
+          debugger;
+          if (response != null) {
+            if (response.data != null) {
+              if (response.data.Table != null) {
+                if (response.data.Table.length > 0) {
+                  NotificationManager.success(response.data.Table[0].Message);
+                  var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
+                  if (usertype !== "Sales User") {
+                    self.setState({
+                      SalesQuoteNo
+                    });
+
+                    self.AcceptQuotes();
+                    self.props.history.push("./spot-rate-table");
+                    // setTimeout(function() {
+                    //   // window.location.href = "spot-rate-table";
+                    //   self.props.history.push("./spot-rate-table")
+                    // }, 1000);
+                  } else {
+                    // setTimeout(function() {
+                    //   self.props.history.push("./spot-rate-table")
+                    // }, 1000);
+                    self.props.history.push("./spot-rate-table");
+                  }
+                }
+              }
+            }
+          }
+        })
+        .catch(error => {
+          debugger;
+          console.log(error.response);
+        });
+    } else {
+      NotificationManager.error("Please select atleast one Rate");
+    }
+  }
+
+  SendRequest() {
+    debugger;
+    if (this.state.selectedDataRow.length > 0) {
+      var txtRequestDiscount,
+        txtRequestFreeTime,
+        txtRequestComments = "";
+      txtRequestDiscount = 0;
+      txtRequestFreeTime = 0;
+      var containerLoadType = this.state.containerLoadType;
+      if (document.getElementById("txtRequestDiscount") != undefined) {
+        txtRequestDiscount = document.getElementById("txtRequestDiscount")
+          .value;
+      }
+      if (document.getElementById("txtRequestFreeTime") != undefined) {
+        txtRequestFreeTime = document.getElementById("txtRequestFreeTime")
+          .value;
+      }
+
+      if (document.getElementById("txtRequestComments") != undefined) {
+        txtRequestComments = document.getElementById("txtRequestComments")
+          .value;
+      }
+
+      //alert(txtRequestDiscount + " - " + txtRequestFreeTime + " - " + txtRequestComments)
+
+      var FCLSQLocalChargesarr = [];
+      var FCLSQSurChargesarr = [];
+
+      var chkslocalcharge = document.getElementsByName("localCharge");
+      for (var i = 0; i < chkslocalcharge.length; i++) {
+        if (chkslocalcharge[i].checked) {
+          FCLSQLocalChargesarr.push({
+            LocalChargeID: 0,
+            Description: chkslocalcharge[0].attributes["data-chargedesc"].value,
+            Amount:
+              chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
+            Currency: chkslocalcharge[0].attributes["data-currency"].value,
+            Minimum: 0,
+            Tax: 0,
+            ChargeItem: chkslocalcharge[0].attributes["data-chargeitem"].value,
+            RateID: 0,
+            Exrate: 0
+          });
+        }
+      }
+      debugger;
+      // var rateDetailsarr = this.state.rateDetails;
+      // var rateSubDetailsarr = this.state.rateSubDetails;
+
+      var rateDetailsarr = this.state.selectedDataRow;
+
+      var subratedetails = [];
+      for (let i = 0; i < rateDetailsarr.length; i++) {
+        if (this.state.isCopy === true) {
+          var data = this.state.rateSubDetails.filter(
+            x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
+          );
+          subratedetails.push(data);
+        } else {
+          var data = this.state.rateSubDetails.filter(
+            x => x.RateLineID === rateDetailsarr[i].RateLineId
+          );
+          for (let i = 0; i < data.length; i++) {
+            subratedetails.push(data[i]);
+          }
+          // subratedetails.push(data);
+        }
+      }
+      var rateSubDetailsarr = subratedetails;
+
+      var FCLSQBaseFreight = [];
+
+      for (var i = 0; i < rateDetailsarr.length; i++) {
+        if (containerLoadType == "FCL") {
+          FCLSQBaseFreight.push({
+            RateID:
+              this.state.isCopy === true
+                ? rateDetailsarr[i].saleQuoteLineID
+                : rateDetailsarr[i].RateLineId,
+            RateType:
+              this.state.isCopy === true
+                ? "BuyRate"
+                : rateDetailsarr[i].TypeOfRate
+          });
+        }
         if (containerLoadType == "LCL") {
           if (rateDetailsarr[i].RateLineID == undefined) {
-            if (rateSubDetailsarr[j].SaleQuoteIDLineID != undefined) {
+            if (rateDetailsarr[i].saleQuoteLineID != undefined) {
+              FCLSQBaseFreight.push({
+                RateID: rateDetailsarr[i].saleQuoteLineID,
+                RateType: rateDetailsarr[i].TypeOfRate
+              });
+            } else {
+              FCLSQBaseFreight.push({
+                RateID: rateDetailsarr[i].RateLineId,
+                RateType: rateDetailsarr[i].TypeOfRate
+              });
+            }
+          } else {
+            FCLSQBaseFreight.push({
+              RateID: rateDetailsarr[i].RateLineID,
+              RateType: rateDetailsarr[i].TypeOfRate
+            });
+          }
+        } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+          FCLSQBaseFreight.push({
+            RateID: rateDetailsarr[i].RateLineID,
+            RateType: rateDetailsarr[i].TypeOfRate
+          });
+        } else if (containerLoadType == "AIR") {
+          FCLSQBaseFreight.push({
+            RateID:
+              this.state.isCopy === true
+                ? rateDetailsarr[i].saleQuoteLineID
+                : rateDetailsarr[i].RateLineId,
+            RateType:
+              this.state.isCopy === true
+                ? rateDetailsarr[i].TypeOfRate
+                : rateDetailsarr[i].TypeOfRate
+          });
+        }
+      }
+
+      var FCLSQCharges = [];
+
+      for (var i = 0; i < rateDetailsarr.length; i++) {
+        for (var j = 0; j < rateSubDetailsarr.length; j++) {
+          if (containerLoadType == "FCL") {
+            if (rateDetailsarr[i].RateLineId == undefined) {
+              if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
+                if (
+                  rateSubDetailsarr[j].saleQuoteLineID ==
+                  rateDetailsarr[i].saleQuoteLineID
+                ) {
+                  FCLSQCharges.push({
+                    ChargeID: 0,
+                    Rate: parseFloat(
+                      rateSubDetailsarr[j].Amount.split("U")[0].trim()
+                    ),
+                    Currency: rateSubDetailsarr[j].BaseCurrency,
+                    RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
+                    ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                    Tax: rateSubDetailsarr[j].Tax,
+                    ChargeItem: rateSubDetailsarr[j].Chargeitem,
+                    Exrate: rateSubDetailsarr[j].ExRate,
+                    ChargeType: rateSubDetailsarr[j].Type,
+                    TotalAmount: parseFloat(
+                      rateSubDetailsarr[j].Total.split("U")[0].trim()
+                    )
+                  });
+                }
+              }
+            } else {
               if (
-                rateSubDetailsarr[j].SaleQuoteIDLineID ==
-                rateDetailsarr[i].saleQuoteLineID
+                rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
               ) {
                 FCLSQCharges.push({
-                  ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
-                  Rate:
-                    rateSubDetailsarr[j].Amount == null
-                      ? 0
-                      : rateSubDetailsarr[j].Amount,
-                  Currency: "USD",
-                  RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+                  ChargeID: rateSubDetailsarr[j].ChargeID,
+                  Rate: rateSubDetailsarr[j].Rate,
+                  Currency: rateSubDetailsarr[j].Currency,
+                  RateLineID: rateSubDetailsarr[j].RateLineID,
                   ChargeCode: rateSubDetailsarr[j].ChargeCode,
                   Tax:
                     rateSubDetailsarr[j].Tax == null
                       ? 0
                       : rateSubDetailsarr[j].Tax,
                   ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                  Exrate:
-                    rateSubDetailsarr[j].ExRate == undefined
-                      ? ""
-                      : rateSubDetailsarr[j].ExRate,
-                  ChargeType: rateSubDetailsarr[j].Type,
-                  TotalAmount: parseFloat(
-                    rateSubDetailsarr[j].Total.split(" ")[0].trim()
-                  )
+                  Exrate: rateSubDetailsarr[j].Exrate,
+                  ChargeType: rateSubDetailsarr[j].ChargeType,
+                  TotalAmount: rateSubDetailsarr[j].TotalAmount
                 });
+              }
+            }
+          }
+
+          if (containerLoadType == "LCL") {
+            if (rateDetailsarr[i].RateLineID == undefined) {
+              if (rateSubDetailsarr[j].SaleQuoteIDLineID != undefined) {
+                if (
+                  rateSubDetailsarr[j].SaleQuoteIDLineID ==
+                  rateDetailsarr[i].saleQuoteLineID
+                ) {
+                  FCLSQCharges.push({
+                    ChargeID: 0, //rateSubDetailsarr[j].ChargeID,
+                    Rate:
+                      rateSubDetailsarr[j].Amount == null
+                        ? 0
+                        : rateSubDetailsarr[j].Amount,
+                    Currency: "USD",
+                    RateLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+                    ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                    Tax:
+                      rateSubDetailsarr[j].Tax == null
+                        ? 0
+                        : rateSubDetailsarr[j].Tax,
+                    ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                    Exrate:
+                      rateSubDetailsarr[j].ExRate == undefined
+                        ? ""
+                        : rateSubDetailsarr[j].ExRate,
+                    ChargeType: rateSubDetailsarr[j].Type,
+                    TotalAmount: parseFloat(
+                      rateSubDetailsarr[j].Total.split(" ")[0].trim()
+                    )
+                  });
+                }
+              } else {
+                if (
+                  rateSubDetailsarr[j].RateLineID ==
+                  rateDetailsarr[i].RateLineId
+                ) {
+                  FCLSQCharges.push({
+                    ChargeID: rateSubDetailsarr[j].ChargeID,
+                    Rate:
+                      rateSubDetailsarr[j].Rate == null
+                        ? 0
+                        : rateSubDetailsarr[j].Rate,
+                    Currency: rateSubDetailsarr[j].Currency,
+                    RateLineID: rateSubDetailsarr[j].RateLineID,
+                    ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                    Tax:
+                      rateSubDetailsarr[j].Tax == null
+                        ? 0
+                        : rateSubDetailsarr[j].Tax,
+                    ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                    Exrate: rateSubDetailsarr[j].Exrate,
+                    ChargeType: rateSubDetailsarr[j].ChargeType,
+                    TotalAmount:
+                      rateSubDetailsarr[j].TotalAmount == null
+                        ? 0
+                        : rateSubDetailsarr[j].TotalAmount
+                  });
+                }
+              }
+            } else {
+              if (
+                rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
+              ) {
+                FCLSQCharges.push({
+                  ChargeID: rateSubDetailsarr[j].ChargeID,
+                  Rate: rateSubDetailsarr[j].Rate,
+                  Currency: rateSubDetailsarr[j].Currency,
+                  RateLineID: rateSubDetailsarr[j].RateLineID,
+                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                  Tax:
+                    rateSubDetailsarr[j].Tax == null
+                      ? 0
+                      : rateSubDetailsarr[j].Tax,
+                  ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                  Exrate: rateSubDetailsarr[j].Exrate,
+                  ChargeType: rateSubDetailsarr[j].ChargeType,
+                  TotalAmount: rateSubDetailsarr[j].TotalAmount
+                });
+              }
+            }
+          }
+          if (containerLoadType == "FTL" || containerLoadType == "LTL") {
+            if (
+              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
+            ) {
+              FCLSQCharges.push({
+                ChargeID: rateSubDetailsarr[j].ChargeID,
+                Rate:
+                  rateSubDetailsarr[j].Rate == null
+                    ? 0
+                    : rateSubDetailsarr[j].Rate,
+                Currency: rateSubDetailsarr[j].Currency,
+                RateLineID: rateSubDetailsarr[j].RateLineID,
+                ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                Tax:
+                  rateSubDetailsarr[j].Tax == null
+                    ? 0
+                    : rateSubDetailsarr[j].Tax,
+                ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                Exrate: rateSubDetailsarr[j].Exrate,
+                ChargeType: rateSubDetailsarr[j].ChargeType,
+                TotalAmount:
+                  rateSubDetailsarr[j].TotalAmount == null
+                    ? 0
+                    : rateSubDetailsarr[j].TotalAmount
+              });
+            }
+          }
+          if (containerLoadType == "AIR") {
+            if (rateDetailsarr[i].RateLineId == undefined) {
+              if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
+                if (
+                  rateSubDetailsarr[j].saleQuoteLineID ==
+                  rateDetailsarr[i].saleQuoteLineID
+                ) {
+                  FCLSQCharges.push({
+                    ChargeID: 0,
+                    Rate: parseFloat(
+                      rateSubDetailsarr[j].Amount.split(" ")[0].trim()
+                    ),
+                    Currency:
+                      rateSubDetailsarr[j].BaseCurrency == undefined
+                        ? "USD"
+                        : rateSubDetailsarr[j].BaseCurrency,
+                    RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
+                    ChargeCode: rateSubDetailsarr[j].ChargeCode,
+                    Tax:
+                      rateSubDetailsarr[j].Tax == undefined
+                        ? 0
+                        : rateSubDetailsarr[j].Tax,
+                    ChargeItem: rateSubDetailsarr[j].ChargeItem,
+                    Exrate: rateSubDetailsarr[j].Exrate,
+                    ChargeType: rateSubDetailsarr[j].ChargeType,
+                    TotalAmount: parseFloat(
+                      rateSubDetailsarr[j].Total.split(" ")[0].trim()
+                    )
+                  });
+                }
               }
             } else {
               if (
@@ -2257,206 +2476,482 @@ class RateFinalizing extends Component {
                 });
               }
             }
-          } else {
-            if (
-              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID
-            ) {
-              FCLSQCharges.push({
-                ChargeID: rateSubDetailsarr[j].ChargeID,
-                Rate: rateSubDetailsarr[j].Rate,
-                Currency: rateSubDetailsarr[j].Currency,
-                RateLineID: rateSubDetailsarr[j].RateLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                Tax:
-                  rateSubDetailsarr[j].Tax == null
-                    ? 0
-                    : rateSubDetailsarr[j].Tax,
-                ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                Exrate: rateSubDetailsarr[j].Exrate,
-                ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount: rateSubDetailsarr[j].TotalAmount
+          }
+        }
+      }
+
+      var chksurcharges = document.getElementsByName("surcharges");
+      for (var i = 0; i < chksurcharges.length; i++) {
+        if (chksurcharges[i].checked) {
+          FCLSQSurChargesarr.push({
+            SurchargeID: 0,
+            ChargeCode: chksurcharges[0].attributes["data-chargedesc"].value,
+            Amount:
+              chksurcharges[0].attributes["data-amountinbasecurrency"].value,
+            Currency: chksurcharges[0].attributes["data-currency"].value,
+            Tax: 0,
+            ChargeItem: chksurcharges[0].attributes["data-chargeitem"].value,
+            RateID: 0,
+            Exrate: 0
+          });
+        }
+      }
+
+      var Containerdetails = [];
+      var RateQueryDim = [];
+      // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+      var usesr = this.state.users;
+      var spacEqmtType = this.state.spacEqmtType;
+      var referType = this.state.referType;
+      var flattack_openTop = this.state.flattack_openTop;
+
+      if (containerLoadType == "FCL") {
+        if (usesr != null) {
+          if (usesr.length > 0) {
+            for (var i = 0; i < usesr.length; i++) {
+              Containerdetails.push({
+                ProfileCodeID: usesr[i].ProfileCodeID,
+                ContainerCode: usesr[i].StandardContainerCode,
+                Type: usesr[i].ContainerName,
+                ContainerQuantity: usesr[i].ContainerQuantity,
+                Temperature:
+                  usesr[i].Temperature == undefined ? 0 : usesr[i].Temperature
               });
             }
           }
         }
-        if (containerLoadType == "FTL" || containerLoadType == "LTL") {
-          if (rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineID) {
-            FCLSQCharges.push({
-              ChargeID: rateSubDetailsarr[j].ChargeID,
-              Rate:
-                rateSubDetailsarr[j].Rate == null
-                  ? 0
-                  : rateSubDetailsarr[j].Rate,
-              Currency: rateSubDetailsarr[j].Currency,
-              RateLineID: rateSubDetailsarr[j].RateLineID,
-              ChargeCode: rateSubDetailsarr[j].ChargeCode,
-              Tax:
-                rateSubDetailsarr[j].Tax == null ? 0 : rateSubDetailsarr[j].Tax,
-              ChargeItem: rateSubDetailsarr[j].ChargeItem,
-              Exrate: rateSubDetailsarr[j].Exrate,
-              ChargeType: rateSubDetailsarr[j].ChargeType,
-              TotalAmount:
-                rateSubDetailsarr[j].TotalAmount == null
-                  ? 0
-                  : rateSubDetailsarr[j].TotalAmount
-            });
-          }
-        }
-        if (containerLoadType == "AIR") {
-          if (rateDetailsarr[i].RateLineId == undefined) {
-            if (rateSubDetailsarr[j].saleQuoteLineID !== undefined) {
-              if (
-                rateSubDetailsarr[j].saleQuoteLineID ==
-                rateDetailsarr[i].saleQuoteLineID
-              ) {
-                FCLSQCharges.push({
-                  ChargeID: 0,
-                  Rate: parseFloat(
-                    rateSubDetailsarr[j].Amount.split(" ")[0].trim()
-                  ),
-                  Currency:
-                    rateSubDetailsarr[j].BaseCurrency == undefined
-                      ? "USD"
-                      : rateSubDetailsarr[j].BaseCurrency,
-                  RateLineID: rateSubDetailsarr[j].saleQuoteLineID,
-                  ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                  Tax:
-                    rateSubDetailsarr[j].Tax == undefined
-                      ? 0
-                      : rateSubDetailsarr[j].Tax,
-                  ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                  Exrate: rateSubDetailsarr[j].Exrate,
-                  ChargeType: rateSubDetailsarr[j].ChargeType,
-                  TotalAmount: parseFloat(
-                    rateSubDetailsarr[j].Total.split(" ")[0].trim()
-                  )
-                });
-              }
-            }
-          } else {
-            if (
-              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
-            ) {
-              FCLSQCharges.push({
-                ChargeID: rateSubDetailsarr[j].ChargeID,
-                Rate:
-                  rateSubDetailsarr[j].Rate == null
-                    ? 0
-                    : rateSubDetailsarr[j].Rate,
-                Currency: rateSubDetailsarr[j].Currency,
-                RateLineID: rateSubDetailsarr[j].RateLineID,
-                ChargeCode: rateSubDetailsarr[j].ChargeCode,
-                Tax:
-                  rateSubDetailsarr[j].Tax == null
-                    ? 0
-                    : rateSubDetailsarr[j].Tax,
-                ChargeItem: rateSubDetailsarr[j].ChargeItem,
-                Exrate: rateSubDetailsarr[j].Exrate,
-                ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount:
-                  rateSubDetailsarr[j].TotalAmount == null
-                    ? 0
-                    : rateSubDetailsarr[j].TotalAmount
+
+        if (spacEqmtType != null) {
+          if (spacEqmtType.length > 0) {
+            for (var i = 0; i < spacEqmtType.length; i++) {
+              Containerdetails.push({
+                ProfileCodeID: spacEqmtType[i].ProfileCodeID,
+                ContainerCode: spacEqmtType[i].StandardContainerCode,
+                Type: spacEqmtType[i].ContainerName,
+                ContainerQuantity: spacEqmtType[i].Quantity,
+                Temperature: 0
               });
             }
           }
         }
-      }
-    }
 
-    var chksurcharges = document.getElementsByName("surcharges");
-    for (var i = 0; i < chksurcharges.length; i++) {
-      if (chksurcharges[i].checked) {
-        FCLSQSurChargesarr.push({
-          SurchargeID: 0,
-          ChargeCode: chksurcharges[0].attributes["data-chargedesc"].value,
-          Amount:
-            chksurcharges[0].attributes["data-amountinbasecurrency"].value,
-          Currency: chksurcharges[0].attributes["data-currency"].value,
-          Tax: 0,
-          ChargeItem: chksurcharges[0].attributes["data-chargeitem"].value,
-          RateID: 0,
-          Exrate: 0
-        });
-      }
-    }
-
-    var Containerdetails = [];
-    var RateQueryDim = [];
-    // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
-    var usesr = this.state.users;
-    var spacEqmtType = this.state.spacEqmtType;
-    var referType = this.state.referType;
-    var flattack_openTop = this.state.flattack_openTop;
-
-    if (containerLoadType == "FCL") {
-      if (usesr != null) {
-        if (usesr.length > 0) {
-          for (var i = 0; i < usesr.length; i++) {
-            Containerdetails.push({
-              ProfileCodeID: usesr[i].ProfileCodeID,
-              ContainerCode: usesr[i].StandardContainerCode,
-              Type: usesr[i].ContainerName,
-              ContainerQuantity: usesr[i].ContainerQuantity,
-              Temperature:
-                usesr[i].Temperature == undefined ? 0 : usesr[i].Temperature
-            });
+        if (referType != null) {
+          if (referType.length > 0) {
+            for (var i = 0; i < referType.length; i++) {
+              Containerdetails.push({
+                ProfileCodeID: referType[i].ProfileCodeID,
+                ContainerCode: referType[i].ContainerCode,
+                Type: referType[i].Type,
+                ContainerQuantity: referType[i].ContainerQuantity,
+                Temperature: referType[i].Temperature
+              });
+            }
           }
         }
-      }
 
-      if (spacEqmtType != null) {
-        if (spacEqmtType.length > 0) {
-          for (var i = 0; i < spacEqmtType.length; i++) {
-            Containerdetails.push({
-              ProfileCodeID: spacEqmtType[i].ProfileCodeID,
-              ContainerCode: spacEqmtType[i].StandardContainerCode,
-              Type: spacEqmtType[i].ContainerName,
-              ContainerQuantity: spacEqmtType[i].Quantity,
-              Temperature: 0
-            });
+        if (flattack_openTop != null) {
+          if (flattack_openTop.length > 0) {
+            for (var i = 0; i < flattack_openTop.length; i++) {
+              RateQueryDim.push({
+                Quantity: flattack_openTop[i].Quantity,
+                Lengths: flattack_openTop[i].length,
+                Width: flattack_openTop[i].width,
+                Height: flattack_openTop[i].height,
+                GrossWt: flattack_openTop[i].Gross_Weight,
+                VolumeWeight: 0,
+                Volume: 0,
+                PackageType:
+                  flattack_openTop[i].PackageType == undefined
+                    ? ""
+                    : flattack_openTop[i].PackageType
+              });
+            }
           }
         }
-      }
-
-      if (referType != null) {
-        if (referType.length > 0) {
-          for (var i = 0; i < referType.length; i++) {
-            Containerdetails.push({
-              ProfileCodeID: referType[i].ProfileCodeID,
-              ContainerCode: referType[i].ContainerCode,
-              Type: referType[i].Type,
-              ContainerQuantity: referType[i].ContainerQuantity,
-              Temperature: referType[i].Temperature
-            });
-          }
-        }
-      }
-
-      if (flattack_openTop != null) {
-        if (flattack_openTop.length > 0) {
-          for (var i = 0; i < flattack_openTop.length; i++) {
+      } else if (containerLoadType == "LCL") {
+        debugger;
+        var multiCBM = this.state.multiCBM;
+        if (this.state.isediting) {
+          for (var i = 0; i < multiCBM.length; i++) {
+            //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
             RateQueryDim.push({
-              Quantity: flattack_openTop[i].Quantity,
-              Lengths: flattack_openTop[i].length,
-              Width: flattack_openTop[i].width,
-              Height: flattack_openTop[i].height,
-              GrossWt: flattack_openTop[i].Gross_Weight,
+              Quantity: multiCBM[i].Quantity,
+              Lengths: multiCBM[i].Length,
+              Width: multiCBM[i].Width,
+              Height: multiCBM[i].height,
+              GrossWt: multiCBM[i].GrossWeight,
               VolumeWeight: 0,
               Volume: 0,
-              PackageType:
-                flattack_openTop[i].PackageType == undefined
-                  ? ""
-                  : flattack_openTop[i].PackageType
+              PackageType: multiCBM[i].PackageType
+            });
+          }
+        } else {
+          for (var i = 0; i < multiCBM.length; i++) {
+            //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+            RateQueryDim.push({
+              Quantity: multiCBM[i].Quantity,
+              Lengths: multiCBM[i].Lengths,
+              Width: multiCBM[i].Width,
+              Height: multiCBM[i].Height,
+              GrossWt: multiCBM[i].GrossWt,
+              VolumeWeight: multiCBM[i].VolumeWeight,
+              Volume: multiCBM[i].Volume,
+              PackageType: multiCBM[i].PackageType
             });
           }
         }
+      } else if (containerLoadType == "FTL") {
+        var TruckTypeData = this.state.TruckTypeData;
+        for (var i = 0; i < TruckTypeData.length; i++) {
+          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+          RateQueryDim.push({
+            Quantity: TruckTypeData[i].Quantity,
+            Lengths: 0,
+            Width: 0,
+            Height: 0,
+            GrossWt: 0,
+            VolumeWeight: 0,
+            Volume: 0,
+            PackageType: TruckTypeData[i].TruckDesc
+          });
+        }
+        //
+      } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
+        var multiCBM = this.state.multiCBM;
+        for (var i = 0; i < multiCBM.length; i++) {
+          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+          RateQueryDim.push({
+            Quantity: multiCBM[i].Quantity,
+            Lengths:
+              containerLoadType == "AIR"
+                ? multiCBM[i].Length
+                : multiCBM[i].Lengths,
+            Width: multiCBM[i].Width,
+            Height:
+              containerLoadType == "AIR"
+                ? multiCBM[i].height
+                : multiCBM[i].Height,
+            GrossWt:
+              containerLoadType == "AIR"
+                ? multiCBM[i].GrossWeight
+                : multiCBM[i].GrossWt,
+            VolumeWeight: multiCBM[i].VolumeWeight,
+            Volume: containerLoadType == "AIR" ? 0 : multiCBM[i].Volume,
+            PackageType: multiCBM[i].PackageType
+          });
+        }
+        var cbmVal = this.state.cbmVal;
+
+        if (cbmVal != null) {
+          if (cbmVal != "") {
+            if (cbmVal != "0") {
+              RateQueryDim.push({
+                Quantity: TruckTypeData[i].Quantity,
+                Lengths: 0,
+                Width: 0,
+                Height: 0,
+                GrossWt: 0,
+                VolumeWeight: 0,
+                Volume: 0,
+                PackageType: TruckTypeData[i].TruckDesc
+              });
+            }
+          }
+        }
       }
-    } else if (containerLoadType == "LCL") {
+
+      var PickUpAddress = "";
+      var DestinationAddress = "";
+      var PickUpAddressDetails = {
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: 0
+      };
+      var DestinationAddressDetails = {
+        Street: "",
+        Country: "",
+        State: "",
+        City: "",
+        ZipCode: 0
+      };
+
+      if (this.state.typeofMove == 1) {
+        PickUpAddress =
+          this.state.isCopy === true
+            ? this.state.PickUpAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.polfullAddData.AirportLongName
+            : this.state.polfullAddData.OceanPortLongName;
+
+        DestinationAddress =
+          this.state.isCopy === true
+            ? this.state.DestinationAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.podfullAddData.AirportLongName
+            : this.state.podfullAddData.OceanPortLongName;
+      }
+      if (this.state.typeofMove == 2) {
+        PickUpAddressDetails = {
+          Street: this.props.location.state.pickUpAddress[0].Area,
+          Country: this.props.location.state.pickUpAddress[0].Country,
+          State: this.props.location.state.pickUpAddress[0].State,
+          City: this.props.location.state.pickUpAddress[0].City,
+          ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+        };
+
+        DestinationAddress =
+          this.state.isCopy === true
+            ? this.state.DestinationAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.podfullAddData.AirportLongName
+            : this.state.podfullAddData.OceanPortLongName;
+      }
+
+      if (this.state.typeofMove == 4) {
+        PickUpAddressDetails = {
+          Street: this.props.location.state.pickUpAddress[0].Area,
+          Country: this.props.location.state.pickUpAddress[0].Country,
+          State: this.props.location.state.pickUpAddress[0].State,
+          City: this.props.location.state.pickUpAddress[0].City,
+          ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+        };
+        DestinationAddressDetails = {
+          Street: this.props.location.state.destAddress[0].Area,
+          Country: this.props.location.state.destAddress[0].Country,
+          State: this.props.location.state.destAddress[0].State,
+          City: this.props.location.state.destAddress[0].City,
+          ZipCode: this.props.location.state.destAddress[0].ZipCode
+        };
+      }
+      if (this.state.typeofMove == 3) {
+        PickUpAddress =
+          this.state.isCopy === true
+            ? this.state.PickUpAddress
+            : this.state.containerLoadType.toUpperCase() === "AIR"
+            ? this.state.polfullAddData.AirportLongName
+            : this.state.polfullAddData.OceanPortLongName;
+
+        DestinationAddressDetails = {
+          Street: this.props.location.state.destAddress[0].Area,
+          Country: this.props.location.state.destAddress[0].Country,
+          State: this.props.location.state.destAddress[0].State,
+          City: this.props.location.state.destAddress[0].City,
+          ZipCode: this.props.location.state.destAddress[0].ZipCode
+        };
+      }
+
+      debugger;
+      var senrequestpara = {
+        ShipmentType: this.state.shipmentType,
+        Inco_terms: this.state.incoTerm,
+        TypesOfMove: this.state.typeofMove,
+        PickUpAddress: PickUpAddress,
+        DestinationAddress: DestinationAddress,
+        HazMat: this.state.HazMat == true ? 1 : 0,
+        ChargeableWt: 0,
+        //Containerdetails: Containerdetails,
+        PickUpAddressDetails: PickUpAddressDetails,
+        DestinationAddressDetails: DestinationAddressDetails,
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        CompanyID: this.state.CompanyID,
+        BaseCurrency: this.state.currencyCode,
+        MywayProfit: this.state.Addedprofit,
+        MywayDiscount: txtRequestDiscount,
+        // FCLSQBaseFreight:FCLSQBaseFreightarr,
+        // FCLSQLocalCharges: FCLSQLocalChargesarr,
+        // FCLSQSurCharges: FCLSQSurChargesarr,
+
+        Comments: txtRequestComments,
+        FreeTime: txtRequestFreeTime,
+        RateQueryDim: RateQueryDim,
+        MailBody:
+          "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+        Commodity: Number(this.state.CommodityID)
+      };
+
+      var url = "";
+
+      if (this.state.containerLoadType == "FCL") {
+        senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
+        senrequestpara.FCLSQCharges = FCLSQCharges;
+        senrequestpara.CustomClearance =
+          this.state.CustomClearance == true ? 1 : 0;
+        senrequestpara.Containerdetails = Containerdetails;
+        //senrequestpara.NonStackable = 0;
+        url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
+      } else if (this.state.containerLoadType == "LCL") {
+        senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
+        senrequestpara.LCLSQCharges = FCLSQCharges;
+        senrequestpara.CustomClearance =
+          this.state.CustomClearance == true ? 1 : 0;
+        senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
+        senrequestpara.Containerdetails = Containerdetails;
+        url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
+      } else if (
+        this.state.containerLoadType == "FTL" ||
+        this.state.containerLoadType == "LTL"
+      ) {
+        senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
+        senrequestpara.InlandSQCharges = FCLSQCharges;
+        senrequestpara.CustomClearance =
+          this.state.CustomClearance == true ? 1 : 0;
+
+        url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
+      } else if (this.state.containerLoadType == "AIR") {
+        senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
+        senrequestpara.AirSQCharges = FCLSQCharges;
+        senrequestpara.CustomClearance =
+          this.state.CustomClearance == true ? 1 : 0;
+        senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
+        senrequestpara.Containerdetails = Containerdetails;
+        url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
+      }
+      //return false;
+      // usertype
+
+      var usertype = encryption(
+        window.localStorage.getItem("usertype"),
+        "desc"
+      );
+      let self = this;
+      axios({
+        method: "post",
+        url: url,
+        data: senrequestpara,
+        headers: authHeader()
+      })
+        .then(function(response) {
+          debugger;
+          if (response != null) {
+            if (response.data != null) {
+              if (response.data.Table != null) {
+                if (response.data.Table.length > 0) {
+                  NotificationManager.success(response.data.Table[0].Message);
+                  var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
+                  if (usertype !== "Sales User") {
+                    self.setState({
+                      SalesQuoteNo
+                    });
+
+                    self.AcceptQuotes();
+
+                    setTimeout(function() {
+                      window.location.href = "quote-table";
+                    }, 1000);
+                  } else {
+                    setTimeout(function() {
+                      window.location.href = "quote-table";
+                    }, 1000);
+                  }
+                  // window.location.href = "quote-table";
+                }
+              }
+            }
+          }
+          //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+        })
+        .catch(error => {
+          debugger;
+          console.log(error.response);
+        });
+    } else {
+      NotificationManager.error("Please select atleast one Rate");
+    }
+  }
+
+  SendRequestCopy() {
+    if (this.state.selectedDataRow.length > 0) {
+      var txtRequestDiscount,
+        txtRequestFreeTime,
+        txtRequestComments = "";
+      txtRequestDiscount = 0;
+      txtRequestFreeTime = 0;
+      var containerLoadType = this.state.containerLoadType;
+
+      var rateDetailsarr = this.state.rateDetails;
+      var rateSubDetailsarr = this.state.rateSubDetails;
+
+      var SQCopyChargesList = [];
+
+      for (var j = 0; j < rateSubDetailsarr.length; j++) {
+        if (containerLoadType == "FCL") {
+          SQCopyChargesList.push({
+            SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+            SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
+            ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+            Chargeitem: rateSubDetailsarr[j].Chargeitem,
+            Tax: rateSubDetailsarr[j].Tax,
+            ExRate: rateSubDetailsarr[j].ExRate,
+            ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+            Type: rateSubDetailsarr[j].Type,
+            SellRate: rateSubDetailsarr[j].SellRate,
+            BuyRate: rateSubDetailsarr[j].BuyRate,
+            Currency: rateSubDetailsarr[j].BaseCurrency
+          });
+        } else if (containerLoadType == "LCL") {
+          SQCopyChargesList.push({
+            SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+            SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+            ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+            Chargeitem: rateSubDetailsarr[j].Chargeitem,
+            Tax: rateSubDetailsarr[j].Tax,
+            ExRate: rateSubDetailsarr[j].ExRate,
+            ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+            Type: rateSubDetailsarr[j].Type,
+            SellRate: rateSubDetailsarr[j].SellRate,
+            BuyRate: rateSubDetailsarr[j].BuyRate,
+            Currency: rateSubDetailsarr[j].BaseCurrency
+          });
+        } else if (containerLoadType == "AIR") {
+          SQCopyChargesList.push({
+            SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
+            SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
+            ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+            Chargeitem: rateSubDetailsarr[j].Chargeitem,
+            Tax: rateSubDetailsarr[j].Tax,
+            ExRate: rateSubDetailsarr[j].Exrate,
+            ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+            Type: rateSubDetailsarr[j].Type,
+            SellRate: rateSubDetailsarr[j].SellRate,
+            BuyRate: rateSubDetailsarr[j].BuyRate,
+            Currency: rateSubDetailsarr[j].BaseCurrency
+          });
+        } else if (containerLoadType == "INLAND") {
+          SQCopyChargesList.push({
+            SaleQuoteID: rateSubDetailsarr[j].SaleQuoteIDD,
+            SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
+            ChargeCode: rateSubDetailsarr[j].ChargeCode,
+            BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
+            Chargeitem: rateSubDetailsarr[j].Chargeitem,
+            Tax: rateSubDetailsarr[j].Tax,
+            ExRate: rateSubDetailsarr[j].ExRate,
+            ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
+            Type: rateSubDetailsarr[j].Type,
+            SellRate: rateSubDetailsarr[j].SellRate,
+            BuyRate: rateSubDetailsarr[j].BuyRate,
+            Currency: rateSubDetailsarr[j].BaseCurrency
+          });
+        }
+      }
+
+      var Containerdetails = [];
+      var RateQueryDim = [];
+      // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
+      var usesr = this.state.users;
+      var spacEqmtType = this.state.spacEqmtType;
+      var referType = this.state.referType;
+      var flattack_openTop = this.state.flattack_openTop;
+
       debugger;
       var multiCBM = this.state.multiCBM;
-      if (this.state.isediting) {
-        for (var i = 0; i < multiCBM.length; i++) {
+
+      for (var i = 0; i < multiCBM.length; i++) {
+        if (this.state.containerLoadType == "FCL") {
           //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
           RateQueryDim.push({
             Quantity: multiCBM[i].Quantity,
@@ -2469,484 +2964,118 @@ class RateFinalizing extends Component {
             PackageType: multiCBM[i].PackageType
           });
         }
-      } else {
-        for (var i = 0; i < multiCBM.length; i++) {
-          //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+        if (this.state.containerLoadType == "LCL") {
           RateQueryDim.push({
             Quantity: multiCBM[i].Quantity,
-            Lengths: multiCBM[i].Lengths,
+            Lengths: multiCBM[i].Length,
             Width: multiCBM[i].Width,
-            Height: multiCBM[i].Height,
-            GrossWt: multiCBM[i].GrossWt,
-            VolumeWeight: multiCBM[i].VolumeWeight,
-            Volume: multiCBM[i].Volume,
+            Height: multiCBM[i].height,
+            GrossWt: multiCBM[i].GrossWeight,
+            VolumeWeight: 0,
+            Volume: 0,
             PackageType: multiCBM[i].PackageType
           });
         }
-      }
-    } else if (containerLoadType == "FTL") {
-      var TruckTypeData = this.state.TruckTypeData;
-      for (var i = 0; i < TruckTypeData.length; i++) {
-        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({
-          Quantity: TruckTypeData[i].Quantity,
-          Lengths: 0,
-          Width: 0,
-          Height: 0,
-          GrossWt: 0,
-          VolumeWeight: 0,
-          Volume: 0,
-          PackageType: TruckTypeData[i].TruckDesc
-        });
-      }
-      //
-    } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
-      var multiCBM = this.state.multiCBM;
-      for (var i = 0; i < multiCBM.length; i++) {
-        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({
-          Quantity: multiCBM[i].Quantity,
-          Lengths:
-            containerLoadType == "AIR"
-              ? multiCBM[i].Length
-              : multiCBM[i].Lengths,
-          Width: multiCBM[i].Width,
-          Height:
-            containerLoadType == "AIR"
-              ? multiCBM[i].height
-              : multiCBM[i].Height,
-          GrossWt:
-            containerLoadType == "AIR"
-              ? multiCBM[i].GrossWeight
-              : multiCBM[i].GrossWt,
-          VolumeWeight: multiCBM[i].VolumeWeight,
-          Volume: containerLoadType == "AIR" ? 0 : multiCBM[i].Volume,
-          PackageType: multiCBM[i].PackageType
-        });
-      }
-      var cbmVal = this.state.cbmVal;
-
-      if (cbmVal != null) {
-        if (cbmVal != "") {
-          if (cbmVal != "0") {
-            RateQueryDim.push({
-              Quantity: TruckTypeData[i].Quantity,
-              Lengths: 0,
-              Width: 0,
-              Height: 0,
-              GrossWt: 0,
-              VolumeWeight: 0,
-              Volume: 0,
-              PackageType: TruckTypeData[i].TruckDesc
-            });
-          }
+        if (this.state.containerLoadType == "AIR") {
+          RateQueryDim.push({
+            Quantity: multiCBM[i].Quantity,
+            Lengths: multiCBM[i].Length,
+            Width: multiCBM[i].Width,
+            Height: multiCBM[i].height,
+            GrossWt: multiCBM[i].GrossWeight,
+            VolumeWeight: multiCBM[i].VolumeWeight,
+            Volume: 0,
+            PackageType: multiCBM[i].PackageType
+          });
+        }
+        if (this.state.containerLoadType == "INLAND") {
+          RateQueryDim.push({
+            Quantity: multiCBM[i].Quantity,
+            Lengths: multiCBM[i].Length,
+            Width: multiCBM[i].Width,
+            Height: multiCBM[i].height,
+            GrossWt: multiCBM[i].GrossWeight,
+            VolumeWeight: multiCBM[i].VolumeWeight,
+            Volume: 0,
+            PackageType:
+              multiCBM[i].PackageType === null ? "" : multiCBM[i].PackageType
+          });
         }
       }
-    }
 
-    var PickUpAddress = "";
-    var DestinationAddress = "";
-    var PickUpAddressDetails = {
-      Street: "",
-      Country: "",
-      State: "",
-      City: "",
-      ZipCode: 0
-    };
-    var DestinationAddressDetails = {
-      Street: "",
-      Country: "",
-      State: "",
-      City: "",
-      ZipCode: 0
-    };
-
-    if (this.state.typeofMove == 1) {
-      PickUpAddress =
-        this.state.isCopy === true
-          ? this.state.PickUpAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.polfullAddData.AirportLongName
-          : this.state.polfullAddData.OceanPortLongName;
-
-      DestinationAddress =
-        this.state.isCopy === true
-          ? this.state.DestinationAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.podfullAddData.AirportLongName
-          : this.state.podfullAddData.OceanPortLongName;
-    }
-    if (this.state.typeofMove == 2) {
-      PickUpAddressDetails = {
-        Street: this.props.location.state.pickUpAddress[0].Area,
-        Country: this.props.location.state.pickUpAddress[0].Country,
-        State: this.props.location.state.pickUpAddress[0].State,
-        City: this.props.location.state.pickUpAddress[0].City,
-        ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+      debugger;
+      var senrequestpara = {
+        Commodity: Number(this.state.CommodityID),
+        OldSaleQuoteNumber: this.props.location.state.Quote,
+        OldSaleQuoteID:
+          rateSubDetailsarr[0].SaleQuoteID == undefined
+            ? rateSubDetailsarr[0].SaleQuoteIDD
+            : rateSubDetailsarr[0].SaleQuoteID,
+        MailBody:
+          "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
+        RateQueryDim: RateQueryDim,
+        SQCopyChargesList: SQCopyChargesList,
+        Mode: this.state.containerLoadType,
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      DestinationAddress =
-        this.state.isCopy === true
-          ? this.state.DestinationAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.podfullAddData.AirportLongName
-          : this.state.podfullAddData.OceanPortLongName;
-    }
+      var url = "";
 
-    if (this.state.typeofMove == 4) {
-      PickUpAddressDetails = {
-        Street: this.props.location.state.pickUpAddress[0].Area,
-        Country: this.props.location.state.pickUpAddress[0].Country,
-        State: this.props.location.state.pickUpAddress[0].State,
-        City: this.props.location.state.pickUpAddress[0].City,
-        ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
-      };
-      DestinationAddressDetails = {
-        Street: this.props.location.state.destAddress[0].Area,
-        Country: this.props.location.state.destAddress[0].Country,
-        State: this.props.location.state.destAddress[0].State,
-        City: this.props.location.state.destAddress[0].City,
-        ZipCode: this.props.location.state.destAddress[0].ZipCode
-      };
-    }
-    if (this.state.typeofMove == 3) {
-      PickUpAddress =
-        this.state.isCopy === true
-          ? this.state.PickUpAddress
-          : this.state.containerLoadType.toUpperCase() === "AIR"
-          ? this.state.polfullAddData.AirportLongName
-          : this.state.polfullAddData.OceanPortLongName;
-
-      DestinationAddressDetails = {
-        Street: this.props.location.state.destAddress[0].Area,
-        Country: this.props.location.state.destAddress[0].Country,
-        State: this.props.location.state.destAddress[0].State,
-        City: this.props.location.state.destAddress[0].City,
-        ZipCode: this.props.location.state.destAddress[0].ZipCode
-      };
-    }
-
-    debugger;
-    var senrequestpara = {
-      ShipmentType: this.state.shipmentType,
-      Inco_terms: this.state.incoTerm,
-      TypesOfMove: this.state.typeofMove,
-      PickUpAddress: PickUpAddress,
-      DestinationAddress: DestinationAddress,
-      HazMat: this.state.HazMat == true ? 1 : 0,
-      ChargeableWt: 0,
-      //Containerdetails: Containerdetails,
-      PickUpAddressDetails: PickUpAddressDetails,
-      DestinationAddressDetails: DestinationAddressDetails,
-      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-      CompanyID: this.state.CompanyID,
-      BaseCurrency: this.state.currencyCode,
-      MywayProfit: this.state.Addedprofit,
-      MywayDiscount: txtRequestDiscount,
-      // FCLSQBaseFreight:FCLSQBaseFreightarr,
-      // FCLSQLocalCharges: FCLSQLocalChargesarr,
-      // FCLSQSurCharges: FCLSQSurChargesarr,
-
-      Comments: txtRequestComments,
-      FreeTime: txtRequestFreeTime,
-      RateQueryDim: RateQueryDim,
-      MailBody:
-        "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
-      Commodity: Number(this.state.CommodityID)
-    };
-
-    var url = "";
-
-    if (this.state.containerLoadType == "FCL") {
-      senrequestpara.FCLSQBaseFreight = FCLSQBaseFreight;
-      senrequestpara.FCLSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance =
-        this.state.CustomClearance == true ? 1 : 0;
-      senrequestpara.Containerdetails = Containerdetails;
+      //if (this.state.containerLoadType == "FCL") {
       //senrequestpara.NonStackable = 0;
-      url = `${appSettings.APIURL}/FCLSalesQuoteInsertion`;
-    } else if (this.state.containerLoadType == "LCL") {
-      senrequestpara.LCLSQBaseFreight = FCLSQBaseFreight;
-      senrequestpara.LCLSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance =
-        this.state.CustomClearance == true ? 1 : 0;
-      senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
-      senrequestpara.Containerdetails = Containerdetails;
-      url = `${appSettings.APIURL}/LCLSalesQuoteInsertion`;
-    } else if (
-      this.state.containerLoadType == "FTL" ||
-      this.state.containerLoadType == "LTL"
-    ) {
-      senrequestpara.InlandSQBaseFreight = FCLSQBaseFreight;
-      senrequestpara.InlandSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance =
-        this.state.CustomClearance == true ? 1 : 0;
+      url = `${appSettings.APIURL}/SalesQuoteCopy`;
+      //}
+      //return false;
+      // usertype
 
-      url = `${appSettings.APIURL}/InlandSalesQuoteInsertion`;
-    } else if (this.state.containerLoadType == "AIR") {
-      senrequestpara.AirSQBaseFreight = FCLSQBaseFreight;
-      senrequestpara.AirSQCharges = FCLSQCharges;
-      senrequestpara.CustomClearance =
-        this.state.CustomClearance == true ? 1 : 0;
-      senrequestpara.NonStackable = this.state.NonStackable == true ? 1 : 0;
-      senrequestpara.Containerdetails = Containerdetails;
-      url = `${appSettings.APIURL}/AirSalesQuoteInsertion`;
-    }
-    //return false;
-    // usertype
+      var usertype = encryption(
+        window.localStorage.getItem("usertype"),
+        "desc"
+      );
+      let self = this;
+      axios({
+        method: "post",
+        url: url,
+        data: senrequestpara,
+        headers: authHeader()
+      })
+        .then(function(response) {
+          debugger;
+          if (response != null) {
+            if (response.data != null) {
+              if (response.data.Table != null) {
+                if (response.data.Table.length > 0) {
+                  NotificationManager.success(response.data.Table[0].Message);
+                  var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
+                  if (usertype !== "Sales User") {
+                    self.setState({
+                      SalesQuoteNo
+                    });
 
-    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
-    let self = this;
-    axios({
-      method: "post",
-      url: url,
-      data: senrequestpara,
-      headers: authHeader()
-    })
-      .then(function(response) {
-        debugger;
-        if (response != null) {
-          if (response.data != null) {
-            if (response.data.Table != null) {
-              if (response.data.Table.length > 0) {
-                NotificationManager.success(response.data.Table[0].Message);
-                var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
-                if (usertype !== "Sales User") {
-                  self.setState({
-                    SalesQuoteNo
-                  });
+                    self.AcceptQuotes();
 
-                  self.AcceptQuotes();
-
-                  setTimeout(function() {
-                    window.location.href = "quote-table";
-                  }, 1000);
-                } else {
-                  setTimeout(function() {
-                    window.location.href = "quote-table";
-                  }, 1000);
+                    setTimeout(function() {
+                      window.location.href = "quote-table";
+                    }, 1000);
+                  } else {
+                    setTimeout(function() {
+                      window.location.href = "quote-table";
+                    }, 1000);
+                  }
+                  // window.location.href = "quote-table";
                 }
-                // window.location.href = "quote-table";
               }
             }
           }
-        }
-        //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
-      })
-      .catch(error => {
-        debugger;
-        console.log(error.response);
-      });
-  }
-
-  SendRequestCopy() {
-    var txtRequestDiscount,
-      txtRequestFreeTime,
-      txtRequestComments = "";
-    txtRequestDiscount = 0;
-    txtRequestFreeTime = 0;
-    var containerLoadType = this.state.containerLoadType;
-
-    var rateDetailsarr = this.state.rateDetails;
-    var rateSubDetailsarr = this.state.rateSubDetails;
-
-    var SQCopyChargesList = [];
-
-    for (var j = 0; j < rateSubDetailsarr.length; j++) {
-      if (containerLoadType == "FCL") {
-        SQCopyChargesList.push({
-          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
-          SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
-          ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem: rateSubDetailsarr[j].Chargeitem,
-          Tax: rateSubDetailsarr[j].Tax,
-          ExRate: rateSubDetailsarr[j].ExRate,
-          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
-          Type: rateSubDetailsarr[j].Type,
-          SellRate: rateSubDetailsarr[j].SellRate,
-          BuyRate: rateSubDetailsarr[j].BuyRate,
-          Currency: rateSubDetailsarr[j].BaseCurrency
+          //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
+        })
+        .catch(error => {
+          debugger;
+          console.log(error.response);
         });
-      } else if (containerLoadType == "LCL") {
-        SQCopyChargesList.push({
-          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
-          SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
-          ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem: rateSubDetailsarr[j].Chargeitem,
-          Tax: rateSubDetailsarr[j].Tax,
-          ExRate: rateSubDetailsarr[j].ExRate,
-          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
-          Type: rateSubDetailsarr[j].Type,
-          SellRate: rateSubDetailsarr[j].SellRate,
-          BuyRate: rateSubDetailsarr[j].BuyRate,
-          Currency: rateSubDetailsarr[j].BaseCurrency
-        });
-      } else if (containerLoadType == "AIR") {
-        SQCopyChargesList.push({
-          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteID,
-          SaleQuoteLineID: rateSubDetailsarr[j].saleQuoteLineID,
-          ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem: rateSubDetailsarr[j].Chargeitem,
-          Tax: rateSubDetailsarr[j].Tax,
-          ExRate: rateSubDetailsarr[j].Exrate,
-          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
-          Type: rateSubDetailsarr[j].Type,
-          SellRate: rateSubDetailsarr[j].SellRate,
-          BuyRate: rateSubDetailsarr[j].BuyRate,
-          Currency: rateSubDetailsarr[j].BaseCurrency
-        });
-      } else if (containerLoadType == "INLAND") {
-        SQCopyChargesList.push({
-          SaleQuoteID: rateSubDetailsarr[j].SaleQuoteIDD,
-          SaleQuoteLineID: rateSubDetailsarr[j].SaleQuoteIDLineID,
-          ChargeCode: rateSubDetailsarr[j].ChargeCode,
-          BaseCurrency: rateSubDetailsarr[j].BaseCurrency,
-          Chargeitem: rateSubDetailsarr[j].Chargeitem,
-          Tax: rateSubDetailsarr[j].Tax,
-          ExRate: rateSubDetailsarr[j].ExRate,
-          ChargeDesc: rateSubDetailsarr[j].ChargeDesc,
-          Type: rateSubDetailsarr[j].Type,
-          SellRate: rateSubDetailsarr[j].SellRate,
-          BuyRate: rateSubDetailsarr[j].BuyRate,
-          Currency: rateSubDetailsarr[j].BaseCurrency
-        });
-      }
+    } else {
+      NotificationManager.error("Please select atleast one rate");
     }
-
-    var Containerdetails = [];
-    var RateQueryDim = [];
-    // ProfileCodeID:23,ContainerCode:'40GP',Type:'40 Standard Dry',ContainerQuantity:3,Temperature:0
-    var usesr = this.state.users;
-    var spacEqmtType = this.state.spacEqmtType;
-    var referType = this.state.referType;
-    var flattack_openTop = this.state.flattack_openTop;
-
-    debugger;
-    var multiCBM = this.state.multiCBM;
-
-    for (var i = 0; i < multiCBM.length; i++) {
-      if (this.state.containerLoadType == "FCL") {
-        //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-        RateQueryDim.push({
-          Quantity: multiCBM[i].Quantity,
-          Lengths: multiCBM[i].Length,
-          Width: multiCBM[i].Width,
-          Height: multiCBM[i].height,
-          GrossWt: multiCBM[i].GrossWeight,
-          VolumeWeight: 0,
-          Volume: 0,
-          PackageType: multiCBM[i].PackageType
-        });
-      }
-      if (this.state.containerLoadType == "LCL") {
-        RateQueryDim.push({
-          Quantity: multiCBM[i].Quantity,
-          Lengths: multiCBM[i].Length,
-          Width: multiCBM[i].Width,
-          Height: multiCBM[i].height,
-          GrossWt: multiCBM[i].GrossWeight,
-          VolumeWeight: 0,
-          Volume: 0,
-          PackageType: multiCBM[i].PackageType
-        });
-      }
-      if (this.state.containerLoadType == "AIR") {
-        RateQueryDim.push({
-          Quantity: multiCBM[i].Quantity,
-          Lengths: multiCBM[i].Length,
-          Width: multiCBM[i].Width,
-          Height: multiCBM[i].height,
-          GrossWt: multiCBM[i].GrossWeight,
-          VolumeWeight: multiCBM[i].VolumeWeight,
-          Volume: 0,
-          PackageType: multiCBM[i].PackageType
-        });
-      }
-      if (this.state.containerLoadType == "INLAND") {
-        RateQueryDim.push({
-          Quantity: multiCBM[i].Quantity,
-          Lengths: multiCBM[i].Length,
-          Width: multiCBM[i].Width,
-          Height: multiCBM[i].height,
-          GrossWt: multiCBM[i].GrossWeight,
-          VolumeWeight: multiCBM[i].VolumeWeight,
-          Volume: 0,
-          PackageType:
-            multiCBM[i].PackageType === null ? "" : multiCBM[i].PackageType
-        });
-      }
-    }
-
-    debugger;
-    var senrequestpara = {
-      Commodity: Number(this.state.CommodityID),
-      OldSaleQuoteNumber: this.props.location.state.Quote,
-      OldSaleQuoteID:
-        rateSubDetailsarr[0].SaleQuoteID == undefined
-          ? rateSubDetailsarr[0].SaleQuoteIDD
-          : rateSubDetailsarr[0].SaleQuoteID,
-      MailBody:
-        "Hello Customer Name,      Greetings!!    Quotation for your requirement is generated by our Sales Team. To view the Qutation and its details please click here",
-      RateQueryDim: RateQueryDim,
-      SQCopyChargesList: SQCopyChargesList,
-      Mode: this.state.containerLoadType,
-      MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-    };
-
-    var url = "";
-
-    //if (this.state.containerLoadType == "FCL") {
-    //senrequestpara.NonStackable = 0;
-    url = `${appSettings.APIURL}/SalesQuoteCopy`;
-    //}
-    //return false;
-    // usertype
-
-    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
-    let self = this;
-    axios({
-      method: "post",
-      url: url,
-      data: senrequestpara,
-      headers: authHeader()
-    })
-      .then(function(response) {
-        debugger;
-        if (response != null) {
-          if (response.data != null) {
-            if (response.data.Table != null) {
-              if (response.data.Table.length > 0) {
-                NotificationManager.success(response.data.Table[0].Message);
-                var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
-                if (usertype !== "Sales User") {
-                  self.setState({
-                    SalesQuoteNo
-                  });
-
-                  self.AcceptQuotes();
-
-                  setTimeout(function() {
-                    window.location.href = "quote-table";
-                  }, 1000);
-                } else {
-                  setTimeout(function() {
-                    window.location.href = "quote-table";
-                  }, 1000);
-                }
-                // window.location.href = "quote-table";
-              }
-            }
-          }
-        }
-        //window.location.href = 'http://hrms.brainvire.com/BVESS/Account/LogOnEss'
-      })
-      .catch(error => {
-        debugger;
-        console.log(error.response);
-      });
   }
 
   SendQuote() {}
@@ -3017,7 +3146,31 @@ class RateFinalizing extends Component {
   }
 
   hanleProfitAmountSubmit() {
-    var rateDetailsarr = this.state.rateDetails;
+    debugger;
+    // var rateDetailsarr = this.state.rateDetails;
+
+    // var rateSubDetailsarr = this.state.rateSubDetails;
+
+    var rateDetailsarr = this.state.selectedDataRow;
+
+    var subratedetails = [];
+    for (let i = 0; i < rateDetailsarr.length; i++) {
+      if (this.state.isCopy === true) {
+        var data = this.state.rateSubDetails.filter(
+          x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
+        );
+        subratedetails.push(data);
+      } else {
+        var data = this.state.rateSubDetails.filter(
+          x => x.RateLineID === rateDetailsarr[i].RateLineId
+        );
+        for (let i = 0; i < data.length; i++) {
+          subratedetails.push(data[i]);
+        }
+        // subratedetails.push(data);
+      }
+    }
+    var rateSubDetailsarr = subratedetails;
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
       rateDetailsarr[i].TotalAmount =
@@ -3027,8 +3180,6 @@ class RateFinalizing extends Component {
     this.setState(prevState => ({
       modalProfit: false
     }));
-
-    var rateSubDetailsarr = this.state.rateSubDetails;
 
     for (var i = 0; i <= rateSubDetailsarr.length - 1; i++) {
       if (rateSubDetailsarr[i].ChargeCode == "Freight") {
@@ -3046,7 +3197,28 @@ class RateFinalizing extends Component {
   }
 
   hanleProfitAmountRemove() {
-    var rateDetailsarr = this.state.rateDetails;
+    // var rateDetailsarr = this.state.rateDetails;
+    // var rateSubDetailsarr = this.state.rateSubDetails;
+    var rateDetailsarr = this.state.selectedDataRow;
+
+    var subratedetails = [];
+    for (let i = 0; i < rateDetailsarr.length; i++) {
+      if (this.state.isCopy === true) {
+        var data = this.state.rateSubDetails.filter(
+          x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
+        );
+        subratedetails.push(data);
+      } else {
+        var data = this.state.rateSubDetails.filter(
+          x => x.RateLineID === rateDetailsarr[i].RateLineId
+        );
+        for (let i = 0; i < data.length; i++) {
+          subratedetails.push(data[i]);
+        }
+        // subratedetails.push(data);
+      }
+    }
+    var rateSubDetailsarr = subratedetails;
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
       rateDetailsarr[i].TotalAmount =
@@ -3056,8 +3228,6 @@ class RateFinalizing extends Component {
     this.setState(prevState => ({
       modalProfit: false
     }));
-
-    var rateSubDetailsarr = this.state.rateSubDetails;
 
     for (var i = 0; i <= rateSubDetailsarr.length - 1; i++) {
       if (rateSubDetailsarr[i].ChargeCode == "Freight") {
@@ -3097,7 +3267,11 @@ class RateFinalizing extends Component {
         // }
         // else
         // {
-        if (this.state.containerLoadType=="FCL"?element.ContainerType!=="ALL" && element.LineId!==0:element.LineId!==0) {
+        if (
+          this.state.containerLoadType == "FCL"
+            ? element.ContainerType !== "ALL" && element.LineId !== 0
+            : element.LineId !== 0
+        ) {
           if (
             element.LineName ==
             (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
@@ -3139,7 +3313,9 @@ class RateFinalizing extends Component {
               ChargeItem: e.target.getAttribute("data-chargeitem"),
               Exrate: 1,
               ChargeType: e.target.getAttribute("data-chargetype"),
-              TotalAmount: parseFloat(e.target.getAttribute("data-amountinbasecurrency")),
+              TotalAmount: parseFloat(
+                e.target.getAttribute("data-amountinbasecurrency")
+              ),
               BaseCurrency: e.target.getAttribute("data-currency")
             };
 
@@ -3147,73 +3323,80 @@ class RateFinalizing extends Component {
               this.state.containerLoadType == "FTL" ||
               this.state.containerLoadType == "LTL"
             ) {
-              newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+              newrateSubDetails.RateLineID = this.state.rateDetails[
+                i
+              ].RateLineID;
             }
 
             this.state.rateSubDetails = this.state.rateSubDetails.concat(
               newrateSubDetails
             );
           }
-        }
-        else{
+        } else {
           this.state.rateDetails[i].TotalAmount =
-              parseFloat(
-                this.state.rateDetails[i].TotalAmount == null
-                  ? 0
-                  : this.state.rateDetails[i].TotalAmount
-              ) + parseFloat(e.target.value);
-            // }
+            parseFloat(
+              this.state.rateDetails[i].TotalAmount == null
+                ? 0
+                : this.state.rateDetails[i].TotalAmount
+            ) + parseFloat(e.target.value);
+          // }
 
-            var newrateSubDetails = {
-              // BaseCurrency: e.target.getAttribute("data-currency"),
-              // ChargeCode: e.target.getAttribute("data-chargedesc"),
-              // ChargeDesc: e.target.getAttribute("data-chargedesc"),
-              // ChargeID: 0,
-              // ChargeItem: e.target.getAttribute("data-chargeitem"),
-              // ChargeType: e.target.getAttribute("data-chargetype"),
-              // Currency: e.target.getAttribute("data-currency"),
-              // Exrate: 0,
-              // Rate: parseFloat(e.target.value),
-              // RateLineID: this.state.rateDetails[i].RateLineId,
-              // SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
-              // Tax: 0,
-              // TotalAmount: parseFloat(
-              //   e.target.getAttribute("data-amountinbasecurrency")
-              // ),
-              // Extracharge: true
+          var newrateSubDetails = {
+            // BaseCurrency: e.target.getAttribute("data-currency"),
+            // ChargeCode: e.target.getAttribute("data-chargedesc"),
+            // ChargeDesc: e.target.getAttribute("data-chargedesc"),
+            // ChargeID: 0,
+            // ChargeItem: e.target.getAttribute("data-chargeitem"),
+            // ChargeType: e.target.getAttribute("data-chargetype"),
+            // Currency: e.target.getAttribute("data-currency"),
+            // Exrate: 0,
+            // Rate: parseFloat(e.target.value),
+            // RateLineID: this.state.rateDetails[i].RateLineId,
+            // SaleQuoteIDLineID: this.state.rateDetails[i].SaleQuoteIDLineID,
+            // Tax: 0,
+            // TotalAmount: parseFloat(
+            //   e.target.getAttribute("data-amountinbasecurrency")
+            // ),
+            // Extracharge: true
 
-              ChargeID: 0,
-              BuyRate: parseFloat(e.target.value),
-              Rate: parseFloat(e.target.value),
-              Currency: e.target.getAttribute("data-currency"),
-              RateLineID: this.state.rateDetails[i].RateLineId,
-              ChargeCode: e.target.getAttribute("data-chargedesc"),
-              ChargeDesc: e.target.getAttribute("data-chargedesc"),
-              Tax: 0,
-              ChargeItem: e.target.getAttribute("data-chargeitem"),
-              Exrate: 1,
-              ChargeType: e.target.getAttribute("data-chargetype"),
-              TotalAmount: parseFloat(e.target.getAttribute("data-amountinbasecurrency")),
-              BaseCurrency: e.target.getAttribute("data-currency")
-            };
+            ChargeID: 0,
+            BuyRate: parseFloat(e.target.value),
+            Rate: parseFloat(e.target.value),
+            Currency: e.target.getAttribute("data-currency"),
+            RateLineID: this.state.rateDetails[i].RateLineId,
+            ChargeCode: e.target.getAttribute("data-chargedesc"),
+            ChargeDesc: e.target.getAttribute("data-chargedesc"),
+            Tax: 0,
+            ChargeItem: e.target.getAttribute("data-chargeitem"),
+            Exrate: 1,
+            ChargeType: e.target.getAttribute("data-chargetype"),
+            TotalAmount: parseFloat(
+              e.target.getAttribute("data-amountinbasecurrency")
+            ),
+            BaseCurrency: e.target.getAttribute("data-currency")
+          };
 
-            if (
-              this.state.containerLoadType == "FTL" ||
-              this.state.containerLoadType == "LTL"
-            ) {
-              newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
-            }
+          if (
+            this.state.containerLoadType == "FTL" ||
+            this.state.containerLoadType == "LTL"
+          ) {
+            newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+          }
 
-            this.state.rateSubDetails = this.state.rateSubDetails.concat(
-              newrateSubDetails
-            );
+          this.state.rateSubDetails = this.state.rateSubDetails.concat(
+            newrateSubDetails
+          );
         }
       }
       this.forceUpdate();
     }
     if (!e.target.checked) {
       for (var i = 0; i < rateDetailsarr.length; i++) {
-        if (this.state.containerLoadType=="FCL"?element.ContainerType!=="ALL" && element.LineId!==0:element.LineId!==0) {
+        if (
+          this.state.containerLoadType == "FCL"
+            ? element.ContainerType !== "ALL" && element.LineId !== 0
+            : element.LineId !== 0
+        ) {
           if (element.LineName == rateDetailsarr[i].lineName) {
             if (this.state.rateDetails[i].TotalAmount == undefined) {
               var amount = this.processText(this.state.rateDetails[i].Total);
@@ -3238,8 +3421,7 @@ class RateFinalizing extends Component {
               }
             }
           }
-        }
-        else{
+        } else {
           if (this.state.rateDetails[i].TotalAmount == undefined) {
             var amount = this.processText(this.state.rateDetails[i].Total);
 
@@ -4031,42 +4213,87 @@ class RateFinalizing extends Component {
     ));
   }
 
-  //------------------------------------------------------------------//
+  toggleRow(rateID, rowData) {
+    debugger;
+    const newSelected = Object.assign({}, this.state.cSelectedRow);
+    newSelected[rateID] = !this.state.cSelectedRow[rateID];
+    this.setState({
+      cSelectedRow: rateID ? newSelected : false
+    });
+    var selectedRow = [];
+
+    if (this.state.selectedDataRow.length == 0) {
+      selectedRow.push(rowData._original);
+      this.setState({
+        selectedDataRow: selectedRow
+      });
+    } else {
+      if (this.state.isCopy === true) {
+        if (newSelected[rateID] === true) {
+          for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+            if (
+              this.state.selectedDataRow[i].saleQuoteLineID ===
+              rowData._original.saleQuoteLineID
+            ) {
+              selectedRow.splice(i, 1);
+
+              break;
+            } else {
+              selectedRow = this.state.selectedDataRow;
+              selectedRow.push(rowData._original);
+              break;
+            }
+          }
+        } else {
+          for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+            if (
+              this.state.selectedDataRow[i].RateLineId ===
+              rowData._original.RateLineId
+            ) {
+              selectedRow = this.state.selectedDataRow;
+              selectedRow.splice(i, 1);
+              break;
+            }
+          }
+        }
+      } else {
+        if (newSelected[rateID] === true) {
+          for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+            if (
+              this.state.selectedDataRow[i].RateLineId ===
+              rowData._original.RateLineId
+            ) {
+              selectedRow.splice(i, 1);
+
+              break;
+            } else {
+              selectedRow = this.state.selectedDataRow;
+              selectedRow.push(rowData._original);
+              break;
+            }
+          }
+        } else {
+          for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+            if (
+              this.state.selectedDataRow[i].RateLineId ===
+              rowData._original.RateLineId
+            ) {
+              selectedRow = this.state.selectedDataRow;
+              selectedRow.splice(i, 1);
+              break;
+            }
+          }
+        }
+      }
+    }
+    this.setState({
+      selectedDataRow: selectedRow
+    });
+  }
 
   render() {
-    
-    // var data1 = [
-    //   { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-    //   { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
-    // ];
-    // var data2 = [
-    //   {
-    //     chargeCode: "A23435",
-    //     chargeName: "Lorem",
-    //     units: "43",
-    //     unitPrice: "$134.00",
-    //     finalPayment: "$45,986.00"
-    //   },
-    //   {
-    //     chargeCode: "B45678",
-    //     chargeName: "Lorem",
-    //     units: "23",
-    //     unitPrice: "$56.45",
-    //     finalPayment: "$1200.00"
-    //   },
-    //   {
-    //     chargeCode: "C54545",
-    //     chargeName: "Lorem",
-    //     units: "56",
-    //     unitPrice: "$50.00",
-    //     finalPayment: "$3456.00"
-    //   }
-    // ];
-    console.log(this.state.CompanyID, "------------------compnayID");
-
     var i = 0;
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
-      debugger;
       let amtSign;
       if (item.Currency == "INR") {
         amtSign = " INR";
@@ -4075,8 +4302,11 @@ class RateFinalizing extends Component {
       } else if (item.Currency == "TL") {
         amtSign = " TL";
       }
-      debugger;
-      if (this.state.modeoftransport === "SEA" || this.state.modeoftransport=="Ocean") {
+
+      if (
+        this.state.modeoftransport === "SEA" ||
+        this.state.modeoftransport == "Ocean"
+      ) {
         return (
           <div>
             <div className="d-flex line-first">
@@ -4100,11 +4330,11 @@ class RateFinalizing extends Component {
             {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
             <span className="line-img">
               <img
-              title={item.LineName}
-              alt={item.LineName}
+                title={item.LineName}
+                alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                  (item.LineName).replace(" ","_")+
+                  item.LineName.replace(" ", "_") +
                   ".png"
                 }
               />
@@ -4139,11 +4369,11 @@ class RateFinalizing extends Component {
             {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
             <span className="line-img">
               <img
-              alt={item.LineName}
-              title={item.LineName}
+                alt={item.LineName}
+                title={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                  (item.LineName).replace(" ","_")+
+                  item.LineName.replace(" ", "_") +
                   ".png"
                 }
               />
@@ -4178,8 +4408,8 @@ class RateFinalizing extends Component {
             {/* <span><img src={"./../assets/img/company_logos/OEAN_LINERS/" + item.LineName + '.png'} /></span> */}
             <span className="line-img">
               <img
-              title={item.LineName}
-              alt={item.LineName}
+                title={item.LineName}
+                alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                 }
@@ -4195,7 +4425,6 @@ class RateFinalizing extends Component {
     });
 
     const checkSurCharges = this.state.arrSurCharges.map((item, index) => {
-      debugger;
       let amtSign;
       if (item.Currency == "INR") {
         amtSign = " INR";
@@ -4204,7 +4433,10 @@ class RateFinalizing extends Component {
       } else if (item.Currency == "TL") {
         amtSign = " TL";
       }
-      if (this.state.modeoftransport === "SEA" || this.state.modeoftransport=="Ocean") {
+      if (
+        this.state.modeoftransport === "SEA" ||
+        this.state.modeoftransport == "Ocean"
+      ) {
         return (
           <div>
             <div className="d-flex line-first">
@@ -4229,11 +4461,11 @@ class RateFinalizing extends Component {
           </span> */}
             <span className="line-img">
               <img
-              title={item.LineName}
-              alt={item.LineName}
+                title={item.LineName}
+                alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                  (item.LineName).replace(" ","_") +
+                  item.LineName.replace(" ", "_") +
                   ".png"
                 }
               />
@@ -4269,11 +4501,11 @@ class RateFinalizing extends Component {
                   </span> */}
             <span className="line-img">
               <img
-              title={item.LineName}
-              alt={item.LineName}
+                title={item.LineName}
+                alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                  (item.LineName).replace(" ","_") +
+                  item.LineName.replace(" ", "_") +
                   ".png"
                 }
               />
@@ -4309,8 +4541,8 @@ class RateFinalizing extends Component {
                   </span> */}
             <span className="line-img">
               <img
-              title={item.LineName}
-              alt={item.LineName}
+                title={item.LineName}
+                alt={item.LineName}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                 }
@@ -4788,8 +5020,37 @@ class RateFinalizing extends Component {
                                   }
 
                                   if (mode === "Ocean" && lname !== "") {
+                                    debugger;
+                                    var rateId = 0;
+                                    if (row._original.RateLineID) {
+                                      rateId = row._original.RateLineID;
+                                    } else if (row._original.RateLineId) {
+                                      rateId = row._original.RateLineId;
+                                    } else {
+                                      rateId = row._original.saleQuoteLineID;
+                                    }
                                     return (
                                       <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  rateId
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(rateId, row)
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
                                         <div className="rate-tab-img">
                                           <img
                                             title={olname}
@@ -4803,8 +5064,36 @@ class RateFinalizing extends Component {
                                       </React.Fragment>
                                     );
                                   } else if (mode == "Air" && lname !== "") {
+                                    var rateId = 0;
+                                    if (row._original.RateLineID) {
+                                      rateId = row._original.RateLineID;
+                                    } else if (row._original.RateLineId) {
+                                      rateId = row._original.RateLineId;
+                                    } else {
+                                      rateId = row._original.saleQuoteLineID;
+                                    }
                                     return (
                                       <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  rateId
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(rateId, row)
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
                                         <div className="rate-tab-img">
                                           <img
                                             title={olname}
@@ -4818,8 +5107,36 @@ class RateFinalizing extends Component {
                                       </React.Fragment>
                                     );
                                   } else {
+                                    var rateId = 0;
+                                    if (row._original.RateLineID) {
+                                      rateId = row._original.RateLineID;
+                                    } else if (row._original.RateLineId) {
+                                      rateId = row._original.RateLineId;
+                                    } else {
+                                      rateId = row._original.saleQuoteLineID;
+                                    }
                                     return (
                                       <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  rateId
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(rateId, row)
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
                                         <div className="rate-tab-img">
                                           <img
                                             title={olname}
@@ -5612,41 +5929,42 @@ class RateFinalizing extends Component {
                           ) != "Customer" ? (
                             this.state.CompanyName == "" ||
                             this.state.isCopy ? (
-                            <div className="position-relative mt-2">
-                              <Autocomplete
-                                id="searchtxt"
-                                className="title-sect p-0 pt-2"
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.customerData}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white",
-                                        padding: '5px'
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Company_Name"]}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Company_Name"
-                                )}
-                                menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  "Company_Name"
-                                )}
-                                inputProps={{
-                                  placeholder: "Search Account/Consignee"
-                                }}
-                              />
-                            </div>
-                          ) : // ) : null
-                          null): null}
+                              <div className="position-relative mt-2">
+                                <Autocomplete
+                                  id="searchtxt"
+                                  className="title-sect p-0 pt-2"
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.customerData}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white",
+                                        padding: "5px"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Company_Name"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Company_Name"
+                                  )}
+                                  menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    "Company_Name"
+                                  )}
+                                  inputProps={{
+                                    placeholder: "Search Account/Consignee"
+                                  }}
+                                />
+                              </div>
+                            ) : // ) : null
+                            null
+                          ) : null}
                         </div>
                         <div className="col-12 col-sm-4 col-md-4 col-lg-6">
                           <p className="details-title">Address</p>
@@ -6839,19 +7157,24 @@ class RateFinalizing extends Component {
                                 <th></th>
                                 <th></th>
                                 <th>
-                                  {this.state.filterrateSubDetails.length!==0?(this.state.filterrateSubDetails.reduce(
-                                    (sum, filterrateSubDetails) =>
-                                      this.state.isCopy == true
-                                        ? sum +
-                                          parseFloat(
-                                            filterrateSubDetails.Total.split(
-                                              " "
-                                            )[0]
-                                          )
-                                        : sum +
-                                          filterrateSubDetails.TotalAmount,
-                                    0
-                                  ) + " "+this.state.filterrateSubDetails[0].BaseCurrency):null}
+                                  {this.state.filterrateSubDetails.length !== 0
+                                    ? this.state.filterrateSubDetails.reduce(
+                                        (sum, filterrateSubDetails) =>
+                                          this.state.isCopy == true
+                                            ? sum +
+                                              parseFloat(
+                                                filterrateSubDetails.Total.split(
+                                                  " "
+                                                )[0]
+                                              )
+                                            : sum +
+                                              filterrateSubDetails.TotalAmount,
+                                        0
+                                      ) +
+                                      " " +
+                                      this.state.filterrateSubDetails[0]
+                                        .BaseCurrency
+                                    : null}
                                 </th>
                               </tr>
                             </thead>
@@ -7210,6 +7533,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
         </div>
+        <NotificationContainer/>
       </React.Fragment>
     );
   }
