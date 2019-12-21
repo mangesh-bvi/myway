@@ -3683,6 +3683,15 @@ class RateTable extends Component {
             <div className="loader-icon"></div>
           ) : ( */}
           <div className="cls-rt no-bg min-hei-auto">
+          {encryption(
+                        window.localStorage.getItem("usertype"),
+                        "desc"
+                      ) !== "Customer" ? (
+                        <p className="bottom-profit">
+                          Profit -------{this.state.profitLossAmt.toFixed(2)}$ /
+                          Profit Margin {this.state.profitLossPer.toFixed(2)}%
+                        </p>
+                      ) : null}
             <div className="rate-table-header">
               <div className="title-sect">
                 <h2>Rate Table</h2>
@@ -4484,7 +4493,7 @@ class RateTable extends Component {
                     columns={columns}
                     defaultSorted={[{ id: "firstName", desc: false }]}
                   /> */}
-                      {encryption(
+                      {/* {encryption(
                         window.localStorage.getItem("usertype"),
                         "desc"
                       ) !== "Customer" ? (
@@ -4492,7 +4501,7 @@ class RateTable extends Component {
                           Profit -------{this.state.profitLossAmt.toFixed(2)}$ /
                           Profit Margin {this.state.profitLossPer.toFixed(2)}%
                         </p>
-                      ) : null}
+                      ) : null} */}
                     </div>
                   ) : (
                     <div className="less-left-rate">
