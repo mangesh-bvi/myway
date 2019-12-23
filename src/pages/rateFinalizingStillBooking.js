@@ -2344,9 +2344,7 @@ class RateFinalizingStillBooking extends Component {
                               <p className="details-title">Unstackable</p>
                               <p className="details-para">
                                 {/* {this.state.EquipmentTypes} */}
-                                {this.state.Unstackable === 0
-                                  ? "No"
-                                  : "Yes"}
+                                {this.state.Unstackable === 0 ? "No" : "Yes"}
                               </p>
                             </div>
                           ) : (
@@ -2512,34 +2510,38 @@ class RateFinalizingStillBooking extends Component {
                                 value={this.state.consigneeVal}
                               />
                             ) : (
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Consignee}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      // width:"100%",
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                    value={item.Company_ID}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Consignee"
-                                )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Consignee"
-                                )}
-                                value={this.state.fields["Consignee"]}
-                              />
+                              <div className="position-relative">
+                                <div className="auto-comp-drp-dwn">
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Consignee}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          // width:"100%",
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                        value={item.Company_ID}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Consignee"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Consignee"
+                                    )}
+                                    value={this.state.fields["Consignee"]}
+                                  />
+                                </div>
+                              </div>
                             )}
                           </div>
 
@@ -2597,32 +2599,36 @@ class RateFinalizingStillBooking extends Component {
                                 value={this.state.shipperval}
                               />
                             ) : (
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Shipper}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Shipper"]}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Shipper"
-                                )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Shipper"
-                                )}
-                              />
+                              <div className="position-relative">
+                                <div className="auto-comp-drp-dwn">
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Shipper}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    value={this.state.fields["Shipper"]}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Shipper"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Shipper"
+                                    )}
+                                  />
+                                </div>
+                              </div>
                             )}
                             {/* <p className="details-para">
                               {Booking3.length > 0 ? Booking3[0].Shipper : null}
@@ -2676,32 +2682,36 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Buyer}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Buyer"]}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Buyer"
-                                )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Buyer"
-                                )}
-                              />
+                              <div className="position-relative">
+                                <div className="auto-comp-drp-dwn">
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Buyer}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    value={this.state.fields["Buyer"]}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Buyer"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Buyer"
+                                    )}
+                                  />
+                                </div>
+                              </div>
                             </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-4 login-fields">
@@ -2747,32 +2757,36 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Notify}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Notify"]}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Notify"
-                                )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Notify"
-                                )}
-                              />
+                              <div className="position-relative">
+                                <div className="auto-comp-drp-dwn">
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Notify}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    value={this.state.fields["Notify"]}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Notify"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Notify"
+                                    )}
+                                  />
+                                </div>
+                              </div>
                             </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-4 login-fields">

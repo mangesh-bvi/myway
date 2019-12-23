@@ -473,6 +473,9 @@ table tbody tr:last-child {
 .ship-summ-table .rt-tr .rt-th:last-child {
   background-image: none;
 }
+.auto-comp-drp-dwn-adv div[style*="display: inline-block;"] {
+  width: 100%;
+}
 /* shipping details ends */
 
 /* shipping details 2 starts */
@@ -1565,7 +1568,7 @@ table tbody tr:last-child {
 
 /* extra */
 .rate-bg {
-  width: 60%;
+  width: 60% !important;
   /* background: #aec6cf; */
   background: #f1f2f2;
   margin: 20px auto;
@@ -1902,7 +1905,8 @@ table tbody tr:last-child {
 .bottom-profit {
   font-family: "Regular Font";
   color: #5f5f60;
-  margin-top: 20px;
+  margin-top: -10px;
+  margin-bottom: 10px;
   font-size: 14px;
   text-align: right;
 }
@@ -2528,6 +2532,16 @@ table tbody tr:last-child {
   width: 150px;
   margin-right: 20px;
 }
+
+/* rate finalizing still booking starts */
+.auto-comp-drp-dwn input + div {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  max-height: 100px !important;
+  z-index: 1;
+}
+/* rate finalizing still booking ends */
 
 /* chetan css ends */
 
@@ -3686,7 +3700,7 @@ a.disabled {
 }
 
 #reversedRange {
-  direction: rtl
+  direction: rtl;
 }
 /*--------------------------------- Rashmi CSS (End) ---------------------------------*/
 
