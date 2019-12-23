@@ -489,7 +489,7 @@ class SpotRateDetails extends Component {
     podfullAddData["OceanPortID"] = 6302;
     podfullAddData[
       "OceanPortLongName"
-    ] = this.state.spotrateresponseTbl.DestinationAddress;
+    ] = this.state.spotrateresponseTbl1[0].DestinationPort_Name;
     podfullAddData[
       "UNECECode"
     ] = this.state.spotrateresponseTbl1[0].DestinationPort_ID;
@@ -505,7 +505,7 @@ class SpotRateDetails extends Component {
     polfullAddData["OceanPortID"] = 0;
     polfullAddData[
       "OceanPortLongName"
-    ] = this.state.spotrateresponseTbl.PickUpAddress;
+    ] = this.state.spotrateresponseTbl1[0].OriginPort_Name;
     polfullAddData[
       "UNECECode"
     ] = this.state.spotrateresponseTbl1[0].OriginPort_ID;

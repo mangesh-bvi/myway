@@ -46,8 +46,26 @@ class myWayMessage extends Component {
     })
       .then(function(response) {
         debugger;
+        var Message = "";
+        var MessageArr = [];
+        for (let i = 0; i < response.data.Table.length; i++) {
+          if (!Message.includes(response.data.Table[i].MessageTitle!==null?
+                                (response.data.Table[i].MessageTitle.includes(':')==true?
+                                response.data.Table[i].MessageTitle.split(':')[1].trim():
+                                response.data.Table[i].MessageTitle):
+                                response.data.Table[i].MessageTitle)) {
+
+              Message += (response.data.Table[i].MessageTitle!==null?
+                         (response.data.Table[i].MessageTitle.includes(':')==true?
+                         response.data.Table[i].MessageTitle.split(':')[1].trim():
+                         response.data.Table[i].MessageTitle):response.data.Table[i].MessageTitle)
+
+              MessageArr.push(response.data.Table[i])
+          }
+          
+        }
         self.setState({
-          MessageArr: response.data.Table
+          MessageArr: MessageArr
         })        
         self.bindMyWayMessageById(response.data.Table[0]);
       })
@@ -129,8 +147,7 @@ class myWayMessage extends Component {
                                                       item.MessageTitle.split(':')[1].trim():item.MessageTitle):""}</span>
                               </h5>
                               <p>
-                                Test, which is a new approach to have all
-                                solutions astrology under one roof.
+                                  {item.MessageDetail}
                               </p>
                               </div>
                             

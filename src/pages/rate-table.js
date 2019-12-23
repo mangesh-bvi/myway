@@ -325,7 +325,8 @@ class RateTable extends Component {
                   ? paramData.polfullAddData.UNECECode
                   : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
-              Address: paramData.fields.pol,
+              Address: paramData.fields.pol==""?paramData.polfullAddData.OceanPortLongName:
+                       paramData.fields.pol,
               IsFilter: true
             });
             this.state.podFilterArray.push({
@@ -340,7 +341,8 @@ class RateTable extends Component {
                   ? paramData.podfullAddData.UNECECode
                   : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
-              Address: paramData.fields.pod,
+              Address: paramData.fields.pod==""?paramData.podfullAddData.OceanPortLongName:
+                       paramData.fields.pod,
               IsFilter: true
             });
           }
@@ -477,6 +479,7 @@ class RateTable extends Component {
             polFilterArray: this.state.polFilterArray,
             podFilterArray: this.state.podFilterArray,
             flattack_openTop: this.state.flattack_openTop,
+
             isViewRate: paramData.isViewRate,
             RatequeryID: paramData.isViewRate==true?paramData.RatequeryID:0,
             IsSearchFromSpotRate: paramData.isViewRate==true?1:0,
@@ -525,7 +528,9 @@ class RateTable extends Component {
 
           this.setState({
             mapPositionPOL: polmarkerData,
-            markerPositionPOD: podmarkerData
+            markerPositionPOD: podmarkerData,
+            polfullAddData: paramData.polfullAddData,
+            podfullAddData: paramData.podfullAddData
           });
             this.HandleMultiPOLPODFilter();
           } else {
@@ -576,21 +581,21 @@ class RateTable extends Component {
   toggleQuantPOLSave() {
     debugger;
 
-    if (this.props.location.state.PageName === "SportRateView") {
-      this.state.polFilterArray = this.state.polArray.slice(1);
-      this.setState(prevState => ({
-        polFilterArray: this.state.polFilterArray,
-        modalPOL: !this.state.modalPOL
-        //modalQuant: !prevState.modalQuant
-      }));
-    } else {
+    // if (this.props.location.state.PageName === "SportRateView") {
+    //   this.state.polFilterArray = this.state.polArray.slice(1);
+    //   this.setState(prevState => ({
+    //     polFilterArray: this.state.polFilterArray,
+    //     modalPOL: !this.state.modalPOL
+    //     //modalQuant: !prevState.modalQuant
+    //   }));
+    // } else {
       this.state.polFilterArray = this.state.polArray;
       this.setState(prevState => ({
         polFilterArray: this.state.polFilterArray,
         modalPOL: !this.state.modalPOL
         //modalQuant: !prevState.modalQuant
       }));
-    }
+    // }
 
     this.HandleMultiPOLPODFilter();
   }
@@ -598,21 +603,21 @@ class RateTable extends Component {
   toggleQuantPODSave() {
     debugger;
 
-    if (this.props.location.state.PageName === "SportRateView") {
-      this.state.podFilterArray = this.state.podArray.slice(1);
-      this.setState(prevState => ({
-        podFilterArray: this.state.podFilterArray,
-        modalPOD: !this.state.modalPOD
-        //modalQuant: !prevState.modalQuant
-      }));
-    } else {
+    // if (this.props.location.state.PageName === "SportRateView") {
+    //   this.state.podFilterArray = this.state.podArray.slice(1);
+    //   this.setState(prevState => ({
+    //     podFilterArray: this.state.podFilterArray,
+    //     modalPOD: !this.state.modalPOD
+    //     //modalQuant: !prevState.modalQuant
+    //   }));
+    // } else {
       this.state.podFilterArray = this.state.podArray;
       this.setState(prevState => ({
         podFilterArray: this.state.podFilterArray,
         modalPOD: !this.state.modalPOD
         //modalQuant: !prevState.modalQuant
       }));
-    }
+    // }
 
     this.HandleMultiPOLPODFilter();
   }
