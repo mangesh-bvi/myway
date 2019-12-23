@@ -1494,30 +1494,31 @@ class BookingView extends Component {
                     </div>
                     <div className="row ratefinalpgn">
                       {this.state.eqmtType.length > 0 ? (
-                        <ReactTable
-                          columns={[
-                            {
-                              columns: [
-                                {
-                                  Header: "Container Name",
-                                  accessor: "ContainerName"
-                                },
-                                {
-                                  Header: "ContainerCode",
-                                  accessor: "ContainerCode"
-                                },
+                        // <ReactTable
+                        //   columns={[
+                        //     {
+                        //       columns: [
+                        //         {
+                        //           Header: "Container Name",
+                        //           accessor: "ContainerName"
+                        //         },
+                        //         {
+                        //           Header: "ContainerCode",
+                        //           accessor: "ContainerCode"
+                        //         },
 
-                                {
-                                  Header: "Container Count",
-                                  accessor: "ContainerCount"
-                                }
-                              ]
-                            }
-                          ]}
-                          data={this.state.eqmtType}
-                          minRows={0}
-                          showPagination={false}
-                        />
+                        //         {
+                        //           Header: "Container Count",
+                        //           accessor: "ContainerCount"
+                        //         }
+                        //       ]
+                        //     }
+                        //   ]}
+                        //   data={this.state.eqmtType}
+                        //   minRows={0}
+                        //   showPagination={false}
+                        // />
+                        ""
                       ) : null}
                       {this.state.multiCBM.length > 0 ? (
                         <ReactTable

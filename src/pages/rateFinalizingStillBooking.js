@@ -9,6 +9,8 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
+import Download from "./../assets/img/csv.png";
+
 import { encryption, convertToPlain } from "../helpers/encryption";
 
 import {
@@ -139,7 +141,11 @@ class RateFinalizingStillBooking extends Component {
       shipperData: {},
       notifyData: {},
       buyerData: {},
-      strBooking_No: ""
+      strBooking_No: "",
+      isShipper: false,
+      isConshinee: false,
+      isBuyer: false,
+      isNotify: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -499,161 +505,173 @@ class RateFinalizingStillBooking extends Component {
   HandleBookingUpdate() {
     //const formData = new FormData();
     debugger;
-    var bookingId = this.state.BookingNo;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    var bookingDetails = this.state.Booking;
 
-    var DefaultEntityTypeID = this.state.DefaultEntityTypeID; ////ask to way it give parameter
-    var MyWayUserID = userId;
+    if (
+      this.state.isConshinee === true ||
+      this.state.isShipper === true ||
+      this.state.isBuyer === true ||
+      this.state.isNotify === true
+    ) {
+      var bookingId = this.state.BookingNo;
+      var userId = encryption(window.localStorage.getItem("userid"), "desc");
+      var bookingDetails = this.state.Booking;
 
-    var ShipperID = 0;
-    var Shipper_Displayas = "";
-    var Shipper_AddressID = 0;
-    var ShipperName = "";
-    if (this.state.isShipper === true) {
-      ShipperID = Number(this.state.shipperData.Company_ID || 0);
-      Shipper_Displayas = this.state.Shipper_Displayas || "";
-      Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-      ShipperName = this.state.shipperData.Company_Name || "";
-    } else {
-      if (this.state.shipperData.Company_ID) {
-        ShipperName = this.state.shipperData.Company_Name || "";
+      var DefaultEntityTypeID = this.state.DefaultEntityTypeID; ////ask to way it give parameter
+      var MyWayUserID = userId;
+
+      var ShipperID = 0;
+      var Shipper_Displayas = "";
+      var Shipper_AddressID = 0;
+      var ShipperName = "";
+      if (this.state.isShipper === true) {
         ShipperID = Number(this.state.shipperData.Company_ID || 0);
+        Shipper_Displayas = this.state.Shipper_Displayas || "";
+        Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+        ShipperName = this.state.shipperData.Company_Name || "";
       } else {
-        ShipperName = this.state.ShipperName;
-        ShipperID = this.state.ShipperID;
+        if (this.state.shipperData.Company_ID) {
+          ShipperName = this.state.shipperData.Company_Name || "";
+          ShipperID = Number(this.state.shipperData.Company_ID || 0);
+        } else {
+          ShipperName = this.state.ShipperName;
+          ShipperID = this.state.ShipperID;
+        }
+
+        Shipper_Displayas = this.state.Shipper_Displayas || "";
+        Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
       }
 
-      Shipper_Displayas = this.state.Shipper_Displayas || "";
-      Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-    }
+      var ConsigneeID = 0;
+      var ConsigneeName = "";
+      var Consignee_AddressID = 0;
+      var Consignee_Displayas = "";
 
-    var ConsigneeID = 0;
-    var ConsigneeName = "";
-    var Consignee_AddressID = 0;
-    var Consignee_Displayas = "";
-
-    if (this.state.isConshinee === true) {
-      ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-      ConsigneeName = this.state.consineeData.Company_Name || "";
-      Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-      Consignee_Displayas = this.state.Consinee_Displayas;
-    } else {
-      if (this.state.consineeData.Company_ID) {
+      if (this.state.isConshinee === true) {
         ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
         ConsigneeName = this.state.consineeData.Company_Name || "";
+        Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+        Consignee_Displayas = this.state.Consinee_Displayas;
       } else {
-        ConsigneeID = this.state.ConsigneeID;
-        ConsigneeName = this.state.ConsigneeName;
+        if (this.state.consineeData.Company_ID) {
+          ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+          ConsigneeName = this.state.consineeData.Company_Name || "";
+        } else {
+          ConsigneeID = this.state.ConsigneeID;
+          ConsigneeName = this.state.ConsigneeName;
+        }
+
+        Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+        Consignee_Displayas = this.state.Consignee_Displayas;
+      }
+      var BuyerID = Number(this.state.buyerData.Company_ID || 0);
+      var Buyer_AddressID = this.state.Buyer_AddressID;
+      var Buyer_Displayas = this.state.Buyer_Displayas;
+      var BuyerName = this.state.buyerData.Company_Name;
+
+      if (this.state.buyerData.Company_ID) {
+        BuyerID = Number(this.state.buyerData.Company_ID || 0);
+        BuyerName = this.state.buyerData.Company_Name;
+      } else {
+        BuyerID = this.state.BuyerID;
+        BuyerName = this.state.BuyerName;
       }
 
-      Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-      Consignee_Displayas = this.state.Consignee_Displayas;
-    }
-    var BuyerID = Number(this.state.buyerData.Company_ID || 0);
-    var Buyer_AddressID = this.state.Buyer_AddressID;
-    var Buyer_Displayas = this.state.Buyer_Displayas;
-    var BuyerName = this.state.buyerData.Company_Name;
+      var NotifyID = Number(this.state.notifyData.Company_ID || 0);
+      var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+      var Notify_Displayas = this.state.Notify_Displayas || "";
+      var NotifyName = this.state.notifyData.Company_Name || "";
 
-    if (this.state.buyerData.Company_ID) {
-      BuyerID = Number(this.state.buyerData.Company_ID || 0);
-      BuyerName = this.state.buyerData.Company_Name;
-    } else {
-      BuyerID = this.state.BuyerID;
-      BuyerName = this.state.BuyerName;
-    }
+      if (this.state.notifyData.Company_Name) {
+        NotifyName = this.state.notifyData.Company_Name || "";
+        NotifyID = Number(this.state.notifyData.Company_ID || 0);
+      } else {
+        NotifyName = this.state.NotifyName;
+        NotifyID = this.state.NotifyID;
+      }
 
-    var NotifyID = Number(this.state.notifyData.Company_ID || 0);
-    var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
-    var Notify_Displayas = this.state.Notify_Displayas || "";
-    var NotifyName = this.state.notifyData.Company_Name || "";
+      var Mode = bookingDetails[0].CargoType;
+      var Commodity = Number(bookingDetails[0].Commodity || 0);
+      var saleQuoteID = Number(bookingDetails[0].saleQuoteID || 0);
+      var saleQuoteNo = bookingDetails[0].saleQuoteNo || "";
+      var saleQuoteLineID = Number(bookingDetails[0].saleQuoteLineID || 0);
 
-    if (this.state.notifyData.Company_Name) {
-      NotifyName = this.state.notifyData.Company_Name || "";
-      NotifyID = Number(this.state.notifyData.Company_ID || 0);
-    } else {
-      NotifyName = this.state.NotifyName;
-      NotifyID = this.state.NotifyID;
-    }
-
-    var Mode = bookingDetails[0].CargoType;
-    var Commodity = Number(bookingDetails[0].Commodity || 0);
-    var saleQuoteID = Number(bookingDetails[0].saleQuoteID || 0);
-    var saleQuoteNo = bookingDetails[0].saleQuoteNo || "";
-    var saleQuoteLineID = Number(bookingDetails[0].saleQuoteLineID || 0);
-
-    var BookingDocs = [];
-    var BookingDim = [];
-    if (this.state.FileData.length > 0) {
-      for (let i = 0; i < this.state.FileData.length; i++) {
-        var fileObj = new Object();
-        fileObj.BookingID = bookingId;
-        fileObj.DocumentID = this.state.FileData[i].DocumentID;
-        fileObj.FTPFilePath = this.state.FileData[i].FilePath;
-        if (this.state.FileData[i].DocumentID) {
-          BookingDocs.push(fileObj);
+      var BookingDocs = [];
+      var BookingDim = [];
+      if (this.state.FileData.length > 0) {
+        for (let i = 0; i < this.state.FileData.length; i++) {
+          var fileObj = new Object();
+          fileObj.BookingID = bookingId;
+          fileObj.DocumentID = this.state.FileData[i].DocumentID;
+          fileObj.FTPFilePath = this.state.FileData[i].FilePath;
+          if (this.state.FileData[i].DocumentID) {
+            BookingDocs.push(fileObj);
+          }
         }
       }
-    }
-    if (this.state.multiCBM.length > 0) {
-      for (let i = 0; i < this.state.multiCBM.length; i++) {
-        var cargoData = new Object();
+      if (this.state.multiCBM.length > 0) {
+        for (let i = 0; i < this.state.multiCBM.length; i++) {
+          var cargoData = new Object();
 
-        cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-        cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-        cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-        cargoData.Lengths = this.state.multiCBM[i].Lengths || 0;
-        cargoData.Width = this.state.multiCBM[i].Width || 0;
-        cargoData.Height = this.state.multiCBM[i].Height || 0;
-        cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-        cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-        cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+          cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
+          cargoData.Lengths = this.state.multiCBM[i].Lengths || 0;
+          cargoData.Width = this.state.multiCBM[i].Width || 0;
+          cargoData.Height = this.state.multiCBM[i].Height || 0;
+          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
 
-        BookingDim.push(cargoData);
+          BookingDim.push(cargoData);
+        }
       }
+
+      var paramData = {
+        MyWayUserID: MyWayUserID,
+        BookingNo: this.state.strBooking_No,
+        ShipperID: ShipperID,
+        Shipper_Displayas: Shipper_Displayas,
+        Shipper_AddressID: Shipper_AddressID,
+        ShipperName: ShipperName,
+        ConsigneeID: ConsigneeID,
+        ConsigneeName: ConsigneeName,
+        Consignee_AddressID: Consignee_AddressID,
+        Consignee_Displayas: Consignee_Displayas,
+        BuyerID: BuyerID,
+        Buyer_AddressID: Buyer_AddressID,
+        Buyer_Displayas: Buyer_Displayas,
+        BuyerName: BuyerName,
+        Mode: Mode,
+        Commodity: Commodity,
+        saleQuoteID: saleQuoteID,
+        saleQuoteNo: saleQuoteNo,
+        saleQuoteLineID: saleQuoteLineID,
+        DefaultEntityTypeID: DefaultEntityTypeID,
+        NotifyID: NotifyID,
+        Notify_AddressID: Notify_AddressID,
+        Notify_Displayas: Notify_Displayas,
+        NotifyName: NotifyName,
+        BookingDocs: BookingDocs,
+        BookingDim: BookingDim
+      };
+      let self = this;
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookingUpdation`,
+
+        headers: authHeader(),
+        data: paramData
+      }).then(function(response) {
+        debugger;
+        NotificationManager.success(response.data.Table[0].Message);
+
+        self.HandleFileUpload();
+      });
+    } else {
+      NotificationManager.error(
+        "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer"
+      );
     }
-
-    var paramData = {
-      MyWayUserID: MyWayUserID,
-      BookingNo: this.state.strBooking_No,
-      ShipperID: ShipperID,
-      Shipper_Displayas: Shipper_Displayas,
-      Shipper_AddressID: Shipper_AddressID,
-      ShipperName: ShipperName,
-      ConsigneeID: ConsigneeID,
-      ConsigneeName: ConsigneeName,
-      Consignee_AddressID: Consignee_AddressID,
-      Consignee_Displayas: Consignee_Displayas,
-      BuyerID: BuyerID,
-      Buyer_AddressID: Buyer_AddressID,
-      Buyer_Displayas: Buyer_Displayas,
-      BuyerName: BuyerName,
-      Mode: Mode,
-      Commodity: Commodity,
-      saleQuoteID: saleQuoteID,
-      saleQuoteNo: saleQuoteNo,
-      saleQuoteLineID: saleQuoteLineID,
-      DefaultEntityTypeID: DefaultEntityTypeID,
-      NotifyID: NotifyID,
-      Notify_AddressID: Notify_AddressID,
-      Notify_Displayas: Notify_Displayas,
-      NotifyName: NotifyName,
-      BookingDocs: BookingDocs,
-      BookingDim: BookingDim
-    };
-    let self = this;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookingUpdation`,
-
-      headers: authHeader(),
-      data: paramData
-    }).then(function(response) {
-      debugger;
-      NotificationManager.success(response.data.Table[0].Message);
-
-      self.HandleFileUpload();
-    });
   }
 
   HandleFileUpload() {
@@ -729,8 +747,13 @@ class RateFinalizingStillBooking extends Component {
 
     if (type === "Conshinee") {
       this.setState({ isConshinee: !this.state.isConshinee });
-    } else {
+    } else if (type === "Shipper") {
       this.setState({ isShipper: !this.state.isShipper });
+    } else if (type === "Buyer") {
+      this.setState({ isBuyer: !this.state.isBuyer });
+    } else if (type === "Notify") {
+      this.setState({ isNotify: !this.state.isNotify });
+    } else {
     }
     // this.setState({
     //   // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
@@ -1086,6 +1109,9 @@ class RateFinalizingStillBooking extends Component {
           if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
             self.setState({ FileData });
           }
+          else{
+            self.setState({ FileData:[{FileName:"File Not Found"}] });
+          }
         }
       });
     }
@@ -1123,6 +1149,7 @@ class RateFinalizingStillBooking extends Component {
         var HAZMAT = 0;
         var Customs_Clearance = 0;
         var ShipmentType = "";
+
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
             var nPartyID = QuotationData[0].NotifyID;
@@ -1286,6 +1313,9 @@ class RateFinalizingStillBooking extends Component {
 
           if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
             self.setState({ FileData });
+          }
+          else{
+            self.setState({ FileData:[{FileName:"File Not Found"}] });
           }
         }
         if (Table6.length > 0) {
@@ -2344,9 +2374,7 @@ class RateFinalizingStillBooking extends Component {
                               <p className="details-title">Unstackable</p>
                               <p className="details-para">
                                 {/* {this.state.EquipmentTypes} */}
-                                {this.state.Unstackable === 0
-                                  ? "No"
-                                  : "Yes"}
+                                {this.state.Unstackable === 0 ? "No" : "Yes"}
                               </p>
                             </div>
                           ) : (
@@ -2465,352 +2493,491 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div className="remember-forgot rate-checkbox justify-content-center">
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                        <h3 style={{ display: "inline" }}>Consignee Details</h3>
                         <input
                           type="checkbox"
                           onChange={this.HandleRadioBtn.bind(this, "Conshinee")}
                           name="cust-select"
-                          id="exist-cust"
+                          id="Conshinee"
                           checked={this.state.isConshinee}
                           value="Consignee"
                         />
-                        <label
-                          className="d-flex flex-column align-items-center"
-                          htmlFor="exist-cust"
-                        >
+                        <label className="d-flex" htmlFor="Conshinee">
                           Consignee
                         </label>
+                      </div>
+                      <div>
+                        {this.state.isConshinee === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                              <p className="details-title">Consignee Name</p>
+                              {this.state.userType !== "Customer" ? (
+                                <input
+                                  type="text"
+                                  name="Consignee"
+                                  value={this.state.consigneeVal}
+                                />
+                              ) : (
+                                <Autocomplete
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.Consignee}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        // width:"100%",
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                      value={item.Company_ID}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Consignee"
+                                  )}
+                                  // menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    item => item.Company_ID,
+                                    "Consignee"
+                                  )}
+                                  value={this.state.fields["Consignee"]}
+                                />
+                              )}
+                            </div>
 
-                        <input
-                          type="checkbox"
-                          onChange={this.HandleRadioBtn.bind(this, "Shipper")}
-                          name="cust-select"
-                          id="new-cust"
-                          checked={this.state.isShipper}
-                          value="Shipper"
-                        />
-                        <label
-                          className="d-flex flex-column align-items-center"
-                          htmlFor="new-cust"
-                        >
-                          Shipper
-                        </label>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
+                              <select
+                                onChange={this.AddressChange.bind(
+                                  this,
+                                  "Consignee"
+                                )}
+                              >
+                                <option>Select</option>
+
+                                {this.state.conshineeAddData.length > 0
+                                  ? this.state.conshineeAddData.map(
+                                      (item, i) => (
+                                        <option key={i} value={item.AddressID}>
+                                          {item.Cust_Address}
+                                        </option>
+                                      )
+                                    )
+                                  : ""
+                                //<option>Other</option>
+                                }
+                                <option>Other</option>
+                              </select>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">&nbsp;</p>
+                              {this.state.conshineeother === true ? (
+                                <textarea
+                                  className="form-control"
+                                  style={{ width: "100%", resize: "none" }}
+                                  value={this.state.Consignee_Displayas}
+                                  onChange={this.HandleConsineeAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Consignee Name</p>
+
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                              <p className="details-title">
+                                Notification Person
+                              </p>
+                              <p className="details-para">
+                                {this.state.contact_name}
+                              </p>
+                            </div> */}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3">
-                        <h3>Consignee Details</h3>
-                      </div>
-                      <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
-                            <p className="details-title">Consignee Name</p>
-                            {this.state.userType !== "Customer" ? (
-                              <input
-                                type="text"
-                                name="Consignee"
-                                value={this.state.consigneeVal}
-                              />
-                            ) : (
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Consignee}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      // width:"100%",
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                    value={item.Company_ID}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Consignee"
-                                )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Consignee"
-                                )}
-                                value={this.state.fields["Consignee"]}
-                              />
-                            )}
-                          </div>
-
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
-                            <select
-                              onChange={this.AddressChange.bind(
-                                this,
-                                "Consignee"
-                              )}
-                            >
-                              <option>Select</option>
-
-                              {this.state.conshineeAddData.length > 0
-                                ? this.state.conshineeAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""
-                              //<option>Other</option>
-                              }
-                              <option>Other</option>
-                            </select>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
-                            {this.state.conshineeother === true ? (
-                              <textarea
-                                className="form-control"
-                                style={{ width: "100%", resize: "none" }}
-                                value={this.state.Consignee_Displayas}
-                                onChange={this.HandleConsineeAddressChange.bind(
-                                  this
-                                )}
-                              ></textarea>
-                            ) : null}
-                          </div>
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                        <h3 style={{ display: "inline" }}>Shipper Details</h3>
+                        <div style={{ display: "inline", float: "left" }}>
+                          <input
+                            type="checkbox"
+                            onChange={this.HandleRadioBtn.bind(this, "Shipper")}
+                            name="cust-select"
+                            id="Shipper"
+                            checked={this.state.isShipper}
+                            value="Shipper"
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="Shipper"
+                          >
+                            Shipper
+                          </label>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <div className="title-border-t py-3">
-                        <h3>Shipper Details</h3>
-                      </div>
                       <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
-                            <p className="details-title">Shipper Name</p>
-                            {this.state.userType !== "Customer" ? (
-                              <input
-                                type="text"
-                                name="Shipper"
-                                onChange={this.HandleChangeCon_Ship}
-                                value={this.state.shipperval}
-                              />
-                            ) : (
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Shipper}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Shipper"]}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Shipper"
-                                )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Shipper"
-                                )}
-                              />
-                            )}
-                            {/* <p className="details-para">
+                        {this.state.isShipper === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                              <p className="details-title">Shipper Name</p>
+                              {this.state.userType !== "Customer" ? (
+                                <input
+                                  type="text"
+                                  name="Shipper"
+                                  onChange={this.HandleChangeCon_Ship}
+                                  value={this.state.shipperval}
+                                />
+                              ) : (
+                                <Autocomplete
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.Shipper}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Shipper"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Shipper"
+                                  )}
+                                  // menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    item => item.Company_ID,
+                                    "Shipper"
+                                  )}
+                                />
+                              )}
+                              {/* <p className="details-para">
                               {Booking3.length > 0 ? Booking3[0].Shipper : null}
                             </p> */}
-                          </div>
+                            </div>
 
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
 
-                            <select
-                              onChange={this.AddressChange.bind(
-                                this,
-                                "Shipper"
-                              )}
-                            >
-                              <option>Select</option>
-
-                              {this.state.shipperAddData.length > 0
-                                ? this.state.shipperAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""}
-                              <option>Other</option>
-                            </select>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
-                            {this.state.shipperother === true ? (
-                              <textarea
-                                className="form-control"
-                                style={{ width: "100%", resize: "none" }}
-                                value={this.state.Shipper_Displayas}
-                                onChange={this.HandleShipperAddressChange.bind(
-                                  this
+                              <select
+                                onChange={this.AddressChange.bind(
+                                  this,
+                                  "Shipper"
                                 )}
-                              ></textarea>
-                            ) : null}
+                              >
+                                <option>Select</option>
+
+                                {this.state.shipperAddData.length > 0
+                                  ? this.state.shipperAddData.map((item, i) => (
+                                      <option key={i} value={item.AddressID}>
+                                        {item.Cust_Address}
+                                      </option>
+                                    ))
+                                  : ""}
+                                <option>Other</option>
+                              </select>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">&nbsp;</p>
+                              {this.state.shipperother === true ? (
+                                <textarea
+                                  className="form-control"
+                                  style={{ width: "100%", resize: "none" }}
+                                  value={this.state.Shipper_Displayas}
+                                  onChange={this.HandleShipperAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Shipper Name</p>
+
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                              <p className="details-title">
+                                Notification Person
+                              </p>
+                              <p className="details-para">
+                                {this.state.contact_name}
+                              </p>
+                            </div> */}
+                            </div>
+                          </div>
+                        )}{" "}
                       </div>
                     </div>
 
                     <div>
-                      <div className="title-border-t py-3">
-                        <h3>Buyer Details</h3>
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                        <h3 style={{ display: "inline" }}>Buyer Details</h3>
+                        <input
+                          type="checkbox"
+                          onChange={this.HandleRadioBtn.bind(this, "Buyer")}
+                          name="cust-select"
+                          id="Buyer"
+                          checked={this.state.isBuyer}
+                          value="Buyer"
+                        />
+                        <label className="d-flex" htmlFor="Buyer">
+                          Buyer
+                        </label>
                       </div>
                       <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
-                            <p className="details-title">Buyer Name</p>
-                            <p className="details-para">
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Buyer}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Buyer"]}
-                                onChange={this.HandleChangeCon.bind(
+                        {this.state.isBuyer === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                              <p className="details-title">Buyer Name</p>
+                              <p className="details-para">
+                                <Autocomplete
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.Buyer}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Buyer"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Buyer"
+                                  )}
+                                  // menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    item => item.Company_ID,
+                                    "Buyer"
+                                  )}
+                                />
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
+
+                              <select
+                                onChange={this.AddressChange.bind(
                                   this,
                                   "Buyer"
                                 )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Buyer"
-                                )}
-                              />
+                              >
+                                <option>Select</option>
+
+                                {this.state.buyerAddData.length > 0
+                                  ? this.state.buyerAddData.map((item, i) => (
+                                      <option key={i} value={item.AddressID}>
+                                        {item.Cust_Address}
+                                      </option>
+                                    ))
+                                  : ""}
+                                <option>Other</option>
+                              </select>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">&nbsp;</p>
+                              {this.state.buyerother === true ? (
+                                <textarea
+                                  className="form-control"
+                                  style={{ width: "100%", resize: "none" }}
+                                  value={this.state.Buyer_Displayas}
+                                  onChange={this.HandleBuyerAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Buyer Name</p>
+
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                            <p className="details-title">
+                              Notification Person
                             </p>
+                            <p className="details-para">
+                              {this.state.contact_name}
+                            </p>
+                          </div> */}
+                            </div>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
-
-                            <select
-                              onChange={this.AddressChange.bind(this, "Buyer")}
-                            >
-                              <option>Select</option>
-
-                              {this.state.buyerAddData.length > 0
-                                ? this.state.buyerAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""}
-                              <option>Other</option>
-                            </select>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
-                            {this.state.buyerother === true ? (
-                              <textarea
-                                className="form-control"
-                                style={{ width: "100%", resize: "none" }}
-                                value={this.state.Buyer_Displayas}
-                                onChange={this.HandleBuyerAddressChange.bind(
-                                  this
-                                )}
-                              ></textarea>
-                            ) : null}
-                          </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3">
-                        <h3>Notify Party Details</h3>
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                        <h3 style={{ display: "inline" }}>Notify Details</h3>
+                        <input
+                          type="checkbox"
+                          onChange={this.HandleRadioBtn.bind(this, "Notify")}
+                          name="cust-select"
+                          id="Notify"
+                          checked={this.state.isNotify}
+                          value="Notify"
+                        />
+                        <label className="d-flex" htmlFor="Notify">
+                          Notify
+                        </label>
                       </div>
                       <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
-                            <p className="details-title">Notify Party Name</p>
-                            <p className="details-para">
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Notify}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Notify"]}
-                                onChange={this.HandleChangeCon.bind(
+                        {this.state.isNotify === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                              <p className="details-title">Notify Party Name</p>
+                              <p className="details-para">
+                                <Autocomplete
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.Notify}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Notify"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Notify"
+                                  )}
+                                  // menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    item => item.Company_ID,
+                                    "Notify"
+                                  )}
+                                />
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
+
+                              <select
+                                onChange={this.AddressChange.bind(
                                   this,
                                   "Notify"
                                 )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Notify"
-                                )}
-                              />
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
+                              >
+                                <option>Select</option>
 
-                            <select
-                              onChange={this.AddressChange.bind(this, "Notify")}
-                            >
-                              <option>Select</option>
+                                {this.state.notifyAddData.length > 0
+                                  ? this.state.notifyAddData.map((item, i) => (
+                                      <option key={i} value={item.AddressID}>
+                                        {item.Cust_Address}
+                                      </option>
+                                    ))
+                                  : ""
+                                //<option>Other</option>
+                                }
+                                <option>Other</option>
+                              </select>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">&nbsp;</p>
+                              {this.state.notiother === true ? (
+                                <textarea
+                                  className="form-control"
+                                  style={{ width: "100%", resize: "none" }}
+                                  value={this.state.Notify_Displayas}
+                                  onChange={this.HandleNotifyAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">
+                                  Notify Party Name
+                                </p>
 
-                              {this.state.notifyAddData.length > 0
-                                ? this.state.notifyAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""
-                              //<option>Other</option>
-                              }
-                              <option>Other</option>
-                            </select>
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                          <p className="details-title">
+                            Notification Person
+                          </p>
+                          <p className="details-para">
+                            {this.state.contact_name}
+                          </p>
+                        </div> */}
+                            </div>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
-                            {this.state.notiother === true ? (
-                              <textarea
-                                className="form-control"
-                                style={{ width: "100%", resize: "none" }}
-                                value={this.state.Notify_Displayas}
-                                onChange={this.HandleNotifyAddressChange.bind(
-                                  this
-                                )}
-                              ></textarea>
-                            ) : null}
-                          </div>
-                        </div>
+                        )}
                       </div>
                     </div>
+
                     <div className="row">
                       <div className="col-12 col-sm-6 col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
@@ -2845,32 +3012,33 @@ class RateFinalizingStillBooking extends Component {
                       </button>
                     </div>
                     <div className="row ratefinalpgn">
-                      {this.state.eqmtType.length > 0 ? (
-                        <ReactTable
-                          columns={[
-                            {
-                              columns: [
-                                {
-                                  Header: "Container Name",
-                                  accessor: "ContainerName"
-                                },
-                                {
-                                  Header: "ContainerCode",
-                                  accessor: "ContainerCode"
-                                },
+                      {this.state.eqmtType.length > 0
+                        ? // <ReactTable
+                          //   columns={[
+                          //     {
+                          //       columns: [
+                          //         {
+                          //           Header: "Container Name",
+                          //           accessor: "ContainerName"
+                          //         },
+                          //         {
+                          //           Header: "ContainerCode",
+                          //           accessor: "ContainerCode"
+                          //         },
 
-                                {
-                                  Header: "Container Count",
-                                  accessor: "ContainerCount"
-                                }
-                              ]
-                            }
-                          ]}
-                          data={this.state.eqmtType}
-                          minRows={0}
-                          showPagination={false}
-                        />
-                      ) : null}
+                          //         {
+                          //           Header: "Container Count",
+                          //           accessor: "ContainerCount"
+                          //         }
+                          //       ]
+                          //     }
+                          //   ]}
+                          //   data={this.state.eqmtType}
+                          //   minRows={0}
+                          //   showPagination={false}
+                          // />
+                          ""
+                        : null}
                       {this.state.multiCBM.length > 0 ? (
                         <ReactTable
                           columns={[
@@ -2939,9 +3107,53 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                       <br />
 
-                      {this.state.FileData.length > 0
+                      <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "File name",
+                                accessor: "FileName"
+                              },
+
+                              {
+                                Header: "Action",
+                                Cell: row => {
+                                  if (row.original.FilePath !== "" && row.original.FileName !== "No File Found") {
+                                    return (
+                                      <div className="action-cntr">
+                                        <a
+                                          onClick={e =>
+                                            // this.HandleDowloadFile(e, row)
+                                            this.HandleFileOpen(
+                                              e,
+                                              row.original.FilePath
+                                            )
+                                          }
+                                        >
+                                          <img
+                                            className="actionicon"
+                                            src={Download}
+                                            alt="download-icon"
+                                          />
+                                        </a>
+                                      </div>
+                                    );
+                                  } else {
+                                    return <></>;
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.FileData}
+                        minRows={0}
+                        showPagination={false}
+                      />
+                      {/* {this.state.FileData.length > 0
                         ? this.CreateFileElement()
-                        : null}
+                        : null} */}
                     </div>
                     {this.state.isView === false ? (
                       <center>

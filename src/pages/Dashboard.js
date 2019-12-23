@@ -1030,7 +1030,7 @@ class Dashboard extends Component {
   componentDidMount() {
     debugger;
     let self = this;
-    // this.BindMapData("All");
+    this.BindMapData("All");
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();

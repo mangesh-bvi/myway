@@ -15,6 +15,7 @@ import {
 } from "react-notifications";
 import { encryption } from "../helpers/encryption";
 import { Button, Modal, ModalBody } from "reactstrap";
+import Download from "./../assets/img/csv.png";
 
 class BookingInsert extends Component {
   constructor(props) {
@@ -128,6 +129,8 @@ class BookingInsert extends Component {
       bother: false,
       isShipper: false,
       isConshinee: false,
+      isBuyer: false,
+      isNotify: false,
       currentPackageType: "",
       valuequantity: 0,
       valuelenght: 0,
@@ -138,7 +141,8 @@ class BookingInsert extends Component {
       valuespecialsontainersode: "",
       modalEdit: false,
       FileData: [],
-      checkList: ""
+      checkList: "",
+      Company_AddressID: 0
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -215,6 +219,11 @@ class BookingInsert extends Component {
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
 
+      if (FileData.length > 0) {
+        self.setState({ FileData });
+      } else {
+        self.setState({ FileData: [{ FileName: "No File Found" }] });
+      }
       if (QuotationData.length > 0) {
         var selectedCommodity = QuotationData[0].Commodity;
         var IncoTerms = QuotationData[0].IncoTerm;
@@ -248,8 +257,10 @@ class BookingInsert extends Component {
         var Customs_Clearance = Booking[0].Customs_Clearance;
         var HAZMAT = Booking[0].HAZMAT;
         var TypeofMove = QuotationData[0].TypeOfMove;
+        var Company_AddressID = Booking[0].Company_AddressID;
         self.setState({
-          FileData,
+          Company_AddressID,
+
           TypeofMove,
           HAZMAT,
           Customs_Clearance,
@@ -284,7 +295,11 @@ class BookingInsert extends Component {
       var multiCBM = response.data.Table3;
       var FileData = response.data.Table4;
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
-
+      if (FileData.length > 0) {
+        self.setState({ FileData });
+      } else {
+        self.setState({ FileData: [{ FileName: "No File Found" }] });
+      }
       if (QuotationData.length > 0) {
         var selectedCommodity = QuotationData[0].Commodity;
         var IncoTerms = QuotationData[0].IncoTerm;
@@ -317,9 +332,11 @@ class BookingInsert extends Component {
         var NonStackable = Booking[0].NonStackable;
         var HAZMAT = Booking[0].HAZMAT;
         var NonStackable = Booking[0].NonStackable;
+        var Company_AddressID = Booking[0].Company_AddressID;
 
         self.setState({
-          FileData,
+          Company_AddressID,
+          
           ModeofTransport,
           companyID,
           company_name,
@@ -355,20 +372,26 @@ class BookingInsert extends Component {
       var FileData = response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
-
+      if (FileData.length > 0) {
+        self.setState({ FileData });
+      } else {
+        self.setState({ FileData: [{ FileName: "No File Found" }] });
+      }
       if (Booking.length > 0) {
         var ModeofTransport = Booking[0].ModeOfTransport;
         var companyID = Booking[0].companyID;
         var company_name = Booking[0].company_name;
         var contact_name = Booking[0].contact_name;
         var Company_Address = Booking[0].Company_Address;
+        var Company_AddressID = Booking[0].Company_AddressID;
 
         var ShipmentType = Booking[0].ShipmentType;
         var TypeofMove = Booking[0].TypeOfMove;
         var IncoTerms = Booking[0].IncoTerm;
         var HAZMAT = Booking[0].HAZMAT;
         self.setState({
-          FileData,
+          Company_AddressID,
+        
           Booking,
           HAZMAT,
           multiCBM,
@@ -424,7 +447,11 @@ class BookingInsert extends Component {
       var FileData = response.data.Table4;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
-
+      if (FileData.length > 0) {
+        self.setState({ FileData });
+      } else {
+        self.setState({ FileData: [{ FileName: "No File Found" }] });
+      }
       if (QuotationData.length > 0) {
         var selectedCommodity = QuotationData[0].Commodity;
         var IncoTerms = QuotationData[0].IncoTerm;
@@ -452,11 +479,14 @@ class BookingInsert extends Component {
         var company_name = Booking[0].company_name;
         var contact_name = Booking[0].contact_name;
         var Company_Address = Booking[0].Company_Address;
+        var Company_AddressID = Booking[0].Company_AddressID;
+
         var SaleQuoteNo = Booking[0].SaleQuoteID;
         var ShipmentType = Booking[0].ShipmentType;
 
         self.setState({
-          FileData,
+          Company_AddressID,
+       
           ModeofTransport,
           companyID,
           company_name,
@@ -474,206 +504,240 @@ class BookingInsert extends Component {
   HandleBookigInsert() {
     let self = this;
 
-    if (this.state.checkList !== "") {
-      debugger;
+    if (
+      this.state.isConshinee === true ||
+      this.state.isShipper === true ||
+      this.state.isBuyer === true ||
+      this.state.isNotify === true
+    ) {
+      if (this.state.checkList !== "") {
+        debugger;
 
-      var userId = encryption(window.localStorage.getItem("userid"), "desc");
+        var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
-      var MyWayUserID = Number(userId);
+        var MyWayUserID = Number(userId);
 
-      var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
+        var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
 
-      var ConsigneeID = 0;
-      var ConsigneeName = "";
-      var Consignee_AddressID = 0;
-      var Consignee_Displayas = "";
-      if (this.state.isConshinee === true) {
-        var ConsigneeID = DefaultEntityTypeID;
-        var ConsigneeName = this.state.company_name;
+        var ConsigneeID = 0;
+        var ConsigneeName = "";
         var Consignee_AddressID = 0;
-        var Consignee_Displayas = this.state.Company_Address;
-      } else {
-        var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-        var ConsigneeName = this.state.consineeData.Company_Name || "";
-        var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-        var Consignee_Displayas = this.state.Consinee_Displayas;
-      }
-      var ShipperID = 0;
-      var ShipperName = "";
-      var Shipper_AddressID = 0;
-      var Shipper_Displayas = "";
-      if (this.state.isShipper === true) {
-        ShipperID = DefaultEntityTypeID;
-        ShipperName = this.state.company_name;
-        Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-        Shipper_Displayas = this.state.Company_Address;
-      } else {
-        ShipperID = Number(this.state.shipperData.Company_ID || 0);
-        ShipperName = this.state.shipperData.Company_Name || "";
-        Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-        Shipper_Displayas = this.state.Shipper_Displayas || "";
-      }
+        var Consignee_Displayas = "";
+        if (this.state.isConshinee === true) {
+          var ConsigneeID = DefaultEntityTypeID;
+          var ConsigneeName = this.state.company_name;
+          var Consignee_AddressID = this.state.Company_AddressID;
+          var Consignee_Displayas = this.state.Company_Address;
+        } else {
+          var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+          var ConsigneeName = this.state.consineeData.Company_Name || "";
+          var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
+          var Consignee_Displayas = this.state.Consinee_Displayas;
+        }
+        var ShipperID = 0;
+        var ShipperName = "";
+        var Shipper_AddressID = 0;
+        var Shipper_Displayas = "";
+        if (this.state.isShipper === true) {
+          ShipperID = DefaultEntityTypeID;
+          ShipperName = this.state.company_name;
+          Shipper_AddressID = this.state.Company_AddressID;
+          Shipper_Displayas = this.state.Company_Address;
+        } else {
+          ShipperID = Number(this.state.shipperData.Company_ID || 0);
+          ShipperName = this.state.shipperData.Company_Name || "";
+          Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+          Shipper_Displayas = this.state.Shipper_Displayas || "";
+        }
 
-      // var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-      // var ConsigneeName = this.state.consineeData.Company_Name || "";
-      // var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-      // var Consignee_Displayas = this.state.Consinee_Displayas;
+        var BuyerID = 0;
+        var Buyer_AddressID = 0;
+        var Buyer_Displayas = "";
+        var BuyerName = "";
 
-      var BuyerID = Number(this.state.buyerData.Company_ID || 0);
-      var Buyer_AddressID = this.state.Buyer_AddressID;
-      var Buyer_Displayas = this.state.Buyer_Displayas;
-      var BuyerName = this.state.buyerData.Company_Name;
+        if (this.state.isBuyer === true) {
+          BuyerID = DefaultEntityTypeID;
+          Buyer_AddressID = this.state.Company_AddressID;
+          Buyer_Displayas = this.state.Company_Address;
+          BuyerName = this.state.company_name;
+        } else {
+          BuyerID = Number(this.state.buyerData.Company_ID || 0);
+          Buyer_AddressID = this.state.Buyer_AddressID;
+          Buyer_Displayas = this.state.Buyer_Displayas;
+          BuyerName = this.state.buyerData.Company_Name;
+        }
 
-      var Mode = this.state.ContainerLoad;
-      var Commodity = 0;
-      if (this.state.selectedCommodity) {
-        Commodity = this.state.commodityData.filter(
-          x => x.Commodity === this.state.selectedCommodity
-        )[0].id;
-      }
-      // var Commodity = Number(
-      //   this.state.commodityData.filter(
-      //     x => x.Commodity === this.state.Commodity
-      //   )[0].id || 0
-      // );
-      // var Commodity = 49;
+        var NotifyID = 0;
+        var Notify_AddressID = 0;
+        var Notify_Displayas = "";
+        var NotifyName = "";
 
-      var saleQuoteID = 0;
-      var saleQuoteNo = this.state.salesQuotaNo || "";
-      var saleQuoteLineID = 0;
-      if (this.state.QuotationData) {
-        var qdata = this.state.QuotationData.filter(
-          x => x.saleQuoteLineID === Number(this.state.checkList)
-        );
-        saleQuoteLineID = qdata[0].saleQuoteLineID;
-        saleQuoteID = qdata[0].SaleQuoteID;
-      } else {
-        var qdata = this.state.QuotationData.filter(
-          x => x.SaleQuoteIDLineID === Number(this.state.checkList)
-        );
-        saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
-      }
+        if (this.state.isNotify === true) {
+          NotifyID = DefaultEntityTypeID;
+          Notify_AddressID = this.state.this.state.Company_AddressID;
+          Notify_Displayas = this.state.Company_Address;
+          NotifyName = this.state.notifyData.company_name;
+        } else {
+          NotifyID = Number(this.state.notifyData.Company_ID || 0);
+          Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+          Notify_Displayas = this.state.Notify_Displayas || "";
+          NotifyName = this.state.notifyData.Company_Name || "";
+        }
 
-      var NotifyID = Number(this.state.notifyData.Company_ID || 0);
-      var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
-      var Notify_Displayas = this.state.Notify_Displayas || "";
-      var NotifyName = this.state.notifyData.Company_Name || "";
+        var Mode = this.state.ContainerLoad;
+        var Commodity = 0;
+        if (this.state.selectedCommodity) {
+          Commodity = this.state.commodityData.filter(
+            x => x.Commodity === this.state.selectedCommodity
+          )[0].id;
+        }
+        // var Commodity = Number(
+        //   this.state.commodityData.filter(
+        //     x => x.Commodity === this.state.Commodity
+        //   )[0].id || 0
+        // );
+        // var Commodity = 49;
 
-      var BookingDim = [];
+        var saleQuoteID = 0;
+        var saleQuoteNo = this.state.salesQuotaNo || "";
+        var saleQuoteLineID = 0;
+        if (this.state.QuotationData) {
+          var qdata = this.state.QuotationData.filter(
+            x => x.saleQuoteLineID === Number(this.state.checkList)
+          );
+          saleQuoteLineID = qdata[0].saleQuoteLineID;
+          saleQuoteID = qdata[0].SaleQuoteID;
+        } else {
+          var qdata = this.state.QuotationData.filter(
+            x => x.SaleQuoteIDLineID === Number(this.state.checkList)
+          );
+          saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
+        }
 
-      if (this.state.multiCBM.length > 0) {
-        for (let i = 0; i < this.state.multiCBM.length; i++) {
-          var cargoData = new Object();
-          if (Mode === "AIR") {
-            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-            cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
-            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-            cargoData.Width = this.state.multiCBM[i].Width || 0;
-            cargoData.Height = this.state.multiCBM[i].height || 0;
-            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-          } else if (Mode === "INLAND") {
-            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-            cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
-            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-            cargoData.Width = this.state.multiCBM[i].Width || 0;
-            cargoData.Height = this.state.multiCBM[i].height || 0;
-            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-          } else {
-            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-            cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-            cargoData.Width = this.state.multiCBM[i].Width || 0;
-            cargoData.Height = this.state.multiCBM[i].Height || 0;
-            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+        var BookingDim = [];
+
+        if (this.state.multiCBM.length > 0) {
+          for (let i = 0; i < this.state.multiCBM.length; i++) {
+            var cargoData = new Object();
+            if (Mode === "AIR") {
+              cargoData.BookingPackID =
+                this.state.multiCBM[i].BookingPackID || 0;
+              cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+              cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
+              cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+              cargoData.Width = this.state.multiCBM[i].Width || 0;
+              cargoData.Height = this.state.multiCBM[i].height || 0;
+              cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+              cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+              cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+            } else if (Mode === "INLAND") {
+              cargoData.BookingPackID =
+                this.state.multiCBM[i].BookingPackID || 0;
+              cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+              cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
+              cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+              cargoData.Width = this.state.multiCBM[i].Width || 0;
+              cargoData.Height = this.state.multiCBM[i].height || 0;
+              cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+              cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+              cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+            } else {
+              cargoData.BookingPackID =
+                this.state.multiCBM[i].BookingPackID || 0;
+              cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+              cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
+              cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+              cargoData.Width = this.state.multiCBM[i].Width || 0;
+              cargoData.Height = this.state.multiCBM[i].Height || 0;
+              cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+              cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+              cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+            }
+            BookingDim.push(cargoData);
           }
+        } else {
+          var cargoData = new Object();
+          cargoData.BookingPackID = 0;
+          cargoData.PackageType = "";
+          cargoData.Quantity = 0;
+          cargoData.Lengths = 0;
+          cargoData.Width = 0;
+          cargoData.Height = 0;
+          cargoData.GrossWt = 0;
+          cargoData.VolumeWeight = 0;
+          cargoData.Volume = 0;
           BookingDim.push(cargoData);
         }
-      } else {
-        var cargoData = new Object();
 
-        cargoData.BookingPackID = 0;
-        cargoData.PackageType = "";
-        cargoData.Quantity = 0;
-        cargoData.Lengths = 0;
-        cargoData.Width = 0;
-        cargoData.Height = 0;
-        cargoData.GrossWt = 0;
-        cargoData.VolumeWeight = 0;
-        cargoData.Volume = 0;
-        BookingDim.push(cargoData);
-      }
-
-      var BookingDocs = [];
-      for (let i = 0; i < this.state.FileData.length; i++) {
-        if (this.state.FileData[i].QuoteID) {
-          var objFile = new Object();
-          objFile.BookingID = 0;
-          objFile.DocumentID = this.state.FileData[i].DocumentID;
-          objFile.FTPFilePath = this.state.FileData[i].FilePath;
-          BookingDocs.push(objFile);
-        } else {
-        }
-      }
-      var paramData = {
-        MyWayUserID: MyWayUserID,
-        ShipperID: ShipperID,
-        Shipper_Displayas: Shipper_Displayas,
-        Shipper_AddressID: Shipper_AddressID,
-        ShipperName: ShipperName,
-        ConsigneeID: ConsigneeID,
-        ConsigneeName: ConsigneeName,
-        Consignee_AddressID: Consignee_AddressID,
-        Consignee_Displayas: Consignee_Displayas,
-        BuyerID: BuyerID,
-        Buyer_AddressID: Buyer_AddressID,
-        Buyer_Displayas: Buyer_Displayas,
-        BuyerName: BuyerName,
-        Mode: Mode,
-        Commodity: Commodity,
-        saleQuoteID: saleQuoteID,
-        saleQuoteNo: saleQuoteNo,
-        saleQuoteLineID: saleQuoteLineID,
-        DefaultEntityTypeID: DefaultEntityTypeID,
-        NotifyID: NotifyID,
-        Notify_AddressID: Notify_AddressID,
-        Notify_Displayas: Notify_Displayas,
-        NotifyName: NotifyName,
-        BookingDim: BookingDim,
-        BookingDocs: BookingDocs
-      };
-
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/BookingInsertion`,
-        data: paramData,
-
-        headers: authHeader()
-      }).then(function(response) {
-        debugger;
-        if (response.data.Table) {
-          var BookingNo = response.data.Table[0].BookingID;
-          NotificationManager.success(response.data.Table[0].Message);
-          self.setState({ BookingNo });
-          if (self.state.FileDataArry.length > 0) {
-            self.HandleFileUpload();
+        var BookingDocs = [];
+        for (let i = 0; i < this.state.FileData.length; i++) {
+          if (this.state.FileData[i].QuoteID) {
+            var objFile = new Object();
+            objFile.BookingID = 0;
+            objFile.DocumentID = this.state.FileData[i].DocumentID;
+            objFile.FTPFilePath = this.state.FileData[i].FilePath;
+            BookingDocs.push(objFile);
           } else {
-            self.props.history.push("booking-table");
           }
         }
-      });
+        var paramData = {
+          MyWayUserID: MyWayUserID,
+          ShipperID: ShipperID,
+          Shipper_Displayas: Shipper_Displayas,
+          Shipper_AddressID: Shipper_AddressID,
+          ShipperName: ShipperName,
+          ConsigneeID: ConsigneeID,
+          ConsigneeName: ConsigneeName,
+          Consignee_AddressID: Consignee_AddressID,
+          Consignee_Displayas: Consignee_Displayas,
+          BuyerID: BuyerID,
+          Buyer_AddressID: Buyer_AddressID,
+          Buyer_Displayas: Buyer_Displayas,
+          BuyerName: BuyerName,
+          Mode: Mode,
+          Commodity: Commodity,
+          saleQuoteID: saleQuoteID,
+          saleQuoteNo: saleQuoteNo,
+          saleQuoteLineID: saleQuoteLineID,
+          DefaultEntityTypeID: DefaultEntityTypeID,
+          NotifyID: NotifyID,
+          Notify_AddressID: Notify_AddressID,
+          Notify_Displayas: Notify_Displayas,
+          NotifyName: NotifyName,
+          BookingDim: BookingDim,
+          BookingDocs: BookingDocs
+        };
+
+        axios({
+          method: "post",
+          url: `${appSettings.APIURL}/BookingInsertion`,
+          data: paramData,
+
+          headers: authHeader()
+        }).then(function(response) {
+          debugger;
+          if (response.data.Table) {
+            var BookingNo = response.data.Table[0].BookingID;
+            NotificationManager.success(response.data.Table[0].Message);
+            self.setState({ BookingNo });
+            setTimeout(() => {
+              if (self.state.FileDataArry.length > 0) {
+                self.HandleFileUpload();
+              } else {
+                self.props.history.push("booking-table");
+              }
+            }, 500);
+          }
+        });
+      } else {
+        // self.setState({ errormessage: "Please atleas one select quotation." });
+        NotificationManager.error("Please select one quotation.");
+        return false;
+      }
     } else {
-      // self.setState({ errormessage: "Please atleas one select quotation." });
-      NotificationManager.error("Please select one quotation.");
-      return false;
+      NotificationManager.error(
+        "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer"
+      );
     }
   }
 
@@ -693,12 +757,7 @@ class BookingInsert extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BookigFileUpload`,
-      // data: {
-      //   BookingID: BookingID,
-      //   DocumentID: DocumentID,
-      //   BookingDoc: DocumnetFile,
-      //   MyWayUserID: userId
-      // },
+
       data: formdata,
       headers: authHeader()
     }).then(function(response) {
@@ -1092,38 +1151,20 @@ class BookingInsert extends Component {
 
   onDocumentChangeHandler = event => {
     debugger;
-    // var FileData = event.target.files;
-    // var FileDataArry = [];
-    // var filesArr = this.state.selectedFile;
-    // for (let i = 0; i < FileData.length; i++) {
-    //   var objeFile = new Object();
-    //   objeFile.FileName = event.target.files[i].name;
+    if (event.target.files[0].type === "application/pdf") {
+      var FileData = event.target.files;
 
-    //   FileDataArry.push(event.target.files[i]);
-    //   filesArr.push(objeFile);
+      var f_data = this.state.FileData;
+      var objFile = new Object();
+      objFile.FileName = event.target.files[0].name;
+      this.setState({ FileDataArry: FileData });
 
-    //   this.setState({
-    //     selectedFile: filesArr,
-    //     FileDataArry
-    //   });
-    // }
-    // this.CreateFileElement();
-
-    var FileData = event.target.files;
-    // var filesArr = this.state.selectedFile;
-    var f_data = this.state.FileData;
-    var objFile = new Object();
-    objFile.FileName = event.target.files[0].name;
-    this.setState({ FileDataArry: FileData });
-    // for (let i = 0; i < FileData.length; i++) {
-    //   var selectedFile = event.target.files[i];
-    //   filesArr.push(selectedFile);
-    //   var fileName = event.target.files[i].name;
-
-    //   // this.addClickTruckType(fileName);
-    // }
-    f_data.push(objFile);
-    this.setState({ FileData: f_data });
+      f_data.push(objFile);
+      this.setState({ FileData: f_data });
+    } else {
+      NotificationManager.error("Please select only PDF File");
+      return false;
+    }
   };
 
   ////this methos for bookig details BookigGridDetailsList
@@ -1870,8 +1911,13 @@ class BookingInsert extends Component {
 
     if (type === "Conshinee") {
       this.setState({ isConshinee: !this.state.isConshinee });
-    } else {
+    } else if (type === "Shipper") {
       this.setState({ isShipper: !this.state.isShipper });
+    } else if (type === "Buyer") {
+      this.setState({ isBuyer: !this.state.isBuyer });
+    } else if (type === "Notify") {
+      this.setState({ isNotify: !this.state.isNotify });
+    } else {
     }
     // this.setState({
     //   // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
@@ -2384,11 +2430,11 @@ class BookingInsert extends Component {
                           type="checkbox"
                           onChange={this.HandleRadioBtn.bind(this, "Conshinee")}
                           name="cust-select"
-                          id="exist-cust"
+                          id="Conshinee"
                           checked={this.state.isConshinee}
                           value="Consignee"
                         />
-                        <label className="d-flex" htmlFor="exist-cust">
+                        <label className="d-flex" htmlFor="Conshinee">
                           Consignee
                         </label>
                       </div>
@@ -2501,13 +2547,13 @@ class BookingInsert extends Component {
                             type="checkbox"
                             onChange={this.HandleRadioBtn.bind(this, "Shipper")}
                             name="cust-select"
-                            id="new-cust"
+                            id="Shipper"
                             checked={this.state.isShipper}
                             value="Shipper"
                           />
                           <label
                             className="d-flex flex-column align-items-center"
-                            htmlFor="new-cust"
+                            htmlFor="Shipper"
                           >
                             Shipper
                           </label>
@@ -2612,152 +2658,238 @@ class BookingInsert extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border-t py-3">
-                        <h3>Buyer Details</h3>
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                        <h3 style={{ display: "inline" }}>Buyer Details</h3>
+                        <input
+                          type="checkbox"
+                          onChange={this.HandleRadioBtn.bind(this, "Buyer")}
+                          name="cust-select"
+                          id="Buyer"
+                          checked={this.state.isBuyer}
+                          value="Buyer"
+                        />
+                        <label className="d-flex" htmlFor="Buyer">
+                          Buyer
+                        </label>
                       </div>
                       <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
-                            <p className="details-title">Buyer Name</p>
-                            <p className="details-para position-relative">
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Buyer}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Buyer"]}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Buyer"
-                                )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Buyer"
-                                )}
-                              />
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
+                        {this.state.isBuyer === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
+                              <p className="details-title">Buyer Name</p>
+                              <p className="details-para position-relative">
+                                <Autocomplete
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.Buyer}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Buyer"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Buyer"
+                                  )}
+                                  // menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    item => item.Company_ID,
+                                    "Buyer"
+                                  )}
+                                />
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
 
-                            {/* {this.state.Buyer_Displayas !== ""
+                              {/* {this.state.Buyer_Displayas !== ""
                                 ? this.state.Buyer_Displayas
                                 : null} */}
-                            <select
-                              onChange={this.AddressChange.bind(this, "Buyer")}
-                            >
-                              <option>Select</option>
-
-                              {this.state.buyerAddData.length > 0
-                                ? this.state.buyerAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""
-                              //<option>Other</option>
-                              }
-                              <option>Other</option>
-                            </select>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
-                            {this.state.buyerother === true ? (
-                              <textarea
-                                className="form-control"
-                                style={{ width: "100%", resize: "none" }}
-                                value={this.state.Buyer_Displayas}
-                                onChange={this.HandleBuyerAddressChange.bind(
-                                  this
+                              <select
+                                onChange={this.AddressChange.bind(
+                                  this,
+                                  "Buyer"
                                 )}
-                              ></textarea>
-                            ) : null}
+                              >
+                                <option>Select</option>
+
+                                {this.state.buyerAddData.length > 0
+                                  ? this.state.buyerAddData.map((item, i) => (
+                                      <option key={i} value={item.AddressID}>
+                                        {item.Cust_Address}
+                                      </option>
+                                    ))
+                                  : ""
+                                //<option>Other</option>
+                                }
+                                <option>Other</option>
+                              </select>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">&nbsp;</p>
+                              {this.state.buyerother === true ? (
+                                <textarea
+                                  className="form-control"
+                                  style={{ width: "100%", resize: "none" }}
+                                  value={this.state.Buyer_Displayas}
+                                  onChange={this.HandleBuyerAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Buyer Name</p>
+
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                              <p className="details-title">
+                                Notification Person
+                              </p>
+                              <p className="details-para">
+                                {this.state.contact_name}
+                              </p>
+                            </div> */}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3">
-                        <h3>Notify Party Details</h3>
+                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                        <h3 style={{ display: "inline" }}>Notify Details</h3>
+                        <input
+                          type="checkbox"
+                          onChange={this.HandleRadioBtn.bind(this, "Notify")}
+                          name="cust-select"
+                          id="Notify"
+                          checked={this.state.isNotify}
+                          value="Notify"
+                        />
+                        <label className="d-flex" htmlFor="Notify">
+                          Notify
+                        </label>
                       </div>
                       <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
-                            <p className="details-title">Notify Party Name</p>
-                            <p className="details-para position-relative">
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Notify}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Notify"]}
-                                onChange={this.HandleChangeCon.bind(
+                        {this.state.isNotify === false ? (
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
+                              <p className="details-title">Notify Party Name</p>
+                              <p className="details-para position-relative">
+                                <Autocomplete
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.Notify}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Notify"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Notify"
+                                  )}
+                                  // menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    item => item.Company_ID,
+                                    "Notify"
+                                  )}
+                                />
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">Address</p>
+
+                              <select
+                                onChange={this.AddressChange.bind(
                                   this,
                                   "Notify"
                                 )}
-                                // menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Notify"
-                                )}
-                              />
+                              >
+                                <option>Select</option>
+
+                                {this.state.notifyAddData.length > 0
+                                  ? this.state.notifyAddData.map((item, i) => (
+                                      <option key={i} value={item.AddressID}>
+                                        {item.Cust_Address}
+                                      </option>
+                                    ))
+                                  : ""
+                                //<option>Other</option>
+                                }
+                                <option>Other</option>
+                              </select>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                              <p className="details-title">&nbsp;</p>
+                              {this.state.notiother === true ? (
+                                <textarea
+                                  className="form-control"
+                                  style={{ width: "100%", resize: "none" }}
+                                  value={this.state.Notify_Displayas}
+                                  onChange={this.HandleNotifyAddressChange.bind(
+                                    this
+                                  )}
+                                ></textarea>
+                              ) : null}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">
+                                  Notify Party Name
+                                </p>
+
+                                <p className="details-para">
+                                  {this.state.company_name}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4">
+                                <p className="details-title">Address</p>
+                                <p className="details-para">
+                                  {this.state.Company_Address}
+                                </p>
+                              </div>
+                              {/* <div className="col-12 col-sm-6 col-md-4">
+                            <p className="details-title">
+                              Notification Person
                             </p>
+                            <p className="details-para">
+                              {this.state.contact_name}
+                            </p>
+                          </div> */}
+                            </div>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">Address</p>
-
-                            <select
-                              onChange={this.AddressChange.bind(this, "Notify")}
-                            >
-                              <option>Select</option>
-
-                              {this.state.notifyAddData.length > 0
-                                ? this.state.notifyAddData.map((item, i) => (
-                                    <option key={i} value={item.AddressID}>
-                                      {item.Cust_Address}
-                                    </option>
-                                  ))
-                                : ""
-                              //<option>Other</option>
-                              }
-                              <option>Other</option>
-                            </select>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
-                            <p className="details-title">&nbsp;</p>
-                            {this.state.notiother === true ? (
-                              <textarea
-                                className="form-control"
-                                style={{ width: "100%", resize: "none" }}
-                                value={this.state.Notify_Displayas}
-                                onChange={this.HandleNotifyAddressChange.bind(
-                                  this
-                                )}
-                              ></textarea>
-                            ) : null}
-                          </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                     <div className="row">
@@ -2794,7 +2926,7 @@ class BookingInsert extends Component {
                       </button>
                     </div>
                     <div className="row ratefinalpgn">
-                      {this.state.eqmtType.length > 0 ? (
+                      {/* {this.state.eqmtType.length > 0 ? (
                         <ReactTable
                           columns={[
                             {
@@ -2819,7 +2951,7 @@ class BookingInsert extends Component {
                           minRows={0}
                           showPagination={false}
                         />
-                      ) : null}
+                      ) : null} */}
 
                       <ReactTable
                         columns={[
@@ -2882,8 +3014,51 @@ class BookingInsert extends Component {
                         </div>
                       </div>
                       <br />
+                      <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "File name",
+                                accessor: "FileName"
+                              },
 
-                      {this.CreateFileElement()}
+                              {
+                                Header: "Action",
+                                Cell: row => {
+                                  if (row.original.FilePath !== "" && row.original.FileName !== "No File Found") {
+                                    return (
+                                      <div className="action-cntr">
+                                        <a
+                                          onClick={e =>
+                                            // this.HandleDowloadFile(e, row)
+                                            this.HandleFileOpen(
+                                              e,
+                                              row.original.FilePath
+                                            )
+                                          }
+                                        >
+                                          <img
+                                            className="actionicon"
+                                            src={Download}
+                                            alt="download-icon"
+                                          />
+                                        </a>
+                                      </div>
+                                    );
+                                  } else {
+                                    return <></>;
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.FileData}
+                        minRows={0}
+                        showPagination={false}
+                      />
+                      {/* {this.CreateFileElement()} */}
                     </div>
                   </div>
                 </div>

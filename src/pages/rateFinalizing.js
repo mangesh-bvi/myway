@@ -5266,7 +5266,7 @@ class RateFinalizing extends Component {
                                 },
                                 accessor: "TransshipmentPort",
                                 filterable: true,
-                                minWidth: 114
+                                minWidth: 120
                               },
                               {
                                 Cell: row => {
@@ -5772,7 +5772,7 @@ class RateFinalizing extends Component {
                           //minRows={1}
                         />
                       ) : null}
-                      {equipmentTypeArr.length !== 0 ? (
+                      {/* {equipmentTypeArr.length !== 0 ? (
                         <ReactTable
                           data={equipmentTypeArr}
                           filterable
@@ -5794,7 +5794,7 @@ class RateFinalizing extends Component {
                           //getTrProps={this.HandleRowClickEvt}
                           //minRows={1}
                         />
-                      ) : null}
+                      ) : null} */}
 
                       {PackageDetailsArr.length !== 0 ? (
                         <ReactTable

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
+import { Popover ,Button} from "antd";
+
 import Logo from "./../assets/img/logo.png";
 import "../assets/css/custom.css";
 import BellIcon from "./../assets/img/bell.png";
@@ -19,7 +21,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import { Button, Modal, ModalBody } from "reactstrap";
+import {  Modal, ModalBody } from "reactstrap";
 // import ModalHeader from "react-bootstrap/ModalHeader";
 
 import {
@@ -41,7 +43,8 @@ class Header extends Component {
       DropdownCommonMessage: [],
       selectedFile: "",
       selectedFileName: "",
-      popupHBLNO: ""
+      popupHBLNO: "",
+      ActivityDateArry: []
     };
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
@@ -130,7 +133,8 @@ class Header extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
+      debugger;
+
       // self.state.Notificationcount = response.data.Table.length;
       var today = new Date();
       today.setDate(today.getDate() - 8);
@@ -158,13 +162,32 @@ class Header extends Component {
   }
 
   toggle() {
-    this.setState({
-      tooltipOpen: !this.state.tooltipOpen
+    debugger;
+    let self = this;
+    var UserID = encryption(window.localStorage.getItem("userid"), "desc");
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/FetchActivityDetails`,
+      data: {
+        UserID: UserID//341 //UserID
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var ActivityDateArry = response.data.Table;
+      if (ActivityDateArry.length > 0) {
+        self.setState({
+          tooltipOpen: !self.state.tooltipOpen,
+          ActivityDateArry
+        });
+      }
     });
   }
   closepopover() {
     this.setState({
-      tooltipOpen: false
+      tooltipOpen: false,
+      ActivityDateArry: []
     });
   }
   onLogout() {
@@ -322,55 +345,79 @@ class Header extends Component {
       )
     );
 
+    var adataval;
+    if (this.state.ActivityDateArry.length > 0) {
+      adataval = this.state.ActivityDateArry.map((item, i) =>
+        this.state.ActivityDateArry.length == 0 ? (
+          <>
+            <label>{item.ActivityDesc}</label>
+            <br />
+            {/* <label>{item.ActMessage}</label> */}
+            <label>{item.SingleActDate}</label>
+          </>
+        ) : (
+          <>
+            <label>{item.ActivityDesc}</label>
+            <br />
+            {/* <label>{item.ActMessage}</label> */}
+            <label>{item.SingleActDate}</label>
+            <hr />
+          </>
+        )
+      );
+    }
+
     let popupHBLNO = this.state.popupHBLNO;
 
     return (
       <div className="pdtop">
         <div className="header-fixed">
-        <div className="cls-header-1">
-          <div className="row">
-            <div className="col-xs col-sm-3 col-md-4 col-lg-3">
-              <Link to="/Dashboard">
-                <img src={Logo} alt="log-icon" className="header-log" />
-              </Link>
-            </div>
-            <div className="col-xs col-sm-9 col-md-8 col-lg-9">
-              <ul className="header-ul">
-                {encryption(window.localStorage.getItem("usertype"), "desc") ===
-                "Sales User"
-                  ? this.state.searchButn && (
-                      <li>
-                        <a href="/rate-search" className="header-btn">
-                          SEARCH RATES
-                        </a>
-                      </li>
-                    )
-                  : this.state.searchButn && (
-                      <li>
-                        <a href="/new-rate-search" className="header-btn">
-                          SEARCH RATES
-                        </a>
-                      </li>
-                    )}
-                <li>
-                  <div className="dropdown" style={{ position: "relative" }}>
-                    <img
-                      src={BellIcon}
-                      alt="bell-icon"
-                      className="header-bell-icon"
-                      data-toggle="dropdown"
-                    />
-                    <a id="Notificationcount" className="notificationss">
-                      0
-                    </a>
-                    <div className="dropdown-menu noti-drop-down">
-                      {optionNotificationItems}
-                      {/*<p>yuguhyuyg</p>*/}
+          <div className="cls-header-1">
+            <div className="row">
+              <div className="col-xs col-sm-3 col-md-4 col-lg-3">
+                <Link to="/Dashboard">
+                  <img src={Logo} alt="log-icon" className="header-log" />
+                </Link>
+              </div>
+              <div className="col-xs col-sm-9 col-md-8 col-lg-9">
+                <ul className="header-ul">
+                  {encryption(
+                    window.localStorage.getItem("usertype"),
+                    "desc"
+                  ) === "Sales User"
+                    ? this.state.searchButn && (
+                        <li>
+                          <a href="/rate-search" className="header-btn">
+                            SEARCH RATES
+                          </a>
+                        </li>
+                      )
+                    : this.state.searchButn && (
+                        <li>
+                          <a href="/new-rate-search" className="header-btn">
+                            SEARCH RATES
+                          </a>
+                        </li>
+                      )}
+                  <li>
+                    <div className="dropdown" style={{ position: "relative" }}>
+                      <img
+                        src={BellIcon}
+                        alt="bell-icon"
+                        className="header-bell-icon"
+                        data-toggle="dropdown"
+                      />
+                      <a id="Notificationcount" className="notificationss">
+                        0
+                      </a>
+                      <div className="dropdown-menu noti-drop-down">
+                        {optionNotificationItems}
+                        {/*<p>yuguhyuyg</p>*/}
+                      </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
 
-                {/* <li style={{ padding: "10px 15px" }}>
+                  {/* <li style={{ padding: "10px 15px" }}>
                   <div className="dropdown">
                     <img
                       className="header-phone-icon dropdown-toggle"
@@ -385,117 +432,117 @@ class Header extends Component {
                     </div>
                   </div>
                 </li> */}
-                <li className="br-none" style={{ padding: "20px" }}>
-                  <img
-                    src={ChatIcon}
-                    alt="chat-icon"
-                    className="header-chat-icon"
-                    onClick={this.toggleDocu}
-                  />
-                  {/* <label style={{fontSize:"12px" , fontWeight: "bold" , color: "#1a1919"}}>Live Chat</label> */}
-                  <Modal
-                    className="delete-popup pol-pod-popup"
-                    isOpen={this.state.modalDocu}
-                    toggle={this.toggleDocu}
-                    centered={true}
-                    // backdrop="static"
-                  >
-                    <ModalBody>
-                      <button
-                        type="button"
-                        className="close"
-                        data-dismiss="modal"
-                        onClick={this.toggleDocu}
-                      >
-                        <span>&times;</span>
-                      </button>
-                      <div
-                        style={{
-                          background: "#fff",
-                          padding: "15px",
-                          borderRadius: "15px"
-                        }}
-                      >
-                        <h3 className="mb-4">Send Message</h3>
-                        <div className="rename-cntr login-fields">
-                          <select id="drpshipment">
-                            <option value="0">Select</option>
-                            {/* <option value="Shipment">Shipment</option> */}
-                            {optionItems}
-                            <option value="Subject">Subject</option>
-                          </select>
-                        </div>
-                        <div className="rename-cntr login-fields">
-                          <input
-                            id="txtShipmentNo"
-                            type="text"
-                            placeholder="Enter Shipment No."
-                            value={popupHBLNO}
-                            onChange={this.onShipmentNoChangeHandler}
-                          />
-                        </div>
-                        <div className="rename-cntr login-fields">
-                          <textarea
-                            id="txtshipmentcomment"
-                            name="comment"
-                            className="txt-add"
-                            placeholder="Enter Comment..."
-                          ></textarea>
-                        </div>
-
-                        <Button
-                          className="butn"
-                          onClick={() => {
-                            this.SendMessage();
-                          }}
-                        >
-                          Send
-                        </Button>
-                        <Button
-                          className="butn"
-                          onClick={() => {
-                            this.toggleDocu();
-                          }}
-                        >
-                          Close
-                        </Button>
-                      </div>
-                    </ModalBody>
-                  </Modal>
-                </li>
-
-                <li id="activelog-open">
-                  <ul className="header-ul-login-dtls">
-                    <li>
-                      <img
-                        src={LoginActore}
-                        alt="login-actore-icon"
-                        className="rounded-circle header-login-actore-icon"
-                      />
-                    </li>
-
-                    <li
-                      data-toggle="dropdown"
-                      className="p-0 mt-3 loign-dtlss"
-                      title={encryption(
-                        window.localStorage.getItem("companyname"),
-                        "desc"
-                      )}
+                  <li className="br-none" style={{ padding: "20px" }}>
+                    <img
+                      src={ChatIcon}
+                      alt="chat-icon"
+                      className="header-chat-icon"
+                      onClick={this.toggleDocu}
+                    />
+                    {/* <label style={{fontSize:"12px" , fontWeight: "bold" , color: "#1a1919"}}>Live Chat</label> */}
+                    <Modal
+                      className="delete-popup pol-pod-popup"
+                      isOpen={this.state.modalDocu}
+                      toggle={this.toggleDocu}
+                      centered={true}
+                      // backdrop="static"
                     >
-                      <div className="dropdown rmarrow">
+                      <ModalBody>
                         <button
                           type="button"
-                          className="dropdown-toggle rmstylebtn"
-                          // data-toggle="dropdown"
-                          id="spnUser"
-                        ></button>
-                      </div>
+                          className="close"
+                          data-dismiss="modal"
+                          onClick={this.toggleDocu}
+                        >
+                          <span>&times;</span>
+                        </button>
+                        <div
+                          style={{
+                            background: "#fff",
+                            padding: "15px",
+                            borderRadius: "15px"
+                          }}
+                        >
+                          <h3 className="mb-4">Send Message</h3>
+                          <div className="rename-cntr login-fields">
+                            <select id="drpshipment">
+                              <option value="0">Select</option>
+                              {/* <option value="Shipment">Shipment</option> */}
+                              {optionItems}
+                              <option value="Subject">Subject</option>
+                            </select>
+                          </div>
+                          <div className="rename-cntr login-fields">
+                            <input
+                              id="txtShipmentNo"
+                              type="text"
+                              placeholder="Enter Shipment No."
+                              value={popupHBLNO}
+                              onChange={this.onShipmentNoChangeHandler}
+                            />
+                          </div>
+                          <div className="rename-cntr login-fields">
+                            <textarea
+                              id="txtshipmentcomment"
+                              name="comment"
+                              className="txt-add"
+                              placeholder="Enter Comment..."
+                            ></textarea>
+                          </div>
 
-                      <p className="login-actore-text" id="compName"></p>
-                    </li>
-                    <div className="dropdown-menu profile-dropdown">
-                      <ul className="profile-ul">
-                        {/* <li>
+                          <Button
+                            className="butn"
+                            onClick={() => {
+                              this.SendMessage();
+                            }}
+                          >
+                            Send
+                          </Button>
+                          <Button
+                            className="butn"
+                            onClick={() => {
+                              this.toggleDocu();
+                            }}
+                          >
+                            Close
+                          </Button>
+                        </div>
+                      </ModalBody>
+                    </Modal>
+                  </li>
+
+                  <li id="activelog-open">
+                    <ul className="header-ul-login-dtls">
+                      <li>
+                        <img
+                          src={LoginActore}
+                          alt="login-actore-icon"
+                          className="rounded-circle header-login-actore-icon"
+                        />
+                      </li>
+
+                      <li
+                        data-toggle="dropdown"
+                        className="p-0 mt-3 loign-dtlss"
+                        title={encryption(
+                          window.localStorage.getItem("companyname"),
+                          "desc"
+                        )}
+                      >
+                        <div className="dropdown rmarrow">
+                          <button
+                            type="button"
+                            className="dropdown-toggle rmstylebtn"
+                            // data-toggle="dropdown"
+                            id="spnUser"
+                          ></button>
+                        </div>
+
+                        <p className="login-actore-text" id="compName"></p>
+                      </li>
+                      <div className="dropdown-menu profile-dropdown">
+                        <ul className="profile-ul">
+                          {/* <li>
                           <img
                             src={UserIcon}
                             className="drp-usericon"
@@ -506,39 +553,48 @@ class Header extends Component {
                             className="lbl-cursor"
                           ></label>
                         </li> */}
-                        <li className="lastlogin-li">
-                          <ul className="lastlogin-ul">
-                            <li>
-                              <img
-                                src={UserIcon}
-                                className="drp-usericon"
-                                alt="user-icon"
-                              />
-                            </li>
-                            <li style={{position: "static"}}>
-                              <label className="lbl-cursor">
-                                Last Login
-                                <span
-                                  id="spnLastLogin"
-                                  className="lastlogin-lbl lbl-cursor"
-                                ></span>
-                              </label>
-                            </li>
-                          </ul>
-                        </li>
-                        <li
-                          className="activitylog-li"
-                          onClick={this.toggle.bind(this)}
-                          id="abcd"
-                        >
-                          <img
-                            src={ActivityLogIcon}
-                            alt="activity-log"
-                            className="activitylog-icon"
-                          />
-                          Activity Log
-                        </li>
-                        {/* <li className="profile-setting-li">
+                          <li className="lastlogin-li">
+                            <ul className="lastlogin-ul">
+                              <li>
+                                <img
+                                  src={UserIcon}
+                                  className="drp-usericon"
+                                  alt="user-icon"
+                                />
+                              </li>
+                              <li style={{ position: "static" }}>
+                                <label className="lbl-cursor">
+                                  Last Login
+                                  <span
+                                    id="spnLastLogin"
+                                    className="lastlogin-lbl lbl-cursor"
+                                  ></span>
+                                </label>
+                              </li>
+                            </ul>
+                          </li>
+                          <li
+                            className="activitylog-li"
+                            onClick={this.toggle.bind(this)}
+                            id="abcd"
+                          >
+                            <Popover
+                              placement="bottomRight"
+                              title={"Activity Log"}
+                             content={adataval}
+                              trigger="click"
+                            >
+                               
+                                <img
+                                  src={ActivityLogIcon}
+                                  alt="activity-log"
+                                  className="activitylog-icon"
+                                />
+                                Activity Log
+                              
+                            </Popover>
+                          </li>
+                          {/* <li className="profile-setting-li">
                           <a href="changePassword">
                             <img
                               src={ProfileSettingIcon}
@@ -548,7 +604,7 @@ class Header extends Component {
                             Change Password
                           </a>
                         </li> */}
-                        {/* <li
+                          {/* <li
                           className="profile-setting-li"
                           onClick={this.toggleProfile}
                         >
@@ -561,7 +617,7 @@ class Header extends Component {
                             Profile Settings
                           </a>
                         </li> */}
-                        {/* <li className="profile-setting-li">
+                          {/* <li className="profile-setting-li">
                           <img
                             className="header-phone-icon dropdown-toggle"
                             data-toggle="dropdown"
@@ -574,116 +630,140 @@ class Header extends Component {
                             <QRCode />
                           </div>
                         </li> */}
-                        <li  style={{position: "static"}}
-                          className="logout-li"
-                          onClick={this.onLogout.bind(this)}
-                        >
-                          <img
-                            src={LogoutIcon}
-                            alt="logout-icon"
-                            className="activitylog-icon"
-                          />
-                          Logout
-                        </li>
-                      </ul>
-                    </div>
-                  </ul>
-                </li>
-              </ul>
+                          <li
+                            style={{ position: "static" }}
+                            className="logout-li"
+                            onClick={this.onLogout.bind(this)}
+                          >
+                            <img
+                              src={LogoutIcon}
+                              alt="logout-icon"
+                              className="activitylog-icon"
+                            />
+                            Logout
+                          </li>
+                        </ul>
+                      </div>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
 
-        <Modal
-          className="delete-popup pol-pod-popup"
-          isOpen={this.state.modalProfile}
-          toggle={this.toggleProfile}
-          centered={true}
-        >
-          <ModalBody>
-            <div className="d-flex align-items-center text-left">
-              <div className="prof-img">
-                <img src={LoginActore} />
-              </div>
-              <div className="pl-3">
-                <p className="prof-name">
-                  {encryption(window.localStorage.getItem("username"), "desc")}
-                </p>
-                <p className="prof-comp">
-                  {encryption(
-                    window.localStorage.getItem("companyname"),
-                    "desc"
-                  )}
-                </p>
-              </div>
-            </div>
-            <div className="rename-cntr login-fields d-block mt-4">
-              <div className="d-flex w-100 align-items-center">
-                <label>Change Image</label>
-                <div className="w-100">
-                  <input
-                    id="file-upload"
-                    className="file-upload d-none"
-                    type="file"
-                    onChange={this.onDocumentChangeHandler}
-                  />
-                  <label htmlFor="file-upload">
-                    <div className="file-icon">
-                      <img src={FileUpload} alt="file-upload" />
-                    </div>
-                    Upload Image
-                  </label>
+          <Modal
+            className="delete-popup pol-pod-popup"
+            isOpen={this.state.modalProfile}
+            toggle={this.toggleProfile}
+            centered={true}
+          >
+            <ModalBody>
+              <div className="d-flex align-items-center text-left">
+                <div className="prof-img">
+                  <img src={LoginActore} />
+                </div>
+                <div className="pl-3">
+                  <p className="prof-name">
+                    {encryption(
+                      window.localStorage.getItem("username"),
+                      "desc"
+                    )}
+                  </p>
+                  <p className="prof-comp">
+                    {encryption(
+                      window.localStorage.getItem("companyname"),
+                      "desc"
+                    )}
+                  </p>
                 </div>
               </div>
-              <p className="file-name">{this.state.selectedFileName}</p>
-            </div>
-            <Button
-              className="butn"
-              onClick={() => {
-                this.toggleProfile();
-                // this.onDocumentClickHandler();
-              }}
-            >
-              Submit
-            </Button>
-            <Button
-              className="butn cancel-butn"
-              onClick={() => {
-                this.toggleProfile();
-              }}
-            >
-              Cancel
-            </Button>
-          </ModalBody>
-        </Modal>
+              <div className="rename-cntr login-fields d-block mt-4">
+                <div className="d-flex w-100 align-items-center">
+                  <label>Change Image</label>
+                  <div className="w-100">
+                    <input
+                      id="file-upload"
+                      className="file-upload d-none"
+                      type="file"
+                      onChange={this.onDocumentChangeHandler}
+                    />
+                    <label htmlFor="file-upload">
+                      <div className="file-icon">
+                        <img src={FileUpload} alt="file-upload" />
+                      </div>
+                      Upload Image
+                    </label>
+                  </div>
+                </div>
+                <p className="file-name">{this.state.selectedFileName}</p>
+              </div>
+              <Button
+                className="butn"
+                onClick={() => {
+                  this.toggleProfile();
+                  // this.onDocumentClickHandler();
+                }}
+              >
+                Submit
+              </Button>
+              <Button
+                className="butn cancel-butn"
+                onClick={() => {
+                  this.toggleProfile();
+                }}
+              >
+                Cancel
+              </Button>
+            </ModalBody>
+          </Modal>
 
-        <UncontrolledPopover
-          trigger="legacy"
-          placement="top"
-          target="abcd"
-          // isOpen={this.state.tooltipOpen}
-          rootClose={this.closepopover.bind(this)}
-          className="popovercls"
-        >
-          <PopoverHeader>
-            <img
-              src={ActivityLogIcon}
-              alt="activity-icon"
-              className="activitylog-icon"
-            />
-            Activity Log
-          </PopoverHeader>
+          <UncontrolledPopover
+            trigger="legacy"
+            placement="top"
+            target="abcd"
+            // isOpen={this.state.tooltipOpen}
+            rootClose={this.closepopover.bind(this)}
+            className="popovercls"
+          >
+            <PopoverHeader>
+              <img
+                src={ActivityLogIcon}
+                alt="activity-icon"
+                className="activitylog-icon"
+              />
+              Activity Log
+            </PopoverHeader>
 
-          <PopoverBody>
-            <label>Log-in</label>
-            <br />
-            <label>
-              {encryption(window.localStorage.getItem("lastlogindate"), "desc")}
-            </label>
-          </PopoverBody>
-        </UncontrolledPopover>
-        <NotificationContainer />
-      </div>
+            <PopoverBody>
+              {/* <div>
+              <div>
+                <label>Log-in</label>
+                <br />
+                <label>
+                  {encryption(
+                    window.localStorage.getItem("lastlogindate"),
+                    "desc"
+                  )}
+                </label>
+                <hr />
+              </div>
+              <div>
+                <label>Log-in</label>
+                <br />
+                <label>
+                  {encryption(
+                    window.localStorage.getItem("lastlogindate"),
+                    "desc"
+                  )}
+                </label>
+              </div>
+              </div> */}
+
+              <div>{adataval}</div>
+            </PopoverBody>
+          </UncontrolledPopover>
+          <NotificationContainer />
+        </div>
       </div>
     );
   }

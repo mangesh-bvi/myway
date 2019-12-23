@@ -344,6 +344,7 @@ class ShipmentPlanner extends Component {
       mappingId: 0,
       transitpopupData: [],
       routerMapData: [],
+      
       iframeKey: 0
     };
 
