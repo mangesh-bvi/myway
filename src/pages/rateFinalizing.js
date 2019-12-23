@@ -570,6 +570,7 @@ class RateFinalizing extends Component {
         this.state.podArray = podArray;
         this.HandleLocalCharges();
         this.HandleSurCharges();
+        this.HandlePackgeTypeData();
       } else {
         var qData = this.props.location.state;
         this.setState({
@@ -2554,10 +2555,14 @@ class RateFinalizing extends Component {
             for (var i = 0; i < flattack_openTop.length; i++) {
               RateQueryDim.push({
                 Quantity: flattack_openTop[i].Quantity,
-                Lengths: flattack_openTop[i].length,
-                Width: flattack_openTop[i].width,
-                Height: flattack_openTop[i].height,
-                GrossWt: flattack_openTop[i].Gross_Weight,
+                Lengths: flattack_openTop[i].length==undefined?flattack_openTop[i].Lengths:
+                         flattack_openTop[i].length,
+                Width: flattack_openTop[i].width==undefined?flattack_openTop[i].Width:
+                       flattack_openTop[i].width,
+                Height: flattack_openTop[i].height==undefined?flattack_openTop[i].Height:
+                        flattack_openTop[i].height,
+                GrossWt: flattack_openTop[i].Gross_Weight==undefined?flattack_openTop[i].Weight:
+                         flattack_openTop[i].Gross_Weight,
                 VolumeWeight: 0,
                 Volume: 0,
                 PackageType:
@@ -3896,11 +3901,11 @@ class RateFinalizing extends Component {
               value={el.PackageType}
             >
               <option selected>Select</option>
-              {this.state.packageTypeData.map((item, i) => (
+              {this.state.packageTypeData!==undefined?this.state.packageTypeData.map((item, i) => (
                 <option key={i} value={item.PackageName}>
                   {item.PackageName}
                 </option>
-              ))}
+              )):null}
             </select>
           </div>
         </div>

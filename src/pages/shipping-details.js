@@ -1090,33 +1090,37 @@ class ShippingDetails extends Component {
                             renderSuggestion={this.renderSuggestion1}
                             inputProps={inputProps}
                           /> */}
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Consignee}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                    //value={item.Company_ID}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Consignee"
-                                )}
-                                //menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Consignee"
-                                )}
-                                value={this.state.fields["Consignee"]}
-                              />
+                              <div className="position-relative">
+                                <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Consignee}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                        //value={item.Company_ID}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Consignee"
+                                    )}
+                                    //menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Consignee"
+                                    )}
+                                    value={this.state.fields["Consignee"]}
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
                           {/* </div> */}
@@ -1195,32 +1199,36 @@ class ShippingDetails extends Component {
                             renderSuggestion={this.renderSuggestion}
                             inputProps={inputShip}
                           /> */}
-                              <Autocomplete
-                                getItemValue={item => item.Company_Name}
-                                items={this.state.Shipper}
-                                renderItem={(item, isHighlighted) => (
-                                  <div
-                                    style={{
-                                      background: isHighlighted
-                                        ? "lightgray"
-                                        : "white"
-                                    }}
-                                  >
-                                    {item.Company_Name}
-                                  </div>
-                                )}
-                                value={this.state.fields["Shipper"]}
-                                onChange={this.HandleChangeCon.bind(
-                                  this,
-                                  "Shipper"
-                                )}
-                                //menuStyle={this.state.menuStyle}
-                                onSelect={this.handleSelectCon.bind(
-                                  this,
-                                  item => item.Company_ID,
-                                  "Shipper"
-                                )}
-                              />
+                              <div className="position-relative">
+                                <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Shipper}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    value={this.state.fields["Shipper"]}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Shipper"
+                                    )}
+                                    //menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Shipper"
+                                    )}
+                                  />
+                                </div>
+                              </div>
                             </div>
                             {/* </div> */}
                           </div>
@@ -1362,32 +1370,38 @@ class ShippingDetails extends Component {
                               {/* <div class="rate-radio-cntr"> */}
                               <div style={{ width: "100%" }}>
                                 <label style={{ padding: "0" }}>POL</label>
-                                <Autocomplete
-                                  getItemValue={item => item.NameWoDiacritics}
-                                  items={this.state.POL}
-                                  renderItem={(item, isHighlighted) => (
-                                    <div
-                                      style={{
-                                        background: isHighlighted
-                                          ? "lightgray"
-                                          : "white"
-                                      }}
-                                    >
-                                      {item.NameWoDiacritics}
-                                    </div>
-                                  )}
-                                  value={this.state.fields["POL"]}
-                                  onChange={this.HandleChangePOLPOD.bind(
-                                    this,
-                                    "POL"
-                                  )}
-                                  menuStyle={this.state.menuStyle}
-                                  onSelect={this.handleSelectPOLPOD.bind(
-                                    this,
-                                    "POL"
-                                  )}
-                                  isMulti={true}
-                                />
+                                <div className="position-relative">
+                                  <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
+                                    <Autocomplete
+                                      getItemValue={item =>
+                                        item.NameWoDiacritics
+                                      }
+                                      items={this.state.POL}
+                                      renderItem={(item, isHighlighted) => (
+                                        <div
+                                          style={{
+                                            background: isHighlighted
+                                              ? "lightgray"
+                                              : "white"
+                                          }}
+                                        >
+                                          {item.NameWoDiacritics}
+                                        </div>
+                                      )}
+                                      value={this.state.fields["POL"]}
+                                      onChange={this.HandleChangePOLPOD.bind(
+                                        this,
+                                        "POL"
+                                      )}
+                                      menuStyle={this.state.menuStyle}
+                                      onSelect={this.handleSelectPOLPOD.bind(
+                                        this,
+                                        "POL"
+                                      )}
+                                      isMulti={true}
+                                    />
+                                  </div>
+                                </div>
                               </div>
                               {/* </div> */}
                             </div>
@@ -1404,32 +1418,38 @@ class ShippingDetails extends Component {
                             isMulti
                             options={this.state.optionsOrigin}
                             /> */}
-                                <Autocomplete
-                                  getItemValue={item => item.NameWoDiacritics}
-                                  items={this.state.POD}
-                                  renderItem={(item, isHighlighted) => (
-                                    <div
-                                      style={{
-                                        background: isHighlighted
-                                          ? "lightgray"
-                                          : "white"
-                                      }}
-                                    >
-                                      {item.NameWoDiacritics}
-                                    </div>
-                                  )}
-                                  value={this.state.fields["POD"]}
-                                  onChange={this.HandleChangePOLPOD.bind(
-                                    this,
-                                    "POD"
-                                  )}
-                                  menuStyle={this.state.menuStyle}
-                                  onSelect={this.handleSelectPOLPOD.bind(
-                                    this,
-                                    "POD"
-                                  )}
-                                  isMulti
-                                />
+                                <div className="position-relative">
+                                  <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
+                                    <Autocomplete
+                                      getItemValue={item =>
+                                        item.NameWoDiacritics
+                                      }
+                                      items={this.state.POD}
+                                      renderItem={(item, isHighlighted) => (
+                                        <div
+                                          style={{
+                                            background: isHighlighted
+                                              ? "lightgray"
+                                              : "white"
+                                          }}
+                                        >
+                                          {item.NameWoDiacritics}
+                                        </div>
+                                      )}
+                                      value={this.state.fields["POD"]}
+                                      onChange={this.HandleChangePOLPOD.bind(
+                                        this,
+                                        "POD"
+                                      )}
+                                      menuStyle={this.state.menuStyle}
+                                      onSelect={this.handleSelectPOLPOD.bind(
+                                        this,
+                                        "POD"
+                                      )}
+                                      isMulti
+                                    />
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
