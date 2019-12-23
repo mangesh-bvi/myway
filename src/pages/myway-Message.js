@@ -24,10 +24,13 @@ class myWayMessage extends Component {
     this.state = {
       MessageArr: [],
       MessageLogArr: [],
-      CommunicationUser:""
+      CommunicationUser:"",
+      ReferenceNo: "",
+      msgg: ""
     };
 
     this.bindMyWayMessage = this.bindMyWayMessage.bind(this);
+    this.handlechange = this.handlechange.bind(this);
   }
 
   componentDidMount() {
@@ -48,24 +51,24 @@ class myWayMessage extends Component {
         debugger;
         var Message = "";
         var MessageArr = [];
-        for (let i = 0; i < response.data.Table.length; i++) {
-          if (!Message.includes(response.data.Table[i].MessageTitle!==null?
-                                (response.data.Table[i].MessageTitle.includes(':')==true?
-                                response.data.Table[i].MessageTitle.split(':')[1].trim():
-                                response.data.Table[i].MessageTitle):
-                                response.data.Table[i].MessageTitle)) {
+        // for (let i = 0; i < response.data.Table.length; i++) {
+        //   if (!Message.includes(response.data.Table[i].MessageTitle!==null?
+        //                         (response.data.Table[i].MessageTitle.includes(':')==true?
+        //                         response.data.Table[i].MessageTitle.split(':')[1].trim():
+        //                         response.data.Table[i].MessageTitle):
+        //                         response.data.Table[i].MessageTitle)) {
 
-              Message += (response.data.Table[i].MessageTitle!==null?
-                         (response.data.Table[i].MessageTitle.includes(':')==true?
-                         response.data.Table[i].MessageTitle.split(':')[1].trim():
-                         response.data.Table[i].MessageTitle):response.data.Table[i].MessageTitle)
+        //       Message += (response.data.Table[i].MessageTitle!==null?
+        //                  (response.data.Table[i].MessageTitle.includes(':')==true?
+        //                  response.data.Table[i].MessageTitle.split(':')[1].trim():
+        //                  response.data.Table[i].MessageTitle):response.data.Table[i].MessageTitle)
 
-              MessageArr.push(response.data.Table[i])
-          }
+        //       MessageArr.push(response.data.Table[i])
+        //   }
           
-        }
+        // }
         self.setState({
-          MessageArr: MessageArr
+          MessageArr: response.data.Table
         })        
         self.bindMyWayMessageById(response.data.Table[0]);
       })
@@ -100,7 +103,8 @@ class myWayMessage extends Component {
         debugger;
         self.setState({
           CommunicationUser: item.LastCommunicationUser,
-          MessageLogArr: response.data
+          MessageLogArr: response.data,
+          ReferenceNo: response.data[0].ReferenceNo
         })
       })
       .catch(error => {
@@ -115,6 +119,55 @@ class myWayMessage extends Component {
         // });
         // self.setState({ reportdetails: actData });
       });
+  }
+
+  SendMessage = () => {
+    debugger;
+    let self = this;
+    var hbllNo = this.state.ReferenceNo;
+    var msgg = this.state.msgg;
+    if (msgg === "" || msgg === null) {
+      NotificationManager.error("Please enter the message.");
+    } else {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/SendCommonMessage`,
+        data: {
+          UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+          ReferenceNo: hbllNo.trim(),
+          // TypeOfMessage: drpshipment.value.trim(),
+          Message: msgg
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.length > 0) {
+              if (response.data[0] != null) {
+                var message = response.data[0].Result;
+                // self.setState({ MessagesActivityDetails });
+                if (response.data[0].Result === "Message Send Successfully") {
+                  // setTimeout(() => {
+                  // this.handleActivityList();
+                  // }, 100);
+                  NotificationManager.success(response.data[0].Result);
+                }
+               // self.handleActivityList();
+              }
+            }
+          }
+        }
+      });
+    }
+  };
+
+  handlechange(e) {
+    debugger;
+    //let fields = this.state.fields;
+    // msgg = e.target.value;
+    this.setState({
+      msgg: e.target.value
+    });
   }
 
   render() {
@@ -179,8 +232,9 @@ class myWayMessage extends Component {
                               type="text"
                               class="write_msg"
                               placeholder="Type a message"
+                              onChange={this.handlechange.bind(this)}
                             />
-                            <button class="msg_send_btn" type="button">
+                            <button class="msg_send_btn" type="button" onClick={this.SendMessage}>
                               <i
                                 class="fa fa-paper-plane-o"
                                 aria-hidden="true"
