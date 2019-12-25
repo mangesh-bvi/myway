@@ -582,7 +582,9 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var shipperId = sid;
     var consigneeId = cid;
-    var hblno = self.state.addWat.replace(/%20/g, " ") || this.state.HblNo.replace(/%20/g, " ")
+    var hblno =
+      self.state.addWat.replace(/%20/g, " ") ||
+      this.state.HblNo.replace(/%20/g, " ");
     var SwitchConsigneeID = 0;
     var SwitchShipperID = 0;
 
@@ -708,7 +710,7 @@ class ShippingDetailsTwo extends Component {
       "GreenLineData"
     );
     localStorage.removeItem("GreenLineData");
-    var HblNo = hblno.replace(/%20/g, " ");;
+    var HblNo = hblno.replace(/%20/g, " ");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
@@ -1553,13 +1555,13 @@ class ShippingDetailsTwo extends Component {
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Seal NO.1</p>
+                                      <p className="details-title">Seal No.1</p>
                                       <p className="details-para">
                                         {cntrDet.SealNo1}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Seal NO.2</p>
+                                      <p className="details-title">Seal No.2</p>
                                       <p className="details-para">
                                         {cntrDet.SealNo2}
                                       </p>
@@ -2133,7 +2135,7 @@ class ShippingDetailsTwo extends Component {
                               </div>
                             </div>
                             <p>
-                              <span>On the way</span>
+                              <span>On the Way</span>
                             </p>
                           </div>
                           <div class="track-line-cntr">
@@ -2213,7 +2215,7 @@ class ShippingDetailsTwo extends Component {
                               </div>
                             </div>
                             <p>
-                              <span>On the way</span>
+                              <span>On the Way</span>
                             </p>
                           </div>
                           <div class="track-line-cntr">
