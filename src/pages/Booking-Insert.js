@@ -2211,7 +2211,7 @@ class BookingInsert extends Component {
                                     <React.Fragment>
                                       <p className="details-title">Price</p>
                                       <p className="details-para">
-                                        {row.original.Total}
+                                        {(row.original.Total).fixed(2)}
                                       </p>
                                     </React.Fragment>
                                   );

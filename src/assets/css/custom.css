@@ -1905,8 +1905,8 @@ table tbody tr:last-child {
 .bottom-profit {
   font-family: "Regular Font";
   color: #5f5f60;
-  margin-top: -10px;
-  margin-bottom: 10px;
+  margin-top: -20px;
+  margin-bottom: 0px;
   font-size: 14px;
   text-align: right;
 }

@@ -689,6 +689,9 @@ class NewRateSearch extends Component {
     fields[field] = e.target.value;
 
     var type = this.state.modeoftransport;
+    self.setState({
+      fields
+    })
     if (fields[field].length > 2) {
       axios({
         method: "post",
@@ -722,6 +725,9 @@ class NewRateSearch extends Component {
         })
         .catch(error => {
           debugger;
+          self.setState({
+            fields
+          })
           // var errorData = error.response.data;
           // var err = errorData.split(":");
           // var data = [{ OceanPortLongName: err[1].replace("}", "") }];

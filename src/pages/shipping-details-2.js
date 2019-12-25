@@ -42,6 +42,7 @@ import {
   Marker,
   InfoWindow
 } from "react-google-maps";
+import { notification } from "antd";
 const { compose } = require("recompose");
 
 var docuemntFileName = "";
@@ -246,7 +247,8 @@ class ShippingDetailsTwo extends Component {
       viewFilePath: "",
       delDocuId: "",
       delFileName: "",
-      downloadFilePath: ""
+      downloadFilePath: "",
+      POLPODData: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -547,8 +549,9 @@ class ShippingDetailsTwo extends Component {
       }
 
       ///Line data
-      debugger;
+
       var RouteLatLong = mydata[i]["GeoCoord"];
+      var Not_Data = 0;
       if (RouteLatLong) {
         var splitRouteLatLong = RouteLatLong.split(";");
         for (var j = 0; j < splitRouteLatLong.length; j++) {
@@ -561,6 +564,13 @@ class ShippingDetailsTwo extends Component {
           }
         }
       } else {
+        debugger;
+        Not_Data = i;
+        // var data = mydata[Not_Data - 1]["GeoCoord"].split(";");
+
+        // var routeShip = new Object();
+        // routeShip.lat = Number(data[data.length - 1].split(",")[0]);
+        // routeShip.lng = Number(data[data.length - 1].split(",")[1]);
       }
       //mainLineData = allLineData;
     }
@@ -582,7 +592,9 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var shipperId = sid;
     var consigneeId = cid;
-    var hblno = self.state.addWat.replace(/%20/g, " ") || this.state.HblNo.replace(/%20/g, " ")
+    var hblno =
+      self.state.addWat.replace(/%20/g, " ") ||
+      this.state.HblNo.replace(/%20/g, " ");
     var SwitchConsigneeID = 0;
     var SwitchShipperID = 0;
 
@@ -621,6 +633,7 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var HblNo = row.original["HBL#"];
     var downloadFilePath = row.original["FilePath"];
+    var fileName = row.original["FileName"];
 
     axios({
       method: "post",
@@ -629,17 +642,25 @@ class ShippingDetailsTwo extends Component {
         MywayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
         FilePath: downloadFilePath
       },
+      responseType: "blob",
       headers: authHeader()
     })
       .then(function(response) {
         debugger;
-        var documentdata = [];
-        documentdata = response.config.data;
+        // var documentdata = [];
+        // documentdata = response.config.data;
         // documentdata.forEach(function(file, i) {
         //   file.sr_no = i + 1;
         // });
+        if (response.data) {
+          var blob = new Blob([response.data], { type: "application/pdf" });
+          var link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = fileName;
+          link.click();
+        }
 
-        self.setState({ documentData: documentdata });
+        // self.setState({ documentData: documentdata });
       })
       .catch(error => {
         debugger;
@@ -708,7 +729,7 @@ class ShippingDetailsTwo extends Component {
       "GreenLineData"
     );
     localStorage.removeItem("GreenLineData");
-    var HblNo = hblno.replace(/%20/g, " ");;
+    var HblNo = hblno.replace(/%20/g, " ");
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
@@ -723,6 +744,10 @@ class ShippingDetailsTwo extends Component {
       debugger;
       var shipmentdata = response.data;
       var ModeType = response.data.Table[0].ModeOfTransport;
+      var POLPODData = response.data.Table5;
+      if (POLPODData.length > 0) {
+        self.setState({ POLPODData });
+      }
       self.setState({
         detailsData: shipmentdata.Table[0],
         ShipperID: shipmentdata.Table[0].ShipperId,
@@ -745,10 +770,15 @@ class ShippingDetailsTwo extends Component {
     });
   }
   onDocumentChangeHandler = event => {
-    this.setState({
-      selectedFile: event.target.files[0],
-      selectedFileName: event.target.files[0].name
-    });
+    debugger;
+    if (event.target.files[0].type === "application/pdf") {
+      this.setState({
+        selectedFile: event.target.files[0],
+        selectedFileName: event.target.files[0].name
+      });
+    } else {
+      NotificationManager.error("Please upload only PDF File");
+    }
   };
   onDocumentConsignee = event => {
     this.setState({
@@ -794,6 +824,7 @@ class ShippingDetailsTwo extends Component {
       debugger;
       NotificationManager.success(response.data[0].Result);
       self.HandleShipmentDocument();
+      self.setState({ selectedFileName: "" });
     });
   };
 
@@ -1270,20 +1301,27 @@ class ShippingDetailsTwo extends Component {
                             </a>
                           </div>
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-para">{detailsData.HBLNO}</p>
+                            <p className="details-title">BL#</p>
+                            <p className="details-para">{detailsData.BLNo}</p>
+                          </div>
+                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                            <p className="details-title">MyWay#</p>
+                            <p className="details-para">
+                              {detailsData.MyWayNumber}
+                            </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Status</p>
                             <p className="details-para">{detailsData.Status}</p>
                           </div>
+                        </div>
+                        <div className="row">
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Last Update</p>
                             <p className="details-para">
                               {detailsData["Status Date"]}
                             </p>
                           </div>
-                        </div>
-                        <div className="row">
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">Mode</p>
                             <p className="details-para">
@@ -1297,13 +1335,15 @@ class ShippingDetailsTwo extends Component {
                             </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">ATA Booking No#</p>
+                            <p className="details-title">ATA Booking#</p>
                             <p className="details-para">
                               {detailsData.ATABookingNo}
                             </p>
                           </div>
+                        </div>
+                        <div className="row">
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">SRT No#</p>
+                            <p className="details-title">SRT#</p>
                             <p className="details-para">
                               {detailsData["SRT No#"]}
                             </p>
@@ -1385,7 +1425,9 @@ class ShippingDetailsTwo extends Component {
                         return (
                           <div className="sect-padd">
                             <p className="details-heading">
-                              Routing Information - {i}
+                              {containerData.length == 1
+                                ? "Routing Information"
+                                : "Routing Information -" + i}
                             </p>
                             <div className="row mid-border">
                               <div className="col-12 col-sm-12 col-md-12 col-lg-6 details-border">
@@ -1841,14 +1883,14 @@ class ShippingDetailsTwo extends Component {
                                     } else {
                                       return (
                                         <div>
-                                          <img
+                                          {/* <img
                                             className="actionicon"
                                             src={Eye}
                                             alt="view-icon"
                                             onClick={e =>
                                               this.HandleDocumentView(e, row)
                                             }
-                                          />
+                                          /> */}
                                           <img
                                             className="actionicon"
                                             src={Delete}
@@ -2486,7 +2528,7 @@ class ShippingDetailsTwo extends Component {
                               id="file-upload"
                               className="file-upload d-none"
                               type="file"
-                              accept="application/pdf"
+                              //accept="application/pdf"
                               onChange={this.onDocumentChangeHandler}
                             />
                             <label htmlFor="file-upload">
@@ -2501,7 +2543,7 @@ class ShippingDetailsTwo extends Component {
                           {this.state.selectedFileName}
                         </p>
                       </div>
-                      <div className="rename-cntr login-fields d-block">
+                      {/* <div className="rename-cntr login-fields d-block">
                         <div className="d-flex w-100 align-items-center">
                           <label>Consignee Document</label>
                           <div className="w-100">
@@ -2522,7 +2564,7 @@ class ShippingDetailsTwo extends Component {
                         <p className="file-name">
                           {this.state.consigneeFileName}
                         </p>
-                      </div>
+                      </div> */}
                       {/* <div>
                       <input
                         type="button"
@@ -2533,7 +2575,7 @@ class ShippingDetailsTwo extends Component {
                       <Button
                         className="butn"
                         onClick={() => {
-                          this.toggleDocu();
+                          // this.toggleDocu();
                           this.onDocumentClickHandler();
                         }}
                       >

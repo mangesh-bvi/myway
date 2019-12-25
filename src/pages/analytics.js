@@ -778,7 +778,7 @@ class Analytics extends Component {
   }
 
   render() {
-    debugger
+    
 
     var buyerShipmentData = {
       labels:this.state.grafShipmentlabels,

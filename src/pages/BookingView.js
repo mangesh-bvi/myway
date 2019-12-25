@@ -9,6 +9,7 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
+import Download from "./../assets/img/csv.png";
 
 import { encryption, convertToPlain } from "../helpers/encryption";
 const imageAsset = "./../assets/img";
@@ -90,7 +91,7 @@ class BookingView extends Component {
       Shipper_Name: "",
       CargoType: "",
       Incoterm: "",
-      companyID:0,
+      companyID: 0,
       contact_name: "",
       company_name: "",
       Company_Address: "",
@@ -101,6 +102,7 @@ class BookingView extends Component {
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
   componentDidMount() {
+    debugger;
     if (this.props.location.state.BookingNo && this.props.location.state.Mode) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -133,7 +135,38 @@ class BookingView extends Component {
         }
       }
     } else {
-      this.props.history.push("/booking-table");
+      if (this.props.location.state.bookingNo) {
+        var userType = encryption(
+          window.localStorage.getItem("usertype"),
+          "desc"
+        );
+        var BookingNo = this.props.location.state.bookingNo;
+        var ModeofTransport = this.props.location.state.Mode;
+
+        this.setState({
+          BookingNo,
+          userType,
+          isView: true,
+       
+        });
+        if (ModeofTransport === "AIR") {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsListAIR();
+            this.NonCustomerList();
+          }, 300);
+        } else {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsList();
+            this.NonCustomerList();
+          }, 300);
+        }
+      } else {
+        this.props.history.push("/booking-table");
+      }
     }
   }
 
@@ -521,19 +554,19 @@ class BookingView extends Component {
           if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
             self.setState({ FileData });
           }
+          else{
+            self.setState({ FileData:{FileName:"No File Found"} });
+          }
         }
 
         if (Table6.length > 0) {
-          var companyID=0;
-          if(Table6[0].contact_name)
-          {
-          Company_Address = Table6[0].Company_Address;
-          contact_name = Table6[0].contact_name;
-          company_name = Table6[0].company_name;
-          }
-          else
-          {
-            var companyID= Table6[0].CompanyID
+          var companyID = 0;
+          if (Table6[0].contact_name) {
+            Company_Address = Table6[0].Company_Address;
+            contact_name = Table6[0].contact_name;
+            company_name = Table6[0].company_name;
+          } else {
+            var companyID = Table6[0].CompanyID;
             Company_Address = Table6[0].Company_Address;
             contact_name = Table6[0].ContactName;
             company_name = Table6[0].CompanyName;
@@ -759,6 +792,7 @@ class BookingView extends Component {
   }
 
   HandleFileOpen(filePath) {
+    debugger;
     var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -889,7 +923,7 @@ class BookingView extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                               
+
                                   var lname = "";
                                   var olname = "";
                                   if (row._original.Linename) {
@@ -1061,7 +1095,10 @@ class BookingView extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={this.state.QuotationSubData.filter(x=>x.SaleQuoteID===row.original.SaleQuoteID1)}
+                                data={this.state.QuotationSubData.filter(
+                                  x =>
+                                    x.SaleQuoteID === row.original.SaleQuoteID1
+                                )}
                                 columns={[
                                   {
                                     columns: [
@@ -1493,33 +1530,33 @@ class BookingView extends Component {
                       </div>
                     </div>
                     <div className="row ratefinalpgn">
-                      {this.state.eqmtType.length > 0 ? (
-                        // <ReactTable
-                        //   columns={[
-                        //     {
-                        //       columns: [
-                        //         {
-                        //           Header: "Container Name",
-                        //           accessor: "ContainerName"
-                        //         },
-                        //         {
-                        //           Header: "ContainerCode",
-                        //           accessor: "ContainerCode"
-                        //         },
+                      {this.state.eqmtType.length > 0
+                        ? // <ReactTable
+                          //   columns={[
+                          //     {
+                          //       columns: [
+                          //         {
+                          //           Header: "Container Name",
+                          //           accessor: "ContainerName"
+                          //         },
+                          //         {
+                          //           Header: "ContainerCode",
+                          //           accessor: "ContainerCode"
+                          //         },
 
-                        //         {
-                        //           Header: "Container Count",
-                        //           accessor: "ContainerCount"
-                        //         }
-                        //       ]
-                        //     }
-                        //   ]}
-                        //   data={this.state.eqmtType}
-                        //   minRows={0}
-                        //   showPagination={false}
-                        // />
-                        ""
-                      ) : null}
+                          //         {
+                          //           Header: "Container Count",
+                          //           accessor: "ContainerCount"
+                          //         }
+                          //       ]
+                          //     }
+                          //   ]}
+                          //   data={this.state.eqmtType}
+                          //   minRows={0}
+                          //   showPagination={false}
+                          // />
+                          ""
+                        : null}
                       {this.state.multiCBM.length > 0 ? (
                         <ReactTable
                           columns={[
@@ -1592,9 +1629,57 @@ class BookingView extends Component {
                       </div>
                       <br /> */}
 
-                      {this.state.FileData.length > 0
+                      {/* {this.state.FileData.length > 0
                         ? this.CreateFileElement()
-                        : null}
+                        : null} */}
+                      <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "File name",
+                                accessor: "FileName"
+                              },
+
+                              {
+                                Header: "Action",
+                                Cell: row => {
+                                  debugger;
+                                  if (
+                                    row.original.FilePath !== "" &&
+                                    row.original.FileName !== "No File Found"
+                                  ) {
+                                    return (
+                                      <div className="action-cntr">
+                                        <a
+                                          onClick={e =>
+                                            // this.HandleDowloadFile(e, row)
+                                            this.HandleFileOpen(
+                                              row.original.FilePath
+                                            )
+                                          }
+                                        >
+                                          <img
+                                          style={{cursor:"pointer"}}
+                                            className="actionicon"
+                                            src={Download}
+                                            alt="download-icon"
+                                          />
+                                        </a>
+                                      </div>
+                                    );
+                                  } else {
+                                  return <></>;
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.FileData}
+                        minRows={0}
+                        showPagination={false}
+                      />
                     </div>
                   </div>
                 </div>

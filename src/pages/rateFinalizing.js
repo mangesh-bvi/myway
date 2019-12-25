@@ -2555,14 +2555,22 @@ class RateFinalizing extends Component {
             for (var i = 0; i < flattack_openTop.length; i++) {
               RateQueryDim.push({
                 Quantity: flattack_openTop[i].Quantity,
-                Lengths: flattack_openTop[i].length==undefined?flattack_openTop[i].Lengths:
-                         flattack_openTop[i].length,
-                Width: flattack_openTop[i].width==undefined?flattack_openTop[i].Width:
-                       flattack_openTop[i].width,
-                Height: flattack_openTop[i].height==undefined?flattack_openTop[i].Height:
-                        flattack_openTop[i].height,
-                GrossWt: flattack_openTop[i].Gross_Weight==undefined?flattack_openTop[i].Weight:
-                         flattack_openTop[i].Gross_Weight,
+                Lengths:
+                  flattack_openTop[i].length == undefined
+                    ? flattack_openTop[i].Lengths
+                    : flattack_openTop[i].length,
+                Width:
+                  flattack_openTop[i].width == undefined
+                    ? flattack_openTop[i].Width
+                    : flattack_openTop[i].width,
+                Height:
+                  flattack_openTop[i].height == undefined
+                    ? flattack_openTop[i].Height
+                    : flattack_openTop[i].height,
+                GrossWt:
+                  flattack_openTop[i].Gross_Weight == undefined
+                    ? flattack_openTop[i].Weight
+                    : flattack_openTop[i].Gross_Weight,
                 VolumeWeight: 0,
                 Volume: 0,
                 PackageType:
@@ -3288,7 +3296,14 @@ class RateFinalizing extends Component {
                   : this.state.rateDetails[i].TotalAmount
               ) + parseFloat(e.target.value);
             // }
+            this.state.rateDetails[i].TotalAmount =
+              this.state.rateDetails[i].TotalAmount +
+              this.state.rateDetails[i].ContainerQuantity *
+                e.target.getAttribute("data-amountinbasecurrency");
 
+            var calAmount =
+              this.state.rateDetails[i].ContainerQuantity *
+              e.target.getAttribute("data-amountinbasecurrency");
             var newrateSubDetails = {
               // BaseCurrency: e.target.getAttribute("data-currency"),
               // ChargeCode: e.target.getAttribute("data-chargedesc"),
@@ -3319,7 +3334,8 @@ class RateFinalizing extends Component {
               Exrate: 1,
               ChargeType: e.target.getAttribute("data-chargetype"),
               TotalAmount: parseFloat(
-                e.target.getAttribute("data-amountinbasecurrency")
+                // e.target.getAttribute("data-amountinbasecurrency")
+                calAmount
               ),
               BaseCurrency: e.target.getAttribute("data-currency")
             };
@@ -3681,6 +3697,7 @@ class RateFinalizing extends Component {
     SalesQuoteNumber = self.state.SalesQuoteNo;
     QuoteType = self.state.containerLoadType;
 
+    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
     debugger;
     axios({
       method: "post",
@@ -3699,7 +3716,10 @@ class RateFinalizing extends Component {
           if (response.data != null) {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
-                NotificationManager.success(response.data.Table[0].Message);
+                if (usertype !== "Sales User") {
+                } else {
+                  NotificationManager.success(response.data.Table[0].Message);
+                }
               }
             }
           }
@@ -3901,11 +3921,13 @@ class RateFinalizing extends Component {
               value={el.PackageType}
             >
               <option selected>Select</option>
-              {this.state.packageTypeData!==undefined?this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageName}>
-                  {item.PackageName}
-                </option>
-              )):null}
+              {this.state.packageTypeData !== undefined
+                ? this.state.packageTypeData.map((item, i) => (
+                    <option key={i} value={item.PackageName}>
+                      {item.PackageName}
+                    </option>
+                  ))
+                : null}
             </select>
           </div>
         </div>
@@ -7538,7 +7560,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
         </div>
-        <NotificationContainer/>
+        <NotificationContainer />
       </React.Fragment>
     );
   }
