@@ -107,6 +107,7 @@ class RateFinalizingStill extends Component {
       this.HandleCommodityDropdown();
       //this.HandleDowloadFile();
     }
+    
   }
 
   //////toggleAcceptModal method
@@ -269,6 +270,13 @@ class RateFinalizingStill extends Component {
           multiCBM: response.data.Table3,
           DocumentDetails: response.data.Table4
         });
+        if(response.data.Table4.length===0)
+        {
+          
+        self.setState({
+          DocumentDetails: [{FileName:"No File Found"}]
+        });
+        }
         self.forceUpdate();
         self.HandleSalesQuoteConditions();
         //console.log(response);
@@ -1370,41 +1378,17 @@ class RateFinalizingStill extends Component {
   // Shlok End working
 
   render() {
-    var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
-    ];
-    var data2 = [
-      {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        finalPayment: "$45,986.00"
-      },
-      {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
-      },
-      {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
-      }
-    ];
+   
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
     } else {
       className = "butn m-0";
     }
-    if (typeof this.props.location.state != "undefined") {
-      var bookingNo = this.props.location.state.detail[0];
+    let status;
+    if (this.props.location.state) {
+      debugger;
+      status = this.props.location.state.detail.Status
       // this.HandleShipmentDetails(bookingNo);
     }
     var DocumentCharges = [];
@@ -1427,8 +1411,7 @@ class RateFinalizingStill extends Component {
                 //   return <h2>Booking Details</h2>;
                 //  }
               })()}
-              {/* <h2>Rate Query Details</h2> */}
-              <h2>{this.props.location.state.detail.Status}</h2>
+              {/* <h2>Rate Query Details</h2> */}              <h2>{status}</h2>
             </div>
             <div className="row">
               {/* <div className="col-md-4">
@@ -2389,21 +2372,29 @@ class RateFinalizingStill extends Component {
                                   // var y = current.getTime();
                                   // console.log(x);
                                   // console.log(y);
-                                  return (
-                                    <div className="action-cntr">
-                                      <a
-                                        onClick={e =>
-                                          this.HandleDowloadFile(e, row)
-                                        }
-                                      >
-                                        <img
-                                          className="actionicon"
-                                          src={Download}
-                                          alt="download-icon"
-                                        />
-                                      </a>
-                                    </div>
-                                  );
+                                  if(row.original.FileName!=="No File Found")
+                                  {
+                                    return (
+                                      <div className="action-cntr">
+                                        <a
+                                          onClick={e =>
+                                            this.HandleDowloadFile(e, row)
+                                          }
+                                        >
+                                          <img
+                                            className="actionicon"
+                                            src={Download}
+                                            alt="download-icon"
+                                          />
+                                        </a>
+                                      </div>
+                                    );
+                                  }
+                                  else
+                                  {
+                                    return <></>;
+                                  }
+                                  
                                 }
                               }
                             ]}

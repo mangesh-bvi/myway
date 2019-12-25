@@ -344,7 +344,7 @@ class ShipmentPlanner extends Component {
       mappingId: 0,
       transitpopupData: [],
       routerMapData: [],
-      
+      loading: true,
       iframeKey: 0
     };
 
@@ -646,6 +646,8 @@ class ShipmentPlanner extends Component {
 
   HandleOnPageLoad() {
     let self = this;
+    self.setState({ loading: true });
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RegCompanyLocation`,
@@ -704,7 +706,7 @@ class ShipmentPlanner extends Component {
         }
       }
 
-      self.setState({ mapsData: finalDataForMap });
+      self.setState({ mapsData: finalDataForMap, loading: false });
     });
   }
 
@@ -720,6 +722,7 @@ class ShipmentPlanner extends Component {
     //     break;
     //   }
     // }
+    self.setState({ consigneedrp: [], linerdrp: [], transportModedrp: [] });
     if (compArray !== null) {
       axios({
         method: "post",
@@ -748,7 +751,7 @@ class ShipmentPlanner extends Component {
     let self = this;
     let supconsid = e.target.value;
     document.getElementById("drpMode").selectedIndex = "0";
-    self.setState({ supConsId: supconsid });
+    self.setState({ supConsId: supconsid, linerdrp: [], transportModedrp: [] });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchTransportMode`,
@@ -768,7 +771,7 @@ class ShipmentPlanner extends Component {
     let self = this;
     let transportmode = e.target.value;
     document.getElementById("drpLiner").selectedIndex = "0";
-    self.setState({ modeofTransport: transportmode });
+    self.setState({ modeofTransport: transportmode, linerdrp: [] });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchLiners`,
@@ -801,7 +804,7 @@ class ShipmentPlanner extends Component {
     var supConsId = this.state.supConsId;
     var sailingDate = document.getElementById("saleDate").value;
     let self = this;
-    self.setState({ transitpopupData: [] });
+    self.setState({ transitpopupData: [], loading: true });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/FetchShipmentPlannerMapData`,
@@ -823,6 +826,7 @@ class ShipmentPlanner extends Component {
           self.setState({ firstmgmt: response.data.Table[index].ManagedBy });
         } else if (index == 1) {
           self.setState({
+            loading: false,
             secondAvg: response.data.Table[index].NTransit_Time
           });
           var mode = response.data.Table[index].RouteMode.split("-");
@@ -1049,45 +1053,46 @@ class ShipmentPlanner extends Component {
                   <div className="full-map-cntr">
                     <div className="ship-detail-maps full-map mt-0">
                       <div className="ship-detail-map">
-                        {this.state.showingMaps ? (
-                          <MapWithAMakredInfoWindow
-                            markerposition={this.state.markerposition}
-                            markers={mapsData}
-                            onClick={this.handleClick}
-                            selectedMarker={this.state.selectedMarker}
-                            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                            containerElement={
-                              <div style={{ height: `100%`, width: "100%" }} />
-                            }
-                            mapElement={<div style={{ height: `100%` }} />}
-                            loadingElement={<div style={{ height: `100%` }} />}
-                          ></MapWithAMakredInfoWindow>
+                        {/* {this.state.loading === true ? (
+                          <div className="loader-icon"></div>
                         ) : (
-                          // <MapWithAMakredInfoWindowLine
-                          //   markers={MapsDetailsData}
-                          //   routerData={routerMapData}
-                          //   onClick={this.handleClick}
-                          //   transitpopupData={transitpopupData}
-                          //   selectedMarker={this.state.selectedMarker}
-                          //   googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                          //   containerElement={
-                          //     <div style={{ height: `100%`, width: "100%" }} />
-                          //   }
-                          //   mapElement={<div style={{ height: `100%` }} />}
-                          //   loadingElement={<div style={{ height: `100%` }} />}
-                          // ></MapWithAMakredInfoWindowLine>
-
-                          <iframe
-                            key={this.state.iframeKey}
-                            src="/MapHtmlPage.html"
-                            className="mapIframe"
-                          />
-                          // <object
-                          //   width="100%"
-                          //   height="100%"
-                          //   data="/MapHtmlPage.html"
-                          // ></object>
-                          // <link rel="import" href="/MapHtmlPage.htm"></link>
+                          ""
+                        )} */}
+                        {this.state.showingMaps ? (
+                          <>
+                            {this.state.loading === true ? (
+                              <div className="loader-icon"></div>
+                            ) : (
+                              <MapWithAMakredInfoWindow
+                                markerposition={this.state.markerposition}
+                                markers={mapsData}
+                                onClick={this.handleClick}
+                                selectedMarker={this.state.selectedMarker}
+                                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
+                                containerElement={
+                                  <div
+                                    style={{ height: `100%`, width: "100%" }}
+                                  />
+                                }
+                                mapElement={<div style={{ height: `100%` }} />}
+                                loadingElement={
+                                  <div style={{ height: `100%` }} />
+                                }
+                              ></MapWithAMakredInfoWindow>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {this.state.loading === true ? (
+                              <div className="loader-icon"></div>
+                            ) : (
+                              <iframe
+                                key={this.state.iframeKey}
+                                src="/MapHtmlPage.html"
+                                className="mapIframe"
+                              />
+                            )}
+                          </>
                         )}
                       </div>
                     </div>

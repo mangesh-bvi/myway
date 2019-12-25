@@ -130,7 +130,6 @@
       type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&callback=initMap"
     ></script>
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
     <link rel="stylesheet" href="js/bootstrap.min.css" />
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -155,7 +154,6 @@
       userId = localStorage.getItem("myUserId");
       var ApiUrl = "";
       ApiUrl = localStorage.getItem("APIUrl");
-      // alert(token);
 
       if (token == "") {
         token =
@@ -209,13 +207,13 @@
 
         //setMarkers(map, locations)
 
-        // debugger;
+        // //debugger;
         /////This bind all the marker data
         getDashboardMarkerData(map);
       }
 
       function setMarkers(map, locations) {
-        debugger;
+        //debugger;
         var marker, i;
 
         for (i = 0; i < locations.length; i++) {
@@ -249,7 +247,7 @@
             "click",
             (function(marker, content, infowindow) {
               return function() {
-                debugger;
+                //debugger;
                 ////////Ajax call to get content data //////////////
                 content = "";
                 var selectedLat = marker
@@ -275,9 +273,9 @@
                     Authorization: token
                   },
                   success: function(data) {
-                    debugger;
+                    //debugger;
                     //alert('Success-2');
-                    debugger;
+                    //debugger;
                     var datas = data.Table1;
                     var filterData = [];
                     for (var j = 0; j < datas.length; j++) {
@@ -301,7 +299,7 @@
                     var innerConsolidateData = "";
                     if (filterData.length > 0) {
                       for (var k = 0; k < filterData.length; k++) {
-                        debugger;
+                        //debugger;
 
                         var CinnerContentDatas = "";
                         var ContNo = filterData[k];
@@ -364,7 +362,7 @@
                       //alert(innerConsolidateData);
                     }
 
-                    debugger;
+                    //debugger;
                     if (datas.length > 0) {
                       console.log(datas.length);
                       var marketContent = "<div id='rootElement'>";
@@ -459,12 +457,7 @@
 
       ///When click on the text box got the info window
       function ShowMarker() {
-        //alert('Method call on search text and button click');
-        debugger;
-
-        // setTimeout(function() {
-        //   $("#loader-icon").show();
-        // }, 500);
+        //debugger;
 
         var enteredHBLNum = $("#dataNumber").val();
         ///Clear input AQTY158984
@@ -503,7 +496,7 @@
             Authorization: token
           },
           success: function(data) {
-            debugger;
+            //debugger;
             //alert('Success-Receive Lat:' + data.Table[0].LastLocation_Lat + ' | long:' + data.Table[0].LastLocation_Lon);
 
             // $("#loader-icon").show();
@@ -540,7 +533,7 @@
                 Authorization: token
               },
               success: function(data) {
-                debugger;
+                //debugger;
                 var datas = data.Table1;
                 var filterData = [];
                 for (var j = 0; j < datas.length; j++) {
@@ -564,7 +557,7 @@
                 var innerConsolidateData = "";
                 if (filterData.length > 0) {
                   for (var k = 0; k < filterData.length; k++) {
-                    debugger;
+                    //debugger;
 
                     var CinnerContentDatas = "";
                     var ContNo = filterData[k];
@@ -625,7 +618,7 @@
                   //alert(innerConsolidateData);
                 }
 
-                debugger;
+                //debugger;
                 //alert('Success - Receive content on search');
                 //var datas = data.Table1;
                 if (datas.length > 0) {
@@ -711,7 +704,7 @@
               }
             });
 
-            debugger;
+            //debugger;
             var infowindow = new google.maps.InfoWindow({
               content: content
             });
@@ -733,15 +726,17 @@
         });
 
         ///////////////////////////////////////////////////////////////////////////
-        debugger;
+        //debugger;
       }
 
       ////Get Dashboard Marker Data on load
       function getDashboardMarkerData(map) {
+        console.log("Request - Start" + new Date());
         if (1 == 1) {
           $.ajax({
             type: "POST",
-            async: false,
+            async: true,
+            cache: true,
             url: ApiUrl + "/ShipmentLatLongAPI",
             data: {
               UserID: userId
@@ -750,8 +745,8 @@
               Authorization: token
             },
             success: function(response) {
-              debugger;
-
+              //debugger;
+              console.log("Response - Received" + new Date());
               if (response.length > 0) {
                 var arrarSelectPin = [
                   "Ocean",
@@ -771,8 +766,9 @@
                   );
                   shippingLocations.push(shipMarkerData);
                 }
-                debugger;
+                //debugger;
                 setMarkers(map, shippingLocations);
+                console.log("Render - Done" + new Date());
               }
             },
             complete: function() {
@@ -787,7 +783,7 @@
       isDelayShipment = 1;
       isNewBooking = 1;
       function toggleMapdata(toogleData) {
-        debugger;
+        //debugger;
 
         ////alert(1);
         if (toogleData === "Ocean") {

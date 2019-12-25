@@ -45,12 +45,12 @@ class SpotRateTable extends Component {
     //this.toggleDel = this.toggleDel.bind(this);
   }
 
-  toggleDel(Data) {
+  toggleDel(Data, Status) {
     var detailid = [Data, "SpotRateID"];
-
+    var Status = Status;
     this.props.history.push({
       pathname: "spot-rate-details",
-      state: { detail: detailid }
+      state: { detail: detailid, Status: Status }
     });
   }
 
@@ -300,27 +300,21 @@ class SpotRateTable extends Component {
                         Cell: row => {
                           var noData = row.original["OriginPort_Name"];
                           var RateQueryId = row.original["RateQueryId"];
+                          var Status = row.original["STATUS"];
                           debugger;
                           if (noData != "No Data Found") {
-                            if (row.original.STATUS === "Pending") {
-                              return <></>;
-                            } else {
-                              return (
-                                <div
-                                  onClick={e => this.toggleDel(RateQueryId)}
-                                  className="tab-icon-view"
-                                >
-                                  <img src={Eye} alt="eye icon" />
-                                </div>
-                              );
-                            }
-                          } else {
                             return (
                               <div
-                                onClick={e => this.toggleDel(RateQueryId)}
+                                onClick={e =>
+                                  this.toggleDel(RateQueryId, Status)
+                                }
                                 className="tab-icon-view"
-                              ></div>
+                              >
+                                <img src={Eye} alt="eye icon" />
+                              </div>
                             );
+                          } else {
+                            return <div></div>;
                           }
                         },
                         Header: "Action",

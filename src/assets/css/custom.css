@@ -1903,10 +1903,10 @@ table tbody tr:last-child {
   position: relative;
 }
 .bottom-profit {
-  font-family: "Medium Font";
-  color: #000;
-  margin-top: -10px;
-  margin-bottom: 10px;
+  font-family: "Regular Font";
+  color: #5f5f60;
+  margin-top: -20px;
+  margin-bottom: 0px;
   font-size: 14px;
   text-align: right;
 }
