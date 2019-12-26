@@ -281,6 +281,10 @@ class ShippingDetails extends Component {
   }
   handleAdvanceSearchModalClose() {
     this.setState({
+      FrDepDate: null,
+      ToDepDate: null,
+      FrArrDate: null,
+      ToArrDate: null,
       modalAdvSearch: false,
       fields: {},
       originCountry: "",
@@ -512,10 +516,59 @@ class ShippingDetails extends Component {
     if (this.state.fields["ModeOfTransport"]) {
       let self = this;
 
-      var FromETDDate = document.getElementById("FrDepDate").value;
-      var ToETDDate = document.getElementById("ToDepDate").value;
-      var FromETADate = document.getElementById("FrArrDate").value;
-      var ToETADate = document.getElementById("ToArrDate").value;
+      var FromETDDate = "";
+
+      if (document.getElementById("FrDepDate").value !== "") {
+        var date = new Date(document.getElementById("FrDepDate").value);
+        FromETDDate =
+          date.getFullYear() +
+          "-" +
+          (date.getMonth() + 1) +
+          "-" +
+          date.getDate();
+      } else {
+        FromETDDate = "";
+      }
+      var ToETDDate = "";
+      if (document.getElementById("ToDepDate").value !== "") {
+        var date1 = new Date(document.getElementById("ToDepDate").value);
+
+        ToETDDate =
+          date1.getFullYear() +
+          "-" +
+          (date1.getMonth() + 1) +
+          "-" +
+          date1.getDate();
+      } else {
+        ToETDDate = "";
+      }
+
+      var FromETADate = "";
+      if (document.getElementById("FrArrDate").value !== "") {
+        var date2 = new Date(document.getElementById("FrArrDate").value);
+
+        FromETADate =
+          date2.getFullYear() +
+          "-" +
+          (date2.getMonth() + 1) +
+          "-" +
+          date2.getDate();
+      } else {
+        FromETADate = "";
+      }
+      var ToETADate = "";
+      if (document.getElementById("ToArrDate").value !== "") {
+        var date3 = new Date(document.getElementById("ToArrDate").value);
+        var ToETADate =
+          date3.getFullYear() +
+          "-" +
+          (date3.getMonth() + 1) +
+          "-" +
+          date3.getDate();
+      } else {
+        ToETADate = "";
+      }
+
       var OriginCountry = "";
       if (this.state.originCountry.length > 0) {
         OriginCountry =
@@ -571,7 +624,10 @@ class ShippingDetails extends Component {
       })
         .then(function(response) {
           debugger;
-          self.setState({ shipmentSummary: [], loading: false });
+          self.setState({
+            shipmentSummary: [],
+            loading: false
+          });
           for (let i = 0; i < response.data.Table.length; i++) {
             self.state.shipmentSummary.push({
               "BL/HBL": response.data.Table[0]["BL#/HBL#"],
@@ -598,11 +654,19 @@ class ShippingDetails extends Component {
         .catch(error => {
           var data = error.response.data;
           if (data) {
-            self.setState({ shipmentSummary: [{ POL: "No Record Found" }] });
+            self.setState({
+              shipmentSummary: [
+                {
+                  POL: "No Record Found"
+                }
+              ]
+            });
           }
         });
 
-      this.setState({ shipmentSummary: [] });
+      this.setState({
+        shipmentSummary: []
+      });
       this.handleAdvanceSearchModalClose();
     } else {
       NotificationManager.error("Please select Mode of transport");

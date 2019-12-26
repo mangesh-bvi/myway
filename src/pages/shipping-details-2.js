@@ -823,8 +823,14 @@ class ShippingDetailsTwo extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data[0].Result);
-      self.HandleShipmentDocument();
-      self.setState({ selectedFileName: "" });
+      self.setState({ selectedFileName: ""});
+      self.toggleDocu();
+      setTimeout(() => {
+        self.HandleShipmentDocument();  
+      }, 100);
+      
+      
+      
     });
   };
 
@@ -2489,7 +2495,7 @@ class ShippingDetailsTwo extends Component {
                       type="button"
                       className="close"
                       data-dismiss="modal"
-                      onClick={this.toggleDocu}
+                      // onClick={this.toggleDocu}
                     >
                       <span>&times;</span>
                     </button>

@@ -498,7 +498,7 @@ class NewRateSearch extends Component {
               className="mr-3"
               type="text"
               name="Quantity"
-              value={el.Quantity || 1}
+              value={el.Quantity || 0}
               placeholder="Quantity"
               onChange={this.UITruckTypeChange.bind(this, i)}
             />

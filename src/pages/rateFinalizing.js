@@ -3301,6 +3301,21 @@ class RateFinalizing extends Component {
               this.state.rateDetails[i].ContainerQuantity *
                 e.target.getAttribute("data-amountinbasecurrency");
 
+            if (this.state.isCopy === true) {
+              var total = 0;
+              var currency = "";
+
+              var data = this.state.rateDetails[i].Total.split(" ");
+              total = data[0];
+              currency = data[1];
+
+              var final_sum =
+                parseFloat(total) +
+                this.state.rateDetails[i].ContainerQuantity *
+                  e.target.getAttribute("data-amountinbasecurrency");
+
+              this.state.rateDetails[i].Total = final_sum + " " + currency;
+            }
             var calAmount =
               this.state.rateDetails[i].ContainerQuantity *
               e.target.getAttribute("data-amountinbasecurrency");
@@ -3412,6 +3427,7 @@ class RateFinalizing extends Component {
       this.forceUpdate();
     }
     if (!e.target.checked) {
+      debugger;
       for (var i = 0; i < rateDetailsarr.length; i++) {
         if (
           this.state.containerLoadType == "FCL"
@@ -5359,23 +5375,35 @@ class RateFinalizing extends Component {
                               },
                               {
                                 Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Price</p>
-                                      <p className="details-para">
-                                        {row.original.TotalAmount !== undefined
-                                          ? row.original.TotalAmount !== "" &&
-                                            row.original.TotalAmount !== null
-                                            ? row.original.TotalAmount +
-                                              0 +
-                                              row.original.BaseCurrency
-                                            : 0
-                                          : row.original.Total === undefined
-                                          ? 0
-                                          : row.original.Total}
-                                      </p>
-                                    </>
-                                  );
+                                  if (this.state.isCopy === true) {
+                                    return (
+                                      <>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.Total}
+                                        </p>
+                                      </>
+                                    );
+                                  } else {
+                                    return (
+                                      <>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.TotalAmount !==
+                                          undefined
+                                            ? row.original.TotalAmount !== "" &&
+                                              row.original.TotalAmount !== null
+                                              ? row.original.TotalAmount +
+                                                0 +
+                                                row.original.BaseCurrency
+                                              : 0
+                                            : row.original.Total === undefined
+                                            ? 0
+                                            : row.original.Total}
+                                        </p>
+                                      </>
+                                    );
+                                  }
                                 },
                                 accessor: "Total",
                                 filterable: true,
