@@ -21,7 +21,7 @@
 .cls-flside {
   float: left;
   height: 700px;
-  }
+}
 /* 
 .cls-flside {
   float: left;
@@ -47,12 +47,16 @@
   text-align: right;
 }
 .cls-rt {
-  width: 100%;
+  /* width: 100%; */
   /* height: 700px; */
   float: right;
   margin: 20px;
   background-color: #fff;
   min-height: calc(100vh - 90px);
+
+  width: calc(100% - 260px);
+  margin-left: auto;
+  transition: 0.5s;
 }
 
 .cls-rt-ts {

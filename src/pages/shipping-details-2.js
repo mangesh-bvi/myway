@@ -1223,7 +1223,7 @@ class ShippingDetailsTwo extends Component {
           <div className="cls-rt">
             <div className="container-fluid">
               <div className="row">
-                <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0">
+                <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0 ship-dtls-ui">
                   <div className="title-sect d-block-xs">
                     <h2>Details View</h2>
                     <div>{Watchlist}</div>
@@ -1440,7 +1440,7 @@ class ShippingDetailsTwo extends Component {
                                 <div className="row">
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
-                                      Type Of Move
+                                      Type of Move
                                     </p>
                                     <p className="details-para">
                                       {routedata.TypeOfMove}
@@ -1601,13 +1601,13 @@ class ShippingDetailsTwo extends Component {
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Seal NO.1</p>
+                                      <p className="details-title">Seal No.1</p>
                                       <p className="details-para">
                                         {cntrDet.SealNo1}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Seal NO.2</p>
+                                      <p className="details-title">Seal No.2</p>
                                       <p className="details-para">
                                         {cntrDet.SealNo2}
                                       </p>
@@ -2181,7 +2181,7 @@ class ShippingDetailsTwo extends Component {
                               </div>
                             </div>
                             <p>
-                              <span>On the way</span>
+                              <span>On the Way</span>
                             </p>
                           </div>
                           <div class="track-line-cntr">
@@ -2261,7 +2261,7 @@ class ShippingDetailsTwo extends Component {
                               </div>
                             </div>
                             <p>
-                              <span>On the way</span>
+                              <span>On the Way</span>
                             </p>
                           </div>
                           <div class="track-line-cntr">

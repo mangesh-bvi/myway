@@ -8,6 +8,10 @@ import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
 // import Pencil from "./../assets/img/pencil.png";
 // import Weight from "./../assets/img/weight.png";
+import p2p from "./../assets/img/Port2Port.png";
+import p2d from "./../assets/img/Port2Door.png";
+import d2p from "./../assets/img/Door2Port.png";
+import d2d from "./../assets/img/Door2Door.png";
 import Arrow from "./../assets/img/arw.png";
 
 import axios from "axios";
@@ -691,7 +695,7 @@ class NewRateSearch extends Component {
     var type = this.state.modeoftransport;
     self.setState({
       fields
-    })
+    });
     if (fields[field].length > 2) {
       axios({
         method: "post",
@@ -727,7 +731,7 @@ class NewRateSearch extends Component {
           debugger;
           self.setState({
             fields
-          })
+          });
           // var errorData = error.response.data;
           // var err = errorData.split(":");
           // var data = [{ OceanPortLongName: err[1].replace("}", "") }];
@@ -1133,7 +1137,7 @@ class NewRateSearch extends Component {
             </div>
           </div>
           <div className="col-md mt-2">
-            <div className="rate-radio-cntr">
+            <div className="rate-radio-cntr mt-3 mb-0">
               <div>
                 <input
                   type="radio"
@@ -1168,7 +1172,7 @@ class NewRateSearch extends Component {
           </div>
           <div className="spe-equ">
             <i
-              className="fa fa-minus mt-2"
+              className="fa fa-minus"
               onClick={this.removeClickSpecial.bind(this, i)}
             ></i>
           </div>
@@ -2812,8 +2816,8 @@ class NewRateSearch extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt rate-bg">
-            <div className="">
+          <div className="cls-rt" style={{ background: "transparent" }}>
+            <div className="rate-bg">
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">
                   <h3>Shipment Type</h3>
@@ -3371,7 +3375,9 @@ class NewRateSearch extends Component {
                   </div>
                 </div>
                 <div id="typeMoveInner">
-                  <div className="new-radio-rate-cntr radio-blue">
+                  <div className="new-radio-rate-cntr type-move-icons radio-border">
+                    {" "}
+                    {/*radio-blue*/}
                     {/* <div style={{display:"none"}}>
                       <input
                         type="radio"
@@ -3395,9 +3401,10 @@ class NewRateSearch extends Component {
                             onChange={this.HandleTypeofMove}
                           />
                           <label htmlFor="p2p">
-                            Port
+                            {/* Port
                             <img src={Arrow} className="arwimg" alt="Arrow" />
-                            Port
+                            Port */}
+                            <img src={p2p} alt="Arrow" />
                           </label>
                         </div>
                         <div>
@@ -3409,9 +3416,10 @@ class NewRateSearch extends Component {
                             onChange={this.HandleTypeofMove}
                           />
                           <label htmlFor="d2p">
-                            Door
+                            {/* Door
                             <img src={Arrow} className="arwimg" alt="Arrow" />
-                            Port
+                            Port */}
+                            <img src={d2p} alt="Arrow" />
                           </label>
                         </div>
                       </>
@@ -3425,9 +3433,10 @@ class NewRateSearch extends Component {
                         onChange={this.HandleTypeofMove}
                       />
                       <label htmlFor="d2d">
-                        Door
+                        {/* Door
                         <img src={Arrow} className="arwimg" alt="Arrow" />
-                        Door
+                        Door */}
+                        <img src={d2d} alt="Arrow" />
                       </label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
@@ -3443,9 +3452,10 @@ class NewRateSearch extends Component {
                             onChange={this.HandleTypeofMove}
                           />
                           <label htmlFor="p2d">
-                            Port
+                            {/* Port
                             <img src={Arrow} className="arwimg" alt="Arrow" />
-                            Door
+                            Door */}
+                            <img src={p2d} alt="Arrow" />
                           </label>
                         </div>
                       </>

@@ -874,6 +874,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      // debugger;
       var bookData = response.data.Table;
       self.setState({
         BookingData: bookData,
@@ -899,7 +900,6 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      //debugger;
       var invoicesData = response.data.Table1;
       selt.setState({
         InvoicesData: invoicesData,
@@ -920,7 +920,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      //debugger;
+      // debugger;
       var activeshipment = response.data.Table;
       selt.setState({
         ActiveShipmentData: activeshipment,
@@ -1067,16 +1067,16 @@ class Dashboard extends Component {
   }
 
   handleBooking(bookingNo, mode) {
-    debugger;
+    // debugger;
     var bookingNo = bookingNo;
     var Mode = mode;
     this.props.history.push({
       pathname: "booking-view",
-      state: { bookingNo: bookingNo ,Mode:Mode}
+      state: { bookingNo: bookingNo, Mode: Mode }
     });
   }
   handleQuote(qnumber, type, status) {
-    debugger;
+    // debugger;
     var type = type;
     var qnumber = qnumber;
     var Status = status;

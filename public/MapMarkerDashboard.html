@@ -123,6 +123,35 @@
         background-size: 60px;
         z-index: 5;
       }
+      .pinmodal {
+        border-bottom: 1px solid #989191;
+        padding-left: 12px;
+      }
+      .pinmodal:last-child {
+        border-bottom: none;
+      }
+      .dash-map-label {
+        font-weight: 700;
+        margin-right: 10px;
+      }
+      .gm-style .gm-style-iw {
+        min-width: 250px;
+        padding-left: 0;
+      }
+      .dash-flex {
+        display: flex;
+      }
+      .mapcontainerno {
+        margin-bottom: 0;
+      }
+      .mapinvoice.ml-2 {
+        margin-bottom: 0;
+      }
+      .dash-inner-cntr {
+        margin-bottom: 7px;
+        border-top: 1px solid #dedede;
+        padding-top: 10px;
+      }
     </style>
     <script
       async
@@ -312,14 +341,14 @@
                           "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
                         CinnerContentDatas =
                           CinnerContentDatas +
-                          "<div role='button' data-toggle='collapse' href='#" +
+                          "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
                           ContNo +
                           "' aria-expanded='false' aria-controls='" +
                           ContNo +
                           "'>";
                         CinnerContentDatas =
                           CinnerContentDatas +
-                          "<a href='#'> " +
+                          "<span class='dash-map-label'>Container No. :</span><a href='#'> " +
                           "<p title='Container No.' class='mapcontainerno'>" +
                           ContNo +
                           "</p></a></div></h5></div>"; //<hr/>
@@ -342,13 +371,13 @@
                             " <div role='button' href='#" +
                             CHBLNum +
                             "'>" +
-                            "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                            "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
                             CHBLNum +
                             "' target='_parent'>" +
                             CHBLNum +
-                            "</a>";
+                            "</a></p></div>";
                           CinnerContentDatas +=
-                            "<p title='MyWay No.' class='mapinvoice ml-2'>" +
+                            "<div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'>" +
                             "" +
                             CinvoiceIds +
                             "</p></div></p>";
@@ -378,14 +407,14 @@
                             "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
                           innerContentDatas =
                             innerContentDatas +
-                            "<div role='button' data-toggle='collapse' href='#" +
+                            "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
                             ContainerNo +
                             "' aria-expanded='false' aria-controls='" +
                             ContainerNo +
                             "'>";
                           innerContentDatas =
                             innerContentDatas +
-                            "<a href='shipment-details?hblno=" +
+                            "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
                             HBLNum +
                             "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
                             ContainerNo +
@@ -402,14 +431,14 @@
                             "'>";
                           innerContentDatas =
                             innerContentDatas +
-                            "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                            "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
                             HBLNum +
                             "' target='_parent'>" +
                             HBLNum +
-                            " </a>";
+                            " </a></p></div>";
                           innerContentDatas =
                             innerContentDatas +
-                            "<div><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                            "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
                             invoiceIds +
                             ",</p> </div> </p></div></h5></div></div></div></div></div>";
 
@@ -570,14 +599,14 @@
                       "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
                     CinnerContentDatas =
                       CinnerContentDatas +
-                      "<div role='button' data-toggle='collapse' href='#" +
+                      "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
                       ContNo +
                       "' aria-expanded='false' aria-controls='" +
                       ContNo +
                       "'>";
                     CinnerContentDatas =
                       CinnerContentDatas +
-                      "<a href='#'> " +
+                      "<span class='dash-map-label'>Container No. :</span><a href='#'> " +
                       "<p title='Container No.' class='mapcontainerno'>" +
                       ContNo +
                       "</p></a></div></h5></div>"; //<hr/>
@@ -599,13 +628,13 @@
                         " <div role='button' href='#" +
                         CHBLNum +
                         "'>" +
-                        "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                        "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
                         CHBLNum +
                         "' target='_parent'>" +
                         CHBLNum +
-                        "</a>";
+                        "</a></p></div>";
                       CinnerContentDatas +=
-                        "<p title='MyWay No.' class='mapinvoice ml-2'>" +
+                        "<div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'>" +
                         "" +
                         CinvoiceIds +
                         "</p></div></p>";
@@ -635,14 +664,14 @@
                         "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
                       innerContentDatas =
                         innerContentDatas +
-                        "<div role='button' data-toggle='collapse' href='#" +
+                        "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
                         ContainerNo +
                         "' aria-expanded='false' aria-controls='" +
                         ContainerNo +
                         "'>";
                       innerContentDatas =
                         innerContentDatas +
-                        "<a href='shipment-details?hblno=" +
+                        "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
                         HBLNum +
                         "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
                         ContainerNo +
@@ -669,14 +698,14 @@
                         "' >";
                       innerContentDatas =
                         innerContentDatas +
-                        "<p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                        "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
                         HBLNum +
                         "' target='_parent'>" +
                         HBLNum +
-                        " </a>";
+                        " </a></p></div>";
                       innerContentDatas =
                         innerContentDatas +
-                        "<div><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                        "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
                         invoiceIds +
                         ",</p> </div> </p></div></h5></div></div></div></div></div>";
 
