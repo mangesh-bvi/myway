@@ -3791,7 +3791,7 @@ class RateFinalizing extends Component {
       debugger;
       if (response.data.Table.length > 0) {
         self.setState({
-          ConditionDesc: response.data.Table[0].conditionDesc
+          ConditionDesc: response.data.Table[0].conditionDesc.split('\n').map((item, i) => <p key={i}>{item}</p>)
         });
       }
     });
@@ -4741,8 +4741,30 @@ class RateFinalizing extends Component {
               <div className="col-md-9">
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border py-3 d-flex align-items-center justify-content-between">
                       <h3>Quotation Price</h3>
+                      <div className="d-flex">
+                    <div className="align-center mr-3">
+                      {this.state.toggleAddProfitBtn && (
+                        <button
+                          onClick={this.toggleProfit}
+                          className="butn more-padd m-0"
+                        >
+                          Add Profit
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      {this.state.toggleIsEdit && (
+                        <button
+                          onClick={this.RequestChangeMsgModal}
+                          className="butn more-padd m-0"
+                        >
+                          Request Change
+                        </button>
+                      )}
+                    </div>
+                  </div>
                     </div>
                     {/* <div className="react-rate-table">
                       <ReactTable
@@ -5727,7 +5749,7 @@ class RateFinalizing extends Component {
                     </div>
                   </div>
 
-                  <div className="row m-0 p-3">
+                  {/* <div className="row m-0 p-3">
                     <div className="align-center">
                       {this.state.toggleAddProfitBtn && (
                         <button
@@ -5748,7 +5770,7 @@ class RateFinalizing extends Component {
                         </button>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                   <div className="rate-final-contr">
                     {/* <div className="text-center">
                       {this.state.toggleIsEdit && (
@@ -5761,20 +5783,7 @@ class RateFinalizing extends Component {
                       )}
                     </div> */}
 
-                    <div
-                      className="title-border py-3 d-flex align-items-center justify-content-between"
-                      style={{ marginBottom: "15px" }}
-                    >
-                      <h3>Cargo Details</h3>
-                      <div className="align-center">
-                        <button
-                          onClick={this.toggleEdit}
-                          className="butn more-padd m-0"
-                        >
-                          Cargo Details
-                        </button>
-                      </div>
-                    </div>
+
                     <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (
                         <ReactTable
@@ -6041,6 +6050,36 @@ class RateFinalizing extends Component {
                         )}
                       </div>
                     ) : null}
+                    {/* <div className="row">
+                      <div className="col-md-6 login-fields">
+                        <p className="details-title">Commodity</p>
+                        <select
+                          //disabled={true}
+                          value={this.state.CommodityID}
+                          onChange={this.commoditySelect.bind(this)}
+                        >
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.id}>
+                              {item.Commodity}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div> */}
+                                        <div
+                      className="title-border py-3 d-flex align-items-center justify-content-between"
+                      style={{ marginBottom: "15px" }}
+                    >
+                      <h3>Cargo Details</h3>
+                      <div className="align-center">
+                        <button
+                          onClick={this.toggleEdit}
+                          className="butn more-padd m-0"
+                        >
+                          Cargo Details
+                        </button>
+                      </div>
+                    </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
@@ -6065,6 +6104,7 @@ class RateFinalizing extends Component {
                         </select>
                       </div> */}
                     </div>
+                    
                     <div className="text-right">
                       {/* <a href={Dummy} target="_blank" className="butn mr-3">
                         Preview
@@ -6943,6 +6983,27 @@ class RateFinalizing extends Component {
                                   : this.state.polfullAddData.OceanPortLongName}
                               </span>
                             </label>
+                            {/* <label>
+                              POD :{" "}
+                              <span>
+                                {this.state.isCopy == true
+                                  ? this.state.DestinationAddress
+                                  : this.state.podfullAddData.OceanPortLongName}
+                              </span>
+                            </label> */}
+                          </div>
+                          <div className="col-12 col-sm-4">
+                            <label>
+                              Service Type :{" "}
+                              <span>
+                                {item.TransshipmentPort === null
+                                  ? "Direct"
+                                  : item.TransshipmentPort}
+                              </span>
+                            </label>
+                            {/* <label>
+                              Inco Terms : <span>{this.state.incoTerm}</span>
+                            </label> */}
                             <label>
                               POD :{" "}
                               <span>
@@ -6954,25 +7015,15 @@ class RateFinalizing extends Component {
                           </div>
                           <div className="col-12 col-sm-4">
                             <label>
-                              Service Type :{" "}
-                              <span>
-                                {item.TransshipmentPort === null
-                                  ? "Direct"
-                                  : item.TransshipmentPort}
-                              </span>
-                            </label>
-                            <label>
-                              Inco Terms : <span>{this.state.incoTerm}</span>
-                            </label>
-                          </div>
-                          <div className="col-12 col-sm-4">
-                            <label>
                               Liner :{" "}
                               <span>
                                 {this.state.isCopy == true
                                   ? item.Linename
                                   : item.lineName}
                               </span>
+                            </label>
+                            <label>
+                              Inco Terms : <span>{this.state.incoTerm}</span>
                             </label>
                           </div>
                         </div>
@@ -7183,7 +7234,7 @@ class RateFinalizing extends Component {
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th>
+                                <th className="total-align">
                                   {this.state.filterrateSubDetails.length !== 0
                                     ? this.state.filterrateSubDetails.reduce(
                                         (sum, filterrateSubDetails) =>

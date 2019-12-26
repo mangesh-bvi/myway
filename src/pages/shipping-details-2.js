@@ -1217,7 +1217,7 @@ class ShippingDetailsTwo extends Component {
           <div className="cls-rt">
             <div className="container-fluid">
               <div className="row">
-                <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0">
+                <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0 ship-dtls-ui">
                   <div className="title-sect d-block-xs">
                     <h2>Details View</h2>
                     <div>{Watchlist}</div>
@@ -1434,7 +1434,7 @@ class ShippingDetailsTwo extends Component {
                                 <div className="row">
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
-                                      Type Of Move
+                                      Type of Move
                                     </p>
                                     <p className="details-para">
                                       {routedata.TypeOfMove}

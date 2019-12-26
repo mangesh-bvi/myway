@@ -107,7 +107,6 @@ class RateFinalizingStill extends Component {
       this.HandleCommodityDropdown();
       //this.HandleDowloadFile();
     }
-    
   }
 
   //////toggleAcceptModal method
@@ -270,12 +269,10 @@ class RateFinalizingStill extends Component {
           multiCBM: response.data.Table3,
           DocumentDetails: response.data.Table4
         });
-        if(response.data.Table4.length===0)
-        {
-          
-        self.setState({
-          DocumentDetails: [{FileName:"No File Found"}]
-        });
+        if (response.data.Table4.length === 0) {
+          self.setState({
+            DocumentDetails: [{ FileName: "No File Found" }]
+          });
         }
         self.forceUpdate();
         self.HandleSalesQuoteConditions();
@@ -730,8 +727,6 @@ class RateFinalizingStill extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-     
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
@@ -894,7 +889,6 @@ class RateFinalizingStill extends Component {
       .then(function(response) {
         debugger;
         NotificationManager.success(response.data.Table[0].Result);
-        
       })
       .catch(error => {
         debugger;
@@ -1370,6 +1364,8 @@ class RateFinalizingStill extends Component {
       if (response.data.Table.length > 0) {
         self.setState({
           ConditionDesc: response.data.Table[0].conditionDesc
+            .split("\n")
+            .map((item, i) => <p key={i}>{item}</p>)
         });
       }
     });
@@ -1378,7 +1374,6 @@ class RateFinalizingStill extends Component {
   // Shlok End working
 
   render() {
-   
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -1388,7 +1383,7 @@ class RateFinalizingStill extends Component {
     let status;
     if (this.props.location.state) {
       debugger;
-      status = this.props.location.state.detail.Status
+      status = this.props.location.state.detail.Status;
       // this.HandleShipmentDetails(bookingNo);
     }
     var DocumentCharges = [];
@@ -1411,7 +1406,7 @@ class RateFinalizingStill extends Component {
                 //   return <h2>Booking Details</h2>;
                 //  }
               })()}
-              {/* <h2>Rate Query Details</h2> */}              <h2>{status}</h2>
+              {/* <h2>Rate Query Details</h2> */} <h2>{status}</h2>
             </div>
             <div className="row">
               {/* <div className="col-md-4">
@@ -1497,25 +1492,25 @@ class RateFinalizingStill extends Component {
                       <h3>Quotation Price</h3>
                       <div>
                         {/* {this.state.toggleCustomerType && */}
-                         { this.state.QuoteStatus && (
-                            //QuoteStatus
-                            <button
-                              className="butn m-0 mr-3"
-                              onClick={this.toggleAcceptModal}
-                            >
-                              Accept
-                            </button>
-                          )}
+                        {this.state.QuoteStatus && (
+                          //QuoteStatus
+                          <button
+                            className="butn m-0 mr-3"
+                            onClick={this.toggleAcceptModal}
+                          >
+                            Accept
+                          </button>
+                        )}
                         {/* {this.state.toggleCustomerType && */}
-                          {this.state.QuoteStatus && (
-                            <button
-                              className="butn m-0"
-                              // onClick={this.RejectQuotes.bind(this)}
-                              onClick={this.toggleRejectModal}
-                            >
-                              Reject
-                            </button>
-                          )}
+                        {this.state.QuoteStatus && (
+                          <button
+                            className="butn m-0"
+                            // onClick={this.RejectQuotes.bind(this)}
+                            onClick={this.toggleRejectModal}
+                          >
+                            Reject
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="react-rate-table">
@@ -2337,7 +2332,7 @@ class RateFinalizingStill extends Component {
                         {this.state.selectedFileName}
                       </p>
                     </div>
-                    <button
+                    {/* <button
                       className={className}
                       id="toggler"
                       onClick={() => {
@@ -2345,11 +2340,11 @@ class RateFinalizingStill extends Component {
                       }}
                     >
                       Upload File
-                    </button>
+                    </button> */}
 
                     <div className="row">
                       {" "}
-                      <div className="col-md-12 login-fields">
+                      <div className="col-md-12 login-fields mt-3">
                         <p className="details-title">Documents</p>
                         <div className="ag-fresh redirect-row">
                           <ReactTable
@@ -2372,8 +2367,9 @@ class RateFinalizingStill extends Component {
                                   // var y = current.getTime();
                                   // console.log(x);
                                   // console.log(y);
-                                  if(row.original.FileName!=="No File Found")
-                                  {
+                                  if (
+                                    row.original.FileName !== "No File Found"
+                                  ) {
                                     return (
                                       <div className="action-cntr">
                                         <a
@@ -2389,12 +2385,9 @@ class RateFinalizingStill extends Component {
                                         </a>
                                       </div>
                                     );
-                                  }
-                                  else
-                                  {
+                                  } else {
                                     return <></>;
                                   }
-                                  
                                 }
                               }
                             ]}
@@ -2463,7 +2456,7 @@ class RateFinalizingStill extends Component {
                         <>
                           <button
                             onClick={this.toggleBook}
-                            className="butn more-padd mt-4"
+                            className="butn more-padd mt-4 mr-3"
                           >
                             Create Booking
                           </button>
