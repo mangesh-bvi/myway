@@ -3417,7 +3417,7 @@ class NewRateSearch extends Component {
                             {/* Port
                             <img src={Arrow} className="arwimg" alt="Arrow" />
                             Port */}
-                            <img src={p2p} alt="Arrow" />
+                            <img src={p2p} alt="Arrow" title="Port to Port" />
                           </label>
                         </div>
                         <div>
@@ -3432,7 +3432,7 @@ class NewRateSearch extends Component {
                             {/* Door
                             <img src={Arrow} className="arwimg" alt="Arrow" />
                             Port */}
-                            <img src={d2p} alt="Arrow" />
+                            <img src={d2p} alt="Arrow" title="Door to Port" />
                           </label>
                         </div>
                       </>
@@ -3449,7 +3449,7 @@ class NewRateSearch extends Component {
                         {/* Door
                         <img src={Arrow} className="arwimg" alt="Arrow" />
                         Door */}
-                        <img src={d2d} alt="Arrow" />
+                        <img src={d2d} alt="Arrow" title="Door to Door" />
                       </label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
@@ -3468,7 +3468,7 @@ class NewRateSearch extends Component {
                             {/* Port
                             <img src={Arrow} className="arwimg" alt="Arrow" />
                             Door */}
-                            <img src={p2d} alt="Arrow" />
+                            <img src={p2d} alt="Arrow" title="Port to Door" />
                           </label>
                         </div>
                       </>

@@ -82,9 +82,6 @@
 .ana-rep * {
   margin-right: 6px;
 }
-  .cls-flside {
-    width: 195px;
-  }
   .rate-bg {
     width: 72%;
 }
@@ -188,27 +185,20 @@
 /* Css End Kalpesh*/
 
 @media (max-width: 768px) {
-  .menuname {
-    display: none;
-  }
-  .cls-flside {
-    width: 50px;
-  }
-  .sidemenu-ul-li a {
-    padding: 15px 5px;
-  }
-  .header-greencounter-icon {
-    display: block;
-    width: 30px;
-    margin-right: 0;
-    margin: auto;
-  }
+
+  
   /* .cls-rt {
     width: calc(94% - 40px);
   } */
   .dynamic-remove {
     left: 91%;
     margin-top: 3px;
+}
+.cls-rt {
+  width: calc(93% - 40px);
+}
+.colap + .cls-rt {
+  width: 100% !important;
 }
 }
 @media (min-width: 576px) and (max-width: 767px) {
@@ -277,9 +267,6 @@
   }
   .cls-ofl {
     padding: 15px;
-}
-.cls-flside {
-  display: none;
 }
 .cls-rt {
   width: 100%;
@@ -431,6 +418,18 @@
 }
 .login-fields select {
   margin: 0 0 15px 0 !important;
+}
+.cls-flside {
+  top: 0;
+  height: 100vh;
+}
+.colap .side-arrow {
+  left: 0;
+}
+.colap {
+  /* width: 0 !important; */
+  /* width: 40px !important; */
+  width: 0 !important;
 }
 }
 @media (min-width: 320px) and (max-width: 460px) {

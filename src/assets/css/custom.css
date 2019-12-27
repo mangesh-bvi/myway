@@ -2428,6 +2428,9 @@ input[type="range"]::-moz-range-track {
 .amnt-popup .txt-cntr .d-flex:last-child {
   margin-bottom: 0px;
 }
+.amnt-popup .rt-table {
+  max-height: 300px;
+}
 .spe-equ .rate-address {
   border-radius: 0;
   margin: 0;
@@ -2784,7 +2787,7 @@ input[type="range"]::-moz-range-track {
   border: none;
   transition: 0.5s;
   white-space: nowrap;
-
+  z-index: 999;
   position: fixed;
   top: 70px;
   left: 0;
