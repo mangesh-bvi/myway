@@ -2654,19 +2654,19 @@ class RateFinalizing extends Component {
           });
         }
         var cbmVal = this.state.cbmVal;
-
+        debugger;
         if (cbmVal != null) {
           if (cbmVal != "") {
             if (cbmVal != "0") {
               RateQueryDim.push({
-                Quantity: TruckTypeData[i].Quantity,
+                Quantity: 0,//TruckTypeData[i].Quantity || 0,
                 Lengths: 0,
                 Width: 0,
                 Height: 0,
                 GrossWt: 0,
                 VolumeWeight: 0,
                 Volume: 0,
-                PackageType: TruckTypeData[i].TruckDesc
+                PackageType: "" //TruckTypeData[i].TruckDesc
               });
             }
           }
@@ -3434,13 +3434,29 @@ class RateFinalizing extends Component {
             ? element.ContainerType !== "ALL" && element.LineId !== 0
             : element.LineId !== 0
         ) {
-          if (element.LineName == rateDetailsarr[i].lineName) {
-            if (this.state.rateDetails[i].TotalAmount == undefined) {
+          debugger;
+          var linename = "";
+          if (rateDetailsarr[i].lineName) {
+            linename = rateDetailsarr[i].lineName;
+          } else {
+            linename = rateDetailsarr[i].Linename;
+          }
+
+          if (element.LineName == linename) {
+            if (
+              this.state.rateDetails[i].TotalAmount == undefined ||
+              this.state.isCopy === true
+            ) {
               var amount = this.processText(this.state.rateDetails[i].Total);
+
+              var qty = 1;
+              if (this.state.rateDetails[i].ContainerQuantity) {
+                qty = this.state.rateDetails[i].ContainerQuantity;
+              }
 
               this.state.rateDetails[i].Total =
                 parseFloat(amount[0]) -
-                parseFloat(e.target.value) +
+                parseFloat(e.target.value * qty) +
                 " " +
                 amount[1];
             } else {
@@ -3459,6 +3475,7 @@ class RateFinalizing extends Component {
             }
           }
         } else {
+          debugger;
           if (this.state.rateDetails[i].TotalAmount == undefined) {
             var amount = this.processText(this.state.rateDetails[i].Total);
 
@@ -3644,6 +3661,7 @@ class RateFinalizing extends Component {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     if (fields[field].length >= 3) {
+      self.setState({fields})
       axios({
         method: "post",
         url: `${appSettings.APIURL}/CustomerList`,
@@ -3807,7 +3825,9 @@ class RateFinalizing extends Component {
       debugger;
       if (response.data.Table.length > 0) {
         self.setState({
-          ConditionDesc: response.data.Table[0].conditionDesc.split('\n').map((item, i) => <p key={i}>{item}</p>)
+          ConditionDesc: response.data.Table[0].conditionDesc
+            .split("\n")
+            .map((item, i) => <p key={i}>{item}</p>)
         });
       }
     });
@@ -4760,27 +4780,27 @@ class RateFinalizing extends Component {
                     <div className="title-border py-3 d-flex align-items-center justify-content-between">
                       <h3>Quotation Price</h3>
                       <div className="d-flex">
-                    <div className="align-center mr-3">
-                      {this.state.toggleAddProfitBtn && (
-                        <button
-                          onClick={this.toggleProfit}
-                          className="butn more-padd m-0"
-                        >
-                          Add Profit
-                        </button>
-                      )}
-                    </div>
-                    <div className="text-center">
-                      {this.state.toggleIsEdit && (
-                        <button
-                          onClick={this.RequestChangeMsgModal}
-                          className="butn more-padd m-0"
-                        >
-                          Request Change
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                        <div className="align-center mr-3">
+                          {this.state.toggleAddProfitBtn && (
+                            <button
+                              onClick={this.toggleProfit}
+                              className="butn more-padd m-0"
+                            >
+                              Add Profit
+                            </button>
+                          )}
+                        </div>
+                        <div className="text-center">
+                          {this.state.toggleIsEdit && (
+                            <button
+                              onClick={this.RequestChangeMsgModal}
+                              className="butn more-padd m-0"
+                            >
+                              Request Change
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     {/* <div className="react-rate-table">
                       <ReactTable
@@ -5811,7 +5831,6 @@ class RateFinalizing extends Component {
                       )}
                     </div> */}
 
-
                     <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (
                         <ReactTable
@@ -6094,7 +6113,7 @@ class RateFinalizing extends Component {
                         </select>
                       </div>
                     </div> */}
-                                        <div
+                    <div
                       className="title-border py-3 d-flex align-items-center justify-content-between"
                       style={{ marginBottom: "15px" }}
                     >
@@ -6132,7 +6151,7 @@ class RateFinalizing extends Component {
                         </select>
                       </div> */}
                     </div>
-                    
+
                     <div className="text-right">
                       {/* <a href={Dummy} target="_blank" className="butn mr-3">
                         Preview
@@ -7639,7 +7658,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
         </div>
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout="3000" />
       </React.Fragment>
     );
   }

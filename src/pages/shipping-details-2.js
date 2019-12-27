@@ -1111,12 +1111,7 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       }
     }
-    // console.log(bookDate, "book");
-    // console.log(departedDate, "---------------departure");
-    // console.log(departedIsActive, "-------------departedIsActive");
-
-    // console.log(arrivedDate, "arrived");
-    // console.log(deliverDate, "deliver");
+    
     debugger;
     var perBooking = "0";
     if (bookDate !== "") {
@@ -1759,7 +1754,10 @@ class ShippingDetailsTwo extends Component {
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Length</p>
                                       <p className="details-para">
-                                        {packData.Length}
+                                        {/* {packData.Length} */}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.Length + " cm"
+                                          : packData.Length + " in"}
                                       </p>
                                     </div>
                                   </div>
@@ -1767,13 +1765,19 @@ class ShippingDetailsTwo extends Component {
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Width</p>
                                       <p className="details-para">
-                                        {packData.Width}
+                                        {/* {packData.Width} */}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.Width + " cm"
+                                          : packData.Width + " in"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Height</p>
                                       <p className="details-para">
-                                        {packData.Height}
+                                        {/* {packData.Height} */}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.Height + " cm"
+                                          : packData.Height + " in"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1781,7 +1785,10 @@ class ShippingDetailsTwo extends Component {
                                         Net Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.NetWeight} Kgs.
+                                        {packData.NetWeight}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.NetWeight + " kgs"
+                                          : packData.NetWeight + " lbs"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1789,7 +1796,10 @@ class ShippingDetailsTwo extends Component {
                                         Gross Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.GrossWeight} Kgs.
+                                        {/* {packData.GrossWeight} */}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.GrossWeight + " kgs"
+                                          : packData.GrossWeight + " lbs"}
                                       </p>
                                     </div>
                                   </div>
@@ -1798,6 +1808,9 @@ class ShippingDetailsTwo extends Component {
                                       <p className="details-title">Volume</p>
                                       <p className="details-para">
                                         {packData.Volume}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.Volume + " cbm"
+                                          : packData.Volume + " ft"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1805,7 +1818,10 @@ class ShippingDetailsTwo extends Component {
                                         Volume Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.VolumeWeight} Kgs.
+                                        {packData.VolumeWeight}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.VolumeWeight + " kgs"
+                                          : packData.VolumeWeight + " lbs"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1813,7 +1829,10 @@ class ShippingDetailsTwo extends Component {
                                         Total Net Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.TotalNetWeight} Kgs.
+                                        {packData.TotalNetWeight}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.TotalNetWeight + " kgs"
+                                          : packData.TotalNetWeight + " lbs"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1821,7 +1840,10 @@ class ShippingDetailsTwo extends Component {
                                         Total Gross Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.TotalGrossWeight} Kgs.
+                                        {/* {packData.TotalGrossWeight} */}
+                                        {packData.UnitType === "Metric"
+                                          ? packData.TotalGrossWeight + " kgs"
+                                          : packData.TotalGrossWeight + " lbs"}
                                       </p>
                                     </div>
                                   </div>
@@ -2618,7 +2640,7 @@ class ShippingDetailsTwo extends Component {
                   </ModalBody>
                 </Modal>
               </div>
-              <NotificationContainer />
+              <NotificationContainer leaveTimeout="3000"/>
             </div>
           </div>
         </div>

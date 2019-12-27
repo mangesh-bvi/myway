@@ -1190,7 +1190,7 @@ class Dashboard extends Component {
                 style={{ color: "#000", cursor: "pointer" }}
                 // onClick={() => this.handleBooking.bind(this)}
                 onClick={() =>
-                  self.handleBooking(book.BookingNo, book.BookingType)
+                  self.handleBooking(book.BookingID, book.BookingType)
                 }
               >
                 {book.BookingNo}

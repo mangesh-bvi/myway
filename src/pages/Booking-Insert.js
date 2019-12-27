@@ -336,7 +336,7 @@ class BookingInsert extends Component {
 
         self.setState({
           Company_AddressID,
-          
+
           ModeofTransport,
           companyID,
           company_name,
@@ -391,7 +391,7 @@ class BookingInsert extends Component {
         var HAZMAT = Booking[0].HAZMAT;
         self.setState({
           Company_AddressID,
-        
+
           Booking,
           HAZMAT,
           multiCBM,
@@ -486,7 +486,7 @@ class BookingInsert extends Component {
 
         self.setState({
           Company_AddressID,
-       
+
           ModeofTransport,
           companyID,
           company_name,
@@ -872,6 +872,7 @@ class BookingInsert extends Component {
 
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (fields[field].length > 3) {
+      self.setState({ fields });
       axios({
         method: "post",
         url: `${appSettings.APIURL}/NonCustomerList`,
@@ -984,9 +985,30 @@ class BookingInsert extends Component {
         }
       });
     } else {
-      self.setState({
-        fields
-      });
+      if (field == "Consignee") {
+        self.setState({
+          Consignee: [],
+          fields
+        });
+      }
+      if (field == "Notify") {
+        self.setState({
+          Notify: [],
+          fields
+        });
+      }
+      if (field == "Shipper") {
+        self.setState({
+          Shipper: [],
+          fields
+        });
+      }
+      if (field == "Buyer") {
+        self.setState({
+          Buyer: [],
+          fields
+        });
+      }
     }
   }
 
@@ -3026,7 +3048,10 @@ class BookingInsert extends Component {
                               {
                                 Header: "Action",
                                 Cell: row => {
-                                  if (row.original.FilePath !== "" && row.original.FileName !== "No File Found") {
+                                  if (
+                                    row.original.FilePath !== "" &&
+                                    row.original.FileName !== "No File Found"
+                                  ) {
                                     return (
                                       <div className="action-cntr">
                                         <a
@@ -3079,7 +3104,7 @@ class BookingInsert extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout="3000" />
 
         {/* -------------------------------------Edit Modal----------------------------- */}
         <Modal

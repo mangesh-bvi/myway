@@ -241,7 +241,9 @@ class RateTable extends Component {
       IsSearchFromSpotRate: 0,
       MinAmt: 0,
       MaxAmt: 0,
-      valueAmt: 0
+      valueAmt: 0,
+      minDays: 0,
+      minamount:0
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -574,14 +576,16 @@ class RateTable extends Component {
   togglePODModal() {
     this.setState({
       modalPOD: !this.state.modalPOD,
-      multiFields: {}
+      multiFields: {},
+      errorPOD: ""
     });
   }
   togglePOLModal() {
     debugger;
     this.setState({
       modalPOL: !this.state.modalPOL,
-      multiFields: {}
+      multiFields: {},
+      errorPOL: ""
     });
   }
   toggleQuant() {
@@ -2568,6 +2572,7 @@ class RateTable extends Component {
 
     var type = this.state.modeoftransport;
     if (multiFields[field].length > 2) {
+      self.setState({ multiFields });
       axios({
         method: "post",
         url: `${appSettings.APIURL}/PolPodByCountry`,
@@ -2623,8 +2628,9 @@ class RateTable extends Component {
     if (field === "pol" + i) {
       for (let i = 0; i < this.state.polArray.length; i++) {
         arrPOL += this.state.polArray[i].Address + ",";
+        arrPOD += this.state.podArray[i].Address + ",";
       }
-      if (!arrPOL.includes(value)) {
+      if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
           var geoCoordinate = id.GeoCoordinate.split(",");
           var PositionPOL = new Object();
@@ -2679,8 +2685,9 @@ class RateTable extends Component {
     } else {
       for (let i = 0; i < this.state.podArray.length; i++) {
         arrPOD += this.state.podArray[i].Address + ",";
+        arrPOL += this.state.polArray[i].Address + ",";
       }
-      if (!arrPOD.includes(value)) {
+      if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
           var PositionPOD = [];
           var geoCoordinate = id.GeoCoordinate.split(",");
@@ -2737,11 +2744,17 @@ class RateTable extends Component {
   }
 
   onPlaceSelected = place => {
+    debugger;
     var arrPOL = "";
+    var arrPOD = "";
     for (let i = 0; i < this.state.polArray.length; i++) {
       arrPOL += this.state.polArray[i].Address + ",";
+      arrPOD += this.state.podArray[i].Address + ",";
     }
-    if (!arrPOL.includes(place.formatted_address)) {
+    if (
+      !arrPOL.includes(place.formatted_address) &&
+      !arrPOD.includes(place.formatted_address)
+    ) {
       const address = place.formatted_address,
         addressArray = place.address_components,
         // city = this.getCity(addressArray),
@@ -2804,10 +2817,15 @@ class RateTable extends Component {
 
   onPlaceSelectedPOD = place => {
     var arrPOD = "";
+    var arrPOL = "";
     for (let i = 0; i < this.state.podArray.length; i++) {
       arrPOD += this.state.podArray[i].Address + ",";
+      arrPOL += this.state.polArray[i].Address + ",";
     }
-    if (!arrPOD.includes(place.formatted_address)) {
+    if (
+      !arrPOD.includes(place.formatted_address) &&
+      !arrPOL.includes(place.formatted_address)
+    ) {
       const address = place.formatted_address,
         addressArray = place.address_components,
         // city = this.getCity(addressArray),
@@ -2926,14 +2944,9 @@ class RateTable extends Component {
       valueAmt: this.state.MaxAmt
     });
     debugger;
-    // this.filterAll(value, "R");
-    var filteredData = [];
-    // var actualData = [
-    //   { test1: "20-22" },
-    //   { test1: "22-28" },
-    //   { test1: "25-28" }
-    // ];
 
+    var filteredData = [];
+    var filterMinday = [];
     var actualData = this.state.RateDetails;
     var checkingValue = parseInt(event.target.value);
 
@@ -2950,8 +2963,19 @@ class RateTable extends Component {
     }
 
     if (filteredData.length > 0) {
-      // var sortfiltedata=filteredData.sort()
-      this.setState({ tempRateDetails: filteredData });
+      for (let i = 0; i < filteredData.length; i++) {
+        var colData = filteredData[i].TransitTime;
+        var tempData = colData.split("-");
+        filterMinday.push(parseInt(tempData[0]));
+        filterMinday.push(parseInt(tempData[1]));
+      }
+
+      var minDays = Math.min.apply(null, filterMinday);
+
+      this.setState({
+        tempRateDetails: filteredData,
+        minDays
+      });
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
@@ -2966,13 +2990,8 @@ class RateTable extends Component {
       value: this.state.MaxTT
     });
     debugger;
-    // this.filterAll(value, "R");
+
     var filteredData = [];
-    // var actualData = [
-    //   { test1: "20-22" },
-    //   { test1: "22-28" },
-    //   { test1: "25-28" }
-    // ];
 
     var actualData = this.state.RateDetails;
     var checkingValue = parseFloat(event.target.value);
@@ -2987,8 +3006,17 @@ class RateTable extends Component {
     }
 
     if (filteredData.length > 0) {
-      // var sortfiltedata=filteredData.sort()
-      this.setState({ tempRateDetails: filteredData });
+      var minamount = Math.min.apply(
+        null,
+        filteredData.map(function(item) {
+          return item.TotalAmount;
+        })
+      );
+
+      this.setState({
+        tempRateDetails: filteredData,
+        minamount
+      });
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
@@ -3758,11 +3786,15 @@ class RateTable extends Component {
                 </select>
               </div>
               <div className="rate-table-range">
-                <p class="upto-days upto-days-btm">Upto {this.state.value} days</p>
+                <p class="upto-days upto-days-btm">
+                  Upto {this.state.value} days
+                </p>
                 <p class="upto-days">Upto {this.state.valueAmt} Amount</p>
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
                 <div className="d-flex">
+                  <sapn>{this.state.minDays + " Days"}</sapn>
+
                   <input
                     type="range"
                     min={this.state.MinTT}
@@ -3778,6 +3810,7 @@ class RateTable extends Component {
                     id="reversedRange"
                     onChange={this.HandleRangeAmtSlider.bind(this)}
                   />
+                  <span>{this.state.minamount}</span>
                   {/* <InputRange
                     formatLabel={value => `${value} DAYS`}
                     maxValue={this.state.MaxTT}
@@ -4303,7 +4336,7 @@ class RateTable extends Component {
                                     </>
                                   );
                                 },
-                                accessor: "TransshipmentPort",
+                                accessor: "Transit Port",
                                 filterable: true,
                                 minWidth: 120
                               },
@@ -5243,7 +5276,7 @@ class RateTable extends Component {
             </Modal>
             {/* )} */}
           </div>
-          <NotificationContainer />
+          <NotificationContainer leaveTimeout="3000" />
         </div>
       </div>
     );

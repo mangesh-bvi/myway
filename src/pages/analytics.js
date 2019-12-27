@@ -121,7 +121,8 @@ class Analytics extends Component {
       toggleFclLcl: false,
       toggleFtlLtl: false,
       toggleInvFclLcl: false,
-      toggleInvFtlLtl: false
+      toggleInvFtlLtl: false,
+      toggleAIR: false
     };
     this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
   }
@@ -465,16 +466,19 @@ class Analytics extends Component {
       this.setState({
         toggleShipShip: true,
         toggleRoadShip: false,
-        toggleFtlLtl: false
+        toggleFtlLtl: false,
+        toggleAIR:false
       });
     } else if (e.target.id === "road-ship") {
       this.setState({
+        toggleAIR:false,
         toggleRoadShip: true,
         toggleShipShip: false,
         toggleFclLcl: false
       });
     } else if (e.target.id === "plane-ship") {
       this.setState({
+        toggleAIR: true,
         toggleRoadShip: false,
         toggleShipShip: false,
         toggleFtlLtl: false,
@@ -777,11 +781,41 @@ class Analytics extends Component {
     return arr;
   }
 
-  render() {
-    
+  handleAnalyticsReset() {
+    debugger;
+    var someDate = new Date();
+    setTimeout(() => {
+      this.setState({
+        startDate: someDate.setMonth(someDate.getMonth() - 6),
+        endDate: new Date(),
+        toggleShipShip: false,
+        toggleRoadShip: false,
+        toggleShipInv: false,
+        toggleRoadInv: false,
+        toggleWeekDate: false,
+        toggleMonthDate: true,
+        toggleYearDate: false,
+        graflabels: [],
+        graphdataset: [],
+        grafShipmentlabels: [],
+        graphShipmentdataset: [],
+        toggleShipmentWeekDate: false,
+        toggleShipmentMonthDate: true,
+        toggleShipmentYearDate: false,
+        setSupplierdrop: [],
+        toggleFclLcl: false,
+        toggleFtlLtl: false,
+        toggleInvFclLcl: false,
+        toggleInvFtlLtl: false,
+        toggleAIR: false
+      });
+    }, 500);
 
+    this.handleAnalyticsShipment(null);
+  }
+  render() {
     var buyerShipmentData = {
-      labels:this.state.grafShipmentlabels,
+      labels: this.state.grafShipmentlabels,
       datasets: this.state.graphShipmentdataset
     };
     console.log(buyerShipmentData);
@@ -789,7 +823,7 @@ class Analytics extends Component {
       labels: this.state.graflabels,
       datasets: this.state.graphdataset
     };
-    
+
     let greenCounterdata = {
       labels: ["Green", "Red"],
       datasets: [
@@ -881,6 +915,7 @@ class Analytics extends Component {
                           name="ship-way"
                           id="plane-ship"
                           value="A"
+                          checked={this.state.toggleAIR}
                           onClick={this.toggleBtnsShip}
                         />
                         <label htmlFor="plane-ship">
@@ -902,6 +937,7 @@ class Analytics extends Component {
                           name="ship-way"
                           id="ship-ship"
                           value="O"
+                          checked={this.state.toggleShipShip}
                           onClick={this.toggleBtnsShip}
                         />
                         <label htmlFor="ship-ship">
@@ -923,6 +959,7 @@ class Analytics extends Component {
                           name="ship-way"
                           id="road-ship"
                           value="I"
+                          checked={this.state.toggleRoadShip}
                           onClick={this.toggleBtnsShip}
                         />
                         <label htmlFor="road-ship">
@@ -989,6 +1026,13 @@ class Analytics extends Component {
                     )}
                   </div>
                   <div className="ana-rep">
+                    <button
+                      className="butn mt-0"
+                      onClick={this.handleAnalyticsReset.bind(this)}
+                      id="shipment-view-btn"
+                    >
+                      Reset
+                    </button>
                     <button
                       className="butn mt-0"
                       onClick={this.handleAnalyticsShipment.bind(this)}

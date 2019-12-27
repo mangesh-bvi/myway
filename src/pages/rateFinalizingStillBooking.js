@@ -160,84 +160,73 @@ class RateFinalizingStillBooking extends Component {
   componentDidMount() {
     var rData = this.props.location.state;
     debugger;
-    if (
-      // typeof rData.ContainerLoad !== "" &&
-      // typeof rData.salesQuotaNo !== "" &&
-      rData.ContainerLoad !== undefined &&
-      rData.salesQuotaNo !== undefined
-    ) {
-      var userType = encryption(
-        window.localStorage.getItem("usertype"),
-        "desc"
-      );
-      this.setState({
-        ContainerLoad: rData.ContainerLoad,
-        salesQuotaNo: rData.salesQuotaNo,
-        isInsert: true,
-        userType
-      });
-      setTimeout(() => {
-        this.HandleGetSalesQuotaion();
-        this.NonCustomerList();
-        this.HandleCommodityDropdown();
-        this.HandlePackgeTypeData();
-      }, 100);
-    }
+    if (rData) {
+      if (rData.Copy === true) {
+        var userType = encryption(
+          window.localStorage.getItem("usertype"),
+          "desc"
+        );
+        var BookingNo = this.props.location.state.BookingNo;
+        var ModeofTransport = this.props.location.state.Mode;
 
-    if (rData.Copy === true) {
-      var userType = encryption(
-        window.localStorage.getItem("usertype"),
-        "desc"
-      );
-      var BookingNo = this.props.location.state.BookingNo;
-      var ModeofTransport = this.props.location.state.Mode;
+        this.setState({
+          BookingNo,
+          userType,
+          copy: true,
+          ModeofTransport
+        });
+        if (ModeofTransport === "AIR") {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsListAIR();
+            this.NonCustomerList();
+          }, 300);
+        } else {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsList();
+            this.NonCustomerList();
+          }, 300);
+        }
+      } else if (
+        this.props.location.state.BookingNo != "" &&
+        this.props.location.state.BookingNo != undefined &&
+        this.props.location.state.Copy === undefined
+      ) {
+        var userType = encryption(
+          window.localStorage.getItem("usertype"),
+          "desc"
+        );
+        var BookingNo = this.props.location.state.BookingNo;
+        var ModeofTransport = this.props.location.state.Mode;
 
-      this.setState({ BookingNo, userType, copy: true, ModeofTransport });
-      if (ModeofTransport === "AIR") {
-        setTimeout(() => {
-          this.HandleCommodityDropdown();
-          this.HandlePackgeTypeData();
-          this.BookigGridDetailsListAIR();
-          this.NonCustomerList();
-        }, 300);
+        this.setState({
+          BookingNo,
+          userType,
+          isView: true,
+          ModeofTransport
+        });
+        if (ModeofTransport === "AIR") {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsListAIR();
+            this.NonCustomerList();
+          }, 300);
+        } else {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsList();
+            this.NonCustomerList();
+          }, 300);
+        }
       } else {
-        setTimeout(() => {
-          this.HandleCommodityDropdown();
-          this.HandlePackgeTypeData();
-          this.BookigGridDetailsList();
-          this.NonCustomerList();
-        }, 300);
       }
-    }
-
-    if (
-      this.props.location.state.BookingNo != "" &&
-      this.props.location.state.BookingNo != undefined &&
-      this.props.location.state.Copy === undefined
-    ) {
-      var userType = encryption(
-        window.localStorage.getItem("usertype"),
-        "desc"
-      );
-      var BookingNo = this.props.location.state.BookingNo;
-      var ModeofTransport = this.props.location.state.Mode;
-
-      this.setState({ BookingNo, userType, isView: true, ModeofTransport });
-      if (ModeofTransport === "AIR") {
-        setTimeout(() => {
-          this.HandleCommodityDropdown();
-          this.HandlePackgeTypeData();
-          this.BookigGridDetailsListAIR();
-          this.NonCustomerList();
-        }, 300);
-      } else {
-        setTimeout(() => {
-          this.HandleCommodityDropdown();
-          this.HandlePackgeTypeData();
-          this.BookigGridDetailsList();
-          this.NonCustomerList();
-        }, 300);
-      }
+    } else {
+      this.props.history.push("booking-table");
     }
   }
 
@@ -340,6 +329,7 @@ class RateFinalizingStillBooking extends Component {
 
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (fields[field].length > 3) {
+      self.setState({ fields });
       axios({
         method: "post",
         url: `${appSettings.APIURL}/NonCustomerList`,
@@ -413,9 +403,30 @@ class RateFinalizingStillBooking extends Component {
         }
       });
     } else {
-      self.setState({
-        fields
-      });
+      if (field == "Consignee") {
+        self.setState({
+          Consignee: [],
+          fields
+        });
+      }
+      if (field == "Notify") {
+        self.setState({
+          Notify: [],
+          fields
+        });
+      }
+      if (field == "Shipper") {
+        self.setState({
+          Shipper: [],
+          fields
+        });
+      }
+      if (field == "Buyer") {
+        self.setState({
+          Buyer: [],
+          fields
+        });
+      }
     }
   }
 
@@ -1108,9 +1119,8 @@ class RateFinalizingStillBooking extends Component {
 
           if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
             self.setState({ FileData });
-          }
-          else{
-            self.setState({ FileData:[{FileName:"File Not Found"}] });
+          } else {
+            self.setState({ FileData: [{ FileName: "File Not Found" }] });
           }
         }
       });
@@ -1313,9 +1323,8 @@ class RateFinalizingStillBooking extends Component {
 
           if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
             self.setState({ FileData });
-          }
-          else{
-            self.setState({ FileData:[{FileName:"File Not Found"}] });
+          } else {
+            self.setState({ FileData: [{ FileName: "File Not Found" }] });
           }
         }
         if (Table6.length > 0) {
@@ -3119,7 +3128,10 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 Header: "Action",
                                 Cell: row => {
-                                  if (row.original.FilePath !== "" && row.original.FileName !== "No File Found") {
+                                  if (
+                                    row.original.FilePath !== "" &&
+                                    row.original.FileName !== "No File Found"
+                                  ) {
                                     return (
                                       <div className="action-cntr">
                                         <a
@@ -3188,7 +3200,7 @@ class RateFinalizingStillBooking extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout="3000" />
         {/* -------------------------------------Edit Modal----------------------------- */}
         <Modal
           className="delete-popup pol-pod-popup large-popup"

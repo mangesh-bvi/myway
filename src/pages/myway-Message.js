@@ -5,17 +5,14 @@ import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
 import Headers from "../component/header";
-import ExistCust from "./../assets/img/exist-cust.png";
-import NewCust from "./../assets/img/new-cust.png";
 import SideMenu from "../component/sidemenu";
-import Autocomplete from "react-autocomplete";
+
 import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import { Table } from "react-bootstrap";
 
 class myWayMessage extends Component {
   constructor(props) {
@@ -24,7 +21,7 @@ class myWayMessage extends Component {
     this.state = {
       MessageArr: [],
       MessageLogArr: [],
-      CommunicationUser:"",
+      CommunicationUser: "",
       ReferenceNo: "",
       msgg: ""
     };
@@ -65,11 +62,11 @@ class myWayMessage extends Component {
 
         //       MessageArr.push(response.data.Table[i])
         //   }
-          
+
         // }
         self.setState({
           MessageArr: response.data.Table
-        })        
+        });
         self.bindMyWayMessageById(response.data.Table[0]);
       })
       .catch(error => {
@@ -86,7 +83,7 @@ class myWayMessage extends Component {
       });
   }
 
-  bindMyWayMessageById(item,e) {
+  bindMyWayMessageById(item, e) {
     debugger;
     let self = this;
     axios({
@@ -105,10 +102,10 @@ class myWayMessage extends Component {
           CommunicationUser: item.LastCommunicationUser,
           MessageLogArr: response.data,
           ReferenceNo: response.data[0].ReferenceNo
-        })
+        });
       })
       .catch(error => {
-        debugger; 
+        debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
         NotificationManager.error(err[1].replace("}", ""));
@@ -152,7 +149,7 @@ class myWayMessage extends Component {
                   // }, 100);
                   NotificationManager.success(response.data[0].Result);
                 }
-               // self.handleActivityList();
+                // self.handleActivityList();
               }
             }
           }
@@ -190,41 +187,53 @@ class myWayMessage extends Component {
                     <div className="col-md-4">
                       <div class="inbox_people">
                         <div class="inbox_chat">
-                        {this.state.MessageArr.map((item, i) => (
-                          <div class="chat_list active_chat" onClick={this.bindMyWayMessageById.bind(this,item)}>
-                            <div class="chat_people">
-                              <div class="chat_ib">
-                              <h5>
-                                {item.LastCommunicationUser}
-                              <span class="chat_date">{item.MessageTitle!==null?(item.MessageTitle.split(':')[1] !== undefined?
-                                                      item.MessageTitle.split(':')[1].trim():item.MessageTitle):""}</span>
-                              </h5>
-                              <p>
-                                  {item.MessageDetail}
-                              </p>
+                          {this.state.MessageArr.map((item, i) => (
+                            <div
+                              class="chat_list active_chat"
+                              onClick={this.bindMyWayMessageById.bind(
+                                this,
+                                item
+                              )}
+                            >
+                              <div class="chat_people">
+                                <div class="chat_ib">
+                                  <h5>
+                                    {item.LastCommunicationUser}
+                                    <span class="chat_date">
+                                      {item.MessageTitle !== null
+                                        ? item.MessageTitle.split(":")[1] !==
+                                          undefined
+                                          ? item.MessageTitle.split(
+                                              ":"
+                                            )[1].trim()
+                                          : item.MessageTitle
+                                        : ""}
+                                    </span>
+                                  </h5>
+                                  <p>{item.MessageDetail}</p>
+                                </div>
                               </div>
-                            
-                              
                             </div>
-                          </div>
-                           ))}
+                          ))}
                         </div>
                       </div>
                     </div>
                     <div className="col-md-8">
                       <div class="mesgs">
-                        <p className="chat-name">{this.state.CommunicationUser}</p>
+                        <p className="chat-name">
+                          {this.state.CommunicationUser}
+                        </p>
                         <div class="msg_history">
                           {this.state.MessageLogArr.map((item, i) => (
-                          <div class="outgoing_msg">
-                            <div class="sent_msg">
-                              <p>
-                               {item.Message}
-                              </p>
-                              <span class="time_date">{item.MessageCreationTime}</span>{" "}
+                            <div class="outgoing_msg">
+                              <div class="sent_msg">
+                                <p>{item.Message}</p>
+                                <span class="time_date">
+                                  {item.MessageCreationTime}
+                                </span>{" "}
+                              </div>
                             </div>
-                          </div>
-                          ))}                         
+                          ))}
                         </div>
                         <div class="type_msg">
                           <div class="input_msg_write">
@@ -234,7 +243,11 @@ class myWayMessage extends Component {
                               placeholder="Type a message"
                               onChange={this.handlechange.bind(this)}
                             />
-                            <button class="msg_send_btn" type="button" onClick={this.SendMessage}>
+                            <button
+                              class="msg_send_btn"
+                              type="button"
+                              onClick={this.SendMessage}
+                            >
                               <i
                                 class="fa fa-paper-plane-o"
                                 aria-hidden="true"

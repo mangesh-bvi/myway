@@ -245,11 +245,16 @@ class ShippingDetails extends Component {
   HandleRowClickEvt = (rowInfo, column) => {
     return {
       onClick: e => {
-        var hblNo = column.original["HBL#"];
-        var eventManage = column.original["Event"];
-        var pol = column.original["POL"];
-        if (pol !== "No record found" && pol !== "No Record Found") {
-          this.HandleChangeShipmentDetails(hblNo, eventManage);
+        debugger;
+        if (column.row.POL === "No Record Found") {
+          return false;
+        } else {
+          var pol = column.original["POL"];
+          if (pol !== "No record found" && pol !== "No Record Found") {
+            var hblNo = column.original["HBL#"];
+            var eventManage = column.original["Event"];
+            this.HandleChangeShipmentDetails(hblNo, eventManage);
+          }
         }
       }
     };
@@ -415,6 +420,7 @@ class ShippingDetails extends Component {
       fields[field] = e.target.value;
       if (fields[field].length > 3) {
         self.setState({
+          fields,
           POL: []
         });
         axios({
@@ -442,9 +448,17 @@ class ShippingDetails extends Component {
           fields
         });
       } else {
-        this.setState({
-          fields
-        });
+        if (field === "POL") {
+          this.setState({
+            fields,
+            POL: []
+          });
+        } else {
+          this.setState({
+            fields,
+            POD: []
+          });
+        }
       }
     } else {
       NotificationManager.error("Please select Mode of Transport");
@@ -705,7 +719,7 @@ class ShippingDetails extends Component {
             </div>
           ) : (
             <div className="cls-rt">
-              <NotificationContainer />
+              <NotificationContainer leaveTimeout="3000" />
               <div className="title-sect d-block-xs btnxs">
                 <h2>Shipments</h2>
                 <div className="d-flex d-block-xs align-items-center">
@@ -1071,8 +1085,6 @@ class ShippingDetails extends Component {
                         if (result.length > 0) {
                           return result;
                         } else {
-                          // this.setState({shipmentSummary:[{POL:"No Record Found"}]});
-                          // re
                           result = [{ POL: "No Record Found" }];
                           return result;
                         }
@@ -1277,22 +1289,7 @@ class ShippingDetails extends Component {
                               >
                                 Shipper
                               </label>
-                              {/* <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                            /> */}
 
-                              {/* <Autosuggest
-                            suggestions={suggestions}
-                            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-                            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-                            getSuggestionValue={this.getSuggestionValue}
-                            renderSuggestion={this.renderSuggestion}
-                            inputProps={inputShip}
-                          /> */}
                               <div className="position-relative">
                                 <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
                                   <Autocomplete

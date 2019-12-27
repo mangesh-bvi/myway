@@ -78,7 +78,8 @@ class RateFinalizingStill extends Component {
       modalPreview: false,
       todayDate: new Date(),
       filterrateSubDetails: [],
-      DocumentDetails: []
+      DocumentDetails: [],
+      SaleQuoteID:""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -156,6 +157,7 @@ class RateFinalizingStill extends Component {
         var TypeofMove = "";
         var IncoTerms = "";
         var CargoDetailsArr = [];
+        var SaleQuoteID="";
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -163,8 +165,9 @@ class RateFinalizingStill extends Component {
               if (response.data.Table.length > 0) {
                 TypeofMove = response.data.Table[0].TypeOfMove;
                 IncoTerms = response.data.Table[0].IncoTerm;
-
+                SaleQuoteID=response.data.Table[0].SaleQuoteID
                 self.setState({
+                  SaleQuoteID,
                   HazMat: response.data.Table[0].HAZMAT,
                   accountcustname:
                     response.data.Table[0].CompanyName == undefined
@@ -217,7 +220,7 @@ class RateFinalizingStill extends Component {
 
                 self.setState({
                   IncoTerms: IncoTerms,
-                  TypeofMove: TypeofMove,
+                  // TypeofMove: TypeofMove,
                   EquipmentTypes: response.data.Table1[0].ContainerCode,
                   Commodity: response.data.Table1[0].Commodity,
                   selectedCommodity: response.data.Table1[0].Commodity
@@ -2735,7 +2738,9 @@ class RateFinalizingStill extends Component {
                         </Moment>
                       </span>
                     </p>
-                    <p>Sales Quote No. :</p>
+                    <p>
+                      Sales Quote No. :<span>{this.state.SaleQuoteID}</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -3229,7 +3234,7 @@ class RateFinalizingStill extends Component {
           </ModalBody>
         </Modal>
 
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout="3000"/>
       </React.Fragment>
     );
   }

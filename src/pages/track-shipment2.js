@@ -237,7 +237,9 @@ class TrackShipment2 extends Component {
       packageTable: [],
       MessagesActivityDetails: [],
       iframeKey: 0,
-      modalShare: false
+      modalShare: false,
+      HBLNumber: "",
+      showData: false
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -638,6 +640,7 @@ class TrackShipment2 extends Component {
       debugger;
       var shipmentdata = response.data;
       self.setState({
+        addWat: shipmentdata.Table[0].HBLNO,
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
         containerData: shipmentdata.Table2,
@@ -833,6 +836,20 @@ class TrackShipment2 extends Component {
     });
   };
 
+  HandleChangeHBL(e) {
+    debugger;
+    var HBLNumber = e.target.value;
+    this.setState({ HBLNumber });
+  }
+  HandleSubmit() {
+    debugger;
+    if (this.state.addWat.trim() === this.state.HBLNumber) {
+      this.setState({ showData: true });
+    } else {
+      NotificationManager.error("Please enter Valid HBL#");
+    }
+  }
+
   render() {
     let self = this;
     const {
@@ -848,8 +865,7 @@ class TrackShipment2 extends Component {
       packageViewMore,
       packageTable
     } = this.state;
-    debugger;
-    console.log(bookedStatus, "--------------------------bookistatus");
+
     let bookingIsActive = "";
     let bookDate = "";
     let departedIsActive = "";
@@ -983,169 +999,154 @@ class TrackShipment2 extends Component {
           </div> */}
           <div className="cls-rt-ts">
             <div className="container-fluid">
-              <div className="row">
-                <div className="col-md-7 p-0">
-                  <div className="title-sect">
+              <div>
+                <div className="title-sect">
+                  {this.state.showData === false ? (
+                    <h2>Track Shipment</h2>
+                  ) : (
                     <h2>Track Shipment - {detailsData.HBLNO}</h2>
-                    {/* {Watchlist} */}
-                  </div>
-                  <ul className="nav cust-tabs" role="tablist">
-                    <li>
-                      <a
-                        className="active"
-                        id="details-tab"
-                        data-toggle="tab"
-                        href="#details"
-                        role="tab"
-                        aria-controls="details"
-                        aria-selected="true"
-                      >
-                        Details
-                      </a>
-                    </li>
-                    {/* <li>
-                      <a
-                        id="documents-tab"
-                        data-toggle="tab"
-                        href="#documents"
-                        role="tab"
-                        aria-controls="documents"
-                        aria-selected="false"
-                        onClick={this.HandleShipmentDocument.bind(this)}
-                      >
-                        Documents
-                      </a>
-                    </li> */}
-                    {/* <li>
-                      <a
-                        id="activity-tab"
-                        data-toggle="tab"
-                        href="#activity"
-                        role="tab"
-                        aria-controls="activity"
-                        aria-selected="false"
-                        onClick={this.handleActivityList.bind(this)}
-                      >
-                        Activity
-                      </a>
-                    </li> */}
-                  </ul>
-                  <div className="tab-content cust-tabs-content">
-                    <div
-                      className="tab-pane fade show active p-0"
-                      id="details"
-                      role="tabpanel"
-                      aria-labelledby="details-tab"
-                    >
-                      {/* <div className="sect-padd">
-                        <p className="details-heading">Booking Details</p>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Mode Of Transport</p>
-                            <p className="details-para">Ocean</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Cargo Type</p>
-                            <p className="details-para">FCL</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Inco Terms</p>
-                            <p className="details-para">EXW</p>
-                          </div>
-                        </div>
-                      </div> */}
-                      <div className="sect-padd">
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">HBL#</p>
-                            <a href="#!" className="details-para">
-                              {detailsData.HBLNO}
-                              <input
-                                type="hidden"
-                                value={detailsData.HBLNO}
-                                id="popupHBLNO"
-                              />
-                            </a>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-para">{detailsData.HBLNO}</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Status</p>
-                            <p className="details-para">{detailsData.Status}</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Last Update</p>
-                            <p className="details-para">
-                              {detailsData["Status Date"]}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Mode</p>
-                            <p className="details-para">
-                              {detailsData.ModeOfTransport}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Cargo Type</p>
-                            <p className="details-para">
-                              {detailsData.CargoType}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">ATA Booking No#</p>
-                            <p className="details-para"></p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">SRT No#</p>
-                            <p className="details-para">
-                              {detailsData["SRT No#"]}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      {/* <div className="sect-padd">
-                        <div className="row">
-                          {addressData.map(function(addkey, i) {
-                            return (
-                              <div
-                                className="col-md-6 details-border shipper-details"
-                                key={i}
-                              >
-                                <p className="details-heading">
-                                  {addkey.EntityType}
-                                </p>
-                                <p className="details-para">{addkey.Address}</p>
+                  )}
+                </div>
+              </div>
+              <div className="row">
+                <div>
+                  <labal>Enter HBL#</labal>
+                  <input
+                    type="text"
+                    name="HBLNO"
+                    value={this.state.HBLNumber}
+                    onChange={this.HandleChangeHBL.bind(this)}
+                  />
+                  <button onClick={this.HandleSubmit.bind(this)}>Submit</button>
+                </div>
+                {this.state.showData === false ? (
+                  ""
+                ) : (
+                  <div className="row">
+                    <div className="col-md-7 p-0">
+                      <ul className="nav cust-tabs" role="tablist">
+                        <li>
+                          <a
+                            className="active"
+                            id="details-tab"
+                            data-toggle="tab"
+                            href="#details"
+                            role="tab"
+                            aria-controls="details"
+                            aria-selected="true"
+                          >
+                            Details
+                          </a>
+                        </li>
+                      </ul>
+                      <div className="tab-content cust-tabs-content">
+                        <div
+                          className="tab-pane fade show active p-0"
+                          id="details"
+                          role="tabpanel"
+                          aria-labelledby="details-tab"
+                        >
+                          <div className="sect-padd">
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">HBL#</p>
+                                <a href="#!" className="details-para">
+                                  {detailsData.HBLNO}
+                                  <input
+                                    type="hidden"
+                                    value={detailsData.HBLNO}
+                                    id="popupHBLNO"
+                                  />
+                                </a>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div> */}
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">BL#</p>
+                                <p className="details-para">
+                                  {detailsData.BLNo}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">MyWay#</p>
+                                <p className="details-para">
+                                  {detailsData.MyWayNumber}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">Status</p>
+                                <p className="details-para">
+                                  {detailsData.Status}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">Last Update</p>
+                                <p className="details-para">
+                                  {detailsData["Status Date"]}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">Mode</p>
+                                <p className="details-para">
+                                  {detailsData.ModeOfTransport}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">Cargo Type</p>
+                                <p className="details-para">
+                                  {detailsData.CargoType}
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">ATA Booking#</p>
+                                <p className="details-para">
+                                  {detailsData.ATABookingNo}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
+                                <p className="details-title">SRT#</p>
+                                <p className="details-para">
+                                  {detailsData["SRT No#"]}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
 
-                      <div className="progress-sect">
-                        <div className="d-flex align-items-center">
-                          <span className="clr-green">POL</span>
-                          <div className="pol-pod-progress">
-                            <Progress
-                              value={
-                                deliverDate !== ""
-                                  ? "100"
-                                  : arrivedDate !== ""
-                                  ? "90"
-                                  : departedDate !== ""
-                                  ? "50"
-                                  : bookDate !== ""
-                                  ? "0"
-                                  : "0"
-                              }
-                            />
-                            <span
-                              className="pol-pod-percent"
-                              style={{
-                                left:
-                                  deliverDate !== ""
+                          <div className="progress-sect">
+                            <div className="d-flex align-items-center">
+                              <span className="clr-green">POL</span>
+                              <div className="pol-pod-progress">
+                                <Progress
+                                  value={
+                                    deliverDate !== ""
+                                      ? "100"
+                                      : arrivedDate !== ""
+                                      ? "90"
+                                      : departedDate !== ""
+                                      ? "50"
+                                      : bookDate !== ""
+                                      ? "0"
+                                      : "0"
+                                  }
+                                />
+                                <span
+                                  className="pol-pod-percent"
+                                  style={{
+                                    left:
+                                      deliverDate !== ""
+                                        ? "100%"
+                                        : arrivedDate !== ""
+                                        ? "90%"
+                                        : departedDate !== ""
+                                        ? "50%"
+                                        : bookDate !== ""
+                                        ? "0%"
+                                        : "0%"
+                                  }}
+                                >
+                                  {deliverDate !== ""
                                     ? "100%"
                                     : arrivedDate !== ""
                                     ? "90%"
@@ -1153,279 +1154,159 @@ class TrackShipment2 extends Component {
                                     ? "50%"
                                     : bookDate !== ""
                                     ? "0%"
-                                    : "0%"
-                              }}
-                            >
-                              {deliverDate !== ""
-                                ? "100%"
-                                : arrivedDate !== ""
-                                ? "90%"
-                                : departedDate !== ""
-                                ? "50%"
-                                : bookDate !== ""
-                                ? "0%"
-                                : "0%"}
-                            </span>
-                          </div>
-                          <span className="clr-green">POD</span>
-                        </div>
-                        <div className="desti-places">
-                          <span>
-                            {containerData.length > 0
-                              ? containerData[0].DeparturePortName
-                              : ""}
-                          </span>
-                          <span>
-                            {containerData.length > 0
-                              ? containerData[0].DestinationPortName
-                              : ""}
-                          </span>
-                        </div>
-                      </div>
-                      {containerData.map(function(routedata, i = 0) {
-                        i++;
-                        return (
-                          <div className="sect-padd">
-                            <p className="details-heading">
-                              Routing Information - {i}
-                            </p>
-                            <div className="row mid-border">
-                              <div className="col-md-6 details-border">
-                                <div className="row">
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">
-                                      Type Of Move
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata.TypeOfMove}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">Vessel Name</p>
-                                    <p className="details-para">
-                                      {routedata.VesselName}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">
-                                      Departure Port
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata.DeparturePortName}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">
-                                      Destination Port
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata.DestinationPortName}
-                                    </p>
-                                  </div>
-                                </div>
+                                    : "0%"}
+                                </span>
                               </div>
-                              <div className="col-md-6 details-border">
-                                <div className="row">
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">
-                                      Departure Date
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata.DepartureDate}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">
-                                      Arrival Date
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata["Arrival Date"]}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">
-                                      Booking Number
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata["Booking Number"]}
-                                    </p>
-                                  </div>
-                                  <div className="col-md-6 details-border">
-                                    <p className="details-title">
-                                      Booking Date
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata.BookingDate}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
+                              <span className="clr-green">POD</span>
                             </div>
-                            <UncontrolledCollapse
-                              className="cont-deta"
-                              toggler={"#route" + i}
-                            >
-                              <div className="collapse-sect">
-                                <div className="row">
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">
-                                      Container Agents
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata["Container Agents"]}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">Flag</p>
-                                    <p className="details-para">
-                                      {routedata.Flag}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">Voyage Id</p>
-                                    <p className="details-para">
-                                      {routedata["Voyage Identification"]}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">IMO Number</p>
-                                    <p className="details-para">
-                                      {routedata["IMO Number"]}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">
-                                      Document Cutoff
-                                    </p>
-                                    <p className="details-para">
-                                      {routedata["Document Cutoff"]}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">Port Cutoff</p>
-                                    <p className="details-para">
-                                      {routedata["Port Cutoff"]}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </UncontrolledCollapse>
-                            <div className="row">
-                              <div className="col-md-12">
-                                <a
-                                  href="#!"
-                                  id={"route" + i}
-                                  className="butn view-btn"
-                                >
-                                  {/* Show Less */}
-                                </a>
-                              </div>
+                            <div className="desti-places">
+                              <span>
+                                {containerData.length > 0
+                                  ? containerData[0].DeparturePortName
+                                  : ""}
+                              </span>
+                              <span>
+                                {containerData.length > 0
+                                  ? containerData[0].DestinationPortName
+                                  : ""}
+                              </span>
                             </div>
                           </div>
-                        );
-                      })}
-                      {/* <div className="sect-padd">
-                        <p className="details-heading">Container Details</p>
-                        <div className="cont-det-outer">
-                          {containerDetails.map(function(cntrDet, i = 0) {
+                          {containerData.map(function(routedata, i = 0) {
                             i++;
                             return (
-                              <div className="cont-det-cntr">
-                                <div className="row">
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">
-                                      Container Number
-                                    </p>
-                                    <p className="details-para">
-                                      {cntrDet["Container Number"]}
-                                    </p>
+                              <div className="sect-padd">
+                                <p className="details-heading">
+                                  {containerData.length === 1
+                                    ? "Routing Information"
+                                    : "Routing Information" - i}
+                                </p>
+                                <div className="row mid-border">
+                                  <div className="col-md-6 details-border">
+                                    <div className="row">
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Type Of Move
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata.TypeOfMove}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Vessel Name
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata.VesselName}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Departure Port
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata.DeparturePortName}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Destination Port
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata.DestinationPortName}
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">
-                                      Container Code / Type
-                                    </p>
-                                    <p className="details-para">
-                                      {cntrDet.ContainerCode} {"/"}
-                                      {cntrDet.ContainerType}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">Seal NO.1</p>
-                                    <p className="details-para">
-                                      {cntrDet.SealNo1}
-                                    </p>
-                                  </div>
-                                  <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                    <p className="details-title">Seal NO.2</p>
-                                    <p className="details-para">
-                                      {cntrDet.SealNo2}
-                                    </p>
+                                  <div className="col-md-6 details-border">
+                                    <div className="row">
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Departure Date
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata.DepartureDate}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Arrival Date
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata["Arrival Date"]}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Booking Number
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata["Booking Number"]}
+                                        </p>
+                                      </div>
+                                      <div className="col-md-6 details-border">
+                                        <p className="details-title">
+                                          Booking Date
+                                        </p>
+                                        <p className="details-para">
+                                          {routedata.BookingDate}
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                                 <UncontrolledCollapse
                                   className="cont-deta"
-                                  toggler={"#toggler" + i}
+                                  toggler={"#route" + i}
                                 >
                                   <div className="collapse-sect">
                                     <div className="row">
                                       <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Unit</p>
+                                        <p className="details-title">
+                                          Container Agents
+                                        </p>
                                         <p className="details-para">
-                                          {cntrDet.Unit}
+                                          {routedata["Container Agents"]}
                                         </p>
                                       </div>
                                       <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Height</p>
+                                        <p className="details-title">Flag</p>
                                         <p className="details-para">
-                                          {cntrDet.height}
+                                          {routedata.Flag}
                                         </p>
                                       </div>
                                       <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Width</p>
+                                        <p className="details-title">
+                                          Voyage Id
+                                        </p>
                                         <p className="details-para">
-                                          {cntrDet.width}
+                                          {routedata["Voyage Identification"]}
                                         </p>
                                       </div>
                                       <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">Length</p>
+                                        <p className="details-title">
+                                          IMO Number
+                                        </p>
                                         <p className="details-para">
-                                          {cntrDet.length}
+                                          {routedata["IMO Number"]}
                                         </p>
                                       </div>
                                     </div>
                                     <div className="row">
                                       <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">
-                                          Gross Weight
+                                          Document Cutoff
                                         </p>
                                         <p className="details-para">
-                                          {cntrDet["Gross Weight"]}
+                                          {routedata["Document Cutoff"]}
                                         </p>
                                       </div>
                                       <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                         <p className="details-title">
-                                          Net Weight
+                                          Port Cutoff
                                         </p>
                                         <p className="details-para">
-                                          {cntrDet.NetWeight}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">
-                                          Volume Weight
-                                        </p>
-                                        <p className="details-para">
-                                          {cntrDet.VolumeWeight}
-                                        </p>
-                                      </div>
-                                      <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                        <p className="details-title">
-                                          Description
-                                        </p>
-                                        <p className="details-para">
-                                          {cntrDet.Description}
+                                          {routedata["Port Cutoff"]}
                                         </p>
                                       </div>
                                     </div>
@@ -1435,7 +1316,7 @@ class TrackShipment2 extends Component {
                                   <div className="col-md-12">
                                     <a
                                       href="#!"
-                                      id={"toggler" + i}
+                                      id={"route" + i}
                                       className="butn view-btn"
                                     ></a>
                                   </div>
@@ -1444,154 +1325,12 @@ class TrackShipment2 extends Component {
                             );
                           })}
                         </div>
-                      </div> */}
-
-                      {/* <div className="sect-padd">
-                        <p className="details-heading">Package Details</p>
-                        {packageDetails.length === 0 ? (
-                          <p className="text-center">No details found</p>
-                        ) : (
-                          ""
-                        )}
-                        {packageDetails.map(function(packData, i) {
-                          return (
-                            <>
-                              <div className="row">
-                                <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                  <p className="details-title">Package Type</p>
-                                  <p className="details-para">
-                                    {packData.PackageType}
-                                  </p>
-                                </div>
-                              </div>
-                              <UncontrolledCollapse
-                                className="cont-deta"
-                                toggler={"#package" + i}
-                              >
-                                <div className="collapse-sect">
-                                  <div className="row">
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">
-                                        Case Number
-                                      </p>
-                                      <p className="details-para">
-                                        {packData.CaseNumber}
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Units</p>
-                                      <p className="details-para">
-                                        {packData.UnitType}
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">
-                                        Package Count
-                                      </p>
-                                      <p className="details-para">
-                                        {packData.PackageCount}
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Length</p>
-                                      <p className="details-para">
-                                        {packData.Length}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="row">
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Width</p>
-                                      <p className="details-para">
-                                        {packData.Width}
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Height</p>
-                                      <p className="details-para">
-                                        {packData.Height}
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">
-                                        Net Weight
-                                      </p>
-                                      <p className="details-para">
-                                        {packData.NetWeight} Kgs.
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">
-                                        Gross Weight
-                                      </p>
-                                      <p className="details-para">
-                                        {packData.GrossWeight} Kgs.
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="row">
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">Volume</p>
-                                      <p className="details-para">
-                                        {packData.Volume}
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">
-                                        Volume Weight
-                                      </p>
-                                      <p className="details-para">
-                                        {packData.VolumeWeight} Kgs.
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">
-                                        Total Net Weight
-                                      </p>
-                                      <p className="details-para">
-                                        {packData.TotalNetWeight} Kgs.
-                                      </p>
-                                    </div>
-                                    <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                                      <p className="details-title">
-                                        Total Gross Weight
-                                      </p>
-                                      <p className="details-para">
-                                        {packData.TotalGrossWeight} Kgs.
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </UncontrolledCollapse>
-                              <div className="row">
-                                <div className="col-md-12">
-                                  <a
-                                    href="#!"
-                                    id={"package" + i}
-                                    className="butn view-btn mr-2"
-                                  >
-                                  </a>
-                                  <button
-                                    onClick={() =>
-                                      self.togglePackage(packData.CargoPackID)
-                                    }
-                                    className="butn view-btn"
-                                  >
-                                    View Items
-                                  </button>
-                                </div>
-                              </div>
-                            </>
-                          );
-                        })}
-                      </div> */}
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className="col-md-5">
-                  <div className="ship-detail-maps">
-                    <div className="ship-detail-map">
-                      {/* <MapWithAMakredInfoWindow
+                    <div className="col-md-5">
+                      <div className="ship-detail-maps">
+                        <div className="ship-detail-map">
+                          {/* <MapWithAMakredInfoWindow
                         markers={MapsDetailsData}
                         onClick={this.handleClick}
                         selectedMarker={this.state.selectedMarker}
@@ -1602,141 +1341,146 @@ class TrackShipment2 extends Component {
                         mapElement={<div style={{ height: `100%` }} />}
                         loadingElement={<div style={{ height: `100%` }} />}
                       ></MapWithAMakredInfoWindow> */}
-                      {/* <object
+                          {/* <object
                         width="100%"
                         height="100%"
                         data="/MapHtmlPage.html"
                       ></object> */}
-                      <iframe
-                        key={this.state.iframeKey}
-                        src="/MapHtmlPage.html"
-                        className="mapIframe"
-                      />
-                    </div>
-                    <div className="shipment-track-cntr">
-                      <div className="shipment-track">
-                        <div>
-                          <p className="est-title">Estimated Time of Arrival</p>
-                          <p className="est-time">
-                            9 October 2019, 90:45:56 Min
-                          </p>
+                          <iframe
+                            key={this.state.iframeKey}
+                            src="/MapHtmlPage.html"
+                            className="mapIframe"
+                          />
                         </div>
-                        <div className="ship-white-cntr">
-                          <div className="ship-white">
-                            <img src={ShipWhite} alt="ship icon" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="track-details">
-                        <div className={bookingIsActive}>
-                          <div className="track-img-cntr">
-                            <div className="track-img">
-                              <img src={Booked} alt="booked icon" />
+                        <div className="shipment-track-cntr">
+                          <div className="shipment-track">
+                            <div>
+                              <p className="est-title">
+                                Estimated Time of Arrival
+                              </p>
+                              <p className="est-time">
+                                9 October 2019, 90:45:56 Min
+                              </p>
+                            </div>
+                            <div className="ship-white-cntr">
+                              <div className="ship-white">
+                                <img src={ShipWhite} alt="ship icon" />
+                              </div>
                             </div>
                           </div>
-                          <p>
-                            <span>Booked : </span>
-                            {bookDate}
-                          </p>
-                        </div>
-                        <div className={departedIsActive + " active"}>
-                          <div className="track-img-cntr">
-                            <div className="track-img">
-                              {/* <img src={Departed} alt="departed icon" /> */}
-                              <img
-                                src={
-                                  departedDate === "" || departedDate === null
-                                    ? Transit
-                                    : Departed
-                                }
-                                alt="departed icon"
-                              />
+                          <div className="track-details">
+                            <div className={bookingIsActive}>
+                              <div className="track-img-cntr">
+                                <div className="track-img">
+                                  <img src={Booked} alt="booked icon" />
+                                </div>
+                              </div>
+                              <p>
+                                <span>Booked : </span>
+                                {bookDate}
+                              </p>
                             </div>
-                          </div>
-                          <p>
-                            <span>
-                              {departedDate === "" || departedDate === null
-                                ? "On the way"
-                                : "Departed :"}
-                            </span>
-                            {departedDate}
-                          </p>
-                        </div>
-                        <div
-                          className={
-                            departedDate === "" || departedDate === null
-                              ? "track-line-cntr"
-                              : "track-line-cntr active"
-                          }
-                        >
-                          <div className="track-img-cntr">
-                            <div className="track-img">
-                              <img
-                                src={
-                                  departedDate === "" || departedDate === null
-                                    ? Departed
+                            <div className={departedIsActive + " active"}>
+                              <div className="track-img-cntr">
+                                <div className="track-img">
+                                  {/* <img src={Departed} alt="departed icon" /> */}
+                                  <img
+                                    src={
+                                      departedDate === "" ||
+                                      departedDate === null
+                                        ? Transit
+                                        : Departed
+                                    }
+                                    alt="departed icon"
+                                  />
+                                </div>
+                              </div>
+                              <p>
+                                <span>
+                                  {departedDate === "" || departedDate === null
+                                    ? "On the way"
+                                    : "Departed :"}
+                                </span>
+                                {departedDate}
+                              </p>
+                            </div>
+                            <div
+                              className={
+                                departedDate === "" || departedDate === null
+                                  ? "track-line-cntr"
+                                  : "track-line-cntr active"
+                              }
+                            >
+                              <div className="track-img-cntr">
+                                <div className="track-img">
+                                  <img
+                                    src={
+                                      departedDate === "" ||
+                                      departedDate === null
+                                        ? Departed
+                                        : arrivedDate !== null ||
+                                          arrivedDate !== ""
+                                        ? Arrived
+                                        : Transit
+                                    }
+                                    alt="transit icon"
+                                  />
+                                </div>
+                              </div>
+                              <p>
+                                <span>
+                                  {departedDate === "" || departedDate === null
+                                    ? "Departed : "
                                     : arrivedDate !== null || arrivedDate !== ""
-                                    ? Arrived
-                                    : Transit
-                                }
-                                alt="transit icon"
-                              />
+                                    ? "Arrived : "
+                                    : "On the way"}
+                                </span>
+                                {arrivedDate !== null || arrivedDate !== ""
+                                  ? arrivedDate
+                                  : null}
+                                {/* {arrivedDate} */}
+                              </p>
                             </div>
-                          </div>
-                          <p>
-                            <span>
-                              {departedDate === "" || departedDate === null
-                                ? "Departed : "
-                                : arrivedDate !== null || arrivedDate !== ""
-                                ? "Arrived : "
-                                : "On the way"}
-                            </span>
-                            {arrivedDate !== null || arrivedDate !== ""
-                              ? arrivedDate
-                              : null}
-                            {/* {arrivedDate} */}
-                          </p>
-                        </div>
-                        <div className={arrivedIsActive}>
-                          <div className="track-img-cntr">
-                            <div className="track-img">
-                              {/* <img src={Arrived} alt="arrived icon" /> */}
-                              <img
-                                src={
-                                  deliverDate !== null || deliverDate !== ""
-                                    ? Transit
-                                    : Arrived
-                                }
-                                alt="arrived icon"
-                              />
+                            <div className={arrivedIsActive}>
+                              <div className="track-img-cntr">
+                                <div className="track-img">
+                                  {/* <img src={Arrived} alt="arrived icon" /> */}
+                                  <img
+                                    src={
+                                      deliverDate !== null || deliverDate !== ""
+                                        ? Transit
+                                        : Arrived
+                                    }
+                                    alt="arrived icon"
+                                  />
+                                </div>
+                              </div>
+                              <p>
+                                <span>
+                                  {arrivedDate === "" || arrivedDate === null
+                                    ? "Arrived : "
+                                    : deliverDate !== null || deliverDate !== ""
+                                    ? "On the way"
+                                    : "Delivered : "}
+                                </span>
+                                {/* {arrivedDate} */}
+                                {deliverDate !== null || deliverDate !== ""
+                                  ? deliverDate
+                                  : null}
+                              </p>
                             </div>
-                          </div>
-                          <p>
-                            <span>
-                              {arrivedDate === "" || arrivedDate === null
-                                ? "Arrived : "
-                                : deliverDate !== null || deliverDate !== ""
-                                ? "On the way"
-                                : "Delivered : "}
-                            </span>
-                            {/* {arrivedDate} */}
-                            {deliverDate !== null || deliverDate !== ""
-                              ? deliverDate
-                              : null}
-                          </p>
-                        </div>
-                        <div className={inlandIsActive}>
-                          <div className="track-img-cntr">
-                            <div className="track-img">
-                              <img src={Inland} alt="inland icon" />
+                            <div className={inlandIsActive}>
+                              <div className="track-img-cntr">
+                                <div className="track-img">
+                                  <img src={Inland} alt="inland icon" />
+                                </div>
+                              </div>
+                              <p>
+                                <span>Inland Transportation : </span>
+                                {inlandDate}
+                              </p>
                             </div>
-                          </div>
-                          <p>
-                            <span>Inland Transportation : </span>
-                            {inlandDate}
-                          </p>
-                        </div>
-                        {/* {deliverDate !== null || deliverDate !== "" ? null : (
+                            {/* {deliverDate !== null || deliverDate !== "" ? null : (
                           <div className={deliveredIsActive}>
                             <div className="track-img-cntr">
                               <div className="track-img">
@@ -1749,21 +1493,23 @@ class TrackShipment2 extends Component {
                             </p>
                           </div>
                         )} */}
-                        <div className={deliveredIsActive}>
-                          <div className="track-img-cntr">
-                            <div className="track-img">
-                              <img src={Delivery} alt="delivery icon" />
+                            <div className={deliveredIsActive}>
+                              <div className="track-img-cntr">
+                                <div className="track-img">
+                                  <img src={Delivery} alt="delivery icon" />
+                                </div>
+                              </div>
+                              <p>
+                                <span>Delivered : </span>
+                                {deliverDate}
+                              </p>
                             </div>
                           </div>
-                          <p>
-                            <span>Delivered : </span>
-                            {deliverDate}
-                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
                 <Modal
                   className="delete-popup package-popup"
                   isOpen={this.state.modalPackage}
@@ -1959,7 +1705,7 @@ class TrackShipment2 extends Component {
                   </ModalBody>
                 </Modal>
               </div>
-              <NotificationContainer />
+              <NotificationContainer leaveTimeout="3000" />
             </div>
           </div>
         </div>

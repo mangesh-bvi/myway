@@ -283,65 +283,64 @@ class BookingTable extends Component {
                         Header: "Action",
                         sortable: false,
                         Cell: row => {
-                          if (row.original.Status === "Pending") {
-                            return (
-                              <div className="action-cntr">
-                                {/* <a> */}
-                                <img
-                                  className="actionicon"
-                                  src={Eye}
-                                  alt="view-icon"
-                                  onClick={e => this.HandleRowClickEvt(e, row)}
-                                />
-                                {/* </a> */}
-                                {/* <a href="/rate-finalizing-still-booking"> */}
-                                {/* <img
-                                  className="actionicon"
-                                  src={Edit}
-                                  alt="view-icon"
-                                  onClick={e => this.HandleDocumentView(e, row)}
-                                /> */}
-                                {/* </a> */}
+                          debugger;
+                          if (row.row.POL !== "No Record Found") {
+                            if (row.original.Status === "Pending") {
+                              return (
+                                <div className="action-cntr">
+                                  {/* <a> */}
+                                  <img
+                                    className="actionicon"
+                                    src={Eye}
+                                    alt="view-icon"
+                                    onClick={e =>
+                                      this.HandleRowClickEvt(e, row)
+                                    }
+                                  />
 
-                                <img
-                                  className="actionicon"
-                                  src={Copy}
-                                  alt="view-icon"
-                                  onClick={e => this.HandleCopyClick(e, row)}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.original.Status === "Approved") {
-                            return (
-                              <div className="action-cntr">
-                                {/* <a> */}
-                                <img
-                                  className="actionicon"
-                                  src={Eye}
-                                  alt="view-icon"
-                                  onClick={e => this.HandleRowClickEvt(e, row)}
-                                />
-                                {/* </a> */}
-                                {/* <a href="/rate-finalizing-still-booking"> */}
-                                <img
-                                  className="actionicon"
-                                  src={Edit}
-                                  alt="view-icon"
-                                  onClick={e => this.HandleDocumentView(e, row)}
-                                />
-                                {/* </a> */}
+                                  <img
+                                    className="actionicon"
+                                    src={Copy}
+                                    alt="view-icon"
+                                    onClick={e => this.HandleCopyClick(e, row)}
+                                  />
+                                </div>
+                              );
+                            }
+                            if (row.original.Status === "Approved") {
+                              return (
+                                <div className="action-cntr">
+                                  <img
+                                    className="actionicon"
+                                    src={Eye}
+                                    alt="view-icon"
+                                    onClick={e =>
+                                      this.HandleRowClickEvt(e, row)
+                                    }
+                                  />
 
-                                <img
-                                  className="actionicon"
-                                  src={Copy}
-                                  alt="view-icon"
-                                  onClick={e => this.HandleCopyClick(e, row)}
-                                />
-                              </div>
-                            );
-                          }
-                          if (row.original.Status === "Rejected") {
+                                  <img
+                                    className="actionicon"
+                                    src={Edit}
+                                    alt="view-icon"
+                                    onClick={e =>
+                                      this.HandleDocumentView(e, row)
+                                    }
+                                  />
+
+                                  <img
+                                    className="actionicon"
+                                    src={Copy}
+                                    alt="view-icon"
+                                    onClick={e => this.HandleCopyClick(e, row)}
+                                  />
+                                </div>
+                              );
+                            }
+                            if (row.original.Status === "Rejected") {
+                              return <></>;
+                            }
+                          } else {
                             return <></>;
                           }
                         }
@@ -362,7 +361,7 @@ class BookingTable extends Component {
                       };
                     },
                     filterMethod: (filter, rows) => {
-                      const result = matchSorter(rows, filter.value, {
+                      var result = matchSorter(rows, filter.value, {
                         keys: [
                           "BookingNo",
                           "Consignee_Name",
@@ -374,8 +373,16 @@ class BookingTable extends Component {
                         ],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH
                       });
-
-                      return result;
+                      if (result.length > 0) {
+                        return result;
+                      } else {
+                        result = [
+                          {
+                            POL: "No Record Found"
+                          }
+                        ];
+                        return result;
+                      }
                     },
                     filterAll: true
                   }

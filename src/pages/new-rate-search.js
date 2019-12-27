@@ -694,7 +694,8 @@ class NewRateSearch extends Component {
 
     var type = this.state.modeoftransport;
     self.setState({
-      fields
+      fields,
+      polpodData: []
     });
     if (fields[field].length > 2) {
       axios({
@@ -2045,6 +2046,18 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
+    if (type === "FCL") {
+      document.getElementById("equipType").classList.add("equipType");
+      document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
+
+      document
+        .getElementById("cntrLoadIconCntr")
+        .classList.add("cntrLoadIconCntr");
+      document.getElementById("cntrLoadName").classList.remove("d-none");
+      document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+      document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    }
 
     this.HandleBindIncoTeamData();
 
