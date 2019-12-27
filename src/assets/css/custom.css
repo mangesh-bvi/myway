@@ -511,9 +511,9 @@ table tbody tr:last-child {
 .cust-tabs-content > div {
   padding: 20px 15px;
 }
-.cust-tabs-content .tab-pane .row .details-border:last-child {
+/* .cust-tabs-content .tab-pane .row .details-border:last-child {
   border-right: 0;
-}
+} */
 .cust-tabs-content .tab-pane .row .details-border:first-child {
   align-items: flex-start;
 }
@@ -675,9 +675,9 @@ table tbody tr:last-child {
   margin-top: 0;
   margin-bottom: 20px;
 }
-.cust-tabs-content .tab-pane .mid-border.row .details-border:nth-child(even) {
+/* .cust-tabs-content .tab-pane .mid-border.row .details-border:nth-child(even) {
   border-right: 0;
-}
+} */
 .less-btn {
   background-color: #474747;
   border-color: #474747;
@@ -3707,9 +3707,10 @@ input[type="range"]::-moz-range-track {
   font-size: 14px;
 }
 .firstbox h3 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   padding: 0;
+  text-align: left;
   margin-bottom: 15px;
   background: transparent;
   color: #333;

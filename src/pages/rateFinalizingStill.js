@@ -2200,13 +2200,13 @@ class RateFinalizingStill extends Component {
                     </div>
                     <div className="">
                       <div className="row">
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Account/Customer</p>
                           <p className="details-para">
                             {this.state.accountcustname}
                           </p>
                         </div>
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Address</p>
                           <p className="details-para">
                             {this.state.custAddress}
