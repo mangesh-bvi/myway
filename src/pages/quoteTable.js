@@ -325,105 +325,71 @@ class QuoteTable extends Component {
                         Header: "Action",
                         sortable: false,
                         Cell: row => {
-                          // var abc = new Date(row.original.CreatedDate);
-                          // var current = new Date();
-                          // var x = abc.getTime();
-                          // var y = current.getTime();
-                          // console.log(x);
-                          // console.log(y);
-                          if (row.original.type !== "No record found") {
-                            if (row.original.Status === "Pending") {
-                              return (
-                                <div className="action-cntr">
-                                  <a
-                                    onClick={e =>
-                                      this.HandleRowClickEvt(e, row)
-                                    }
-                                  >
-                                    <img
-                                      className="actionicon"
-                                      src={Eye}
-                                      alt="view-icon"
-                                    />
-                                  </a>
-
-                                  {/* <span
-                              title="Create Booking"
-                              onClick={this.toggleBook} 
-                            > */}
-                                  {/* <a
-                                    title="Create Booking"
-                                    onClick={this.Editfinalizing.bind(this)}
-                                  >
-                                    <img
-                                      className="actionicon"
-                                      src={Edit}
-                                      alt="booking-icon"
-                                      data-Quote={
-                                        row.original.QUOTE_ID_Revisions
-                                      }
-                                      data-type={row.original.type}
-                                    />
-                                  </a> */}
-                                  {/* </span> */}
-                                  <a onClick={this.Copyfinalizing.bind(this)}>
-                                    <img
-                                      className="actionicon"
-                                      src={Copy}
-                                      alt="view-icon"
-                                      data-Quote={
-                                        row.original.QUOTE_ID_Revisions
-                                      }
-                                      data-type={row.original.type}
-                                    />
-                                  </a>
-                                </div>
-                              );
-                            } else {
-                              return (
-                                <div className="action-cntr">
-                                  <a
-                                    onClick={e =>
-                                      this.HandleRowClickEvt(e, row)
-                                    }
-                                  >
-                                    <img
-                                      className="actionicon"
-                                      src={Eye}
-                                      alt="view-icon"
-                                    />
-                                  </a>
-                                  {/* <a
-                                    title={"It has been " + row.original.Status}
-                                    onClick={this.Editfinalizing.bind(this)}
-                                  >
-                                    <img
-                                      className="actionicon"
-                                      src={Edit}
-                                      alt="booking-icon"
-                                      data-Quote={
-                                        row.original.QUOTE_ID_Revisions
-                                      }
-                                      data-type={row.original.type}
-                                    />
-                                  </a> */}
-                                  {/* </span> */}
-                                  <a onClick={this.Copyfinalizing.bind(this)}>
-                                    <img
-                                      className="actionicon"
-                                      src={Copy}
-                                      alt="view-icon"
-                                      data-Quote={
-                                        row.original.QUOTE_ID_Revisions
-                                      }
-                                      data-type={row.original.type}
-                                    />
-                                  </a>
-                                </div>
-                              );
-                            }
+                          debugger;
+                          if (row.row.POD === "No Record Found") {
+                            return <></>;
                           } else {
-                            return <div></div>;
+                            if (row.original.type !== "No record found") {
+                              if (row.original.Status === "Pending") {
+                                return (
+                                  <div className="action-cntr">
+                                    <a
+                                      onClick={e =>
+                                        this.HandleRowClickEvt(e, row)
+                                      }
+                                    >
+                                      <img
+                                        className="actionicon"
+                                        src={Eye}
+                                        alt="view-icon"
+                                      />
+                                    </a>
+
+                                    <a onClick={this.Copyfinalizing.bind(this)}>
+                                      <img
+                                        className="actionicon"
+                                        src={Copy}
+                                        alt="view-icon"
+                                        data-Quote={
+                                          row.original.QUOTE_ID_Revisions
+                                        }
+                                        data-type={row.original.type}
+                                      />
+                                    </a>
+                                  </div>
+                                );
+                              } else {
+                                return (
+                                  <div className="action-cntr">
+                                    <a
+                                      onClick={e =>
+                                        this.HandleRowClickEvt(e, row)
+                                      }
+                                    >
+                                      <img
+                                        className="actionicon"
+                                        src={Eye}
+                                        alt="view-icon"
+                                      />
+                                    </a>
+
+                                    <a onClick={this.Copyfinalizing.bind(this)}>
+                                      <img
+                                        className="actionicon"
+                                        src={Copy}
+                                        alt="view-icon"
+                                        data-Quote={
+                                          row.original.QUOTE_ID_Revisions
+                                        }
+                                        data-type={row.original.type}
+                                      />
+                                    </a>
+                                  </div>
+                                );
+                              }
+                            } else {
+                              return <div></div>;
+                            }
                           }
                         }
                       }
@@ -443,19 +409,29 @@ class QuoteTable extends Component {
                       };
                     },
                     filterMethod: (filter, rows) => {
-                      const result = matchSorter(rows, filter.value, {
+                      var result = matchSorter(rows, filter.value, {
                         keys: [
                           "Quote#",
                           "Company",
                           "Contact",
                           "type",
+                          "POL",
                           "POD",
                           "Notes",
                           "Status"
                         ],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH
                       });
-
+                      if (result.length > 0) {
+                        return result;
+                      } else {
+                        result = [
+                          {
+                            POD: "No Record Found"
+                          }
+                        ];
+                        return result;
+                      }
                       return result;
                     },
                     filterAll: true

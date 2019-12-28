@@ -4,27 +4,15 @@ import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 
-// import ShipWhite from "./../assets/img/ship-white.png";
-// import HambShip from "./../assets/img/hamb-ship.png";
-// import PlaneWhite from "./../assets/img/plane-white.png";
-// import DelayShip from "./../assets/img/delay-shipment.png";
-// import CurrBook from "./../assets/img/current-booking.png";
-// import HambPlane from "./../assets/img/hamb-plane.png";
-// import BlueShip from "./../assets/img/circle-ship.png";
 import ShipBlue from "./../assets/img/blue-ship.png";
-// import BluePlane from "./../assets/img/circle-plane.png";
 import PlaneBlue from "./../assets/img/blue-plane.png";
-// import BookingBlue from "./../assets/img/circle-booked.png";
 import DelayBlue from "./../assets/img/blue-delay.png";
 import WL from "./../assets/img/wl.png";
 import BookBlue from "./../assets/img/blue-booking.png";
-// import LoadingImg from "./../assets/img/loading.gif";
 
-// import TruckWhite from "./../assets/img/truck-white.png";
 import appSettings from "../helpers/appSetting";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-// import GreenPlus from "./../assets/img/green-plus.png";
 import Ship from "./../assets/img/ship.png";
 import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
@@ -80,28 +68,6 @@ const MapWithAMakredInfoWindow = compose(
       if (marker.Pin == "Ocean") {
         return (
           <div key={i}>
-            {/* <Marker
-                  key={marker.index}
-                  position={{ lat: marker.lat, lng: marker.lng }}
-                >
-                  <InfoWindow key={marker.index}></InfoWindow>
-                </Marker> */}
-            {/* <Marker
-                key={props.searchData.index}
-                position={{
-                  lat: props.searchData.lat,
-                  lng: props.searchData.lng
-                }}
-              >
-                <InfoWindow>
-                  <div>
-                    <div>nhà trọ cho thuê</div>
-                    <div>1.500.000đ</div>
-                  </div>
-                </InfoWindow>
-                }
-              </Marker>; */}
-
             <Marker
               icon={blueShip}
               key={marker.id}
@@ -111,10 +77,6 @@ const MapWithAMakredInfoWindow = compose(
                 lat: Number(marker.LastLocation_Lat),
                 lng: Number(marker.LastLocation_Lon)
               }}
-              // position={{
-              //   lat: this.state.mapPosition.lat,
-              //   lng: this.state.mapPosition.lng
-              // }}
             >
               {props.selectedMarker === marker.LastLocation && (
                 <InfoWindow>
@@ -183,15 +145,8 @@ const MapWithAMakredInfoWindow = compose(
                                 >
                                   <h5>
                                     <div
-                                      //className="collapsed"
                                       role="button"
-                                      // data-toggle="collapse"
                                       href={C_HblNO.replace(/ +/g, "")}
-                                      //aria-expanded="false"
-                                      // aria-controls={mdata["HBL#"].replace(
-                                      //   / +/g,
-                                      //   ""
-                                      // )}
                                     >
                                       <p
                                         title="HBL No."
@@ -226,32 +181,7 @@ const MapWithAMakredInfoWindow = compose(
                                     </div>
                                   </h5>
                                 </div>
-                                {/* <div
-                                      id={mdata["HBL#"].replace(/ +/g, "")}
-                                      className="collapse"
-                                      data-parent="#accordion-1"
-                                      aria-labelledby="heading-1-1"
-                                    >
-                                      <div className="card-body">
-                                        {finalinvocearr.length > 0
-                                          ? finalinvocearr.map(function(
-                                              idata,
-                                              i
-                                            ) {
-                                              return (
-                                                <div>
-                                                  <p
-                                                    title="MyWay No."
-                                                    className="mapinvoice ml-2"
-                                                  >
-                                                    {idata}
-                                                  </p>
-                                                </div>
-                                              );
-                                            })
-                                          : null}
-                                      </div>
-                                    </div> */}
+                                {}
                               </div>
                             </div>
                           </div>
@@ -340,15 +270,8 @@ const MapWithAMakredInfoWindow = compose(
                               >
                                 <h5>
                                   <div
-                                    //className="collapsed"
                                     role="button"
-                                    // data-toggle="collapse"
                                     href={C_HblNO.replace(/ +/g, "")}
-                                    //aria-expanded="false"
-                                    // aria-controls={mdata["HBL#"].replace(
-                                    //   / +/g,
-                                    //   ""
-                                    // )}
                                   >
                                     <p
                                       title="HBL No."
@@ -383,32 +306,7 @@ const MapWithAMakredInfoWindow = compose(
                                   </div>
                                 </h5>
                               </div>
-                              {/* <div
-                                      id={mdata["HBL#"].replace(/ +/g, "")}
-                                      className="collapse"
-                                      data-parent="#accordion-1"
-                                      aria-labelledby="heading-1-1"
-                                    >
-                                      <div className="card-body">
-                                        {finalinvocearr.length > 0
-                                          ? finalinvocearr.map(function(
-                                              idata,
-                                              i
-                                            ) {
-                                              return (
-                                                <div>
-                                                  <p
-                                                    title="MyWay No."
-                                                    className="mapinvoice ml-2"
-                                                  >
-                                                    {idata}
-                                                  </p>
-                                                </div>
-                                              );
-                                            })
-                                          : null}
-                                      </div>
-                                    </div> */}
+                              {}
                             </div>
                           </div>
                         </div>
@@ -539,32 +437,7 @@ const MapWithAMakredInfoWindow = compose(
                                   </div>
                                 </h5>
                               </div>
-                              {/* <div
-                                      id={mdata["HBL#"].replace(/ +/g, "")}
-                                      className="collapse"
-                                      data-parent="#accordion-1"
-                                      aria-labelledby="heading-1-1"
-                                    >
-                                      <div className="card-body">
-                                        {finalinvocearr.length > 0
-                                          ? finalinvocearr.map(function(
-                                              idata,
-                                              i
-                                            ) {
-                                              return (
-                                                <div>
-                                                  <p
-                                                    title="MyWay No."
-                                                    className="mapinvoice ml-2"
-                                                  >
-                                                    {idata}
-                                                  </p>
-                                                </div>
-                                              );
-                                            })
-                                          : null}
-                                      </div>
-                                    </div> */}
+                              {}
                             </div>
                           </div>
                         </div>
@@ -696,32 +569,7 @@ const MapWithAMakredInfoWindow = compose(
                                   </div>
                                 </h5>
                               </div>
-                              {/* <div
-                                      id={mdata["HBL#"].replace(/ +/g, "")}
-                                      className="collapse"
-                                      data-parent="#accordion-1"
-                                      aria-labelledby="heading-1-1"
-                                    >
-                                      <div className="card-body">
-                                        {finalinvocearr.length > 0
-                                          ? finalinvocearr.map(function(
-                                              idata,
-                                              i
-                                            ) {
-                                              return (
-                                                <div>
-                                                  <p
-                                                    title="MyWay No."
-                                                    className="mapinvoice ml-2"
-                                                  >
-                                                    {idata}
-                                                  </p>
-                                                </div>
-                                              );
-                                            })
-                                          : null}
-                                      </div>
-                                    </div> */}
+                              {}
                             </div>
                           </div>
                         </div>
@@ -810,15 +658,8 @@ const MapWithAMakredInfoWindow = compose(
                               >
                                 <h5>
                                   <div
-                                    //className="collapsed"
                                     role="button"
-                                    // data-toggle="collapse"
                                     href={C_HblNO.replace(/ +/g, "")}
-                                    //aria-expanded="false"
-                                    // aria-controls={mdata["HBL#"].replace(
-                                    //   / +/g,
-                                    //   ""
-                                    // )}
                                   >
                                     <p
                                       title="HBL No."
@@ -853,32 +694,7 @@ const MapWithAMakredInfoWindow = compose(
                                   </div>
                                 </h5>
                               </div>
-                              {/* <div
-                                      id={mdata["HBL#"].replace(/ +/g, "")}
-                                      className="collapse"
-                                      data-parent="#accordion-1"
-                                      aria-labelledby="heading-1-1"
-                                    >
-                                      <div className="card-body">
-                                        {finalinvocearr.length > 0
-                                          ? finalinvocearr.map(function(
-                                              idata,
-                                              i
-                                            ) {
-                                              return (
-                                                <div>
-                                                  <p
-                                                    title="MyWay No."
-                                                    className="mapinvoice ml-2"
-                                                  >
-                                                    {idata}
-                                                  </p>
-                                                </div>
-                                              );
-                                            })
-                                          : null}
-                                      </div>
-                                    </div> */}
+                              {}
                             </div>
                           </div>
                         </div>
@@ -895,14 +711,8 @@ const MapWithAMakredInfoWindow = compose(
     <div className="dash-search-cntr">
       <Autocomplete
         style={{
-          // width: "auto",
           height: "40px",
           paddingLeft: "16px",
-          // marginTop: "2px",
-          // marginBottom: "500px",
-          // position: "absolute",
-          // top: "60px",
-          // left: "10px",
           border: "0",
           borderRadius: "50px",
           paddingRight: "45px"
@@ -951,15 +761,15 @@ class Dashboard extends Component {
       },
       iframeKey: 0
     };
-    this.BindMapData = this.BindMapData.bind(this);
-    this.HandleShipmentPin = this.HandleShipmentPin.bind(this);
+    ////////this.BindMapData = this.BindMapData.bind(this);
+    ////////this.HandleShipmentPin = this.HandleShipmentPin.bind(this);
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
-    this.HandleQuotesData = this.HandleQuotesData.bind(this);
-    this.HandleRediractPageShipmentDetails = this.HandleRediractPageShipmentDetails.bind(
-      this
-    );
-    this.HandleShipmentPage = this.HandleShipmentPage.bind(this);
-    this.HandleBookingTablePage = this.HandleBookingTablePage.bind(this);
+    ///////this.HandleQuotesData = this.HandleQuotesData.bind(this);
+    // // // this.HandleRediractPageShipmentDetails = this.HandleRediractPageShipmentDetails.bind(
+    // // //   this
+    // // // );
+    ////this.HandleShipmentPage = this.HandleShipmentPage.bind(this);
+    ////this.HandleBookingTablePage = this.HandleBookingTablePage.bind(this);
     this.HandleQuotesTablePage = this.HandleQuotesTablePage.bind(this);
     this.HandleBookingCardApi = this.HandleBookingCardApi.bind(this);
     this.HandleWatchListData = this.HandleWatchListData.bind(this);
@@ -968,7 +778,7 @@ class Dashboard extends Component {
   /////this method for onChangeSearchBox for react google autocomplete box
 
   onChangeSearchBox = e => {
-    debugger;
+    ////debugger;
     var hblNoContinerNno = document.getElementById("autocomplete").value;
     if (hblNoContinerNno !== "" && hblNoContinerNno !== null) {
       let self = this;
@@ -982,10 +792,8 @@ class Dashboard extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        //debugger;
         var data = response.data.Table;
-
-        // self.setState({ packageTypeData: data });
       });
     }
   };
@@ -993,13 +801,10 @@ class Dashboard extends Component {
   //// end
 
   onPlaceSelected = place => {
-    debugger;
+    //debugger;
     console.log("plc", place);
     const address = place.formatted_address,
       addressArray = place.address_components,
-      // city = this.getCity( addressArray ),
-      // area = this.getArea( addressArray ),
-      // state = this.getState( addressArray ),
       latValue = place.geometry.location.lat(),
       lngValue = place.geometry.location.lng();
     if (addressArray.length > 4) {
@@ -1012,10 +817,6 @@ class Dashboard extends Component {
     this.setState({ zoom: this.state.zoom });
     // Set these values in the state.
     this.setState({
-      // address: ( address ) ? address : '',
-      // area: ( area ) ? area : '',
-      // city: ( city ) ? city : '',
-      // state: ( state ) ? state : '',
       markerPosition: {
         lat: latValue,
         lng: lngValue
@@ -1028,9 +829,8 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    debugger;
+    //debugger;
     let self = this;
-    this.BindMapData("All");
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
     this.HandleBookingCardApi();
@@ -1074,6 +874,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      // debugger;
       var bookData = response.data.Table;
       self.setState({
         BookingData: bookData,
@@ -1099,7 +900,6 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var invoicesData = response.data.Table1;
       selt.setState({
         InvoicesData: invoicesData,
@@ -1109,7 +909,7 @@ class Dashboard extends Component {
   }
 
   HandleWatchListData() {
-    debugger;
+    //debugger;
     let selt = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
@@ -1120,7 +920,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      // debugger;
       var activeshipment = response.data.Table;
       selt.setState({
         ActiveShipmentData: activeshipment,
@@ -1130,7 +930,7 @@ class Dashboard extends Component {
   }
 
   HandleQuotesData() {
-    debugger
+    //debugger
     let selt = this;
     axios({
       method: "post",
@@ -1140,7 +940,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      //debugger;
       var quotesdata = response.data.Table;
       selt.setState({
         QuotesData: quotesdata,
@@ -1149,7 +949,7 @@ class Dashboard extends Component {
     });
   }
   handleClick = (marker, event) => {
-    debugger;
+    //debugger;
     let selt = this;
     selt.setState({ selectedMarker: "" });
     var userID = marker.ID;
@@ -1165,7 +965,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      //debugger;
 
       selt.setState({
         selectedMarker: marker.LastLocation,
@@ -1179,11 +979,11 @@ class Dashboard extends Component {
   }
 
   BindMapData(BindingID) {
-    debugger;
+    //debugger;
     let self = this;
     var mdata;
     var arraModalMapData = [];
-    debugger;
+    //debugger;
 
     if (self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1) {
       axios({
@@ -1194,7 +994,7 @@ class Dashboard extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        //debugger;
         mdata = response.data;
         if (BindingID != "All") {
           mdata = mdata.filter(map => map.Pin == BindingID);
@@ -1266,16 +1066,27 @@ class Dashboard extends Component {
     }
   }
 
+  handleBooking(bookingNo, mode) {
+    // debugger;
+    var bookingNo = bookingNo;
+    var Mode = mode;
+    this.props.history.push({
+      pathname: "booking-view",
+      state: { bookingNo: bookingNo, Mode: Mode }
+    });
+  }
+  handleQuote(qnumber, type, status) {
+    // debugger;
+    var type = type;
+    var qnumber = qnumber;
+    var Status = status;
+    var detail = { Quotes: qnumber, Type: type, Status: Status };
+    this.props.history.push({
+      pathname: "rate-finalizing-still",
+      state: { detail: detail }
+    });
+  }
   render() {
-    // const divStyle ={}
-    // if (encryption(window.localStorage.getItem("usertype"),"desc") == "Sales User") {
-    //   divStyle = {
-    //     "display": "none"
-    //   }
-    // }
-    // else{divStyle = {
-    //   "display": "none"
-    // }}
     let className = "dash-map1";
     if (
       encryption(window.localStorage.getItem("usertype"), "desc") ==
@@ -1283,7 +1094,6 @@ class Dashboard extends Component {
     ) {
       this.state.IsWidgets = true;
       className = "dash-map";
-      // this.setState({IsWidgets: this.state.IsWidgets});
     }
     const {
       mapsData,
@@ -1375,7 +1185,16 @@ class Dashboard extends Component {
         return (
           <div key={i}>
             <p>
-              <span style={{ color: "#000" }}>{book.BookingNo}</span>
+              <span
+                title={"Booking No"}
+                style={{ color: "#000", cursor: "pointer" }}
+                // onClick={() => this.handleBooking.bind(this)}
+                onClick={() =>
+                  self.handleBooking(book.BookingID, book.BookingType)
+                }
+              >
+                {book.BookingNo}
+              </span>
               <span style={{ float: "right" }}>
                 {book.ETD !== "" || undefined || null
                   ? new Date(book.ETD).toLocaleDateString("en-US")
@@ -1384,20 +1203,6 @@ class Dashboard extends Component {
             </p>
             <p>
               POL : <span>{book.POL}</span>
-              {/* <HTMLEllipsis
-              unsafeHTML='sad sanas dsaahsa said saabh 
-              aihbd asa hsa siau sadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'
-              maxLine='5'
-              ellipsis='...'
-              basedOn='letters'
-              // text='sad sanas dsaahsa said saabh 
-              // aihbd asa hsa siau sadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'
-              // maxLine='3'
-              // ellipsis='...'
-              // trimLeft
-              // basedOn='letters'
-            />
-              <text>sad sanas dsaahsa said saabh aihbd asa hsa siau</text> */}
             </p>
 
             <p>
@@ -1414,7 +1219,21 @@ class Dashboard extends Component {
         return (
           <div key={i}>
             <p>
-              <span style={{ color: "#000", fontFamily: "Bold Font" }}>
+              <span
+                title={"Quotetion No"}
+                style={{
+                  color: "#000",
+                  fontFamily: "Bold Font",
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  self.handleQuote(
+                    quotes.SalesQuoteNumber,
+                    quotes.type,
+                    quotes.CurrentStatus
+                  );
+                }}
+              >
                 {quotes.SalesQuoteNumber}
               </span>
             </p>
@@ -1463,9 +1282,7 @@ class Dashboard extends Component {
     });
     return (
       <div>
-        {/* {loading == true ? (
-          <img src={LoadingImg} width="50" height="50" />
-        ) : null} */}
+        {}
 
         <Headers />
 
@@ -1475,11 +1292,7 @@ class Dashboard extends Component {
           </div>
           <div className="cls-rt">
             <div className="dash-outer">
-              {/* {this.state.loading === true ? (
-                <div className="loader-icon"></div>
-              ) : (
-                ""
-              )} */}
+              {}
               {this.state.checkMapview == true ? (
                 ""
               ) : (
@@ -1501,12 +1314,7 @@ class Dashboard extends Component {
                       />
                     </div>
                   </div>
-                  {/* <div
-                    className="container-fluid p-0"
-                    style={{
-                      display: this.state.IsWidgets != false ? "block" : "none"
-                    }}
-                  ></div> */}
+                  {}
                   <div className="row dash-sects-cntr">
                     <div className="col-12 col-sm-12 col-md-6 col-lg-3">
                       <div className="dash-sects">
@@ -1587,12 +1395,12 @@ class Dashboard extends Component {
                           )}
                         </div>
                         <div className="dash-sects-dtls">
-                          {/* <i className="fa fa-refresh fa-spin"></i> */}
+                          {}
                           <div className="dash-sects-dtls-inner">
                             {Invoices}
                           </div>
                         </div>
-                        {/* <span className="viewmore-span">...View More</span> */}
+                        {}
                       </div>
                     </div>
                   </div>
@@ -1607,61 +1415,13 @@ class Dashboard extends Component {
                       key={this.state.iframeKey}
                       src="/MapMarkerDashboard.html"
                       className="mapIframe"
-                      //sandbox="allow-top-navigation"
                     />
-                    {/* <MapWithAMakredInfoWindow
-                      searchData={this.state.searchData}
-                      markers={mapsData}
-                      onClick={this.handleClick}
-                      selectedMarker={selectedMarker}
-                      ModalData={ModalData}
-                      onPlaceSelected={this.onPlaceSelected}
-                      onChangeSearchBox={this.onChangeSearchBox}
-                      mapPosition={this.state.mapPosition}
-                      zoom={this.state.zoom}
-                      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                      containerElement={
-                        <div style={{ height: `100%`, width: "100%" }} />
-                      }
-                      mapElement={<div style={{ height: `100%` }} />}
-                      loadingElement={<div style={{ height: `100%` }} />}
-                    ></MapWithAMakredInfoWindow> */}
+                    {}
                   </div>
                 </div>
               )}
 
-              {/* <input
-                id="Ocean"
-                className="header-btn"
-                type="button"
-                value="Ocean-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Ocean")}
-              />
-              <input
-                id="Air"
-                className="header-btn"
-                type="button"
-                value="Air-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Air")}
-              />
-              <input
-                id="Delay-Ocean"
-                className="header-btn"
-                type="button"
-                value="Delay-Ocean-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Delay-Ocean")}
-              />
-              <input
-                id="Booking-Ocean"
-                className="header-btn"
-                type="button"
-                value="CurrentBooking-Shipment"
-                name="search-rate"
-                onClick={() => self.HandleShipmentPin("Booking-Ocean")}
-              /> */}
+              {}
             </div>
           </div>
         </div>

@@ -70,6 +70,7 @@ class RateSearch extends Component {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     if (fields[field].length >= 3) {
+      self.setState({fields})
       axios({
         method: "post",
         url: `${appSettings.APIURL}/CustomerList`,

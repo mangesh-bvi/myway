@@ -78,7 +78,8 @@ class RateFinalizingStill extends Component {
       modalPreview: false,
       todayDate: new Date(),
       filterrateSubDetails: [],
-      DocumentDetails: []
+      DocumentDetails: [],
+      SaleQuoteID:""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -156,6 +157,7 @@ class RateFinalizingStill extends Component {
         var TypeofMove = "";
         var IncoTerms = "";
         var CargoDetailsArr = [];
+        var SaleQuoteID="";
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -163,8 +165,9 @@ class RateFinalizingStill extends Component {
               if (response.data.Table.length > 0) {
                 TypeofMove = response.data.Table[0].TypeOfMove;
                 IncoTerms = response.data.Table[0].IncoTerm;
-
+                SaleQuoteID=response.data.Table[0].SaleQuoteID
                 self.setState({
+                  SaleQuoteID,
                   HazMat: response.data.Table[0].HAZMAT,
                   accountcustname:
                     response.data.Table[0].CompanyName == undefined
@@ -217,7 +220,7 @@ class RateFinalizingStill extends Component {
 
                 self.setState({
                   IncoTerms: IncoTerms,
-                  TypeofMove: TypeofMove,
+                  // TypeofMove: TypeofMove,
                   EquipmentTypes: response.data.Table1[0].ContainerCode,
                   Commodity: response.data.Table1[0].Commodity,
                   selectedCommodity: response.data.Table1[0].Commodity
@@ -269,6 +272,11 @@ class RateFinalizingStill extends Component {
           multiCBM: response.data.Table3,
           DocumentDetails: response.data.Table4
         });
+        if (response.data.Table4.length === 0) {
+          self.setState({
+            DocumentDetails: [{ FileName: "No File Found" }]
+          });
+        }
         self.forceUpdate();
         self.HandleSalesQuoteConditions();
         //console.log(response);
@@ -722,8 +730,6 @@ class RateFinalizingStill extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-     
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
@@ -886,7 +892,6 @@ class RateFinalizingStill extends Component {
       .then(function(response) {
         debugger;
         NotificationManager.success(response.data.Table[0].Result);
-        
       })
       .catch(error => {
         debugger;
@@ -1362,6 +1367,8 @@ class RateFinalizingStill extends Component {
       if (response.data.Table.length > 0) {
         self.setState({
           ConditionDesc: response.data.Table[0].conditionDesc
+            .split("\n")
+            .map((item, i) => <p key={i}>{item}</p>)
         });
       }
     });
@@ -1370,41 +1377,16 @@ class RateFinalizingStill extends Component {
   // Shlok End working
 
   render() {
-    var data1 = [
-      { validUntil: "Valid Until : JANUARY", tt: "TT", price: "$43.00" },
-      { validUntil: "Valid Until : MARCH", tt: "TT", price: "$88.00" }
-    ];
-    var data2 = [
-      {
-        chargeCode: "A23435",
-        chargeName: "Lorem",
-        units: "43",
-        unitPrice: "$134.00",
-        finalPayment: "$45,986.00"
-      },
-      {
-        chargeCode: "B45678",
-        chargeName: "Lorem",
-        units: "23",
-        unitPrice: "$56.45",
-        finalPayment: "$1200.00"
-      },
-      {
-        chargeCode: "C54545",
-        chargeName: "Lorem",
-        units: "56",
-        unitPrice: "$50.00",
-        finalPayment: "$3456.00"
-      }
-    ];
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
     } else {
       className = "butn m-0";
     }
-    if (typeof this.props.location.state != "undefined") {
-      var bookingNo = this.props.location.state.detail[0];
+    let status;
+    if (this.props.location.state) {
+      debugger;
+      status = this.props.location.state.detail.Status;
       // this.HandleShipmentDetails(bookingNo);
     }
     var DocumentCharges = [];
@@ -1427,8 +1409,7 @@ class RateFinalizingStill extends Component {
                 //   return <h2>Booking Details</h2>;
                 //  }
               })()}
-              {/* <h2>Rate Query Details</h2> */}
-              <h2>{this.props.location.state.detail.Status}</h2>
+              {/* <h2>Rate Query Details</h2> */} <h2>{status}</h2>
             </div>
             <div className="row">
               {/* <div className="col-md-4">
@@ -1514,25 +1495,25 @@ class RateFinalizingStill extends Component {
                       <h3>Quotation Price</h3>
                       <div>
                         {/* {this.state.toggleCustomerType && */}
-                         { this.state.QuoteStatus && (
-                            //QuoteStatus
-                            <button
-                              className="butn m-0 mr-3"
-                              onClick={this.toggleAcceptModal}
-                            >
-                              Accept
-                            </button>
-                          )}
+                        {this.state.QuoteStatus && (
+                          //QuoteStatus
+                          <button
+                            className="butn m-0 mr-3"
+                            onClick={this.toggleAcceptModal}
+                          >
+                            Accept
+                          </button>
+                        )}
                         {/* {this.state.toggleCustomerType && */}
-                          {this.state.QuoteStatus && (
-                            <button
-                              className="butn m-0"
-                              // onClick={this.RejectQuotes.bind(this)}
-                              onClick={this.toggleRejectModal}
-                            >
-                              Reject
-                            </button>
-                          )}
+                        {this.state.QuoteStatus && (
+                          <button
+                            className="butn m-0"
+                            // onClick={this.RejectQuotes.bind(this)}
+                            onClick={this.toggleRejectModal}
+                          >
+                            Reject
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="react-rate-table">
@@ -2219,13 +2200,13 @@ class RateFinalizingStill extends Component {
                     </div>
                     <div className="">
                       <div className="row">
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Account/Customer</p>
                           <p className="details-para">
                             {this.state.accountcustname}
                           </p>
                         </div>
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">Address</p>
                           <p className="details-para">
                             {this.state.custAddress}
@@ -2354,7 +2335,7 @@ class RateFinalizingStill extends Component {
                         {this.state.selectedFileName}
                       </p>
                     </div>
-                    <button
+                    {/* <button
                       className={className}
                       id="toggler"
                       onClick={() => {
@@ -2362,11 +2343,11 @@ class RateFinalizingStill extends Component {
                       }}
                     >
                       Upload File
-                    </button>
+                    </button> */}
 
                     <div className="row">
                       {" "}
-                      <div className="col-md-12 login-fields">
+                      <div className="col-md-12 login-fields mt-3">
                         <p className="details-title">Documents</p>
                         <div className="ag-fresh redirect-row">
                           <ReactTable
@@ -2389,21 +2370,27 @@ class RateFinalizingStill extends Component {
                                   // var y = current.getTime();
                                   // console.log(x);
                                   // console.log(y);
-                                  return (
-                                    <div className="action-cntr">
-                                      <a
-                                        onClick={e =>
-                                          this.HandleDowloadFile(e, row)
-                                        }
-                                      >
-                                        <img
-                                          className="actionicon"
-                                          src={Download}
-                                          alt="download-icon"
-                                        />
-                                      </a>
-                                    </div>
-                                  );
+                                  if (
+                                    row.original.FileName !== "No File Found"
+                                  ) {
+                                    return (
+                                      <div className="action-cntr">
+                                        <a
+                                          onClick={e =>
+                                            this.HandleDowloadFile(e, row)
+                                          }
+                                        >
+                                          <img
+                                            className="actionicon"
+                                            src={Download}
+                                            alt="download-icon"
+                                          />
+                                        </a>
+                                      </div>
+                                    );
+                                  } else {
+                                    return <></>;
+                                  }
                                 }
                               }
                             ]}
@@ -2472,7 +2459,7 @@ class RateFinalizingStill extends Component {
                         <>
                           <button
                             onClick={this.toggleBook}
-                            className="butn more-padd mt-4"
+                            className="butn more-padd mt-4 mr-3"
                           >
                             Create Booking
                           </button>
@@ -2751,7 +2738,9 @@ class RateFinalizingStill extends Component {
                         </Moment>
                       </span>
                     </p>
-                    <p>Sales Quote No. :</p>
+                    <p>
+                      Sales Quote No. :<span>{this.state.SaleQuoteID}</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -3245,7 +3234,7 @@ class RateFinalizingStill extends Component {
           </ModalBody>
         </Modal>
 
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout="3000"/>
       </React.Fragment>
     );
   }

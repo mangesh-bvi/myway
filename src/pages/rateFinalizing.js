@@ -2555,14 +2555,22 @@ class RateFinalizing extends Component {
             for (var i = 0; i < flattack_openTop.length; i++) {
               RateQueryDim.push({
                 Quantity: flattack_openTop[i].Quantity,
-                Lengths: flattack_openTop[i].length==undefined?flattack_openTop[i].Lengths:
-                         flattack_openTop[i].length,
-                Width: flattack_openTop[i].width==undefined?flattack_openTop[i].Width:
-                       flattack_openTop[i].width,
-                Height: flattack_openTop[i].height==undefined?flattack_openTop[i].Height:
-                        flattack_openTop[i].height,
-                GrossWt: flattack_openTop[i].Gross_Weight==undefined?flattack_openTop[i].Weight:
-                         flattack_openTop[i].Gross_Weight,
+                Lengths:
+                  flattack_openTop[i].length == undefined
+                    ? flattack_openTop[i].Lengths
+                    : flattack_openTop[i].length,
+                Width:
+                  flattack_openTop[i].width == undefined
+                    ? flattack_openTop[i].Width
+                    : flattack_openTop[i].width,
+                Height:
+                  flattack_openTop[i].height == undefined
+                    ? flattack_openTop[i].Height
+                    : flattack_openTop[i].height,
+                GrossWt:
+                  flattack_openTop[i].Gross_Weight == undefined
+                    ? flattack_openTop[i].Weight
+                    : flattack_openTop[i].Gross_Weight,
                 VolumeWeight: 0,
                 Volume: 0,
                 PackageType:
@@ -2646,19 +2654,19 @@ class RateFinalizing extends Component {
           });
         }
         var cbmVal = this.state.cbmVal;
-
+        debugger;
         if (cbmVal != null) {
           if (cbmVal != "") {
             if (cbmVal != "0") {
               RateQueryDim.push({
-                Quantity: TruckTypeData[i].Quantity,
+                Quantity: 0,//TruckTypeData[i].Quantity || 0,
                 Lengths: 0,
                 Width: 0,
                 Height: 0,
                 GrossWt: 0,
                 VolumeWeight: 0,
                 Volume: 0,
-                PackageType: TruckTypeData[i].TruckDesc
+                PackageType: "" //TruckTypeData[i].TruckDesc
               });
             }
           }
@@ -3288,7 +3296,29 @@ class RateFinalizing extends Component {
                   : this.state.rateDetails[i].TotalAmount
               ) + parseFloat(e.target.value);
             // }
+            this.state.rateDetails[i].TotalAmount =
+              this.state.rateDetails[i].TotalAmount +
+              this.state.rateDetails[i].ContainerQuantity *
+                e.target.getAttribute("data-amountinbasecurrency");
 
+            if (this.state.isCopy === true) {
+              var total = 0;
+              var currency = "";
+
+              var data = this.state.rateDetails[i].Total.split(" ");
+              total = data[0];
+              currency = data[1];
+
+              var final_sum =
+                parseFloat(total) +
+                this.state.rateDetails[i].ContainerQuantity *
+                  e.target.getAttribute("data-amountinbasecurrency");
+
+              this.state.rateDetails[i].Total = final_sum + " " + currency;
+            }
+            var calAmount =
+              this.state.rateDetails[i].ContainerQuantity *
+              e.target.getAttribute("data-amountinbasecurrency");
             var newrateSubDetails = {
               // BaseCurrency: e.target.getAttribute("data-currency"),
               // ChargeCode: e.target.getAttribute("data-chargedesc"),
@@ -3319,7 +3349,8 @@ class RateFinalizing extends Component {
               Exrate: 1,
               ChargeType: e.target.getAttribute("data-chargetype"),
               TotalAmount: parseFloat(
-                e.target.getAttribute("data-amountinbasecurrency")
+                // e.target.getAttribute("data-amountinbasecurrency")
+                calAmount
               ),
               BaseCurrency: e.target.getAttribute("data-currency")
             };
@@ -3396,19 +3427,36 @@ class RateFinalizing extends Component {
       this.forceUpdate();
     }
     if (!e.target.checked) {
+      debugger;
       for (var i = 0; i < rateDetailsarr.length; i++) {
         if (
           this.state.containerLoadType == "FCL"
             ? element.ContainerType !== "ALL" && element.LineId !== 0
             : element.LineId !== 0
         ) {
-          if (element.LineName == rateDetailsarr[i].lineName) {
-            if (this.state.rateDetails[i].TotalAmount == undefined) {
+          debugger;
+          var linename = "";
+          if (rateDetailsarr[i].lineName) {
+            linename = rateDetailsarr[i].lineName;
+          } else {
+            linename = rateDetailsarr[i].Linename;
+          }
+
+          if (element.LineName == linename) {
+            if (
+              this.state.rateDetails[i].TotalAmount == undefined ||
+              this.state.isCopy === true
+            ) {
               var amount = this.processText(this.state.rateDetails[i].Total);
+
+              var qty = 1;
+              if (this.state.rateDetails[i].ContainerQuantity) {
+                qty = this.state.rateDetails[i].ContainerQuantity;
+              }
 
               this.state.rateDetails[i].Total =
                 parseFloat(amount[0]) -
-                parseFloat(e.target.value) +
+                parseFloat(e.target.value * qty) +
                 " " +
                 amount[1];
             } else {
@@ -3427,6 +3475,7 @@ class RateFinalizing extends Component {
             }
           }
         } else {
+          debugger;
           if (this.state.rateDetails[i].TotalAmount == undefined) {
             var amount = this.processText(this.state.rateDetails[i].Total);
 
@@ -3612,6 +3661,7 @@ class RateFinalizing extends Component {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     if (fields[field].length >= 3) {
+      self.setState({fields})
       axios({
         method: "post",
         url: `${appSettings.APIURL}/CustomerList`,
@@ -3681,6 +3731,7 @@ class RateFinalizing extends Component {
     SalesQuoteNumber = self.state.SalesQuoteNo;
     QuoteType = self.state.containerLoadType;
 
+    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
     debugger;
     axios({
       method: "post",
@@ -3699,7 +3750,10 @@ class RateFinalizing extends Component {
           if (response.data != null) {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
-                NotificationManager.success(response.data.Table[0].Message);
+                if (usertype !== "Sales User") {
+                } else {
+                  NotificationManager.success(response.data.Table[0].Message);
+                }
               }
             }
           }
@@ -3772,6 +3826,8 @@ class RateFinalizing extends Component {
       if (response.data.Table.length > 0) {
         self.setState({
           ConditionDesc: response.data.Table[0].conditionDesc
+            .split("\n")
+            .map((item, i) => <p key={i}>{item}</p>)
         });
       }
     });
@@ -3901,11 +3957,13 @@ class RateFinalizing extends Component {
               value={el.PackageType}
             >
               <option selected>Select</option>
-              {this.state.packageTypeData!==undefined?this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageName}>
-                  {item.PackageName}
-                </option>
-              )):null}
+              {this.state.packageTypeData !== undefined
+                ? this.state.packageTypeData.map((item, i) => (
+                    <option key={i} value={item.PackageName}>
+                      {item.PackageName}
+                    </option>
+                  ))
+                : null}
             </select>
           </div>
         </div>
@@ -4719,8 +4777,30 @@ class RateFinalizing extends Component {
               <div className="col-md-9">
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
-                    <div className="title-border py-3">
+                    <div className="title-border py-3 d-flex align-items-center justify-content-between">
                       <h3>Quotation Price</h3>
+                      <div className="d-flex">
+                        <div className="align-center mr-3">
+                          {this.state.toggleAddProfitBtn && (
+                            <button
+                              onClick={this.toggleProfit}
+                              className="butn more-padd m-0"
+                            >
+                              Add Profit
+                            </button>
+                          )}
+                        </div>
+                        <div className="text-center">
+                          {this.state.toggleIsEdit && (
+                            <button
+                              onClick={this.RequestChangeMsgModal}
+                              className="butn more-padd m-0"
+                            >
+                              Request Change
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     {/* <div className="react-rate-table">
                       <ReactTable
@@ -5337,23 +5417,35 @@ class RateFinalizing extends Component {
                               },
                               {
                                 Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Price</p>
-                                      <p className="details-para">
-                                        {row.original.TotalAmount !== undefined
-                                          ? row.original.TotalAmount !== "" &&
-                                            row.original.TotalAmount !== null
-                                            ? row.original.TotalAmount +
-                                              0 +
-                                              row.original.BaseCurrency
-                                            : 0
-                                          : row.original.Total === undefined
-                                          ? 0
-                                          : row.original.Total}
-                                      </p>
-                                    </>
-                                  );
+                                  if (this.state.isCopy === true) {
+                                    return (
+                                      <>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.Total}
+                                        </p>
+                                      </>
+                                    );
+                                  } else {
+                                    return (
+                                      <>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.TotalAmount !==
+                                          undefined
+                                            ? row.original.TotalAmount !== "" &&
+                                              row.original.TotalAmount !== null
+                                              ? row.original.TotalAmount +
+                                                0 +
+                                                row.original.BaseCurrency
+                                              : 0
+                                            : row.original.Total === undefined
+                                            ? 0
+                                            : row.original.Total}
+                                        </p>
+                                      </>
+                                    );
+                                  }
                                 },
                                 accessor: "Total",
                                 filterable: true,
@@ -5705,7 +5797,7 @@ class RateFinalizing extends Component {
                     </div>
                   </div>
 
-                  <div className="row m-0 p-3">
+                  {/* <div className="row m-0 p-3">
                     <div className="align-center">
                       {this.state.toggleAddProfitBtn && (
                         <button
@@ -5726,7 +5818,7 @@ class RateFinalizing extends Component {
                         </button>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                   <div className="rate-final-contr">
                     {/* <div className="text-center">
                       {this.state.toggleIsEdit && (
@@ -5739,20 +5831,6 @@ class RateFinalizing extends Component {
                       )}
                     </div> */}
 
-                    <div
-                      className="title-border py-3 d-flex align-items-center justify-content-between"
-                      style={{ marginBottom: "15px" }}
-                    >
-                      <h3>Cargo Details</h3>
-                      <div className="align-center">
-                        <button
-                          onClick={this.toggleEdit}
-                          className="butn more-padd m-0"
-                        >
-                          Cargo Details
-                        </button>
-                      </div>
-                    </div>
                     <div className="ag-fresh redirect-row">
                       {TruckDetailsArr.length !== 0 ? (
                         <ReactTable
@@ -6019,6 +6097,36 @@ class RateFinalizing extends Component {
                         )}
                       </div>
                     ) : null}
+                    {/* <div className="row">
+                      <div className="col-md-6 login-fields">
+                        <p className="details-title">Commodity</p>
+                        <select
+                          //disabled={true}
+                          value={this.state.CommodityID}
+                          onChange={this.commoditySelect.bind(this)}
+                        >
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.id}>
+                              {item.Commodity}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div> */}
+                    <div
+                      className="title-border py-3 d-flex align-items-center justify-content-between"
+                      style={{ marginBottom: "15px" }}
+                    >
+                      <h3>Cargo Details</h3>
+                      <div className="align-center">
+                        <button
+                          onClick={this.toggleEdit}
+                          className="butn more-padd m-0"
+                        >
+                          Cargo Details
+                        </button>
+                      </div>
+                    </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
@@ -6043,6 +6151,7 @@ class RateFinalizing extends Component {
                         </select>
                       </div> */}
                     </div>
+
                     <div className="text-right">
                       {/* <a href={Dummy} target="_blank" className="butn mr-3">
                         Preview
@@ -6921,6 +7030,27 @@ class RateFinalizing extends Component {
                                   : this.state.polfullAddData.OceanPortLongName}
                               </span>
                             </label>
+                            {/* <label>
+                              POD :{" "}
+                              <span>
+                                {this.state.isCopy == true
+                                  ? this.state.DestinationAddress
+                                  : this.state.podfullAddData.OceanPortLongName}
+                              </span>
+                            </label> */}
+                          </div>
+                          <div className="col-12 col-sm-4">
+                            <label>
+                              Service Type :{" "}
+                              <span>
+                                {item.TransshipmentPort === null
+                                  ? "Direct"
+                                  : item.TransshipmentPort}
+                              </span>
+                            </label>
+                            {/* <label>
+                              Inco Terms : <span>{this.state.incoTerm}</span>
+                            </label> */}
                             <label>
                               POD :{" "}
                               <span>
@@ -6932,25 +7062,15 @@ class RateFinalizing extends Component {
                           </div>
                           <div className="col-12 col-sm-4">
                             <label>
-                              Service Type :{" "}
-                              <span>
-                                {item.TransshipmentPort === null
-                                  ? "Direct"
-                                  : item.TransshipmentPort}
-                              </span>
-                            </label>
-                            <label>
-                              Inco Terms : <span>{this.state.incoTerm}</span>
-                            </label>
-                          </div>
-                          <div className="col-12 col-sm-4">
-                            <label>
                               Liner :{" "}
                               <span>
                                 {this.state.isCopy == true
                                   ? item.Linename
                                   : item.lineName}
                               </span>
+                            </label>
+                            <label>
+                              Inco Terms : <span>{this.state.incoTerm}</span>
                             </label>
                           </div>
                         </div>
@@ -7161,7 +7281,7 @@ class RateFinalizing extends Component {
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th>
+                                <th className="total-align">
                                   {this.state.filterrateSubDetails.length !== 0
                                     ? this.state.filterrateSubDetails.reduce(
                                         (sum, filterrateSubDetails) =>
@@ -7538,7 +7658,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
         </div>
-        <NotificationContainer/>
+        <NotificationContainer leaveTimeout="3000" />
       </React.Fragment>
     );
   }

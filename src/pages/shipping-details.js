@@ -142,20 +142,25 @@ class ShippingDetails extends Component {
 
   toggleShare(e) {
     e.stopPropagation();
+    debugger;
+    var URL = window.location.host;
+
     this.setState(prevState => ({
       modalShare: !prevState.modalShare,
       copied: false,
-      shareLink: "http://myway.demo.brainvire.net/track-shipment2?hblno="
+      shareLink: URL + "/track-shipment2?hblno="
     }));
   }
 
   HandleDocumentView(evt, row) {
     debugger;
     evt.stopPropagation();
+    var URL = window.location.host;
+    var shareLink = URL + "/track-shipment2?";
     var hblNo = row.original["Encoding_HBl#"];
     this.setState(prevState => ({
       modalShare: !prevState.modalShare,
-      shareLink: this.state.shareLink + hblNo
+      shareLink: shareLink + hblNo
     }));
   }
 
@@ -240,11 +245,16 @@ class ShippingDetails extends Component {
   HandleRowClickEvt = (rowInfo, column) => {
     return {
       onClick: e => {
-        var hblNo = column.original["HBL#"];
-        var eventManage = column.original["Event"];
-        var pol = column.original["POL"];
-        if (pol !== "No record found" && pol !== "No Record Found") {
-          this.HandleChangeShipmentDetails(hblNo, eventManage);
+        debugger;
+        if (column.row.POL === "No Record Found") {
+          return false;
+        } else {
+          var pol = column.original["POL"];
+          if (pol !== "No record found" && pol !== "No Record Found") {
+            var hblNo = column.original["HBL#"];
+            var eventManage = column.original["Event"];
+            this.HandleChangeShipmentDetails(hblNo, eventManage);
+          }
         }
       }
     };
@@ -276,12 +286,16 @@ class ShippingDetails extends Component {
   }
   handleAdvanceSearchModalClose() {
     this.setState({
+      FrDepDate: null,
+      ToDepDate: null,
+      FrArrDate: null,
+      ToArrDate: null,
       modalAdvSearch: false,
       fields: {},
       originCountry: "",
       destCountry: "",
-      ConsigneeID: "",
-      ShipperID: ""
+      ConsigneeID: 0,
+      ShipperID: 0
     });
   }
 
@@ -304,7 +318,9 @@ class ShippingDetails extends Component {
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
-
+    self.setState({
+      fields
+    });
     if (fields[field].length > 3) {
       debugger;
       axios({
@@ -339,12 +355,12 @@ class ShippingDetails extends Component {
     } else {
       if (field === "Consignee") {
         self.setState({
-          //Consignee: response.data.Table,
+          Consignee: [],
           fields
         });
       } else {
         self.setState({
-          //Shipper: response.data.Table,
+          Shipper: [],
           fields
         });
       }
@@ -398,41 +414,55 @@ class ShippingDetails extends Component {
 
   HandleChangePOLPOD(field, e) {
     debugger;
-    let self = this;
-    let fields = this.state.fields;
-    fields[field] = e.target.value;
-    if (fields[field].length > 3) {
-      self.setState({
-        POL: []
-      });
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/PolPodByCountry`,
-        data: {
-          Mode: this.state.fields["ModeOfTransport"],
-          Search: fields[field]
-          // CountryCode: "IN"
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        debugger;
+    if (this.state.fields["ModeOfTransport"]) {
+      let self = this;
+      let fields = this.state.fields;
+      fields[field] = e.target.value;
+      if (fields[field].length > 3) {
+        self.setState({
+          fields,
+          POL: []
+        });
+        axios({
+          method: "post",
+          url: `${appSettings.APIURL}/PolPodByCountry`,
+          data: {
+            Mode: this.state.fields["ModeOfTransport"],
+            Search: fields[field]
+            // CountryCode: "IN"
+          },
+          headers: authHeader()
+        }).then(function(response) {
+          debugger;
+          if (field === "POL") {
+            self.setState({
+              POL: response.data.Table
+            });
+          } else {
+            self.setState({
+              POD: response.data.Table
+            });
+          }
+        });
+        this.setState({
+          fields
+        });
+      } else {
         if (field === "POL") {
-          self.setState({
-            POL: response.data.Table
+          this.setState({
+            fields,
+            POL: []
           });
         } else {
-          self.setState({
-            POD: response.data.Table
+          this.setState({
+            fields,
+            POD: []
           });
         }
-      });
-      this.setState({
-        fields
-      });
+      }
     } else {
-      this.setState({
-        fields
-      });
+      NotificationManager.error("Please select Mode of Transport");
+      return false;
     }
   }
 
@@ -497,97 +527,164 @@ class ShippingDetails extends Component {
 
   handleSubmit = () => {
     debugger;
-    let self = this;
+    if (this.state.fields["ModeOfTransport"]) {
+      let self = this;
 
-    var FromETDDate = document.getElementById("FrDepDate").value;
-    var ToETDDate = document.getElementById("ToDepDate").value;
-    var FromETADate = document.getElementById("FrArrDate").value;
-    var ToETADate = document.getElementById("ToArrDate").value;
-    var OriginCountry = "";
-    if (this.state.originCountry.length > 0) {
-      OriginCountry = this.state.originCountry;
-    }
+      var FromETDDate = "";
 
-    var DestCntry = "";
-    if (this.state.destCountry.length > 0) {
-      DestCntry = this.state.destCountry;
-    }
+      if (document.getElementById("FrDepDate").value !== "") {
+        var date = new Date(document.getElementById("FrDepDate").value);
+        FromETDDate =
+          date.getFullYear() +
+          "-" +
+          (date.getMonth() + 1) +
+          "-" +
+          date.getDate();
+      } else {
+        FromETDDate = "";
+      }
+      var ToETDDate = "";
+      if (document.getElementById("ToDepDate").value !== "") {
+        var date1 = new Date(document.getElementById("ToDepDate").value);
 
-    var Consignee = this.state.ConsigneeID;
-    var Shipper = this.state.ShipperID;
-    var pol = this.state.fields["POL"] || "";
-    var pod = this.state.fields["POD"] || "";
-    var ShipmentStage = this.state.fields["ShipmentStage"] || "";
-    var ModeOfTransport = this.state.fields["ModeOfTransport"] || "";
-    var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    // self.setState({loading:false});
+        ToETDDate =
+          date1.getFullYear() +
+          "-" +
+          (date1.getMonth() + 1) +
+          "-" +
+          date1.getDate();
+      } else {
+        ToETDDate = "";
+      }
 
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/TrackShipmentSearch`,
-      data: {
-        StageID: ShipmentStage,
-        // this.state.fields["ShipmentStage"] === undefined
-        //   ? ""
-        //   : parseInt(this.state.fields["ShipmentStage"]),
-        ModeofTransport: ModeOfTransport,
-        // this.state.fields["ModeOfTransport"] === undefined
-        //   ? ""
-        //   : this.state.fields["ModeOfTransport"],
-        UserID: userid,
-        FromETADate: FromETADate,
-        ToETADate: ToETADate,
-        FromETDDate: FromETDDate,
-        ToETDDate: ToETDDate,
-        OriginCntry: OriginCountry,
-        DestCntry: DestCntry,
-        POL: pol,
-        // this.state.fields["POL"] === undefined
-        //   ? ""
-        //   : this.state.fields["POL"],
-        POD: pod,
-        // this.state.fields["POD"] === undefined
-        //   ? ""
-        //   : this.state.fields["POD"],
-        ShipperID: Shipper,
-        ConsigneeID: Consignee
-      },
-      headers: authHeader()
-    })
-      .then(function(response) {
-        debugger;
-        self.setState({ shipmentSummary: [], loading: false });
-        for (let i = 0; i < response.data.Table.length; i++) {
-          self.state.shipmentSummary.push({
-            "BL/HBL": response.data.Table[0]["BL#/HBL#"],
-            Consignee: response.data.Table[i]["Consignee"],
-            ConsigneeID: response.data.Table[i]["ConsigneeID"],
-            ETA: response.data.Table[i]["ETA"],
-            ETD: response.data.Table[i]["ETD"],
-            Event: "N/A",
-            "HBL#": response.data.Table[i]["HBL#"],
-            ModeOfTransport: response.data.Table[i]["ModeOfTransport"],
-            POD: response.data.Table[i]["POD"],
-            POL: response.data.Table[i]["POL"],
-            SR_No: i + 1,
-            Shipper: response.data.Table[i]["Shipper"],
-            ShipperID: response.data.Table[i]["ShipperID"],
-            Status: response.data.Table[i]["Current_Status"]
-          });
-        }
-        // self.setState({  });
-        self.setState(prevState => ({
-          shipmentSummary: self.state.shipmentSummary
-        }));
+      var FromETADate = "";
+      if (document.getElementById("FrArrDate").value !== "") {
+        var date2 = new Date(document.getElementById("FrArrDate").value);
+
+        FromETADate =
+          date2.getFullYear() +
+          "-" +
+          (date2.getMonth() + 1) +
+          "-" +
+          date2.getDate();
+      } else {
+        FromETADate = "";
+      }
+      var ToETADate = "";
+      if (document.getElementById("ToArrDate").value !== "") {
+        var date3 = new Date(document.getElementById("ToArrDate").value);
+        var ToETADate =
+          date3.getFullYear() +
+          "-" +
+          (date3.getMonth() + 1) +
+          "-" +
+          date3.getDate();
+      } else {
+        ToETADate = "";
+      }
+
+      var OriginCountry = "";
+      if (this.state.originCountry.length > 0) {
+        OriginCountry =
+          this.state.originCountry !== "Select" ? this.state.originCountry : "";
+      }
+
+      var DestCntry = "";
+      if (this.state.destCountry.length > 0) {
+        DestCntry =
+          this.state.destCountry !== "Select" ? this.state.destCountry : "";
+      }
+
+      var Consignee = this.state.ConsigneeID;
+      var Shipper = this.state.ShipperID;
+      var pol = this.state.fields["POL"] || "";
+      var pod = this.state.fields["POD"] || "";
+      var ShipmentStage = Number(this.state.fields["ShipmentStage"]) || 0;
+      var ModeOfTransport = this.state.fields["ModeOfTransport"] || "";
+      var userid = encryption(window.localStorage.getItem("userid"), "desc");
+      // self.setState({loading:false});
+
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/TrackShipmentSearch`,
+        data: {
+          StageID: ShipmentStage,
+          // this.state.fields["ShipmentStage"] === undefined
+          //   ? ""
+          //   : parseInt(this.state.fields["ShipmentStage"]),
+          ModeofTransport: ModeOfTransport,
+          // this.state.fields["ModeOfTransport"] === undefined
+          //   ? ""
+          //   : this.state.fields["ModeOfTransport"],
+          UserID: userid,
+          FromETADate: FromETADate,
+          ToETADate: ToETADate,
+          FromETDDate: FromETDDate,
+          ToETDDate: ToETDDate,
+          OriginCntry: OriginCountry,
+          DestCntry: DestCntry,
+          POL: pol,
+          // this.state.fields["POL"] === undefined
+          //   ? ""
+          //   : this.state.fields["POL"],
+          POD: pod,
+          // this.state.fields["POD"] === undefined
+          //   ? ""
+          //   : this.state.fields["POD"],
+          ShipperID: Shipper,
+          ConsigneeID: Consignee
+        },
+        headers: authHeader()
       })
-      .catch(error => {
-        var data = error.response.data;
-        if (data) {
-          self.setState({ shipmentSummary: [{ POL: "No Record Found" }] });
-        }
+        .then(function(response) {
+          debugger;
+          self.setState({
+            shipmentSummary: [],
+            loading: false
+          });
+          for (let i = 0; i < response.data.Table.length; i++) {
+            self.state.shipmentSummary.push({
+              "BL/HBL": response.data.Table[0]["BL#/HBL#"],
+              Consignee: response.data.Table[i]["Consignee"],
+              ConsigneeID: response.data.Table[i]["ConsigneeID"],
+              ETA: response.data.Table[i]["ETA"],
+              ETD: response.data.Table[i]["ETD"],
+              Event: "N/A",
+              "HBL#": response.data.Table[i]["HBL#"],
+              ModeOfTransport: response.data.Table[i]["ModeOfTransport"],
+              POD: response.data.Table[i]["POD"],
+              POL: response.data.Table[i]["POL"],
+              SR_No: i + 1,
+              Shipper: response.data.Table[i]["Shipper"],
+              ShipperID: response.data.Table[i]["ShipperID"],
+              Status: response.data.Table[i]["Current_Status"]
+            });
+          }
+          // self.setState({  });
+          self.setState(prevState => ({
+            shipmentSummary: self.state.shipmentSummary
+          }));
+        })
+        .catch(error => {
+          var data = error.response.data;
+          if (data) {
+            self.setState({
+              shipmentSummary: [
+                {
+                  POL: "No Record Found"
+                }
+              ]
+            });
+          }
+        });
+
+      this.setState({
+        shipmentSummary: []
       });
-    this.setState({ shipmentSummary: [] });
-    this.handleAdvanceSearchModalClose();
+      this.handleAdvanceSearchModalClose();
+    } else {
+      NotificationManager.error("Please select Mode of transport");
+    }
   };
 
   handleValidation() {
@@ -622,7 +719,7 @@ class ShippingDetails extends Component {
             </div>
           ) : (
             <div className="cls-rt">
-              <NotificationContainer />
+              <NotificationContainer leaveTimeout="3000" />
               <div className="title-sect d-block-xs btnxs">
                 <h2>Shipments</h2>
                 <div className="d-flex d-block-xs align-items-center">
@@ -661,14 +758,13 @@ class ShippingDetails extends Component {
                   >
                     Advance Search
                   </button>
-                  <a
-                    href="#!"
+                  <button
                     onClick={this.MapButn}
                     style={{ display: this.state.mapDis }}
                     className="butn"
                   >
                     Map View
-                  </a>
+                  </button>
                 </div>
               </div>
               <div style={{ display: this.state.listDis }} className="map-tab">
@@ -926,21 +1022,26 @@ class ShippingDetails extends Component {
                         },
                         {
                           Cell: row => {
-                            debugger;
-                            if (
-                              row.original.POL !== "No record found" &&
-                              row.original.POL !== "No Record Found"
-                            ) {
-                              return (
-                                <i
-                                  className="fa fa-share-alt shareicon"
-                                  // onClick={this.toggleShare}
-                                  onClick={e => this.HandleDocumentView(e, row)}
-                                  aria-hidden="true"
-                                ></i>
-                              );
+                            if (row.row.POL === "No Record Found") {
+                              return <></>;
                             } else {
-                              return <div></div>;
+                              if (
+                                row.original.POL !== "No record found" &&
+                                row.original.POL !== "No Record Found"
+                              ) {
+                                return (
+                                  <i
+                                    className="fa fa-share-alt shareicon"
+                                    // onClick={this.toggleShare}
+                                    onClick={e =>
+                                      this.HandleDocumentView(e, row)
+                                    }
+                                    aria-hidden="true"
+                                  ></i>
+                                );
+                              } else {
+                                return <div></div>;
+                              }
                             }
                           },
                           Header: row => {
@@ -964,7 +1065,8 @@ class ShippingDetails extends Component {
                         };
                       },
                       filterMethod: (filter, rows) => {
-                        const result = matchSorter(rows, filter.value, {
+                        debugger;
+                        var result = matchSorter(rows, filter.value, {
                           keys: [
                             "BL/HBL",
                             "HBL#",
@@ -980,8 +1082,12 @@ class ShippingDetails extends Component {
                           ],
                           threshold: matchSorter.rankings.WORD_STARTS_WITH
                         });
-
-                        return result;
+                        if (result.length > 0) {
+                          return result;
+                        } else {
+                          result = [{ POL: "No Record Found" }];
+                          return result;
+                        }
                       },
                       filterAll: true
                     }
@@ -1183,22 +1289,7 @@ class ShippingDetails extends Component {
                               >
                                 Shipper
                               </label>
-                              {/* <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                            /> */}
 
-                              {/* <Autosuggest
-                            suggestions={suggestions}
-                            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-                            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-                            getSuggestionValue={this.getSuggestionValue}
-                            renderSuggestion={this.renderSuggestion}
-                            inputProps={inputShip}
-                          /> */}
                               <div className="position-relative">
                                 <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
                                   <Autocomplete

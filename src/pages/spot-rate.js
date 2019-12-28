@@ -58,7 +58,7 @@ class SpotRate extends Component {
   render() {
     return (
       <div>
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout="3000" />
         <Headers />
         <div className="cls-ofl">
           <div className="cls-flside">

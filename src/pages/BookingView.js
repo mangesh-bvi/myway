@@ -9,6 +9,7 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
+import Download from "./../assets/img/csv.png";
 
 import { encryption, convertToPlain } from "../helpers/encryption";
 const imageAsset = "./../assets/img";
@@ -90,7 +91,7 @@ class BookingView extends Component {
       Shipper_Name: "",
       CargoType: "",
       Incoterm: "",
-      companyID:0,
+      companyID: 0,
       contact_name: "",
       company_name: "",
       Company_Address: "",
@@ -101,6 +102,7 @@ class BookingView extends Component {
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
   componentDidMount() {
+    debugger;
     if (this.props.location.state.BookingNo && this.props.location.state.Mode) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -133,7 +135,37 @@ class BookingView extends Component {
         }
       }
     } else {
-      this.props.history.push("/booking-table");
+      if (this.props.location.state.bookingNo) {
+        var userType = encryption(
+          window.localStorage.getItem("usertype"),
+          "desc"
+        );
+        var BookingNo = this.props.location.state.bookingNo;
+        var ModeofTransport = this.props.location.state.Mode;
+
+        this.setState({
+          BookingNo,
+          userType,
+          isView: true
+        });
+        if (ModeofTransport === "AIR") {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsListAIR();
+            this.NonCustomerList();
+          }, 300);
+        } else {
+          setTimeout(() => {
+            this.HandleCommodityDropdown();
+            this.HandlePackgeTypeData();
+            this.BookigGridDetailsList();
+            this.NonCustomerList();
+          }, 300);
+        }
+      } else {
+        this.props.history.push("/booking-table");
+      }
     }
   }
 
@@ -518,22 +550,21 @@ class BookingView extends Component {
             });
           }
 
-          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
+          if (FileData.length > 0) {
             self.setState({ FileData });
+          } else {
+            self.setState({ FileData: [{ FileName: "No File Found" }] });
           }
         }
 
         if (Table6.length > 0) {
-          var companyID=0;
-          if(Table6[0].contact_name)
-          {
-          Company_Address = Table6[0].Company_Address;
-          contact_name = Table6[0].contact_name;
-          company_name = Table6[0].company_name;
-          }
-          else
-          {
-            var companyID= Table6[0].CompanyID
+          var companyID = 0;
+          if (Table6[0].contact_name) {
+            Company_Address = Table6[0].Company_Address;
+            contact_name = Table6[0].contact_name;
+            company_name = Table6[0].company_name;
+          } else {
+            var companyID = Table6[0].CompanyID;
             Company_Address = Table6[0].Company_Address;
             contact_name = Table6[0].ContactName;
             company_name = Table6[0].CompanyName;
@@ -666,33 +697,6 @@ class BookingView extends Component {
 
             var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
 
-            // if (DefaultEntityTypeID === ShipperID) {
-            //   companyID = ShipperID;
-            //   CompanyAddress = Shipper_Displayas;
-            //   Company_Name = Shipper_Name;
-            //   Company_AddressID = Shipper_AddressID;
-            // }
-            // if (DefaultEntityTypeID === BuyerID) {
-            //   companyID = BuyerID;
-            //   CompanyAddress = Buyer_Displayas;
-            //   Company_Name = BuyerName;
-            //   Company_AddressID = Buyer_AddressID;
-            // }
-
-            // if (DefaultEntityTypeID === Consignee) {
-            //   companyID = Consignee;
-            //   CompanyAddress = Consignee_Displayas;
-            //   Company_Name = Consignee_Name;
-            //   Company_AddressID = Consignee_AddressID;
-            // }
-
-            // if (DefaultEntityTypeID === NotifyID) {
-            //   companyID = NotifyID;
-            //   CompanyAddress = Notify_Displayas;
-            //   Company_Name = NotifyName;
-            //   Company_AddressID = Notify_AddressID;
-            // }
-
             self.setState({
               DefaultEntityTypeID,
 
@@ -759,6 +763,7 @@ class BookingView extends Component {
   }
 
   HandleFileOpen(filePath) {
+    debugger;
     var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -889,7 +894,7 @@ class BookingView extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-                               
+
                                   var lname = "";
                                   var olname = "";
                                   if (row._original.Linename) {
@@ -1061,7 +1066,10 @@ class BookingView extends Component {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
-                                data={this.state.QuotationSubData.filter(x=>x.SaleQuoteID===row.original.SaleQuoteID1)}
+                                data={this.state.QuotationSubData.filter(
+                                  x =>
+                                    x.SaleQuoteID === row.original.SaleQuoteID1
+                                )}
                                 columns={[
                                   {
                                     columns: [
@@ -1308,35 +1316,6 @@ class BookingView extends Component {
                             <p className="details-para">
                               {this.state.fields["Consignee"]}
                             </p>
-                            {/* <Autocomplete
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.Consignee}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    // width:"100%",
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                  value={item.Company_ID}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Consignee"
-                              )}
-                              // menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                item => item.Company_ID,
-                                "Consignee"
-                              )}
-                              value={this.state.fields["Consignee"]}
-                              autoComplete="off"
-                            /> */}
                           </div>
 
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3">
@@ -1359,33 +1338,6 @@ class BookingView extends Component {
                             <p className="details-para">
                               {this.state.fields["Shipper"]}
                             </p>
-                            {/* <Autocomplete
-                              getItemValue={item => item.Company_Name}
-                              items={this.state.Shipper}
-                              renderItem={(item, isHighlighted) => (
-                                <div
-                                  style={{
-                                    background: isHighlighted
-                                      ? "lightgray"
-                                      : "white"
-                                  }}
-                                >
-                                  {item.Company_Name}
-                                </div>
-                              )}
-                              value={this.state.fields["Shipper"]}
-                              onChange={this.HandleChangeCon.bind(
-                                this,
-                                "Shipper"
-                              )}
-                              // menuStyle={this.state.menuStyle}
-                              onSelect={this.handleSelectCon.bind(
-                                this,
-                                item => item.Company_ID,
-                                "Shipper"
-                              )}
-                              autoComplete="off"
-                            /> */}
                           </div>
 
                           <div className="col-md-4">
@@ -1408,18 +1360,6 @@ class BookingView extends Component {
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
                               {this.state.BuyerName}
-
-                              {/* <select
-                                onChange={this.HandleChangeBuyer.bind(this)}
-                                value={this.state.BuyerID}
-                              >
-                                <option selected>select</option>
-                                {this.state.NonCustomerData.map((item, i) => (
-                                  <option key={i} value={item.Company_ID}>
-                                    {item.Company_Name}
-                                  </option>
-                                ))}
-                              </select> */}
                             </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-4 login-fields">
@@ -1443,17 +1383,6 @@ class BookingView extends Component {
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
                               {this.state.NotifyName}
-                              {/* <select
-                                onChange={this.HandleChangeParty.bind(this)}
-                                value={this.state.NotifyID}
-                              >
-                                <option selected>select</option>
-                                {this.state.NonCustomerData.map((item, i) => (
-                                  <option key={i} value={item.Company_ID}>
-                                    {item.Company_Name}
-                                  </option>
-                                ))}
-                              </select> */}
                             </p>
                           </div>
                           <div className="col-12 col-sm-6 col-md-4 login-fields">
@@ -1471,17 +1400,6 @@ class BookingView extends Component {
                       <div className="col-12 col-sm-6 col-md-4 login-fields">
                         <p className="details-title">Commodity</p>
                         <p className="details-para">{commodityName}</p>
-                        {/* <select
-                          disabled={true}
-                          value={this.state.selectedCommodity}
-                        >
-                          <option>Select</option>
-                          {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.id}>
-                              {item.Commodity}
-                            </option>
-                          ))}
-                        </select> */}
                       </div>
                     </div>
                     <div>
@@ -1493,33 +1411,7 @@ class BookingView extends Component {
                       </div>
                     </div>
                     <div className="row ratefinalpgn">
-                      {this.state.eqmtType.length > 0 ? (
-                        // <ReactTable
-                        //   columns={[
-                        //     {
-                        //       columns: [
-                        //         {
-                        //           Header: "Container Name",
-                        //           accessor: "ContainerName"
-                        //         },
-                        //         {
-                        //           Header: "ContainerCode",
-                        //           accessor: "ContainerCode"
-                        //         },
-
-                        //         {
-                        //           Header: "Container Count",
-                        //           accessor: "ContainerCount"
-                        //         }
-                        //       ]
-                        //     }
-                        //   ]}
-                        //   data={this.state.eqmtType}
-                        //   minRows={0}
-                        //   showPagination={false}
-                        // />
-                        ""
-                      ) : null}
+                      {this.state.eqmtType.length > 0 ? "" : null}
                       {this.state.multiCBM.length > 0 ? (
                         <ReactTable
                           columns={[
@@ -1574,27 +1466,54 @@ class BookingView extends Component {
                       </div>
                     </div>
                     <div className="rename-cntr login-fields d-block">
-                      {/* <div className="d-flex w-100 mt-4 align-items-center">
-                        <div className="w-100">
-                          <input
-                            id="file-upload"
-                            className="file-upload d-none"
-                            type="file"
-                            onChange={this.onDocumentChangeHandler}
-                          />
-                          <label htmlFor="file-upload">
-                            <div className="file-icon">
-                              <img src={FileUpload} alt="file-upload" />
-                            </div>
-                            Add File
-                          </label>
-                        </div>
-                      </div>
-                      <br /> */}
+                      <ReactTable
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Header: "File name",
+                                accessor: "FileName"
+                              },
 
-                      {this.state.FileData.length > 0
-                        ? this.CreateFileElement()
-                        : null}
+                              {
+                                Header: "Action",
+                                Cell: row => {
+                                  if (
+                                    row.original.FilePath !== "" &&
+                                    row.original.FileName !== "No File Found"
+                                  ) {
+                                    return (
+                                      <div className="action-cntr">
+                                        <a
+                                          onClick={e =>
+                                            this.HandleFileOpen(
+                                              row.original.FilePath
+                                            )
+                                          }
+                                        >
+                                          <img
+                                            style={{
+                                              cursor: "pointer"
+                                            }}
+                                            className="actionicon"
+                                            src={Download}
+                                            alt="download-icon"
+                                          />
+                                        </a>
+                                      </div>
+                                    );
+                                  } else {
+                                    return <></>;
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]}
+                        data={this.state.FileData}
+                        minRows={0}
+                        showPagination={false}
+                      />
                     </div>
                   </div>
                 </div>

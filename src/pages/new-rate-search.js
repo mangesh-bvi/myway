@@ -8,6 +8,10 @@ import makeAnimated from "react-select/animated";
 import { Button, Modal, ModalBody } from "reactstrap";
 // import Pencil from "./../assets/img/pencil.png";
 // import Weight from "./../assets/img/weight.png";
+import p2p from "./../assets/img/Port2Port.png";
+import p2d from "./../assets/img/Port2Door.png";
+import d2p from "./../assets/img/Door2Port.png";
+import d2d from "./../assets/img/Door2Door.png";
 import Arrow from "./../assets/img/arw.png";
 
 import axios from "axios";
@@ -498,7 +502,7 @@ class NewRateSearch extends Component {
               className="mr-3"
               type="text"
               name="Quantity"
-              value={el.Quantity || 1}
+              value={el.Quantity || 0}
               placeholder="Quantity"
               onChange={this.UITruckTypeChange.bind(this, i)}
             />
@@ -689,6 +693,10 @@ class NewRateSearch extends Component {
     fields[field] = e.target.value;
 
     var type = this.state.modeoftransport;
+    self.setState({
+      fields,
+      polpodData: []
+    });
     if (fields[field].length > 2) {
       axios({
         method: "post",
@@ -722,6 +730,9 @@ class NewRateSearch extends Component {
         })
         .catch(error => {
           debugger;
+          self.setState({
+            fields
+          });
           // var errorData = error.response.data;
           // var err = errorData.split(":");
           // var data = [{ OceanPortLongName: err[1].replace("}", "") }];
@@ -1127,7 +1138,7 @@ class NewRateSearch extends Component {
             </div>
           </div>
           <div className="col-md mt-2">
-            <div className="rate-radio-cntr">
+            <div className="rate-radio-cntr mt-3 mb-0">
               <div>
                 <input
                   type="radio"
@@ -1162,7 +1173,7 @@ class NewRateSearch extends Component {
           </div>
           <div className="spe-equ">
             <i
-              className="fa fa-minus mt-2"
+              className="fa fa-minus"
               onClick={this.removeClickSpecial.bind(this, i)}
             ></i>
           </div>
@@ -2035,6 +2046,18 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
+    if (type === "FCL") {
+      document.getElementById("equipType").classList.add("equipType");
+      document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
+
+      document
+        .getElementById("cntrLoadIconCntr")
+        .classList.add("cntrLoadIconCntr");
+      document.getElementById("cntrLoadName").classList.remove("d-none");
+      document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+      document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    }
 
     this.HandleBindIncoTeamData();
 
@@ -2806,8 +2829,8 @@ class NewRateSearch extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <div className="cls-rt rate-bg">
-            <div className="">
+          <div className="cls-rt" style={{ background: "transparent" }}>
+            <div className="rate-bg">
               <div className="new-rate-cntr" id="shipmentType">
                 <div className="rate-title-cntr">
                   <h3>Shipment Type</h3>
@@ -3365,7 +3388,9 @@ class NewRateSearch extends Component {
                   </div>
                 </div>
                 <div id="typeMoveInner">
-                  <div className="new-radio-rate-cntr radio-blue">
+                  <div className="new-radio-rate-cntr type-move-icons radio-border">
+                    {" "}
+                    {/*radio-blue*/}
                     {/* <div style={{display:"none"}}>
                       <input
                         type="radio"
@@ -3389,9 +3414,10 @@ class NewRateSearch extends Component {
                             onChange={this.HandleTypeofMove}
                           />
                           <label htmlFor="p2p">
-                            Port
+                            {/* Port
                             <img src={Arrow} className="arwimg" alt="Arrow" />
-                            Port
+                            Port */}
+                            <img src={p2p} alt="Arrow" title="Port to Port" />
                           </label>
                         </div>
                         <div>
@@ -3403,9 +3429,10 @@ class NewRateSearch extends Component {
                             onChange={this.HandleTypeofMove}
                           />
                           <label htmlFor="d2p">
-                            Door
+                            {/* Door
                             <img src={Arrow} className="arwimg" alt="Arrow" />
-                            Port
+                            Port */}
+                            <img src={d2p} alt="Arrow" title="Door to Port" />
                           </label>
                         </div>
                       </>
@@ -3419,9 +3446,10 @@ class NewRateSearch extends Component {
                         onChange={this.HandleTypeofMove}
                       />
                       <label htmlFor="d2d">
-                        Door
+                        {/* Door
                         <img src={Arrow} className="arwimg" alt="Arrow" />
-                        Door
+                        Door */}
+                        <img src={d2d} alt="Arrow" title="Door to Door" />
                       </label>
                     </div>
                     {this.state.containerLoadType === "LCL" ||
@@ -3437,9 +3465,10 @@ class NewRateSearch extends Component {
                             onChange={this.HandleTypeofMove}
                           />
                           <label htmlFor="p2d">
-                            Port
+                            {/* Port
                             <img src={Arrow} className="arwimg" alt="Arrow" />
-                            Door
+                            Door */}
+                            <img src={p2d} alt="Arrow" title="Port to Door" />
                           </label>
                         </div>
                       </>

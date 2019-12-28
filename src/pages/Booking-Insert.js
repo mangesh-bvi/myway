@@ -336,7 +336,7 @@ class BookingInsert extends Component {
 
         self.setState({
           Company_AddressID,
-          
+
           ModeofTransport,
           companyID,
           company_name,
@@ -391,7 +391,7 @@ class BookingInsert extends Component {
         var HAZMAT = Booking[0].HAZMAT;
         self.setState({
           Company_AddressID,
-        
+
           Booking,
           HAZMAT,
           multiCBM,
@@ -486,7 +486,7 @@ class BookingInsert extends Component {
 
         self.setState({
           Company_AddressID,
-       
+
           ModeofTransport,
           companyID,
           company_name,
@@ -872,6 +872,7 @@ class BookingInsert extends Component {
 
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (fields[field].length > 3) {
+      self.setState({ fields });
       axios({
         method: "post",
         url: `${appSettings.APIURL}/NonCustomerList`,
@@ -984,9 +985,30 @@ class BookingInsert extends Component {
         }
       });
     } else {
-      self.setState({
-        fields
-      });
+      if (field == "Consignee") {
+        self.setState({
+          Consignee: [],
+          fields
+        });
+      }
+      if (field == "Notify") {
+        self.setState({
+          Notify: [],
+          fields
+        });
+      }
+      if (field == "Shipper") {
+        self.setState({
+          Shipper: [],
+          fields
+        });
+      }
+      if (field == "Buyer") {
+        self.setState({
+          Buyer: [],
+          fields
+        });
+      }
     }
   }
 
@@ -2397,20 +2419,20 @@ class BookingInsert extends Component {
                       </div>
                       <div className="">
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Account/Customer</p>
 
                             <p className="details-para">
                               {this.state.company_name}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Company_Address}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">
                               {this.state.contact_name}
@@ -2913,19 +2935,18 @@ class BookingInsert extends Component {
                         className="title-border-t py-3"
                         style={{ width: "100%" }}
                       >
-                        <h3>Cargo Details</h3>
-                      </div>
-                    </div>
-                    <div className="align-center">
+                        <h3 style={{ display: "inline" }}>Cargo Details</h3>
+                        
                       <button
                         onClick={this.toggleEdit}
-                        style={{ margin: "0 0 15px 0" }}
+                        style={{ margin: "0 0 15px 0" , float: "right" }}
                         className="butn more-padd"
                       >
                         Cargo Details
                       </button>
+                      </div>
                     </div>
-                    <div className="row ratefinalpgn">
+                    <div className="row ratefinalpgn"  style={{ display: "block" }}>
                       {/* {this.state.eqmtType.length > 0 ? (
                         <ReactTable
                           columns={[
@@ -3026,7 +3047,10 @@ class BookingInsert extends Component {
                               {
                                 Header: "Action",
                                 Cell: row => {
-                                  if (row.original.FilePath !== "" && row.original.FileName !== "No File Found") {
+                                  if (
+                                    row.original.FilePath !== "" &&
+                                    row.original.FileName !== "No File Found"
+                                  ) {
                                     return (
                                       <div className="action-cntr">
                                         <a
@@ -3079,7 +3103,7 @@ class BookingInsert extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout="3000" />
 
         {/* -------------------------------------Edit Modal----------------------------- */}
         <Modal

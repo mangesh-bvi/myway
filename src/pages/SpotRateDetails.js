@@ -148,20 +148,24 @@ class SpotRateDetails extends Component {
       MyWayFreeTime: 0,
       Mode: "",
       ModeOfTransport: "",
-      PageName:"SportRateView",
-      RatequeryID: 0
+      PageName: "SportRateView",
+      RatequeryID: 0,
+      Status: ""
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
     this.toggleViewRate = this.toggleViewRate.bind(this);
   }
   componentWillMount() {
+    debugger;
     if (typeof this.props.location.state != "undefined") {
       var SpotRateID = this.props.location.state.detail[0];
-      this.HandleShipmentDetails(SpotRateID);
-      // setTimeout(() => {
-      this.HandleCommodityDropdown();
-      // }, 100);
+      var Status = this.props.location.state.Status;
+      this.setState({ Status });
+      setTimeout(() => {
+        this.HandleShipmentDetails(SpotRateID);
+        this.HandleCommodityDropdown();
+      }, 200);
     }
 
     this.HandlePackgeTypeData();
@@ -232,7 +236,7 @@ class SpotRateDetails extends Component {
                   var MyWayDiscount = RateQueryData[0].MyWayDiscount;
                   var MyWayFreeTime = RateQueryData[0].MyWayFreeTime;
                   var ModeOfTransport = RateQueryData[0].ModeOfTransport;
-                  var shipmentType=RateQueryData[0].ShipmentType;
+                  var shipmentType = RateQueryData[0].ShipmentType;
                   self.setState({
                     shipmentType,
                     Mode,
@@ -293,8 +297,6 @@ class SpotRateDetails extends Component {
       data: {},
       headers: authHeader()
     }).then(function(response) {
-      
-
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
@@ -655,7 +657,6 @@ class SpotRateDetails extends Component {
       zoomPOD: 0,
       zoomPOL: 0,
       RatequeryID: this.state.RatequeryID
-      
     });
     this.HandleViewRateData();
   }
@@ -686,12 +687,16 @@ class SpotRateDetails extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Spot Rate Details</h2>
               <div>
-                <button
-                  onClick={this.toggleViewRate}
-                  className="butn more-padd"
-                >
-                  View Rate
-                </button>
+                {this.state.Status !== "Pending" ? (
+                  <button
+                    onClick={this.toggleViewRate}
+                    className="butn more-padd"
+                  >
+                    View Rate
+                  </button>
+                ) : (
+                  ""
+                )}
                 <button
                   onClick={this.toggleSpotHistory}
                   className="butn more-padd"
@@ -1285,7 +1290,10 @@ class SpotRateDetails extends Component {
                             return (
                               <div style={{ padding: "20px 0" }}>
                                 <ReactTable
-                                  data={this.state.QuotationSubData.filter(x=>x.RateLineID===row.original.RateLineID)}
+                                  data={this.state.QuotationSubData.filter(
+                                    x =>
+                                      x.RateLineID === row.original.RateLineID
+                                  )}
                                   columns={[
                                     {
                                       columns: [

@@ -241,7 +241,9 @@ class RateTable extends Component {
       IsSearchFromSpotRate: 0,
       MinAmt: 0,
       MaxAmt: 0,
-      valueAmt: 0
+      valueAmt: 0,
+      minDays: 0,
+      minamount:0
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -574,14 +576,16 @@ class RateTable extends Component {
   togglePODModal() {
     this.setState({
       modalPOD: !this.state.modalPOD,
-      multiFields: {}
+      multiFields: {},
+      errorPOD: ""
     });
   }
   togglePOLModal() {
     debugger;
     this.setState({
       modalPOL: !this.state.modalPOL,
-      multiFields: {}
+      multiFields: {},
+      errorPOL: ""
     });
   }
   toggleQuant() {
@@ -667,32 +671,32 @@ class RateTable extends Component {
           });
         }
       }
-    }
-    for (var i = 0; i < this.state.podFilterArray.length; i++) {
-      if (this.state.podFilterArray[i].IsFilter == true) {
-        multiPOD.push({
-          POD: this.state.podFilterArray[i].POD,
-          PODGeoCordinate: this.state.podFilterArray[i].PODGeoCordinate
-        });
-      } else {
-        var sdata = this.props.location.state.spotrateresponseTbl1;
-        for (var i = 0; i < sdata.length; i++) {
-          if (!polArray.includes(sdata[i].OriginPort_ID)) {
-            polArray += sdata[i].OriginPort_ID + ",";
-            multiPOL.push({
-              POL: sdata[i].OriginPort_ID,
-              POLGeoCordinate: sdata[i].POLGeoCordinate
-            });
-          }
+      for (var i = 0; i < this.state.podFilterArray.length; i++) {
+        if (this.state.podFilterArray[i].IsFilter == true) {
+          multiPOD.push({
+            POD: this.state.podFilterArray[i].POD,
+            PODGeoCordinate: this.state.podFilterArray[i].PODGeoCordinate
+          });
         }
-        for (var i = 0; i < sdata.length; i++) {
-          if (!podArray.includes(sdata[i].DestinationPort_ID)) {
-            podArray += sdata[i].DestinationPort_ID + ",";
-            multiPOD.push({
-              POD: sdata[i].DestinationPort_ID,
-              PODGeoCordinate: sdata[i].PODGeoCordinate
-            });
-          }
+      }
+    } else {
+      var sdata = this.props.location.state.spotrateresponseTbl1;
+      for (var i = 0; i < sdata.length; i++) {
+        if (!polArray.includes(sdata[i].OriginPort_ID)) {
+          polArray += sdata[i].OriginPort_ID + ",";
+          multiPOL.push({
+            POL: sdata[i].OriginPort_ID,
+            POLGeoCordinate: sdata[i].POLGeoCordinate
+          });
+        }
+      }
+      for (var i = 0; i < sdata.length; i++) {
+        if (!podArray.includes(sdata[i].DestinationPort_ID)) {
+          podArray += sdata[i].DestinationPort_ID + ",";
+          multiPOD.push({
+            POD: sdata[i].DestinationPort_ID,
+            PODGeoCordinate: sdata[i].PODGeoCordinate
+          });
         }
       }
     }
@@ -2568,6 +2572,7 @@ class RateTable extends Component {
 
     var type = this.state.modeoftransport;
     if (multiFields[field].length > 2) {
+      self.setState({ multiFields });
       axios({
         method: "post",
         url: `${appSettings.APIURL}/PolPodByCountry`,
@@ -2623,8 +2628,9 @@ class RateTable extends Component {
     if (field === "pol" + i) {
       for (let i = 0; i < this.state.polArray.length; i++) {
         arrPOL += this.state.polArray[i].Address + ",";
+        arrPOD += this.state.podArray[i].Address + ",";
       }
-      if (!arrPOL.includes(value)) {
+      if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
           var geoCoordinate = id.GeoCoordinate.split(",");
           var PositionPOL = new Object();
@@ -2679,8 +2685,9 @@ class RateTable extends Component {
     } else {
       for (let i = 0; i < this.state.podArray.length; i++) {
         arrPOD += this.state.podArray[i].Address + ",";
+        arrPOL += this.state.polArray[i].Address + ",";
       }
-      if (!arrPOD.includes(value)) {
+      if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
           var PositionPOD = [];
           var geoCoordinate = id.GeoCoordinate.split(",");
@@ -2737,11 +2744,17 @@ class RateTable extends Component {
   }
 
   onPlaceSelected = place => {
+    debugger;
     var arrPOL = "";
+    var arrPOD = "";
     for (let i = 0; i < this.state.polArray.length; i++) {
       arrPOL += this.state.polArray[i].Address + ",";
+      arrPOD += this.state.podArray[i].Address + ",";
     }
-    if (!arrPOL.includes(place.formatted_address)) {
+    if (
+      !arrPOL.includes(place.formatted_address) &&
+      !arrPOD.includes(place.formatted_address)
+    ) {
       const address = place.formatted_address,
         addressArray = place.address_components,
         // city = this.getCity(addressArray),
@@ -2804,10 +2817,15 @@ class RateTable extends Component {
 
   onPlaceSelectedPOD = place => {
     var arrPOD = "";
+    var arrPOL = "";
     for (let i = 0; i < this.state.podArray.length; i++) {
       arrPOD += this.state.podArray[i].Address + ",";
+      arrPOL += this.state.polArray[i].Address + ",";
     }
-    if (!arrPOD.includes(place.formatted_address)) {
+    if (
+      !arrPOD.includes(place.formatted_address) &&
+      !arrPOL.includes(place.formatted_address)
+    ) {
       const address = place.formatted_address,
         addressArray = place.address_components,
         // city = this.getCity(addressArray),
@@ -2926,14 +2944,9 @@ class RateTable extends Component {
       valueAmt: this.state.MaxAmt
     });
     debugger;
-    // this.filterAll(value, "R");
-    var filteredData = [];
-    // var actualData = [
-    //   { test1: "20-22" },
-    //   { test1: "22-28" },
-    //   { test1: "25-28" }
-    // ];
 
+    var filteredData = [];
+    var filterMinday = [];
     var actualData = this.state.RateDetails;
     var checkingValue = parseInt(event.target.value);
 
@@ -2950,8 +2963,19 @@ class RateTable extends Component {
     }
 
     if (filteredData.length > 0) {
-      // var sortfiltedata=filteredData.sort()
-      this.setState({ tempRateDetails: filteredData });
+      for (let i = 0; i < filteredData.length; i++) {
+        var colData = filteredData[i].TransitTime;
+        var tempData = colData.split("-");
+        filterMinday.push(parseInt(tempData[0]));
+        filterMinday.push(parseInt(tempData[1]));
+      }
+
+      var minDays = Math.min.apply(null, filterMinday);
+
+      this.setState({
+        tempRateDetails: filteredData,
+        minDays
+      });
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
@@ -2966,13 +2990,8 @@ class RateTable extends Component {
       value: this.state.MaxTT
     });
     debugger;
-    // this.filterAll(value, "R");
+
     var filteredData = [];
-    // var actualData = [
-    //   { test1: "20-22" },
-    //   { test1: "22-28" },
-    //   { test1: "25-28" }
-    // ];
 
     var actualData = this.state.RateDetails;
     var checkingValue = parseFloat(event.target.value);
@@ -2987,8 +3006,17 @@ class RateTable extends Component {
     }
 
     if (filteredData.length > 0) {
-      // var sortfiltedata=filteredData.sort()
-      this.setState({ tempRateDetails: filteredData });
+      var minamount = Math.min.apply(
+        null,
+        filteredData.map(function(item) {
+          return item.TotalAmount;
+        })
+      );
+
+      this.setState({
+        tempRateDetails: filteredData,
+        minamount
+      });
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
@@ -3707,557 +3735,6 @@ class RateTable extends Component {
     var i = 0;
     var classname = "";
 
-    let columnFCL = [
-      {
-        columns: [
-          {
-            Cell: ({ original, row }) => {
-              i++;
-
-              var mode = this.state.modeoftransport;
-              var lname = "";
-              var olname = "";
-
-              if (row._original.lineName) {
-                olname = row._original.lineName;
-                lname =
-                  row._original.lineName.replace(" ", "_").replace("  ", "_") +
-                  ".png";
-              }
-
-              if (
-                row._original.lineName !== "No Record Found" &&
-                mode == "SEA" &&
-                lname !== ""
-              ) {
-                return (
-                  <React.Fragment>
-                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                      <div className="remember-forgot rat-img d-block m-0">
-                        <input
-                          id={"maersk-logo" + i}
-                          type="checkbox"
-                          name={"rate-tab-check"}
-                          checked={
-                            this.state.cSelectedRow[
-                              original.RateLineID == undefined
-                                ? original.RateLineId
-                                : original.RateLineID
-                            ] === true
-                          }
-                          onChange={e =>
-                            this.toggleRow(
-                              original.RateLineID == undefined
-                                ? original.RateLineId
-                                : original.RateLineID,
-                              row
-                            )
-                          }
-                        />
-                        <label htmlFor={"maersk-logo" + i}></label>
-                      </div>
-                    </div>
-                    <div className="rate-tab-img">
-                      <img
-                        title={row._original.lineName}
-                        src={
-                          "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                          lname
-                        }
-                        alt={olname}
-                      />
-                    </div>
-                  </React.Fragment>
-                );
-              } else if (
-                row._original.lineName !== "No Record Found" &&
-                mode == "AIR" &&
-                lname !== ""
-              ) {
-                return (
-                  <React.Fragment>
-                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                      <div className="remember-forgot rat-img d-block m-0">
-                        <input
-                          id={"maersk-logo" + i}
-                          type="checkbox"
-                          name={"rate-tab-check"}
-                          checked={
-                            this.state.cSelectedRow[
-                              original.RateLineID == undefined
-                                ? original.RateLineId
-                                : original.RateLineID
-                            ] === true
-                          }
-                          onChange={e =>
-                            this.toggleRow(
-                              original.RateLineID == undefined
-                                ? original.RateLineId
-                                : original.RateLineID,
-                              row
-                            )
-                          }
-                        />
-                        <label htmlFor={"maersk-logo" + i}></label>
-                      </div>
-                    </div>
-                    <div className="rate-tab-img">
-                      <img
-                        title={row._original.lineName}
-                        src={
-                          "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                          lname
-                        }
-                        alt={row._original.lineName}
-                      />
-                    </div>
-                  </React.Fragment>
-                );
-              } else if (
-                row._original.lineName !== "No Record Found" &&
-                lname === ""
-              ) {
-                return (
-                  <React.Fragment>
-                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                      <div className="remember-forgot rat-img d-block m-0">
-                        <input
-                          id={"maersk-logo" + i}
-                          type="checkbox"
-                          name={"rate-tab-check"}
-                          checked={
-                            this.state.cSelectedRow[
-                              original.RateLineID == undefined
-                                ? original.RateLineId
-                                : original.RateLineID
-                            ] === true
-                          }
-                          onChange={e =>
-                            this.toggleRow(
-                              original.RateLineID == undefined
-                                ? original.RateLineId
-                                : original.RateLineID,
-                              row
-                            )
-                          }
-                        />
-                        <label htmlFor={"maersk-logo" + i}></label>
-                      </div>
-                    </div>
-                    <div className="rate-tab-img">
-                      <img
-                        title={row._original.lineName}
-                        src={
-                          "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
-                        }
-                        alt={row._original.lineName}
-                      />
-                    </div>
-                  </React.Fragment>
-                );
-              } else {
-                return (
-                  <React.Fragment>
-                    <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                      {row._original.lineName}
-                    </div>
-                  </React.Fragment>
-                );
-              }
-            },
-            accessor: "lineName"
-            // minWidth: 200
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">POL</p>
-                  <p title={row.original.POLName} className="details-para max2">
-                    {row.original.POLName}
-                  </p>
-                </>
-              );
-            },
-            accessor: "POLName",
-            //  minWidth: 175
-            filterable: true
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">POD</p>
-                  <p title={row.original.PODName} className="details-para max2">
-                    {row.original.PODName}
-                  </p>
-                </>
-              );
-            }
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Transshipment Port</p>
-                  <p className="details-para">
-                    {row.original.TransshipmentPort}
-                  </p>
-                </>
-              );
-            },
-            accessor: "TransshipmentPort",
-            filterable: true,
-            minWidth: 120
-          },
-          {
-            Cell: row => {
-              if (row.original.lineName !== "No Record Found") {
-                return (
-                  <>
-                    <p className="details-title">Expiry</p>
-                    <p className="details-para">
-                      {new Date(
-                        row.original.expiryDate || row.original.ExpiryDate
-                      ).toLocaleDateString("en-US")}
-                    </p>
-                  </>
-                );
-              } else {
-                return <></>;
-              }
-            },
-            accessor: "expiryDate" || "ExpiryDate",
-            filterable: true,
-            minWidth: 90
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">TT (Days)</p>
-                  <p className="details-para">{row.original.TransitTime}</p>
-                </>
-              );
-            },
-            accessor: "TransitTime",
-            minWidth: 90
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Free Time</p>
-                  <p className="details-para">{row.original.freeTime}</p>
-                </>
-              );
-            },
-            accessor: "freeTime",
-            filterable: true,
-            minWidth: 80
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Container</p>
-                  <p className="details-para">{row.original.ContainerType}</p>
-                </>
-              );
-            },
-            accessor: "ContainerType",
-            filterable: true
-            //minWidth: 175
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Quantity</p>
-                  <p className="details-para">
-                    {row.original.ContainerQuantity}
-                  </p>
-                </>
-              );
-            },
-            accessor: "ContainerQuantity",
-            filterable: true
-            //minWidth: 175
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Commodities</p>
-                  <p className="details-para">{row.original.commodities}</p>
-                </>
-              );
-            },
-            accessor: "commodities",
-            filterable: true,
-            minWidth: 120
-          },
-
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Price</p>
-                  <p className="details-para">{row.original.TotalAmount}</p>
-                </>
-              );
-            },
-            accessor: "TotalAmount",
-            filterable: true,
-            minWidth: 80
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Currency</p>
-                  <p className="details-para">{row.original.BaseCurrency}</p>
-                </>
-              );
-            },
-            accessor: "BaseCurrency",
-            filterable: true,
-            minWidth: 80
-          }
-        ]
-      },
-      {
-        show: false,
-        Header: "All",
-        id: "all",
-        width: 0,
-        resizable: false,
-        sortable: false,
-        filterAll: true,
-        Filter: () => {},
-        getProps: () => {
-          return {
-            // style: { padding: "0px"}
-          };
-        },
-        filterMethod: (filter, rows) => {
-          debugger;
-
-          const result = matchSorter(rows, filter.value, {
-            keys: ["commodities", "TransitTime"],
-            threshold: matchSorter.rankings.WORD_STARTS_WITH
-          });
-
-          return result;
-        }
-      }
-    ];
-
-    let columnLCL = [
-      {
-        columns: [
-          {
-            Cell: ({ original, row }) => {
-              return (
-                <React.Fragment>
-                  <div className="cont-costs rate-tab-check p-0 d-inline-block">
-                    <div className="remember-forgot rat-img d-block m-0">
-                      <input
-                        id={"maersk-logo" + i}
-                        type="checkbox"
-                        name={"rate-tab-check"}
-                        checked={
-                          this.state.cSelectedRow[
-                            original.RateLineID == undefined
-                              ? original.RateLineId
-                              : original.RateLineID
-                          ] === true
-                        }
-                        onChange={e =>
-                          this.toggleRow(
-                            original.RateLineID == undefined
-                              ? original.RateLineId
-                              : original.RateLineID,
-                            row
-                          )
-                        }
-                      />
-                      <label htmlFor={"maersk-logo" + i}></label>
-                    </div>
-                  </div>
-                  <div className="rate-tab-img">
-                    <img
-                      src={row._original.LogoPath}
-                      title={row._original.CoLoader}
-                      alt={row._original.CoLoader}
-                    />
-                  </div>
-                </React.Fragment>
-              );
-            },
-            accessor: "lineName"
-            // minWidth: 200
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">POL</p>
-                  <p
-                    title={row.original.PickUpAddress}
-                    className="details-para max2"
-                  >
-                    {row.original.PickUpAddress}
-                  </p>
-                </>
-              );
-            },
-            accessor: "PickUpAddress",
-            //  minWidth: 175
-            filterable: true
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">POD</p>
-                  <p
-                    title={row.original.DeliveryAddress}
-                    className="details-para max2"
-                  >
-                    {row.original.DeliveryAddress}
-                  </p>
-                </>
-              );
-            }
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Co Loader</p>
-                  <p className="details-para">{row.original.CoLoader}</p>
-                </>
-              );
-            },
-            accessor: "CoLoader",
-            minWidth: 90
-          },
-          {
-            Cell: row => {
-              if (row.original.lineName !== "No Record Found") {
-                return (
-                  <>
-                    <p className="details-title">Expiry</p>
-                    <p className="details-para">
-                      {new Date(row.original.expiryDate).toLocaleDateString(
-                        "en-US"
-                      )}
-                    </p>
-                  </>
-                );
-              } else {
-                return <></>;
-              }
-            },
-            accessor: "expiryDate",
-            filterable: true,
-            minWidth: 90
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">TT (Days)</p>
-                  <p className="details-para">{row.original.TransitTime}</p>
-                </>
-              );
-            },
-            accessor: "TransitTime",
-            minWidth: 90
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Commodities</p>
-                  <p className="details-para">{row.original.Commodity}</p>
-                </>
-              );
-            },
-            accessor: "Commodity",
-            filterable: true,
-            minWidth: 120
-          },
-
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">CBM</p>
-                  <p className="details-para">{row.original.CBM}</p>
-                </>
-              );
-            },
-            accessor: "ContainerType",
-            filterable: true
-            //minWidth: 175
-          },
-
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Price</p>
-                  <p className="details-para">{row.original.TotalAmount}</p>
-                </>
-              );
-            },
-            accessor: "TotalAmount",
-            filterable: true,
-            minWidth: 80
-          },
-          {
-            Cell: row => {
-              return (
-                <>
-                  <p className="details-title">Currency</p>
-                  <p className="details-para">{row.original.BaseCurrency}</p>
-                </>
-              );
-            },
-            accessor: "BaseCurrency",
-            filterable: true,
-            minWidth: 80
-          }
-        ]
-      },
-      {
-        show: false,
-        Header: "All",
-        id: "all",
-        width: 0,
-        resizable: false,
-        sortable: false,
-        filterAll: true,
-        Filter: () => {},
-        getProps: () => {
-          return {
-            // style: { padding: "0px"}
-          };
-        },
-        filterMethod: (filter, rows) => {
-          debugger;
-
-          const result = matchSorter(rows, filter.value, {
-            keys: ["commodities", "TransitTime"],
-            threshold: matchSorter.rankings.WORD_STARTS_WITH
-          });
-
-          return result;
-        }
-      }
-    ];
     if (this.state.isViewRate == true) {
       classname = "butn btn-sizeRate disabled";
     } else {
@@ -4270,7 +3747,7 @@ class RateTable extends Component {
           <div className="cls-flside">
             <SideMenu />
           </div>
-          <NotificationContainer />
+          {/* <NotificationContainer /> */}
           {/* {this.state.loading === true ? (
             <div className="loader-icon"></div>
           ) : ( */}
@@ -4309,11 +3786,15 @@ class RateTable extends Component {
                 </select>
               </div>
               <div className="rate-table-range">
-                {/* <p class="upto-days">Upto {this.state.value} days</p> */}
+                <p class="upto-days upto-days-btm">
+                  Upto {this.state.value} days
+                </p>
                 <p class="upto-days">Upto {this.state.valueAmt} Amount</p>
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
                 <div className="d-flex">
+                  <sapn>{this.state.minDays + " Days"}</sapn>
+
                   <input
                     type="range"
                     min={this.state.MinTT}
@@ -4329,17 +3810,11 @@ class RateTable extends Component {
                     id="reversedRange"
                     onChange={this.HandleRangeAmtSlider.bind(this)}
                   />
+                  <span>{this.state.minamount}</span>
                   {/* <InputRange
                     formatLabel={value => `${value} DAYS`}
                     maxValue={this.state.MaxTT}
                     minValue={this.state.MinTT}
-                    value={this.state.value}
-                    onChange={this.HandleRangeSlider.bind(this)}
-                  />
-                  <InputRange
-                    formatLabel={value => `${value} DAYS`}
-                    minValue={this.state.MaxTT}
-                    maxValue={this.state.MinTT}
                     value={this.state.value}
                     onChange={this.HandleRangeSlider.bind(this)}
                   /> */}
@@ -4505,10 +3980,7 @@ class RateTable extends Component {
                               googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
                               containerElement={
                                 <div
-                                  style={{
-                                    height: `100%`,
-                                    width: "100%"
-                                  }}
+                                  style={{ height: `100%`, width: "100%" }}
                                 />
                               }
                               mapElement={<div style={{ height: `100%` }} />}
@@ -4580,7 +4052,6 @@ class RateTable extends Component {
                           >
                             +
                           </span>
-
                           <POLMaps
                             markerPOLData={this.state.mapPositionPOL}
                             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
@@ -4642,11 +4113,366 @@ class RateTable extends Component {
                   ) : this.state.RateDetails.length > 0 ? (
                     <div className="react-rate-table react-rate-tab">
                       <ReactTable
-                        columns={
-                          this.state.containerLoadType === "FCL"
-                            ? columnFCL
-                            : columnLCL
-                        }
+                        columns={[
+                          {
+                            columns: [
+                              {
+                                Cell: ({ original, row }) => {
+                                  i++;
+
+                                  var mode = this.state.modeoftransport;
+                                  var lname = "";
+                                  var olname = "";
+
+                                  if (row._original.lineName) {
+                                    olname = row._original.lineName;
+                                    lname =
+                                      row._original.lineName
+                                        .replace(" ", "_")
+                                        .replace("  ", "_") + ".png";
+                                  }
+
+                                  if (
+                                    row._original.lineName !==
+                                      "No Record Found" &&
+                                    mode == "SEA" &&
+                                    lname !== ""
+                                  ) {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  original.RateLineID ==
+                                                  undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  original.RateLineID ==
+                                                    undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID,
+                                                  row
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={row._original.lineName}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              lname
+                                            }
+                                            alt={olname}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else if (
+                                    row._original.lineName !==
+                                      "No Record Found" &&
+                                    mode == "AIR" &&
+                                    lname !== ""
+                                  ) {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  original.RateLineID ==
+                                                  undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  original.RateLineID ==
+                                                    undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID,
+                                                  row
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={row._original.lineName}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              lname
+                                            }
+                                            alt={row._original.lineName}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else if (
+                                    row._original.lineName !==
+                                      "No Record Found" &&
+                                    lname === ""
+                                  ) {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  original.RateLineID ==
+                                                  undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID
+                                                ] === true
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  original.RateLineID ==
+                                                    undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID,
+                                                  row
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={row._original.lineName}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
+                                            alt={row._original.lineName}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          {row._original.lineName}
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+                                accessor: "lineName"
+                                // minWidth: 200
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">POL</p>
+                                      <p
+                                        title={row.original.POLName}
+                                        className="details-para max2"
+                                      >
+                                        {row.original.POLName}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "POLName",
+                                //  minWidth: 175
+                                filterable: true
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">POD</p>
+                                      <p
+                                        title={row.original.PODName}
+                                        className="details-para max2"
+                                      >
+                                        {row.original.PODName}
+                                      </p>
+                                    </>
+                                  );
+                                }
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">
+                                        Transshipment Port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "Transit Port",
+                                filterable: true,
+                                minWidth: 120
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Free Time</p>
+                                      <p className="details-para">
+                                        {row.original.freeTime}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "freeTime",
+                                filterable: true,
+                                minWidth: 80
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Container</p>
+                                      <p className="details-para">
+                                        {row.original.ContainerType}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "ContainerType",
+                                filterable: true
+                                //minWidth: 175
+                              },
+                              // {
+                              //   Cell: row => {
+                              //     return (
+                              //       <>
+                              //         <p className="details-title">Quantity</p>
+                              //         <p className="details-para">
+                              //           {row.original.ContainerQuantity}
+                              //         </p>
+                              //       </>
+                              //     );
+                              //   },
+                              //   accessor: "ContainerType",
+                              //   filterable: true
+                              //   //minWidth: 175
+                              // },
+                              {
+                                Cell: row => {
+                                  if (
+                                    row.original.lineName !== "No Record Found"
+                                  ) {
+                                    return (
+                                      <>
+                                        <p className="details-title">Expiry</p>
+                                        <p className="details-para">
+                                          {new Date(
+                                            row.original.expiryDate ||
+                                              row.original.ExpiryDate
+                                          ).toLocaleDateString("en-US")}
+                                        </p>
+                                      </>
+                                    );
+                                  } else {
+                                    return <></>;
+                                  }
+                                },
+                                accessor: "expiryDate" || "ExpiryDate",
+                                filterable: true,
+                                minWidth: 90
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">TT (Days)</p>
+                                      <p className="details-para">
+                                        {row.original.TransitTime}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "TransitTime",
+                                minWidth: 90
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Price</p>
+                                      <p className="details-para">
+                                        {row.original.TotalAmount !== "" &&
+                                        row.original.TotalAmount !== null
+                                          ? row.original.TotalAmount +
+                                            " " +
+                                            (row.original.BaseCurrency !== null
+                                              ? row.original.BaseCurrency
+                                              : "")
+                                          : ""}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "baseFreightFee",
+                                filterable: true,
+                                minWidth: 80
+                              }
+                            ]
+                          },
+                          {
+                            show: false,
+                            Header: "All",
+                            id: "all",
+                            width: 0,
+                            resizable: false,
+                            sortable: false,
+                            filterAll: true,
+                            Filter: () => {},
+                            getProps: () => {
+                              return {
+                                // style: { padding: "0px"}
+                              };
+                            },
+                            filterMethod: (filter, rows) => {
+                              debugger;
+
+                              const result = matchSorter(rows, filter.value, {
+                                keys: ["commodities", "TransitTime"],
+                                threshold: matchSorter.rankings.WORD_STARTS_WITH
+                              });
+
+                              return result;
+                            }
+                          }
+                        ]}
                         onFilteredChange={this.onFilteredChange.bind(this)}
                         filtered={this.state.filtered}
                         defaultFilterMethod={(filter, row) =>
@@ -4768,9 +4594,8 @@ class RateTable extends Component {
                         "desc"
                       ) !== "Customer" ? (
                         <p className="bottom-profit">
-                          Profit -------
-                          {this.state.profitLossAmt.toFixed(2)}$ / Profit Margin{" "}
-                          {this.state.profitLossPer.toFixed(2)}%
+                          Profit -------{this.state.profitLossAmt.toFixed(2)}$ /
+                          Profit Margin {this.state.profitLossPer.toFixed(2)}%
                         </p>
                       ) : null} */}
                     </div>
@@ -4854,7 +4679,6 @@ class RateTable extends Component {
                   </div>
                   {this.state.specialEquipment === true ? (
                     <div className="">
-
                       <div className="equip-plus-cntr w-100">
                         <Select
                           className="rate-dropdown"
@@ -4873,13 +4697,11 @@ class RateTable extends Component {
                             <>{this.MultiCreateCBM()}</>
                           ) : null
                         ) : null}
-
                         {this.state.refertypeSelect === true ? (
                           this.state.referType.length > 0 ? (
                             <>{this.createUISpecial()}</>
                           ) : null
                         ) : null}
-
                         {this.state.spacEqmtTypeSelect === true ? (
                           this.state.spacEqmtType.length > 0 ? (
                             <>
@@ -5454,6 +5276,7 @@ class RateTable extends Component {
             </Modal>
             {/* )} */}
           </div>
+          <NotificationContainer leaveTimeout="3000" />
         </div>
       </div>
     );
