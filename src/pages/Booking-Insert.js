@@ -83,6 +83,7 @@ class BookingInsert extends Component {
       errormessage: "",
       //---------------sales quotation details
       multiCBM: [],
+      addmultiCBM: [],
       ContainerLoad: "",
       salesQuotaNo: "",
       isInsert: false,
@@ -370,6 +371,7 @@ class BookingInsert extends Component {
       var Booking = response.data.Table;
       var multiCBM = response.data.Table3;
       var FileData = response.data.Table4;
+      var addmultiCBM = response.data.Table3;
 
       //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
       if (FileData.length > 0) {
@@ -424,6 +426,11 @@ class BookingInsert extends Component {
           ContainerCode
         });
       }
+
+      // if(addmultiCBM.length>0)
+      // {
+
+      // }
     });
   }
 
@@ -504,13 +511,13 @@ class BookingInsert extends Component {
   HandleBookigInsert() {
     let self = this;
 
-    if (
-      this.state.isConshinee === true ||
-      this.state.isShipper === true ||
-      this.state.isBuyer === true ||
-      this.state.isNotify === true
-    ) {
-      if (this.state.checkList !== "") {
+    if (this.state.checkList !== "") {
+      if (
+        this.state.isConshinee === true ||
+        this.state.isShipper === true ||
+        this.state.isBuyer === true ||
+        this.state.isNotify === true
+      ) {
         debugger;
 
         var userId = encryption(window.localStorage.getItem("userid"), "desc");
@@ -731,13 +738,13 @@ class BookingInsert extends Component {
         });
       } else {
         // self.setState({ errormessage: "Please atleas one select quotation." });
-        NotificationManager.error("Please select one quotation.");
-        return false;
+        NotificationManager.error(
+          "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer"
+        );
       }
     } else {
-      NotificationManager.error(
-        "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer"
-      );
+      NotificationManager.error("Please select one quotation.");
+      return false;
     }
   }
 
@@ -1174,6 +1181,11 @@ class BookingInsert extends Component {
   onDocumentChangeHandler = event => {
     debugger;
     if (event.target.files[0].type === "application/pdf") {
+      if (this.state.FileData[0].FileName === "this.state.FileData") {
+        var Fdata = this.state.FileData.splice(0);
+
+        this.setState({ FileData: Fdata });
+      }
       var FileData = event.target.files;
 
       var f_data = this.state.FileData;
@@ -1192,29 +1204,33 @@ class BookingInsert extends Component {
   ////this methos for bookig details BookigGridDetailsList
 
   HandleFileOpen(filePath) {
-    var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+    if (filePath) {
+      return false;
+    } else {
+      var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+      var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/DownloadFTPFile`,
-      data: {
-        MywayUserID: userId,
-        FilePath: filePath
-      },
-      responseType: "blob",
-      headers: authHeader()
-    }).then(function(response) {
-      if (response.data) {
-        var blob = new Blob([response.data], {
-          type: "application/pdf"
-        });
-        var link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = FileName;
-        link.click();
-      }
-    });
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/DownloadFTPFile`,
+        data: {
+          MywayUserID: userId,
+          FilePath: filePath
+        },
+        responseType: "blob",
+        headers: authHeader()
+      }).then(function(response) {
+        if (response.data) {
+          var blob = new Blob([response.data], {
+            type: "application/pdf"
+          });
+          var link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = FileName;
+          link.click();
+        }
+      });
+    }
   }
 
   ////this method for multiple file element create
@@ -1932,38 +1948,53 @@ class BookingInsert extends Component {
     var selectedType = e.target.checked;
 
     if (type === "Conshinee") {
-      this.setState({ isConshinee: !this.state.isConshinee });
+      if (
+        this.state.isShipper === false &&
+        this.state.isBuyer === false &&
+        this.state.isNotify === false
+      ) {
+        this.setState({
+          isConshinee: !this.state.isConshinee
+        });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else if (type === "Shipper") {
-      this.setState({ isShipper: !this.state.isShipper });
+      if (
+        this.state.isConshinee === false &&
+        this.state.isBuyer === false &&
+        this.state.isNotify === false
+      ) {
+        this.setState({
+          isShipper: !this.state.isShipper
+        });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else if (type === "Buyer") {
-      this.setState({ isBuyer: !this.state.isBuyer });
+      if (
+        this.state.isConshinee === false &&
+        this.state.isNotify === false &&
+        this.state.isShipper === false
+      ) {
+        this.setState({ isBuyer: !this.state.isBuyer });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else if (type === "Notify") {
-      this.setState({ isNotify: !this.state.isNotify });
+      if (
+        this.state.isConshinee === false &&
+        this.state.isBuyer === false &&
+        this.state.isShipper === false
+      ) {
+        this.setState({
+          isNotify: !this.state.isNotify
+        });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else {
     }
-    // this.setState({
-    //   // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
-    //   fields: {},
-    //   Consignee: [],
-    //   Shipper: [],
-    //   shipperData: {},
-    //   consineeData: {}
-    // });
-    // setTimeout(() => {
-    //   if (selectedType === "Consignee") {
-    //     this.setState({
-    //       selectedType,
-    //       fields: { Consignee: this.state.company_name }
-    //     });
-    //     this.HandleChangeCon(selectedType, this.state.company_name);
-    //   } else {
-    //     this.setState({
-    //       selectedType,
-    //       fields: { Shipper: this.state.company_name }
-    //     });
-    //     this.HandleChangeCon(selectedType, this.state.company_name);
-    //   }
-    // }, 100);
   }
 
   ////this method for party change value
@@ -2111,6 +2142,29 @@ class BookingInsert extends Component {
                                   } else if (mode == "Air" && lname !== "") {
                                     return (
                                       <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.checkList ===
+                                                row.original.saleQuoteLineID
+                                                  ? true
+                                                  : false
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  row.original.saleQuoteLineID
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
                                         <div className="rate-tab-img">
                                           <img
                                             title={olname}
@@ -2126,6 +2180,29 @@ class BookingInsert extends Component {
                                   } else {
                                     return (
                                       <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.checkList ===
+                                                row.original.saleQuoteLineID
+                                                  ? true
+                                                  : false
+                                              }
+                                              onChange={e =>
+                                                this.toggleRow(
+                                                  row.original.saleQuoteLineID
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
                                         <div className="rate-tab-img">
                                           <img
                                             title={olname}
@@ -2140,7 +2217,7 @@ class BookingInsert extends Component {
                                   }
                                 },
                                 accessor: "lineName",
-                                width: 200
+                                width: 120
                               },
                               {
                                 Cell: row => {
@@ -2196,7 +2273,36 @@ class BookingInsert extends Component {
                                 filterable: true
                                 // minWidth: 175
                               },
-
+                              {
+                                minWidth: 120,
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">
+                                        Transit port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "TransshipmentPort",
+                                filterable: true
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Free Time</p>
+                                      <p className="details-para"></p>
+                                    </>
+                                  );
+                                },
+                                accessor: "freeTime",
+                                filterable: true,
+                                minWidth: 80
+                              },
                               {
                                 accessor: "ContainerType",
                                 Cell: row => {
@@ -2211,6 +2317,7 @@ class BookingInsert extends Component {
                                 }
                               },
                               {
+                                minWidth: 90,
                                 accessor: "ExpiryDate",
                                 Cell: row => {
                                   return (
@@ -2225,8 +2332,27 @@ class BookingInsert extends Component {
                                   );
                                 }
                               },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">TT (Days)</p>
+                                      {this.state.ContainerLoad !== "INLAND" ? (
+                                        <p className="details-para">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      ) : (
+                                        <p className="details-para"></p>
+                                      )}
+                                    </>
+                                  );
+                                },
+                                accessor: "TransitTime"
+                                // minWidth: 60
+                              },
 
                               {
+                                minWidth: 80,
                                 accessor: "Total",
                                 Cell: row => {
                                   return (
@@ -2335,14 +2461,16 @@ class BookingInsert extends Component {
                           )}
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">HazMat</p>
-                            <p className="details-para">{this.state.HAZMAT}</p>
+                            <p className="details-para">
+                              {this.state.HAZMAT === 1 ? "Yes" : "No"}
+                            </p>
                           </div>
                           {this.state.ContainerLoad === "AIR" ||
                           this.state.ContainerLoad === "LCL" ? (
                             <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                               <p className="details-title">Unstackable</p>
                               <p className="details-para">
-                                {this.state.NonStackable}
+                                {this.state.NonStackable === 1 ? "Yes" : "No"}
                               </p>
                             </div>
                           ) : (
@@ -2351,7 +2479,9 @@ class BookingInsert extends Component {
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Customs Clearance</p>
                             <p className="details-para">
-                              {this.state.Customs_Clearance}
+                              {this.state.Customs_Clearance === 1
+                                ? "Yes"
+                                : "No"}
                             </p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3">
@@ -2503,6 +2633,7 @@ class BookingInsert extends Component {
                                   this,
                                   "Consignee"
                                 )}
+                                value={this.state.Consinee_AddressID}
                               >
                                 <option>Select</option>
 
@@ -2622,6 +2753,7 @@ class BookingInsert extends Component {
                                   this,
                                   "Shipper"
                                 )}
+                                value={this.state.Shipper_AddressID}
                               >
                                 <option>Select</option>
 
@@ -2739,6 +2871,7 @@ class BookingInsert extends Component {
                                   this,
                                   "Buyer"
                                 )}
+                                value={this.state.Buyer_AddressID}
                               >
                                 <option>Select</option>
 
@@ -2854,6 +2987,7 @@ class BookingInsert extends Component {
                                   this,
                                   "Notify"
                                 )}
+                                value={this.state.Notify_AddressID}
                               >
                                 <option>Select</option>
 

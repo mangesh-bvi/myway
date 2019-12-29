@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
-import { Popover ,Button} from "antd";
+import { Popover, Button } from "antd";
 
 import Logo from "./../assets/img/logo.png";
 import "../assets/css/custom.css";
@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import {  Modal, ModalBody } from "reactstrap";
+import { Modal, ModalBody } from "reactstrap";
 // import ModalHeader from "react-bootstrap/ModalHeader";
 
 import {
@@ -170,7 +170,7 @@ class Header extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchActivityDetails`,
       data: {
-        UserID: UserID//341 //UserID
+        UserID: UserID //341 //UserID
       },
       headers: authHeader()
     }).then(function(response) {
@@ -301,36 +301,64 @@ class Header extends Component {
     });
   };
 
-  RedirectoShipment(RefNo) {
+  RedirectoShipment(RefNo, ID, Type, Product, ProductStatus) {
     debugger;
-    // this.props.history.push({
-    //   pathname: "shipment-details",
-    //   state: { detail: RefNo }
-    // });
-    window.location.href = "shipment-details?hblno=" + RefNo;
+
+    if (Type === "Booking") {
+      this.props.history.push({
+        pathname: "/booking-view",
+        state: {
+          bookingNo: ID,
+          Mode: Product
+        }
+      });
+    } else if (Type === "SalesQuote") {
+      var ptype = Product;
+      var qnumber = qnumber;
+      var Status = ProductStatus;
+      var detail = {
+        Quotes: qnumber,
+        Type: ptype,
+        Status: Status
+      };
+      this.props.history.push({
+        pathname: "/rate-finalizing-still",
+        state: {
+          detail: detail
+        }
+      });
+      // self.props.history.push({
+      //   pathname: "rate-finalizing-still",
+      //   state: { detail: detail }
+      // });
+    } else {
+      // window.location.href = "shipment-details?hblno=" + RefNo;
+    }
   }
 
   render() {
+    // let self = this;
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
       <div
         key={i}
         onClick={() => {
-          this.RedirectoShipment(item.RefNo);
+          this.RedirectoShipment(
+            item.RefNo,
+            item.ID,
+            item.ActivityType,
+            item.Product,
+            item.ProductStatus
+          );
         }}
       >
         <p>
-          Shipment: <a> {item.Product}</a>
+          {item.ActivityType}: <a> {item.Product}</a>
         </p>
         <p>
           RefNo: <a>{item.RefNo} </a>
         </p>
         <p>
-          Status :{" "}
-          <a>
-            {" "}
-            {item.ProductStatus}
-            {/* - { new Date( item.ActivityDate).toLocaleDateString()}  */}
-          </a>
+          Status :<a> {item.ProductStatus}</a>
         </p>
       </div>
     ));
@@ -350,14 +378,17 @@ class Header extends Component {
       adataval = this.state.ActivityDateArry.map((item, i) =>
         this.state.ActivityDateArry.length == 0 ? (
           <>
-            <label>{item.ActivityDesc}</label>
+            <span>{item.CNT+" "}</span> <label>{item.ActivityDesc}</label>
+            {item.CSV}
             <br />
             {/* <label>{item.ActMessage}</label> */}
             <label>{item.SingleActDate}</label>
           </>
         ) : (
           <>
+            <span>{item.CNT+" "}</span>
             <label>{item.ActivityDesc}</label>
+            <sap>{item.CSV}</sap>
             <br />
             {/* <label>{item.ActMessage}</label> */}
             <label>{item.SingleActDate}</label>
@@ -578,58 +609,14 @@ class Header extends Component {
                             onClick={this.toggle.bind(this)}
                             id="abcd"
                           >
-                            <Popover
-                              placement="bottomRight"
-                              title={"Activity Log"}
-                             content={adataval}
-                              trigger="click"
-                            >
-                               
-                                <img
-                                  src={ActivityLogIcon}
-                                  alt="activity-log"
-                                  className="activitylog-icon"
-                                />
-                                Activity Log
-                              
-                            </Popover>
+                            <img
+                              src={ActivityLogIcon}
+                              alt="activity-log"
+                              className="activitylog-icon"
+                            />
+                            Activity Log
                           </li>
-                          {/* <li className="profile-setting-li">
-                          <a href="changePassword">
-                            <img
-                              src={ProfileSettingIcon}
-                              alt="profile-icon"
-                              className="profilesetting-icon"
-                            />
-                            Change Password
-                          </a>
-                        </li> */}
-                          {/* <li
-                          className="profile-setting-li"
-                          onClick={this.toggleProfile}
-                        >
-                          <a href="#!">
-                            <img
-                              src={ProfileSettingIcon}
-                              alt="profile-icon"
-                              className="profilesetting-icon"
-                            />
-                            Profile Settings
-                          </a>
-                        </li> */}
-                          {/* <li className="profile-setting-li">
-                          <img
-                            className="header-phone-icon dropdown-toggle"
-                            data-toggle="dropdown"
-                            id="qrCode"
-                            src={PhoneIcon}
-                            alt="mobile-icon"
-                          />
-                          Mobile App
-                          <div className="dropdown-menu qr-code-dropdown">
-                            <QRCode />
-                          </div>
-                        </li> */}
+
                           <li
                             style={{ position: "static" }}
                             className="logout-li"

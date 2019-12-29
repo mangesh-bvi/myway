@@ -97,7 +97,8 @@ class BookingView extends Component {
       Company_Address: "",
       HAZMAT: 0,
       eqtType: "",
-      NonStackable: 0
+      NonStackable: 0,
+      Customs_Clearance: 0
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
@@ -559,6 +560,7 @@ class BookingView extends Component {
 
         if (Table6.length > 0) {
           var companyID = 0;
+          var Customs_Clearance = Table6[0].Customs_Clearance;
           if (Table6[0].contact_name) {
             Company_Address = Table6[0].Company_Address;
             contact_name = Table6[0].contact_name;
@@ -571,7 +573,9 @@ class BookingView extends Component {
           }
           ShipmentType = Table6[0].ShipmentType;
           HAZMAT = Table6[0].HAZMAT;
+
           self.setState({
+            Customs_Clearance,
             companyID,
             Company_Address,
             contact_name,
@@ -645,11 +649,7 @@ class BookingView extends Component {
             });
           }
         }
-        // for (let qd of self.state.QuotationData) {
-        //   if (qd.Linename) {
-        //     self.GetImageURL(qd);
-        //   }
-        // }
+    
         if (typeof eqmtType !== "undefined") {
           if (eqmtType.length > 0) {
             self.setState({ eqmtType });
@@ -733,12 +733,17 @@ class BookingView extends Component {
             });
           }
 
-          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
+          if ((FileData.length > 0)) {
             self.setState({ FileData });
+          }
+          else
+          {
+            self.setState({ FileData: [{ FileName: "No File Found" }] });
           }
         }
 
         if (Table6.length > 0) {
+          var Customs_Clearance = Table6[0].Customs_Clearance;
           Company_Address = Table6[0].Company_Address;
           contact_name = Table6[0].contact_name;
           company_name = Table6[0].company_name;
@@ -894,7 +899,7 @@ class BookingView extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-
+                                  debugger;
                                   var lname = "";
                                   var olname = "";
                                   if (row._original.Linename) {
@@ -913,6 +918,7 @@ class BookingView extends Component {
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
+
                                   var mode = this.state.ModeofTransport;
 
                                   if (mode === "Ocean" && lname !== "") {
@@ -930,7 +936,7 @@ class BookingView extends Component {
                                         </div>
                                       </React.Fragment>
                                     );
-                                  } else if (mode == "Air" && lname !== "") {
+                                  } else if (mode == "Air" ||mode == "AIR" && lname !== "") {
                                     return (
                                       <React.Fragment>
                                         <div className="rate-tab-img">
@@ -1005,7 +1011,7 @@ class BookingView extends Component {
                                       <React.Fragment>
                                         <p className="details-title">POD</p>
                                         <p className="details-para">
-                                          {row.original.POL}
+                                          {row.original.POD}
                                         </p>
                                       </React.Fragment>
                                     );
@@ -1173,6 +1179,14 @@ class BookingView extends Component {
                               </p>
                             </div>
                           )}
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                            <p className="details-title">Customs Clearance</p>
+                            <p className="details-para">
+                              {this.state.Customs_Clearance === 1
+                                ? "Yes"
+                                : "No"}
+                            </p>
+                          </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">

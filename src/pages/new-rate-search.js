@@ -233,7 +233,9 @@ class NewRateSearch extends Component {
       testSelection: false,
       errors: {},
       heightData: [],
-      isViewRate: false
+      isViewRate: false,
+      FCLCargoType:[],
+      AIRLCLLTLType:[]
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -929,7 +931,7 @@ class NewRateSearch extends Component {
           } else {
             multiCBM[i] = {
               ...multiCBM[i],
-              [name]: value === "" ? 0 : value
+              [name]: value === "" ? 0 : value.toFixed(2)
             };
           }
         }
@@ -1363,7 +1365,7 @@ class NewRateSearch extends Component {
     } else {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        [name]: parseFloat(value)
+        [name]: parseFloat(value.toFixed(2))
       };
     }
 

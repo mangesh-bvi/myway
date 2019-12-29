@@ -118,11 +118,15 @@ class Analytics extends Component {
       toggleShipmentMonthDate: true,
       toggleShipmentYearDate: false,
       setSupplierdrop: [],
-      toggleFclLcl: false,
+      toggleFclLcl: true,
       toggleFtlLtl: false,
       toggleInvFclLcl: false,
       toggleInvFtlLtl: false,
-      toggleAIR: false
+      toggleAIR: false,
+      cargoTypeFCL: true,
+      cargoTypeLCL: false,
+      checkFTL: true,
+      checkLTL: false
     };
     this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
   }
@@ -133,7 +137,7 @@ class Analytics extends Component {
 
   handleAnalyticsShipment(event) {
     let self = this;
-
+    debugger;
     if (
       this.state.toggleShipShip === true &&
       this.state.toggleFclLcl === false
@@ -145,12 +149,10 @@ class Analytics extends Component {
     ) {
       NotificationManager.error("Please select FTL or LTL");
     } else {
-      // var FromDate = "2019-01-01";
-      // var ToDate = "2019-06-30";
       var FromDate = "";
       var ToDate = "";
       var ActiveFlag = "D";
-      //var Mode = "A,O,I";
+
       var Mode = "A,FCL,LCL,FTL,LTL";
       var period = document.getElementById("drp-period-shipment").value;
       var DatedBy = document.getElementById("Datedbydrp").value;
@@ -363,6 +365,7 @@ class Analytics extends Component {
 
         if (arrayTruck != null) {
           if (arrayTruck.length > 0) {
+            debugger;
             for (var i = 0; i < arrayTruck.length; i++) {
               if (Segregatedby == "VolumeChart") {
                 arrayTruckdata.push(arrayTruck[i].Volume);
@@ -467,14 +470,20 @@ class Analytics extends Component {
         toggleShipShip: true,
         toggleRoadShip: false,
         toggleFtlLtl: false,
-        toggleAIR:false
+        toggleAIR: false,
+        toggleFclLcl: true,
+        cargoTypeFCL: true,
+        cargoTypeLCL: false
       });
     } else if (e.target.id === "road-ship") {
       this.setState({
-        toggleAIR:false,
+        toggleAIR: false,
         toggleRoadShip: true,
         toggleShipShip: false,
-        toggleFclLcl: false
+        toggleFclLcl: false,
+        toggleFtlLtl: true,
+        checkFTL: true,
+        checkLTL: false
       });
     } else if (e.target.id === "plane-ship") {
       this.setState({
@@ -487,14 +496,42 @@ class Analytics extends Component {
     }
   };
   toggleFclLcl = e => {
-    this.setState({
-      toggleFclLcl: true
-    });
+    debugger;
+    if (e.target.value === "FCL") {
+      this.setState({
+        cargoTypeFCL: true,
+        toggleFclLcl: true,
+        cargoTypeLCL: false,
+        checkFTL: true
+      });
+    } else {
+      this.setState({
+        toggleFclLcl: true,
+        cargoTypeLCL: true,
+        cargoTypeFCL: false,
+        checkLTL: false
+      });
+    }
   };
   toggleFtlLtl = e => {
-    this.setState({
-      toggleFtlLtl: true
-    });
+    debugger;
+    if (e.target.value == "FTL") {
+      this.setState({
+        checkFTL: true,
+        checkLTL: false,
+        toggleFtlLtl: true,
+        cargoTypeFCL: true,
+        cargoTypeLCL: false
+      });
+    } else {
+      this.setState({
+        checkLTL: true,
+        checkFTL: false,
+        toggleFtlLtl: true,
+        cargoTypeFCL: true,
+        cargoTypeLCL: false
+      });
+    }
   };
   toggleInvFclLcl = e => {
     this.setState({
@@ -803,7 +840,7 @@ class Analytics extends Component {
         toggleShipmentMonthDate: true,
         toggleShipmentYearDate: false,
         setSupplierdrop: [],
-        toggleFclLcl: false,
+        toggleFclLcl: true,
         toggleFtlLtl: false,
         toggleInvFclLcl: false,
         toggleInvFtlLtl: false,
@@ -812,6 +849,21 @@ class Analytics extends Component {
     }, 500);
 
     this.handleAnalyticsShipment(null);
+  }
+  handleReportClick() {
+    if (
+      this.state.toggleAIR == true ||
+      this.state.toggleShipShip == true ||
+      this.state.toggleRoadShip == true
+    )
+    {
+      this.props.history.push("reports");
+    }
+    else
+    {
+      NotificationManager.error("please select atlest one Mode of transport");
+    }
+      
   }
   render() {
     var buyerShipmentData = {
@@ -984,6 +1036,7 @@ class Analytics extends Component {
                             name="sea-opt"
                             value="FCL"
                             id="fcl-ship"
+                            checked={this.state.cargoTypeFCL}
                             onClick={this.toggleFclLcl}
                           />
                           <label htmlFor="fcl-ship">FCL</label>
@@ -994,6 +1047,7 @@ class Analytics extends Component {
                             name="sea-opt"
                             value="LCL"
                             id="lcl-ship"
+                            checked={this.state.cargoTypeLCL}
                             onClick={this.toggleFclLcl}
                           />
                           <label htmlFor="lcl-ship">LCL</label>
@@ -1008,6 +1062,7 @@ class Analytics extends Component {
                             name="road-opt"
                             value="FTL"
                             id="ftl-ship"
+                            checked={this.state.checkFTL}
                             onClick={this.toggleFtlLtl}
                           />
                           <label htmlFor="ftl-ship">FTL</label>
@@ -1018,6 +1073,7 @@ class Analytics extends Component {
                             name="road-opt"
                             value="LTL"
                             id="ltl-ship"
+                            checked={this.state.checkLTL}
                             onClick={this.toggleFtlLtl}
                           />
                           <label htmlFor="ltl-ship">LTL</label>
@@ -1040,9 +1096,13 @@ class Analytics extends Component {
                     >
                       view
                     </button>
-                    <a href="/reports" className="butn mt-0 blue-butn">
+                    <button
+                      onClick={this.handleReportClick.bind(this)}
+                      href="/reports"
+                      className="butn mt-0 blue-butn"
+                    >
                       Reports
-                    </a>
+                    </button>
                   </div>
                 </div>
                 <div className="ana-radio-cntr">
