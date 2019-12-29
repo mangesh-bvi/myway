@@ -2549,20 +2549,20 @@ class BookingInsert extends Component {
                       </div>
                       <div className="">
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Account/Customer</p>
 
                             <p className="details-para">
                               {this.state.company_name}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Company_Address}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">
                               {this.state.contact_name}
@@ -3069,19 +3069,18 @@ class BookingInsert extends Component {
                         className="title-border-t py-3"
                         style={{ width: "100%" }}
                       >
-                        <h3>Cargo Details</h3>
-                      </div>
-                    </div>
-                    <div className="align-center">
+                        <h3 style={{ display: "inline" }}>Cargo Details</h3>
+                        
                       <button
                         onClick={this.toggleEdit}
-                        style={{ margin: "0 0 15px 0" }}
+                        style={{ margin: "0 0 15px 0" , float: "right" }}
                         className="butn more-padd"
                       >
                         Cargo Details
                       </button>
+                      </div>
                     </div>
-                    <div className="row ratefinalpgn">
+                    <div className="row ratefinalpgn"  style={{ display: "block" }}>
                       {/* {this.state.eqmtType.length > 0 ? (
                         <ReactTable
                           columns={[

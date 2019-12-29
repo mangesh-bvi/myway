@@ -1431,7 +1431,7 @@ class ShippingDetailsTwo extends Component {
                                 : "Routing Information -" + i}
                             </p>
                             <div className="row mid-border">
-                              <div className="col-12 col-sm-12 col-md-12 col-lg-6 details-border">
+                              <div className="col-12 col-sm-12 col-md-12 col-lg-6">
                                 <div className="row">
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">
@@ -1465,7 +1465,7 @@ class ShippingDetailsTwo extends Component {
                                   </div>
                                 </div>
                               </div>
-                              <div className="col-12 col-sm-12 col-md-12 col-lg-6 details-border">
+                              <div className="col-12 col-sm-12 col-md-12 col-lg-6">
                                 <div className="row">
                                   <div className="col-md-6 details-border">
                                     <p className="details-title">

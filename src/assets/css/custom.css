@@ -511,9 +511,9 @@ table tbody tr:last-child {
 .cust-tabs-content > div {
   padding: 20px 15px;
 }
-.cust-tabs-content .tab-pane .row .details-border:last-child {
+/* .cust-tabs-content .tab-pane .row .details-border:last-child {
   border-right: 0;
-}
+} */
 .cust-tabs-content .tab-pane .row .details-border:first-child {
   align-items: flex-start;
 }
@@ -675,9 +675,9 @@ table tbody tr:last-child {
   margin-top: 0;
   margin-bottom: 20px;
 }
-.cust-tabs-content .tab-pane .mid-border.row .details-border:nth-child(even) {
+/* .cust-tabs-content .tab-pane .mid-border.row .details-border:nth-child(even) {
   border-right: 0;
-}
+} */
 .less-btn {
   background-color: #474747;
   border-color: #474747;
@@ -2428,6 +2428,9 @@ input[type="range"]::-moz-range-track {
 .amnt-popup .txt-cntr .d-flex:last-child {
   margin-bottom: 0px;
 }
+.amnt-popup .rt-table {
+  max-height: 300px;
+}
 .spe-equ .rate-address {
   border-radius: 0;
   margin: 0;
@@ -2784,7 +2787,7 @@ input[type="range"]::-moz-range-track {
   border: none;
   transition: 0.5s;
   white-space: nowrap;
-
+  z-index: 999;
   position: fixed;
   top: 70px;
   left: 0;
@@ -3704,9 +3707,10 @@ input[type="range"]::-moz-range-track {
   font-size: 14px;
 }
 .firstbox h3 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   padding: 0;
+  text-align: left;
   margin-bottom: 15px;
   background: transparent;
   color: #333;
