@@ -196,8 +196,14 @@ class RateFinalizingStill extends Component {
                   TypeofMove: TypeofMove,
                   IncoTerms: IncoTerms,
                   CustomClearance: response.data.Table[0].Customs_Clearance,
-                  PickUpAddress: response.data.Table[0].pickupAddress,
-                  DestinationAddress: response.data.Table[0].deliveryAddress
+                  PickUpAddress: response.data.Table[0].TypeOfMove=="Door To Door"?
+                                 response.data.Table[0].PickUpStreet+", "+response.data.Table[0].PickUpState+", "+
+                                 response.data.Table[0].PickUpCountry:  
+                                 response.data.Table[0].pickupAddress,
+                  DestinationAddress: response.data.Table[0].TypeOfMove=="Door To Door"?
+                                      response.data.Table[0].DestStreet+", "+response.data.Table[0].DestState+", "+
+                                      response.data.Table[0].DestCountry:  
+                                      response.data.Table[0].deliveryAddress
                 });
               }
             }
@@ -2748,7 +2754,7 @@ class RateFinalizingStill extends Component {
             <div className="row">
               <div className="col-12 col-sm-6">
                 <div className="firstbox">
-                  <h3>
+                  {/* <h3>
                     From,{" "}
                     <span>
                       {encryption(
@@ -2756,7 +2762,7 @@ class RateFinalizingStill extends Component {
                         "desc"
                       )}
                     </span>
-                  </h3>
+                  </h3> */}
                   <label>
                     Sales Person :{" "}
                     <span>
@@ -2925,9 +2931,10 @@ class RateFinalizingStill extends Component {
                       <div className="row">
                         <div className="col-12 col-sm-4">
                           <label>
-                            Type of Move :
+                            Type of Move : 
                             <span>
-                              {this.state.typeofMove === 1
+                              {this.state.TypeofMove}
+                              {/* {this.state.typeofMove === 1
                                 ? "Port To Port"
                                 : this.state.typeofMove === 2
                                 ? "Door To Port"
@@ -2935,14 +2942,16 @@ class RateFinalizingStill extends Component {
                                 ? "Door To Door"
                                 : this.state.typeofMove === 3
                                 ? "Port To Door"
-                                : ""}
+                                : ""} */}
                             </span>
                           </label>
                           <label>
-                            POL : <span>{this.state.PickUpAddress}</span>
+                            POL : <span>{item.POL}</span>
+                            {/* <span>{this.state.PickUpAddress}</span> */}
                           </label>
                           <label>
-                            POD : <span>{this.state.DestinationAddress}</span>
+                            POD : <span>{item.POD}</span>
+                            {/* <span>{this.state.DestinationAddress}</span> */}
                           </label>
                         </div>
                         <div className="col-12 col-sm-4">
@@ -3054,7 +3063,15 @@ class RateFinalizingStill extends Component {
                       <div className="table-responsive">
                         <table className="table table-responsive">
                           {(() => {
-                            this.state.filterrateSubDetails = this.state.SubRateDetails.filter(
+                            this.state.filterrateSubDetails = this.state.ContainerLoad!=="FCL" && 
+                            this.state.ContainerLoad!=="AIR"?(this.state.ContainerLoad!=="INLAND"?
+                            this.state.SubRateDetails.filter(
+                              d => d.saleQuoteLineID === item.SaleQuoteIDLineID
+                            ):
+                            this.state.SubRateDetails.filter(
+                              d => d.SaleQuoteIDLineID === item.SaleQuoteIDLineID
+                            ))
+                            :this.state.SubRateDetails.filter(
                               d => d.saleQuoteLineID === item.saleQuoteLineID
                             );
                           })()}
@@ -3162,21 +3179,18 @@ class RateFinalizingStill extends Component {
                             <tbody>
                               {DocumentCharges.map(item => (
                                 <tr>
-                                  <td>{item.ChargeType}</td>
+                                  <td>{item.Type}</td>
                                   <td>
-                                    {(item.Rate === null
+                                    {(item.Amount === null
                                       ? " "
-                                      : item.Rate + " ") + item.Currency}
+                                      : item.Amount)}
                                   </td>
-                                  <td>{item.ChargeItem}</td>
+                                  <td>{item.Chargeitem}</td>
                                   <td>{item.Tax}</td>
                                   <td>
-                                    {(item.TotalAmount === null
+                                    {(item.Total === null
                                       ? " "
-                                      : item.TotalAmount + " ") +
-                                      (item.BaseCurrency === null
-                                        ? ""
-                                        : item.BaseCurrency)}
+                                      : item.Total)}
                                   </td>
                                 </tr>
                               ))}
