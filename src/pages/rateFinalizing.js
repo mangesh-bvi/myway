@@ -193,6 +193,7 @@ class RateFinalizing extends Component {
         var PackageDetailsArr = [];
         var TruckDetailsArr = [];
         var MultiCBM = [];
+        var selectedRow = [];
         if (containerLoadType == "FCL") {
           if (users != null) {
             if (users.length > 0) {
@@ -495,8 +496,17 @@ class RateFinalizing extends Component {
             }
           }
         }
+        const newSelected = Object.assign({}, this.state.cSelectedRow);
+        
         for (let i = 0; i < rateDetails.length; i++) {
-          rateOrgDetails.push({RateLineId:rateDetails[i].RateLineId, Total:rateDetails[i].TotalAmount})          
+          rateOrgDetails.push({RateLineId:rateDetails[i].RateLineId, Total:rateDetails[i].TotalAmount}) 
+          // this.state.cSelectedRow = !this.state.cSelectedRow[rateDetails[i].RateLineId]    
+          newSelected[rateDetails[i].RateLineId] = !this.state.cSelectedRow[rateDetails[i].RateLineId];
+          selectedRow.push(rateDetails[i]);
+          this.setState({
+            cSelectedRow: rateDetails[i].RateLineId ? newSelected : false,
+            selectedDataRow: selectedRow
+          });     
         }
 
         this.setState({
@@ -555,6 +565,7 @@ class RateFinalizing extends Component {
           specialEquipment: specialEquipment,
           polArray: polArray,
           podArray: podArray
+          // cSelectedRow: this.state.cSelectedRow
         });
 
         this.state.rateDetails = rateDetails;
