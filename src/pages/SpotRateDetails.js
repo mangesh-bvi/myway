@@ -687,7 +687,7 @@ class SpotRateDetails extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Spot Rate Details</h2>
               <div>
-                {this.state.Status !== "Pending" ? (
+                {this.state.Status === "Rate added by Local Pricing" ? (
                   <button
                     onClick={this.toggleViewRate}
                     className="butn more-padd"
@@ -980,34 +980,35 @@ class SpotRateDetails extends Component {
                               if (spotrateresponseTbl1.length>0) {
                           */}
                             {spotrateresponseTbl1.length > 0 ? (
-                              <ReactTable
-                                data={spotrateresponseTbl1}
-                                noDataText="No Data Found"
-                                filterable
-                                columns={[
-                                  {
-                                    columns: [
-                                      {
-                                        Header: "Container",
-                                        accessor: "Container"
-                                      },
-                                      {
-                                        Header: "Quantity",
-                                        accessor: "ContainerQty"
-                                      },
+                              // <ReactTable
+                              //   data={spotrateresponseTbl1}
+                              //   noDataText="No Data Found"
+                              //   filterable
+                              //   columns={[
+                              //     {
+                              //       columns: [
+                              //         {
+                              //           Header: "Container",
+                              //           accessor: "Container"
+                              //         },
+                              //         {
+                              //           Header: "Quantity",
+                              //           accessor: "ContainerQty"
+                              //         },
 
-                                      {
-                                        Header: "Temperature",
-                                        accessor: "Container_Temperature"
-                                      }
-                                    ]
-                                  }
-                                ]}
-                                className="-striped -highlight"
-                                defaultPageSize={10}
-                                minRows={1}
-                                //getTrProps={this.HandleRowClickEvt}
-                              />
+                              //         {
+                              //           Header: "Temperature",
+                              //           accessor: "Container_Temperature"
+                              //         }
+                              //       ]
+                              //     }
+                              //   ]}
+                              //   className="-striped -highlight"
+                              //   defaultPageSize={10}
+                              //   minRows={1}
+                              //   //getTrProps={this.HandleRowClickEvt}
+                              // />
+                              ""
                             ) : null}
                           </div>
                           <div className="ag-fresh">
@@ -1094,7 +1095,15 @@ class SpotRateDetails extends Component {
                                           "_"
                                         ).replace(" ", "_") + ".png";
                                     }
-                                    var mode = this.state.ModeofTransport;
+                                    if (row._original.lineName) {
+                                      olname = row._original.lineName;
+                                      lname =
+                                        row._original.lineName.replace(
+                                          "  ",
+                                          "_"
+                                        ).replace(" ", "_") + ".png";
+                                    }
+                                    var mode = this.state.ModeofTransport||this.state.ModeOfTransport;
 
                                     if (mode === "Ocean" && lname !== "") {
                                       return (

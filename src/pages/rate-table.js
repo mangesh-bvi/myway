@@ -7,11 +7,8 @@ import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import { Button, Modal, ModalBody } from "reactstrap";
-import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
-import maersk from "./../assets/img/maersk.png";
-import CancelImg from "./../assets/img/close.png";
 import Select from "react-select";
 // import { Link } from "react-router-dom";
 import Autocomplete from "react-google-autocomplete";
@@ -243,7 +240,7 @@ class RateTable extends Component {
       MaxAmt: 0,
       valueAmt: 0,
       minDays: 0,
-      minamount:0
+      minamount: 0
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -577,7 +574,8 @@ class RateTable extends Component {
     this.setState({
       modalPOD: !this.state.modalPOD,
       multiFields: {},
-      errorPOD: ""
+      errorPOD: "",
+      polpodDataAdd: []
     });
   }
   togglePOLModal() {
@@ -585,7 +583,8 @@ class RateTable extends Component {
     this.setState({
       modalPOL: !this.state.modalPOL,
       multiFields: {},
-      errorPOL: ""
+      errorPOL: "",
+      polpodDataAdd: []
     });
   }
   toggleQuant() {
@@ -613,7 +612,8 @@ class RateTable extends Component {
     //   }));
     // } else {
     this.state.polFilterArray = this.state.polArray;
-    this.setState(prevState => ({
+    this.setState(() => ({
+      loading: true,
       polFilterArray: this.state.polFilterArray,
       modalPOL: !this.state.modalPOL
       //modalQuant: !prevState.modalQuant
@@ -635,7 +635,8 @@ class RateTable extends Component {
     //   }));
     // } else {
     this.state.podFilterArray = this.state.podArray;
-    this.setState(prevState => ({
+    this.setState(() => ({
+      loading: true,
       podFilterArray: this.state.podFilterArray,
       modalPOD: !this.state.modalPOD
       //modalQuant: !prevState.modalQuant
@@ -646,7 +647,6 @@ class RateTable extends Component {
   }
 
   HandleMultiPOLPODFilter() {
-    var paramData;
     let self = this;
     var rModeofTransport =
       this.state.modeoftransport === "SEA"
@@ -769,9 +769,10 @@ class RateTable extends Component {
       console.log(response);
       var ratetable = response.data.Table;
       var ratetable1 = response.data.Table1;
-
+      var commodityData = response.data.Table2;
       if (ratetable != null) {
         self.setState({
+          commodityData,
           RateDetails: ratetable,
           tempRateDetails: ratetable,
           loading: false
@@ -814,7 +815,7 @@ class RateTable extends Component {
       selectedRow.push(rowData._original);
       for (let j = 0; j < rateSubDetails.length; j++) {
         this.state.profitLossAmt +=
-          rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+          rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
         BuyRate += rateSubDetails[j].BuyRate;
       }
       this.state.profitLossPer += (this.state.profitLossAmt * 100) / BuyRate;
@@ -852,7 +853,7 @@ class RateTable extends Component {
         }
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt +=
-            rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+            rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
           BuyRate += rateSubDetails[j].BuyRate;
         }
         this.state.profitLossPer = (this.state.profitLossAmt * 100) / BuyRate;
@@ -869,7 +870,7 @@ class RateTable extends Component {
         }
         for (let j = 0; j < rateSubDetails.length; j++) {
           this.state.profitLossAmt -=
-            rateSubDetails[j].Rate - rateSubDetails[j].BuyRate;
+            rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
           BuyRate -= rateSubDetails[j].BuyRate;
         }
 
@@ -1585,7 +1586,7 @@ class RateTable extends Component {
       });
   }
 
-  toggleChangePOLPOD(i, field, geoCoordinate, e) {
+  toggleChangePOLPOD(i, field, geoCoordinate) {
     debugger;
     if (field == "POL") {
       this.state.polFilterArray[i].IsFilter = !this.state.polFilterArray[i]
@@ -1648,7 +1649,7 @@ class RateTable extends Component {
     this.HandleMultiPOLPODFilter();
   }
 
-  HandleDocumentView(evt, row) {
+  HandleDocumentView(row) {
     debugger;
     var rowDataAry = [];
     var rowDataObj = row.original;
@@ -2415,7 +2416,7 @@ class RateTable extends Component {
     this.setState({ users, selected });
   }
   //// end For Equipment to create element
-  specEquipChange = (value, option) => {
+  specEquipChange = value => {
     debugger;
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
@@ -2619,7 +2620,7 @@ class RateTable extends Component {
     }
   }
 
-  HandleAddressDropdownPolSelect(e, field, i, value, id) {
+  HandleAddressDropdownPolSelect(field, i, value, id) {
     let multiFields = this.state.multiFields;
     multiFields[field] = value;
     var arrPOL = "";
@@ -2678,6 +2679,7 @@ class RateTable extends Component {
         multiFields[field] = "";
         this.state.errorPOL = value + " already exist";
         this.setState({
+          polpodDataAdd: [],
           multiFields,
           errorPOL: this.state.errorPOL
         });
@@ -2689,7 +2691,6 @@ class RateTable extends Component {
       }
       if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
-          var PositionPOD = [];
           var geoCoordinate = id.GeoCoordinate.split(",");
           var mapPositionPOD = new Object();
           mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
@@ -2736,6 +2737,7 @@ class RateTable extends Component {
         multiFields[field] = "";
         this.state.errorPOD = value + " already exist";
         this.setState({
+          polpodDataAdd: [],
           multiFields,
           errorPOD: this.state.errorPOD
         });
@@ -2899,37 +2901,22 @@ class RateTable extends Component {
       });
     } else this.setState({ filtered });
   }
-  filterAll(e, type) {
+  filterAll(e) {
     debugger;
-    // const { value } = e.target;
-    // var filteval = e.target.selectedOptions[0].innerText;
-    // if (typeof type !== "undefined" && type !== "" && type !== null) {
-    // } else {
-    //   if (value !== "All") {
-    //     var filterData = this.state.RateDetails.filter(
-    //       x => x.commodities === filteval
-    //     );
-    //     if (filterData.length > 0) {
-    //       this.setState({
-    //         tempRateDetails: filterData,
-    //         Commodity: value,
-    //         CommodityID: value
-    //       });
-    //     } else {
-    //       this.setState({
-    //         tempRateDetails: [{ lineName: "No Record Found" }],
-    //         RateSubDetails: [{ ChargeType: "No Record Found" }]
-    //       });
-    //     }
-    //   } else {
-    //     this.setState({ tempRateDetails: this.state.RateDetails });
-    //   }
-    // }
-    this.state.CommodityID = parseInt(e.target.value);
+
+    var CommodityID = parseInt(e.target.value);
     this.setState({
-      CommodityID: this.state.CommodityID
+      loading: true,
+      CommodityID: CommodityID
     });
-    this.HandleRateDetailsFCL(this.state);
+    if (
+      this.state.polFilterArray.length > 1 ||
+      this.state.podFilterArray.length > 1
+    ) {
+      this.HandleMultiPOLPODFilter();
+    } else {
+      this.HandleRateDetailsFCL(this.state);
+    }
   }
 
   custClearToggle() {
@@ -3769,6 +3756,7 @@ class RateTable extends Component {
                   className=""
                   onChange={this.filterAll}
                   style={{ marginLeft: "5px" }}
+                  value={this.state.CommodityID}
                 >
                   {/* <option>Select</option> */}
                   {/* <option value="All">All</option> */}
@@ -4119,8 +4107,15 @@ class RateTable extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
+                                  debugger;
 
                                   var mode = this.state.modeoftransport;
+                                  var type = this.state.containerLoadType;
+                                  // if(row._original.Type==="LCL")
+                                  // {
+
+                                  //   mode=row._original.Type;
+                                  // }
                                   var lname = "";
                                   var olname = "";
 
@@ -4136,6 +4131,7 @@ class RateTable extends Component {
                                     row._original.lineName !==
                                       "No Record Found" &&
                                     mode == "SEA" &&
+                                    type != "LCL" &&
                                     lname !== ""
                                   ) {
                                     return (
@@ -4154,7 +4150,7 @@ class RateTable extends Component {
                                                     : original.RateLineID
                                                 ] === true
                                               }
-                                              onChange={e =>
+                                              onChange={() =>
                                                 this.toggleRow(
                                                   original.RateLineID ==
                                                     undefined
@@ -4184,6 +4180,54 @@ class RateTable extends Component {
                                   } else if (
                                     row._original.lineName !==
                                       "No Record Found" &&
+                                    type == "LCL" &&
+                                    lname !== ""
+                                  ) {
+                                    return (
+                                      <React.Fragment>
+                                        <div className="cont-costs rate-tab-check p-0 d-inline-block">
+                                          <div className="remember-forgot rat-img d-block m-0">
+                                            <input
+                                              id={"maersk-logo" + i}
+                                              type="checkbox"
+                                              name={"rate-tab-check"}
+                                              checked={
+                                                this.state.cSelectedRow[
+                                                  original.RateLineID ==
+                                                  undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID
+                                                ] === true
+                                              }
+                                              onChange={() =>
+                                                this.toggleRow(
+                                                  original.RateLineID ==
+                                                    undefined
+                                                    ? original.RateLineId
+                                                    : original.RateLineID,
+                                                  row
+                                                )
+                                              }
+                                            />
+                                            <label
+                                              htmlFor={"maersk-logo" + i}
+                                            ></label>
+                                          </div>
+                                        </div>
+                                        <div className="rate-tab-img">
+                                          <img
+                                            title={row._original.lineName}
+                                            src={
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                            }
+                                            alt={row._original.lineName}
+                                          />
+                                        </div>
+                                      </React.Fragment>
+                                    );
+                                  } else if (
+                                    row._original.lineName !==
+                                      "No Record Found" &&
                                     mode == "AIR" &&
                                     lname !== ""
                                   ) {
@@ -4203,7 +4247,7 @@ class RateTable extends Component {
                                                     : original.RateLineID
                                                 ] === true
                                               }
-                                              onChange={e =>
+                                              onChange={() =>
                                                 this.toggleRow(
                                                   original.RateLineID ==
                                                     undefined
@@ -4251,7 +4295,7 @@ class RateTable extends Component {
                                                     : original.RateLineID
                                                 ] === true
                                               }
-                                              onChange={e =>
+                                              onChange={() =>
                                                 this.toggleRow(
                                                   original.RateLineID ==
                                                     undefined
@@ -4328,7 +4372,7 @@ class RateTable extends Component {
                                   return (
                                     <>
                                       <p className="details-title">
-                                        Transshipment Port
+                                        Transit port
                                       </p>
                                       <p className="details-para">
                                         {row.original.TransshipmentPort}

@@ -59,7 +59,7 @@ class RateFinalizingStillBooking extends Component {
       typeofMove: "",
       cargoType: "",
       ModeofTransport: "",
-
+      IncoTerm: "",
       //dynamic element
       TruckTypeData: [
         {
@@ -229,50 +229,6 @@ class RateFinalizingStillBooking extends Component {
       this.props.history.push("booking-table");
     }
   }
-
-  ////get sales quotation detsils
-
-  // HandleGetSalesQuotaion() {
-  //   let self = this;
-  //   debugger;
-  //   var ContainerLoad = this.state.ContainerLoad;
-  //   var salesQuotaNo = this.state.salesQuotaNo;
-
-  //   axios({
-  //     method: "post",
-  //     url: `${appSettings.APIURL}/SalesQuoteView`,
-  //     data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
-  //     headers: authHeader()
-  //   }).then(function(response) {
-  //     debugger;
-  //     var QuotationData = response.data.Table1;
-  //     var QuotationSubData = response.data.Table2;
-  //     var Booking = response.data.Table;
-  //     var typeofMove = "";
-  //     if (Booking[0].TypeOfMove === "Port To Port") {
-  //       typeofMove = "Port To Port";
-  //     }
-  //     if (Booking[0].TypeOfMove === "Door To Port") {
-  //       typeofMove = "Door To Port";
-  //     }
-  //     if (Booking[0].TypeOfMove === "Port To Door") {
-  //       typeofMove = "Port To Door";
-  //     }
-  //     if (Booking[0].TypeOfMove === "Door To Door") {
-  //       typeofMove = "Door To Door";
-  //     }
-  //     var EquipmentTypes = QuotationData[0].ContainerCode || "";
-  //     var selectedCommodity = QuotationData[0].Commodity;
-  //     self.setState({
-  //       QuotationData,
-  //       QuotationSubData,
-  //       Booking,
-  //       typeofMove,
-  //       selectedCommodity,
-  //       EquipmentTypes
-  //     });
-  //   });
-  // }
 
   ////file upload method for booking
   HandleFileUload() {
@@ -734,21 +690,28 @@ class RateFinalizingStillBooking extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    var FileData = event.target.files;
-    // var filesArr = this.state.selectedFile;
-    var f_data = this.state.FileData;
-    var objFile = new Object();
-    objFile.FileName = event.target.files[0].name;
-    this.setState({ selectedFile: FileData });
-    // for (let i = 0; i < FileData.length; i++) {
-    //   var selectedFile = event.target.files[i];
-    //   filesArr.push(selectedFile);
-    //   var fileName = event.target.files[i].name;
+    debugger;
+    if (event.target.files[0].type === "application/pdf") {
+      if (this.state.FileData[0].FileName === "File Not Found") {
+        var Fdata = this.state.FileData.splice(0);
 
-    //   // this.addClickTruckType(fileName);
-    // }
-    f_data.push(objFile);
-    this.setState({ FileData: f_data });
+        this.setState({ FileData: Fdata });
+      }
+      var FileData = event.target.files;
+
+      var f_data = this.state.FileData;
+      var objFile = new Object();
+      objFile.FileName = event.target.files[0].name;
+      this.setState({
+        selectedFile: FileData
+      });
+
+      f_data.push(objFile);
+      this.setState({ FileData: f_data });
+    } else {
+      NotificationManager.error("Please select only PDF File");
+      return false;
+    }
   };
 
   ////change value of SelectType methiod
@@ -757,38 +720,53 @@ class RateFinalizingStillBooking extends Component {
     var selectedType = e.target.checked;
 
     if (type === "Conshinee") {
-      this.setState({ isConshinee: !this.state.isConshinee });
+      if (
+        this.state.isShipper === false &&
+        this.state.isBuyer === false &&
+        this.state.isNotify === false
+      ) {
+        this.setState({
+          isConshinee: !this.state.isConshinee
+        });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else if (type === "Shipper") {
-      this.setState({ isShipper: !this.state.isShipper });
+      if (
+        this.state.isConshinee === false &&
+        this.state.isBuyer === false &&
+        this.state.isNotify === false
+      ) {
+        this.setState({
+          isShipper: !this.state.isShipper
+        });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else if (type === "Buyer") {
-      this.setState({ isBuyer: !this.state.isBuyer });
+      if (
+        this.state.isConshinee === false &&
+        this.state.isNotify === false &&
+        this.state.isShipper === false
+      ) {
+        this.setState({ isBuyer: !this.state.isBuyer });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else if (type === "Notify") {
-      this.setState({ isNotify: !this.state.isNotify });
+      if (
+        this.state.isConshinee === false &&
+        this.state.isBuyer === false &&
+        this.state.isShipper === false
+      ) {
+        this.setState({
+          isNotify: !this.state.isNotify
+        });
+      } else {
+        NotificationManager.error("Only 1 is check has customer ");
+      }
     } else {
     }
-    // this.setState({
-    //   // fields:selectedType==="Consignee"?{ Shipper: "" }:{ Consignee: "" },
-    //   fields: {},
-    //   Consignee: [],
-    //   Shipper: [],
-    //   shipperData: {},
-    //   consineeData: {}
-    // });
-    // setTimeout(() => {
-    //   if (selectedType === "Consignee") {
-    //     this.setState({
-    //       selectedType,
-    //       fields: { Consignee: this.state.company_name }
-    //     });
-    //     this.HandleChangeCon(selectedType, this.state.company_name);
-    //   } else {
-    //     this.setState({
-    //       selectedType,
-    //       fields: { Shipper: this.state.company_name }
-    //     });
-    //     this.HandleChangeCon(selectedType, this.state.company_name);
-    //   }
-    // }, 100);
   }
 
   ////this methos for bookig details HandleBookigClone
@@ -971,16 +949,25 @@ class RateFinalizingStillBooking extends Component {
         var CargoDetails = response.data.Table2;
         var FileData = response.data.Table3;
         var eqmtType = response.data.Table1;
+        var Table6 = response.data.Table6;
         var ModeofTransport = response.data.Table[0].ModeofTransport;
+        var Company_Address = "";
+        var contact_name = "";
+        var company_name = "";
+        var HAZMAT = 0;
+        var ShipmentType = "";
+        if (FileData.length > 0) {
+          self.setState({ FileData });
+        } else {
+          self.setState({ FileData: [{ FileName: "File Not Found" }] });
+        }
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
-            var nPartyID = QuotationData[0].NotifyID;
-
             self.setState({
               QuotationData,
               QuotationSubData,
               Booking,
-              nPartyID,
+
               ModeofTransport
             });
           }
@@ -1032,13 +1019,19 @@ class RateFinalizingStillBooking extends Component {
             var CompanyAddress = "";
             var Company_Name = "";
             var Company_AddressID = 0;
+            var isNotify = false;
+            var isBuyer = false;
+            var isConshinee = false;
+            var isShipper = false;
             if (DefaultEntityTypeID === ShipperID) {
+              isShipper = true;
               companyID = ShipperID;
               CompanyAddress = Shipper_Displayas;
               Company_Name = ShipperName;
               Company_AddressID = Shipper_AddressID;
             }
             if (DefaultEntityTypeID === BuyerID) {
+              isBuyer = true;
               companyID = BuyerID;
               CompanyAddress = Buyer_Displayas;
               Company_Name = BuyerName;
@@ -1046,6 +1039,7 @@ class RateFinalizingStillBooking extends Component {
             }
 
             if (DefaultEntityTypeID === ConsigneeID) {
+              isConshinee = true;
               companyID = ConsigneeID;
               CompanyAddress = Consignee_Displayas;
               Company_Name = ConsigneeName;
@@ -1053,12 +1047,18 @@ class RateFinalizingStillBooking extends Component {
             }
 
             if (DefaultEntityTypeID === NotifyID) {
+              isNotify = true;
               companyID = NotifyID;
               CompanyAddress = Notify_Displayas;
               Company_Name = NotifyName;
               Company_AddressID = Notify_AddressID;
             }
             self.setState({
+              typeofMove,
+              isConshinee,
+              isShipper,
+              isBuyer,
+              isNotify,
               companyID,
               CompanyAddress,
               Company_Name,
@@ -1116,12 +1116,29 @@ class RateFinalizingStillBooking extends Component {
               }, 800);
             }
           }
+        }
 
-          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
-            self.setState({ FileData });
-          } else {
-            self.setState({ FileData: [{ FileName: "File Not Found" }] });
-          }
+        if (Table6.length > 0) {
+          var Customs_Clearance = Table6[0].Customs_Clearance;
+          Company_Address = Table6[0].Company_Address;
+          contact_name = Table6[0].contact_name;
+          company_name = Table6[0].company_name;
+          ShipmentType = Table6[0].ShipmentType;
+          HAZMAT = Table6[0].HAZMAT;
+          var typeofMove = Table6[0].TypeOfMove;
+          var NonStackable = Table6[0].NonStackable;
+          var IncoTerm = Table6[0].IncoTerm;
+          self.setState({
+            IncoTerm,
+            typeofMove,
+            Customs_Clearance,
+            NonStackable,
+            Company_Address,
+            contact_name,
+            company_name,
+            ShipmentType,
+            HAZMAT
+          });
         }
       });
     }
@@ -1174,6 +1191,7 @@ class RateFinalizingStillBooking extends Component {
                   EquipmentTypes + QuotationData[i].ContainerType + ",";
               }
             }
+
             self.setState({
               company_name,
               EquipmentTypes,
@@ -1191,6 +1209,7 @@ class RateFinalizingStillBooking extends Component {
             self.setState({ eqmtType });
           }
         }
+
         if (typeof Booking !== "undefined") {
           var typeofMove = "";
           if (Booking.length > 0) {
@@ -1234,13 +1253,19 @@ class RateFinalizingStillBooking extends Component {
             var CompanyAddress = "";
             var Company_Name = "";
             var Company_AddressID = 0;
+            var isNotify = false;
+            var isBuyer = false;
+            var isConshinee = false;
+            var isShipper = false;
             if (DefaultEntityTypeID === ShipperID) {
+              isShipper = true;
               companyID = ShipperID;
               CompanyAddress = Shipper_Displayas;
               Company_Name = ShipperName;
               Company_AddressID = Shipper_AddressID;
             }
             if (DefaultEntityTypeID === BuyerID) {
+              isBuyer = true;
               companyID = BuyerID;
               CompanyAddress = Buyer_Displayas;
               Company_Name = BuyerName;
@@ -1248,6 +1273,7 @@ class RateFinalizingStillBooking extends Component {
             }
 
             if (DefaultEntityTypeID === ConsigneeID) {
+              isConshinee = true;
               companyID = ConsigneeID;
               CompanyAddress = Consignee_Displayas;
               Company_Name = ConsigneeName;
@@ -1255,6 +1281,7 @@ class RateFinalizingStillBooking extends Component {
             }
 
             if (DefaultEntityTypeID === NotifyID) {
+              isNotify = true;
               companyID = NotifyID;
               CompanyAddress = Notify_Displayas;
               Company_Name = NotifyName;
@@ -1262,6 +1289,10 @@ class RateFinalizingStillBooking extends Component {
             }
 
             self.setState({
+              isConshinee,
+              isBuyer,
+              isShipper,
+              isNotify,
               typeofMove,
               DefaultEntityTypeID,
               companyID,
@@ -1321,7 +1352,7 @@ class RateFinalizingStillBooking extends Component {
             }, 800);
           }
 
-          if ((typeof FileData !== "undefined") | (FileData.length > 0)) {
+          if (FileData.length > 0) {
             self.setState({ FileData });
           } else {
             self.setState({ FileData: [{ FileName: "File Not Found" }] });
@@ -1345,8 +1376,9 @@ class RateFinalizingStillBooking extends Component {
           var HAZMAT = Table6[0].HAZMAT;
           var Customs_Clearance = Table6[0].Customs_Clearance;
           var ModeofTransport = Table6[0].ModeOfTransport;
-
+          var IncoTerm = Table6[0].IncoTerm;
           self.setState({
+            IncoTerm,
             ModeofTransport,
             HAZMAT,
             Customs_Clearance,
@@ -1465,32 +1497,38 @@ class RateFinalizingStillBooking extends Component {
   }
 
   // file download
-  HandleFileOpen(filePath) {
-    var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
+  HandleFileOpen(e, filePath) {
+    debugger;
+    if (filePath === undefined) {
+      NotificationManager.error("Invalid File Path");
+      return false;
+    } else {
+      var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+      var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/DownloadFTPFile`,
-      data: {
-        MywayUserID: userId,
-        FilePath: filePath
-      },
-      responseType: "blob",
-      headers: authHeader()
-    }).then(function(response) {
-      if (response.data) {
-        var blob = new Blob([response.data], { type: "application/pdf" });
-        var link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = FileName;
-        link.click();
-      }
-      //   window.open(
-      //     "data:application/octet-stream;charset=utf-16le;base64," + response.data
-      //   );
-      //   window.open(response.data);
-    });
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/DownloadFTPFile`,
+        data: {
+          MywayUserID: userId,
+          FilePath: filePath
+        },
+        responseType: "blob",
+        headers: authHeader()
+      }).then(function(response) {
+        if (response.data) {
+          var blob = new Blob([response.data], { type: "application/pdf" });
+          var link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = FileName;
+          link.click();
+        }
+        //   window.open(
+        //     "data:application/octet-stream;charset=utf-16le;base64," + response.data
+        //   );
+        //   window.open(response.data);
+      });
+    }
   }
 
   ////this method for multiple file element create
@@ -1888,116 +1926,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   SubmitCargoDetails(e) {
-    // var PackageDetailsArr = [];
-    // if (
-    //   this.state.ContainerLoad == "AIR" ||
-    //   this.state.ContainerLoad == "LCL"
-    // ) {
-    //   let multiCBM = [...this.state.multiCBM];
-    //   for (var i = 0; i < multiCBM.length; i++) {
-    //     if (
-    //       multiCBM[i].PackageType + "_" + i ==
-    //       e.target.getAttribute("data-valuespecialsontainersode")
-    //     ) {
-    //       multiCBM[i].PackageType = this.state.currentPackageType;
-    //     }
-
-    //     PackageDetailsArr.push({
-    //       PackageType: multiCBM[i].PackageType,
-    //       SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
-    //       ContainerType: multiCBM[i].PackageType,
-    //       Packaging: "-",
-    //       Quantity: multiCBM[i].Quantity,
-    //       Lenght:
-    //         this.state.isCopy == true
-    //           ? multiCBM[i].Length || multiCBM[i].Lengths
-    //           : multiCBM[i].Length,
-    //       Width: multiCBM[i].Width,
-    //       Height:
-    //         this.state.isCopy == true ? multiCBM[i].height : multiCBM[i].height,
-    //       Weight:
-    //         this.state.isCopy == true
-    //           ? multiCBM[i].GrossWeight
-    //           : multiCBM[i].GrossWeight,
-    //       CBM:
-    //         this.state.containerLoadType == "LCL"
-    //           ? multiCBM[i].Volume
-    //           : multiCBM[i].VolumeWeight,
-    //       Editable: true
-    //     });
-    //   }
-
-    //   this.setState({
-    //     multiCBM: multiCBM
-    //   });
-    // } else {
-    //   let flattack_openTop = [...this.state.flattack_openTop];
-    //   for (var i = 0; i < flattack_openTop.length; i++) {
-    //     if (
-    //       flattack_openTop[i].SpecialContainerCode ==
-    //       e.target.getAttribute("data-valuespecialsontainersode")
-    //     ) {
-    //       flattack_openTop[i].PackageType = this.state.currentPackageType;
-    //     }
-
-    //     PackageDetailsArr.push({
-    //       PackageType: flattack_openTop[i].PackageType,
-    //       SpecialContainerCode: flattack_openTop[i].SpecialContainerCode,
-    //       ContainerType:
-    //         flattack_openTop[i].PackageType +
-    //         " (" +
-    //         flattack_openTop[i].SpecialContainerCode +
-    //         ")",
-    //       Quantity: flattack_openTop[i].Quantity,
-    //       Lenght: flattack_openTop[i].length,
-    //       Width: flattack_openTop[i].width,
-    //       Height: flattack_openTop[i].height,
-    //       Weight: flattack_openTop[i].Gross_Weight,
-    //       CBM: flattack_openTop[i].total,
-    //       Editable: true
-    //     });
-    //   }
-
-    //   this.setState({
-    //     flattack_openTop: flattack_openTop
-    //   });
-    // }
-
-    // let CargoDetailsArr = [...this.state.CargoDetailsArr];
-
-    // for (var i = 0; i < CargoDetailsArr.length; i++) {
-    //   if (
-    //     CargoDetailsArr[i].SpecialContainerCode ==
-    //     e.target.getAttribute("data-valuespecialsontainersode")
-    //   ) {
-    //     CargoDetailsArr[i].PackageType = this.state.currentPackageType;
-    //     if (
-    //       this.state.ContainerLoad == "AIR" ||
-    //       this.state.ContainerLoad == "LCL"
-    //     ) {
-    //       CargoDetailsArr[i].ContainerType = this.state.currentPackageType;
-    //     } else {
-    //       CargoDetailsArr[i].ContainerType =
-    //         this.state.currentPackageType +
-    //         " (" +
-    //         CargoDetailsArr[i].SpecialContainerCode +
-    //         ")";
-    //     }
-    //   }
-    // }
-
-    // this.setState({
-    //   PackageDetailsArr: PackageDetailsArr,
-    //   CargoDetailsArr: CargoDetailsArr
-    // });
-
-    // this.props.location.state.flattack_openTop = flattack_openTop;
-
-    // this.forceUpdate();
-    // this.setState({ modalEdit: !this.state.modalEdit });
-    // this.setState(prevState => ({
-    //   modalEdit: !prevState.modalEdit
-    // }));
     this.toggleEdit();
   }
 
@@ -2034,6 +1962,7 @@ class RateFinalizingStillBooking extends Component {
 
   render() {
     const { Booking } = this.state;
+    console.log(this.state.FileData);
     var bNumber = "";
     if (Booking.length > 0) {
       bNumber = Booking[0].strBooking_No;
@@ -2120,7 +2049,10 @@ class RateFinalizingStillBooking extends Component {
                                         </div>
                                       </React.Fragment>
                                     );
-                                  } else if (mode == "Air" && lname !== "") {
+                                  } else if (
+                                    mode == "Air" ||
+                                    (mode == "AIR" && lname !== "")
+                                  ) {
                                     return (
                                       <React.Fragment>
                                         <div className="rate-tab-img">
@@ -2212,6 +2144,36 @@ class RateFinalizingStillBooking extends Component {
                                   }
                                 }
                               },
+                              {
+                                minWidth: 120,
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">
+                                        Transit port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "TransshipmentPort",
+                                filterable: true
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Free Time</p>
+                                      <p className="details-para"></p>
+                                    </>
+                                  );
+                                },
+                                accessor: "freeTime",
+                                filterable: true
+                                // minWidth: 80
+                              },
 
                               {
                                 accessor: "ContainerType",
@@ -2241,7 +2203,26 @@ class RateFinalizingStillBooking extends Component {
                                   );
                                 }
                               },
-
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">TT (Days)</p>
+                                      {this.state.ContainerLoad !== "INLAND" ? (
+                                        <p className="details-para">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      ) : (
+                                        <p className="details-para">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      )}
+                                    </>
+                                  );
+                                },
+                                accessor: "TransitTime"
+                                // minWidth: 60
+                              },
                               {
                                 accessor: "Total",
                                 Cell: row => {
@@ -2268,7 +2249,9 @@ class RateFinalizingStillBooking extends Component {
                               <ReactTable
                                 data={this.state.QuotationSubData.filter(
                                   x =>
-                                    x.SaleQuoteID === row.original.SaleQuoteID1
+                                    x.SaleQuoteID ===
+                                      row.original.SaleQuoteID1 ||
+                                    row.original.SaleQuoteID
                                 )}
                                 columns={[
                                   {
@@ -2392,11 +2375,7 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Inco Terms</p>
                             <p className="details-para">
-                              {Booking.length > 0 ? Booking[0].Incoterm : ""}
-                              {Booking.length > 0 ? Booking[0].IncoTerm : ""}
-                              {this.state.QuotationData.length > 0
-                                ? this.state.QuotationData[0].IncoTerm
-                                : ""}
+                              {this.state.IncoTerm}
                             </p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-4 col-lg-3">
@@ -2566,6 +2545,7 @@ class RateFinalizingStillBooking extends Component {
                                   this,
                                   "Consignee"
                                 )}
+                                value={this.state.Conshinee_AddressID}
                               >
                                 <option>Select</option>
 
@@ -2699,6 +2679,7 @@ class RateFinalizingStillBooking extends Component {
                                   this,
                                   "Shipper"
                                 )}
+                                value={this.state.Shipper_AddressID}
                               >
                                 <option>Select</option>
 
@@ -2813,6 +2794,7 @@ class RateFinalizingStillBooking extends Component {
                                   this,
                                   "Buyer"
                                 )}
+                                value={this.state.Buyer_AddressID}
                               >
                                 <option>Select</option>
 
@@ -2926,6 +2908,7 @@ class RateFinalizingStillBooking extends Component {
                                   this,
                                   "Notify"
                                 )}
+                                value={this.state.Notify_AddressID}
                               >
                                 <option>Select</option>
 
@@ -3021,33 +3004,7 @@ class RateFinalizingStillBooking extends Component {
                       </button>
                     </div>
                     <div className="row ratefinalpgn">
-                      {this.state.eqmtType.length > 0
-                        ? // <ReactTable
-                          //   columns={[
-                          //     {
-                          //       columns: [
-                          //         {
-                          //           Header: "Container Name",
-                          //           accessor: "ContainerName"
-                          //         },
-                          //         {
-                          //           Header: "ContainerCode",
-                          //           accessor: "ContainerCode"
-                          //         },
-
-                          //         {
-                          //           Header: "Container Count",
-                          //           accessor: "ContainerCount"
-                          //         }
-                          //       ]
-                          //     }
-                          //   ]}
-                          //   data={this.state.eqmtType}
-                          //   minRows={0}
-                          //   showPagination={false}
-                          // />
-                          ""
-                        : null}
+                      {this.state.eqmtType.length > 0 ? "" : null}
                       {this.state.multiCBM.length > 0 ? (
                         <ReactTable
                           columns={[
@@ -3128,9 +3085,10 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 Header: "Action",
                                 Cell: row => {
+                                  debugger;
                                   if (
                                     row.original.FilePath !== "" &&
-                                    row.original.FileName !== "No File Found"
+                                    row.original.FileName !== "File Not Found"
                                   ) {
                                     return (
                                       <div className="action-cntr">

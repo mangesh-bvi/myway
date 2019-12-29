@@ -802,7 +802,7 @@ class Dashboard extends Component {
 
   onPlaceSelected = place => {
     //debugger;
-    console.log("plc", place);
+    
     const address = place.formatted_address,
       addressArray = place.address_components,
       latValue = place.geometry.location.lat(),

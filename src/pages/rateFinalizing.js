@@ -371,6 +371,7 @@ class RateFinalizing extends Component {
             //   })
           }
         } else if (containerLoadType == "FTL") {
+          debugger
           // var cSelectedRow = this.props.location.state.selectedDataRow;
 
           // var AllrateDetails = this.props.location.state.RateDetails;
@@ -383,8 +384,8 @@ class RateFinalizing extends Component {
             if (TruckTypeData.length > 0) {
               for (var i = 0; i < TruckTypeData.length; i++) {
                 CargoDetailsArr.push({
-                  PackageType: TruckTypeData[i].PackageType,
-                  SpecialContainerCode: TruckTypeData[i].SpecialContainerCode,
+                  PackageType: "",
+                  SpecialContainerCode: "",
                   ContainerType: TruckTypeData[i].TruckDesc,
                   Packaging: "-",
                   Quantity: TruckTypeData[i].Quantity,
@@ -5954,29 +5955,30 @@ class RateFinalizing extends Component {
                     </div> */}
 
                     <div className="ag-fresh redirect-row">
-                      {TruckDetailsArr.length !== 0 ? (
-                        <ReactTable
-                          data={TruckDetailsArr}
-                          filterable
-                          minRows={1}
-                          showPagination={false}
-                          columns={[
-                            {
-                              Header: "Truck Name",
-                              accessor: "TransportType",
-                              minWidth: 110
-                            },
-                            {
-                              Header: "Quantity",
-                              accessor: "Quantity"
-                            }
-                          ]}
-                          className="-striped -highlight"
-                          defaultPageSize={2000}
-                          //getTrProps={this.HandleRowClickEvt}
-                          //minRows={1}
-                        />
-                      ) : null}
+                      {TruckDetailsArr.length !== 0
+                        ? // <ReactTable
+                          //   data={TruckDetailsArr}
+                          //   filterable
+                          //   minRows={1}
+                          //   showPagination={false}
+                          //   columns={[
+                          //     {
+                          //       Header: "Truck Name",
+                          //       accessor: "TransportType",
+                          //       minWidth: 110
+                          //     },
+                          //     {
+                          //       Header: "Quantity",
+                          //       accessor: "Quantity"
+                          //     }
+                          //   ]}
+                          //   className="-striped -highlight"
+                          //   defaultPageSize={2000}
+                          //   //getTrProps={this.HandleRowClickEvt}
+                          //   //minRows={1}
+                          // />
+                          ""
+                        : null}
                       {/* {equipmentTypeArr.length !== 0 ? (
                         <ReactTable
                           data={equipmentTypeArr}
@@ -7645,39 +7647,12 @@ class RateFinalizing extends Component {
                     // this.state.specialEquipment === true ? (
                     this.state.flattack_openTop.length > 0 ? (
                       <div className="">
-                        {/* spe-equ mt-0 */}
-                        {/* <div className="equip-plus-cntr w-100">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.SpecialContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.SpecialContainerCode
-                              }
-                              options={this.state.SpacialEqmt}
-                              placeholder="Select Kind of Special Equipment"
-                              onChange={this.specEquipChange}
-                              showNewOptionAtTop={false}
-                            />
-                          </div> */}
                         <div id="cbmInner">
-                          {/* {this.state.specialEqtSelect === true ? ( */}
-                          {/* {this.state.flattack_openTop.length > 0 ? ( */}
                           <>{this.MultiCreateCBM()}</>
-                          {/* //) : null */}
-                          {/* ) : null} */}
                         </div>
                       </div>
                     ) : (
                       <div className="row cbm-space" key={i}>
-                        {/* <div className="col-md">
-                        <div className="spe-equ">
-                          <label className="mr-0 mt-2" name="SpecialContainerCode">
-                            {el.SpecialContainerCode}
-                          </label>
-                        </div>
-                      </div> */}
                         <div className="col-md">
                           <div className="spe-equ">
                             <select
@@ -7782,18 +7757,7 @@ class RateFinalizing extends Component {
                             />
                           </div>
                         </div>
-                        {/* <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            name="total"
-                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                            placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
-                            value={el.total || ""}
-                            className="w-100"
-                          />
-                        </div>
-                      </div> */}
+
                         {i === 0 ? (
                           <div className="">
                             <div className="spe-equ">
@@ -7816,17 +7780,138 @@ class RateFinalizing extends Component {
                             </div>
                           </div>
                         ) : null}
-                        {/* <div className="">
-                        <div className="spe-equ">
-                          <i
-                            className="fa fa-minus mt-2"
-                            aria-hidden="true"
-                            //onClick={this.removeClickMultiCBM.bind(this)}
-                          ></i>
-                        </div>
-                      </div> */}
                       </div>
                     )
+                  ) : this.state.TruckDetailsArr.length > 0 ? (
+                    <div className="row cbm-space" key={i}>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <select
+                            className="select-text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            name="SpecialContainerCode"
+                            //value={el.SpecialContainerCode}
+                          >
+                            <option selected>Select</option>
+                            {this.state.TruckDetailsArr.map((item, i) => (
+                              <option key={i} value={item.TruckDesc}>
+                                {item.TruckDesc}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <select
+                            className="select-text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            name="PackageType"
+                            //value={el.PackageType}
+                          >
+                            <option selected>Select</option>
+                            {this.state.packageTypeData.map((item, i) => (
+                              <option key={i} value={item.PackageName}>
+                                {item.PackageName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            placeholder={"L (cm)"}
+                            className="w-100"
+                            name="length"
+                            //value={el.length || ""}
+                            // onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            placeholder={"W (cm)"}
+                            className="w-100"
+                            name="width"
+                            //value={el.width || ""}
+                            //onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            placeholder="H (cm)"
+                            className="w-100"
+                            name="height"
+                            //value={el.height || ""}
+                            //onBlur={this.cbmChange}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-md">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            onChange={this.newMultiCBMHandleChange.bind(
+                              this,
+                              i
+                            )}
+                            //placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
+                            name="Gross_Weight"
+                            //value={el.Gross_Weight}
+                            className="w-100"
+                          />
+                        </div>
+                      </div>
+
+                      {i === 0 ? (
+                        <div className="">
+                          <div className="spe-equ">
+                            <i
+                              className="fa fa-plus mt-2"
+                              aria-hidden="true"
+                              onClick={this.addMultiDim.bind(this)}
+                            ></i>
+                          </div>
+                        </div>
+                      ) : null}
+                      {this.state.flattack_openTop.length > 1 ? (
+                        <div className="">
+                          <div className="spe-equ">
+                            <i
+                              className="fa fa-minus mt-2"
+                              aria-hidden="true"
+                              onClick={this.removeMultiDim.bind(this, i)}
+                            ></i>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
                   ) : (
                     this.CreateMultiCBM()
                   )}

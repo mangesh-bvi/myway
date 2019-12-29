@@ -79,7 +79,7 @@ class RateFinalizingStill extends Component {
       todayDate: new Date(),
       filterrateSubDetails: [],
       DocumentDetails: [],
-      SaleQuoteID:""
+      SaleQuoteID: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -107,6 +107,8 @@ class RateFinalizingStill extends Component {
       this.HandlePackgeTypeData();
       this.HandleCommodityDropdown();
       //this.HandleDowloadFile();
+    } else {
+      this.props.history.push("quote-table");
     }
   }
 
@@ -157,7 +159,7 @@ class RateFinalizingStill extends Component {
         var TypeofMove = "";
         var IncoTerms = "";
         var CargoDetailsArr = [];
-        var SaleQuoteID="";
+        var SaleQuoteID = "";
         //accountcustname
         if (response != null) {
           if (response.data != null) {
@@ -165,7 +167,7 @@ class RateFinalizingStill extends Component {
               if (response.data.Table.length > 0) {
                 TypeofMove = response.data.Table[0].TypeOfMove;
                 IncoTerms = response.data.Table[0].IncoTerm;
-                SaleQuoteID=response.data.Table[0].SaleQuoteID
+                SaleQuoteID = response.data.Table[0].SaleQuoteID;
                 self.setState({
                   SaleQuoteID,
                   HazMat: response.data.Table[0].HAZMAT,
@@ -317,6 +319,10 @@ class RateFinalizingStill extends Component {
     }));
   }
   onDocumentChangeHandler = event => {
+    setTimeout(() => {
+      this.onDocumentSaleQuoteHandler();
+    }, 200);
+
     this.setState({
       selectedFileName: event.target.files[0].name,
       selectedFile: event.target.files[0]
@@ -836,36 +842,6 @@ class RateFinalizingStill extends Component {
       ]
     }));
   }
-
-  onDocumentClickHandler = () => {
-    debugger;
-    const docData = new FormData();
-    var docName = this.state.selectedFileName;
-
-    if (docName == "") {
-      NotificationManager.error("Please enter document name");
-      return false;
-    }
-
-    debugger;
-    //docData.append();
-    docData.append("ShipmentNumber", "BCM2453770");
-    docData.append("HBLNo", "BCM23770");
-    docData.append("DocDescription", docName);
-    docData.append("name", docName);
-    docData.append("FileData", this.state.selectedFile);
-    // docData.append()
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/UploadShipmentDocument`,
-      data: docData,
-      headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      NotificationManager.success(response.data[0].Result);
-    });
-  };
 
   onDocumentSaleQuoteHandler = () => {
     debugger;
@@ -2317,10 +2293,6 @@ class RateFinalizingStill extends Component {
                       </a>
                     </div> */}
                     <div className="rename-cntr login-fields d-block">
-                      {/* <input
-                        type="file"
-                        onChange={this.onDocumentChangeHandler}
-                      ></input> */}
                       <div className="d-flex w-100 mt-4 align-items-center">
                         <div className="w-100">
                           <input
@@ -2341,15 +2313,6 @@ class RateFinalizingStill extends Component {
                         {this.state.selectedFileName}
                       </p>
                     </div>
-                    {/* <button
-                      className={className}
-                      id="toggler"
-                      onClick={() => {
-                        this.onDocumentSaleQuoteHandler();
-                      }}
-                    >
-                      Upload File
-                    </button> */}
 
                     <div className="row">
                       {" "}
@@ -2370,12 +2333,6 @@ class RateFinalizingStill extends Component {
                                 Header: "Action",
                                 sortable: false,
                                 Cell: row => {
-                                  // var abc = new Date(row.original.CreatedDate);
-                                  // var current = new Date();
-                                  // var x = abc.getTime();
-                                  // var y = current.getTime();
-                                  // console.log(x);
-                                  // console.log(y);
                                   if (
                                     row.original.FileName !== "No File Found"
                                   ) {
@@ -2408,48 +2365,6 @@ class RateFinalizingStill extends Component {
                         </div>
                       </div>
                     </div>
-                    {/* <div className="row">
-                      {" "}
-                      <div className="col-md-12 login-fields">
-                        <p className="details-title">Cargo Details</p>
-                        <div className="ag-fresh redirect-row">
-                          <ReactTable
-                            data={CargoDetailsArr}
-                            filterable
-                            minRows={1}
-                            showPagination={false}
-                            columns={[
-                              {
-                                Header: "File",
-                                accessor: "ContainerType"
-                              },
-                              {
-                                Header: "Download",
-                                accessor: "Quantity"
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <div
-                                      onClick={e => this.HandleDowloadFile()}
-                                      className="tab-icon-view"
-                                    >
-                                      <img src={Eye} alt="eye icon" />
-                                    </div>
-                                  );
-                                },
-                                Header: "Action",
-                                sortable: false
-                              }
-                            ]}
-                            className="-striped -highlight"
-                            defaultPageSize={2000}
-                            //getTrProps={this.HandleRowClickEvt}
-                            //minRows={1}
-                          />
-                        </div>
-                      </div>
-                    </div> */}
 
                     <center>
                       {/* <Button
@@ -3248,7 +3163,7 @@ class RateFinalizingStill extends Component {
           </ModalBody>
         </Modal>
 
-        <NotificationContainer leaveTimeout="3000"/>
+        <NotificationContainer leaveTimeout="3000" />
       </React.Fragment>
     );
   }
