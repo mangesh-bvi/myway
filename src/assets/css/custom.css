@@ -1375,11 +1375,16 @@ table tbody tr:last-child {
 }
 .rate-dropdown .css-yk16xz-control,
 .rate-dropdown .css-yk16xz-control:hover {
-  border-color: #959595;
+  border-radius: 0;
+    background: #ededed url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=) no-repeat right 15px center;
+    border: none;
+    min-height: 50px;
 }
 .rate-dropdown .css-1pahdxg-control {
-  border-color: #959595 !important;
-  box-shadow: initial !important;
+  border-radius: 0;
+    background: #ededed url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=) no-repeat right 15px center;
+    border: none;
+    min-height: 50px;
 }
 .rate-dropdown .css-yt9ioa-option {
   font-family: "Regular Font";
@@ -1464,8 +1469,8 @@ table tbody tr:last-child {
 .rate-checkbox label {
   /* min-width: 200px; */
   min-width: auto;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 /* .rate-checkbox label:first-of-type {
   margin-top: 0;
@@ -2379,7 +2384,7 @@ input[type="range"]::-moz-range-track {
   padding: 0 15px;
 }
 .rate-final-contr .details-title {
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 .rate-final-contr .details-para {
   font-size: 14px;

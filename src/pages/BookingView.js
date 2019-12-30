@@ -1242,7 +1242,7 @@ class BookingView extends Component {
                               {this.state.Incoterm}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.TypeofMove}
@@ -1295,24 +1295,24 @@ class BookingView extends Component {
 
                   <div className="rate-final-contr">
                     <div>
-                      <div className="title-border-t py-3">
+                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
                         <h3>Customer Details</h3>
                       </div>
                       <div className="">
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Account/Customer</p>
                             <p className="details-para">
                               {this.state.company_name}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Company_Address}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">
                               {this.state.contact_name}
@@ -1369,19 +1369,19 @@ class BookingView extends Component {
                       ) : null}
                     </div>
                     <div>
-                      <div className="title-border-t py-3">
+                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
                         <h3>Consignee Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                             <p className="details-title">Consignee Name</p>
                             <p className="details-para">
                               {this.state.fields["Consignee"]}
                             </p>
                           </div>
 
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Consignee_Displayas}
@@ -1391,19 +1391,19 @@ class BookingView extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3">
+                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
                         <h3>Shipper Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                             <p className="details-title">Shipper Name</p>
                             <p className="details-para">
                               {this.state.fields["Shipper"]}
                             </p>
                           </div>
 
-                          <div className="col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Shipper_Displayas}
@@ -1414,18 +1414,18 @@ class BookingView extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border-t py-3">
+                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
                         <h3>Buyer Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                             <p className="details-title">Buyer Name</p>
                             <p className="details-para">
                               {this.state.BuyerName}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Buyer_Displayas !== ""
@@ -1437,18 +1437,18 @@ class BookingView extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3">
+                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
                         <h3>Notify Party Details</h3>
                       </div>
                       <div>
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                             <p className="details-title">Notify Party Name</p>
                             <p className="details-para">
                               {this.state.NotifyName}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {this.state.Notify_Displayas !== ""
@@ -1460,14 +1460,14 @@ class BookingView extends Component {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-12 col-sm-6 col-md-4 login-fields">
+                      <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                         <p className="details-title">Commodity</p>
                         <p className="details-para">{commodityName}</p>
                       </div>
                     </div>
                     <div>
                       <div
-                        className="title-border-t py-3"
+                        className="title-border title-border-t py-3"
                         style={{ width: "100%" }}
                       >
                         <h3>Cargo Details</h3>

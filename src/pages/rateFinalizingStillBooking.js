@@ -2606,7 +2606,7 @@ class RateFinalizingStillBooking extends Component {
                               {this.state.IncoTerm}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3">
+                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Type of Move</p>
                             <p className="details-para">
                               {this.state.typeofMove}
@@ -2664,12 +2664,12 @@ class RateFinalizingStillBooking extends Component {
 
                   <div className="rate-final-contr">
                     <div>
-                      <div className="title-border-t py-3">
+                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
                         <h3>Customer Details</h3>
                       </div>
                       <div className="">
                         <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Account/Customer</p>
 
                             <p className="details-para">
@@ -2685,7 +2685,7 @@ class RateFinalizingStillBooking extends Component {
                               {this.state.company_name}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Address</p>
                             <p className="details-para">
                               {/* {Booking.length > 0
@@ -2694,7 +2694,7 @@ class RateFinalizingStillBooking extends Component {
                               {this.state.Company_Address}
                             </p>
                           </div>
-                          <div className="col-12 col-sm-6 col-md-4">
+                          <div className="col-12 col-sm-6 col-md-4 r-border">
                             <p className="details-title">Notification Person</p>
                             <p className="details-para">
                               {/* {Booking.length > 0
@@ -2709,7 +2709,7 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                         <h3 style={{ display: "inline" }}>Consignee Details</h3>
                         <input
                           type="checkbox"
@@ -2726,7 +2726,7 @@ class RateFinalizingStillBooking extends Component {
                       <div>
                         {this.state.isConshinee === false ? (
                           <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
                               <p className="details-title">Consignee Name</p>
                               {this.state.userType !== "Customer" ? (
                                 <input
@@ -2766,7 +2766,7 @@ class RateFinalizingStillBooking extends Component {
                               )}
                             </div>
 
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                               <p className="details-title">Address</p>
                               <select
                                 onChange={this.AddressChange.bind(
@@ -2808,14 +2808,14 @@ class RateFinalizingStillBooking extends Component {
                         ) : (
                           <div className="">
                             <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">Consignee Name</p>
 
                                 <p className="details-para">
                                   {this.state.company_name}
                                 </p>
                               </div>
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">Address</p>
                                 <p className="details-para">
                                   {this.state.Company_Address}
@@ -2835,7 +2835,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                         <h3 style={{ display: "inline" }}>Shipper Details</h3>
                         <div style={{ display: "inline", float: "left" }}>
                           <input
@@ -2857,7 +2857,7 @@ class RateFinalizingStillBooking extends Component {
                       <div>
                         {this.state.isShipper === false ? (
                           <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
                               <p className="details-title">Shipper Name</p>
                               {this.state.userType !== "Customer" ? (
                                 <input
@@ -2899,7 +2899,7 @@ class RateFinalizingStillBooking extends Component {
                             </p> */}
                             </div>
 
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                               <p className="details-title">Address</p>
 
                               <select
@@ -2938,14 +2938,14 @@ class RateFinalizingStillBooking extends Component {
                         ) : (
                           <div className="">
                             <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">Shipper Name</p>
 
                                 <p className="details-para">
                                   {this.state.company_name}
                                 </p>
                               </div>
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">Address</p>
                                 <p className="details-para">
                                   {this.state.Company_Address}
@@ -2966,7 +2966,7 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                         <h3 style={{ display: "inline" }}>Buyer Details</h3>
                         <input
                           type="checkbox"
@@ -2983,7 +2983,7 @@ class RateFinalizingStillBooking extends Component {
                       <div>
                         {this.state.isBuyer === false ? (
                           <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
                               <p className="details-title">Buyer Name</p>
                               <p className="details-para">
                                 <Autocomplete
@@ -3014,7 +3014,7 @@ class RateFinalizingStillBooking extends Component {
                                 />
                               </p>
                             </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                               <p className="details-title">Address</p>
 
                               <select
@@ -3053,14 +3053,14 @@ class RateFinalizingStillBooking extends Component {
                         ) : (
                           <div className="">
                             <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">Buyer Name</p>
 
                                 <p className="details-para">
                                   {this.state.company_name}
                                 </p>
                               </div>
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">Address</p>
                                 <p className="details-para">
                                   {this.state.Company_Address}
@@ -3080,7 +3080,7 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div>
-                      <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                         <h3 style={{ display: "inline" }}>Notify Details</h3>
                         <input
                           type="checkbox"
@@ -3097,7 +3097,7 @@ class RateFinalizingStillBooking extends Component {
                       <div>
                         {this.state.isNotify === false ? (
                           <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
                               <p className="details-title">Notify Party Name</p>
                               <p className="details-para">
                                 <Autocomplete
@@ -3128,7 +3128,7 @@ class RateFinalizingStillBooking extends Component {
                                 />
                               </p>
                             </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                               <p className="details-title">Address</p>
 
                               <select
@@ -3169,7 +3169,7 @@ class RateFinalizingStillBooking extends Component {
                         ) : (
                           <div className="">
                             <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">
                                   Notify Party Name
                                 </p>
@@ -3178,7 +3178,7 @@ class RateFinalizingStillBooking extends Component {
                                   {this.state.company_name}
                                 </p>
                               </div>
-                              <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 r-border">
                                 <p className="details-title">Address</p>
                                 <p className="details-para">
                                   {this.state.Company_Address}
@@ -3216,8 +3216,8 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div>
                       <div
-                        className="title-border-t py-3"
-                        style={{ width: "100%" }}
+                        className="title-border title-border-t py-3"
+                        style={{ width: "100%" , marginBottom:"15px" }}
                       >
                         <h3>Cargo Details</h3>
                       </div>
