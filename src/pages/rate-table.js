@@ -3747,10 +3747,14 @@ class RateTable extends Component {
               </p>
             ) : null}
             <div className="rate-table-header">
-              <div className="title-sect">
-                <h2>Rate Table</h2>
-              </div>
-              <div className="login-fields m-0 rate-tab-drop">
+              <div className="row rangerow">
+                <div className="col-12 col-sm-12 col-md-2">
+                  <div className="title-sect">
+                    <h2>Rate Table</h2>
+                  </div>
+                </div>
+                <div className="col-12 col-sm-12 col-md-4">
+                  <div className="login-fields rate-tab-drop">
                 Commodity
                 <select
                   className=""
@@ -3773,15 +3777,17 @@ class RateTable extends Component {
                       ))}
                 </select>
               </div>
-              <div className="rate-table-range">
+                </div>
+                <div className="col-12 col-sm-12 col-md-4 p-0">
+                  <div className="rate-table-range">
                 <p class="upto-days upto-days-btm">
                   Upto {this.state.value} days
                 </p>
                 <p class="upto-days">Upto {this.state.valueAmt} Amount</p>
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
-                <div className="d-flex">
-                  <sapn>{this.state.minDays + " Days"}</sapn>
+                <div className="d-flex" style={{margin:"0 0px 0 20px"}}>
+                  <span className="clr-green dragvalue">{this.state.minDays + " Days"}</span>
 
                   <input
                     type="range"
@@ -3799,7 +3805,7 @@ class RateTable extends Component {
                     id="reversedRange"
                     onChange={this.HandleRangeAmtSlider.bind(this)}
                   />
-                  <span>{this.state.minamount}</span>
+                  <span className="clr-red dragvalue2">{this.state.minamount}</span>
                   {/* <InputRange
                     formatLabel={value => `${value} DAYS`}
                     maxValue={this.state.MaxTT}
@@ -3809,10 +3815,13 @@ class RateTable extends Component {
                   /> */}
                 </div>
               </div>
-              <div className="rate-table-butn">
+                </div>
+                <div className="col-12 col-sm-12 col-md-2">
+                  <div className="rate-table-butn" style={{padding:"0"}}>
                 <button
                   onClick={this.handleCheck.bind(this)}
-                  className="blue-butn butn m-0"
+                  className="blue-butn butn"
+                  style={{margin:"15px 0 0 0"}}
                 >
                   Proceed
                 </button>
@@ -3825,6 +3834,12 @@ class RateTable extends Component {
                   Proceed
                 </Link> */}
               </div>
+                </div>
+              </div>
+              
+              
+              
+              
 
               {/* {----------------------End Spot Rate Modal------------------} */}
             </div>

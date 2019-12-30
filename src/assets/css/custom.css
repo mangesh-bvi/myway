@@ -1825,7 +1825,10 @@ table tbody tr:last-child {
 .rate-table-range .input-range {
   width: 250px !important;
 }
-
+.rangerow {
+  padding: 0px;
+  width: 100%;
+}
 input[type="range"] {
   -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
   width: 130px; /* Specific width is required for Firefox. */
@@ -2594,7 +2597,15 @@ input[type="range"]::-moz-range-track {
   width: 47px !important;
 }
 .colap + .cls-rt {
-  width: calc(100% - 90px) !important;
+  width: calc(100% - 90px);
+}
+.dragvalue {
+  padding: 0 10px 0 0;
+  font-size: 12px;
+}
+.dragvalue2 {
+  padding: 0 0px 0 10px;
+  font-size: 12px;
 }
 .colap .sidemenu-ul2 > li {
   border-right-color: transparent;
@@ -4183,6 +4194,10 @@ img {
   height: auto;
   width: 18px;
   margin: 0 3px;
+}
+
+select option {
+  background-color:#ededed;
 }
 
 @media (min-width: 768px) {

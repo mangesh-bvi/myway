@@ -108,11 +108,15 @@
   padding: 20px 5px;
 }
 .title-sect h2 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
+}
+input[type="range"] {
+  width: 60px; /* Specific width is required for Firefox. */
 }
 .login-fields {
   padding: 0 10px;
+  margin: 0;
   font-size: 14px;
 }
 .rate-tab-drop select {
@@ -224,6 +228,10 @@
 .rate-bg {
   width: 80% !important;
 }
+
+.rate-table-header {
+  display: block;
+}
 }
 @media (min-width: 576px) and (max-width: 640px) {
   .menubars {
@@ -275,7 +283,7 @@
     padding: 15px;
 }
 .cls-rt {
-  width: 100%;
+  width: 100% !important;
   margin: 0;
 }
 .title-sect h2 {
@@ -340,9 +348,6 @@
 }
 .rate-dropdown {
   width: 100%;
-}
-.rate-table-header {
-  display: block;
 }
 .rate-table-header h2 {
   margin: 0;
@@ -437,6 +442,15 @@
   /* width: 40px !important; */
   width: 0 !important;
 }
+
+.rangerow {
+  padding: 0px 25px;
+  width: auto;
+}
+
+.rate-table-header {
+  display: block;
+}
 }
 @media (min-width: 320px) and (max-width: 460px) {
   .login-between {
@@ -459,5 +473,13 @@
     position: absolute;
     top: -70px;
     right: 0;
+}
+
+.rangerow {
+  padding: 0px 25px;
+  width: auto;
+}
+.rate-table-header {
+  display: block;
 }
 }
