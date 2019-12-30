@@ -2767,7 +2767,8 @@ class RateFinalizingStill extends Component {
                 <div className="thirdbox">
                   {this.state.ContainerLoad.toUpperCase() === "LCL" ||
                   this.state.ContainerLoad.toUpperCase() === "AIR" ||
-                  this.state.ContainerLoad.toUpperCase() === "LTL" ? (
+                  this.state.ContainerLoad.toUpperCase() === "LTL" ||
+                  this.state.ContainerLoad.toUpperCase() === "FCL"? (
                     <>
                       <h3>Dimensions</h3>
                       <div className="table-responsive">

@@ -3794,6 +3794,7 @@ class RateTable extends Component {
                     type="range"
                     min={this.state.MinAmt}
                     max={this.state.MaxAmt}
+                    step="0.01"
                     value={this.state.valueAmt}
                     id="reversedRange"
                     onChange={this.HandleRangeAmtSlider.bind(this)}
