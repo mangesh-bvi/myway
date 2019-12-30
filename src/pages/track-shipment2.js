@@ -1000,7 +1000,7 @@ class TrackShipment2 extends Component {
           <div className="cls-rt-ts">
             <div className="container-fluid">
               <div>
-                <div className="title-sect">
+                <div className="title-sect ts-head">
                   {this.state.showData === false ? (
                     <h2>Track Shipment</h2>
                   ) : (
@@ -1009,21 +1009,22 @@ class TrackShipment2 extends Component {
                 </div>
               </div>
               <div className="row">
-                <div>
-                  <labal>Enter HBL#</labal>
+                <div className="col-12">
+                  <labal className="details-title" style={{marginRight:"10px"}}>Enter HBL#</labal>
                   <input
                     type="text"
                     name="HBLNO"
+                    className="enterhbl"
                     value={this.state.HBLNumber}
                     onChange={this.HandleChangeHBL.bind(this)}
                   />
-                  <button onClick={this.HandleSubmit.bind(this)}>Submit</button>
+                  <button onClick={this.HandleSubmit.bind(this)} className="butn view-btn">Submit</button>
                 </div>
                 {this.state.showData === false ? (
                   ""
                 ) : (
                   <div className="row">
-                    <div className="col-md-7 p-0">
+                    <div className="col-md-7">
                       <ul className="nav cust-tabs" role="tablist">
                         <li>
                           <a
@@ -1176,15 +1177,15 @@ class TrackShipment2 extends Component {
                             i++;
                             return (
                               <div className="sect-padd">
-                                <p className="details-heading">
+                                <p className="details-heading title-border title-border-t">
                                   {containerData.length === 1
                                     ? "Routing Information"
                                     : "Routing Information" - i}
                                 </p>
                                 <div className="row mid-border">
-                                  <div className="col-md-6 details-border">
+                                  <div className="col-md-6 details-border" style={{border:"none"}}>
                                     <div className="row">
-                                      <div className="col-md-6 details-border">
+                                      <div className="col-md-6 details-border" style={{alignItems: "center"}}>
                                         <p className="details-title">
                                           Type Of Move
                                         </p>
@@ -1218,9 +1219,9 @@ class TrackShipment2 extends Component {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="col-md-6 details-border">
+                                  <div className="col-md-6 details-border" style={{border:"none"}}>
                                     <div className="row">
-                                      <div className="col-md-6 details-border">
+                                      <div className="col-md-6 details-border" style={{alignItems: "center"}}>
                                         <p className="details-title">
                                           Departure Date
                                         </p>

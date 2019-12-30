@@ -197,9 +197,9 @@
 .cls-rt {
   width: calc(93% - 40px);
 }
-.colap + .cls-rt {
+/* .colap + .cls-rt {
   width: 100% !important;
-}
+} */
 }
 @media (min-width: 576px) and (max-width: 767px) {
   .header-ul li {
@@ -220,6 +220,9 @@
 .dynamic-remove {
     left: 80%;
     margin-top: 12px;
+}
+.rate-bg {
+  width: 80% !important;
 }
 }
 @media (min-width: 576px) and (max-width: 640px) {
@@ -242,6 +245,9 @@
 }
 }
 @media (min-width: 320px) and (max-width: 575px) {
+  .rate-bg {
+    width: 100% !important;
+}
   .br-none {
     border-right: none !important;
   }

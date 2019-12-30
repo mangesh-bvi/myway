@@ -1770,7 +1770,7 @@ class RateTable extends Component {
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 3
-                ? "rename-cntr login-fields position-relative"
+                ? "rename-cntr login-fields position-relative w-92"
                 : ""
             }
           >
@@ -1860,7 +1860,7 @@ class RateTable extends Component {
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 2
-                ? "rename-cntr login-fields position-relative"
+                ? "rename-cntr login-fields position-relative w-92"
                 : ""
             }
           >
@@ -1934,7 +1934,7 @@ class RateTable extends Component {
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 2
-                ? "rename-cntr login-fields position-relative"
+                ? "rename-cntr login-fields position-relative w-92"
                 : ""
             }
           >

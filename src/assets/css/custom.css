@@ -216,6 +216,7 @@ h2 span {
 .login-fields select {
   background: #ededed url("./../img/down-arrow.png") no-repeat right 15px center;
   padding-right: 15px;
+  /* box-shadow: 0 0 5px 0px #a3a3a3; */
 }
 .login-fields input::placeholder {
   font-family: "Italic Font";
@@ -341,6 +342,23 @@ h2 span {
 .title-sect h2 {
   font-size: 18px;
   font-weight: 600;
+}
+.ts-head {
+  padding: 15px 0;
+}
+.ts-head h2 {
+  color: #002d73;
+}
+.enterhbl {
+  border: 0;
+    letter-spacing: 0.5px;
+    background-color: #f1f2f2;
+    padding: 8px 15px;
+    font-family: "Medium Font";
+    font-size: 14px;
+    width: 250px;
+    border-radius: 0px;
+    margin-right: 5px;
 }
 .list-map .butn {
   padding: 5px;
@@ -519,7 +537,7 @@ table tbody tr:last-child {
 }
 .ship-detail-maps {
   background-color: #f1f2f2;
-  margin: 15px 0;
+  margin: 15px;
 }
 .shipment-track {
   padding: 10px;
@@ -661,8 +679,9 @@ table tbody tr:last-child {
   font-family: "Bold Font";
   color: #333333;
   font-size: 18px;
-  letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  padding: 10px 0;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
 }
 .shipper-details {
   align-items: flex-start;
@@ -963,6 +982,7 @@ table tbody tr:last-child {
 .react-datepicker-wrapper input {
   background: #ededed url(./../img/calendar.png) no-repeat right 25px center;
   background-size: 20px;
+  /* box-shadow: 0 0 5px 0px #a3a3a3; */
   padding-right: 60px;
 }
 .planner-cntr .butn {
@@ -1769,6 +1789,12 @@ table tbody tr:last-child {
 }
 .pol-pod-popup .login-fields:last-of-type {
   margin-bottom: 0;
+}
+.w-92 {
+  width: 92%;
+}
+.w-92 div {
+  width: 100%;
 }
 .pol-pod-popup label {
   margin-bottom: 0;
