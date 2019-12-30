@@ -98,7 +98,7 @@ class RateFinalizingStillBooking extends Component {
       consineeData: {},
       shipperData: {},
       buyerId: 0,
-
+      multiCMBData: [],
       //---------------sales quotation details
       ContainerLoad: "",
       salesQuotaNo: "",
@@ -145,7 +145,9 @@ class RateFinalizingStillBooking extends Component {
       isShipper: false,
       isConshinee: false,
       isBuyer: false,
-      isNotify: false
+      isNotify: false,
+      multiCargo: [],
+      CargoDetails: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -155,7 +157,6 @@ class RateFinalizingStillBooking extends Component {
     this.BookigGridDetailsList = this.BookigGridDetailsList.bind(this);
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
     this.NonCustomerList = this.NonCustomerList.bind(this);
-    // this.HandleGetSalesQuotaion = this.HandleGetSalesQuotaion.bind(this);
   }
   componentDidMount() {
     var rData = this.props.location.state;
@@ -175,21 +176,21 @@ class RateFinalizingStillBooking extends Component {
           copy: true,
           ModeofTransport
         });
-        if (ModeofTransport === "AIR") {
-          setTimeout(() => {
-            this.HandleCommodityDropdown();
-            this.HandlePackgeTypeData();
-            this.BookigGridDetailsListAIR();
-            this.NonCustomerList();
-          }, 300);
-        } else {
-          setTimeout(() => {
-            this.HandleCommodityDropdown();
-            this.HandlePackgeTypeData();
-            this.BookigGridDetailsList();
-            this.NonCustomerList();
-          }, 300);
-        }
+        // if (ModeofTransport === "AIR") {
+        //   setTimeout(() => {
+        //     this.HandleCommodityDropdown();
+        //     this.HandlePackgeTypeData();
+        //     this.BookigGridDetailsListAIR();
+        //     this.NonCustomerList();
+        //   }, 300);
+        // } else {
+        setTimeout(() => {
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+          this.BookigGridDetailsList();
+          this.NonCustomerList();
+        }, 300);
+        // }
       } else if (
         this.props.location.state.BookingNo != "" &&
         this.props.location.state.BookingNo != undefined &&
@@ -208,21 +209,21 @@ class RateFinalizingStillBooking extends Component {
           isView: true,
           ModeofTransport
         });
-        if (ModeofTransport === "AIR") {
-          setTimeout(() => {
-            this.HandleCommodityDropdown();
-            this.HandlePackgeTypeData();
-            this.BookigGridDetailsListAIR();
-            this.NonCustomerList();
-          }, 300);
-        } else {
-          setTimeout(() => {
-            this.HandleCommodityDropdown();
-            this.HandlePackgeTypeData();
-            this.BookigGridDetailsList();
-            this.NonCustomerList();
-          }, 300);
-        }
+        // if (ModeofTransport === "AIR") {
+        //   setTimeout(() => {
+        //     this.HandleCommodityDropdown();
+        //     this.HandlePackgeTypeData();
+        //     this.BookigGridDetailsListAIR();
+        //     this.NonCustomerList();
+        //   }, 300);
+        // } else {
+        setTimeout(() => {
+          this.HandleCommodityDropdown();
+          this.HandlePackgeTypeData();
+          this.BookigGridDetailsList();
+          this.NonCustomerList();
+        }, 300);
+        // }
       } else {
       }
     } else {
@@ -491,10 +492,10 @@ class RateFinalizingStillBooking extends Component {
       var Shipper_AddressID = 0;
       var ShipperName = "";
       if (this.state.isShipper === true) {
-        ShipperID = Number(this.state.shipperData.Company_ID || 0);
+        ShipperID = Number(this.state.ShipperID || 0);
         Shipper_Displayas = this.state.Shipper_Displayas || "";
         Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
-        ShipperName = this.state.shipperData.Company_Name || "";
+        ShipperName = this.state.ShipperName || "";
       } else {
         if (this.state.shipperData.Company_ID) {
           ShipperName = this.state.shipperData.Company_Name || "";
@@ -514,10 +515,10 @@ class RateFinalizingStillBooking extends Component {
       var Consignee_Displayas = "";
 
       if (this.state.isConshinee === true) {
-        ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-        ConsigneeName = this.state.consineeData.Company_Name || "";
+        ConsigneeID = Number(this.state.ConsigneeID || 0);
+        ConsigneeName = this.state.ConsigneeName || "";
         Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-        Consignee_Displayas = this.state.Consinee_Displayas;
+        Consignee_Displayas = this.state.Consignee_Displayas;
       } else {
         if (this.state.consineeData.Company_ID) {
           ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
@@ -530,30 +531,50 @@ class RateFinalizingStillBooking extends Component {
         Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
         Consignee_Displayas = this.state.Consignee_Displayas;
       }
-      var BuyerID = Number(this.state.buyerData.Company_ID || 0);
-      var Buyer_AddressID = this.state.Buyer_AddressID;
-      var Buyer_Displayas = this.state.Buyer_Displayas;
-      var BuyerName = this.state.buyerData.Company_Name;
 
-      if (this.state.buyerData.Company_ID) {
-        BuyerID = Number(this.state.buyerData.Company_ID || 0);
-        BuyerName = this.state.buyerData.Company_Name;
+      var BuyerID = 0;
+      var BuyerName = "";
+      var Buyer_AddressID = 0;
+      var Buyer_Displayas = "";
+
+      if (this.state.isBuyer === true) {
+        BuyerID = Number(this.state.BuyerID || 0);
+        BuyerName = this.state.BuyerName || "";
+        Buyer_AddressID = Number(this.state.Buyer_AddressID || 0);
+        Buyer_Displayas = this.state.Buyer_Displayas;
       } else {
-        BuyerID = this.state.BuyerID;
-        BuyerName = this.state.BuyerName;
+        if (this.state.buyerData.Company_ID) {
+          BuyerID = Number(this.state.buyerData.Company_ID || 0);
+          BuyerName = this.state.buyerData.Company_Name || "";
+        } else {
+          BuyerID = this.state.BuyerID;
+          BuyerName = this.state.BuyerName;
+        }
+        Buyer_AddressID = Number(this.state.Buyer_AddressID || 0);
+        Buyer_Displayas = this.state.Buyer_Displayas;
       }
 
-      var NotifyID = Number(this.state.notifyData.Company_ID || 0);
-      var Notify_AddressID = Number(this.state.Notify_AddressID || 0);
-      var Notify_Displayas = this.state.Notify_Displayas || "";
-      var NotifyName = this.state.notifyData.Company_Name || "";
+      var NotifyID = 0;
+      var NotifyName = "";
 
-      if (this.state.notifyData.Company_Name) {
-        NotifyName = this.state.notifyData.Company_Name || "";
-        NotifyID = Number(this.state.notifyData.Company_ID || 0);
+      var Notify_AddressID = 0;
+      var Notify_Displayas = "";
+
+      if (this.state.isNotify === true) {
+        NotifyID = Number(this.state.NotifyID || 0);
+        NotifyName = this.state.NotifyName || "";
+        Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+        Notify_Displayas = this.state.Notify_Displayas;
       } else {
-        NotifyName = this.state.NotifyName;
-        NotifyID = this.state.NotifyID;
+        if (this.state.notifyData.Company_ID) {
+          NotifyID = Number(this.state.notifyData.Company_ID || 0);
+          NotifyName = this.state.notifyData.Company_Name || "";
+        } else {
+          NotifyID = this.state.BuyerID;
+          NotifyName = this.state.BuyerName;
+        }
+        Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+        Notify_Displayas = this.state.Notify_Displayas;
       }
 
       var Mode = bookingDetails[0].CargoType;
@@ -785,10 +806,10 @@ class RateFinalizingStillBooking extends Component {
     var Shipper_AddressID = 0;
     var ShipperName = "";
     if (self.state.isShipper === true) {
-      ShipperID = Number(self.state.shipperData.Company_ID || 0);
+      ShipperID = Number(self.state.ShipperID || 0);
       Shipper_Displayas = self.state.Shipper_Displayas || "";
       Shipper_AddressID = Number(self.state.Shipper_AddressID || 0);
-      ShipperName = self.state.shipperData.Company_Name || "";
+      ShipperName = self.state.ShipperName || "";
     } else {
       if (self.state.shipperData.Company_ID) {
         ShipperName = self.state.shipperData.Company_Name || "";
@@ -808,10 +829,10 @@ class RateFinalizingStillBooking extends Component {
     var Consignee_Displayas = "";
 
     if (self.state.isConshinee === true) {
-      ConsigneeID = Number(self.state.consineeData.Company_ID || 0);
-      ConsigneeName = self.state.consineeData.Company_Name || "";
+      ConsigneeID = Number(self.state.ConsigneeID || 0);
+      ConsigneeName = self.state.ConsigneeName || "";
       Consignee_AddressID = Number(self.state.Consignee_AddressID || 0);
-      Consignee_Displayas = self.state.Consinee_Displayas;
+      Consignee_Displayas = self.state.Consignee_Displayas;
     } else {
       if (self.state.consineeData.Company_ID) {
         ConsigneeID = Number(self.state.consineeData.Company_ID || 0);
@@ -824,30 +845,50 @@ class RateFinalizingStillBooking extends Component {
       Consignee_AddressID = Number(self.state.Consignee_AddressID || 0);
       Consignee_Displayas = self.state.Consignee_Displayas;
     }
-    var BuyerID = Number(self.state.buyerData.Company_ID || 0);
-    var Buyer_AddressID = self.state.Buyer_AddressID;
-    var Buyer_Displayas = self.state.Buyer_Displayas;
-    var BuyerName = self.state.buyerData.Company_Name;
 
-    if (self.state.buyerData.Company_ID) {
-      BuyerID = Number(self.state.buyerData.Company_ID || 0);
-      BuyerName = self.state.buyerData.Company_Name;
+    var BuyerID = 0;
+    var BuyerName = "";
+    var Buyer_AddressID = 0;
+    var Buyer_Displayas = "";
+
+    if (self.state.isBuyer === true) {
+      BuyerID = Number(self.state.BuyerID || 0);
+      BuyerName = self.state.BuyerName || "";
+      Buyer_AddressID = Number(self.state.Buyer_AddressID || 0);
+      Buyer_Displayas = self.state.Buyer_Displayas;
     } else {
-      BuyerID = self.state.BuyerID;
-      BuyerName = self.state.BuyerName;
+      if (self.state.buyerData.Company_ID) {
+        BuyerID = Number(self.state.buyerData.Company_ID || 0);
+        BuyerName = self.state.buyerData.Company_Name || "";
+      } else {
+        BuyerID = self.state.BuyerID;
+        BuyerName = self.state.BuyerName;
+      }
+      Buyer_AddressID = Number(self.state.Buyer_AddressID || 0);
+      Buyer_Displayas = self.state.Buyer_Displayas;
     }
 
-    var NotifyID = Number(self.state.notifyData.Company_ID || 0);
-    var Notify_AddressID = Number(self.state.Notify_AddressID || 0);
-    var Notify_Displayas = self.state.Notify_Displayas || "";
-    var NotifyName = self.state.notifyData.Company_Name || "";
+    var NotifyID = 0;
+    var NotifyName = "";
 
-    if (self.state.notifyData.Company_Name) {
-      NotifyName = self.state.notifyData.Company_Name || "";
-      NotifyID = Number(self.state.notifyData.Company_ID || 0);
+    var Notify_AddressID = 0;
+    var Notify_Displayas = "";
+
+    if (self.state.isNotify === true) {
+      NotifyID = Number(self.state.NotifyID || 0);
+      NotifyName = self.state.NotifyName || "";
+      Notify_AddressID = Number(self.state.Notify_AddressID || 0);
+      Notify_Displayas = self.state.Notify_Displayas;
     } else {
-      NotifyName = self.state.NotifyName;
-      NotifyID = self.state.NotifyID;
+      if (self.state.notifyData.Company_ID) {
+        NotifyID = Number(self.state.notifyData.Company_ID || 0);
+        NotifyName = self.state.notifyData.Company_Name || "";
+      } else {
+        NotifyID = self.state.BuyerID;
+        NotifyName = self.state.BuyerName;
+      }
+      Notify_AddressID = Number(self.state.Notify_AddressID || 0);
+      Notify_Displayas = self.state.Notify_Displayas;
     }
 
     var Mode = bookingDetails[0].CargoType;
@@ -922,8 +963,9 @@ class RateFinalizingStillBooking extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data.Table[0].Message);
-
-      self.HandleFileUpload();
+      setTimeout(() => {
+        self.HandleFileUpload();
+      }, 100);
     });
   }
 
@@ -1023,34 +1065,34 @@ class RateFinalizingStillBooking extends Component {
             var isBuyer = false;
             var isConshinee = false;
             var isShipper = false;
-            if (DefaultEntityTypeID === ShipperID) {
+            if (DefaultEntityTypeID === ShipperID || ShipperID === 0) {
               isShipper = true;
-              companyID = ShipperID;
+              companyID = Table6[0].companyID;
               CompanyAddress = Shipper_Displayas;
-              Company_Name = ShipperName;
+              Company_Name = Table6[0].company_name;
               Company_AddressID = Shipper_AddressID;
             }
-            if (DefaultEntityTypeID === BuyerID) {
+            if (DefaultEntityTypeID === BuyerID || BuyerID === 0) {
               isBuyer = true;
-              companyID = BuyerID;
+              companyID = Table6[0].companyID;
               CompanyAddress = Buyer_Displayas;
-              Company_Name = BuyerName;
+              Company_Name = Table6[0].company_name;
               Company_AddressID = Buyer_AddressID;
             }
 
-            if (DefaultEntityTypeID === ConsigneeID) {
+            if (DefaultEntityTypeID === ConsigneeID || ConsigneeID === 0) {
               isConshinee = true;
-              companyID = ConsigneeID;
+              companyID = Table6[0].companyID;
               CompanyAddress = Consignee_Displayas;
-              Company_Name = ConsigneeName;
+              Company_Name = Table6[0].company_name;
               Company_AddressID = Consignee_AddressID;
             }
 
-            if (DefaultEntityTypeID === NotifyID) {
+            if (DefaultEntityTypeID === NotifyID || NotifyID === 0) {
               isNotify = true;
-              companyID = NotifyID;
+              companyID = Table6[0].companyID;
               CompanyAddress = Notify_Displayas;
-              Company_Name = NotifyName;
+              Company_Name = Table6[0].company_name;
               Company_AddressID = Notify_AddressID;
             }
             self.setState({
@@ -1176,6 +1218,31 @@ class RateFinalizingStillBooking extends Component {
         var HAZMAT = 0;
         var Customs_Clearance = 0;
         var ShipmentType = "";
+        var multiCargo = [];
+        debugger;
+
+        if (Booking[0].Mode == "FCL") {
+          var type = QuotationData[0].ContainerType;
+        }
+        if (Booking[0].Mode == "FTL") {
+        } else {
+          for (let i = 0; i < CargoDetails.length; i++) {
+            var objcargo = new Object();
+
+            objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
+            objcargo.PackageType = CargoDetails[i].PackageType || "";
+            objcargo.Quantity = CargoDetails[i].QTY || 0;
+            objcargo.Lengths = CargoDetails[i].Lengths || 0;
+            objcargo.Width = CargoDetails[i].Width || 0;
+            objcargo.Height = CargoDetails[i].Height || 0;
+            objcargo.GrossWt = CargoDetails[i].GrossWeight || 0;
+            objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
+            objcargo.Volume = CargoDetails[i].Volume || 0;
+            objcargo.TotalGrossWeight = CargoDetails[i].TotalGrossWeight || 0;
+
+            multiCargo.push(objcargo);
+          }
+        }
 
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
@@ -1288,7 +1355,10 @@ class RateFinalizingStillBooking extends Component {
               Company_AddressID = Notify_AddressID;
             }
 
+            var ContainerLoad = Booking[0].Mode;
+
             self.setState({
+              ContainerLoad,
               isConshinee,
               isBuyer,
               isShipper,
@@ -1300,7 +1370,9 @@ class RateFinalizingStillBooking extends Component {
               Company_Name,
               Company_AddressID,
               strBooking_No,
-              multiCBM: CargoDetails,
+              multiCargo,
+              // multiCBM: multiCargo,
+              CargoDetails,
               cargoType: Booking[0].CargoType,
               selectedCommodity: Booking[0].Commodity,
 
@@ -1375,9 +1447,11 @@ class RateFinalizingStillBooking extends Component {
 
           var HAZMAT = Table6[0].HAZMAT;
           var Customs_Clearance = Table6[0].Customs_Clearance;
+          var NonStackable = Table6[0].NonStackable;
           var ModeofTransport = Table6[0].ModeOfTransport;
           var IncoTerm = Table6[0].IncoTerm;
           self.setState({
+            NonStackable,
             IncoTerm,
             ModeofTransport,
             HAZMAT,
@@ -1715,12 +1789,12 @@ class RateFinalizingStillBooking extends Component {
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
         (multiCBM[i].Quantity *
-          (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
+          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
         6000;
-      if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
+      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWeight
+          ["VolumeWeight"]: multiCBM[i].GrossWt
         };
       } else {
         multiCBM[i] = {
@@ -1731,9 +1805,9 @@ class RateFinalizingStillBooking extends Component {
     } else {
       var decVolume =
         multiCBM[i].Quantity *
-        ((multiCBM[i].Length / 100) *
+        ((multiCBM[i].Lengths / 100) *
           (multiCBM[i].Width / 100) *
-          (multiCBM[i].height / 100));
+          (multiCBM[i].Height / 100));
       multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: parseFloat(decVolume)
@@ -1783,8 +1857,8 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={"L (cm)"}
               className="w-100"
-              name="Length"
-              value={this.state.isCopy == true ? el.Length : el.Length || ""}
+              name="Lengths"
+              value={this.state.isCopy == true ? el.Lengths : el.Lengths || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -1803,33 +1877,17 @@ class RateFinalizingStillBooking extends Component {
           </div>
         </div>
         <div className="col-md">
-          {(this.state.ContainerLoad == "LCL" || "AIR" || "LTL") &&
-          this.state.NonStackable ? (
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder="H (cm)"
-                className="w-100"
-                name="height"
-                value={this.state.isCopy == true ? el.height : el.height || ""}
-                disabled
-                //onBlur={this.cbmChange}
-              />
-            </div>
-          ) : (
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder="H (cm)"
-                className="w-100"
-                name="height"
-                value={this.state.isCopy == true ? el.height : el.height || ""}
-                //onBlur={this.cbmChange}
-              />
-            </div>
-          )}
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="Height"
+              value={this.state.isCopy == true ? el.Height : el.Height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
         </div>
 
         <div className="col-md">
@@ -1838,12 +1896,8 @@ class RateFinalizingStillBooking extends Component {
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
-              name="GrossWeight"
-              value={
-                this.state.isCopy == true
-                  ? el.GrossWeight
-                  : el.GrossWeight || ""
-              }
+              name="GrossWt"
+              value={this.state.isCopy == true ? el.GrossWt : el.GrossWt || ""}
               className="w-100"
             />
           </div>
@@ -1892,7 +1946,7 @@ class RateFinalizingStillBooking extends Component {
               <i
                 className="fa fa-minus mt-2"
                 aria-hidden="true"
-                onClick={this.removeMultiCBM.bind(this)}
+                onClick={this.removeMultiCBM.bind(this, i)}
               ></i>
             </div>
           </div>
@@ -1902,16 +1956,19 @@ class RateFinalizingStillBooking extends Component {
   }
 
   addMultiCBM() {
+    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
         {
+          BookingPackID: 0,
           PackageType: "",
           Quantity: 0,
-          Length: 0,
+          Lengths: 0,
           Width: 0,
-          height: 0,
+          Height: 0,
           Weight: 0,
+          GrossWt: 0,
           VolumeWeight: 0,
           Volume: 0
         }
@@ -1920,39 +1977,211 @@ class RateFinalizingStillBooking extends Component {
   }
 
   removeMultiCBM(i) {
+    debugger;
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
     this.setState({ multiCBM });
   }
 
+  // ------------------------For FCL ----------------
+  CreateFCLMultiCBM() {
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Lengths"
+              value={this.state.isCopy == true ? el.Lengths : el.Lengths || ""}
+              // onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="Height"
+              value={this.state.isCopy == true ? el.Height : el.Height || ""}
+              //onBlur={this.cbmChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
+              name="GrossWt"
+              value={this.state.isCopy == true ? el.GrossWt : el.GrossWt || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
+            <div className="spe-equ">
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this, i)}
+              ></i>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    ));
+  }
+
+  removeFCLMultiCBM(i) {
+    debugger;
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
+  }
+
+  addFCLMultiCBM() {
+    debugger;
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          BookingPackID: 0,
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          Weight: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ]
+    }));
+  }
   SubmitCargoDetails(e) {
+    var data = this.state.multiCBM;
+    var multiCBM = [];
+    debugger;
+    for (let i = 0; i < data.length; i++) {
+      var cargoData = new Object();
+      if (data[i].PackageType !== "") {
+        cargoData.BookingPackID = data[i].BookingPackID || 0;
+        cargoData.PackageType = data[i].PackageType || "";
+        cargoData.Quantity = data[i].Quantity || 0;
+        cargoData.Lengths = data[i].Lengths || 0;
+        cargoData.Width = data[i].Width || 0;
+        cargoData.Height = data[i].Height || 0;
+        cargoData.GrossWt = data[i].GrossWt || 0;
+        cargoData.VolumeWeight = data[i].VolumeWeight || 0;
+        cargoData.Volume = data[i].Volume || 0;
+
+        multiCBM.push(cargoData);
+      }
+    }
+
+    this.setState({ multiCargo: multiCBM });
     this.toggleEdit();
   }
 
   toggleEdit(e) {
     if (!this.state.modalEdit) {
-      var valuetype = e.target.getAttribute("data-valuetype");
-      var valuequantity = e.target.getAttribute("data-valuequantity");
-      var valuelenght = e.target.getAttribute("data-valuelenght");
-      var valuewidth = e.target.getAttribute("data-valuewidth");
-      var valueheight = e.target.getAttribute("data-valueheight");
-      var valueweight = e.target.getAttribute("data-valueweight");
-      var valuecbm = e.target.getAttribute("data-valuecbm");
-      var valuespecialsontainersode = e.target.getAttribute(
-        "data-valuespecialsontainersode"
-      );
+      debugger;
 
-      this.setState(prevState => ({
-        currentPackageType: valuetype,
-        valuequantity: valuequantity,
-        valuelenght: valuelenght,
-        valuewidth: valuewidth,
-        valueheight: valueheight,
-        valueweight: valueweight,
-        valuecbm: valuecbm,
-        valuespecialsontainersode: valuespecialsontainersode
-      }));
-      this.forceUpdate();
+      var multiCBM = this.state.multiCargo;
+
+      this.setState({ multiCBM });
+    } else {
     }
 
     this.setState(prevState => ({
@@ -1962,7 +2191,7 @@ class RateFinalizingStillBooking extends Component {
 
   render() {
     const { Booking } = this.state;
-    console.log(this.state.FileData);
+    console.log(this.state.ContainerLoad);
     var bNumber = "";
     if (Booking.length > 0) {
       bNumber = Booking[0].strBooking_No;
@@ -1989,9 +2218,7 @@ class RateFinalizingStillBooking extends Component {
               <h2>
                 {this.state.copy === true
                   ? "Booking Clone"
-                  : this.state.isInsert === true
-                  ? "Create Booking"
-                  : this.state.BookingNo !== "" && this.state.isView === false
+                  : this.state.BookingNo !== "" && this.state.isView === true
                   ? "Update Booking"
                   : this.state.BookingNo !== "" && this.state.isView === true
                   ? "Booking Details " + bNumber
@@ -2320,7 +2547,7 @@ class RateFinalizingStillBooking extends Component {
                           <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">Container Load</p>
                             <p className="details-para">
-                              {Booking.length > 0 ? Booking[0].CargoType : null}
+                              {/* {Booking.length > 0 ? Booking[0].CargoType : null} */}
                               {this.state.ContainerLoad !== ""
                                 ? this.state.ContainerLoad
                                 : ""}
@@ -2360,8 +2587,9 @@ class RateFinalizingStillBooking extends Component {
                                 : "Yes"}
                             </p>
                           </div>
-                          {this.state.ContainerLoad == "LCL" ||
-                          this.state.ContainerLoad == "AIR" ? (
+                          {this.state.ContainerLoad === "LCL" ||
+                          this.state.ContainerLoad === "AIR" ||
+                          this.state.ContainerLoad === "LTL" ? (
                             <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                               <p className="details-title">Unstackable</p>
                               <p className="details-para">
@@ -3005,7 +3233,7 @@ class RateFinalizingStillBooking extends Component {
                     </div>
                     <div className="row ratefinalpgn">
                       {this.state.eqmtType.length > 0 ? "" : null}
-                      {this.state.multiCBM.length > 0 ? (
+                      {this.state.multiCargo.length > 0 ? (
                         <ReactTable
                           columns={[
                             {
@@ -3016,7 +3244,7 @@ class RateFinalizingStillBooking extends Component {
                                 },
                                 {
                                   Header: "Quantity",
-                                  accessor: "QTY"
+                                  accessor: "Quantity"
                                 },
                                 {
                                   Header: "Length",
@@ -3032,7 +3260,7 @@ class RateFinalizingStillBooking extends Component {
                                 },
                                 {
                                   Header: "Gross Weight",
-                                  accessor: "GrossWeight"
+                                  accessor: "GrossWt"
                                 },
                                 {
                                   Header: "Volume Weight",
@@ -3041,7 +3269,7 @@ class RateFinalizingStillBooking extends Component {
                               ]
                             }
                           ]}
-                          data={this.state.multiCBM}
+                          data={this.state.multiCargo}
                           minRows={0}
                           showPagination={false}
                           className="-striped -highlight"
@@ -3125,33 +3353,23 @@ class RateFinalizingStillBooking extends Component {
                         ? this.CreateFileElement()
                         : null} */}
                     </div>
-                    {this.state.isView === false ? (
-                      <center>
-                        <button
-                          onClick={
-                            this.state.copy === true
-                              ? this.HandleBookigClone.bind(this)
-                              : this.state.isInsert === true
-                              ? this.HandleBookigInsert.bind(this)
-                              : this.HandleBookingUpdate.bind(this)
-                          }
-                          className="butn more-padd mt-4"
-                        >
-                          {this.state.copy === true
-                            ? "Booking Clone"
-                            : this.state.isInsert === true
-                            ? "Create Booking"
-                            : this.state.BookingNo !== ""
-                            ? "Update Booking"
-                            : ""}
-                          {/* {this.state.salesQuotaNo !== ""
-                          ? "Create Booking"
-                          : "Update Booking"} */}
-                        </button>
-                      </center>
-                    ) : (
-                      ""
-                    )}
+
+                    <center>
+                      <button
+                        onClick={
+                          this.state.copy === true
+                            ? this.HandleBookigClone.bind(this)
+                            : this.HandleBookingUpdate.bind(this)
+                        }
+                        className="butn more-padd mt-4"
+                      >
+                        {this.state.copy === true
+                          ? "Booking Clone"
+                          : this.state.BookingNo !== ""
+                          ? "Update Booking"
+                          : ""}
+                      </button>
+                    </center>
                   </div>
                 </div>
               </div>
@@ -3184,224 +3402,11 @@ class RateFinalizingStillBooking extends Component {
             >
               <h3 className="mb-4">Edit Cargo Details</h3>
               <>
-                {" "}
-                {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                        <Select
-                          className="rate-dropdown"
-                          getOptionLabel={option =>
-                            option.StandardContainerCode
-                          }
-                          getOptionValue={option =>
-                            option.StandardContainerCode
-                          }
-                          isMulti
-                          options={this.state.EquipmentType}
-                          onChange={this.newaddClick.bind(this)}
-                          value={this.state.selected}
-                          showNewOptionAtTop={false}
-                        />
-                      </div> */}
-                {/* <div className="d-flex flex-wrap justify-content-center">
-                        {this.NewcreateUI()}
-                      </div>
-                      <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                        <input
-                          id="Special-equType"
-                          type="checkbox"
-                          className="d-none"
-                          name={"Special-equType"}
-                          // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                        />
-                      </div> */}
-                {this.state.containerLoadType === "FCL" ? (
-                  // this.state.specialEquipment === true ? (
-                  this.state.flattack_openTop.length > 0 ? (
-                    <div className="">
-                      {/* spe-equ mt-0 */}
-                      {/* <div className="equip-plus-cntr w-100">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.SpecialContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.SpecialContainerCode
-                              }
-                              options={this.state.SpacialEqmt}
-                              placeholder="Select Kind of Special Equipment"
-                              onChange={this.specEquipChange}
-                              showNewOptionAtTop={false}
-                            />
-                          </div> */}
-                      <div id="cbmInner">
-                        {/* {this.state.specialEqtSelect === true ? ( */}
-                        {/* {this.state.flattack_openTop.length > 0 ? ( */}
-                        <>{this.MultiCreateCBM()}</>
-                        {/* //) : null */}
-                        {/* ) : null} */}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="row cbm-space" key={i}>
-                      {/* <div className="col-md">
-                        <div className="spe-equ">
-                          <label className="mr-0 mt-2" name="SpecialContainerCode">
-                            {el.SpecialContainerCode}
-                          </label>
-                        </div>
-                      </div> */}
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <select
-                            className="select-text"
-                            onChange={this.newMultiCBMHandleChange.bind(
-                              this,
-                              i
-                            )}
-                            name="SpecialContainerCode"
-                            //value={el.SpecialContainerCode}
-                          >
-                            <option selected>Select</option>
-                            {this.state.equipmentTypeArr.map((item, i) => (
-                              <option key={i} value={item.ContainerType}>
-                                {item.ContainerType}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <select
-                            className="select-text"
-                            onChange={this.newMultiCBMHandleChange.bind(
-                              this,
-                              i
-                            )}
-                            name="PackageType"
-                            //value={el.PackageType}
-                          >
-                            <option selected>Select</option>
-                            {this.state.packageTypeData.map((item, i) => (
-                              <option key={i} value={item.PackageName}>
-                                {item.PackageName}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            onChange={this.newMultiCBMHandleChange.bind(
-                              this,
-                              i
-                            )}
-                            placeholder={"L (cm)"}
-                            className="w-100"
-                            name="length"
-                            //value={el.length || ""}
-                            // onBlur={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            onChange={this.newMultiCBMHandleChange.bind(
-                              this,
-                              i
-                            )}
-                            placeholder={"W (cm)"}
-                            className="w-100"
-                            name="width"
-                            //value={el.width || ""}
-                            //onBlur={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            onChange={this.newMultiCBMHandleChange.bind(
-                              this,
-                              i
-                            )}
-                            placeholder="H (cm)"
-                            className="w-100"
-                            name="height"
-                            //value={el.height || ""}
-                            //onBlur={this.cbmChange}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            onChange={this.newMultiCBMHandleChange.bind(
-                              this,
-                              i
-                            )}
-                            //placeholder={el.Gross_Weight === 0 ? "G W" : "G W"}
-                            name="Gross_Weight"
-                            //value={el.Gross_Weight}
-                            className="w-100"
-                          />
-                        </div>
-                      </div>
-                      {/* <div className="col-md">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            name="total"
-                            onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                            placeholder={this.state.modeoftransport != "AIR" ? "VW" : "KG"}
-                            value={el.total || ""}
-                            className="w-100"
-                          />
-                        </div>
-                      </div> */}
-                      {i === 0 ? (
-                        <div className="">
-                          <div className="spe-equ">
-                            <i
-                              className="fa fa-plus mt-2"
-                              aria-hidden="true"
-                              onClick={this.addMultiDim.bind(this)}
-                            ></i>
-                          </div>
-                        </div>
-                      ) : null}
-                      {this.state.flattack_openTop.length > 1 ? (
-                        <div className="">
-                          <div className="spe-equ">
-                            <i
-                              className="fa fa-minus mt-2"
-                              aria-hidden="true"
-                              onClick={this.removeMultiDim.bind(this, i)}
-                            ></i>
-                          </div>
-                        </div>
-                      ) : null}
-                      {/* <div className="">
-                        <div className="spe-equ">
-                          <i
-                            className="fa fa-minus mt-2"
-                            aria-hidden="true"
-                            //onClick={this.removeClickMultiCBM.bind(this)}
-                          ></i>
-                        </div>
-                      </div> */}
-                    </div>
-                  )
-                ) : (
-                  this.CreateMultiCBM()
-                )}
+                {this.state.containerLoadType === "FCL"
+                  ? ""
+                  : this.state.containerLoadType === "FTL"
+                  ? ""
+                  : this.CreateMultiCBM()}
               </>
 
               <div className="text-center">

@@ -297,7 +297,14 @@ class BookingTable extends Component {
                                       this.HandleRowClickEvt(e, row)
                                     }
                                   />
-
+ <img
+                                    className="actionicon"
+                                    src={Edit}
+                                    alt="view-icon"
+                                    onClick={e =>
+                                      this.HandleDocumentView(e, row)
+                                    }
+                                  />
                                   <img
                                     className="actionicon"
                                     src={Copy}

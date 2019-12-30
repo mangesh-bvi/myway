@@ -1334,7 +1334,7 @@ class Dashboard extends Component {
 
                         <span
                           className="viewmore-span"
-                          onClick={this.HandleShipmentPage}
+                          onClick={self.HandleShipmentPage.bind(this)}
                         >
                           ...View More
                         </span>
@@ -1356,7 +1356,7 @@ class Dashboard extends Component {
                         </div>
                         <span
                           className="viewmore-span"
-                          onClick={this.HandleBookingTablePage}
+                          onClick={self.HandleBookingTablePage.bind(this)}
                         >
                           ...View More
                         </span>
@@ -1378,7 +1378,7 @@ class Dashboard extends Component {
                         </div>
                         <span
                           className="viewmore-span"
-                          onClick={this.HandleQuotesTablePage}
+                          onClick={self.HandleQuotesTablePage.bind(this)}
                         >
                           ...View More
                         </span>

@@ -931,7 +931,7 @@ class NewRateSearch extends Component {
           } else {
             multiCBM[i] = {
               ...multiCBM[i],
-              [name]: value === "" ? 0 : value.toFixed(2)
+              [name]: value === "" ? 0 : value
             };
           }
         }

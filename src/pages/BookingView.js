@@ -1018,6 +1018,36 @@ class BookingView extends Component {
                                   }
                                 }
                               },
+                              {
+                                minWidth: 120,
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">
+                                        Transit port
+                                      </p>
+                                      <p className="details-para">
+                                        {row.original.TransshipmentPort}
+                                      </p>
+                                    </>
+                                  );
+                                },
+                                accessor: "TransshipmentPort",
+                                filterable: true
+                              },
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">Free Time</p>
+                                      <p className="details-para"></p>
+                                    </>
+                                  );
+                                },
+                                accessor: "freeTime",
+                                filterable: true
+                                // minWidth: 80
+                              },
 
                               {
                                 accessor: "ContainerType",
@@ -1047,7 +1077,26 @@ class BookingView extends Component {
                                   );
                                 }
                               },
-
+                              {
+                                Cell: row => {
+                                  return (
+                                    <>
+                                      <p className="details-title">TT (Days)</p>
+                                      {this.state.ContainerLoad !== "INLAND" ? (
+                                        <p className="details-para">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      ) : (
+                                        <p className="details-para">
+                                          {row.original.TransitTime}
+                                        </p>
+                                      )}
+                                    </>
+                                  );
+                                },
+                                accessor: "TransitTime"
+                                // minWidth: 60
+                              },
                               {
                                 accessor: "Total",
                                 Cell: row => {
