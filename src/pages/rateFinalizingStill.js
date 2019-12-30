@@ -880,6 +880,9 @@ class RateFinalizingStill extends Component {
         NotificationManager.error(error.response.data.split("'")[1]);
         console.log(error.response);
       });
+
+      var qData = this.props.location.state;
+      this.HandleSalesQuoteView(qData);
   };
 
   HandleDowloadFile = (e, item) => {

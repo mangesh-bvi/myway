@@ -2177,6 +2177,7 @@ class RateFinalizing extends Component {
   SendRequest() {
     debugger;
     if (this.state.selectedDataRow.length > 0) {
+      if(this.state.CompanyID !== 0){
       var txtRequestDiscount,
         txtRequestFreeTime,
         txtRequestComments = "";
@@ -2907,13 +2908,17 @@ class RateFinalizing extends Component {
           debugger;
           console.log(error.response);
         });
-    } else {
+      }else{
+        NotificationManager.error("Please select customer");
+      }
+      } else {
       NotificationManager.error("Please select atleast one Rate");
     }
   }
 
   SendRequestCopy() {
     if (this.state.selectedDataRow.length > 0) {
+      if(this.state.CompanyID !== 0){
       var txtRequestDiscount,
         txtRequestFreeTime,
         txtRequestComments = "";
@@ -3124,6 +3129,9 @@ class RateFinalizing extends Component {
           debugger;
           console.log(error.response);
         });
+      }else{
+        NotificationManager.error("Please select customer");
+      }
     } else {
       NotificationManager.error("Please select atleast one rate");
     }
@@ -5954,6 +5962,151 @@ class RateFinalizing extends Component {
                     </div>
                   </div> */}
                   <div className="rate-final-contr">
+                    <div
+                      className="title-border py-3"
+                      style={{ marginBottom: "15px" }}
+                    >
+                      <h3>Customer Details</h3>
+                    </div>
+                    <div className="">
+                      <div className="row">
+                        <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock">
+                          <p className="details-title">Account/Customer</p>
+                          {this.state.toggleAddProfitBtn && (
+                            <p className="details-para">
+                              {this.state.CompanyName}
+                            </p>
+                          )}
+                          {!this.state.toggleAddProfitBtn && (
+                            <p className="details-para">
+                              {encryption(
+                                window.localStorage.getItem("companyname"),
+                                "desc"
+                              )}
+                            </p>
+                          )}
+                          {encryption(
+                            window.localStorage.getItem("usertype"),
+                            "desc"
+                          ) != "Customer" ? (
+                            this.state.CompanyName == "" ||
+                            this.state.isCopy ? (
+                              <div className="position-relative mt-2">
+                                <Autocomplete
+                                  id="searchtxt"
+                                  className="title-sect p-0 pt-2"
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.customerData}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white",
+                                        padding: "5px"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Company_Name"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Company_Name"
+                                  )}
+                                  menuStyle={this.state.menuStyle}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    "Company_Name"
+                                  )}
+                                  inputProps={{
+                                    placeholder: "Search Account/Consignee"
+                                  }}
+                                />
+                              </div>
+                            ) : // ) : null
+                            null
+                          ) : null}
+                        </div>
+                        <div className="col-12 col-sm-4 col-md-4 col-lg-6">
+                          <p className="details-title">Address</p>
+                          <p className="details-para">
+                            {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
+                            {/* {this.state.CustAddress} */}
+                            {encryption(
+                              window.localStorage.getItem("usertype"),
+                              "desc"
+                            ) != "Customer"
+                              ? this.state.CompanyAddress
+                              : encryption(
+                                  window.localStorage.getItem("companyaddress"),
+                                  "desc"
+                                )}
+                          </p>
+                        </div>
+                        <div className="col-12 col-sm-4 col-md-3 col-xl-3">
+                          <p className="details-title">Notification Person</p>
+                          <p className="details-para">
+                            {encryption(
+                              window.localStorage.getItem("usertype"),
+                              "desc"
+                            ) != "Customer"
+                              ? this.state.ContactName
+                              : encryption(
+                                  window.localStorage.getItem("contactname"),
+                                  "desc"
+                                )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    {this.state.CompanyName == "" ? (
+                      <div className="text-right">
+                        {this.state.toggleAddProfitBtn && (
+                          <button
+                            onClick={() => {
+                              this.toggleNewConsignee();
+                              this.newOpen();
+                            }}
+                            //onClick={this.toggleNewConsignee}
+                            className="butn more-padd"
+                          >
+                            Create Customer
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+                    {/* <div className="row">
+                      <div className="col-md-6 login-fields">
+                        <p className="details-title">Commodity</p>
+                        <select
+                          //disabled={true}
+                          value={this.state.CommodityID}
+                          onChange={this.commoditySelect.bind(this)}
+                        >
+                          {this.state.commodityData.map((item, i) => (
+                            <option key={i} value={item.id}>
+                              {item.Commodity}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div> */}
+                    <div
+                      className="title-border py-3 d-flex align-items-center justify-content-between"
+                      style={{ marginBottom: "15px" }}
+                    >
+                      <h3>Cargo Details</h3>
+                      <div className="align-center">
+                        <button
+                          onClick={this.toggleEdit}
+                          className="butn more-padd m-0"
+                        >
+                          Cargo Details
+                        </button>
+                      </div>
+                    </div>
+                    <div className="rate-final-contr">
                     {/* <div className="text-center">
                       {this.state.toggleIsEdit && (
                         <button
@@ -6117,151 +6270,6 @@ class RateFinalizing extends Component {
                     </div>
                   </div>
 
-                  <div className="rate-final-contr">
-                    <div
-                      className="title-border py-3"
-                      style={{ marginBottom: "15px" }}
-                    >
-                      <h3>Customer Details</h3>
-                    </div>
-                    <div className="">
-                      <div className="row">
-                        <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock">
-                          <p className="details-title">Account/Customer</p>
-                          {this.state.toggleAddProfitBtn && (
-                            <p className="details-para">
-                              {this.state.CompanyName}
-                            </p>
-                          )}
-                          {!this.state.toggleAddProfitBtn && (
-                            <p className="details-para">
-                              {encryption(
-                                window.localStorage.getItem("companyname"),
-                                "desc"
-                              )}
-                            </p>
-                          )}
-                          {encryption(
-                            window.localStorage.getItem("usertype"),
-                            "desc"
-                          ) != "Customer" ? (
-                            this.state.CompanyName == "" ||
-                            this.state.isCopy ? (
-                              <div className="position-relative mt-2">
-                                <Autocomplete
-                                  id="searchtxt"
-                                  className="title-sect p-0 pt-2"
-                                  getItemValue={item => item.Company_Name}
-                                  items={this.state.customerData}
-                                  renderItem={(item, isHighlighted) => (
-                                    <div
-                                      style={{
-                                        background: isHighlighted
-                                          ? "lightgray"
-                                          : "white",
-                                        padding: "5px"
-                                      }}
-                                    >
-                                      {item.Company_Name}
-                                    </div>
-                                  )}
-                                  value={this.state.fields["Company_Name"]}
-                                  onChange={this.HandleChangeCon.bind(
-                                    this,
-                                    "Company_Name"
-                                  )}
-                                  menuStyle={this.state.menuStyle}
-                                  onSelect={this.handleSelectCon.bind(
-                                    this,
-                                    "Company_Name"
-                                  )}
-                                  inputProps={{
-                                    placeholder: "Search Account/Consignee"
-                                  }}
-                                />
-                              </div>
-                            ) : // ) : null
-                            null
-                          ) : null}
-                        </div>
-                        <div className="col-12 col-sm-4 col-md-4 col-lg-6">
-                          <p className="details-title">Address</p>
-                          <p className="details-para">
-                            {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
-                            {/* {this.state.CustAddress} */}
-                            {encryption(
-                              window.localStorage.getItem("usertype"),
-                              "desc"
-                            ) != "Customer"
-                              ? this.state.CompanyAddress
-                              : encryption(
-                                  window.localStorage.getItem("companyaddress"),
-                                  "desc"
-                                )}
-                          </p>
-                        </div>
-                        <div className="col-12 col-sm-4 col-md-3 col-xl-3">
-                          <p className="details-title">Notification Person</p>
-                          <p className="details-para">
-                            {encryption(
-                              window.localStorage.getItem("usertype"),
-                              "desc"
-                            ) != "Customer"
-                              ? this.state.ContactName
-                              : encryption(
-                                  window.localStorage.getItem("contactname"),
-                                  "desc"
-                                )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    {this.state.CompanyName == "" ? (
-                      <div className="text-right">
-                        {this.state.toggleAddProfitBtn && (
-                          <button
-                            onClick={() => {
-                              this.toggleNewConsignee();
-                              this.newOpen();
-                            }}
-                            //onClick={this.toggleNewConsignee}
-                            className="butn more-padd"
-                          >
-                            Create Customer
-                          </button>
-                        )}
-                      </div>
-                    ) : null}
-                    {/* <div className="row">
-                      <div className="col-md-6 login-fields">
-                        <p className="details-title">Commodity</p>
-                        <select
-                          //disabled={true}
-                          value={this.state.CommodityID}
-                          onChange={this.commoditySelect.bind(this)}
-                        >
-                          {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.id}>
-                              {item.Commodity}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div> */}
-                    <div
-                      className="title-border py-3 d-flex align-items-center justify-content-between"
-                      style={{ marginBottom: "15px" }}
-                    >
-                      <h3>Cargo Details</h3>
-                      <div className="align-center">
-                        <button
-                          onClick={this.toggleEdit}
-                          className="butn more-padd m-0"
-                        >
-                          Cargo Details
-                        </button>
-                      </div>
-                    </div>
                     <div className="row">
                       <div className="col-md-6 login-fields">
                         <p className="details-title">Commodity</p>
