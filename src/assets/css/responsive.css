@@ -112,7 +112,7 @@
   font-weight: 400;
 }
 input[type="range"] {
-  width: 60px; /* Specific width is required for Firefox. */
+  width: 60px !important;
 }
 .login-fields {
   padding: 0 10px;
@@ -232,6 +232,10 @@ input[type="range"] {
 .rate-table-header {
   display: block;
 }
+
+input[type="range"] {
+  width: 60px !important;
+}
 }
 @media (min-width: 576px) and (max-width: 640px) {
   .menubars {
@@ -250,6 +254,10 @@ input[type="range"] {
   }
   .header-ul li {
     padding: 10px 15px;
+}
+
+input[type="range"] {
+  width: 60px !important;
 }
 }
 @media (min-width: 320px) and (max-width: 575px) {
@@ -450,6 +458,10 @@ input[type="range"] {
 
 .rate-table-header {
   display: block;
+}
+
+input[type="range"] {
+  width: 60px !important;
 }
 }
 @media (min-width: 320px) and (max-width: 460px) {
