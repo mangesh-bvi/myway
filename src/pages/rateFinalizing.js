@@ -775,29 +775,29 @@ class RateFinalizing extends Component {
                 var table = response.data.Table1;
                 var container = "";
                 for (var i = 0; i < table.length; i++) {
-                  CargoDetailsArr.push({
-                    PackageType: table[i].PackageType,
-                    SpecialContainerCode: table[i].PackageType + "_" + i,
-                    ContainerType: table[i].PackageType,
-                    Packaging: "-",
-                    Quantity: table[i].Quantity,
-                    Lenght: table[i].Length,
-                    Width: table[i].Width,
-                    Height: table[i].height,
-                    Weight: table[i].GrossWeight,
-                    Gross_Weight: "-",
-                    Temperature: "-",
-                    CBM:
-                      response.data.Table[0].ModeOfTransport.toUpperCase() ===
-                      "AIR"
-                        ? table[i].ChgWeight
-                        : table[i].CBM === undefined
-                        ? "-"
-                        : table[i].CBM,
-                    Volume: "-",
-                    VolumeWeight: "-",
-                    Editable: true
-                  });
+                  // CargoDetailsArr.push({
+                  //   PackageType: table[i].PackageType,
+                  //   SpecialContainerCode: table[i].PackageType + "_" + i,
+                  //   ContainerType: table[i].PackageType,
+                  //   Packaging: "-",
+                  //   Quantity: table[i].Quantity,
+                  //   Lenght: table[i].Length,
+                  //   Width: table[i].Width,
+                  //   Height: table[i].height,
+                  //   Weight: table[i].GrossWeight,
+                  //   Gross_Weight: "-",
+                  //   Temperature: "-",
+                  //   CBM:
+                  //     response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                  //     "AIR"
+                  //       ? table[i].ChgWeight
+                  //       : table[i].CBM === undefined
+                  //       ? "-"
+                  //       : table[i].CBM,
+                  //   Volume: "-",
+                  //   VolumeWeight: "-",
+                  //   Editable: true
+                  // });
                   // }
                   if (param.type == "FCL") {
                     if (!container.includes(table[i].ContainerCode)) {
@@ -913,7 +913,8 @@ class RateFinalizing extends Component {
             self.setState({
               PackageDetailsArr: PackageDetailsArr,
               users: containerDetailsArr,
-              equipmentTypeArr: equipmentTypeArr
+              equipmentTypeArr: equipmentTypeArr,
+              CargoDetailsArr: CargoDetailsArr
             });
           }
         }
@@ -3406,6 +3407,7 @@ class RateFinalizing extends Component {
   SubmitCargoDetails(e) {
     debugger;
     var PackageDetailsArr = [];
+    let CargoDetailsArr = [];
     if (
       this.state.containerLoadType == "AIR" ||
       this.state.containerLoadType == "LCL" ||
@@ -3441,6 +3443,31 @@ class RateFinalizing extends Component {
             this.state.containerLoadType == "LCL"
               ? multiCBM[i].Volume
               : multiCBM[i].VolumeWeight,
+          Editable: true
+        });
+
+        CargoDetailsArr.push({
+          PackageType: multiCBM[i].PackageType,
+          SpecialContainerCode: multiCBM[i].PackageType + "_" + i,
+          ContainerType: multiCBM[i].PackageType,
+          Packaging: "-",
+          Quantity: multiCBM[i].Quantity,
+          Lenght: this.state.isCopy == true
+          ? multiCBM[i].Length || multiCBM[i].Lengths
+          : multiCBM[i].Length,
+          Width: multiCBM[i].Width,
+          Height: this.state.isCopy == true ? multiCBM[i].height : multiCBM[i].height,
+          Weight: this.state.isCopy == true
+          ? multiCBM[i].GrossWeight
+          : multiCBM[i].GrossWeight,
+          Gross_Weight: "-",
+          Temperature: "-",
+          CBM:
+          this.state.containerLoadType == "LCL"
+          ? multiCBM[i].Volume
+          : multiCBM[i].VolumeWeight,
+          Volume: "-",
+          VolumeWeight: "-",
           Editable: true
         });
       }
@@ -3482,6 +3509,28 @@ class RateFinalizing extends Component {
             CBM: flattack_openTop[i].total,
             Editable: true
           });
+
+          CargoDetailsArr.push({
+            PackageType: flattack_openTop[i].PackageType,
+            SpecialContainerCode: flattack_openTop[i].SpecialContainerCode + "_" + i,
+            ContainerType: flattack_openTop[i].PackageType +
+            " (" +
+            flattack_openTop[i].SpecialContainerCode +
+            ")",
+            Packaging: "-",
+            Quantity: flattack_openTop[i].Quantity,
+            Lenght: flattack_openTop[i].length,
+            Width: flattack_openTop[i].width,
+            Height: flattack_openTop[i].height,
+            Weight: flattack_openTop[i].Gross_Weight,
+            Gross_Weight: "-",
+            Temperature: "-",
+            CBM:
+            flattack_openTop[i].total,
+            Volume: "-",
+            VolumeWeight: "-",
+            Editable: true
+          });
         }
       }
 
@@ -3490,7 +3539,6 @@ class RateFinalizing extends Component {
       });
     }
 
-    let CargoDetailsArr = [...this.state.CargoDetailsArr];
 
     for (var i = 0; i < CargoDetailsArr.length; i++) {
       if (
@@ -6924,7 +6972,8 @@ class RateFinalizing extends Component {
                   <div className="thirdbox">
                     {this.state.containerLoadType === "LCL" ||
                     this.state.containerLoadType === "AIR" ||
-                    this.state.containerLoadType === "LTL" ? (
+                    this.state.containerLoadType === "LTL" ||
+                    this.state.containerLoadType === "FCL" ? (
                       <>
                         <h3>Dimensions</h3>
                         <div className="table-responsive">
@@ -6956,8 +7005,8 @@ class RateFinalizing extends Component {
                                   <td>{item1.Weight}</td>
                                   <td>
                                     {this.state.containerLoadType === "AIR"
-                                      ? item1.VolumeWeight
-                                      : item1.Volume}
+                                      ? item1.CBM
+                                      : item1.CBM}
                                   </td>
                                 </tr>
                               ))}
@@ -7099,7 +7148,7 @@ class RateFinalizing extends Component {
                   ))}
                   {this.state.rateDetails.map(item => (
                   <> */}
-                  <div className="row">
+                  {/* <div className="row">
                     <div className="col-12">
                       <div className="thirdbox">
                         {this.state.containerLoadType === "LCL" ||
@@ -7148,7 +7197,7 @@ class RateFinalizing extends Component {
                         ) : null}
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="row">
                     <div className="col-12">
                       <div className="thirdbox">
