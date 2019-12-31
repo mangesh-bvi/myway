@@ -1793,9 +1793,6 @@ table tbody tr:last-child {
 .w-92 {
   width: 92%;
 }
-.w-92 div {
-  width: 100%;
-}
 .pol-pod-popup label {
   margin-bottom: 0;
   margin-right: 20px;
@@ -1901,12 +1898,12 @@ input[type="range"]::-moz-range-track {
   font-family: "Bold Font";
   text-transform: uppercase;
   position: absolute;
-  left: 25px;
+  left: 10px;
   top: calc(50% - 13px);
   transform: translateY(-50%);
 }
 .rate-table-range .cust-labl.clr-red {
-  right: 25px;
+  right: 10px;
   left: initial;
 }
 .rate-table-header {
@@ -2600,7 +2597,7 @@ input[type="range"]::-moz-range-track {
   width: calc(100% - 90px);
 }
 .dragvalue {
-  padding: 0 10px 0 0;
+  padding: 0 5px 0 0;
   font-size: 12px;
 }
 .dragvalue2 {
