@@ -716,11 +716,34 @@ class RateTable extends Component {
         }
       }
     }
+    debugger;
+    var compID = 0;
+    var baseCurrency = "";
+    this.setState({ loading: true });
+    var incoTerms=this.props.location.state.incoTerms;
+    this.setState({incoTerms})
+    if (this.props.location.state.companyId) {
+      compID = this.props.location.state.companyId;
+      this.setState({companyId:compID})
+    } else {
+      compID = this.props.location.state.CustomerID;
+      this.setState({companyId:compID})
+    }
+    if (this.state.currencyCode !== "") {
+      baseCurrency = this.state.currencyCode;
+      this.setState({currencyCode:baseCurrency});
+    } else {
+      baseCurrency = this.props.location.state.currencyCode;
+      this.setState({ currencyCode: baseCurrency });
+    }
+    
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
       data: {
+        CustomerId: compID,
+        BaseCurrency: baseCurrency,
         QuoteType: this.state.containerLoadType,
         ModeOfTransport: rModeofTransport,
         Type: this.state.shipmentType,
@@ -742,7 +765,7 @@ class RateTable extends Component {
           }
         ],
         Commodity: this.state.CommodityID,
-        CustomerId: parseInt(this.props.location.state.companyId),
+        CustomerId: compID,
         PickUpAddressDetails: {
           Street: "",
           Country: "",
@@ -757,6 +780,7 @@ class RateTable extends Component {
           City: "",
           ZipCode: 0
         },
+
         HazMat: this.state.HazMat == true ? 1 : 0,
         CustomClearance: this.state.Custom_Clearance == true ? 1 : 0,
         NonStackable: this.state.NonStackable == true ? 1 : 0,
@@ -770,19 +794,57 @@ class RateTable extends Component {
       var ratetable = response.data.Table;
       var ratetable1 = response.data.Table1;
       var commodityData = response.data.Table2;
-      if (ratetable != null) {
+
+      if (ratetable.length > 0) {
+        if (ratetable != null) {
+          var MinTTArray = [];
+          var MaxTTArray = [];
+          var AmtArray = [];
+          for (let i = 0; i < ratetable.length; i++) {
+            MinTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[0]));
+            MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]));
+            AmtArray.push(ratetable[i].TotalAmount);
+            //MaxAmtArray.push(ratetable[i].TotalAmount);
+          }
+          self.setState({
+            RateDetails: ratetable,
+            tempRateDetails: ratetable,
+            loading: false,
+            commodityData ,
+            MinTT: Math.min(...MinTTArray),
+            MaxTT: Math.max(...MaxTTArray),
+            MinAmt: Math.min(...AmtArray),
+            MaxAmt: Math.max(...AmtArray),
+            value: Math.max(...MaxTTArray),
+            valueAmt: Math.max(...AmtArray)
+          });
+        }
+        if (ratetable1 != null) {
+          self.setState({
+            RateSubDetails: ratetable1
+          });
+        }
+      } else {
         self.setState({
-          commodityData,
-          RateDetails: ratetable,
-          tempRateDetails: ratetable,
           loading: false
         });
       }
-      if (ratetable1 != null) {
-        self.setState({
-          RateSubDetails: ratetable1
-        });
-      }
+
+
+
+      // if (ratetable != null) {
+      //   self.setState({
+      //     commodityData,
+      //     RateDetails: ratetable,
+      //     tempRateDetails: ratetable,
+      //     loading: false
+      //   });
+      // }
+      // if (ratetable1 != null) {
+      //   self.setState({
+      //     RateSubDetails: ratetable1
+      //   });
+      // }
     });
     // // }
   }
@@ -1250,341 +1312,339 @@ class RateTable extends Component {
       });
   }
 
-  HandleSportRateDetailsFCL(paramData) {
-    debugger;
-    var dataParameter = {};
-    var pickUpAddress = {
-      Street: "",
-      Country: "",
-      State: "",
-      City: "",
-      ZipCode: ""
-    };
-    var destUpAddress = {
-      Street: "",
-      Country: "",
-      State: "",
-      City: "",
-      ZipCode: ""
-    };
-    if (paramData.isSearch) {
-      var rTypeofMove =
-        paramData.typesofMove === "p2p"
-          ? 1
-          : paramData.typesofMove === "d2p"
-          ? 2
-          : paramData.typesofMove === "d2d"
-          ? 4
-          : paramData.typesofMove === "p2d"
-          ? 3
-          : 0;
+  // HandleSportRateDetailsFCL(paramData) {
+  //   debugger;
+  //   var dataParameter = {};
+  //   var pickUpAddress = {
+  //     Street: "",
+  //     Country: "",
+  //     State: "",
+  //     City: "",
+  //     ZipCode: ""
+  //   };
+  //   var destUpAddress = {
+  //     Street: "",
+  //     Country: "",
+  //     State: "",
+  //     City: "",
+  //     ZipCode: ""
+  //   };
+  //   if (paramData.isSearch) {
+  //     var rTypeofMove =
+  //       paramData.typesofMove === "p2p"
+  //         ? 1
+  //         : paramData.typesofMove === "d2p"
+  //         ? 2
+  //         : paramData.typesofMove === "d2d"
+  //         ? 4
+  //         : paramData.typesofMove === "p2d"
+  //         ? 3
+  //         : 0;
 
-      var rModeofTransport =
-        paramData.modeoftransport === "SEA"
-          ? "Ocean"
-          : paramData.modeoftransport === "AIR"
-          ? "Air"
-          : paramData.modeoftransport === "ROAD"
-          ? "inland"
-          : "";
-      var polAddress = paramData.polfullAddData;
-      var podAddress = paramData.podfullAddData;
+  //     var rModeofTransport =
+  //       paramData.modeoftransport === "SEA"
+  //         ? "Ocean"
+  //         : paramData.modeoftransport === "AIR"
+  //         ? "Air"
+  //         : paramData.modeoftransport === "ROAD"
+  //         ? "inland"
+  //         : "";
+  //     var polAddress = paramData.polfullAddData;
+  //     var podAddress = paramData.podfullAddData;
 
-      var containerdetails = paramData.users;
+  //     var containerdetails = paramData.users;
 
-      var polLatLng = new Object();
-      var podLatLng = new Object();
+  //     var polLatLng = new Object();
+  //     var podLatLng = new Object();
 
-      var polmapData = polAddress.GeoCoordinate;
-      var polmarkerData = [];
-      if (typeof polmapData !== "undefined" && polmapData !== null) {
-        polLatLng.lat = Number(polmapData.split(",")[0]);
-        polLatLng.lng = Number(polmapData.split(",")[1]);
+  //     var polmapData = polAddress.GeoCoordinate;
+  //     var polmarkerData = [];
+  //     if (typeof polmapData !== "undefined" && polmapData !== null) {
+  //       polLatLng.lat = Number(polmapData.split(",")[0]);
+  //       polLatLng.lng = Number(polmapData.split(",")[1]);
 
-        polmarkerData.push(polLatLng);
-      } else {
-        var mapPositionPOL = paramData.mapPositionPOL;
-        if (mapPositionPOL !== null && typeof mapPositionPOL !== "undefined") {
-          polmarkerData.push(mapPositionPOL);
-        }
-      }
-      var podmapData = podAddress.GeoCoordinate;
-      var podmarkerData = [];
-      if (typeof podmapData !== "undefined" && podmapData !== null) {
-        podLatLng.lat = Number(podmapData.split(",")[0]);
-        podLatLng.lng = Number(podmapData.split(",")[1]);
+  //       polmarkerData.push(polLatLng);
+  //     } else {
+  //       var mapPositionPOL = paramData.mapPositionPOL;
+  //       if (mapPositionPOL !== null && typeof mapPositionPOL !== "undefined") {
+  //         polmarkerData.push(mapPositionPOL);
+  //       }
+  //     }
+  //     var podmapData = podAddress.GeoCoordinate;
+  //     var podmarkerData = [];
+  //     if (typeof podmapData !== "undefined" && podmapData !== null) {
+  //       podLatLng.lat = Number(podmapData.split(",")[0]);
+  //       podLatLng.lng = Number(podmapData.split(",")[1]);
 
-        podmarkerData.push(podLatLng);
-      } else {
-        var mapPositionPOD = paramData.mapPositionPOD;
-        if (mapPositionPOD !== null && typeof mapPositionPOD !== "undefined") {
-          podmarkerData.push(mapPositionPOD);
-        }
-      }
+  //       podmarkerData.push(podLatLng);
+  //     } else {
+  //       var mapPositionPOD = paramData.mapPositionPOD;
+  //       if (mapPositionPOD !== null && typeof mapPositionPOD !== "undefined") {
+  //         podmarkerData.push(mapPositionPOD);
+  //       }
+  //     }
 
-      this.setState({
-        mapPositionPOL: polmarkerData,
-        markerPositionPOD: podmarkerData,
-        users: paramData.users,
-        selected: paramData.selected
-      });
+  //     this.setState({
+  //       mapPositionPOL: polmarkerData,
+  //       markerPositionPOD: podmarkerData,
+  //       users: paramData.users,
+  //       selected: paramData.selected
+  //     });
 
-      var selectedPOL =
-        paramData.polfullAddData.NameWoDiacritics || paramData.PickupCity;
-      var SelectPOD =
-        paramData.podfullAddData.NameWoDiacritics || paramData.DeliveryCity;
-      var selectedPOLPOD = selectedPOL + " To " + SelectPOD;
+  //     var selectedPOL =
+  //       paramData.polfullAddData.NameWoDiacritics || paramData.PickupCity;
+  //     var SelectPOD =
+  //       paramData.podfullAddData.NameWoDiacritics || paramData.DeliveryCity;
+  //     var selectedPOLPOD = selectedPOL + " To " + SelectPOD;
 
-      var cmbvalue = paramData.cbmVal;
-      if (cmbvalue != "") {
-        cmbvalue = parseInt(cmbvalue);
-      } else {
-        cmbvalue = 0;
-      }
+  //     var cmbvalue = paramData.cbmVal;
+  //     if (cmbvalue != "") {
+  //       cmbvalue = parseInt(cmbvalue);
+  //     } else {
+  //       cmbvalue = 0;
+  //     }
 
-      if (paramData.typesofMove === "d2p") {
-        pickUpAddress = paramData.fullAddressPOL[0];
-      } else if (paramData.typesofMove === "p2d") {
-        destUpAddress = paramData.fullAddressPOD[0];
-      } else if (paramData.typesofMove === "d2d") {
-        pickUpAddress = paramData.fullAddressPOL[0];
-        destUpAddress = paramData.fullAddressPOD[0];
-      }
+  //     if (paramData.typesofMove === "d2p") {
+  //       pickUpAddress = paramData.fullAddressPOL[0];
+  //     } else if (paramData.typesofMove === "p2d") {
+  //       destUpAddress = paramData.fullAddressPOD[0];
+  //     } else if (paramData.typesofMove === "d2d") {
+  //       pickUpAddress = paramData.fullAddressPOL[0];
+  //       destUpAddress = paramData.fullAddressPOD[0];
+  //     }
 
-      dataParameter = {
-        QuoteType: paramData.containerLoadType,
-        ModeOfTransport: rModeofTransport,
-        Type: paramData.shipmentType,
-        TypeOfMove: rTypeofMove,
-        BaseCurrency: paramData.currencyCode,
+  //     dataParameter = {
+  //       QuoteType: paramData.containerLoadType,
+  //       ModeOfTransport: rModeofTransport,
+  //       Type: paramData.shipmentType,
+  //       TypeOfMove: rTypeofMove,
+  //       BaseCurrency: paramData.currencyCode,
 
-        Containerdetails: containerdetails,
+  //       Containerdetails: containerdetails,
 
-        Currency: paramData.currencyCode,
+  //       RateQueryDim: paramData.multiCBM,
+  //       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+  //     };
 
-        RateQueryDim: paramData.multiCBM,
-        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-      };
+  //     if (
+  //       encryption(window.localStorage.getItem("usertype"), "desc") ===
+  //       "Customer"
+  //     ) {
+  //       paramData.companyId = encryption(
+  //         window.localStorage.getItem("companyid"),
+  //         "desc"
+  //       );
+  //     }
 
-      if (
-        encryption(window.localStorage.getItem("usertype"), "desc") ===
-        "Customer"
-      ) {
-        paramData.companyId = encryption(
-          window.localStorage.getItem("companyid"),
-          "desc"
-        );
-      }
+  //     dataParameter.Commodity = this.state.CommodityID;
+  //     dataParameter.CustomerId = parseInt(paramData.companyId);
+  //     dataParameter.PickUpAddressDetails = pickUpAddress;
+  //     dataParameter.DestinationAddressDetails = destUpAddress;
+  //     dataParameter.HazMat = paramData.HazMat === false ? 0 : 1;
+  //     dataParameter.IsSearchFromSpotRate = 1;
 
-      dataParameter.Commodity = this.state.CommodityID;
-      dataParameter.CustomerId = parseInt(paramData.companyId);
-      dataParameter.PickUpAddressDetails = pickUpAddress;
-      dataParameter.DestinationAddressDetails = destUpAddress;
-      dataParameter.HazMat = paramData.HazMat === false ? 0 : 1;
-      dataParameter.IsSearchFromSpotRate = 1;
+  //     if (this.props.location.state.spotrateresponseTbl) {
+  //       var rateid = this.props.location.state.spotrateresponseTbl;
+  //       dataParameter.RatequeryID = rateid.RateQueryId;
+  //     } else {
+  //       dataParameter.RatequeryID = 0;
+  //     }
 
-      if (this.props.location.state.spotrateresponseTbl) {
-        var rateid = this.props.location.state.spotrateresponseTbl;
-        dataParameter.RatequeryID = rateid.RateQueryId;
-      } else {
-        dataParameter.RatequeryID = 0;
-      }
+  //     if (paramData.Custom_Clearance) {
+  //       dataParameter.CustomClearance =
+  //         paramData.Custom_Clearance === true ? 1 : 0;
+  //     } else {
+  //       dataParameter.CustomClearance = 0;
+  //     }
 
-      if (paramData.Custom_Clearance) {
-        dataParameter.CustomClearance =
-          paramData.Custom_Clearance === true ? 1 : 0;
-      } else {
-        dataParameter.CustomClearance = 0;
-      }
+  //     dataParameter.NonStackable = paramData.NonStackable === false ? 0 : 1;
 
-      dataParameter.NonStackable = paramData.NonStackable === false ? 0 : 1;
+  //     var EquipmentType = [];
+  //     if (paramData.StandardContainerCode != undefined) {
+  //       EquipmentType = paramData.StandardContainerCode;
+  //     } else {
+  //       EquipmentType = paramData.EquipmentType;
+  //     }
+  //     var sportMultiPOL = [];
+  //     var sportMultiPOD = [];
 
-      var EquipmentType = [];
-      if (paramData.StandardContainerCode != undefined) {
-        EquipmentType = paramData.StandardContainerCode;
-      } else {
-        EquipmentType = paramData.EquipmentType;
-      }
-      var sportMultiPOL = [];
-      var sportMultiPOD = [];
+  //     if (this.props.location.state.spotrateresponseTbl1) {
+  //       var sdata = this.props.location.state.spotrateresponseTbl1;
+  //       for (let i = 0; i < sdata.length; i++) {
+  //         var objPOL = new Object();
+  //         objPOL.POL = sdata[i].OriginPort_Name;
+  //         objPOL.POLGeoCordinate = sdata[i].POLGeoCordinate;
 
-      if (this.props.location.state.spotrateresponseTbl1) {
-        var sdata = this.props.location.state.spotrateresponseTbl1;
-        for (let i = 0; i < sdata.length; i++) {
-          var objPOL = new Object();
-          objPOL.POL = sdata[i].OriginPort_Name;
-          objPOL.POLGeoCordinate = sdata[i].POLGeoCordinate;
+  //         sportMultiPOL.push(objPOL);
 
-          sportMultiPOL.push(objPOL);
+  //         var objPOD = new Object();
+  //         objPOD.POD = sdata[i].DestinationPort_Name;
+  //         objPOD.PODGeoCordinate = sdata[i].PODGeoCordinate;
 
-          var objPOD = new Object();
-          objPOD.POD = sdata[i].DestinationPort_Name;
-          objPOD.PODGeoCordinate = sdata[i].PODGeoCordinate;
+  //         sportMultiPOD.push(objPOD);
+  //       }
+  //     }
 
-          sportMultiPOD.push(objPOD);
-        }
-      }
+  //     dataParameter.MultiplePOL = sportMultiPOL;
 
-      dataParameter.MultiplePOL = sportMultiPOL;
+  //     dataParameter.MultiplePOD = sportMultiPOD;
 
-      dataParameter.MultiplePOD = sportMultiPOD;
+  //     var incoTerms = paramData.incoTerms;
+  //     this.setState({
+  //       polFilterArray: sportMultiPOL,
+  //       podFilterArray: sportMultiPOD,
+  //       shipmentType: paramData.shipmentType,
+  //       modeoftransport: paramData.modeoftransport,
+  //       containerLoadType: paramData.containerLoadType,
+  //       typeofMove: rTypeofMove,
+  //       selectaddress: selectedPOLPOD,
+  //       HazMat: paramData.HazMat,
+  //       NonStackable: paramData.NonStackable,
+  //       Custom_Clearance: paramData.Custom_Clearance,
+  //       SpacialEqmt: paramData.SpacialEqmt,
+  //       EquipmentType: EquipmentType,
+  //       spacEqmtType: paramData.spacEqmtType,
+  //       referType: paramData.referType,
+  //       flattack_openTop: paramData.flattack_openTop,
+  //       spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
+  //       specialEqtSelect: paramData.specialEqtSelect,
+  //       refertypeSelect: paramData.refertypeSelect,
+  //       specialEquipment: paramData.specialEquipment,
+  //       incoTerms,
+  //       polfullAddData: paramData.polfullAddData,
+  //       podfullAddData: paramData.podfullAddData,
+  //       currencyCode: paramData.currencyCode,
+  //       TruckType: paramData.TruckType,
+  //       TruckTypeData: paramData.TruckTypeData,
+  //       // OriginGeoCordinates: paramData.OriginGeoCordinates,
+  //       // DestGeoCordinate: paramData.DestGeoCordinate,
+  //       pickUpAddress: paramData.fullAddressPOL,
+  //       destAddress: paramData.fullAddressPOD,
+  //       multiCBM: paramData.multiCBM,
+  //       packageTypeData: paramData.packageTypeData,
+  //       fields: paramData.fields,
+  //       puAdd: paramData.puAdd,
+  //       DeliveryCity: paramData.DeliveryCity,
+  //       typesofMove: paramData.typesofMove,
+  //       // polArray:this.state.polArray,
+  //       // podArray:this.state.podArray,
+  //       // polFilterArray:this.state.polFilterArray,
+  //       // podFilterArray:this.state.podFilterArray,
+  //       ChargeableWeight: cmbvalue,
+  //       ModeOfTransport: rModeofTransport,
+  //       TypeOfMove: rTypeofMove,
+  //       PortOfDischargeCode:
+  //         paramData.containerLoadType == "AIR"
+  //           ? podAddress.Location !== "" && podAddress.Location !== undefined
+  //             ? podAddress.Location
+  //             : ""
+  //           : podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
+  //           ? podAddress.UNECECode
+  //           : "",
+  //       PortOfLoadingCode:
+  //         paramData.containerLoadType == "AIR"
+  //           ? polAddress.Location !== "" && polAddress.Location !== undefined
+  //             ? polAddress.Location
+  //             : ""
+  //           : polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
+  //           ? polAddress.UNECECode
+  //           : "",
+  //       Containerdetails: containerdetails,
+  //       OriginGeoCordinates:
+  //         polAddress.GeoCoordinate !== "" &&
+  //         polAddress.GeoCoordinate !== undefined
+  //           ? polAddress.GeoCoordinate
+  //           : paramData.OriginGeoCordinates,
+  //       DestGeoCordinate:
+  //         podAddress.GeoCoordinate !== "" &&
+  //         podAddress.GeoCoordinate !== undefined
+  //           ? podAddress.GeoCoordinate
+  //           : paramData.DestGeoCordinate,
+  //       PickupCity:
+  //         polAddress.NameWoDiacritics !== "" &&
+  //         polAddress.NameWoDiacritics !== undefined
+  //           ? polAddress.NameWoDiacritics
+  //           : "",
+  //       DeliveryCity:
+  //         podAddress.NameWoDiacritics !== "" &&
+  //         podAddress.NameWoDiacritics !== undefined
+  //           ? podAddress.NameWoDiacritics
+  //           : paramData.DeliveryCity,
+  //       Currency: paramData.currencyCode,
+  //       isSearch: paramData.isSearch,
+  //       cbmVal: paramData.cbmVal,
+  //       companyId: paramData.companyId,
+  //       companyName: paramData.companyName,
+  //       companyAddress: paramData.companyAddress,
+  //       contactName: paramData.contactName,
+  //       contactEmail: paramData.contactEmail
+  //     });
+  //   }
 
-      var incoTerms = paramData.incoTerms;
-      this.setState({
-        polFilterArray: sportMultiPOL,
-        podFilterArray: sportMultiPOD,
-        shipmentType: paramData.shipmentType,
-        modeoftransport: paramData.modeoftransport,
-        containerLoadType: paramData.containerLoadType,
-        typeofMove: rTypeofMove,
-        selectaddress: selectedPOLPOD,
-        HazMat: paramData.HazMat,
-        NonStackable: paramData.NonStackable,
-        Custom_Clearance: paramData.Custom_Clearance,
-        SpacialEqmt: paramData.SpacialEqmt,
-        EquipmentType: EquipmentType,
-        spacEqmtType: paramData.spacEqmtType,
-        referType: paramData.referType,
-        flattack_openTop: paramData.flattack_openTop,
-        spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
-        specialEqtSelect: paramData.specialEqtSelect,
-        refertypeSelect: paramData.refertypeSelect,
-        specialEquipment: paramData.specialEquipment,
-        incoTerms,
-        polfullAddData: paramData.polfullAddData,
-        podfullAddData: paramData.podfullAddData,
-        currencyCode: paramData.currencyCode,
-        TruckType: paramData.TruckType,
-        TruckTypeData: paramData.TruckTypeData,
-        // OriginGeoCordinates: paramData.OriginGeoCordinates,
-        // DestGeoCordinate: paramData.DestGeoCordinate,
-        pickUpAddress: paramData.fullAddressPOL,
-        destAddress: paramData.fullAddressPOD,
-        multiCBM: paramData.multiCBM,
-        packageTypeData: paramData.packageTypeData,
-        fields: paramData.fields,
-        puAdd: paramData.puAdd,
-        DeliveryCity: paramData.DeliveryCity,
-        typesofMove: paramData.typesofMove,
-        // polArray:this.state.polArray,
-        // podArray:this.state.podArray,
-        // polFilterArray:this.state.polFilterArray,
-        // podFilterArray:this.state.podFilterArray,
-        ChargeableWeight: cmbvalue,
-        ModeOfTransport: rModeofTransport,
-        TypeOfMove: rTypeofMove,
-        PortOfDischargeCode:
-          paramData.containerLoadType == "AIR"
-            ? podAddress.Location !== "" && podAddress.Location !== undefined
-              ? podAddress.Location
-              : ""
-            : podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
-            ? podAddress.UNECECode
-            : "",
-        PortOfLoadingCode:
-          paramData.containerLoadType == "AIR"
-            ? polAddress.Location !== "" && polAddress.Location !== undefined
-              ? polAddress.Location
-              : ""
-            : polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
-            ? polAddress.UNECECode
-            : "",
-        Containerdetails: containerdetails,
-        OriginGeoCordinates:
-          polAddress.GeoCoordinate !== "" &&
-          polAddress.GeoCoordinate !== undefined
-            ? polAddress.GeoCoordinate
-            : paramData.OriginGeoCordinates,
-        DestGeoCordinate:
-          podAddress.GeoCoordinate !== "" &&
-          podAddress.GeoCoordinate !== undefined
-            ? podAddress.GeoCoordinate
-            : paramData.DestGeoCordinate,
-        PickupCity:
-          polAddress.NameWoDiacritics !== "" &&
-          polAddress.NameWoDiacritics !== undefined
-            ? polAddress.NameWoDiacritics
-            : "",
-        DeliveryCity:
-          podAddress.NameWoDiacritics !== "" &&
-          podAddress.NameWoDiacritics !== undefined
-            ? podAddress.NameWoDiacritics
-            : paramData.DeliveryCity,
-        Currency: paramData.currencyCode,
-        isSearch: paramData.isSearch,
-        cbmVal: paramData.cbmVal,
-        companyId: paramData.companyId,
-        companyName: paramData.companyName,
-        companyAddress: paramData.companyAddress,
-        contactName: paramData.contactName,
-        contactEmail: paramData.contactEmail
-      });
-    }
+  //   debugger;
+  //   let self = this;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
+  //     data: dataParameter,
+  //     headers: authHeader()
+  //   })
+  //     .then(function(response) {
+  //       debugger;
+  //       //console.log(response);
+  //       var ratetable = response.data.Table;
+  //       var ratetable1 = response.data.Table1;
+  //       var ratetable2 = response.data.Table2;
 
-    debugger;
-    let self = this;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
-      data: dataParameter,
-      headers: authHeader()
-    })
-      .then(function(response) {
-        debugger;
-        //console.log(response);
-        var ratetable = response.data.Table;
-        var ratetable1 = response.data.Table1;
-        var ratetable2 = response.data.Table2;
-
-        if (ratetable.length > 0) {
-          if (ratetable != null) {
-            var MinTTArray = [];
-            var MaxTTArray = [];
-            var AmtArray = [];
-            for (let i = 0; i < ratetable.length; i++) {
-              MinTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[0]));
-              MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]));
-              AmtArray.push(ratetable[i].TotalAmount);
-            }
-            self.setState({
-              RateDetails: ratetable,
-              tempRateDetails: ratetable,
-              loading: false,
-              commodityData: ratetable2,
-              MinTT: Math.min(...MinTTArray),
-              MaxTT: Math.max(...MaxTTArray),
-              MinAmt: Math.min(...AmtArray),
-              MaxAmt: Math.max(...AmtArray),
-              value: Math.max(...MaxTTArray),
-              valueAmt: Math.max(...AmtArray)
-            });
-          }
-          if (ratetable1 != null) {
-            self.setState({
-              RateSubDetails: ratetable1
-            });
-          }
-        } else {
-          self.setState({
-            loading: false
-          });
-        }
-      })
-      .catch(error => {
-        debugger;
-        var edata = error.response.data.split(":")[1];
-        var errorData = edata
-          .replace("}", "")
-          .replace(/'/g, "")
-          .replace(/ +/g, "");
-        if (errorData == "No Records Found") {
-          var RateDetails = [];
-          setTimeout(() => {
-            self.setState({ RateDetails });
-          }, 100);
-        }
-      });
-  }
+  //       if (ratetable.length > 0) {
+  //         if (ratetable != null) {
+  //           var MinTTArray = [];
+  //           var MaxTTArray = [];
+  //           var AmtArray = [];
+  //           for (let i = 0; i < ratetable.length; i++) {
+  //             MinTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[0]));
+  //             MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]));
+  //             AmtArray.push(ratetable[i].TotalAmount);
+  //           }
+  //           self.setState({
+  //             RateDetails: ratetable,
+  //             tempRateDetails: ratetable,
+  //             loading: false,
+  //             commodityData: ratetable2,
+  //             MinTT: Math.min(...MinTTArray),
+  //             MaxTT: Math.max(...MaxTTArray),
+  //             MinAmt: Math.min(...AmtArray),
+  //             MaxAmt: Math.max(...AmtArray),
+  //             value: Math.max(...MaxTTArray),
+  //             valueAmt: Math.max(...AmtArray)
+  //           });
+  //         }
+  //         if (ratetable1 != null) {
+  //           self.setState({
+  //             RateSubDetails: ratetable1
+  //           });
+  //         }
+  //       } else {
+  //         self.setState({
+  //           loading: false
+  //         });
+  //       }
+  //     })
+  //     .catch(error => {
+  //       debugger;
+  //       var edata = error.response.data.split(":")[1];
+  //       var errorData = edata
+  //         .replace("}", "")
+  //         .replace(/'/g, "")
+  //         .replace(/ +/g, "");
+  //       if (errorData == "No Records Found") {
+  //         var RateDetails = [];
+  //         setTimeout(() => {
+  //           self.setState({ RateDetails });
+  //         }, 100);
+  //       }
+  //     });
+  // }
 
   toggleChangePOLPOD(i, field, geoCoordinate) {
     debugger;
@@ -2620,7 +2680,8 @@ class RateTable extends Component {
     }
   }
 
-  HandleAddressDropdownPolSelect(field, i, value, id) {
+  HandleAddressDropdownPolSelect(e, field, i, value, id) {
+    debugger;
     let multiFields = this.state.multiFields;
     multiFields[field] = value;
     var arrPOL = "";
@@ -2629,6 +2690,8 @@ class RateTable extends Component {
     if (field === "pol" + i) {
       for (let i = 0; i < this.state.polArray.length; i++) {
         arrPOL += this.state.polArray[i].Address + ",";
+      }
+      for (let i = 0; i < this.state.podArray.length; i++) {
         arrPOD += this.state.podArray[i].Address + ",";
       }
       if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
@@ -2679,7 +2742,6 @@ class RateTable extends Component {
         multiFields[field] = "";
         this.state.errorPOL = value + " already exist";
         this.setState({
-          polpodDataAdd: [],
           multiFields,
           errorPOL: this.state.errorPOL
         });
@@ -2687,10 +2749,13 @@ class RateTable extends Component {
     } else {
       for (let i = 0; i < this.state.podArray.length; i++) {
         arrPOD += this.state.podArray[i].Address + ",";
-        arrPOL += this.state.polArray[i].Address + ",";
       }
-      if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
+      for (let j = 0; j < this.state.polArray.length; j++) {
+        arrPOL += this.state.polArray[j].Address + ",";
+      }
+      if (!arrPOD.includes(value) && !arrPOL.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+          var PositionPOD = [];
           var geoCoordinate = id.GeoCoordinate.split(",");
           var mapPositionPOD = new Object();
           mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
@@ -2737,7 +2802,6 @@ class RateTable extends Component {
         multiFields[field] = "";
         this.state.errorPOD = value + " already exist";
         this.setState({
-          polpodDataAdd: [],
           multiFields,
           errorPOD: this.state.errorPOD
         });
@@ -3774,10 +3838,12 @@ class RateTable extends Component {
                 </select>
               </div>
               <div className="rate-table-range">
-                <p class="upto-days upto-days-btm">
+                {/* <p class="upto-days upto-days-btm">
                   Upto {this.state.value} days
-                </p>
-                <p class="upto-days">Upto {this.state.valueAmt} Amount</p>
+                </p> */}
+                <p class="upto-days upto-days-btm">{this.state.value}</p>
+                {/* <p class="upto-days">Upto {this.state.valueAmt} Amount</p> */}
+                <p class="upto-days">{this.state.valueAmt} </p>
                 <span className="cust-labl clr-green">Faster</span>
                 <span className="cust-labl clr-red">Cheaper</span>
                 <div className="d-flex">

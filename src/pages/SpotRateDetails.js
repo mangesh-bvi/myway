@@ -150,7 +150,10 @@ class SpotRateDetails extends Component {
       ModeOfTransport: "",
       PageName: "SportRateView",
       RatequeryID: 0,
-      Status: ""
+      Status: "",
+      IsSpotRate: false,
+      IsRequestForChange: false,
+      CustomerID:0,
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -237,7 +240,14 @@ class SpotRateDetails extends Component {
                   var MyWayFreeTime = RateQueryData[0].MyWayFreeTime;
                   var ModeOfTransport = RateQueryData[0].ModeOfTransport;
                   var shipmentType = RateQueryData[0].ShipmentType;
+                  var IsRequestForChange = RateQueryData[0].IsRequestForChange;
+                  var IsSpotRate = RateQueryData[0].IsSpotRate;
+                  var CustomerID = RateQueryData[0].CustomerID;
+
                   self.setState({
+                    CustomerID,
+                    IsRequestForChange,
+                    IsSpotRate,
                     shipmentType,
                     Mode,
                     ModeOfTransport,
@@ -908,24 +918,30 @@ class SpotRateDetails extends Component {
                           ""
                         )}
 
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                          <p className="details-title">MyWay Comments</p>
-                          <p className="details-para">
-                            {this.state.MyWayComments}
-                          </p>
-                        </div>
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                          <p className="details-title">MyWay Discount</p>
-                          <p className="details-para">
-                            {this.state.MyWayDiscount}
-                          </p>
-                        </div>
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                          <p className="details-title">MyWay FreeTime</p>
-                          <p className="details-para">
-                            {this.state.MyWayFreeTime}
-                          </p>
-                        </div>
+                        {this.state.IsRequestForChange === true ? (
+                          <>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">MyWay Comments</p>
+                              <p className="details-para">
+                                {this.state.MyWayComments}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">MyWay Discount</p>
+                              <p className="details-para">
+                                {this.state.MyWayDiscount}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">MyWay FreeTime</p>
+                              <p className="details-para">
+                                {this.state.MyWayFreeTime}
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </div>
                   </div>
@@ -979,37 +995,37 @@ class SpotRateDetails extends Component {
                             {/* {(() => {
                               if (spotrateresponseTbl1.length>0) {
                           */}
-                            {spotrateresponseTbl1.length > 0 ? (
-                              // <ReactTable
-                              //   data={spotrateresponseTbl1}
-                              //   noDataText="No Data Found"
-                              //   filterable
-                              //   columns={[
-                              //     {
-                              //       columns: [
-                              //         {
-                              //           Header: "Container",
-                              //           accessor: "Container"
-                              //         },
-                              //         {
-                              //           Header: "Quantity",
-                              //           accessor: "ContainerQty"
-                              //         },
+                            {spotrateresponseTbl1.length > 0
+                              ? // <ReactTable
+                                //   data={spotrateresponseTbl1}
+                                //   noDataText="No Data Found"
+                                //   filterable
+                                //   columns={[
+                                //     {
+                                //       columns: [
+                                //         {
+                                //           Header: "Container",
+                                //           accessor: "Container"
+                                //         },
+                                //         {
+                                //           Header: "Quantity",
+                                //           accessor: "ContainerQty"
+                                //         },
 
-                              //         {
-                              //           Header: "Temperature",
-                              //           accessor: "Container_Temperature"
-                              //         }
-                              //       ]
-                              //     }
-                              //   ]}
-                              //   className="-striped -highlight"
-                              //   defaultPageSize={10}
-                              //   minRows={1}
-                              //   //getTrProps={this.HandleRowClickEvt}
-                              // />
-                              ""
-                            ) : null}
+                                //         {
+                                //           Header: "Temperature",
+                                //           accessor: "Container_Temperature"
+                                //         }
+                                //       ]
+                                //     }
+                                //   ]}
+                                //   className="-striped -highlight"
+                                //   defaultPageSize={10}
+                                //   minRows={1}
+                                //   //getTrProps={this.HandleRowClickEvt}
+                                // />
+                                ""
+                              : null}
                           </div>
                           <div className="ag-fresh">
                             <ReactTable
@@ -1098,12 +1114,13 @@ class SpotRateDetails extends Component {
                                     if (row._original.lineName) {
                                       olname = row._original.lineName;
                                       lname =
-                                        row._original.lineName.replace(
-                                          "  ",
-                                          "_"
-                                        ).replace(" ", "_") + ".png";
+                                        row._original.lineName
+                                          .replace("  ", "_")
+                                          .replace(" ", "_") + ".png";
                                     }
-                                    var mode = this.state.ModeofTransport||this.state.ModeOfTransport;
+                                    var mode =
+                                      this.state.ModeofTransport ||
+                                      this.state.ModeOfTransport;
 
                                     if (mode === "Ocean" && lname !== "") {
                                       return (
