@@ -15,7 +15,7 @@ import ProfileSettingIcon from "./../assets/img/profilesetting.png";
 import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 import axios from "axios";
@@ -23,12 +23,14 @@ import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import { Modal, ModalBody } from "reactstrap";
 // import ModalHeader from "react-bootstrap/ModalHeader";
+ 
 
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import RateFinalizingStill from "../pages/rateFinalizingStill";
 
 class Header extends Component {
   constructor(props) {
@@ -303,15 +305,17 @@ class Header extends Component {
 
   RedirectoShipment(RefNo, ID, Type, Product, ProductStatus) {
     debugger;
-
+    // let self = this;
     if (Type === "Booking") {
-      this.props.history.push({
-        pathname: "/booking-view",
-        state: {
-          bookingNo: ID,
-          Mode: Product
-        }
-      });
+      setTimeout(() => {
+        this.props.history.push({
+          pathname: "/booking-view",
+          state: {
+            bookingNo: ID,
+            Mode: Product
+          }
+        });
+      }, 200);
     } else if (Type === "SalesQuote") {
       var ptype = Product;
       var qnumber = qnumber;
@@ -321,16 +325,21 @@ class Header extends Component {
         Type: ptype,
         Status: Status
       };
-      this.props.history.push({
-        pathname: "/rate-finalizing-still",
-        state: {
-          detail: detail
-        }
-      });
-      // self.props.history.push({
-      //   pathname: "rate-finalizing-still",
-      //   state: { detail: detail }
-      // });
+      debugger;
+      setTimeout(() => {
+        this.props.history.push({
+          pathname: "/rate-finalizing-still",
+          state: {
+            detail: detail
+          }
+        });
+        // <Route
+        //   path="/rate-finalizing-still"
+        //   component={()=> return <RateFinalizingStill state={detail} />}
+        // />;
+      }, 100);
+      // <Route exact path="rate-finalizing-still" render={(props) => <RateFinalizingStill state={detail} {...props} /> } />
+
     } else {
       // window.location.href = "shipment-details?hblno=" + RefNo;
     }
@@ -378,7 +387,7 @@ class Header extends Component {
       adataval = this.state.ActivityDateArry.map((item, i) =>
         this.state.ActivityDateArry.length == 0 ? (
           <>
-            <span>{item.CNT+" "}</span> <label>{item.ActivityDesc}</label>
+            <span>{item.CNT + " "}</span> <label>{item.ActivityDesc}</label>
             {item.CSV}
             <br />
             {/* <label>{item.ActMessage}</label> */}
@@ -386,7 +395,7 @@ class Header extends Component {
           </>
         ) : (
           <>
-            <span>{item.CNT+" "}</span>
+            <span>{item.CNT + " "}</span>
             <label>{item.ActivityDesc}</label>
             <sap>{item.CSV}</sap>
             <br />

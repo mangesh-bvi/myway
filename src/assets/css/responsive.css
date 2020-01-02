@@ -108,11 +108,15 @@
   padding: 20px 5px;
 }
 .title-sect h2 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
+}
+input[type="range"] {
+  width: 60px !important;
 }
 .login-fields {
   padding: 0 10px;
+  margin: 0;
   font-size: 14px;
 }
 .rate-tab-drop select {
@@ -197,9 +201,9 @@
 .cls-rt {
   width: calc(93% - 40px);
 }
-.colap + .cls-rt {
+/* .colap + .cls-rt {
   width: 100% !important;
-}
+} */
 }
 @media (min-width: 576px) and (max-width: 767px) {
   .header-ul li {
@@ -221,6 +225,17 @@
     left: 80%;
     margin-top: 12px;
 }
+.rate-bg {
+  width: 80% !important;
+}
+
+.rate-table-header {
+  display: block;
+}
+
+input[type="range"] {
+  width: 60px !important;
+}
 }
 @media (min-width: 576px) and (max-width: 640px) {
   .menubars {
@@ -240,8 +255,15 @@
   .header-ul li {
     padding: 10px 15px;
 }
+
+input[type="range"] {
+  width: 60px !important;
+}
 }
 @media (min-width: 320px) and (max-width: 575px) {
+  .rate-bg {
+    width: 100% !important;
+}
   .br-none {
     border-right: none !important;
   }
@@ -269,7 +291,7 @@
     padding: 15px;
 }
 .cls-rt {
-  width: 100%;
+  width: 100% !important;
   margin: 0;
 }
 .title-sect h2 {
@@ -334,9 +356,6 @@
 }
 .rate-dropdown {
   width: 100%;
-}
-.rate-table-header {
-  display: block;
 }
 .rate-table-header h2 {
   margin: 0;
@@ -431,6 +450,19 @@
   /* width: 40px !important; */
   width: 0 !important;
 }
+
+.rangerow {
+  padding: 0px 25px;
+  width: auto;
+}
+
+.rate-table-header {
+  display: block;
+}
+
+input[type="range"] {
+  width: 60px !important;
+}
 }
 @media (min-width: 320px) and (max-width: 460px) {
   .login-between {
@@ -453,5 +485,13 @@
     position: absolute;
     top: -70px;
     right: 0;
+}
+
+.rangerow {
+  padding: 0px 25px;
+  width: auto;
+}
+.rate-table-header {
+  display: block;
 }
 }
