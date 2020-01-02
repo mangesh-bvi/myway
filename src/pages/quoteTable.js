@@ -5,24 +5,13 @@ import axios from "axios";
 import "../styles/custom.css";
 import "../assets/css/react-table.css";
 import { encryption } from "../helpers/encryption";
-import { UncontrolledTooltip } from "reactstrap";
+
 import { Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import LoginActore from "./../assets/img/login-actore.jfif";
-import DownArrow from "./../assets/img/down-arrow.png";
+ 
 import Copy from "./../assets/img/copy.png";
-import Edit from "./../assets/img/pencil.png";
-import Book from "./../assets/img/calendar.svg";
-import Ship from "./../assets/img/ship.png";
-import Truck from "./../assets/img/truck.png";
-import Rail from "./../assets/img/rail.png";
-import Plane from "./../assets/img/plane.png";
-import Transit from "./../assets/img/transit.png";
-import Box from "./../assets/img/box.png";
-import Delivered from "./../assets/img/delivered.png";
-import InPlane from "./../assets/img/in-plane.png";
-import Arrived from "./../assets/img/arrived.png";
+ 
 import Eye from "./../assets/img/eye.png";
 import matchSorter from "match-sorter";
 import ReactTable from "react-table";

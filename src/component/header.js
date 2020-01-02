@@ -16,6 +16,7 @@ import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
 import { Link, Route } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 import axios from "axios";
@@ -23,7 +24,6 @@ import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import { Modal, ModalBody } from "reactstrap";
 // import ModalHeader from "react-bootstrap/ModalHeader";
- 
 
 import {
   NotificationContainer,
@@ -305,17 +305,15 @@ class Header extends Component {
 
   RedirectoShipment(RefNo, ID, Type, Product, ProductStatus) {
     debugger;
-    // let self = this;
+    let self = this;
     if (Type === "Booking") {
-      setTimeout(() => {
-        this.props.history.push({
-          pathname: "/booking-view",
-          state: {
-            bookingNo: ID,
-            Mode: Product
-          }
-        });
-      }, 200);
+      self.props.history.push({
+        pathname: "booking-view",
+        state: {
+          bookingNo: ID,
+          Mode: Product
+        }
+      });
     } else if (Type === "SalesQuote") {
       var ptype = Product;
       var qnumber = qnumber;
@@ -326,32 +324,24 @@ class Header extends Component {
         Status: Status
       };
       debugger;
-      setTimeout(() => {
-        this.props.history.push({
-          pathname: "/rate-finalizing-still",
-          state: {
-            detail: detail
-          }
-        });
-        // <Route
-        //   path="/rate-finalizing-still"
-        //   component={()=> return <RateFinalizingStill state={detail} />}
-        // />;
-      }, 100);
-      // <Route exact path="rate-finalizing-still" render={(props) => <RateFinalizingStill state={detail} {...props} /> } />
 
+      self.props.history.push({
+        pathname: "rate-finalizing-still",
+        // state: { detail: detail }
+      });
+     
     } else {
       // window.location.href = "shipment-details?hblno=" + RefNo;
     }
   }
 
   render() {
-    // let self = this;
+    let self = this;
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
       <div
         key={i}
         onClick={() => {
-          this.RedirectoShipment(
+          self.RedirectoShipment(
             item.RefNo,
             item.ID,
             item.ActivityType,

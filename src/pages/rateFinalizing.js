@@ -1189,7 +1189,8 @@ class RateFinalizing extends Component {
     debugger;
     if (this.state.selectedDataRow.length > 0) {
       this.setState(prevState => ({
-        modalProfit: !prevState.modalProfit
+        modalProfit: !prevState.modalProfit,
+        ProfitAmount: 0
         //ProfitAmount: this.state.Addedprofit
       }));
     } else {
@@ -1201,7 +1202,8 @@ class RateFinalizing extends Component {
     debugger;
     if (this.state.selectedDataRow.length > 0) {
       this.setState(prevState => ({
-        modalLoss: !prevState.modalLoss
+        modalLoss: !prevState.modalLoss,
+        ProfitAmount: 0
         //ProfitAmount: this.state.Addedprofit
       }));
     } else {
@@ -1878,7 +1880,7 @@ class RateFinalizing extends Component {
       })
         .then(function(response) {
           debugger;
-          self.toggleRequest()
+          self.toggleRequest();
           if (response != null) {
             if (response.data != null) {
               if (response.data.Table != null) {
@@ -1897,12 +1899,10 @@ class RateFinalizing extends Component {
                         self.props.history.push("./spot-rate-table");
                       }, 4000);
                     }
- 
                   } else {
                     setTimeout(() => {
                       self.props.history.push("./spot-rate-table");
                     }, 4000);
-                     
                   }
                 }
               }
@@ -2535,13 +2535,23 @@ class RateFinalizing extends Component {
               ? this.state.polfullAddData.AirportLongName
               : this.state.polfullAddData.OceanPortLongName;
 
-          DestinationAddressDetails = {
-            Street: this.props.location.state.destAddress[0].Area,
-            Country: this.props.location.state.destAddress[0].Country,
-            State: this.props.location.state.destAddress[0].State,
-            City: this.props.location.state.destAddress[0].City,
-            ZipCode: this.props.location.state.destAddress[0].ZipCode
-          };
+          if (this.props.location.state.destAddress.Length > 0) {
+            DestinationAddressDetails = {
+              Street: this.props.location.state.destAddress[0].Area,
+              Country: this.props.location.state.destAddress[0].Country,
+              State: this.props.location.state.destAddress[0].State,
+              City: this.props.location.state.destAddress[0].City,
+              ZipCode: this.props.location.state.destAddress[0].ZipCode
+            };
+          } else {
+            DestinationAddressDetails = {
+              Street: "",
+              Country: "",
+              State: "",
+              City: "",
+              ZipCode: 0
+            };
+          }
         }
 
         debugger;
@@ -2959,9 +2969,6 @@ class RateFinalizing extends Component {
 
   hanleProfitAmountSubmit() {
     debugger;
-    // var rateDetailsarr = this.state.rateDetails;
-
-    // var rateSubDetailsarr = this.state.rateSubDetails;
 
     var rateDetailsarr = this.state.selectedDataRow;
 
@@ -3027,6 +3034,7 @@ class RateFinalizing extends Component {
   }
 
   hanleProfitAmountRemove() {
+    
     // var rateDetailsarr = this.state.rateDetails;
     // var rateSubDetailsarr = this.state.rateSubDetails;
     var rateDetailsarr = this.state.selectedDataRow;
@@ -3051,6 +3059,7 @@ class RateFinalizing extends Component {
     var rateSubDetailsarr = subratedetails;
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
+      debugger
       if (this.state.isCopy == true) {
         var rateOrgDetailsarr = this.state.rateOrgDetails.filter(
           x => x.RateLineId === rateDetailsarr[i].saleQuoteLineID
@@ -3094,21 +3103,21 @@ class RateFinalizing extends Component {
         if (
           parseFloat(rateDetailsarr[i].TotalAmount) -
             parseFloat(this.state.ProfitAmount) >=
-          rateOrgDetailsarr[i].Total
+          rateOrgDetailsarr[0].Total
         ) {
           rateDetailsarr[i].TotalAmount =
             parseFloat(rateDetailsarr[i].TotalAmount) -
             parseFloat(this.state.ProfitAmount);
 
-          for (var i = 0; i <= rateSubDetailsarr.length - 1; i++) {
+          for (var j = 0; j <= rateSubDetailsarr.length - 1;j++) {
             // var rateOrgDetailsarr = this.state.rateOrgDetails.filter(
             //   x => x.RateLineId === rateSubDetailsarr[i].RateLineID
             // )
-            if (rateSubDetailsarr[i].ChargeCode == "Freight") {
+            if (rateSubDetailsarr[j].ChargeCode == "Freight") {
               //   if ((parseFloat(rateDetailsarr[i].TotalAmount) -
               // parseFloat(this.state.ProfitAmount)) >= rateOrgDetailsarr[0].Total) {
-              rateSubDetailsarr[i].TotalAmount =
-                parseFloat(rateSubDetailsarr[i].TotalAmount) -
+              rateSubDetailsarr[j].TotalAmount =
+                parseFloat(rateSubDetailsarr[j].TotalAmount) -
                 parseFloat(this.state.ProfitAmount);
               //}
             }
@@ -3120,11 +3129,12 @@ class RateFinalizing extends Component {
           );
         }
       }
-      this.setState(prevState => ({
-        modalProfit: false
-      }));
+      // this.setState(prevState => ({
+      //   modalProfit: !prevState.state.modalProfit
+      // }));
+   
     }
-
+    this.toggleLoss();
     this.setState({
       toggleProfitRemoveBtn: false
       //Addedprofit: ""
@@ -3452,20 +3462,23 @@ class RateFinalizing extends Component {
           ContainerType: multiCBM[i].PackageType,
           Packaging: "-",
           Quantity: multiCBM[i].Quantity,
-          Lenght: this.state.isCopy == true
-          ? multiCBM[i].Length || multiCBM[i].Lengths
-          : multiCBM[i].Length,
+          Lenght:
+            this.state.isCopy == true
+              ? multiCBM[i].Length || multiCBM[i].Lengths
+              : multiCBM[i].Length,
           Width: multiCBM[i].Width,
-          Height: this.state.isCopy == true ? multiCBM[i].height : multiCBM[i].height,
-          Weight: this.state.isCopy == true
-          ? multiCBM[i].GrossWeight
-          : multiCBM[i].GrossWeight,
+          Height:
+            this.state.isCopy == true ? multiCBM[i].height : multiCBM[i].height,
+          Weight:
+            this.state.isCopy == true
+              ? multiCBM[i].GrossWeight
+              : multiCBM[i].GrossWeight,
           Gross_Weight: "-",
           Temperature: "-",
           CBM:
-          this.state.containerLoadType == "LCL"
-          ? multiCBM[i].Volume
-          : multiCBM[i].VolumeWeight,
+            this.state.containerLoadType == "LCL"
+              ? multiCBM[i].Volume
+              : multiCBM[i].VolumeWeight,
           Volume: "-",
           VolumeWeight: "-",
           Editable: true
@@ -3512,11 +3525,13 @@ class RateFinalizing extends Component {
 
           CargoDetailsArr.push({
             PackageType: flattack_openTop[i].PackageType,
-            SpecialContainerCode: flattack_openTop[i].SpecialContainerCode + "_" + i,
-            ContainerType: flattack_openTop[i].PackageType +
-            " (" +
-            flattack_openTop[i].SpecialContainerCode +
-            ")",
+            SpecialContainerCode:
+              flattack_openTop[i].SpecialContainerCode + "_" + i,
+            ContainerType:
+              flattack_openTop[i].PackageType +
+              " (" +
+              flattack_openTop[i].SpecialContainerCode +
+              ")",
             Packaging: "-",
             Quantity: flattack_openTop[i].Quantity,
             Lenght: flattack_openTop[i].length,
@@ -3525,8 +3540,7 @@ class RateFinalizing extends Component {
             Weight: flattack_openTop[i].Gross_Weight,
             Gross_Weight: "-",
             Temperature: "-",
-            CBM:
-            flattack_openTop[i].total,
+            CBM: flattack_openTop[i].total,
             Volume: "-",
             VolumeWeight: "-",
             Editable: true
@@ -3538,7 +3552,6 @@ class RateFinalizing extends Component {
         flattack_openTop: flattack_openTop
       });
     }
-
 
     for (var i = 0; i < CargoDetailsArr.length; i++) {
       if (
@@ -6218,7 +6231,11 @@ class RateFinalizing extends Component {
                           "Enter Amount in " + this.state.currencyCode
                         }
                         class="w-100"
-                        value={this.state.ProfitAmount}
+                        value={
+                          this.state.ProfitAmount === 0
+                            ? ""
+                            : this.state.ProfitAmount
+                        }
                         onChange={this.hanleProfitAmountChange.bind(this)}
                         maxLength="10"
                       />
@@ -6280,7 +6297,11 @@ class RateFinalizing extends Component {
                           "Enter Amount in " + this.state.currencyCode
                         }
                         class="w-100"
-                        value={this.state.ProfitAmount}
+                        value={
+                          this.state.ProfitAmount === 0
+                            ? ""
+                            : this.state.ProfitAmount
+                        }
                         onChange={this.hanleProfitAmountChange.bind(this)}
                         maxLength="10"
                       />

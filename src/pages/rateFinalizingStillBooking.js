@@ -600,15 +600,15 @@ class RateFinalizingStillBooking extends Component {
         for (let i = 0; i < this.state.multiCBM.length; i++) {
           var cargoData = new Object();
 
-          cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-          cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-          cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-          cargoData.Lengths = this.state.multiCBM[i].Lengths || 0;
-          cargoData.Width = this.state.multiCBM[i].Width || 0;
-          cargoData.Height = this.state.multiCBM[i].Height || 0;
-          cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-          cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-          cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+          cargoData.BookingPackID = self.state.multiCBM[i].BookingPackID || 0;
+          cargoData.PackageType = self.state.multiCBM[i].PackageType || "";
+          cargoData.Quantity = self.state.multiCBM[i].Quantity || 0;
+          cargoData.Lengths = self.state.multiCBM[i].Lengths || 0;
+          cargoData.Width = self.state.multiCBM[i].Width || 0;
+          cargoData.Height = self.state.multiCBM[i].Height || 0;
+          cargoData.GrossWt = self.state.multiCBM[i].GrossWeight || 0;
+          cargoData.VolumeWeight = self.state.multiCBM[i].VolumeWeight || 0;
+          cargoData.Volume = self.state.multiCBM[i].Volume || 0;
 
           BookingDim.push(cargoData);
         }
@@ -914,7 +914,7 @@ class RateFinalizingStillBooking extends Component {
 
         cargoData.BookingPackID = self.state.multiCBM[i].BookingPackID || 0;
         cargoData.PackageType = self.state.multiCBM[i].PackageType || "";
-        cargoData.Quantity = self.state.multiCBM[i].QTY || 0;
+        cargoData.Quantity = self.state.multiCBM[i].Quantity || 0;
         cargoData.Lengths = self.state.multiCBM[i].Lengths || 0;
         cargoData.Width = self.state.multiCBM[i].Width || 0;
         cargoData.Height = self.state.multiCBM[i].Height || 0;
@@ -1769,6 +1769,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   HandleChangeMultiCBM(i, e) {
+    debugger;
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -1786,32 +1787,53 @@ class RateFinalizingStillBooking extends Component {
     }
 
     this.setState({ multiCBM });
-    if (this.state.containerLoadType !== "LCL") {
-      var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
-        6000;
-      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+    if (this.state.ContainerLoad !== "LCL") {
+      if (
+        this.state.ContainerLoad === "FCL" ||
+        this.state.ContainerLoad === "FTL"
+      ) {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWt
+          ["VolumeWeight"]: 0
         };
       } else {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
-        };
+        var decVolumeWeight =
+          (multiCBM[i].Quantity *
+            (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+          6000;
+        if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            ["VolumeWeight"]: multiCBM[i].GrossWt
+          };
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            ["VolumeWeight"]: parseFloat(decVolumeWeight)
+          };
+        }
       }
     } else {
-      var decVolume =
-        multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
-      };
+      if (
+        this.state.ContainerLoad === "FCL" ||
+        this.state.ContainerLoad === "FTL"
+      ) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["Volume"]: 0
+        };
+      } else {
+        var decVolume =
+          multiCBM[i].Quantity *
+          ((multiCBM[i].Lengths / 100) *
+            (multiCBM[i].Width / 100) *
+            (multiCBM[i].Height / 100));
+
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["Volume"]: parseFloat(decVolume)
+        };
+      }
     }
 
     this.setState({ multiCBM });
@@ -1837,19 +1859,24 @@ class RateFinalizingStillBooking extends Component {
             </select>
           </div>
         </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="QTY"
-              className="w-100"
-              name="Quantity"
-              value={el.Quantity || ""}
-              //onKeyUp={this.cbmChange}
-            />
+        {this.state.ContainerLoad !== "FCL" ||
+        this.state.ContainerLoad !== "FTL" ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="QTY"
+                className="w-100"
+                name="Quantity"
+                value={el.Quantity || ""}
+                //onKeyUp={this.cbmChange}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          ""
+        )}
         <div className="col-md">
           <div className="spe-equ">
             <input
@@ -1889,46 +1916,50 @@ class RateFinalizingStillBooking extends Component {
             />
           </div>
         </div>
-
         <div className="col-md">
           <div className="spe-equ">
             <input
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
-              name="GrossWt"
-              value={this.state.isCopy == true ? el.GrossWt : el.GrossWt || ""}
+              placeholder={el.GrossWeight === 0 ? "GW(Kg)" : "GW(Kg)"}
+              name="GrossWeight"
+              value={this.state.isCopy == true ? el.GrossWeight : el.GrossWeight || ""}
               className="w-100"
             />
           </div>
         </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              disabled
-              name={
-                this.state.containerLoadType === "LCL"
-                  ? "Volume"
-                  : "VolumeWeight"
-              }
-              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={
-                this.state.containerLoadType === "LCL"
-                  ? "KG"
-                  : this.state.containerLoadType === "AIR"
-                  ? "CW"
-                  : "VW"
-              }
-              value={
-                this.state.containerLoadType === "LCL"
-                  ? el.Volume
-                  : el.VolumeWeight || ""
-              }
-              className="w-100 weight-icon"
-            />
+        {this.state.ContainerType !== "FCL" ||
+        this.state.ContainerType !== "FTL" ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                disabled
+                name={
+                  this.state.containerLoadType === "LCL"
+                    ? "Volume"
+                    : "VolumeWeight"
+                }
+                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                placeholder={
+                  this.state.containerLoadType === "LCL"
+                    ? "KG"
+                    : this.state.containerLoadType === "AIR"
+                    ? "CW"
+                    : "VW"
+                }
+                value={
+                  this.state.containerLoadType === "LCL"
+                    ? el.Volume
+                    : el.VolumeWeight || ""
+                }
+                className="w-100 weight-icon"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          ""
+        )}{" "}
         {i === 0 ? (
           <div className="">
             <div className="spe-equ">
@@ -2345,7 +2376,7 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 accessor: "POD",
                                 Cell: row => {
-                                  debugger;
+                                   
                                   if (
                                     this.state.Booking[0].CargoType === "LCL" ||
                                     this.state.Booking[0].CargoType === "FCL" ||
@@ -2664,7 +2695,10 @@ class RateFinalizingStillBooking extends Component {
 
                   <div className="rate-final-contr">
                     <div>
-                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
+                      <div
+                        className="title-border title-border-t py-3"
+                        style={{ marginBottom: "15px" }}
+                      >
                         <h3>Customer Details</h3>
                       </div>
                       <div className="">
@@ -2709,7 +2743,10 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div
+                        style={{ marginBottom: "15px" }}
+                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                      >
                         <h3 style={{ display: "inline" }}>Consignee Details</h3>
                         <input
                           type="checkbox"
@@ -2835,7 +2872,10 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div>
-                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div
+                        style={{ marginBottom: "15px" }}
+                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                      >
                         <h3 style={{ display: "inline" }}>Shipper Details</h3>
                         <div style={{ display: "inline", float: "left" }}>
                           <input
@@ -2966,7 +3006,10 @@ class RateFinalizingStillBooking extends Component {
                     </div>
 
                     <div>
-                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div
+                        style={{ marginBottom: "15px" }}
+                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                      >
                         <h3 style={{ display: "inline" }}>Buyer Details</h3>
                         <input
                           type="checkbox"
@@ -3080,7 +3123,10 @@ class RateFinalizingStillBooking extends Component {
                       </div>
                     </div>
                     <div>
-                      <div style={{marginBottom:"15px"}} className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
+                      <div
+                        style={{ marginBottom: "15px" }}
+                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                      >
                         <h3 style={{ display: "inline" }}>Notify Details</h3>
                         <input
                           type="checkbox"
@@ -3217,7 +3263,7 @@ class RateFinalizingStillBooking extends Component {
                     <div>
                       <div
                         className="title-border title-border-t py-3"
-                        style={{ width: "100%" , marginBottom:"15px" }}
+                        style={{ width: "100%", marginBottom: "15px" }}
                       >
                         <h3>Cargo Details</h3>
                       </div>
@@ -3242,6 +3288,7 @@ class RateFinalizingStillBooking extends Component {
                                   Header: "Package Type",
                                   accessor: "PackageType"
                                 },
+
                                 {
                                   Header: "Quantity",
                                   accessor: "Quantity"
@@ -3313,7 +3360,7 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 Header: "Action",
                                 Cell: row => {
-                                  debugger;
+                               
                                   if (
                                     row.original.FilePath !== "" &&
                                     row.original.FileName !== "File Not Found"

@@ -7,7 +7,7 @@ import {
   Modal,
   ModalBody
 } from "reactstrap";
-import GoogleMapReact from "google-map-react";
+
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 // import ShipBig from "./../assets/img/ship-big.png";
@@ -19,7 +19,7 @@ import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
 import ApprovedImg from "./../assets/img/approved-status.png";
 import Delivery from "./../assets/img/delivery.png";
-import Eye from "./../assets/img/eye.png";
+
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 import appSettings from "../helpers/appSetting";
@@ -35,176 +35,8 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker,
-  InfoWindow
-} from "react-google-maps";
-import { notification } from "antd";
-const { compose } = require("recompose");
 
 var docuemntFileName = "";
-
-const SourceIcon = () => (
-  <div className="map-icon source-icon">
-    <img src={ShipWhite} />
-  </div>
-);
-const DestiIcon = () => (
-  <div className="map-icon desti-icon">
-    <img src={ShipWhite} />
-  </div>
-);
-const MapWithAMakredInfoWindow = compose(
-  withScriptjs,
-  withGoogleMap
-)(props => (
-  <GoogleMap
-    defaultCenter={{ lat: 32.24165126, lng: 67.78319374 }}
-    defaultZoom={2}
-  >
-    {props.markers.map((marker, i) => {
-      debugger;
-
-      var iCount = props.markers.length;
-      var start = marker.StartLatLng;
-      var end = marker.EndLatLng;
-      var cRouteLatLong = marker.CRouteLatLong;
-      // const onClick = props.onClick.bind(this, i);
-      let iconMarker = new window.google.maps.MarkerImage(
-        null,
-        null /* size is determined at runtime */,
-        null /* origin is 0,0 */,
-        null /* anchor is bottom center of the scaled image */,
-        new window.google.maps.Size(32, 32)
-      );
-
-      return (
-        <>
-          {marker.CTransShipPort !== "" ? (
-            <Marker
-              key={marker.CTransShipPort}
-              title={marker.CTransShipPort}
-              position={{
-                lat: cRouteLatLong[0].lat,
-                lng: cRouteLatLong[0].lng
-              }}
-            />
-          ) : null}
-          {marker.ORDERID === 1 ? (
-            <>
-              <Marker
-                key={start[0].lat}
-                icon={iconMarker}
-                onClick={props.onClick.bind(this, start[0].lat)}
-                position={{
-                  lat: start[0].lat,
-                  lng: start[0].lng
-                }}
-              >
-                {props.selectedMarker === start[0].lat && (
-                  <InfoWindow>
-                    <div>
-                      <h4>{marker.ShipperName}</h4>
-                      <br />
-                      <b>{marker.StartLocation}</b>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-              <Marker
-                key={end[0].lat}
-                onClick={props.onClick.bind(this, end[0].lat)}
-                position={{
-                  lat: end[0].lat,
-                  lng: end[0].lng
-                }}
-              >
-                {props.selectedMarker === end[0].lat && (
-                  <InfoWindow>
-                    <div>
-                      <h4>{marker.EndLocation}</h4>
-                      <br />
-                      <p>
-                        Transit time From {marker.StartLocation} To{" "}
-                        {marker.EndLocation} is:
-                        <b>
-                          {" "}
-                          {marker.NTransit_Time} (Max {marker.NMax_Transit_Time}
-                          , Min {marker.NMin_Transit_Time}) days
-                        </b>
-                      </p>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-            </>
-          ) : null}
-          {marker.EndLatLng[0].lat !== props.markers[i].StartLocation[0].lat &&
-          marker.EndLatLng[0].lng !== props.markers[i].StartLocation[0].lng &&
-          iCount !== marker.ORDERID ? (
-            <Marker
-              key={end[0].lat}
-              onClick={props.onClick.bind(this, end[0].lat)}
-              position={{
-                lat: end[0].lat,
-                lng: end[0].lng
-              }}
-            >
-              {props.selectedMarker === end[0].lat && (
-                <InfoWindow>
-                  <div>
-                    <h4>{marker.EndLocation}</h4>
-                    <br />
-                    <p>
-                      Transit time From {marker.StartLocation} To{" "}
-                      {marker.EndLocation} is:
-                      <b>
-                        {" "}
-                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
-                        Min {marker.NMin_Transit_Time}) days
-                      </b>
-                    </p>
-                  </div>
-                </InfoWindow>
-              )}
-            </Marker>
-          ) : (
-            <Marker
-              key={end[0].lat}
-              //icon={iconMarker}
-              onClick={props.onClick.bind(this, end[0].lat)}
-              position={{
-                lat: end[0].lat,
-                lng: end[0].lng
-              }}
-            >
-              {props.selectedMarker === end[0].lat && (
-                <InfoWindow>
-                  <div>
-                    <h4>{marker.EndLocation}</h4>
-                    <br />
-                    <p>
-                      Transit time From {marker.StartLocation} To{" "}
-                      {marker.EndLocation} is:
-                      <b>
-                        {" "}
-                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
-                        Min {marker.NMin_Transit_Time}) days
-                      </b>
-                    </p>
-                  </div>
-                </InfoWindow>
-              )}
-            </Marker>
-          )}
-        </>
-      );
-    })}
-  </GoogleMap>
-));
 
 class ShippingDetailsTwo extends Component {
   constructor(props) {
@@ -248,7 +80,8 @@ class ShippingDetailsTwo extends Component {
       delDocuId: "",
       delFileName: "",
       downloadFilePath: "",
-      POLPODData: []
+      POLPODData: [],
+      Table9: []
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -263,7 +96,6 @@ class ShippingDetailsTwo extends Component {
   }
 
   componentDidMount() {
-    debugger;
     localStorage.removeItem(
       "AllLineData",
       "FlagsData",
@@ -281,7 +113,6 @@ class ShippingDetailsTwo extends Component {
         HblNo: hblno
       });
     } else if (typeof this.props.location.state != "undefined") {
-      debugger;
       var hblno = this.props.location.state.detail;
       var event = this.props.location.state.event || "";
       var pageName = this.props.location.state.pageName;
@@ -342,93 +173,6 @@ class ShippingDetailsTwo extends Component {
     this.setState({ selectedMarker: marker });
   };
   HandleMapDetailsData(mdetails) {
-    debugger;
-
-    // var PinModalData = [];
-    // var RouteData = [];
-
-    // for (let i = 0; i < DetailsData.length; i++) {
-    //   var finalList = new Object();
-
-    //   // var orderId = DetailsData[i].ORDERID;
-    //   finalList.ORDERID = DetailsData[i].ORDERID;
-    //   finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
-    //   finalList.StartLocation = DetailsData[i].StartLocation;
-    //   finalList.ShipperName = DetailsData[i].ShipperName;
-    //   finalList.EndLocation = DetailsData[i].EndLocation;
-    //   finalList.ConsigneeName = DetailsData[i].ConsigneeName;
-    //   finalList.NTransit_Time = DetailsData[i].NTransit_Time;
-    //   finalList.NMax_Transit_Time = DetailsData[i].NMax_Transit_Time;
-    //   finalList.NMin_Transit_Time = DetailsData[i].NMin_Transit_Time;
-    //   finalList.CTransShipPort = DetailsData[i].CTransShipPort;
-    //   finalList.CType = DetailsData[i].CType;
-    //   finalList.Line = DetailsData[i].Line;
-    //   finalList.NEdLocationID = DetailsData[i].NEdLocationID;
-    //   finalList.NStLocationID = DetailsData[i].NStLocationID;
-    //   finalList.NTransRouteID = DetailsData[i].NTransRouteID;
-    //   finalList.SLinerID = DetailsData[i].SLinerID;
-    //   finalList.TransitType = DetailsData[i].TransitType;
-
-    //   //Start Location Lat lng
-    //   var CStLatLong = DetailsData[i].CStLatLong;
-    //   var startlatlng = [];
-    //   var startlatlnglst = new Object();
-    //   startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
-    //   startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
-    //   startlatlng.push(startlatlnglst);
-
-    //   finalList.StartLatLng = startlatlng;
-
-    //   // End Location Lat Lng
-    //   var CEdLatLong = DetailsData[i].CEdLatLong;
-    //   var endlatlng = [];
-    //   var endlatlnglst = new Object();
-    //   endlatlnglst.lat = Number(CEdLatLong.split(",")[0]);
-    //   endlatlnglst.lng = Number(CEdLatLong.split(",")[1]);
-    //   endlatlng.push(endlatlnglst);
-    //   finalList.EndLatLng = endlatlng;
-
-    //   //CRouteLatLong Lat Lng
-    //   // Rounting line
-    //   var cRouteLatLong = DetailsData[i].CRouteLatLong;
-    //   if (cRouteLatLong.length > 0) {
-    //     var routeArray = [];
-    //     var ComplexData = [];
-    //     routeArray.push(cRouteLatLong.split(";"));
-
-    //     var routlen = routeArray[0];
-    //     for (let k = 0; k < routlen.length; k++) {
-    //       var routelatlng = new Object();
-    //       var latlngvar = routlen[k];
-    //       routelatlng.lat = Number(latlngvar.split(",")[0]);
-    //       routelatlng.lng = Number(latlngvar.split(",")[1]);
-    //       ComplexData.push(routelatlng);
-    //     }
-    //     finalList.CRouteLatLong = ComplexData;
-    //   } else {
-    //     finalList.CRouteLatLong = null;
-    //   }
-
-    //   PinModalData.push(finalList);
-
-    //   // Rounting line
-    //   var RouteLatLong = DetailsData[i].RouteLatLong;
-    //   var RouteArray = [];
-    //   // var ComplexData = [];
-    //   RouteArray.push(RouteLatLong.split(";"));
-
-    //   var routlen = RouteArray[0];
-    //   for (let k = 0; k < routlen.length; k++) {
-    //     var routelatlng = new Object();
-    //     var latlngvar = routlen[k];
-    //     routelatlng.lat = Number(latlngvar.split(",")[0]);
-    //     routelatlng.lng = Number(latlngvar.split(",")[1]);
-    //     RouteData.push(routelatlng);
-    //   }
-    // }
-
-    // self.setState({ MapsDetailsData: PinModalData });
-
     var mydata = mdetails.Table;
     let self = this;
     /////Baloon with First's Start
@@ -566,13 +310,7 @@ class ShippingDetailsTwo extends Component {
       } else {
         debugger;
         Not_Data = i;
-        // var data = mydata[Not_Data - 1]["GeoCoord"].split(";");
-
-        // var routeShip = new Object();
-        // routeShip.lat = Number(data[data.length - 1].split(",")[0]);
-        // routeShip.lng = Number(data[data.length - 1].split(",")[1]);
       }
-      //mainLineData = allLineData;
     }
 
     debugger;
@@ -745,9 +483,8 @@ class ShippingDetailsTwo extends Component {
       var shipmentdata = response.data;
       var ModeType = response.data.Table[0].ModeOfTransport;
       var POLPODData = response.data.Table5;
-      if (POLPODData.length > 0) {
-        self.setState({ POLPODData });
-      }
+      var Table9 = response.data.Table9;
+
       self.setState({
         detailsData: shipmentdata.Table[0],
         ShipperID: shipmentdata.Table[0].ShipperId,
@@ -763,7 +500,9 @@ class ShippingDetailsTwo extends Component {
         packageViewMore: shipmentdata.Table8,
         ModeType
       });
-
+      if (POLPODData.length > 0) {
+        self.setState({ POLPODData, Table9 });
+      }
       var sid = shipmentdata.Table[0].ShipperId;
       var cid = shipmentdata.Table[0].ConsigneeID;
       self.HandleShipmentDetailsMap(sid, cid);
@@ -801,10 +540,7 @@ class ShippingDetailsTwo extends Component {
       return false;
     }
     debugger;
-    //docData.append();
-    // docData.append("ShipmentNumber", this.state.ShipperID);
-    // docData.append("ShipmentNumber", "BCM2453770");
-    // docData.append("HBLNo", "BCM23770");
+
     docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
     docData.append("name", docName);
@@ -823,14 +559,11 @@ class ShippingDetailsTwo extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data[0].Result);
-      self.setState({ selectedFileName: ""});
+      self.setState({ selectedFileName: "" });
       self.toggleDocu();
       setTimeout(() => {
-        self.HandleShipmentDocument();  
+        self.HandleShipmentDocument();
       }, 100);
-      
-      
-      
     });
   };
 
@@ -979,7 +712,6 @@ class ShippingDetailsTwo extends Component {
         debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-        //NotificationManager.error(err[1].replace("}", ""));
       });
     // }
   }
@@ -1017,13 +749,14 @@ class ShippingDetailsTwo extends Component {
       addressData,
       containerData,
       containerDetails,
-      ShowCard,
+
       documentData,
       bookedStatus,
-      MapsDetailsData,
+
       packageDetails,
-      packageViewMore,
-      packageTable
+
+      packageTable,
+      POLPODData
     } = this.state;
     let approvedisActive = "";
     let approvedDate = "";
@@ -1111,28 +844,32 @@ class ShippingDetailsTwo extends Component {
             : bookedStatus[index].ActualDate;
       }
     }
-    
-    debugger;
+
     var perBooking = "0";
-    if (bookDate !== "") {
-      perBooking = "0";
-    }
+    var locName = "";
+    var statusid = 0;
+    if (POLPODData.length > 0) {
+      debugger;
 
-    if (departedDate !== "") {
-      perBooking = "50";
-    }
-    if (departedDate !== "" && containerData.length > 1) {
-      perBooking = "25";
-    }
-
-    if (arrivedDate != "") {
-      perBooking = "100";
-    }
-    if (arrivedDate !== "" && containerData.length > 1) {
-      perBooking = "75";
-    }
-    if (deliverDate != "") {
-      perBooking = "100";
+      for (let i = 0; i < POLPODData.length; i++) {
+        if (POLPODData[i].ActualTimeDeparture === null) {
+          statusid = i;
+          break;
+        }
+      }
+      var len = 100 / POLPODData.length;
+      if (statusid === 1 && arrivedDate !== "" && deliverDate !== "") {
+        perBooking = "0";
+      } else if (statusid === 0 && arrivedDate !== "" && deliverDate !== "") {
+        perBooking = "100";
+      } else if (arrivedDate !== "") {
+        perBooking = "75";
+      } else if (deliverDate !== "") {
+        perBooking = "100";
+      } else {
+        var total = parseInt(100 / statusid);
+        perBooking = total * (statusid - 1) + "";
+      }
     }
 
     var eventColor = "";
@@ -1385,40 +1122,39 @@ class ShippingDetailsTwo extends Component {
                           <span className="clr-green">POL</span>
                           <div className="pol-pod-progress">
                             <Progress color={eventColor} value={perBooking} />
-                            {/* <span
-                              className="pol-pod-percent"
-                              style={{ left: perBooking + "%" }}
-                            >
-                              {perBooking + "%"}
-                            </span> */}
                           </div>
                           <span className="clr-green">POD</span>
                         </div>
                         <div className="desti-places">
-                          <span>
-                            {containerData.length > 0
-                              ? containerData[0].DeparturePortName.split(",")[0]
-                              : ""}
-                            {/* {containerData.length > 0
-                              ? containerData[0].DeparturePortName !==
-                                containerData[1].DeparturePortName
-                                ? containerData[0].DeparturePortName.split(
-                                    ","
-                                  )[0]
-                                : containerData[1].DeparturePortName.split(
-                                    ","
-                                  )[1]
-                              : null} */}
-                          </span>
+                          {POLPODData.length < 2 ? (
+                            <>
+                              <span>
+                                {containerData.length > 0
+                                  ? containerData[0].DeparturePortName.split(
+                                      ","
+                                    )[0]
+                                  : ""}
+                              </span>
 
-                          <span>{destinationPortName}</span>
-                          <span>
-                            {containerData.length > 0
-                              ? containerData[
-                                  containerData.length - 1
-                                ].DestinationPortName.split(",")[0]
-                              : ""}
-                          </span>
+                              <span>
+                                {containerData.length > 0
+                                  ? containerData[
+                                      containerData.length - 1
+                                    ].DestinationPortName.split(",")[0]
+                                  : ""}
+                              </span>
+                            </>
+                          ) : (
+                            POLPODData.map(function(ld, i) {
+                              // if (i == 0) {
+                              //   return <></>;
+                              // } else if (i > 1 && i===POLPODData.length-1 ) {
+                              //   return <span>{ld["POL/POD"]}</span>;
+                              // }
+
+                              return <span>{ld["POL/POD"]+","}</span>;
+                            })
+                          )}
                         </div>
                       </div>
                       {containerData.map(function(routedata, i = 0) {
@@ -2640,7 +2376,7 @@ class ShippingDetailsTwo extends Component {
                   </ModalBody>
                 </Modal>
               </div>
-              <NotificationContainer leaveTimeout="3000"/>
+              <NotificationContainer leaveTimeout="3000" />
             </div>
           </div>
         </div>

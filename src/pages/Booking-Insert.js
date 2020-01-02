@@ -323,10 +323,10 @@ class BookingInsert extends Component {
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
           objcargo.PackageType = CargoDetails[i].PackageType || "";
           objcargo.Quantity = CargoDetails[i].Quantity || 0;
-          objcargo.Lengths = CargoDetails[i].Length || 0;
+          objcargo.Length = CargoDetails[i].Length || 0;
           objcargo.Width = CargoDetails[i].Width || 0;
-          objcargo.Height = CargoDetails[i].height || 0;
-          objcargo.GrossWt = CargoDetails[i].GrossWeight || 0;
+          objcargo.height = CargoDetails[i].height || 0;
+          objcargo.GrossWeight = CargoDetails[i].GrossWeight || 0;
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
           objcargo.Volume = CargoDetails[i].Volume || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
@@ -421,10 +421,10 @@ class BookingInsert extends Component {
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
           objcargo.PackageType = CargoDetails[i].PackageType || "";
           objcargo.Quantity = CargoDetails[i].Quantity || 0;
-          objcargo.Lengths = CargoDetails[i].Length || 0;
+          objcargo.Length = CargoDetails[i].Length || 0;
           objcargo.Width = CargoDetails[i].Width || 0;
-          objcargo.Height = CargoDetails[i].height || 0;
-          objcargo.GrossWt = CargoDetails[i].GrossWeight || 0;
+          objcargo.height = CargoDetails[i].height || 0;
+          objcargo.GrossWeight = CargoDetails[i].GrossWeight || 0;
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
           objcargo.Volume = CargoDetails[i].Volume || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
@@ -520,10 +520,10 @@ class BookingInsert extends Component {
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
           objcargo.PackageType = CargoDetails[i].PackageType || "";
           objcargo.Quantity = CargoDetails[i].Quantity || 0;
-          objcargo.Lengths = CargoDetails[i].Length || 0;
+          objcargo.Length = CargoDetails[i].Length || 0;
           objcargo.Width = CargoDetails[i].Width || 0;
-          objcargo.Height = CargoDetails[i].height || 0;
-          objcargo.GrossWt = CargoDetails[i].GrossWeight || 0;
+          objcargo.height = CargoDetails[i].height || 0;
+          objcargo.GrossWeight = CargoDetails[i].GrossWeight || 0;
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
           objcargo.Volume = CargoDetails[i].Volume || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
@@ -687,16 +687,25 @@ class BookingInsert extends Component {
         var saleQuoteNo = this.state.salesQuotaNo || "";
         var saleQuoteLineID = 0;
         if (this.state.QuotationData) {
-          var qdata = this.state.QuotationData.filter(
-            x => x.saleQuoteLineID === Number(this.state.checkList)
-          );
-          saleQuoteLineID = qdata[0].saleQuoteLineID;
-          saleQuoteID = qdata[0].SaleQuoteID;
+          if (this.state.ContainerLoad === "INLAND") {
+            var qdata = this.state.QuotationData.filter(
+              x => x.SaleQuoteIDLineID === Number(this.state.checkList)
+            );
+            saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
+            saleQuoteID = qdata[0].SaleQuoteID;
+          } else {
+            var qdata = this.state.QuotationData.filter(
+              x => x.saleQuoteLineID === Number(this.state.checkList)
+            );
+            saleQuoteLineID = qdata[0].saleQuoteLineID;
+            saleQuoteID = qdata[0].SaleQuoteID;
+          }
         } else {
           var qdata = this.state.QuotationData.filter(
             x => x.SaleQuoteIDLineID === Number(this.state.checkList)
           );
           saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
+          saleQuoteID = qdata[0].SaleQuoteID;
         }
 
         var BookingDim = [];
@@ -858,10 +867,12 @@ class BookingInsert extends Component {
 
     if (!this.state.modalEdit) {
       debugger;
-
       var multiCBM = this.state.multiCargo;
-
-      this.setState({ multiCBM });
+      if (multiCBM.length > 0) {
+        this.setState({ multiCBM });
+      } else {
+        this.addMultiCBM();
+      }
     } else {
     }
 
@@ -1344,6 +1355,7 @@ class BookingInsert extends Component {
     this.setState({ multiCBM });
   }
   CreateMultiCBM() {
+    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -1363,19 +1375,24 @@ class BookingInsert extends Component {
             </select>
           </div>
         </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="QTY"
-              className="w-100"
-              name="Quantity"
-              value={el.Quantity || ""}
-              //onKeyUp={this.cbmChange}
-            />
+        {this.state.ContainerLoad !== "FCL" &&
+        this.state.ContainerLoad !== "INLAND" ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                onChange={this.HandleChangeMultiCBM.bind(this, i)}
+                placeholder="Quantity"
+                className="w-100"
+                name="Quantity"
+                value={el.Quantity || ""}
+                //onKeyUp={this.cbmChange}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          ""
+        )}
         <div className="col-md">
           <div className="spe-equ">
             <input
@@ -1428,33 +1445,38 @@ class BookingInsert extends Component {
             />
           </div>
         </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              disabled
-              name={
-                this.state.containerLoadType === "LCL"
-                  ? "Volume"
-                  : "VolumeWeight"
-              }
-              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={
-                this.state.containerLoadType === "LCL"
-                  ? "KG"
-                  : this.state.containerLoadType === "AIR"
-                  ? "CW"
-                  : "VW"
-              }
-              value={
-                this.state.containerLoadType === "LCL"
-                  ? el.Volume
-                  : el.VolumeWeight || ""
-              }
-              className="w-100 weight-icon"
-            />
+        {this.state.ContainerLoad !== "FCL" &&
+        this.state.ContainerLoad !== "INLAND" ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                disabled
+                name={
+                  this.state.containerLoadType === "LCL"
+                    ? "Volume"
+                    : "VolumeWeight"
+                }
+                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                placeholder={
+                  this.state.containerLoadType === "LCL"
+                    ? "KG"
+                    : this.state.containerLoadType === "AIR"
+                    ? "CW"
+                    : "VW"
+                }
+                value={
+                  this.state.containerLoadType === "LCL"
+                    ? el.Volume
+                    : el.VolumeWeight || ""
+                }
+                className="w-100 weight-icon"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          ""
+        )}
         {i === 0 ? (
           <div className="">
             <div className="spe-equ">
@@ -1530,194 +1552,57 @@ class BookingInsert extends Component {
     }
 
     this.setState({ multiCBM });
-    if (this.state.containerLoadType !== "LCL") {
-      var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
-        6000;
-      if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
+
+    if (this.state.ContainerLoad !== "LCL") {
+      if (
+        this.state.ContainerLoad === "FCL" ||
+        this.state.ContainerLoad === "INLAND"
+      ) {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWeight.toFixed(2)
+          ["VolumeWeight"]: 0
         };
       } else {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
-        };
+        var decVolumeWeight =
+          (multiCBM[i].Quantity *
+            (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
+          6000;
+        if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            ["VolumeWeight"]: multiCBM[i].GrossWeight.toFixed(2)
+          };
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
+          };
+        }
       }
     } else {
-      var decVolume =
-        multiCBM[i].Quantity *
-        ((multiCBM[i].Length / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].height / 100));
-      multiCBM[i] = {
-        ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
-      };
+      if (
+        this.state.ContainerLoad === "FCL" ||
+        this.state.ContainerLoad === "INLAND"
+      ) {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["Volume"]: 0
+        };
+      } else {
+        var decVolume =
+          multiCBM[i].Quantity *
+          ((multiCBM[i].Length / 100) *
+            (multiCBM[i].Width / 100) *
+            (multiCBM[i].height / 100));
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["Volume"]: parseFloat(decVolume)
+        };
+      }
     }
 
     this.setState({ multiCBM });
   }
-
-  // CreateMultiCBM() {
-  //   return this.state.multiCBM.map((el, i) => (
-  //     <div className="row cbm-space" key={i}>
-  //       <div className="col-md">
-  //         <div className="spe-equ">
-  //           <select
-  //             className="select-text"
-  //             onChange={this.HandleChangeMultiCBM.bind(this, i)}
-  //             name="PackageType"
-  //             value={el.PackageType}
-  //           >
-  //             <option selected>Select</option>
-  //             {this.state.packageTypeData.map((item, i) => (
-  //               <option key={i} value={item.PackageName}>
-  //                 {item.PackageName}
-  //               </option>
-  //             ))}
-  //           </select>
-  //         </div>
-  //       </div>
-  //       <div className="col-md">
-  //         <div className="spe-equ">
-  //           <input
-  //             type="text"
-  //             onChange={this.HandleChangeMultiCBM.bind(this, i)}
-  //             placeholder="QTY"
-  //             className="w-100"
-  //             name="Quantity"
-  //             value={el.Quantity || ""}
-  //             //onKeyUp={this.cbmChange}
-  //           />
-  //         </div>
-  //       </div>
-  //       <div className="col-md">
-  //         <div className="spe-equ">
-  //           <input
-  //             type="text"
-  //             onChange={this.HandleChangeMultiCBM.bind(this, i)}
-  //             placeholder={"L (cm)"}
-  //             className="w-100"
-  //             name="Length"
-  //             value={this.state.isCopy == true ? el.Length : el.Length || ""}
-  //             // onBlur={this.cbmChange}
-  //           />
-  //         </div>
-  //       </div>
-  //       <div className="col-md">
-  //         <div className="spe-equ">
-  //           <input
-  //             type="text"
-  //             onChange={this.HandleChangeMultiCBM.bind(this, i)}
-  //             placeholder={"W (cm)"}
-  //             className="w-100"
-  //             name="Width"
-  //             value={el.Width || ""}
-  //             //onBlur={this.cbmChange}
-  //           />
-  //         </div>
-  //       </div>
-  //       <div className="col-md">
-  //         {(this.state.ContainerLoad == "LCL" || "AIR" || "LTL") &&
-  //         this.state.NonStackable ? (
-  //           <div className="spe-equ">
-  //             <input
-  //               type="text"
-  //               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-  //               placeholder="H (cm)"
-  //               className="w-100"
-  //               name="height"
-  //               value={this.state.isCopy == true ? el.height : el.height || ""}
-  //               disabled
-  //               //onBlur={this.cbmChange}
-  //             />
-  //           </div>
-  //         ) : (
-  //           <div className="spe-equ">
-  //             <input
-  //               type="text"
-  //               onChange={this.HandleChangeMultiCBM.bind(this, i)}
-  //               placeholder="H (cm)"
-  //               className="w-100"
-  //               name="height"
-  //               value={this.state.isCopy == true ? el.height : el.height || ""}
-  //               //onBlur={this.cbmChange}
-  //             />
-  //           </div>
-  //         )}
-  //       </div>
-
-  //       <div className="col-md">
-  //         <div className="spe-equ">
-  //           <input
-  //             type="text"
-  //             onChange={this.HandleChangeMultiCBM.bind(this, i)}
-  //             placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
-  //             name="GrossWeight"
-  //             value={
-  //               this.state.isCopy == true
-  //                 ? el.GrossWeight
-  //                 : el.GrossWeight || ""
-  //             }
-  //             className="w-100"
-  //           />
-  //         </div>
-  //       </div>
-  //       <div className="col-md">
-  //         <div className="spe-equ">
-  //           <input
-  //             type="text"
-  //             disabled
-  //             name={
-  //               this.state.containerLoadType === "LCL"
-  //                 ? "Volume"
-  //                 : "VolumeWeight"
-  //             }
-  //             // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-  //             placeholder={
-  //               this.state.containerLoadType === "LCL"
-  //                 ? "KG"
-  //                 : this.state.containerLoadType === "AIR"
-  //                 ? "CW"
-  //                 : "VW"
-  //             }
-  //             value={
-  //               this.state.containerLoadType === "LCL"
-  //                 ? el.Volume
-  //                 : el.VolumeWeight || ""
-  //             }
-  //             className="w-100 weight-icon"
-  //           />
-  //         </div>
-  //       </div>
-  //       {i === 0 ? (
-  //         <div className="">
-  //           <div className="spe-equ">
-  //             <i
-  //               className="fa fa-plus mt-2"
-  //               aria-hidden="true"
-  //               onClick={this.addMultiCBM.bind(this)}
-  //             ></i>
-  //           </div>
-  //         </div>
-  //       ) : null}
-  //       {this.state.multiCBM.length > 1 ? (
-  //         <div className="">
-  //           <div className="spe-equ">
-  //             <i
-  //               className="fa fa-minus mt-2"
-  //               aria-hidden="true"
-  //               onClick={this.removeMultiCBM.bind(this)}
-  //             ></i>
-  //           </div>
-  //         </div>
-  //       ) : null}
-  //     </div>
-  //   ));
-  // }
 
   SubmitCargoDetails(e) {
     debugger;
@@ -2887,33 +2772,6 @@ class BookingInsert extends Component {
                       className="row ratefinalpgn"
                       style={{ display: "block" }}
                     >
-                      {/* {this.state.eqmtType.length > 0 ? (
-                        <ReactTable
-                          columns={[
-                            {
-                              columns: [
-                                {
-                                  Header: "Container Name",
-                                  accessor: "ContainerName"
-                                },
-                                {
-                                  Header: "ContainerCode",
-                                  accessor: "ContainerCode"
-                                },
-
-                                {
-                                  Header: "Container Count",
-                                  accessor: "ContainerCount"
-                                }
-                              ]
-                            }
-                          ]}
-                          data={this.state.eqmtType}
-                          minRows={0}
-                          showPagination={false}
-                        />
-                      ) : null} */}
-
                       <ReactTable
                         columns={[
                           {

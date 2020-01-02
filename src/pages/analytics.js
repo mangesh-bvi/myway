@@ -351,12 +351,13 @@ class Analytics extends Component {
                 arrayOceandata.push(arrayOcean[i].NoOfShipment);
               }
             }
+            // arrayOcean[0].Modeoftransport
             graphdataset.push({
               fillColor: "rgba(172,194,132,0.4)",
               strokeColor: "#ACC26D",
               pointColor: "#fff",
               pointStrokeColor: "#9DB86D",
-              label: arrayOcean[0].Modeoftransport,
+              label: "Ocean",
               data: arrayOceandata,
               backgroundColor: "#4a99e7"
             });

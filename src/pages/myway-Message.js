@@ -23,7 +23,8 @@ class myWayMessage extends Component {
       MessageLogArr: [],
       CommunicationUser: "",
       ReferenceNo: "",
-      msgg: ""
+      msgg: "",
+      selectedItem: {}
     };
 
     this.bindMyWayMessage = this.bindMyWayMessage.bind(this);
@@ -86,6 +87,7 @@ class myWayMessage extends Component {
   bindMyWayMessageById(item, e) {
     debugger;
     let self = this;
+    self.setState({ selectedItem: item });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/MessageDetailsbyID`,
@@ -109,12 +111,6 @@ class myWayMessage extends Component {
         var temperror = error.response.data;
         var err = temperror.split(":");
         NotificationManager.error(err[1].replace("}", ""));
-
-        // var actData = [];
-        // actData.push({
-        //   ModeOfTransport: "No Data Found"
-        // });
-        // self.setState({ reportdetails: actData });
       });
   }
 
@@ -123,18 +119,22 @@ class myWayMessage extends Component {
     let self = this;
     var hbllNo = this.state.ReferenceNo;
     var msgg = this.state.msgg;
+    var paramdata = {
+      UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+      ReferenceNo: this.state.ReferenceNo,
+      TypeOfMessage: this.state.selectedItem.MessageType,
+      Message: this.state.msgg,
+      SubjectMessage: this.state.selectedItem.MessageTitle,
+      MessageID: this.state.selectedItem.MessageId
+    };
+
     if (msgg === "" || msgg === null) {
       NotificationManager.error("Please enter the message.");
     } else {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/SendCommonMessage`,
-        data: {
-          UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-          ReferenceNo: hbllNo.trim(),
-          // TypeOfMessage: drpshipment.value.trim(),
-          Message: msgg
-        },
+        data: paramdata,
         headers: authHeader()
       }).then(function(response) {
         if (response != null) {
