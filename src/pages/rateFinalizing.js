@@ -703,8 +703,12 @@ class RateFinalizing extends Component {
                   incoTerms: IncoTerms,
                   incoTerm: IncoTerms,
                   currencyCode: "USD",
-                  PickUpAddress: response.data.Table[0].pickupAddress,
-                  DestinationAddress: response.data.Table[0].deliveryAddress
+                  PickUpAddress: response.data.Table[0].TypeOfMove=="Door To Door"?
+                  response.data.Table[0].PickUpStreet+", "+response.data.Table[0].PickUpState+", "+
+                  response.data.Table[0].PickUpCountry: response.data.Table[0].pickupAddress,
+                  DestinationAddress: response.data.Table[0].TypeOfMove=="Door To Door"?
+                  response.data.Table[0].DestStreet+", "+response.data.Table[0].DestState+", "+
+                  response.data.Table[0].DestCountry: response.data.Table[0].deliveryAddress
                 });
               }
             }
@@ -1973,23 +1977,22 @@ class RateFinalizing extends Component {
 
         var rateDetailsarr = this.state.selectedDataRow;
 
-        var subratedetails = [];
-        for (let i = 0; i < rateDetailsarr.length; i++) {
-          if (this.state.isCopy === true) {
-            var data = this.state.rateSubDetails.filter(
-              x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
-            );
-            subratedetails.push(data);
-          } else {
-            var data = this.state.rateSubDetails.filter(
-              x => x.RateLineID === rateDetailsarr[i].RateLineId
-            );
-            for (let i = 0; i < data.length; i++) {
-              subratedetails.push(data[i]);
-            }
-            // subratedetails.push(data);
+      var subratedetails = [];
+      for (let i = 0; i < rateDetailsarr.length; i++) {
+        if (this.state.isCopy === true) {
+          var data = this.state.rateSubDetails.filter(
+            x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
+          );
+          subratedetails.push(data);
+        } else {
+          var data = this.state.rateSubDetails.filter(
+            x => x.RateLineID === rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID
+          );
+          for (let i = 0; i < data.length; i++) {
+            subratedetails.push(data[i]);
           }
         }
+      }
         var rateSubDetailsarr = subratedetails;
 
         var FCLSQBaseFreight = [];
@@ -7106,7 +7109,7 @@ class RateFinalizing extends Component {
                             <label>
                               Service Type :{" "}
                               <span>
-                                {item.TransshipmentPort === null
+                                {item.TransshipmentPort === null || item.TransshipmentPort === undefined
                                   ? "Direct"
                                   : item.TransshipmentPort}
                               </span>
@@ -7118,7 +7121,7 @@ class RateFinalizing extends Component {
                               POD :{" "}
                               <span>
                                 {this.state.isCopy == true
-                                  ? this.state.DestinationAddress
+                                  ?this.state.DestinationAddress
                                   : item.PODName}
                               </span>
                             </label>

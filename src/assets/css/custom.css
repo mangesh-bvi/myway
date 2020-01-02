@@ -4299,3 +4299,7 @@ select option {
 .divblock div {
   display: block !important;
 }
+
+.new-outer div[style*="display: inline-block;"] {
+  position: relative;
+}

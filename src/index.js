@@ -58,6 +58,8 @@ import "./assets/css/responsive.css";
 
 import BookingView from './pages/BookingView'
 import BookingInsert from "./pages/Booking-Insert";
+
+//import TestGoogleAPI from "./pages/testGoogleAPI"
  
 
 ReactDOM.render(
@@ -116,6 +118,7 @@ ReactDOM.render(
     />
     <Route exact path="/track-shipment" component={TrackShipment} />
     <Route exact path="/track-shipment2" component={TrackShipment2} />
+    {/* <Route exact path="/testGoogleAPI" component={TestGoogleAPI} /> */}
     {/* <Route  path="/" component={Login} />   */}
   </Router>,
   document.getElementById("root")
