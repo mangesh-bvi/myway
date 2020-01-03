@@ -10,34 +10,29 @@ import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-// import LoginActore from "./../assets/img/login-actore.jfif";
-// import DownArrow from "./../assets/img/down-arrow.png";
-// import Ship from "./../assets/img/ship.png";
-// import Truck from "./../assets/img/truck.png";
+
 import Rail from "./../assets/img/rail.png";
-// import Plane from "./../assets/img/plane.png";
+
 import PlaneColor from "./../assets/img/AirShipment-color.png";
 import OceanColor from "./../assets/img/OceanShipment-color.png";
 import TruckColor from "./../assets/img/DelayShipment-color.png";
-// import Transit from "./../assets/img/transit.png";
+
 import { encryption } from "../helpers/encryption";
-// import Box from "./../assets/img/box.png";
+
 import Delivered from "./../assets/img/delivered.png";
-// import InPlane from "./../assets/img/in-plane.png";
-// import Arrived from "./../assets/img/arrived.png";
-// import ArrivedStatus from "./../assets/img/arrived-status.png";
+
 import ArrivedStatusColor from "./../assets/img/Arrived-b.png";
-// import InlandTransportStatus from "./../assets/img/inland-transportation-status.png";
+
 import InlandTransportStatusColor from "./../assets/img/InlandTransportation-b.png";
 import TransshippedStatus from "./../assets/img/transshipped-status.png";
 import InTransitStatus from "./../assets/img/in-transit-status.png";
 import GateInStatus from "./../assets/img/gate-in-status.png";
-// import DepartedStatus from "./../assets/img/departed-status.png";
+
 import DepartedStatusColor from "./../assets/img/Departed-b.png";
-// import DeliveredStatus from "./../assets/img/delivered-status.png";
+
 import DeliveredStatusColor from "./../assets/img/Delivered-b.png";
 import BookedStatusColor from "./../assets/img/Booked-b.png";
-// import ApprovedStatus from "./../assets/img/approved-status.png";
+
 import ApprovedStatusColor from "./../assets/img/Approved-b.png";
 import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
@@ -46,7 +41,7 @@ import matchSorter from "match-sorter";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import makeAnimated from "react-select/animated";
-// import Select from "react-select";
+
 import Autocomplete from "react-autocomplete";
 import {
   NotificationContainer,
@@ -54,16 +49,6 @@ import {
 } from "react-notifications";
 
 const animatedComponents = makeAnimated();
-const SourceIcon = () => (
-  <div className="map-icon source-icon">
-    <img src={ShipWhite} />
-  </div>
-);
-const DestiIcon = () => (
-  <div className="map-icon desti-icon">
-    <img src={ShipWhite} />
-  </div>
-);
 
 class ShippingDetails extends Component {
   constructor(props) {
@@ -73,9 +58,9 @@ class ShippingDetails extends Component {
       listDis: "none",
       mapDis: "block",
       copied: false,
-      // shareLink: "http://myway.demo.brainvire.net/shipment-details?hblno=",
+
       shareLink: "http://mywayqa.demo.brainvire.net/track-shipment2?",
-      //shareLink: "http://localhost:3000/track-shipment2?",
+
       filterAll: "",
       filtered: [],
       modalAdvSearch: false,
@@ -769,16 +754,7 @@ class ShippingDetails extends Component {
               </div>
               <div style={{ display: this.state.listDis }} className="map-tab">
                 <div className="full-map">
-                  <GoogleMapReact
-                    bootstrapURLKeys={{
-                      key: appSettings.Keys
-                    }}
-                    defaultCenter={this.props.center}
-                    defaultZoom={this.props.zoom}
-                  >
-                    <SourceIcon lat={59.955413} lng={30.337844} />
-                    <DestiIcon lat={59.9} lng={30.3} />
-                  </GoogleMapReact>
+                   
                 </div>
               </div>
               <div

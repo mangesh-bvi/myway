@@ -35,6 +35,7 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import StepZilla from "react-stepzilla";
 
 var docuemntFileName = "";
 
@@ -183,7 +184,6 @@ class ShippingDetailsTwo extends Component {
 
     var allLineData = [];
     for (var i = 0; i < mydata.length; i++) {
-      debugger;
       var BlocationData = {};
       var flagsData = {};
 
@@ -744,6 +744,15 @@ class ShippingDetailsTwo extends Component {
 
   render() {
     let self = this;
+
+    const steps = [
+      { name: "NHAVA SHEVA (JAWAHARLAL NEHRU)", component: <></> },
+      { name: "HAMBURG", component: <></> },
+      { name: "MANZANILLO", component: <></> },
+      { name: "KINGSTON", component: <></> },
+      { name: "BELIZE CITY", component: <></> }
+    ];
+
     const {
       detailsData,
       addressData,
@@ -858,13 +867,11 @@ class ShippingDetailsTwo extends Component {
         }
       }
       var len = 100 / POLPODData.length;
-      if (statusid === 1 && arrivedDate !== "" && deliverDate !== "") {
+      if (statusid === 1 && arrivedDate === "" && deliverDate === "") {
         perBooking = "0";
       } else if (statusid === 0 && arrivedDate !== "" && deliverDate !== "") {
         perBooking = "100";
-      } else if (arrivedDate !== "") {
-        perBooking = "75";
-      } else if (deliverDate !== "") {
+      } else if (deliverDate !== "" && arrivedDate !== "") {
         perBooking = "100";
       } else {
         var total = parseInt(100 / statusid);
@@ -1119,13 +1126,17 @@ class ShippingDetailsTwo extends Component {
                       </div>
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
-                          <span className="clr-green">POL</span>
+                          <div className="step-progress">
+                          <StepZilla steps={steps} stepsNavigation={false} prevBtnOnLastStep={false} startAtStep={2} />
+                          </div>
+
+                          {/* <span className="clr-green">POL</span>
                           <div className="pol-pod-progress">
                             <Progress color={eventColor} value={perBooking} />
                           </div>
-                          <span className="clr-green">POD</span>
+                          <span className="clr-green">POD</span> */}
                         </div>
-                        <div className="desti-places">
+                        {/* <div className="desti-places">
                           {POLPODData.length < 2 ? (
                             <>
                               <span>
@@ -1152,10 +1163,10 @@ class ShippingDetailsTwo extends Component {
                               //   return <span>{ld["POL/POD"]}</span>;
                               // }
 
-                              return <span>{ld["POL/POD"]+","}</span>;
+                              return <span>{ld["POL/POD"] + ","}</span>;
                             })
                           )}
-                        </div>
+                        </div> */}
                       </div>
                       {containerData.map(function(routedata, i = 0) {
                         i++;
@@ -1492,8 +1503,8 @@ class ShippingDetailsTwo extends Component {
                                       <p className="details-para">
                                         {/* {packData.Length} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.Length + " cm"
-                                          : packData.Length + " in"}
+                                          ? packData.Length.toFixed(2) + " cm"
+                                          : packData.Length.toFixed(2) + " in"}
                                       </p>
                                     </div>
                                   </div>
@@ -1503,8 +1514,8 @@ class ShippingDetailsTwo extends Component {
                                       <p className="details-para">
                                         {/* {packData.Width} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.Width + " cm"
-                                          : packData.Width + " in"}
+                                          ? packData.Width.toFixed(2) + " cm"
+                                          : packData.Width.toFixed(2) + " in"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1512,8 +1523,8 @@ class ShippingDetailsTwo extends Component {
                                       <p className="details-para">
                                         {/* {packData.Height} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.Height + " cm"
-                                          : packData.Height + " in"}
+                                          ? packData.Height.toFixed(2) + " cm"
+                                          : packData.Height.toFixed(2) + " in"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1521,10 +1532,12 @@ class ShippingDetailsTwo extends Component {
                                         Net Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.NetWeight}
+                                        {/* {packData.NetWeight} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.NetWeight + " kgs"
-                                          : packData.NetWeight + " lbs"}
+                                          ? packData.NetWeight.toFixed(2) +
+                                            " kgs"
+                                          : packData.NetWeight.toFixed(2) +
+                                            " lbs"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1534,8 +1547,10 @@ class ShippingDetailsTwo extends Component {
                                       <p className="details-para">
                                         {/* {packData.GrossWeight} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.GrossWeight + " kgs"
-                                          : packData.GrossWeight + " lbs"}
+                                          ? packData.GrossWeight.toFixed(2) +
+                                            " kgs"
+                                          : packData.GrossWeight.toFixed(2) +
+                                            " lbs"}
                                       </p>
                                     </div>
                                   </div>
@@ -1543,10 +1558,10 @@ class ShippingDetailsTwo extends Component {
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Volume</p>
                                       <p className="details-para">
-                                        {packData.Volume}
+                                        {/* {packData.Volume} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.Volume + " cbm"
-                                          : packData.Volume + " ft"}
+                                          ? packData.Volume.toFixed(2) + " cbm"
+                                          : packData.Volume.toFixed(2) + " ft"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1554,10 +1569,12 @@ class ShippingDetailsTwo extends Component {
                                         Volume Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.VolumeWeight}
+                                        {/* {packData.VolumeWeight} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.VolumeWeight + " kgs"
-                                          : packData.VolumeWeight + " lbs"}
+                                          ? packData.VolumeWeight.toFixed(2) +
+                                            " kgs"
+                                          : packData.VolumeWeight.toFixed(2) +
+                                            " lbs"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1565,10 +1582,12 @@ class ShippingDetailsTwo extends Component {
                                         Total Net Weight
                                       </p>
                                       <p className="details-para">
-                                        {packData.TotalNetWeight}
+                                        {/* {packData.TotalNetWeight} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.TotalNetWeight + " kgs"
-                                          : packData.TotalNetWeight + " lbs"}
+                                          ? packData.TotalNetWeight.toFixed(2) +
+                                            " kgs"
+                                          : packData.TotalNetWeight.toFixed(2) +
+                                            " lbs"}
                                       </p>
                                     </div>
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
@@ -1578,8 +1597,12 @@ class ShippingDetailsTwo extends Component {
                                       <p className="details-para">
                                         {/* {packData.TotalGrossWeight} */}
                                         {packData.UnitType === "Metric"
-                                          ? packData.TotalGrossWeight + " kgs"
-                                          : packData.TotalGrossWeight + " lbs"}
+                                          ? packData.TotalGrossWeight.toFixed(
+                                              2
+                                            ) + " kgs"
+                                          : packData.TotalGrossWeight.toFixed(
+                                              2
+                                            ) + " lbs"}
                                       </p>
                                     </div>
                                   </div>

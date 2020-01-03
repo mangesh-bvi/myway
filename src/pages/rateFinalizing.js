@@ -3094,6 +3094,7 @@ class RateFinalizing extends Component {
             }
           }
         } else {
+          
           NotificationManager.error(
             "Price should not be less than " +
               this.state.selectedDataRow[i].Total

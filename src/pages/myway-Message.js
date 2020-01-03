@@ -49,22 +49,7 @@ class myWayMessage extends Component {
         debugger;
         var Message = "";
         var MessageArr = [];
-        // for (let i = 0; i < response.data.Table.length; i++) {
-        //   if (!Message.includes(response.data.Table[i].MessageTitle!==null?
-        //                         (response.data.Table[i].MessageTitle.includes(':')==true?
-        //                         response.data.Table[i].MessageTitle.split(':')[1].trim():
-        //                         response.data.Table[i].MessageTitle):
-        //                         response.data.Table[i].MessageTitle)) {
 
-        //       Message += (response.data.Table[i].MessageTitle!==null?
-        //                  (response.data.Table[i].MessageTitle.includes(':')==true?
-        //                  response.data.Table[i].MessageTitle.split(':')[1].trim():
-        //                  response.data.Table[i].MessageTitle):response.data.Table[i].MessageTitle)
-
-        //       MessageArr.push(response.data.Table[i])
-        //   }
-
-        // }
         self.setState({
           MessageArr: response.data.Table
         });
@@ -75,12 +60,6 @@ class myWayMessage extends Component {
         var temperror = error.response.data;
         var err = temperror.split(":");
         NotificationManager.error(err[1].replace("}", ""));
-
-        // var actData = [];
-        // actData.push({
-        //   ModeOfTransport: "No Data Found"
-        // });
-        // self.setState({ reportdetails: actData });
       });
   }
 
@@ -133,23 +112,24 @@ class myWayMessage extends Component {
     } else {
       axios({
         method: "post",
-        url: `${appSettings.APIURL}/SendCommonMessage`,
+        url: `${appSettings.APIURL}/SendReplyToCommonMessage`,
         data: paramdata,
         headers: authHeader()
       }).then(function(response) {
+        debugger;
         if (response != null) {
           if (response.data != null) {
             if (response.data.length > 0) {
               if (response.data[0] != null) {
                 var message = response.data[0].Result;
-                // self.setState({ MessagesActivityDetails });
+
                 if (response.data[0].Result === "Message Send Successfully") {
-                  // setTimeout(() => {
-                  // this.handleActivityList();
-                  // }, 100);
                   NotificationManager.success(response.data[0].Result);
+                  
                 }
-                // self.handleActivityList();
+                var item = self.state.selectedItem;
+                  self.setState({ msgg: "" });
+                  self.bindMyWayMessageById(item);
               }
             }
           }
@@ -241,6 +221,7 @@ class myWayMessage extends Component {
                               type="text"
                               class="write_msg"
                               placeholder="Type a message"
+                              value={this.state.msgg}
                               onChange={this.handlechange.bind(this)}
                             />
                             <button

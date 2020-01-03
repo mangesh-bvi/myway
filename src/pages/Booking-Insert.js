@@ -742,7 +742,7 @@ class BookingInsert extends Component {
               cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
               cargoData.Lengths = this.state.multiCBM[i].Length || 0;
               cargoData.Width = this.state.multiCBM[i].Width || 0;
-              cargoData.Height = this.state.multiCBM[i].Height || 0;
+              cargoData.Height = this.state.multiCBM[i].height || 0;
               cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
               cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
               cargoData.Volume = this.state.multiCBM[i].Volume || 0;
