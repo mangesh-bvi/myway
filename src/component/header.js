@@ -305,9 +305,9 @@ class Header extends Component {
 
   RedirectoShipment(RefNo, ID, Type, Product, ProductStatus) {
     debugger;
-    let self = this;
+
     if (Type === "Booking") {
-      self.props.history.push({
+      this.props.history.push({
         pathname: "booking-view",
         state: {
           bookingNo: ID,
@@ -325,15 +325,47 @@ class Header extends Component {
       };
       debugger;
 
-      self.props.history.push({
+      this.props.history.push({
         pathname: "rate-finalizing-still",
-        // state: { detail: detail }
+        state: {
+          detail: detail
+        }
       });
-     
     } else {
       // window.location.href = "shipment-details?hblno=" + RefNo;
     }
   }
+
+  // RedirectoShipment(RefNo, ID, Type, Product, ProductStatus) {
+  //   debugger;
+  //   let self = this;
+  //   if (Type === "Booking") {
+  //     self.props.history.push({
+  //       pathname: "booking-view",
+  //       state: {
+  //         bookingNo: ID,
+  //         Mode: Product
+  //       }
+  //     });
+  //   } else if (Type === "SalesQuote") {
+  //     var ptype = Product;
+  //     var qnumber = qnumber;
+  //     var Status = ProductStatus;
+  //     var detail = {
+  //       Quotes: qnumber,
+  //       Type: ptype,
+  //       Status: Status
+  //     };
+  //     debugger;
+
+  //     self.props.history.push({
+  //       pathname: "rate-finalizing-still"
+  //       // state: { detail: detail }
+  //     });
+  //   } else {
+  //     // window.location.href = "shipment-details?hblno=" + RefNo;
+  //   }
+  // }
 
   render() {
     let self = this;
@@ -376,15 +408,15 @@ class Header extends Component {
     if (this.state.ActivityDateArry.length > 0) {
       adataval = this.state.ActivityDateArry.map((item, i) =>
         this.state.ActivityDateArry.length == 0 ? (
-          <>
+          <div className="active-log-pop">
             <span>{item.CNT + " "}</span> <label>{item.ActivityDesc}</label>
             {item.CSV}
             <br />
             {/* <label>{item.ActMessage}</label> */}
             <label>{item.SingleActDate}</label>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="active-log-pop">
             <span>{item.CNT + " "}</span>
             <label>{item.ActivityDesc}</label>
             <sap>{item.CSV}</sap>
@@ -392,7 +424,7 @@ class Header extends Component {
             {/* <label>{item.ActMessage}</label> */}
             <label>{item.SingleActDate}</label>
             <hr />
-          </>
+          </div>
         )
       );
     }
@@ -721,31 +753,7 @@ class Header extends Component {
             </PopoverHeader>
 
             <PopoverBody>
-              {/* <div>
-              <div>
-                <label>Log-in</label>
-                <br />
-                <label>
-                  {encryption(
-                    window.localStorage.getItem("lastlogindate"),
-                    "desc"
-                  )}
-                </label>
-                <hr />
-              </div>
-              <div>
-                <label>Log-in</label>
-                <br />
-                <label>
-                  {encryption(
-                    window.localStorage.getItem("lastlogindate"),
-                    "desc"
-                  )}
-                </label>
-              </div>
-              </div> */}
-
-              <div>{adataval}</div>
+              <div className="active-log-pop">{adataval}</div>
             </PopoverBody>
           </UncontrolledPopover>
           <NotificationContainer />

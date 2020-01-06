@@ -965,7 +965,7 @@ class RateFinalizingStillBooking extends Component {
       NotificationManager.success(response.data.Table[0].Message);
       setTimeout(() => {
         self.HandleFileUpload();
-      }, 100);
+      }, 1000);
     });
   }
 

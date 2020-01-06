@@ -153,7 +153,7 @@ class SpotRateDetails extends Component {
       Status: "",
       IsSpotRate: false,
       IsRequestForChange: false,
-      CustomerID:0,
+      CustomerID: 0
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -566,6 +566,7 @@ class SpotRateDetails extends Component {
         }
       }
     }
+    debugger;
     this.state.selected = selected;
     this.state.users = users;
     this.state.multiCBM = multiCBM;
@@ -672,6 +673,7 @@ class SpotRateDetails extends Component {
   }
 
   HandleViewRateData() {
+    debugger
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
@@ -1083,7 +1085,8 @@ class SpotRateDetails extends Component {
                         </div>
                         {/* <input type="text" value="Dummy" disabled /> */}
                         <br />
-                        <p className="details-title">Quotation Details</p>
+                        {this.state.Status === "Rate added by Local Pricing" ? (
+                        <><p className="details-title">Quotation Details</p>
 
                         <ReactTable
                           columns={[
@@ -1353,7 +1356,8 @@ class SpotRateDetails extends Component {
                               </div>
                             );
                           }}
-                        />
+                        /></>
+                        ):""}
                       </div>
                     </div>
 

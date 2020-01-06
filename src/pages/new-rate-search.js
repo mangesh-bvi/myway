@@ -234,8 +234,8 @@ class NewRateSearch extends Component {
       errors: {},
       heightData: [],
       isViewRate: false,
-      FCLCargoType:[],
-      AIRLCLLTLType:[]
+      FCLCargoType: [],
+      AIRLCLLTLType: []
     };
 
     this.togglePuAdd = this.togglePuAdd.bind(this);
@@ -396,19 +396,6 @@ class NewRateSearch extends Component {
     } else {
       this.setState({ cbmVal: jiji });
     }
-
-    // var Textvalue = isNaN(jiji) ? 0 : parseFloat(e.target.value);
-    // var validNumber = new RegExp(/^\d+(\.\d{1,2})?$/);
-    //   if (e.target.value === "" || validNumber.test(e.target.value)) {
-    //     if ((parseFloat(e.target.value) * 100) % 1 > 0) {
-    //     } else {
-    //       var Textvalue = e.target.value;
-    //       this.setState({ cbmVal: Textvalue });
-
-    //     }
-    //   }
-
-    // var Textvalue = e.target.value;
 
     document.getElementById("cbm").classList.add("cbm");
     document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
@@ -755,34 +742,35 @@ class NewRateSearch extends Component {
     fields[field] = e.target.value;
     var polpodData = [];
     var polpodDataAdd = [];
-    const headers = {
-        'Access-Control-Allow-Origin': 'http://localhost:3000'
-    };
+
     self.setState({
       fields
     });
     if (fields[field].length > 2) {
-        const proxyurl = "https://cors-anywhere.herokuapp.com/";
-        const url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="+e.target.value+"&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&sessiontoken=2333"; // site that doesn’t send Access-Control-*
-        fetch(proxyurl + url)
-            .then(res => res.json())
-            .then(response =>{ 
-              
-                for(let i = 0; i < response.predictions.length; i++) {
-                  if (field == "PUAddress") {
-                    polpodData.push({Address: response.predictions[i].description})
-                  }
-                  else if (field == "PDAddress") {
-                    polpodDataAdd.push({Address: response.predictions[i].description})
-                  }                                 
-                }
-              self.setState({
-                  polpodData: polpodData,
-                  polpodDataAdd: polpodDataAdd
-              })
-                 //console.log('Success:', JSON.stringify(response))
-            })
-            .catch(error => console.error('Error:', error));
+      const proxyurl = "https://cors-anywhere.herokuapp.com/";
+      const url =
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
+        e.target.value +
+        "&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&sessiontoken=2333"; // site that doesn’t send Access-Control-*
+      fetch(proxyurl + url)
+        .then(res => res.json())
+        .then(response => {
+          for (let i = 0; i < response.predictions.length; i++) {
+            if (field == "PUAddress") {
+              polpodData.push({ Address: response.predictions[i].description });
+            } else if (field == "PDAddress") {
+              polpodDataAdd.push({
+                Address: response.predictions[i].description
+              });
+            }
+          }
+          self.setState({
+            polpodData: polpodData,
+            polpodDataAdd: polpodDataAdd
+          });
+          //console.log('Success:', JSON.stringify(response))
+        })
+        .catch(error => console.error("Error:", error));
     } else {
       self.setState({
         fields
@@ -795,92 +783,91 @@ class NewRateSearch extends Component {
     let fields = this.state.fields;
     fields[field] = value;
     this.setState({
-        fields
-      });
+      fields
+    });
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-        const url = "https://maps.googleapis.com/maps/api/geocode/json?address="+value+"&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"; // site that doesn’t send Access-Control-*
-        fetch(proxyurl + url)
-            .then(res => res.json())
-            .then(response =>{ 
-              
-              const address = response.results[0].formatted_address,
-                  addressArray = response.results[0].address_components,
-                  city = this.getCity(addressArray),
-                  area = this.getArea(addressArray),
-                  state = this.getState(addressArray),
-                  zipcode = this.getZipCode(addressArray),
-                  country = this.getCountry(addressArray),
-                  latValue = response.results[0].geometry.location.lat,
-                  lngValue = response.results[0].geometry.location.lng;
-                if (addressArray.length > 4) {
-                  this.setState({ zoomPOL: 15 });
-                } else if (addressArray.length > 2 && addressArray.length <= 4) {
-                  this.setState({ zoomPOL: 10 });
-                } else {
-                  this.setState({ zoomPOL: 6 });
-                }
+    const url =
+      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+      value +
+      "&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"; // site that doesn’t send Access-Control-*
+    fetch(proxyurl + url)
+      .then(res => res.json())
+      .then(response => {
+        const address = response.results[0].formatted_address,
+          addressArray = response.results[0].address_components,
+          city = this.getCity(addressArray),
+          area = this.getArea(addressArray),
+          state = this.getState(addressArray),
+          zipcode = this.getZipCode(addressArray),
+          country = this.getCountry(addressArray),
+          latValue = response.results[0].geometry.location.lat,
+          lngValue = response.results[0].geometry.location.lng;
+        if (addressArray.length > 4) {
+          this.setState({ zoomPOL: 15 });
+        } else if (addressArray.length > 2 && addressArray.length <= 4) {
+          this.setState({ zoomPOL: 10 });
+        } else {
+          this.setState({ zoomPOL: 6 });
+        }
 
-                if(field == "PUAddress"){
-                this.state.fullAddressPOL.push({
-                  Area: area,
-                  City: city,
-                  State: state,
-                  ZipCode: zipcode,
-                  Country: country
-                });
+        if (field == "PUAddress") {
+          this.state.fullAddressPOL.push({
+            Area: area,
+            City: city,
+            State: state,
+            ZipCode: zipcode,
+            Country: country
+          });
 
-                var originGeoCordinates = latValue + "," + lngValue;
-                this.setState({
-                  fullAddressPOL: this.state.fullAddressPOL,
-                  PickupCity: address,
-                  OriginGeoCordinates: originGeoCordinates
-                });
+          var originGeoCordinates = latValue + "," + lngValue;
+          this.setState({
+            fullAddressPOL: this.state.fullAddressPOL,
+            PickupCity: address,
+            OriginGeoCordinates: originGeoCordinates
+          });
 
-                this.setState({
-                  markerPositionPOL: {
-                    lat: Number(latValue),
-                    lng: Number(lngValue)
-                  },
-                  mapPositionPOL: {
-                    lat: Number(latValue),
-                    lng: Number(lngValue)
-                  }
-                });
-                this.addressChange("puAdd", address);
-              }
-              else if(field == "PDAddress") {
-                var destGeoCordinate = latValue + "," + lngValue;
-                this.state.fullAddressPOD.push({
-                  Area: area,
-                  City: city,
-                  State: state,
-                  ZipCode: zipcode,
-                  Country: country
-                });
-                this.setState({
-                  fullAddressPOD: this.state.fullAddressPOD,
-                  DeliveryCity: address,
-                  DestGeoCordinate: destGeoCordinate
-                });
+          this.setState({
+            markerPositionPOL: {
+              lat: Number(latValue),
+              lng: Number(lngValue)
+            },
+            mapPositionPOL: {
+              lat: Number(latValue),
+              lng: Number(lngValue)
+            }
+          });
+          this.addressChange("puAdd", address);
+        } else if (field == "PDAddress") {
+          var destGeoCordinate = latValue + "," + lngValue;
+          this.state.fullAddressPOD.push({
+            Area: area,
+            City: city,
+            State: state,
+            ZipCode: zipcode,
+            Country: country
+          });
+          this.setState({
+            fullAddressPOD: this.state.fullAddressPOD,
+            DeliveryCity: address,
+            DestGeoCordinate: destGeoCordinate
+          });
 
-                this.setState({
-                  markerPositionPOD: {
-                    lat: Number(latValue),
-                    lng: Number(lngValue)
-                  },
-                  mapPositionPOD: {
-                    lat: Number(latValue),
-                    lng: Number(lngValue)
-                  }
-                });
-                this.addressChange("", address);
-              }
-                // alert("lat :"+response.results[0].geometry.location.lat+" lng :"+response.results[0].geometry.location.lng);
-                 //console.log('Success:', JSON.stringify(response))
-            })
-            .catch(error => console.error('Error:', error));
-
-
+          this.setState({
+            markerPositionPOD: {
+              lat: Number(latValue),
+              lng: Number(lngValue)
+            },
+            mapPositionPOD: {
+              lat: Number(latValue),
+              lng: Number(lngValue)
+            }
+          });
+          this.addressChange("", address);
+        }
+        // alert("lat :"+response.results[0].geometry.location.lat+" lng :"+response.results[0].geometry.location.lng);
+        //console.log('Success:', JSON.stringify(response))
+      })
+      .catch(error => console.error("Error:", error));
   }
 
   //// start dynamic element for LCL-AIR-LTL
@@ -2677,16 +2664,6 @@ class NewRateSearch extends Component {
   };
 
   specEquipChange = (value, option) => {
-    // let difference = this.state.referType.filter(x => !value.includes(x));
-    // let difference1 = this.state.flattack_openTop.filter(
-    //   x => !value.includes(x)
-    // );
-
-    // // let difference2 = this.state.spacEqmtType.filter(x => !value.includes(x));
-    // let difference2 = this.state.spacEqmtType.filter(
-    //   vendor => vendor.TypeName === value[0].SpecialContainerCode
-    // );
-
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
       if (
@@ -2748,134 +2725,6 @@ class NewRateSearch extends Component {
         this.addSpacEqmtType(value);
       }
     }
-
-    // if (value1 != null && value1 != "") {
-    //   let iCount = value1.length;
-    //   let difference = this.state.spEqtSelect.filter(x => !value1.includes(x));
-
-    //   if (difference.length > 0) {
-    //     this.setState({ spEqtSelect: value1 });
-    //     var elmnt = document.getElementById(difference[0].SpecialContainerCode);
-    //     if (elmnt != null && elmnt != "undefined") {
-    //       elmnt.remove();
-    //     }
-    //   } else {
-    //     this.setState({ spEqtSelect: value1 });
-    //     i++;
-
-    //     let dropVal =
-    //       iCount == 1
-    //         ? value1[0].SpecialContainerCode
-    //         : value1[iCount - 1].SpecialContainerCode;
-    //     let div = document.createElement("div");
-    //     let clas = document.createAttribute("class");
-    //     clas.value = "spec-inner-cntr";
-    //     div.setAttributeNode(clas);
-
-    //     let ids = document.createAttribute("id");
-    //     ids.value =
-    //       iCount == 1
-    //         ? value1[0].SpecialContainerCode
-    //         : value1[iCount - 1].SpecialContainerCode;
-    //     div.setAttributeNode(ids);
-
-    //     let name = document.createAttribute("name");
-    //     name.value = "spequType";
-    //     div.setAttributeNode(name);
-
-    //     let cont = document.createElement("p");
-    //     cont.innerHTML = dropVal;
-    //     let into = document.createElement("b");
-    //     into.innerHTML = "X";
-
-    //     // let quan = document.createElement("span");
-    //     // quan.innerHTML = "Quan :";
-    //     let inpNum = document.createElement("input");
-    //     let typ = document.createAttribute("type");
-    //     typ.value = "number";
-    //     inpNum.setAttributeNode(typ);
-    //     inpNum.value = 1;
-
-    //     let temp = document.createElement("span");
-    //     let tempClas = document.createAttribute("class");
-    //     tempClas.value = "temp-mar";
-    //     temp.setAttributeNode(tempClas);
-    //     temp.innerHTML = "Temp :";
-    //     let inpTemp = document.createElement("input");
-    //     let typTemp = document.createAttribute("type");
-    //     typTemp.value = "number";
-    //     inpTemp.setAttributeNode(typTemp);
-    //     inpTemp.value = 1;
-    //     let faren = document.createElement("span");
-    //     faren.innerHTML = "F";
-
-    //     let divFC = document.createElement("div");
-    //     let clasFC = document.createAttribute("class");
-    //     clasFC.value = "new-radio-rate-cntr fc-radio";
-    //     divFC.setAttributeNode(clasFC);
-    //     let divF = document.createElement("div");
-    //     let inputF = document.createElement("input");
-    //     let typeF = document.createAttribute("type");
-    //     typeF.value = "radio";
-    //     inputF.setAttributeNode(typeF);
-    //     let nameF = document.createAttribute("name");
-    //     nameF.value = "fc" + i;
-    //     inputF.setAttributeNode(nameF);
-    //     let idF = document.createAttribute("id");
-    //     idF.value = "f" + i;
-    //     inputF.setAttributeNode(idF);
-    //     let labelF = document.createElement("label");
-    //     let forF = document.createAttribute("for");
-    //     forF.value = "f" + i;
-    //     labelF.innerHTML = "F";
-    //     labelF.setAttributeNode(forF);
-    //     divF.appendChild(inputF);
-    //     divF.appendChild(labelF);
-    //     divFC.appendChild(divF);
-    //     let divC = document.createElement("div");
-    //     let inputC = document.createElement("input");
-    //     let typeC = document.createAttribute("type");
-    //     typeC.value = "radio";
-    //     inputC.setAttributeNode(typeC);
-    //     let nameC = document.createAttribute("name");
-    //     nameC.value = "fc" + i;
-    //     inputC.setAttributeNode(nameC);
-    //     let idC = document.createAttribute("id");
-    //     idC.value = "c" + i;
-    //     inputC.setAttributeNode(idC);
-    //     let labelC = document.createElement("label");
-    //     let forC = document.createAttribute("for");
-    //     forC.value = "c" + i;
-    //     labelC.innerHTML = "C";
-    //     labelC.setAttributeNode(forC);
-    //     divC.appendChild(inputC);
-    //     divC.appendChild(labelC);
-    //     divFC.appendChild(divC);
-
-    //     let cross = document.createElement("i");
-    //     let crsCls = document.createAttribute("class");
-    //     crsCls.value = "fa fa-times";
-    //     cross.setAttributeNode(crsCls);
-
-    //     div.appendChild(cont);
-    //     div.appendChild(into);
-    //     // div.appendChild(quan);
-    //     div.appendChild(inpNum);
-    //     div.appendChild(temp);
-    //     div.appendChild(inpTemp);
-    //     div.appendChild(divFC); // faren
-    //     div.appendChild(cross);
-    //     document.getElementById("specEquipAppend").appendChild(div);
-    //   }
-    // } else {
-    //   var elmnt = document.getElementsByName("spequType");
-    //   if (elmnt != null && elmnt != "undefined") {
-    //     elmnt[0].remove();
-    //   }
-    //   this.setState({ spEqtSelect: [] });
-    // }
-
-    //
   };
 
   addClick() {
@@ -2931,21 +2780,6 @@ class NewRateSearch extends Component {
   render() {
     let self = this;
 
-    const optionsSpeEqu = [
-      { value: "Refer Type", label: "Refer Type" },
-      { value: "abc", label: "abc" },
-      { value: "def", label: "def" }
-    ];
-    const optionsPOL = [
-      { value: "10.5736", label: "10.5736" },
-      { value: "20.6987", label: "20.6987" },
-      { value: "30.0369", label: "30.0369" }
-    ];
-    const optionsPOD = [
-      { value: "35.5736", label: "35.5736" },
-      { value: "69.6987", label: "69.6987" },
-      { value: "60.0369", label: "60.0369" }
-    ];
     let unStack = "";
     if (
       this.state.containerLoadType === "ltl" ||
@@ -3739,90 +3573,84 @@ class NewRateSearch extends Component {
                             value={this.state.fields["pol"]}
                           />
                         ) : (
-                          // <Map1WithAMakredInfoWindowSearchBooks
-                          //   onPlaceSelected={this.onPlaceSelected}
-                          //   googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
-                          //   loadingElement={<div />}
-                          //   containerElement={<div />}
-                          //   mapElement={<div />}
-                          // />
+                          
                           <ReactAutocomplete
-                          getItemValue={item => item.Address}
+                            getItemValue={item => item.Address}
+                            items={this.state.polpodData}
+                            renderItem={(item, isHighlighted) => (
+                              <div
+                                style={{
+                                  background: isHighlighted
+                                    ? "lightgray"
+                                    : "white"
+                                }}
+                                value={item.Address}
+                              >
+                                {item.Address}
+                              </div>
+                            )}
+                            renderInput={function(props) {
+                              return (
+                                <input
+                                  placeholder="Enter PU Address"
+                                  className="w-100 sticky-dropdown"
+                                  type="text"
+                                  {...props}
+                                />
+                              );
+                            }}
+                            onChange={this.HandlePUPDAddress.bind(
+                              this,
+                              "PUAddress"
+                            )}
+                            //menuStyle={this.state.menuStyle}
+                            onSelect={this.HandleAddressDropdownSelect.bind(
+                              this,
+                              item => item.NameWoDiacritics,
+                              "PUAddress"
+                            )}
+                            value={this.state.fields["PUAddress"]}
+                          />
+                        )
+                      ) : this.state.typesofMove == "p2p" ||
+                        this.state.typesofMove === "p2d" ? (
+                        <ReactAutocomplete
+                          getItemValue={item => item.OceanPortLongName}
                           items={this.state.polpodData}
                           renderItem={(item, isHighlighted) => (
-                          <div
+                            <div
                               style={{
-                              background: isHighlighted
-                              ? "lightgray"
-                              : "white"
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
                               }}
-                              value={item.Address}
-                          >
-                              {item.Address}
-                          </div>
+                              value={item.AirPortID}
+                            >
+                              {item.OceanPortLongName}
+                            </div>
                           )}
                           renderInput={function(props) {
-                                            return (
-                                              <input
-                                                placeholder="Enter PU Address"
-                                                className="w-100 sticky-dropdown"
-                                                type="text"
-                                                {...props}
-                                              />
-                                            );
-                                          }}
-                                          onChange={this.HandlePUPDAddress.bind(
-                                            this,
-                                            "PUAddress"
-                                          )}
-                                          //menuStyle={this.state.menuStyle}
-                                          onSelect={this.HandleAddressDropdownSelect.bind(
-                                            this,
-                                            item => item.NameWoDiacritics,
-                                            "PUAddress"
-                                          )}
-                                          value={this.state.fields["PUAddress"]}
-                                        />
-                                      )
-                                    ) : this.state.typesofMove == "p2p" ||
-                                      this.state.typesofMove === "p2d" ? (
-                                      <ReactAutocomplete
-                                        getItemValue={item => item.OceanPortLongName}
-                                        items={this.state.polpodData}
-                                        renderItem={(item, isHighlighted) => (
-                                          <div
-                                            style={{
-                                              background: isHighlighted
-                                                ? "lightgray"
-                                                : "white"
-                                            }}
-                                            value={item.AirPortID}
-                                          >
-                                            {item.OceanPortLongName}
-                                          </div>
-                                        )}
-                                        renderInput={function(props) {
-                                          return (
-                                            <input
-                                              placeholder="Enter POL"
-                                              className="w-100 sticky-dropdown"
-                                              type="text"
-                                              {...props}
-                                            />
-                                          );
-                                        }}
-                                        onChange={this.HandlePOLPODAutosearch.bind(
-                                          this,
-                                          "pol"
-                                        )}
-                                        //menuStyle={this.state.menuStyle}
-                                        onSelect={this.HandleAddressDropdownPolSelect.bind(
-                                          this,
-                                          item => item.NameWoDiacritics,
-                                          "pol"
-                                        )}
-                                        value={this.state.fields["pol"]}
-                                      />
+                            return (
+                              <input
+                                placeholder="Enter POL"
+                                className="w-100 sticky-dropdown"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
+                          onChange={this.HandlePOLPODAutosearch.bind(
+                            this,
+                            "pol"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownPolSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "pol"
+                          )}
+                          value={this.state.fields["pol"]}
+                        />
                       ) : (
                         // <Map1WithAMakredInfoWindowSearchBooks
                         //   onPlaceSelected={this.onPlaceSelected}
@@ -3832,42 +3660,42 @@ class NewRateSearch extends Component {
                         //   mapElement={<div />}
                         // />
                         <ReactAutocomplete
-                        getItemValue={item => item.Address}
-                        items={this.state.polpodData}
-                        renderItem={(item, isHighlighted) => (
-                        <div
-                            style={{
-                            background: isHighlighted
-                            ? "lightgray"
-                            : "white"
-                            }}
-                            value={item.Address}
-                        >
-                            {item.Address}
-                        </div>
-                        )}
-                        renderInput={function(props) {
-                                          return (
-                                            <input
-                                              placeholder="Enter PU Address"
-                                              className="w-100 sticky-dropdown"
-                                              type="text"
-                                              {...props}
-                                            />
-                                          );
-                                        }}
-                                        onChange={this.HandlePUPDAddress.bind(
-                                          this,
-                                          "PUAddress"
-                                        )}
-                                        //menuStyle={this.state.menuStyle}
-                                        onSelect={this.HandleAddressDropdownSelect.bind(
-                                          this,
-                                          item => item.NameWoDiacritics,
-                                          "PUAddress"
-                                        )}
-                                        value={this.state.fields["PUAddress"]}
-                                      />
+                          getItemValue={item => item.Address}
+                          items={this.state.polpodData}
+                          renderItem={(item, isHighlighted) => (
+                            <div
+                              style={{
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
+                              }}
+                              value={item.Address}
+                            >
+                              {item.Address}
+                            </div>
+                          )}
+                          renderInput={function(props) {
+                            return (
+                              <input
+                                placeholder="Enter PU Address"
+                                className="w-100 sticky-dropdown"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
+                          onChange={this.HandlePUPDAddress.bind(
+                            this,
+                            "PUAddress"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "PUAddress"
+                          )}
+                          value={this.state.fields["PUAddress"]}
+                        />
                       )}
                     </div>
                     <span className="equip-error">
@@ -3926,42 +3754,42 @@ class NewRateSearch extends Component {
                           //   mapElement={<div />}
                           // />
                           <ReactAutocomplete
-                          getItemValue={item => item.Address}
-                          items={this.state.polpodDataAdd}
-                          renderItem={(item, isHighlighted) => (
-                          <div
-                              style={{
-                              background: isHighlighted
-                              ? "lightgray"
-                              : "white"
-                              }}
-                              value={item.Address}
-                          >
-                              {item.Address}
-                          </div>
-                          )}
-                          renderInput={function(props) {
-                                            return (
-                                              <input
-                                                placeholder="Enter PD Address"
-                                                className="w-100 sticky-dropdown"
-                                                type="text"
-                                                {...props}
-                                              />
-                                            );
-                                          }}
-                                          onChange={this.HandlePUPDAddress.bind(
-                                            this,
-                                            "PDAddress"
-                                          )}
-                                          //menuStyle={this.state.menuStyle}
-                                          onSelect={this.HandleAddressDropdownSelect.bind(
-                                            this,
-                                            item => item.NameWoDiacritics,
-                                            "PDAddress"
-                                          )}
-                                          value={this.state.fields["PDAddress"]}
-                                        />
+                            getItemValue={item => item.Address}
+                            items={this.state.polpodDataAdd}
+                            renderItem={(item, isHighlighted) => (
+                              <div
+                                style={{
+                                  background: isHighlighted
+                                    ? "lightgray"
+                                    : "white"
+                                }}
+                                value={item.Address}
+                              >
+                                {item.Address}
+                              </div>
+                            )}
+                            renderInput={function(props) {
+                              return (
+                                <input
+                                  placeholder="Enter PD Address"
+                                  className="w-100 sticky-dropdown"
+                                  type="text"
+                                  {...props}
+                                />
+                              );
+                            }}
+                            onChange={this.HandlePUPDAddress.bind(
+                              this,
+                              "PDAddress"
+                            )}
+                            //menuStyle={this.state.menuStyle}
+                            onSelect={this.HandleAddressDropdownSelect.bind(
+                              this,
+                              item => item.NameWoDiacritics,
+                              "PDAddress"
+                            )}
+                            value={this.state.fields["PDAddress"]}
+                          />
                         )
                       ) : this.state.typesofMove === "p2p" ||
                         this.state.typesofMove === "d2p" ? (
@@ -4014,39 +3842,39 @@ class NewRateSearch extends Component {
                           getItemValue={item => item.Address}
                           items={this.state.polpodDataAdd}
                           renderItem={(item, isHighlighted) => (
-                          <div
+                            <div
                               style={{
-                              background: isHighlighted
-                              ? "lightgray"
-                              : "white"
+                                background: isHighlighted
+                                  ? "lightgray"
+                                  : "white"
                               }}
                               value={item.Address}
-                          >
+                            >
                               {item.Address}
-                          </div>
+                            </div>
                           )}
                           renderInput={function(props) {
-                                            return (
-                                              <input
-                                                placeholder="Enter PD Address"
-                                                className="w-100 sticky-dropdown"
-                                                type="text"
-                                                {...props}
-                                              />
-                                            );
-                                          }}
-                                          onChange={this.HandlePUPDAddress.bind(
-                                            this,
-                                            "PDAddress"
-                                          )}
-                                          //menuStyle={this.state.menuStyle}
-                                          onSelect={this.HandleAddressDropdownSelect.bind(
-                                            this,
-                                            item => item.NameWoDiacritics,
-                                            "PDAddress"
-                                          )}
-                                          value={this.state.fields["PDAddress"]}
-                                        />
+                            return (
+                              <input
+                                placeholder="Enter PD Address"
+                                className="w-100 sticky-dropdown"
+                                type="text"
+                                {...props}
+                              />
+                            );
+                          }}
+                          onChange={this.HandlePUPDAddress.bind(
+                            this,
+                            "PDAddress"
+                          )}
+                          //menuStyle={this.state.menuStyle}
+                          onSelect={this.HandleAddressDropdownSelect.bind(
+                            this,
+                            item => item.NameWoDiacritics,
+                            "PDAddress"
+                          )}
+                          value={this.state.fields["PDAddress"]}
+                        />
                       )}
                     </div>
                     <span className="equip-error">

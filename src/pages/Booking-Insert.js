@@ -713,40 +713,17 @@ class BookingInsert extends Component {
         if (this.state.multiCBM.length > 0) {
           for (let i = 0; i < this.state.multiCBM.length; i++) {
             var cargoData = new Object();
-            if (Mode === "AIR") {
-              cargoData.BookingPackID =
-                this.state.multiCBM[i].BookingPackID || 0;
-              cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-              cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
-              cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-              cargoData.Width = this.state.multiCBM[i].Width || 0;
-              cargoData.Height = this.state.multiCBM[i].height || 0;
-              cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-              cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-              cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-            } else if (Mode === "INLAND") {
-              cargoData.BookingPackID =
-                this.state.multiCBM[i].BookingPackID || 0;
-              cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-              cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
-              cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-              cargoData.Width = this.state.multiCBM[i].Width || 0;
-              cargoData.Height = this.state.multiCBM[i].height || 0;
-              cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-              cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-              cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-            } else {
-              cargoData.BookingPackID =
-                this.state.multiCBM[i].BookingPackID || 0;
-              cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-              cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-              cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-              cargoData.Width = this.state.multiCBM[i].Width || 0;
-              cargoData.Height = this.state.multiCBM[i].height || 0;
-              cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-              cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-              cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-            }
+
+            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
+            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+            cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
+            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+            cargoData.Width = this.state.multiCBM[i].Width || 0;
+            cargoData.Height = this.state.multiCBM[i].height || 0;
+            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
+
             BookingDim.push(cargoData);
           }
         } else {

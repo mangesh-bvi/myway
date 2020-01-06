@@ -745,14 +745,6 @@ class ShippingDetailsTwo extends Component {
   render() {
     let self = this;
 
-    const steps = [
-      { name: "NHAVA SHEVA (JAWAHARLAL NEHRU)", component: <></> },
-      { name: "HAMBURG", component: <></> },
-      { name: "MANZANILLO", component: <></> },
-      { name: "KINGSTON", component: <></> },
-      { name: "BELIZE CITY", component: <></> }
-    ];
-
     const {
       detailsData,
       addressData,
@@ -857,28 +849,32 @@ class ShippingDetailsTwo extends Component {
     var perBooking = "0";
     var locName = "";
     var statusid = 0;
-    if (POLPODData.length > 0) {
-      debugger;
+    // if (POLPODData.length > 0) {
+    //   debugger;
 
-      for (let i = 0; i < POLPODData.length; i++) {
-        if (POLPODData[i].ActualTimeDeparture === null) {
-          statusid = i;
-          break;
-        }
-      }
-      var len = 100 / POLPODData.length;
-      if (statusid === 1 && arrivedDate === "" && deliverDate === "") {
-        perBooking = "0";
-      } else if (statusid === 0 && arrivedDate !== "" && deliverDate !== "") {
-        perBooking = "100";
-      } else if (deliverDate !== "" && arrivedDate !== "") {
-        perBooking = "100";
-      } else {
-        var total = parseInt(100 / statusid);
-        perBooking = total * (statusid - 1) + "";
-      }
-    }
+    //   for (let i = 0; i < POLPODData.length; i++) {
+    //     if (POLPODData[i].ActualTimeDeparture === null) {
+    //       statusid = i;
+    //       break;
+    //     }
+    //   }
+    //   var len = 100 / POLPODData.length;
+    //   if (statusid === 1 && arrivedDate === "" && deliverDate === "") {
+    //     perBooking = "0";
+    //   } else if (statusid === 0 && arrivedDate !== "" && deliverDate !== "") {
+    //     perBooking = "100";
+    //   } else if (statusid === 0 && arrivedDate !== "" && deliverDate !== "") {
+    //     perBooking = "65";
+    //   } else if (deliverDate !== "" && arrivedDate !== "") {
+    //     perBooking = "100";
+    //   } else {
+    //     debugger;
+    //     var total = parseInt(100 / statusid);
+    //     perBooking = total * (statusid - 1) + "";
+    //   }
+    // }
 
+    var POLPODDatalen = POLPODData.length;
     var eventColor = "";
     if (this.state.eve !== "") {
       if (this.state.eve === "On Time") {
@@ -890,6 +886,33 @@ class ShippingDetailsTwo extends Component {
       }
     }
 
+    if (this.state.Table9.length > 0) {
+      debugger
+      var Transshipped = this.state.Table9.filter(x => x.Status === "Transshipped").length;
+
+      var Arriveddata = this.state.Table9.filter(x => x.Status === "Arrived").length;
+      var Delivered = this.state.Table9.filter(x => x.Status === "Delivered").length;
+      if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
+        var total = parseInt(100 / (Transshipped + 1));
+        perBooking = total * (Transshipped) + "";
+      }
+      if (Transshipped > 0 && Arriveddata > 0 && Delivered === 0) {
+        var total = parseInt(100 / (Transshipped + 1));
+        perBooking = total * (Transshipped) + "";
+      }
+      
+      if(Transshipped==0 &&Arriveddata>0)
+      {
+        perBooking="100";
+
+      }
+      if(Transshipped==0 &&Delivered>0)
+      {
+        perBooking="100";
+
+      }
+      
+    }
     let Watchlist = "";
     if (this.state.ShipmentExistsInWatchList == 0) {
       Watchlist = (
@@ -1126,15 +1149,142 @@ class ShippingDetailsTwo extends Component {
                       </div>
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
-                          <div className="step-progress">
-                          <StepZilla steps={steps} stepsNavigation={false} prevBtnOnLastStep={false} startAtStep={2} />
+                          <div className="mobilenumber-resp">
+                            {/* <span className="line-respo"></span>
+                            <label className="respo">Response</label> */}
+                            {/* {this.state.POLPODData.map(function(id, i) {
+                              
+                              var per = 100 / POLPODDatalen;
+                              if (i === 0) {
+                                return (
+                                  <div className="desti-places">
+                                    {id["POL/POD"]}
+                                  </div>
+                                );
+                              } else if (i > 1 && i==POLPODDatalen-1) {
+                                return (
+                                  <label className="resol">
+                                    <span className="line-resol"></span>
+                                    {id["POL/POD"]}
+                                  </label>
+                                );
+                              } else {
+                                return (
+                                  <div className="desti-places">
+                                    {id["POL/POD"]}
+                                  </div>
+                                );
+                              }
+
+                              
+                            })} */}
+                            {/* <label className="resol">
+                              <span className="line-resol"></span>
+                              Resolution
+                            </label> */}
                           </div>
 
-                          {/* <span className="clr-green">POL</span>
+                          <span
+                            className="clr-green"
+                            style={{ overflow: "initial" }}
+                          >
+                            POL
+                          </span>
                           <div className="pol-pod-progress">
-                            <Progress color={eventColor} value={perBooking} />
+                            <div className="mobilenumber-resp">
+                              {this.state.POLPODData.map(function(id, i) {
+                                var wid = 100 / (POLPODDatalen - 1);
+                                var wid1 = 100 / POLPODDatalen;
+                                // var fwid = wid + wid / 2 + "%";
+
+                                if (i === 0) {
+                                  return (
+                                    <label
+                                      className="resol"
+                                      style={{ width: wid1 + "%" }}
+                                    >
+                                      {/* <span className="line-resol" style={{left: wid + "%"}}></span> */}
+                                      <span
+                                        className="progspan"
+                                        style={{ display: "block" ,float:POLPODDatalen<2?"left":"none"}}
+                                      >
+                                        {id["POL/POD"]}
+                                      </span>
+                                    </label>
+                                  );
+                                }
+                                if (i >= 1 && i < POLPODDatalen - 1) {
+                                  var fwidth = wid * i;
+                                  return (
+                                    <label
+                                      className="resol"
+                                      style={{ width: wid1 + "%" }}
+                                    >
+                                      <span
+                                        className="line-resol"
+                                        style={{ left: fwidth + "%" }}
+                                      ></span>
+                                      <span
+                                        className="progspan"
+                                        style={{ display: "block" }}
+                                      >
+                                        {id["POL/POD"]}
+                                      </span>
+                                    </label>
+                                  );
+                                }
+                                if (i === POLPODDatalen - 1) {
+                                  return (
+                                    <label
+                                      className="resol"
+                                      style={{
+                                        width: wid1 + "%",
+                                        
+                                      }}
+                                    >
+                                      {/* <span className="line-resol"></span> */}
+                                      <span
+                                        className="progspan"
+                                        style={{ display: "block" ,float:POLPODDatalen<2?"right":"none"}}
+                                      >
+                                        {id["POL/POD"]}
+                                      </span>
+                                    </label>
+                                  );
+                                }
+                              })}
+
+                              {/* <label className="resol">
+                                <span className="line-resol"></span>B
+                              </label>
+                              <label className="resol">
+                                <span className="line-resol"></span>C
+                              </label>
+                              <label className="resol">
+                                <span className="line-resol"></span>D
+                                </label> */}
+                            </div>
+                            {/* <Progress className="ticket-progress" color={eventColor} value={perBooking} /> */}
+                            <progress
+                              className={
+                                "ticket-progress progress-" + eventColor
+                              }
+                              style={{
+                                width: "100%",
+                                "::-webkit-progress-value": {
+                                  background: "#000000"
+                                }
+                              }}
+                              value={Number(perBooking)}
+                              max="100"
+                            ></progress>
                           </div>
-                          <span className="clr-green">POD</span> */}
+                          <span
+                            className="clr-green"
+                            style={{ overflow: "initial" }}
+                          >
+                            POD
+                          </span>
                         </div>
                         {/* <div className="desti-places">
                           {POLPODData.length < 2 ? (

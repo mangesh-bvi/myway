@@ -195,6 +195,7 @@ class RateFinalizing extends Component {
         var TruckDetailsArr = [];
         var MultiCBM = [];
         var selectedRow = [];
+        debugger;
         if (containerLoadType == "FCL") {
           if (users != null) {
             if (users.length > 0) {
@@ -373,7 +374,7 @@ class RateFinalizing extends Component {
             //   })
           }
         } else if (containerLoadType == "FTL") {
-          debugger;
+        
           // var cSelectedRow = this.props.location.state.selectedDataRow;
 
           // var AllrateDetails = this.props.location.state.RateDetails;
@@ -3097,7 +3098,7 @@ class RateFinalizing extends Component {
           
           NotificationManager.error(
             "Price should not be less than " +
-              this.state.selectedDataRow[i].Total
+              this.state.rateOrgDetails[i].Total
           );
         }
       } else {
@@ -3129,7 +3130,7 @@ class RateFinalizing extends Component {
         } else {
           NotificationManager.error(
             "Price should not be less than " +
-              this.state.selectedDataRow[i].TotalAmount
+              this.state.rateOrgDetails[i].Total
           );
         }
       }
@@ -5474,10 +5475,7 @@ class RateFinalizing extends Component {
                                 keys: ["commodities", "TransitTime"],
                                 threshold: matchSorter.rankings.WORD_STARTS_WITH
                               });
-                              console.log(
-                                result,
-                                "---------------result---------------"
-                              );
+                               
                               return result;
                             }
                           }

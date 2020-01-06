@@ -351,14 +351,14 @@ h2 span {
 }
 .enterhbl {
   border: 0;
-    letter-spacing: 0.5px;
-    background-color: #f1f2f2;
-    padding: 8px 15px;
-    font-family: "Medium Font";
-    font-size: 14px;
-    width: 250px;
-    border-radius: 0px;
-    margin-right: 5px;
+  letter-spacing: 0.5px;
+  background-color: #f1f2f2;
+  padding: 8px 15px;
+  font-family: "Medium Font";
+  font-size: 14px;
+  width: 250px;
+  border-radius: 0px;
+  margin-right: 5px;
 }
 .list-map .butn {
   padding: 5px;
@@ -680,8 +680,8 @@ table tbody tr:last-child {
   color: #333333;
   font-size: 18px;
   padding: 10px 0;
-    letter-spacing: 0.5px;
-    margin-bottom: 15px;
+  letter-spacing: 0.5px;
+  margin-bottom: 15px;
 }
 .shipper-details {
   align-items: flex-start;
@@ -710,7 +710,9 @@ table tbody tr:last-child {
 }
 .progress-sect span {
   font-family: "Bold Font";
-  font-size: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .progress-sect .progress {
   height: 5px;
@@ -1396,15 +1398,19 @@ table tbody tr:last-child {
 .rate-dropdown .css-yk16xz-control,
 .rate-dropdown .css-yk16xz-control:hover {
   border-radius: 0;
-    background: #ededed url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=) no-repeat right 15px center;
-    border: none;
-    min-height: 50px;
+  background: #ededed
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=)
+    no-repeat right 15px center;
+  border: none;
+  min-height: 50px;
 }
 .rate-dropdown .css-1pahdxg-control {
   border-radius: 0;
-    background: #ededed url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=) no-repeat right 15px center;
-    border: none;
-    min-height: 50px;
+  background: #ededed
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAGXRFW…rC+VBxBnTFIFANxOuh7PVQPhywYLG2AIivA/FMdAmAAAMAFzMPPPC6phkAAAAASUVORK5CYII=)
+    no-repeat right 15px center;
+  border: none;
+  min-height: 50px;
 }
 .rate-dropdown .css-yt9ioa-option {
   font-family: "Regular Font";
@@ -4194,7 +4200,7 @@ img {
 }
 
 select option {
-  background-color:#ededed;
+  background-color: #ededed;
 }
 
 @media (min-width: 768px) {
@@ -4302,4 +4308,90 @@ select option {
 
 .new-outer div[style*="display: inline-block;"] {
   position: relative;
+}
+
+progress {
+  border: none;
+  background: #f1f2f2;
+}
+
+progress::-moz-progress-bar {
+  background: lightcolor;
+}
+
+progress.ticket-progress.progress-red::-webkit-progress-value {
+  background: #eb0029;
+}
+
+progress.ticket-progress.progress-yellow::-webkit-progress-value {
+  background: #ffb400;
+}
+
+progress.ticket-progress.progress-green::-webkit-progress-value {
+  background: #39b54a;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #f1f2f2;
+}
+
+@media only screen and (max-width: 768px) {
+  .mobilenumber-resp .respo {
+    margin-left: 0 !important;
+  }
+  .mobilenumber-resp .resol {
+    margin-right: 0 !important;
+  }
+  .card-details-1 {
+    height: auto;
+  }
+}
+
+.mobilenumber-resp {
+  font-size: 10px;
+}
+.mobilenumber-resp .respo {
+  float: left;
+  margin-left: 35px;
+}
+
+.mobilenumber-resp .line-respo {
+  border-right: 2px solid orange;
+  /* padding: 3px; */
+  top: 20px;
+  left: -26px;
+  position: relative;
+}
+.mobilenumber-resp .line-resol {
+  border-right: 2px solid black;
+  /* padding: 3px; */
+  top: 33px;
+  position: relative;
+  /* right: -20px; */
+}
+
+.mobilenumber-resp .line-respo {
+  border-right: 2px solid orange;
+  /* padding: 3px; */
+  top: 20px;
+  left: -26px;
+  position: relative;
+}
+
+.mobilenumber-resp .line-resol {
+  border-right: 2px solid black;
+  /* padding: 3px; */
+  top: 33px;
+  position: relative;
+  /* right: -20px; */
+}
+
+.progspan {
+  text-align: center !important;
+  font-size: 8px !important;
+  /* width: 25%; */
+}
+.active-log-pop {
+  max-height: 300px;
+  overflow: auto;
 }

@@ -273,7 +273,7 @@ class Login extends React.Component {
     });
   }
   handleSubmit(e) {
-    debugger
+    debugger;
     let self = this;
     e.preventDefault();
     this.setState({ submitted: true, loading: true });
@@ -366,6 +366,7 @@ class Login extends React.Component {
             "emailid",
             encryption(data.Table[0].email_id, "enc")
           );
+          debugger;
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
 
@@ -374,7 +375,7 @@ class Login extends React.Component {
 
           var ProfileTypen = userType[0].ProfileType;
           var SalesCompanyPopupFlag = userType[0].SalesCompanyPopupFlag;
-          if (SalesCompanyPopupFlag === 1) {
+          if (userTypeName === "Sales User" && SalesCompanyPopupFlag === 1) {
             if (
               userTypeName === "Sales User" &&
               ProfileTypen &&
@@ -387,9 +388,19 @@ class Login extends React.Component {
                 modalSalesLogin: !self.state.modalSalesLogin
               });
             }
-          } else {
             setTimeout(function() {
               window.location.href = "./rate-search";
+            }, 300);
+          } else if (
+            userTypeName === "Sales User" &&
+            SalesCompanyPopupFlag === 0
+          ) {
+            setTimeout(function() {
+              window.location.href = "./rate-search";
+            }, 300);
+          } else {
+            setTimeout(function() {
+              window.location.href = "./dashboard";
             }, 300);
           }
 
@@ -618,7 +629,7 @@ function TokenhandleResponse(response) {
           "Sales User"
         ) {
         } else {
-          window.location.href = "./Dashboard";
+          // window.location.href = "./Dashboard";
         }
       } else {
         window.location.href = "./user-agreement";

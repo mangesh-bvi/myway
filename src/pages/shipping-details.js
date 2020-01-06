@@ -634,7 +634,7 @@ class ShippingDetails extends Component {
               ConsigneeID: response.data.Table[i]["ConsigneeID"],
               ETA: response.data.Table[i]["ETA"],
               ETD: response.data.Table[i]["ETD"],
-              Event: "N/A",
+              Event: response.data.Table[i]["Event"],
               "HBL#": response.data.Table[i]["HBL#"],
               ModeOfTransport: response.data.Table[i]["ModeOfTransport"],
               POD: response.data.Table[i]["POD"],
@@ -961,6 +961,7 @@ class ShippingDetails extends Component {
                           Header: "Event",
                           accessor: "Event",
                           Cell: row => {
+                            debugger
                             if (row.value == "N/A") {
                               return (
                                 <div>
