@@ -21,6 +21,7 @@ class AddUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading:false,
       values: [],
       selectCountry: [
         // { key: "1", value: "India" },
@@ -908,6 +909,7 @@ class AddUser extends React.Component {
     let HideInvoiceDetails = "";
     var RegisteredCompany = "";
     var Modules = "";
+    this.setState({loading:true})
     // if (this.state.isAir === true) {
     //   ModeOfTransport+="A";
     // }
@@ -1086,39 +1088,7 @@ class AddUser extends React.Component {
         method: "post",
         url: `${appSettings.APIURL}/CreateUserWithDoc`,
         data: docData,
-        // {
-        //   UserName: this.state.fields["username"],
-        //   Password: this.state.fields["password"],
-        //   IsEnabled: this.state.fields["isenabled"],
-        //   ClientAdminID: 0,
-        //   DisplayAsShipper: this.state.fields["displayShipper"],
-        //   DisplayAsConsignee: this.state.fields["displayConsignee"],
-        //   UserType: this.state.fields["usertype"],
-        //   ModeOfTransport: ModeOfTransport,
-        //   CanCreateUser: this.state.fields["usercreation"],
-        //   CreatedBy: userid,
-        //   EmailID: this.state.fields["emailid"],
-        //   ImpExp: this.state.fields["ImpExp"],
-        //   IsAdmin: this.state.fields["isadmin"],
-        //   IsMywayUser: "Y",
-        //   MywayUserName: this.state.fields["username"],
-        //   MywayPassword: "",
-        //   FirstName: this.state.fields["firstname"],
-        //   LastName: this.state.fields["lastname"],
-        //   CountryCode: this.state.fields["country"],
-        //   RefreshTime: this.state.fields["refreshtime"],
-        //   IsNew: 1,
-        //   IsMobileEnabled: 0,
-        //   ProfileType: 1,
-        //   ProfileSubType: 0,
-        //   HasMobileAccess: 1,
-        //   ModuleID: "1,2,3",
-        //   DocumentID: Document,
-        //   IsHideInvoiceDetails: this.state.miscelleneous[0].IsSelected,
-        //   IsHideHBLShowMBLDocument: this.state.miscelleneous[1].IsSelected,
-        //   RegisteredCompany: RegisteredCompany
-
-        // },
+         
         headers: authHeader()
       })
         .then(function(response) {
@@ -1135,7 +1105,7 @@ class AddUser extends React.Component {
         });
     } else {
       debugger;
-      this.setState({ settoaste: true, loading: true });
+      this.setState({ settoaste: true, loading: false });
     }
   }
 
@@ -1211,42 +1181,7 @@ class AddUser extends React.Component {
     });
 
     Modules = Modules.slice(0, -1);
-    // const { username, password, emailid, firstname,
-    //   lastname, refreshtime, country, isenabled, usertype, usercreation,
-    //   isadmin, ImpExp, displayShipper, displayConsignee, MobileEnable,
-    //   Company, Consignee, Shipper} = this.state;
-    // docData.append("UserID",874585);
-    // docData.append("UserName",this.state.fields["username"]);
-    // docData.append("Password",this.state.fields["password"]);
-    // docData.append("IsEnabled",this.state.fields["isenabled"]);
-    // docData.append("ClientAdminID",0);
-    // docData.append("DisplayAsShipper",this.state.fields["displayShipper"]);
-    // docData.append("DisplayAsConsignee",this.state.fields["displayConsignee"]);
-    // docData.append("UserType",this.state.fields["usertype"]);
-    // docData.append("ModeOfTransport",ModeOfTransport);
-    // docData.append("CanCreateUser",this.state.fields["usercreation"]);
-    // docData.append("CreatedBy",userid);
-    // docData.append("EmailID",this.state.fields["emailid"]);
-    // docData.append("ImpExp",this.state.fields["ImpExp"]);
-    // docData.append("IsAdmin",this.state.fields["isadmin"]);
-    // docData.append("IsMywayUser","Y");
-    // docData.append("MywayUserName",this.state.fields["username"]);
-    // docData.append("MywayPassword","");
-    // docData.append("FirstName",this.state.fields["firstname"]);
-    // docData.append("LastName",this.state.fields["lastname"]);
-    // docData.append("CountryCode",this.state.fields["country"]);
-    // docData.append("RefreshTime",this.state.fields["refreshtime"]);
-    // docData.append("IsNew",true);
-    // docData.append("IsMobileEnabled",false);
-    // docData.append("ProfileType",1);
-    // docData.append("ProfileSubType",0);
-    // docData.append("HasMobileAccess",true);
-    // docData.append("ModuleID","1,2,3");
-    // docData.append("DocumentID",Document);
-    // docData.append("IsHideInvoiceDetails",this.state.miscelleneous[0].IsSelected);
-    // docData.append("IsHideHBLShowMBLDocument",this.state.miscelleneous[1].IsSelected);
-    // docData.append("Logo",this.state.selectedFile);
-    // docData.append("RegisteredCompany",RegisteredCompany);
+     
 
     docData.append("UserID", this.props.location.state.detail);
     docData.append("UserName", this.state.fields["username"]);
@@ -1291,40 +1226,7 @@ class AddUser extends React.Component {
         method: "post",
         url: `${appSettings.APIURL}/UpdateUserWithDoc`,
         data: docData,
-        // {
-        //   UserID:userid,
-        //   UserName: this.state.fields["username"],
-        //   Password: this.state.fields["password"],
-        //   IsEnabled: this.state.fields["isenabled"],
-        //   ClientAdminID: 0,
-        //   DisplayAsShipper: this.state.fields["displayShipper"],
-        //   DisplayAsConsignee: this.state.fields["displayConsignee"],
-        //   UserType: this.state.fields["usertype"],
-        //   ModeOfTransport: ModeOfTransport,
-        //   CanCreateUser: this.state.fields["usercreation"],
-        //   CreatedBy: userid,
-        //   EmailID: this.state.fields["emailid"],
-        //   ImpExp: this.state.fields["ImpExp"],
-        //   IsAdmin: this.state.fields["isadmin"],
-        //   IsMywayUser: "Y",
-        //   MywayUserName: this.state.fields["username"],
-        //   MywayPassword: "",
-        //   FirstName: this.state.fields["firstname"],
-        //   LastName: this.state.fields["lastname"],
-        //   CountryCode: this.state.fields["country"],
-        //   RefreshTime: this.state.fields["refreshtime"],
-        //   IsNew: 1,
-        //   IsMobileEnabled: 0,
-        //   ProfileType: 1,
-        //   ProfileSubType: 0,
-        //   HasMobileAccess: 1,
-        //   ModuleID: "1,2,3",
-        //   DocumentID: Document,
-        //   IsHideInvoiceDetails: this.state.miscelleneous[0].IsSelected,
-        //   IsHideHBLShowMBLDocument: this.state.miscelleneous[1].IsSelected,
-        //   RegisteredCompany: RegisteredCompany
-
-        // },
+        
         headers: authHeader()
       })
         .then(function(response) {
@@ -2003,7 +1905,15 @@ class AddUser extends React.Component {
                           className="butn mb-2"
                           onClick={this.handleSubmit}
                         >
-                          Submit
+                         {this.state.loading != true
+                            ? this.state.loading && (
+                                <i
+                                  style={{ marginRight: 15 }}
+                                  className="fa fa-refresh fa-spin"
+                                ></i>
+                              )
+                            : null}
+                          {this.state.loading ? "Please Wait ..." : "Submit"}
                         </button>
                       );
                     }

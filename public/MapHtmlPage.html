@@ -22,11 +22,7 @@
   <body>
     <div id="map"></div>
     <script>
-      // This example adds an animated symbol to a polyline.
-      //var locations = [
-      //{"title": 'loan 1',"lat":"49.24859","long":"8.887826","addr":'address 1'},
-      //{"title":'loan 2',"lat":"21.143956","long":"79.093453","addr":'address 2'}
-      //];
+       
 
       var baloonData = localStorage.getItem("BaloonData");
       var flagData = localStorage.getItem("FlagsData");
@@ -51,7 +47,8 @@
         var map = new google.maps.Map(document.getElementById("map"), {
           zoom: 1,
           mapTypeId: "terrain",
-          gestureHandling: "cooperative"
+          gestureHandling: "cooperative",
+          center: new google.maps.LatLng(20.0071393, 64.4206358),
         });
 
         // Define the symbol, using one of the predefined paths ('CIRCLE')

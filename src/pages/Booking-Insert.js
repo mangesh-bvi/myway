@@ -145,7 +145,9 @@ class BookingInsert extends Component {
       checkList: "",
       Company_AddressID: 0,
       multiCargo: [],
-      CargoDetails: []
+      CargoDetails: [],
+      selectedDataRow: [],
+      loding: false
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -294,6 +296,20 @@ class BookingInsert extends Component {
           ShipmentType
         });
       }
+      var selectedRow = [];
+      const newSelected = Object.assign({}, self.state.cSelectedRow);
+
+      for (let i = 0; i < QuotationData.length; i++) {
+        newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
+          .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
+        selectedRow.push(QuotationData[i]);
+        self.setState({
+          cSelectedRow: QuotationData[i].SaleQuoteIDLineID
+            ? newSelected
+            : false,
+          selectedDataRow: selectedRow
+        });
+      }
     });
   }
 
@@ -347,6 +363,7 @@ class BookingInsert extends Component {
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var TypeofMove = QuotationData[0].TypeOfMove;
+
         self.setState({
           CargoDetails,
           multiCargo,
@@ -387,6 +404,18 @@ class BookingInsert extends Component {
           NonStackable,
           HAZMAT,
           NonStackable
+        });
+      }
+      var selectedRow = [];
+      const newSelected = Object.assign({}, self.state.cSelectedRow);
+
+      for (let i = 0; i < QuotationData.length; i++) {
+        newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+          .cSelectedRow[QuotationData[i].saleQuoteLineID];
+        selectedRow.push(QuotationData[i]);
+        self.setState({
+          cSelectedRow: QuotationData[i].saleQuoteLineID ? newSelected : false,
+          selectedDataRow: selectedRow
         });
       }
     });
@@ -452,6 +481,7 @@ class BookingInsert extends Component {
         var HAZMAT = Booking[0].HAZMAT;
 
         self.setState({
+          selectedRow: QuotationData,
           Company_AddressID,
           multiCargo,
           Booking,
@@ -475,6 +505,7 @@ class BookingInsert extends Component {
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var ContainerCode = QuotationData[0].ContainerCode;
+
         self.setState({
           QuotationData,
           QuotationSubData,
@@ -486,11 +517,18 @@ class BookingInsert extends Component {
           ContainerCode
         });
       }
+      var selectedRow = [];
+      const newSelected = Object.assign({}, self.state.cSelectedRow);
 
-      // if(addmultiCBM.length>0)
-      // {
-
-      // }
+      for (let i = 0; i < QuotationData.length; i++) {
+        newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+          .cSelectedRow[QuotationData[i].saleQuoteLineID];
+        selectedRow.push(QuotationData[i]);
+        self.setState({
+          cSelectedRow: QuotationData[i].saleQuoteLineID ? newSelected : false,
+          selectedDataRow: selectedRow
+        });
+      }
     });
   }
 
@@ -544,6 +582,7 @@ class BookingInsert extends Component {
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var TypeofMove = QuotationData[0].TypeOfMove;
+
         self.setState({
           CargoDetails,
           QuotationData,
@@ -558,6 +597,7 @@ class BookingInsert extends Component {
           TypeofMove
         });
       }
+
       if (Booking.length > 0) {
         var ModeofTransport = Booking[0].ModeOfTransport;
         var companyID = Booking[0].companyID;
@@ -581,6 +621,18 @@ class BookingInsert extends Component {
           ShipmentType
         });
       }
+      var selectedRow = [];
+      const newSelected = Object.assign({}, self.state.cSelectedRow);
+
+      for (let i = 0; i < QuotationData.length; i++) {
+        newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+          .cSelectedRow[QuotationData[i].saleQuoteLineID];
+        selectedRow.push(QuotationData[i]);
+        self.setState({
+          cSelectedRow: QuotationData[i].saleQuoteLineID ? newSelected : false,
+          selectedDataRow: selectedRow
+        });
+      }
     });
   }
 
@@ -588,8 +640,7 @@ class BookingInsert extends Component {
 
   HandleBookigInsert() {
     let self = this;
-
-    if (this.state.checkList !== "") {
+    if (this.state.selectedDataRow.length === 1) {
       if (
         this.state.isConshinee === true ||
         this.state.isShipper === true ||
@@ -598,6 +649,7 @@ class BookingInsert extends Component {
       ) {
         debugger;
 
+        this.setState({ loding: true });
         var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
         var MyWayUserID = Number(userId);
@@ -688,25 +740,27 @@ class BookingInsert extends Component {
         var saleQuoteLineID = 0;
         if (this.state.QuotationData) {
           if (this.state.ContainerLoad === "INLAND") {
+            debugger;
             var qdata = this.state.QuotationData.filter(
-              x => x.SaleQuoteIDLineID === Number(this.state.checkList)
+              x => x.SaleQuoteIDLineID === Number(this.state.selectedDataRow[0].SaleQuoteIDLineID)
             );
             saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
             saleQuoteID = qdata[0].SaleQuoteID;
           } else {
             var qdata = this.state.QuotationData.filter(
-              x => x.saleQuoteLineID === Number(this.state.checkList)
+              x => x.saleQuoteLineID === Number(this.state.selectedDataRow[0].saleQuoteLineID)
             );
             saleQuoteLineID = qdata[0].saleQuoteLineID;
             saleQuoteID = qdata[0].SaleQuoteID;
           }
-        } else {
-          var qdata = this.state.QuotationData.filter(
-            x => x.SaleQuoteIDLineID === Number(this.state.checkList)
-          );
-          saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
-          saleQuoteID = qdata[0].SaleQuoteID;
         }
+        // } else {
+        //   var qdata = this.state.QuotationData.filter(
+        //     x => x.SaleQuoteIDLineID === Number(this.state.checkList)
+        //   );
+        //   saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
+        //   saleQuoteID = qdata[0].SaleQuoteID;
+        // }
 
         var BookingDim = [];
 
@@ -790,14 +844,14 @@ class BookingInsert extends Component {
           if (response.data.Table) {
             var BookingNo = response.data.Table[0].BookingID;
             NotificationManager.success(response.data.Table[0].Message);
-            self.setState({ BookingNo });
+            self.setState({ BookingNo ,loding:false});
             setTimeout(() => {
               if (self.state.FileDataArry.length > 0) {
                 self.HandleFileUpload();
               } else {
                 self.props.history.push("booking-table");
               }
-            }, 500);
+            }, 1000);
           }
         });
       } else {
@@ -807,7 +861,7 @@ class BookingInsert extends Component {
         );
       }
     } else {
-      NotificationManager.error("Please select one quotation.");
+      NotificationManager.error("Please select only one quotation.");
       return false;
     }
   }
@@ -1294,17 +1348,61 @@ class BookingInsert extends Component {
         [name]: value
       };
     } else {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value === "" ? 0 : parseFloat(value)
-      };
+      if (
+        name === "Lengths" ||
+        name === "Length" ||
+        name === "Width" ||
+        name === "Height" ||
+        name === "height" ||
+        name === "GrossWt" ||
+        name === "GrossWeight"
+      ) {
+        var jiji = value;
+
+        if (isNaN(jiji)) {
+          return false;
+        }
+        var splitText = jiji.split(".");
+        var index = jiji.indexOf(".");
+        if (index != -1) {
+          if (splitText) {
+            if (splitText[1].length <= 2) {
+              if (index != -1 && splitText.length === 2) {
+                multiCBM[i] = {
+                  ...multiCBM[i],
+                  [name]: value === "" ? 0 : value
+                };
+              }
+            } else {
+              return false;
+            }
+          } else {
+            multiCBM[i] = {
+              ...multiCBM[i],
+              [name]: value === "" ? 0 : value
+            };
+          }
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            [name]: value === "" ? 0 : value
+          };
+        }
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          [name]: value === "" ? 0 : parseFloat(value)
+        };
+      }
     }
 
     this.setState({ multiCBM });
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
         (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+          (parseFloat(multiCBM[i].Lengths) *
+            parseFloat(multiCBM[i].Width) *
+            parseFloat(multiCBM[i].Height))) /
         6000;
       if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
         multiCBM[i] = {
@@ -1314,25 +1412,24 @@ class BookingInsert extends Component {
       } else {
         multiCBM[i] = {
           ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight)
+          ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
         };
       }
     } else {
       var decVolume =
         multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
+        ((parseFloat(multiCBM[i].Lengths) / 100) *
+          (parseFloat(multiCBM[i].Width) / 100) *
+          (parseFloat(multiCBM[i].Height) / 100));
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume)
+        ["Volume"]: parseFloat(decVolume.toFixed(2))
       };
     }
 
     this.setState({ multiCBM });
   }
   CreateMultiCBM() {
-    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -1378,7 +1475,7 @@ class BookingInsert extends Component {
               placeholder={"L (cm)"}
               className="w-100"
               name="Length"
-              value={el.Length || 0}
+              value={el.Length || ""}
               // onBlur={this.cbmChange}
             />
           </div>
@@ -1522,10 +1619,52 @@ class BookingInsert extends Component {
         [name]: value
       };
     } else {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value === "" ? 0 : parseFloat(value)
-      };
+      if (
+        name === "Lengths" ||
+        name === "Length" ||
+        name === "Width" ||
+        name === "Height" ||
+        name === "height" ||
+        name === "GrossWt" ||
+        name === "GrossWeight"
+      ) {
+        var jiji = value;
+
+        if (isNaN(jiji)) {
+          return false;
+        }
+        var splitText = jiji.split(".");
+        var index = jiji.indexOf(".");
+        if (index != -1) {
+          if (splitText) {
+            if (splitText[1].length <= 2) {
+              if (index != -1 && splitText.length === 2) {
+                multiCBM[i] = {
+                  ...multiCBM[i],
+                  [name]: value === "" ? 0 : value
+                };
+              }
+            } else {
+              return false;
+            }
+          } else {
+            multiCBM[i] = {
+              ...multiCBM[i],
+              [name]: value === "" ? 0 : value
+            };
+          }
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            [name]: value === "" ? 0 : value
+          };
+        }
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          [name]: value === "" ? 0 : parseFloat(value)
+        };
+      }
     }
 
     this.setState({ multiCBM });
@@ -1542,7 +1681,9 @@ class BookingInsert extends Component {
       } else {
         var decVolumeWeight =
           (multiCBM[i].Quantity *
-            (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
+            (parseFloat(multiCBM[i].Length) *
+              parseFloat(multiCBM[i].Width) *
+              parseFloat(multiCBM[i].height))) /
           6000;
         if (multiCBM[i].GrossWeight > parseFloat(decVolumeWeight)) {
           multiCBM[i] = {
@@ -1568,12 +1709,12 @@ class BookingInsert extends Component {
       } else {
         var decVolume =
           multiCBM[i].Quantity *
-          ((multiCBM[i].Length / 100) *
-            (multiCBM[i].Width / 100) *
-            (multiCBM[i].height / 100));
+          ((parseFloat(multiCBM[i].Length) / 100) *
+            (parseFloat(multiCBM[i].Width) / 100) *
+            (parseFloat(multiCBM[i].height) / 100));
         multiCBM[i] = {
           ...multiCBM[i],
-          ["Volume"]: parseFloat(decVolume)
+          ["Volume"]: parseFloat(decVolume.toFixed(2))
         };
       }
     }
@@ -1702,17 +1843,66 @@ class BookingInsert extends Component {
     ));
   }
 
-  toggleRow(saleQuoteLineID) {
+  // toggleRow(rateID, rowData) {
+  //   debugger;
+
+  //   if (this.state.checkList === "") {
+  //     this.setState({ checkList: saleQuoteLineID });
+  //   } else {
+  //     if (this.state.checkList === saleQuoteLineID) {
+  //       this.setState({ checkList: "" });
+  //     } else {
+  //       NotificationManager.error("Please select only one quotation.");
+  //     }
+  //   }
+  // }
+
+  toggleRow(rateID, rowData) {
     debugger;
-    if (this.state.checkList === "") {
-      this.setState({ checkList: saleQuoteLineID });
+    const newSelected = Object.assign({}, this.state.cSelectedRow);
+    newSelected[rateID] = !this.state.cSelectedRow[rateID];
+    this.setState({
+      cSelectedRow: rateID ? newSelected : false
+    });
+    var selectedRow = [];
+
+    if (this.state.selectedDataRow.length == 0) {
+      selectedRow.push(rowData.original);
+      this.setState({
+        selectedDataRow: selectedRow
+      });
     } else {
-      if (this.state.checkList === saleQuoteLineID) {
-        this.setState({ checkList: "" });
+      if (newSelected[rateID] === true) {
+        for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+          if (
+            this.state.selectedDataRow[i].saleQuoteLineID ===
+            rowData.original.saleQuoteLineID
+          ) {
+            selectedRow.splice(i, 1);
+
+            break;
+          } else {
+            selectedRow = this.state.selectedDataRow;
+            selectedRow.push(rowData.original);
+            break;
+          }
+        }
       } else {
-        NotificationManager.error("Please select only one quotation.");
+        for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+          if (
+            this.state.selectedDataRow[i].saleQuoteLineID ===
+            rowData.original.saleQuoteLineID
+          ) {
+            selectedRow = this.state.selectedDataRow;
+            selectedRow.splice(i, 1);
+            break;
+          }
+        }
       }
     }
+    this.setState({
+      selectedDataRow: selectedRow
+    });
   }
 
   render() {
@@ -1761,6 +1951,12 @@ class BookingInsert extends Component {
                                         "_"
                                       ).replace(" ", "_") + ".png";
                                   }
+                                  var saleQuote = 0;
+                                  if (row.original.saleQuoteLineID != null) {
+                                    saleQuote = row.original.saleQuoteLineID;
+                                  } else {
+                                    saleQuote = row.original.SaleQuoteIDLineID;
+                                  }
 
                                   var mode = "";
                                   if (this.state.ModeofTransport) {
@@ -1776,15 +1972,12 @@ class BookingInsert extends Component {
                                               type="checkbox"
                                               name={"rate-tab-check"}
                                               checked={
-                                                this.state.checkList ===
-                                                row.original.saleQuoteLineID
-                                                  ? true
-                                                  : false
+                                                this.state.cSelectedRow[
+                                                  saleQuote
+                                                ]
                                               }
                                               onChange={e =>
-                                                this.toggleRow(
-                                                  row.original.saleQuoteLineID
-                                                )
+                                                this.toggleRow(saleQuote, row)
                                               }
                                             />
                                             <label
@@ -1814,15 +2007,12 @@ class BookingInsert extends Component {
                                               type="checkbox"
                                               name={"rate-tab-check"}
                                               checked={
-                                                this.state.checkList ===
-                                                row.original.saleQuoteLineID
-                                                  ? true
-                                                  : false
+                                                this.state.cSelectedRow[
+                                                  saleQuote
+                                                ] == true
                                               }
                                               onChange={e =>
-                                                this.toggleRow(
-                                                  row.original.saleQuoteLineID
-                                                )
+                                                this.toggleRow(saleQuote, row)
                                               }
                                             />
                                             <label
@@ -1852,15 +2042,12 @@ class BookingInsert extends Component {
                                               type="checkbox"
                                               name={"rate-tab-check"}
                                               checked={
-                                                this.state.checkList ===
-                                                row.original.saleQuoteLineID
-                                                  ? true
-                                                  : false
+                                                this.state.cSelectedRow[
+                                                  saleQuote
+                                                ]
                                               }
                                               onChange={e =>
-                                                this.toggleRow(
-                                                  row.original.saleQuoteLineID
-                                                )
+                                                this.toggleRow(saleQuote, row)
                                               }
                                             />
                                             <label
@@ -2865,8 +3052,19 @@ class BookingInsert extends Component {
                   <button
                     onClick={this.HandleBookigInsert.bind(this)}
                     className="butn more-padd mt-4"
+                    disabled={this.state.loding === true ? true : false}
                   >
-                    Send Booking
+                    {this.state.loding == true ? (
+                      <>
+                        <i
+                          style={{ marginRight: 15 }}
+                          className="fa fa-refresh fa-spin"
+                        ></i>
+                        {"Please Wait ..."}
+                      </>
+                    ) : (
+                      "Send Booking"
+                    )}
                   </button>
                 </center>
                 <p>

@@ -20,6 +20,7 @@ import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-google-autocomplete";
 
 import ReactAutocomplete from "react-autocomplete";
+import { NotificationManager } from "react-notifications";
 
 var i = 0;
 const animatedComponents = makeAnimated();
@@ -367,7 +368,32 @@ class NewRateSearch extends Component {
         });
       }
       if (this.state.currencyCode !== "") {
-        this.props.history.push({ pathname: "rate-table", state: this.state });
+        if (
+          this.state.selected.length > 0 &&
+          this.state.containerLoadType === "FCL"
+        ) {
+          this.props.history.push({
+            pathname: "rate-table",
+            state: this.state
+          });
+        } else if (this.state.selected.length > 0) {
+          this.props.history.push({
+            pathname: "rate-table",
+            state: this.state
+          });
+        } else if (
+          this.state.selected.length==0 &&
+          this.state.containerLoadType !== "FCL"
+        ) {
+          this.props.history.push({
+            pathname: "rate-table",
+            state: this.state
+          });
+        } else {
+          NotificationManager.error("Select Equipment Types");
+        }
+      } else {
+        NotificationManager.error("Select Equipment Types");
       }
     }
   }
@@ -1046,16 +1072,48 @@ class NewRateSearch extends Component {
         name === "Height" ||
         name === "GrossWt"
       ) {
-        var validNumber = new RegExp(/^\d*\.?\d*$/);
-        if (value === "" || validNumber.test(value)) {
-          if ((parseFloat(value) * 100) % 1 > 0) {
+        var jiji = value;
+
+        if (isNaN(jiji)) {
+          return false;
+        }
+        var splitText = jiji.split(".");
+        var index = jiji.indexOf(".");
+        if (index != -1) {
+          if (splitText) {
+            if (splitText[1].length <= 2) {
+              if (index != -1 && splitText.length === 2) {
+                multiCBM[i] = {
+                  ...multiCBM[i],
+                  [name]: value === "" ? 0 : value
+                };
+              }
+            } else {
+              return false;
+            }
           } else {
             multiCBM[i] = {
               ...multiCBM[i],
               [name]: value === "" ? 0 : value
             };
           }
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            [name]: value === "" ? 0 : value
+          };
         }
+
+        // var validNumber = new RegExp(/^\d*\.?\d*$/);
+        // if (value === "" || validNumber.test(value)) {
+        //   if ((parseFloat(value) * 100) % 1 > 0) {
+        //   } else {
+        //     multiCBM[i] = {
+        //       ...multiCBM[i],
+        //       [name]: value === "" ? 0 : value
+        //     };
+        //   }
+        // }
       } else {
         multiCBM[i] = {
           ...multiCBM[i],
@@ -1068,7 +1126,9 @@ class NewRateSearch extends Component {
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
         (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+          (parseFloat(multiCBM[i].Lengths) *
+            parseFloat(multiCBM[i].Width) *
+            parseFloat(multiCBM[i].Height))) /
         6000;
       if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
         multiCBM[i] = {
@@ -1084,9 +1144,9 @@ class NewRateSearch extends Component {
     } else {
       var decVolume =
         multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
+        ((parseFloat(multiCBM[i].Lengths) / 100) *
+          (parseFloat(multiCBM[i].Width) / 100) *
+          (parseFloat(multiCBM[i].Height) / 100));
       multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: parseFloat(decVolume.toFixed(2))
@@ -2171,18 +2231,18 @@ class NewRateSearch extends Component {
     document.getElementById("modeTransName").classList.remove("d-none");
     document.getElementById("modeTransMinusClick").classList.add("d-none");
     document.getElementById("modeTransPlusClick").classList.remove("d-none");
-    if (type === "FCL") {
-      document.getElementById("equipType").classList.add("equipType");
-      document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
-      document.getElementById("containerLoad").classList.add("less-padd");
+    // if (type === "FCL") {
+    //   document.getElementById("equipType").classList.add("equipType");
+    //   document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+    //   document.getElementById("containerLoad").classList.add("less-padd");
 
-      document
-        .getElementById("cntrLoadIconCntr")
-        .classList.add("cntrLoadIconCntr");
-      document.getElementById("cntrLoadName").classList.remove("d-none");
-      document.getElementById("cntrLoadMinusClick").classList.add("d-none");
-      document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
-    }
+    //   document
+    //     .getElementById("cntrLoadIconCntr")
+    //     .classList.add("cntrLoadIconCntr");
+    //   document.getElementById("cntrLoadName").classList.remove("d-none");
+    //   document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+    //   document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    // }
 
     this.HandleBindIncoTeamData();
 
@@ -3484,54 +3544,6 @@ class NewRateSearch extends Component {
                 <div className="row justify-content-center" id="addressInner">
                   <div className="col-md-6">
                     <div className="spe-equ address-full">
-                      {/* {this.state.typesofMove == "p2p" ||
-                      this.state.typesofMove === "p2d" ? (
-                        <ReactAutocomplete
-                          getItemValue={item => item.OceanPortLongName}
-                          items={this.state.polpodData}
-                          renderItem={(item, isHighlighted) => (
-                            <div
-                              style={{
-                                background: isHighlighted
-                                  ? "lightgray"
-                                  : "white"
-                              }}
-                              value={item.AirPortID}
-                            >
-                              {item.OceanPortLongName}
-                            </div>
-                          )}
-                          renderInput={function(props) {
-                            return (
-                              <input
-                                placeholder="Enter POL"
-                                className="w-100 sticky-dropdown"
-                                type="text"
-                                {...props}
-                              />
-                            );
-                          }}
-                          onChange={this.HandlePOLPODAutosearch.bind(
-                            this,
-                            "pol"
-                          )}
-                          //menuStyle={this.state.menuStyle}
-                          onSelect={this.HandleAddressDropdownPolSelect.bind(
-                            this,
-                            item => item.NameWoDiacritics,
-                            "pol"
-                          )}
-                          value={this.state.fields["pol"]}
-                        />
-                      ) : (
-                        <Map1WithAMakredInfoWindowSearchBooks
-                          onPlaceSelected={this.onPlaceSelected}
-                          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&v=3.exp&libraries=geometry,drawing,places"
-                          loadingElement={<div />}
-                          containerElement={<div />}
-                          mapElement={<div />}
-                        />
-                      )} */}
                       {this.state.modeoftransport === "AIR" ? (
                         this.state.typesofMove == "p2p" ||
                         this.state.typesofMove === "p2d" ? (
@@ -3573,7 +3585,6 @@ class NewRateSearch extends Component {
                             value={this.state.fields["pol"]}
                           />
                         ) : (
-                          
                           <ReactAutocomplete
                             getItemValue={item => item.Address}
                             items={this.state.polpodData}

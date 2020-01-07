@@ -849,30 +849,6 @@ class ShippingDetailsTwo extends Component {
     var perBooking = "0";
     var locName = "";
     var statusid = 0;
-    // if (POLPODData.length > 0) {
-    //   debugger;
-
-    //   for (let i = 0; i < POLPODData.length; i++) {
-    //     if (POLPODData[i].ActualTimeDeparture === null) {
-    //       statusid = i;
-    //       break;
-    //     }
-    //   }
-    //   var len = 100 / POLPODData.length;
-    //   if (statusid === 1 && arrivedDate === "" && deliverDate === "") {
-    //     perBooking = "0";
-    //   } else if (statusid === 0 && arrivedDate !== "" && deliverDate !== "") {
-    //     perBooking = "100";
-    //   } else if (statusid === 0 && arrivedDate !== "" && deliverDate !== "") {
-    //     perBooking = "65";
-    //   } else if (deliverDate !== "" && arrivedDate !== "") {
-    //     perBooking = "100";
-    //   } else {
-    //     debugger;
-    //     var total = parseInt(100 / statusid);
-    //     perBooking = total * (statusid - 1) + "";
-    //   }
-    // }
 
     var POLPODDatalen = POLPODData.length;
     var eventColor = "";
@@ -887,31 +863,36 @@ class ShippingDetailsTwo extends Component {
     }
 
     if (this.state.Table9.length > 0) {
-      debugger
-      var Transshipped = this.state.Table9.filter(x => x.Status === "Transshipped").length;
+      debugger;
+      var Transshipped = this.state.Table9.filter(
+        x => x.Status === "Transshipped"
+      ).length;
 
-      var Arriveddata = this.state.Table9.filter(x => x.Status === "Arrived").length;
-      var Delivered = this.state.Table9.filter(x => x.Status === "Delivered").length;
+      var Arriveddata = this.state.Table9.filter(x => x.Status === "Arrived")
+        .length;
+      var Delivered = this.state.Table9.filter(x => x.Status === "Delivered")
+        .length;
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        perBooking = total * (Transshipped) + "";
+        perBooking = total * Transshipped + "";
       }
       if (Transshipped > 0 && Arriveddata > 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        perBooking = total * (Transshipped) + "";
+        perBooking = total * Transshipped + "";
       }
-      
-      if(Transshipped==0 &&Arriveddata>0)
-      {
-        perBooking="100";
 
+      if (Transshipped >= 1 && Arriveddata >= 1) {
+        perBooking = "100";
       }
-      if(Transshipped==0 &&Delivered>0)
-      {
-        perBooking="100";
-
+      if (Transshipped >= 1 && Delivered >= 1) {
+        perBooking = "100";
       }
-      
+      if (Transshipped == 0 && Arriveddata > 0) {
+        perBooking = "100";
+      }
+      if (Transshipped == 0 && Delivered > 0) {
+        perBooking = "100";
+      }
     }
     let Watchlist = "";
     if (this.state.ShipmentExistsInWatchList == 0) {
@@ -1206,9 +1187,13 @@ class ShippingDetailsTwo extends Component {
                                       {/* <span className="line-resol" style={{left: wid + "%"}}></span> */}
                                       <span
                                         className="progspan"
-                                        style={{ display: "block" ,float:POLPODDatalen<2?"left":"none"}}
+                                        style={{
+                                          display: "block",
+                                          float:
+                                            POLPODDatalen < 2 ? "left" : "none"
+                                        }}
                                       >
-                                        {id["POL/POD"]}
+                                        {/* {id["POL/POD"]} */}
                                       </span>
                                     </label>
                                   );
@@ -1238,16 +1223,19 @@ class ShippingDetailsTwo extends Component {
                                     <label
                                       className="resol"
                                       style={{
-                                        width: wid1 + "%",
-                                        
+                                        width: wid1 + "%"
                                       }}
                                     >
                                       {/* <span className="line-resol"></span> */}
                                       <span
                                         className="progspan"
-                                        style={{ display: "block" ,float:POLPODDatalen<2?"right":"none"}}
+                                        style={{
+                                          display: "block",
+                                          float:
+                                            POLPODDatalen < 2 ? "right" : "none"
+                                        }}
                                       >
-                                        {id["POL/POD"]}
+                                        {/* {id["POL/POD"]} */}
                                       </span>
                                     </label>
                                   );
@@ -1285,6 +1273,35 @@ class ShippingDetailsTwo extends Component {
                           >
                             POD
                           </span>
+                        </div>
+                        <div className="desti-places">
+                          {POLPODData.length < 2 ? (
+                            <>
+                              <span>
+                                {POLPODData.length > 0
+                                  ? POLPODData[0]["POL/POD"]
+                                  : ""}
+                              </span>
+                              <span>
+                                {POLPODData.length > 0
+                                  ? POLPODData[1]["POL/POD"]
+                                  : ""}
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span>
+                                {POLPODData.length > 0
+                                  ? POLPODData[0]["POL/POD"]
+                                  : ""}
+                              </span>
+                              <span>
+                                {POLPODData.length > 0
+                                  ? POLPODData[POLPODData.length - 1]["POL/POD"]
+                                  : ""}
+                              </span>
+                            </>
+                          )}
                         </div>
                         {/* <div className="desti-places">
                           {POLPODData.length < 2 ? (

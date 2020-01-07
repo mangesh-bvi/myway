@@ -244,6 +244,7 @@ class Login extends React.Component {
   toggleSalesLoginPage() {
     var checkedCompData = this.state.checked;
     var finalselectedData = [];
+    let self=this;
     for (var i = 0; i < checkedCompData.length; i++) {
       finalselectedData.push(parseInt(checkedCompData[i]));
     }
@@ -260,7 +261,8 @@ class Login extends React.Component {
     })
       .then(function(response) {
         debugger;
-        window.location.href = "./rate-search";
+        self.props.history.push("/rate-search")
+        // window.location.href = "./rate-search";
       })
       .catch(error => {
         console.log(error);
@@ -376,6 +378,7 @@ class Login extends React.Component {
           var ProfileTypen = userType[0].ProfileType;
           var SalesCompanyPopupFlag = userType[0].SalesCompanyPopupFlag;
           if (userTypeName === "Sales User" && SalesCompanyPopupFlag === 1) {
+            debugger;
             if (
               userTypeName === "Sales User" &&
               ProfileTypen &&
@@ -388,9 +391,7 @@ class Login extends React.Component {
                 modalSalesLogin: !self.state.modalSalesLogin
               });
             }
-            setTimeout(function() {
-              window.location.href = "./rate-search";
-            }, 300);
+            
           } else if (
             userTypeName === "Sales User" &&
             SalesCompanyPopupFlag === 0

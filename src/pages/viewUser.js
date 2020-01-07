@@ -8,23 +8,21 @@ import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
-import GoogleMapReact from "google-map-react";
+
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
-import Delete from "./../assets/img/red-delete-icon.png";
+
 import Deactivate from "./../assets/img/deactivate.png";
 import DeactivateGray from "./../assets/img/deactivate-gray.png";
-import InputRange from "react-input-range";
+
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
-import maersk from "./../assets/img/maersk.png";
+
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
-
-const SourceIcon = () => <div className="map-circ source-circ" />;
-const DestiIcon = () => <div className="map-circ desti-circ" />;
+import matchSorter from "match-sorter";
 
 class ViewUser extends Component {
   constructor(props) {
@@ -41,7 +39,8 @@ class ViewUser extends Component {
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleDeactivate = this.toggleDeactivate.bind(this);
     this.handleViewUserData = this.handleViewUserData.bind(this);
-
+    this.filterAll = this.filterAll.bind(this);
+    this.onFilteredChange = this.onFilteredChange.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
   }
 
@@ -131,62 +130,25 @@ class ViewUser extends Component {
     }
   }
 
+  onFilteredChange(filtered) {
+    if (filtered.length > 1 && this.state.filterAll.length) {
+      const filterAll = "";
+      this.setState({
+        filtered: filtered.filter(item => item.id != "all"),
+        filterAll
+      });
+    } else this.setState({ filtered });
+  }
+
+  filterAll(e) {
+    const { value } = e.target;
+    const filterAll = value;
+    const filtered = [{ id: "all", value: filterAll }];
+
+    this.setState({ filterAll, filtered });
+  }
+
   render() {
-    // var data1 = [
-    //   {
-    //     sr_no: 1,
-    //     username: "Sangameshwar",
-    //     isEnab: "True",
-    //     userType: "Customer"
-    //   },
-    //   {
-    //     sr_no: 2,
-    //     username: "Sangameshwar",
-    //     isEnab: "False",
-    //     userType: "Customer"
-    //   },
-    //   {
-    //     sr_no: 3,
-    //     username: "Sangameshwar",
-    //     isEnab: "True",
-    //     userType: "Customer"
-    //   },
-    //   {
-    //     sr_no: 4,
-    //     username: "Sangameshwar",
-    //     isEnab: "False",
-    //     userType: "Customer"
-    //   },
-    //   {
-    //     sr_no: 5,
-    //     username: "Sangameshwar",
-    //     isEnab: "True",
-    //     userType: "Customer"
-    //   }
-    // ];
-    // var data2 = [
-    //   {
-    //     chargeCode: "A23435",
-    //     chargeName: "Lorem",
-    //     units: "43",
-    //     unitPrice: "$134.00",
-    //     finalPayment: "$45,986.00"
-    //   },
-    //   {
-    //     chargeCode: "B45678",
-    //     chargeName: "Lorem",
-    //     units: "23",
-    //     unitPrice: "$56.45",
-    //     finalPayment: "$1200.00"
-    //   },
-    //   {
-    //     chargeCode: "C54545",
-    //     chargeName: "Lorem",
-    //     units: "56",
-    //     unitPrice: "$50.00",
-    //     finalPayment: "$3456.00"
-    //   }
-    // ];
     return (
       <div>
         <Headers />
@@ -198,10 +160,23 @@ class ViewUser extends Component {
             <NotificationContainer />
             <div className="title-sect">
               <h2>View Users</h2>
+              <div className="col-12 col-sm-4">
+                <input
+                  type="search"
+                  className="quote-txt-srch"
+                  placeholder="Search here"
+                  value={this.state.filterAll}
+                  onChange={this.filterAll}
+                />
+              </div>
             </div>
             <div className="view-user-table">
               <ReactTable
-                noDataText=""
+                onFilteredChange={this.onFilteredChange.bind(this)}
+                filtered={this.state.filtered}
+                defaultFilterMethod={(filter, row) =>
+                  String(row[filter.id]) === filter.value
+                }
                 minRows={1}
                 columns={[
                   {
@@ -217,7 +192,16 @@ class ViewUser extends Component {
                       {
                         Header: "Is Enabled",
                         accessor: "IsEnabled",
-                        Cell: row => (row.original.IsEnabled ? "True" : "False")
+                        Cell: row => {
+                          debugger;
+                          if (row.row.IsEnabled !== "No Record Found") {
+                            return (
+                              <>{row.original.IsEnabled ? "True" : "False"}</>
+                            );
+                          } else {
+                            return <>{row.row.IsEnabled}</>;
+                          }
+                        }
                       },
                       {
                         Header: "User Type",
@@ -227,36 +211,81 @@ class ViewUser extends Component {
                         Header: "Action",
                         sortable: false,
                         Cell: row => {
-                          return (
-                            <div>
-                              <span title="Edit">
-                              <img
-                                className="actionicon"
-                                src={Pencil}
-                                alt="view-icon"
-                                onClick={e => this.HandleDocumentView(e, row)}
-                              />
-                              </span>
-                              <span title={row.original.IsEnabled ? "Active": "Inactive"}>
-                              <img
-                                style={{
-                                  pointerEvents: row.original.IsEnabled
-                                    ? "initial"
-                                    : "none"
-                                }}
-                                className="actionicon"
-                                src={
-                                  row.original.IsEnabled
-                                    ? Deactivate
-                                    : DeactivateGray
-                                }
-                                alt="deactivate-icon"
-                                onClick={e => this.HandleDocumentDelete(e, row)}
-                              />
-                              </span>
-                            </div>
-                          );
+                          if (row.row.IsEnabled !== "No Record Found") {
+                            return (
+                              <div>
+                                <span title="Edit">
+                                  <img
+                                    className="actionicon"
+                                    src={Pencil}
+                                    alt="view-icon"
+                                    onClick={e =>
+                                      this.HandleDocumentView(e, row)
+                                    }
+                                  />
+                                </span>
+                                <span
+                                  title={
+                                    row.original.IsEnabled
+                                      ? "Active"
+                                      : "Inactive"
+                                  }
+                                >
+                                  <img
+                                    style={{
+                                      pointerEvents: row.original.IsEnabled
+                                        ? "initial"
+                                        : "none"
+                                    }}
+                                    className="actionicon"
+                                    src={
+                                      row.original.IsEnabled
+                                        ? Deactivate
+                                        : DeactivateGray
+                                    }
+                                    alt="deactivate-icon"
+                                    onClick={e =>
+                                      this.HandleDocumentDelete(e, row)
+                                    }
+                                  />
+                                </span>
+                              </div>
+                            );
+                          } else {
+                            return <></>;
+                          }
                         }
+                      },
+                      {
+                        show: false,
+                        Header: "All",
+                        id: "all",
+                        width: 0,
+                        resizable: false,
+                        sortable: false,
+                        Filter: () => {},
+                        getProps: () => {
+                          return {
+                            // style: { padding: "0px"}
+                          };
+                        },
+                        filterMethod: (filter, rows) => {
+                          var result = matchSorter(rows, filter.value, {
+                            keys: ["UserType", "IsEnabled", "Username", "srno"],
+                            threshold: matchSorter.rankings.WORD_STARTS_WITH
+                          });
+                          if (result.length > 0) {
+                            return result;
+                          } else {
+                            result = [
+                              {
+                                IsEnabled: "No Record Found"
+                              }
+                            ];
+                            return result;
+                          }
+                        },
+                        filterAll: true
                       }
                     ]
                   }
@@ -265,56 +294,60 @@ class ViewUser extends Component {
                 defaultPageSize={10}
                 className="-striped -highlight"
                 SubComponent={row => {
-                  return (
-                    <div style={{ padding: "20px 0" }}>
-                      <div className="view-user-inner pt-0">
-                        <div className="container-fluid">
-                          <div className="row">
-                            <div className="col-md-4">
-                              <p className="view-user-title">
-                                Last Login Date:
-                              </p>
-                              <p className="view-user-desc">
-                                {row.original["LastLoginDate"]}
-                              </p>
-                            </div>
-                            <div className="col-md-4">
-                              <p className="view-user-title">
-                                Mode Of Transport:
-                              </p>
-                              <p className="view-user-desc">
-                                {row.original["ModeOfTransport"]}
-                              </p>
-                            </div>
-                            <div className="col-md-4">
-                              <p className="view-user-title">
-                                Can Create User:
-                              </p>
-                              <p className="view-user-desc">
-                                {row.original["CanCreateUser"]
-                                  ? "True"
-                                  : "False"}
-                              </p>
-                            </div>
-                            <div className="col-md-4">
-                              <p className="view-user-title">Created Date:</p>
-                              <p className="view-user-desc">
-                                <Moment format="DD-MMM-YYYY">
-                                  {row.original["CreatedDate"]}
-                                </Moment>
-                              </p>
-                            </div>
-                            <div className="col-md-4">
-                              <p className="view-user-title">Created By:</p>
-                              <p className="view-user-desc">
-                                {row.original["CreatedByName"]}
-                              </p>
+                  if (row.row.IsEnabled !== "No Record Found") {
+                    return (
+                      <div style={{ padding: "20px 0" }}>
+                        <div className="view-user-inner pt-0">
+                          <div className="container-fluid">
+                            <div className="row">
+                              <div className="col-md-4">
+                                <p className="view-user-title">
+                                  Last Login Date:
+                                </p>
+                                <p className="view-user-desc">
+                                  {row.original["LastLoginDate"]}
+                                </p>
+                              </div>
+                              <div className="col-md-4">
+                                <p className="view-user-title">
+                                  Mode Of Transport:
+                                </p>
+                                <p className="view-user-desc">
+                                  {row.original["ModeOfTransport"]}
+                                </p>
+                              </div>
+                              <div className="col-md-4">
+                                <p className="view-user-title">
+                                  Can Create User:
+                                </p>
+                                <p className="view-user-desc">
+                                  {row.original["CanCreateUser"]
+                                    ? "True"
+                                    : "False"}
+                                </p>
+                              </div>
+                              <div className="col-md-4">
+                                <p className="view-user-title">Created Date:</p>
+                                <p className="view-user-desc">
+                                  <Moment format="DD-MMM-YYYY">
+                                    {row.original["CreatedDate"]}
+                                  </Moment>
+                                </p>
+                              </div>
+                              <div className="col-md-4">
+                                <p className="view-user-title">Created By:</p>
+                                <p className="view-user-desc">
+                                  {row.original["CreatedByName"]}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  } else {
+                    return <></>;
+                  }
                 }}
               />
             </div>
@@ -326,17 +359,29 @@ class ViewUser extends Component {
             centered={true}
           >
             <ModalBody>
-            <button type="button" style={{top:"-12px" , right:"-15px"}} className="close" data-dismiss="modal" onClick={this.toggleDel}>
+              <button
+                type="button"
+                style={{ top: "-12px", right: "-15px" }}
+                className="close"
+                data-dismiss="modal"
+                onClick={this.toggleDel}
+              >
                 <span>&times;</span>
               </button>
-              <div style={{background:"#fff" , padding:"15px" , borderRadius: "15px"}}>
-              <p>Are you sure ?</p>
-              <Button className="butn" onClick={this.toggleDeactivate}>
-                Yes
-              </Button>
-              <Button className="butn cancel-butn" onClick={this.toggleDel}>
-                No
-              </Button>
+              <div
+                style={{
+                  background: "#fff",
+                  padding: "15px",
+                  borderRadius: "15px"
+                }}
+              >
+                <p>Are you sure ?</p>
+                <Button className="butn" onClick={this.toggleDeactivate}>
+                  Yes
+                </Button>
+                <Button className="butn cancel-butn" onClick={this.toggleDel}>
+                  No
+                </Button>
               </div>
             </ModalBody>
           </Modal>

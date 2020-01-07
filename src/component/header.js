@@ -51,7 +51,9 @@ class Header extends Component {
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
-    this.RedirectoShipment = this.RedirectoShipment.bind(this);
+    // this.RedirectoShipment = this.RedirectoShipment.bind(this);
+    // this.HandleActivityClick = this.HandleActivityClick.bind(this);
+    // this.activatePlaylist = this.activatePlaylist.bind(this);
   }
 
   componentDidMount() {
@@ -232,26 +234,7 @@ class Header extends Component {
       return false;
     }
 
-    var month_names = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec"
-    ];
-
     var today = new Date();
-
-    var day = today.getDate();
-    var month_index = today.getMonth();
-    var year = today.getFullYear();
 
     //alert(txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year);
     let self = this;
@@ -366,7 +349,15 @@ class Header extends Component {
   //     // window.location.href = "shipment-details?hblno=" + RefNo;
   //   }
   // }
+  HandleActivityClick() {
+    debugger;
+  }
 
+  activatePlaylist() {
+    // you code
+    alert(1);
+    // this.props.history.push("/booking-table");
+  }
   render() {
     let self = this;
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
@@ -409,7 +400,10 @@ class Header extends Component {
       adataval = this.state.ActivityDateArry.map((item, i) =>
         this.state.ActivityDateArry.length == 0 ? (
           <div className="active-log-pop">
-            <span>{item.CNT + " "}</span> <label>{item.ActivityDesc}</label>
+            <span>{item.CNT + " "}</span>{" "}
+            <label>
+              {item.ActivityDesc}
+            </label>
             {item.CSV}
             <br />
             {/* <label>{item.ActMessage}</label> */}

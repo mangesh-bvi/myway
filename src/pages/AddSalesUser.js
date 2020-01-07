@@ -6,20 +6,20 @@ import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
 import FileUpload from "./../assets/img/file.png";
-import { is } from "@babel/types";
+
 import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import { bool } from "prop-types";
 
 var string = "";
 class AddSalesUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       values: [],
       selectCountry: [
         // { key: "1", value: "India" },
@@ -390,6 +390,8 @@ class AddSalesUser extends React.Component {
     let Document = "";
     let HideInvoiceDetails = "";
     var RegisteredCompany = "";
+    this.setState({ loading: true });
+
     var Modules = "";
 
     for (const [index, value] of this.state.chkModeOfTrans.entries()) {
@@ -496,6 +498,7 @@ class AddSalesUser extends React.Component {
     docData.append("Logo", this.state.selectedFile);
     docData.append("RegisteredCompany", "");
     // var docDesc = document.getElementById("docDesc").value;
+    let self = this;
     if (this.handleValidation()) {
       axios({
         method: "post",
@@ -506,6 +509,7 @@ class AddSalesUser extends React.Component {
         .then(function(response) {
           debugger;
           NotificationManager.success(response.data[0].Message);
+          this.setState({ loading: false });
         })
         .catch(error => console.log(error.response));
     } else {
@@ -617,7 +621,7 @@ class AddSalesUser extends React.Component {
         .catch(error => console.log(error.response));
     } else {
       debugger;
-      this.setState({ settoaste: true, loading: true });
+      this.setState({ settoaste: true });
     }
   }
 
@@ -1171,8 +1175,17 @@ class AddSalesUser extends React.Component {
                           type="button"
                           className="butn mb-2"
                           onClick={this.handleSubmit}
+                          disabled={this.state.loading != true ? false : true}
                         >
-                          Submit
+                          {this.state.loading != true
+                            ? this.state.loading && (
+                                <i
+                                  style={{ marginRight: 15 }}
+                                  className="fa fa-refresh fa-spin"
+                                ></i>
+                              )
+                            : null}
+                          {this.state.loading ? "Please Wait ..." : "Submit"}
                         </button>
                       );
                     }

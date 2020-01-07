@@ -3436,15 +3436,36 @@ class RateTable extends Component {
       name === "Height" ||
       name === "GrossWt"
     ) {
-      var validNumber = new RegExp(/^\d*\.?\d*$/);
-      if (value === "" || validNumber.test(value)) {
-        if ((parseFloat(value) * 100) % 1 > 0) {
+      var jiji = value;
+
+      if (isNaN(jiji)) {
+        return false;
+      }
+      var splitText = jiji.split(".");
+      var index = jiji.indexOf(".");
+      if (index != -1) {
+        if (splitText) {
+          if (splitText[1].length <= 2) {
+            if (index != -1 && splitText.length === 2) {
+              multiCBM[i] = {
+                ...multiCBM[i],
+                [name]: value === "" ? 0 : value
+              };
+            }
+          } else {
+            return false;
+          }
         } else {
           multiCBM[i] = {
             ...multiCBM[i],
-            [name]: value
+            [name]: value === "" ? 0 : value
           };
         }
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          [name]: value === "" ? 0 : value
+        };
       }
     } else {
       multiCBM[i] = {
@@ -3457,7 +3478,9 @@ class RateTable extends Component {
     if (this.state.containerLoadType !== "LCL") {
       var decVolumeWeight =
         (multiCBM[i].Quantity *
-          (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+          (parseFloat(multiCBM[i].Lengths) *
+            parseFloat(multiCBM[i].Width) *
+            parseFloat(multiCBM[i].Height))) /
         6000;
       if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
         multiCBM[i] = {
@@ -3473,9 +3496,9 @@ class RateTable extends Component {
     } else {
       var decVolume =
         multiCBM[i].Quantity *
-        ((multiCBM[i].Lengths / 100) *
-          (multiCBM[i].Width / 100) *
-          (multiCBM[i].Height / 100));
+        ((parseFloat(multiCBM[i].Lengths) / 100) *
+          (parseFloat(multiCBM[i].Width) / 100) *
+          (parseFloat(multiCBM[i].Height) / 100));
       multiCBM[i] = {
         ...multiCBM[i],
         ["Volume"]: parseFloat(decVolume.toFixed(2))
@@ -4331,7 +4354,6 @@ class RateTable extends Component {
                       </div>
                     </div>
                     <div className="pol-pod-maps-cntr">
-                       
                       <div className="pol-pod-maps pod-maps">
                         <span className="rate-map-ovrly">POD</span>
                         <span

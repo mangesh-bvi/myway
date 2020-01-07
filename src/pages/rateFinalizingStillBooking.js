@@ -147,7 +147,8 @@ class RateFinalizingStillBooking extends Component {
       isBuyer: false,
       isNotify: false,
       multiCargo: [],
-      CargoDetails: []
+      CargoDetails: [],
+      loding: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -480,6 +481,7 @@ class RateFinalizingStillBooking extends Component {
       this.state.isBuyer === true ||
       this.state.isNotify === true
     ) {
+      this.setState({ loding: true });
       var bookingId = this.state.BookingNo;
       var userId = encryption(window.localStorage.getItem("userid"), "desc");
       var bookingDetails = this.state.Booking;
@@ -652,7 +654,7 @@ class RateFinalizingStillBooking extends Component {
       }).then(function(response) {
         debugger;
         NotificationManager.success(response.data.Table[0].Message);
-
+        self.setState({ loding: false });
         self.HandleFileUpload();
       });
     } else {
@@ -794,6 +796,7 @@ class RateFinalizingStillBooking extends Component {
   HandleBookigClone() {
     let self = this;
     debugger;
+    this.setState({ loding: true });
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     var bookingDetails = self.state.Booking;
@@ -963,6 +966,7 @@ class RateFinalizingStillBooking extends Component {
     }).then(function(response) {
       debugger;
       NotificationManager.success(response.data.Table[0].Message);
+      self.setState({ loding: false });
       setTimeout(() => {
         self.HandleFileUpload();
       }, 1000);
@@ -1780,14 +1784,57 @@ class RateFinalizingStillBooking extends Component {
         [name]: value
       };
     } else {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value === "" ? 0 : parseFloat(value)
-      };
+      if (
+        name === "Lengths" ||
+        name === "Length" ||
+        name === "Width" ||
+        name === "Height" ||
+        name === "height" ||
+        name === "GrossWt" ||
+        name === "GrossWeight"
+      ) {
+        var jiji = value;
+
+        if (isNaN(jiji)) {
+          return false;
+        }
+        var splitText = jiji.split(".");
+        var index = jiji.indexOf(".");
+        if (index != -1) {
+          if (splitText) {
+            if (splitText[1].length <= 2) {
+              if (index != -1 && splitText.length === 2) {
+                multiCBM[i] = {
+                  ...multiCBM[i],
+                  [name]: value === "" ? 0 : value
+                };
+              }
+            } else {
+              return false;
+            }
+          } else {
+            multiCBM[i] = {
+              ...multiCBM[i],
+              [name]: value === "" ? 0 : value
+            };
+          }
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            [name]: value === "" ? 0 : value
+          };
+        }
+      } else {
+        multiCBM[i] = {
+          ...multiCBM[i],
+          [name]: value === "" ? 0 : parseFloat(value)
+        };
+      }
     }
 
     this.setState({ multiCBM });
     if (this.state.ContainerLoad !== "LCL") {
+      debugger;
       if (
         this.state.ContainerLoad === "FCL" ||
         this.state.ContainerLoad === "FTL"
@@ -1799,21 +1846,24 @@ class RateFinalizingStillBooking extends Component {
       } else {
         var decVolumeWeight =
           (multiCBM[i].Quantity *
-            (multiCBM[i].Lengths * multiCBM[i].Width * multiCBM[i].Height)) /
+            (parseFloat(multiCBM[i].Lengths) *
+              parseFloat(multiCBM[i].Width) *
+              parseFloat(multiCBM[i].Height))) /
           6000;
         if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
           multiCBM[i] = {
             ...multiCBM[i],
-            ["VolumeWeight"]: multiCBM[i].GrossWt
+            ["VolumeWeight"]: parseFloat(multiCBM[i].GrossWt).toFixed(2)
           };
         } else {
           multiCBM[i] = {
             ...multiCBM[i],
-            ["VolumeWeight"]: parseFloat(decVolumeWeight)
+            ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
           };
         }
       }
     } else {
+      debugger;
       if (
         this.state.ContainerLoad === "FCL" ||
         this.state.ContainerLoad === "FTL"
@@ -1825,13 +1875,13 @@ class RateFinalizingStillBooking extends Component {
       } else {
         var decVolume =
           multiCBM[i].Quantity *
-          ((multiCBM[i].Lengths / 100) *
-            (multiCBM[i].Width / 100) *
-            (multiCBM[i].Height / 100));
+          ((parseFloat(multiCBM[i].Lengths) / 100) *
+            (parseFloat(multiCBM[i].Width) / 100) *
+            (parseFloat(multiCBM[i].Height) / 100));
 
         multiCBM[i] = {
           ...multiCBM[i],
-          ["Volume"]: parseFloat(decVolume)
+          ["Volume"]: parseFloat(decVolume.toFixed(2))
         };
       }
     }
@@ -1840,6 +1890,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   CreateMultiCBM() {
+    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -1859,7 +1910,7 @@ class RateFinalizingStillBooking extends Component {
             </select>
           </div>
         </div>
-        {this.state.ContainerLoad !== "FCL" ||
+        {this.state.ContainerLoad !== "FCL" &&
         this.state.ContainerLoad !== "FTL" ? (
           <div className="col-md">
             <div className="spe-equ">
@@ -1923,13 +1974,17 @@ class RateFinalizingStillBooking extends Component {
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.GrossWeight === 0 ? "GW(Kg)" : "GW(Kg)"}
               name="GrossWeight"
-              value={this.state.isCopy == true ? el.GrossWeight : el.GrossWeight || ""}
+              value={
+                this.state.isCopy == true
+                  ? el.GrossWeight
+                  : el.GrossWeight || ""
+              }
               className="w-100"
             />
           </div>
         </div>
-        {this.state.ContainerType !== "FCL" ||
-        this.state.ContainerType !== "FTL" ? (
+        {this.state.ContainerLoad !== "FCL" &&
+        this.state.ContainerLoad !== "FTL" ? (
           <div className="col-md">
             <div className="spe-equ">
               <input
@@ -2376,7 +2431,6 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 accessor: "POD",
                                 Cell: row => {
-                                   
                                   if (
                                     this.state.Booking[0].CargoType === "LCL" ||
                                     this.state.Booking[0].CargoType === "FCL" ||
@@ -3360,7 +3414,6 @@ class RateFinalizingStillBooking extends Component {
                               {
                                 Header: "Action",
                                 Cell: row => {
-                               
                                   if (
                                     row.original.FilePath !== "" &&
                                     row.original.FileName !== "File Not Found"
@@ -3403,6 +3456,7 @@ class RateFinalizingStillBooking extends Component {
 
                     <center>
                       <button
+                        disabled={this.state.loding === true ? true : false}
                         onClick={
                           this.state.copy === true
                             ? this.HandleBookigClone.bind(this)
@@ -3410,11 +3464,23 @@ class RateFinalizingStillBooking extends Component {
                         }
                         className="butn more-padd mt-4"
                       >
-                        {this.state.copy === true
-                          ? "Booking Clone"
-                          : this.state.BookingNo !== ""
-                          ? "Update Booking"
-                          : ""}
+                        {this.state.loding == true ? (
+                          <>
+                            <i
+                              style={{ marginRight: 15 }}
+                              className="fa fa-refresh fa-spin"
+                            ></i>
+                            {"Please Wait ..."}
+                          </>
+                        ) : (
+                          <>
+                            {this.state.copy === true
+                              ? "Booking Clone"
+                              : this.state.BookingNo !== ""
+                              ? "Update Booking"
+                              : ""}
+                          </>
+                        )}
                       </button>
                     </center>
                   </div>

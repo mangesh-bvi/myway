@@ -175,11 +175,7 @@ class BookingTable extends Component {
     // var { quotesData } = this.state;
 
     const Moment = require("moment");
-    const array = [
-      { date: "2018-05-11" },
-      { date: "2018-05-12" },
-      { date: "2018-05-10" }
-    ];
+    
     dataQuote = bookingData.sort(
       (a, b) =>
         new Moment(b.CreatedDate).format("YYYYMMDD") -
