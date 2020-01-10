@@ -28,13 +28,13 @@ class AddSalesUser extends React.Component {
         // { key: "4", value: "Russia" },
       ],
       selectIsEnable: [
-        { key: true, value: "True" },
-        { key: false, value: "False" }
+        { key: false, value: "False" },
+        { key: true, value: "True" }
       ],
       selectUserType: [],
       selectIsAdmin: [
-        { key: "Y", value: "Yes" },
-        { key: "N", value: "No" }
+        { key: "N", value: "No" },
+        { key: "Y", value: "Yes" }
       ],
       selectImpExp: [],
       selectCompany: [],

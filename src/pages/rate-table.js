@@ -242,7 +242,8 @@ class RateTable extends Component {
       minDays: 0,
       minamount: 0,
       spolAddress: "",
-      spodAddress: ""
+      spodAddress: "",
+      cmbTypeRadio: ""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -488,6 +489,7 @@ class RateTable extends Component {
           this.state.containerLoadType = paramData.containerLoadType;
           this.state.users = paramData.users;
           this.setState({
+            cmbTypeRadio: paramData.cmbTypeRadio,
             polArray: this.state.polArray,
             podArray: this.state.podArray,
             polFilterArray: this.state.polFilterArray,
@@ -2196,6 +2198,7 @@ class RateTable extends Component {
   }
 
   createUISpecial() {
+    debugger;
     return this.state.referType.map((el, i) => {
       return (
         <div key={i} className="row cbm-space">
@@ -2212,8 +2215,8 @@ class RateTable extends Component {
                 type="text"
                 name="ContainerQuantity"
                 placeholder="Quantity"
+                value={el.ContainerQuantity || ""}
                 onChange={this.UISpecialChange.bind(this, i)}
-                value={el.ContainerQuantity}
               />
             </div>
           </div>
@@ -2223,26 +2226,24 @@ class RateTable extends Component {
                 type="text"
                 name="Temperature"
                 placeholder="Temp"
+                value={el.Temperature || ""}
                 onChange={this.UISpecialChange.bind(this, i)}
-                value={el.Temperature}
               />
             </div>
           </div>
-          <div className="col-md mt-4">
-            <div className="rate-radio-cntr mb-0">
+          <div className="col-md mt-2">
+            <div className="rate-radio-cntr mt-3 mb-0">
               <div>
                 <input
                   type="radio"
-                  name="TemperatureType"
-                  id="exist-cust"
-                  className="d-none"
+                  name={"TemperatureType" + i}
+                  id={"exist-cust" + i}
                   value="C"
                   onChange={this.UISpecialChange.bind(this, i)}
-                  checked={el.TemperatureType === "C" ? true : false}
                 />
                 <label
                   className="d-flex flex-column align-items-center"
-                  htmlFor="exist-cust"
+                  htmlFor={"exist-cust" + i}
                 >
                   Celcius
                 </label>
@@ -2250,25 +2251,23 @@ class RateTable extends Component {
               <div>
                 <input
                   type="radio"
-                  name="TemperatureType"
-                  id="new-cust"
-                  className="d-none"
+                  name={"TemperatureType" + i}
+                  id={"new-cust" + i}
                   value="F"
                   onChange={this.UISpecialChange.bind(this, i)}
-                  checked={el.TemperatureType === "F" ? true : false}
                 />
                 <label
                   className="d-flex flex-column align-items-center"
-                  htmlFor="new-cust"
+                  htmlFor={"new-cust" + i}
                 >
                   Farenheit
                 </label>
               </div>
             </div>
           </div>
-          <div className="spe-equ mt-0">
+          <div className="spe-equ">
             <i
-              className="fa fa-minus mt-2"
+              className="fa fa-minus"
               onClick={this.removeClickSpecial.bind(this, i)}
             ></i>
           </div>
@@ -3100,11 +3099,11 @@ class RateTable extends Component {
         filterMinday.push(parseInt(tempData[1]));
       }
 
-      var minDays = Math.min.apply(null, filterMinday);
+      var MinTT = Math.min.apply(null, filterMinday);
 
       this.setState({
         tempRateDetails: filteredData,
-        minDays
+        MinTT
       });
     } else {
       this.setState({
@@ -3136,7 +3135,7 @@ class RateTable extends Component {
     }
 
     if (filteredData.length > 0) {
-      var minamount = Math.min.apply(
+      var MinAmt = Math.min.apply(
         null,
         filteredData.map(function(item) {
           return item.TotalAmount;
@@ -3145,7 +3144,7 @@ class RateTable extends Component {
 
       this.setState({
         tempRateDetails: filteredData,
-        minamount
+        MinAmt
       });
     } else {
       this.setState({
@@ -3267,156 +3266,141 @@ class RateTable extends Component {
   }
 
   CreateMultiCBM() {
-    return this.state.cbmVal == "" ? (
-      this.state.multiCBM.map((el, i) => (
-        <div className="row cbm-space" key={i}>
-          <div className="col-md">
-            <div className="spe-equ">
-              <select
-                className="select-text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                name="PackageType"
-                value={el.PackageType}
-              >
-                <option selected>Select</option>
-                {this.state.packageTypeData.map((item, i) => (
-                  <option key={i} value={item.PackageName}>
-                    {item.PackageName}
-                  </option>
-                ))}
-              </select>
-            </div>
+    return this.state.multiCBM.map((el, i) => (
+      <div className="row cbm-space" key={i}>
+        <div className="col-md">
+          <div className="spe-equ">
+            <select
+              className="select-text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              name="PackageType"
+              value={el.PackageType}
+            >
+              <option selected>Select</option>
+              {this.state.packageTypeData.map((item, i) => (
+                <option key={i} value={item.PackageName}>
+                  {item.PackageName}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder="QTY"
-                className="w-100"
-                name="Quantity"
-                value={el.Quantity || ""}
-                //onKeyUp={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="QTY"
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+              //onKeyUp={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={"L (cm)"}
-                className="w-100"
-                name="Lengths"
-                value={el.Lengths || ""}
-                // onBlur={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"L (cm)"}
+              className="w-100"
+              name="Lengths"
+              value={el.Lengths || ""}
+              // onBlur={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={"W (cm)"}
-                className="w-100"
-                name="Width"
-                value={el.Width || ""}
-                //onBlur={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={"W (cm)"}
+              className="w-100"
+              name="Width"
+              value={el.Width || ""}
+              //onBlur={this.cbmChange}
+            />
           </div>
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder="H (cm)"
-                className="w-100"
-                name="Height"
-                value={el.Height || ""}
-                //onBlur={this.cbmChange}
-              />
-            </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder="H (cm)"
+              className="w-100"
+              name="Height"
+              value={el.Height || ""}
+              //onBlur={this.cbmChange}
+            />
           </div>
+        </div>
 
-          <div className="col-md">
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.HandleChangeMultiCBM.bind(this, i)}
+              placeholder={el.Gross_Weight === 0 ? "GW (kg)" : "GW (kg)"}
+              name="GrossWt"
+              value={el.GrossWt || ""}
+              className="w-100"
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              disabled
+              name={
+                this.state.containerLoadType === "LCL"
+                  ? "Volume"
+                  : "VolumeWeight"
+              }
+              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={
+                this.state.containerLoadType === "LCL"
+                  ? "KG"
+                  : this.state.containerLoadType === "AIR"
+                  ? "CW"
+                  : "VW"
+              }
+              value={
+                this.state.containerLoadType === "LCL"
+                  ? el.Volume
+                  : el.VolumeWeight || ""
+              }
+              className="w-100 weight-icon"
+            />
+          </div>
+        </div>
+        {i === 0 ? (
+          <div className="">
             <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder={el.Gross_Weight === 0 ? "GW (kg)" : "GW (kg)"}
-                name="GrossWt"
-                value={el.GrossWt || ""}
-                className="w-100"
-              />
+              <i
+                className="fa fa-plus mt-2"
+                aria-hidden="true"
+                onClick={this.addMultiCBM.bind(this)}
+              ></i>
             </div>
           </div>
-          <div className="col-md">
+        ) : null}
+        {this.state.multiCBM.length > 1 ? (
+          <div className="">
             <div className="spe-equ">
-              <input
-                type="text"
-                disabled
-                name={
-                  this.state.containerLoadType === "LCL"
-                    ? "Volume"
-                    : "VolumeWeight"
-                }
-                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-                placeholder={
-                  this.state.containerLoadType === "LCL"
-                    ? "KG"
-                    : this.state.containerLoadType === "AIR"
-                    ? "CW"
-                    : "VW"
-                }
-                value={
-                  this.state.containerLoadType === "LCL"
-                    ? el.Volume
-                    : el.VolumeWeight || ""
-                }
-                className="w-100 weight-icon"
-              />
+              <i
+                className="fa fa-minus mt-2"
+                aria-hidden="true"
+                onClick={this.removeMultiCBM.bind(this, i)}
+              ></i>
             </div>
           </div>
-          {i === 0 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-plus mt-2"
-                  aria-hidden="true"
-                  onClick={this.addMultiCBM.bind(this)}
-                ></i>
-              </div>
-            </div>
-          ) : null}
-          {this.state.multiCBM.length > 1 ? (
-            <div className="">
-              <div className="spe-equ">
-                <i
-                  className="fa fa-minus mt-2"
-                  aria-hidden="true"
-                  onClick={this.removeMultiCBM.bind(this, i)}
-                ></i>
-              </div>
-            </div>
-          ) : null}
-        </div>
-      ))
-    ) : (
-      <div className="col-md-4 m-auto">
-        <div className="spe-equ">
-          <input
-            type="number"
-            minLength={1}
-            //onChange={this.HandleCMBtextChange.bind(this)}
-            placeholder={this.state.modeoftransport != "AIR" ? "CBM" : "KG"}
-            className="w-100"
-            value={this.state.cbmVal}
-          />
-        </div>
+        ) : null}
       </div>
-    );
+    ));
   }
 
   HandleChangeMultiCBM(i, e) {
@@ -3684,6 +3668,21 @@ class RateTable extends Component {
     // }
 
     if (param.containerLoadType == "AIR" || param.containerLoadType == "FCL") {
+      var multiCBMData = [];
+      if (this.state.cmbTypeRadio === "CBM") {
+        multiCBMData.push({
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: parseFloat(this.state.cbmVal)
+        });
+      } else {
+        multiCBMData = MultiCBM;
+      }
       dataParameter = {
         Mode: param.containerLoadType,
         ShipmentType: param.shipmentType,
@@ -3706,7 +3705,7 @@ class RateTable extends Component {
         PickUpAddressDetails: pickUpAddressDetails[0],
         // DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:''},
         DestinationAddressDetails: destUpAddressDetails[0],
-        RateQueryDim: MultiCBM,
+        RateQueryDim: multiCBMData,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
         CompanyID: 1457295703,
         CommodityID: parseInt(param.CommodityID),
@@ -3717,6 +3716,21 @@ class RateTable extends Component {
       };
     }
     if (param.containerLoadType == "LTL" || param.containerLoadType == "LCL") {
+      var multiCBMData = [];
+      if (this.state.cmbTypeRadio === "CBM") {
+        multiCBMData.push({
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: parseFloat(this.state.cbmVal)
+        });
+      } else {
+        multiCBMData = MultiCBM;
+      }
       dataParameter = {
         Mode: param.containerLoadType,
         ShipmentType: param.shipmentType,
@@ -3732,7 +3746,7 @@ class RateTable extends Component {
         ChargeableWt: param.ChargeableWeight,
         PickUpAddressDetails: pickUpAddressDetails[0],
         DestinationAddressDetails: destUpAddressDetails[0],
-        RateQueryDim: MultiCBM,
+        RateQueryDim: multiCBMData,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
         CompanyID: 1457295703,
         CommodityID: parseInt(param.CommodityID),
@@ -4022,6 +4036,13 @@ class RateTable extends Component {
     return country;
   };
 
+  cmbTypeRadioChange(e) {
+    debugger;
+    var value = e.target.value;
+
+    this.setState({ cmbTypeRadio: value });
+  }
+
   render() {
     var i = 0;
     var classname = "";
@@ -4094,7 +4115,7 @@ class RateTable extends Component {
                     <span className="cust-labl clr-red">Cheaper</span>
                     <div className="d-flex" style={{ margin: "0 0px 0 12px" }}>
                       <span className="clr-green dragvalue">
-                        {this.state.minDays + " Days"}
+                        {this.state.MinTT + " Days"}
                       </span>
 
                       <input
@@ -4114,7 +4135,7 @@ class RateTable extends Component {
                         onChange={this.HandleRangeAmtSlider.bind(this)}
                       />
                       <span className="clr-red dragvalue2">
-                        {this.state.minamount}
+                        {this.state.MinAmt}
                       </span>
                       {/* <InputRange
                     formatLabel={value => `${value} DAYS`}
@@ -4277,12 +4298,17 @@ class RateTable extends Component {
                             <span className="rate-map-ovrly map-pol-lbl">
                               POL
                             </span>
-                            <span
-                              onClick={this.togglePOLModal}
-                              className="rate-map-ovrly rate-map-plus plusImg-pdng"
-                            >
-                              +
-                            </span>
+                            {this.state.typeofMove === 1 ||
+                            this.state.typeofMove === 2 ? (
+                              <span
+                                onClick={this.togglePOLModal}
+                                className="rate-map-ovrly rate-map-plus plusImg-pdng"
+                              >
+                                +
+                              </span>
+                            ) : (
+                              ""
+                            )}
 
                             <POLMaps
                               //zomePOL={this.state.zoomPOL}
@@ -4356,12 +4382,17 @@ class RateTable extends Component {
                     <div className="pol-pod-maps-cntr">
                       <div className="pol-pod-maps pod-maps">
                         <span className="rate-map-ovrly">POD</span>
-                        <span
-                          onClick={this.togglePODModal}
-                          className="rate-map-ovrly rate-map-plus"
-                        >
-                          +
-                        </span>
+                        {this.state.typeofMove === 1 ||
+                        this.state.typeofMove === 2 ? (
+                          <span
+                            onClick={this.togglePODModal}
+                            className="rate-map-ovrly rate-map-plus"
+                          >
+                            +
+                          </span>
+                        ) : (
+                          ""
+                        )}
                         <PODMaps
                           //zomePOL={this.state.zoomPOD}
                           markerPODData={this.state.markerPositionPOD}
@@ -4534,6 +4565,12 @@ class RateTable extends Component {
                                     mode == "AIR" &&
                                     lname !== ""
                                   ) {
+                                    // var fs = require('fs');
+
+                                    // if (fs.exists("https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +lname) == true)
+                                    // {
+
+                                    // }
                                     return (
                                       <React.Fragment>
                                         <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -4999,68 +5036,7 @@ class RateTable extends Component {
                       ? "Equipment Types"
                       : "Cargo Details"}
                   </h3>
-                  {/* <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                    <Select
-                      className="rate-dropdown"
-                      getOptionLabel={option => option.StandardContainerCode}
-                      getOptionValue={option => option.StandardContainerCode}
-                      isMulti
-                      options={this.state.EquipmentType}
-                      // onChange={this.equipChange.bind(this)}
-                      onChange={this.newaddClick.bind(this)}
-                      value={this.state.selected}
-                      showNewOptionAtTop={false}
-                    />
-                  </div>
-                  <div className="d-flex flex-wrap justify-content-center">
-                    {this.NewcreateUI()}
-                  </div>
-                  <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                    <input
-                      id="Special-equType"
-                      type="checkbox"
-                      className="d-none"
-                      name={"Special-equType"}
-                      // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                    />
-                  </div>
-                  {this.state.specialEquipment === true ? (
-                    <div className="">
-                      <div className="equip-plus-cntr w-100">
-                        <Select
-                          className="rate-dropdown"
-                          getOptionLabel={option => option.SpecialContainerCode}
-                          getOptionValue={option => option.SpecialContainerCode}
-                          options={this.state.SpacialEqmt}
-                          placeholder="Select Kind of Special Equipment"
-                          onChange={this.specEquipChange}
-                          // value={thi.state.spEqtSelect}
-                          showNewOptionAtTop={false}
-                        />
-                      </div>
-                      <div id="cbmInner">
-                        {this.state.specialEqtSelect === true ? (
-                          this.state.flattack_openTop.length > 0 ? (
-                            <>{this.MultiCreateCBM()}</>
-                          ) : null
-                        ) : null}
-                        {this.state.refertypeSelect === true ? (
-                          this.state.referType.length > 0 ? (
-                            <>{this.createUISpecial()}</>
-                          ) : null
-                        ) : null}
-                        {this.state.spacEqmtTypeSelect === true ? (
-                          this.state.spacEqmtType.length > 0 ? (
-                            <>
-                              <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                {this.createUIspacEqmtType()}
-                              </div>
-                            </>
-                          ) : null
-                        ) : null}
-                      </div>
-                    </div>
-                  ) : null} */}
+
                   {this.state.containerLoadType === "FTL" ? (
                     this.createUITruckType()
                   ) : this.state.containerLoadType === "FCL" ? (
@@ -5142,7 +5118,78 @@ class RateTable extends Component {
                       ) : null}
                     </>
                   ) : (
-                    this.CreateMultiCBM()
+                    <>
+                      <div className="rate-radio-cntr justify-content-center">
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="exist-cust"
+                            value="ALL"
+                            style={{ display: "none" }}
+                            checked={
+                              this.state.cmbTypeRadio === "ALL" ? true : false
+                            }
+                            // onChange={
+                            //   this.state.containerLoadType !== "FTL"
+                            //     ? this.cmbTypeRadioChange.bind(this)
+                            //     : null
+                            // }
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="exist-cust"
+                          >
+                            Dimensions
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="cmbTypeRadio"
+                            id="new-cust"
+                            value="CBM"
+                            style={{ display: "none" }}
+                            checked={
+                              this.state.cmbTypeRadio !== "ALL" ? true : false
+                            }
+                            onChange={this.cmbTypeRadioChange.bind(this)}
+                          />
+                          <label
+                            className="d-flex flex-column align-items-center"
+                            htmlFor="new-cust"
+                          >
+                            {this.state.containerLoadType === "AIR"
+                              ? "Chargable Weight"
+                              : "CBM"}
+                          </label>
+                        </div>
+                      </div>
+                      {this.state.cmbTypeRadio === "ALL" ? (
+                        this.CreateMultiCBM()
+                      ) : (
+                        <div className="col-md-4 m-auto">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              minLength={1}
+                              onChange={this.HandleCMBtextChange.bind(this)}
+                              placeholder={
+                                this.state.modeoftransport != "AIR"
+                                  ? "CBM"
+                                  : "KG"
+                              }
+                              className="w-100"
+                              value={this.state.cbmVal}
+                            />
+                          </div>
+                          <span className="equip-error">
+                            {/* {this.state.errors["CBM"]} */}
+                          </span>
+                        </div>
+                      )}
+                    </>
                   )}
                   <div className="text-center">
                     <Button
@@ -5346,7 +5393,7 @@ class RateTable extends Component {
                           ) : null}
                         </>
                       ) : (
-                        this.CreateMultiCBM()
+                        <>{this.CreateMultiCBM()}</>
                       )}
                       {/* {this.createUITruckType()} */}
                     </div>
@@ -5491,6 +5538,32 @@ class RateTable extends Component {
                     padding: "15px"
                   }}
                 >
+                  {/* <div
+                    className="py-3"
+                   style={{marginBottom:"0px"}}
+                  >
+                    <h6>Customer Details</h6>
+                  </div>
+                  <div className="">
+                    <div className="row">
+                      <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock">
+                        <p className="details-title">Account/Customer</p>
+                        <p className="details-para">
+                         
+                        </p>
+                      </div>
+                      <div className="col-12 col-sm-4 col-md-4 col-lg-6">
+                        <p className="details-title">Address</p>
+                        <p className="details-para">
+                          
+                        </p>
+                      </div>
+                      <div className="col-12 col-sm-4 col-md-3 col-xl-3">
+                        <p className="details-title">Notification Person</p>
+                        <p className="details-para"></p>
+                      </div>
+                    </div>
+                  </div> */}
                   <div className="rename-cntr login-fields">
                     <label>Commodity</label>
                     <select onChange={this.filterAll}>
@@ -5507,6 +5580,55 @@ class RateTable extends Component {
                       ))}
                     </select>
                   </div>
+
+                  <div className="rate-radio-cntr justify-content-center">
+                    <div>
+                      <input
+                        type="radio"
+                        name="cmbTypeRadio"
+                        id="exist-cust"
+                        value="ALL"
+                        style={{ display: "none" }}
+                        checked={
+                          this.state.cmbTypeRadio === "ALL" ? true : false
+                        }
+                        // onChange={
+                        //   this.state.containerLoadType !== "FTL"
+                        //     ? this.cmbTypeRadioChange.bind(this)
+                        //     : null
+                        // }
+                        onChange={this.cmbTypeRadioChange.bind(this)}
+                      />
+                      <label
+                        className="d-flex flex-column align-items-center"
+                        htmlFor="exist-cust"
+                      >
+                        Dimensions
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="cmbTypeRadio"
+                        id="new-cust"
+                        value="CBM"
+                        style={{ display: "none" }}
+                        checked={
+                          this.state.cmbTypeRadio !== "ALL" ? true : false
+                        }
+                        onChange={this.cmbTypeRadioChange.bind(this)}
+                      />
+                      <label
+                        className="d-flex flex-column align-items-center"
+                        htmlFor="new-cust"
+                      >
+                        {this.state.containerLoadType === "AIR"
+                          ? "Chargable Weight"
+                          : "CBM"}
+                      </label>
+                    </div>
+                  </div>
+
                   <div className="rename-cntr login-fields align-items-start">
                     <label>Cargo</label>
                     <div className="w-100">
@@ -5590,17 +5712,32 @@ class RateTable extends Component {
                             </div>
                           ) : null}
                         </>
+                      ) : this.state.cmbTypeRadio === "ALL" ? (
+                        <>{this.CreateMultiCBM()}</>
                       ) : (
-                        this.CreateMultiCBM()
+                        <div className="col-md-4 m-auto">
+                          <div className="spe-equ">
+                            <input
+                              type="text"
+                              minLength={1}
+                              onChange={this.HandleCMBtextChange.bind(this)}
+                              placeholder={
+                                this.state.modeoftransport != "AIR"
+                                  ? "CBM"
+                                  : "KG"
+                              }
+                              className="w-100"
+                              value={this.state.cbmVal}
+                            />
+                          </div>
+                          <span className="equip-error">
+                            {/* {this.state.errors["CBM"]} */}
+                          </span>
+                        </div>
                       )}
-                      {/* {this.createUITruckType()} */}
                     </div>
-                    {/* <select>
-                    <option>Select</option>
-                    <option>Select</option>
-                    <option>Select</option>
-                  </select> */}
                   </div>
+
                   <div className="text-center">
                     <Button
                       className="butn"

@@ -360,7 +360,6 @@ class NewRateSearch extends Component {
   }
 
   HandleSearchButton() {
-    let self = this;
     if (this.handleValidation()) {
       if (this.state.currencyCode === "") {
         this.setState({
@@ -368,6 +367,7 @@ class NewRateSearch extends Component {
         });
       }
       if (this.state.currencyCode !== "") {
+        debugger;
         if (
           this.state.selected.length > 0 &&
           this.state.containerLoadType === "FCL"
@@ -376,13 +376,18 @@ class NewRateSearch extends Component {
             pathname: "rate-table",
             state: this.state
           });
-        } else if (this.state.selected.length > 0) {
+        } else if (
+          this.state.selected.length > 0 ||
+          this.state.referType.length > 0 ||
+          this.state.flattack_openTop.length > 0 ||
+          this.state.spacEqmtType.length > 0
+        ) {
           this.props.history.push({
             pathname: "rate-table",
             state: this.state
           });
         } else if (
-          this.state.selected.length==0 &&
+          this.state.selected.length == 0 &&
           this.state.containerLoadType !== "FCL"
         ) {
           this.props.history.push({
@@ -778,7 +783,7 @@ class NewRateSearch extends Component {
         "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
         e.target.value +
         "&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&sessiontoken=2333"; // site that doesn’t send Access-Control-*
-      fetch(proxyurl + url)
+      fetch(url)
         .then(res => res.json())
         .then(response => {
           for (let i = 0; i < response.predictions.length; i++) {

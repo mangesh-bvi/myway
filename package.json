@@ -16,6 +16,7 @@
     "crypto-js": "^3.1.9-1",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
+    "fs": "0.0.1-security",
     "google-map-react": "^1.1.5",
     "history": "^4.10.1",
     "image-size": "^0.8.3",

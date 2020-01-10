@@ -19,7 +19,6 @@ import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
 import ApprovedImg from "./../assets/img/approved-status.png";
 import Delivery from "./../assets/img/delivery.png";
-
 import Delete from "./../assets/img/red-delete-icon.png";
 import Download from "./../assets/img/csv.png";
 import appSettings from "../helpers/appSetting";
@@ -116,7 +115,7 @@ class ShippingDetailsTwo extends Component {
     } else if (typeof this.props.location.state != "undefined") {
       var hblno = this.props.location.state.detail;
       var event = this.props.location.state.event || "";
-      var pageName = this.props.location.state.pageName;
+      var pageName = this.props.location.state.pageName||"";
       if (event !== "N/A") {
         self.setState({ eve: event });
       }
@@ -1103,6 +1102,7 @@ class ShippingDetailsTwo extends Component {
                         <div className="row">
                           {addressData.map(function(addkey, i) {
                             //  <p className="details-heading" key={i}>{addkey.EntityType}</p>
+                            debugger  
                             return (
                               <div
                                 className="col-md-6 details-border shipper-details"
@@ -1111,11 +1111,15 @@ class ShippingDetailsTwo extends Component {
                                 <p className="details-heading">
                                   {addkey.EntityType}
                                 </p>
+                                <p className="details-title">
+                                  {addkey.CustomerName}
+                                </p>
+                                
                                 {/* <p className="details-title">
                                   Blueground Turizm Ve Services Hizmetleri
                                   Ticaret A.S.
                                 </p> */}
-                                <p className="details-para">{addkey.Address}</p>
+                                <p className="details-para">{addkey.Address1}</p>
                               </div>
                             );
                           })}

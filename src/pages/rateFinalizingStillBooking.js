@@ -10,7 +10,7 @@ import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
 import Download from "./../assets/img/csv.png";
-
+import Delete from "./../assets/img/red-delete-icon.png";
 import { encryption, convertToPlain } from "../helpers/encryption";
 
 import {
@@ -148,7 +148,8 @@ class RateFinalizingStillBooking extends Component {
       isNotify: false,
       multiCargo: [],
       CargoDetails: [],
-      loding: false
+      loding: false,
+      newloding: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -974,6 +975,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   BookigGridDetailsListAIR() {
+    this.setState({ newloding: true });
     let self = this;
 
     var bookingId = self.state.BookingNo;
@@ -1192,6 +1194,7 @@ class RateFinalizingStillBooking extends Component {
 
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
+    this.setState({ newloding: true });
     let self = this;
     debugger;
     var bookingId = self.state.BookingNo;
@@ -1264,6 +1267,7 @@ class RateFinalizingStillBooking extends Component {
             }
 
             self.setState({
+              newloding: false,
               company_name,
               EquipmentTypes,
               ContactName,
@@ -2275,6 +2279,53 @@ class RateFinalizingStillBooking extends Component {
     }));
   }
 
+  HandleDocumentDelete(e, row) {
+    debugger;
+    if (row.original.FilePath) {
+      var MywayUserID = encryption(
+        window.localStorage.getItem("userid"),
+        "desc"
+      );
+      var documentData = {
+        QuoteID: row.original.QuoteID,
+        DocumentID: row.original.DocumentID,
+        MyWayUserID: MywayUserID
+      };
+
+      let self = this;
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/DeleteSalesQuotedocument`,
+        // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
+        data: documentData,
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+        NotificationManager.success(response.data.Table[0].Result);
+        if (
+          response.data.Table[0].Result === "Docuement deleted successfully"
+        ) {
+           var FileData=self.state.FileData;
+           FileData.splice(row.index)
+        }
+      });
+    } else {
+      var FileData = this.state.FileData;
+      var index = row.index;
+      if (FileData.length == 0) {
+        FileData = [{ FileName: "No File Found" }];
+        this.setState({ FileData });
+      } else {
+        FileData.splice(index);
+        if (FileData.length > 0) {
+          this.setState({ FileData });
+        } else {
+          FileData = [{ FileName: "No File Found" }];
+          this.setState({ FileData });
+        }
+      }
+    }
+  }
   render() {
     const { Booking } = this.state;
     console.log(this.state.ContainerLoad);
@@ -2307,863 +2358,901 @@ class RateFinalizingStillBooking extends Component {
                   : this.state.BookingNo !== "" && this.state.isView === true
                   ? "Update Booking"
                   : this.state.BookingNo !== "" && this.state.isView === true
-                  ? "Booking Details " + bNumber
+                  ? "Booking Details " + this.state.newloding === true
+                    ? ""
+                    : bNumber
                   : ""}
               </h2>
             </div>
-            <div className="row">
-              <div className="col-md-12">
-                <div className="pb-4" style={{ backgroundColor: "#fff" }}>
-                  <div className="rate-final-contr">
-                    <div className="title-border d-flex align-items-center justify-content-between py-3">
-                      <h3>Quotation Price</h3>
+            {this.state.newloding === true ? (
+              <div className="loader-icon"></div>
+            ) : (
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="pb-4" style={{ backgroundColor: "#fff" }}>
+                    <div className="rate-final-contr">
+                      <div className="title-border d-flex align-items-center justify-content-between py-3">
+                        <h3>Quotation Price</h3>
+                      </div>
+                      <div className="react-rate-table">
+                        <ReactTable
+                          columns={[
+                            {
+                              columns: [
+                                {
+                                  Cell: ({ original, row }) => {
+                                    i++;
+
+                                    var lname = "";
+                                    var olname = "";
+                                    if (row._original.Linename) {
+                                      olname = row._original.Linename;
+                                      lname =
+                                        row._original.Linename.replace(
+                                          "  ",
+                                          "_"
+                                        ).replace(" ", "_") + ".png";
+                                    }
+                                    if (row._original.LineName) {
+                                      olname = row._original.LineName;
+                                      lname =
+                                        row._original.LineName.replace(
+                                          "  ",
+                                          "_"
+                                        ).replace(" ", "_") + ".png";
+                                    }
+                                    var mode = this.state.ModeofTransport;
+
+                                    if (mode === "Ocean" && lname !== "") {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              alt={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                                lname
+                                              }
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    } else if (
+                                      mode == "Air" ||
+                                      (mode == "AIR" && lname !== "")
+                                    ) {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              alt={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                lname
+                                              }
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                              }
+                                              alt={olname}
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  },
+                                  accessor: "lineName"
+                                  // minWidth: 200
+                                },
+                                {
+                                  accessor: "POL",
+
+                                  Cell: row => {
+                                    if (
+                                      this.state.Booking[0].CargoType ===
+                                        "LCL" ||
+                                      this.state.Booking[0].CargoType ===
+                                        "FCL" ||
+                                      this.state.Booking[0].CargoType === "AIR"
+                                    ) {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POL</p>
+                                          <p className="details-para">
+                                            {row.original.POL}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POL</p>
+                                          <p className="details-para">
+                                            {row.original.OriginName}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  }
+                                },
+                                {
+                                  accessor: "POD",
+                                  Cell: row => {
+                                    if (
+                                      this.state.Booking[0].CargoType ===
+                                        "LCL" ||
+                                      this.state.Booking[0].CargoType ===
+                                        "FCL" ||
+                                      this.state.Booking[0].CargoType === "AIR"
+                                    ) {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POD</p>
+                                          <p className="details-para">
+                                            {row.original.POD}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POD</p>
+                                          <p className="details-para">
+                                            {row.original.DestinationName}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  }
+                                },
+                                {
+                                  minWidth: 120,
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">
+                                          Transit port
+                                        </p>
+                                        <p className="details-para">
+                                          {row.original.TransshipmentPort}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "TransshipmentPort",
+                                  filterable: true
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">
+                                          Free Time
+                                        </p>
+                                        <p className="details-para"></p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "freeTime",
+                                  filterable: true
+                                  // minWidth: 80
+                                },
+
+                                {
+                                  accessor: "ContainerType",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">
+                                          Container
+                                        </p>
+                                        <p className="details-para">
+                                          {row.original.ContainerType}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+                                {
+                                  accessor: "ExpiryDate",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">Expiry</p>
+                                        <p className="details-para">
+                                          {new Date(
+                                            row.original.ExpiryDate
+                                          ).toLocaleDateString("en-US")}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">
+                                          TT (Days)
+                                        </p>
+                                        {this.state.ContainerLoad !==
+                                        "INLAND" ? (
+                                          <p className="details-para">
+                                            {row.original.TransitTime}
+                                          </p>
+                                        ) : (
+                                          <p className="details-para">
+                                            {row.original.TransitTime}
+                                          </p>
+                                        )}
+                                      </>
+                                    );
+                                  },
+                                  accessor: "TransitTime"
+                                  // minWidth: 60
+                                },
+                                {
+                                  accessor: "Total",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.Total}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                }
+                              ]
+                            }
+                          ]}
+                          data={this.state.QuotationData}
+                          minRows={1}
+                          showPagination={false}
+                          className="-striped -highlight no-mid-align"
+                          SubComponent={row => {
+                            return (
+                              <div style={{ padding: "20px 0" }}>
+                                <ReactTable
+                                  data={this.state.QuotationSubData.filter(
+                                    x =>
+                                      x.SaleQuoteID ===
+                                        row.original.SaleQuoteID1 ||
+                                      row.original.SaleQuoteID
+                                  )}
+                                  columns={[
+                                    {
+                                      columns: [
+                                        {
+                                          Header: "C. Description",
+                                          accessor: "ChargeDesc"
+                                        },
+                                        {
+                                          Header: "C.Name",
+                                          accessor: "ChargeCode"
+                                        },
+                                        {
+                                          Header: "Units",
+                                          accessor: "Chargeitem"
+                                        },
+                                        {
+                                          Header: "Unit Price",
+                                          accessor: "Amount"
+                                        },
+                                        {
+                                          Header: "Final Payment",
+                                          accessor: "Total"
+                                        }
+                                      ]
+                                    }
+                                  ]}
+                                  // defaultPageSize={3}
+                                  minRows={1}
+                                  showPagination={false}
+                                />
+                              </div>
+                            );
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="react-rate-table">
-                      <ReactTable
-                        columns={[
-                          {
-                            columns: [
-                              {
-                                Cell: ({ original, row }) => {
-                                  i++;
-
-                                  var lname = "";
-                                  var olname = "";
-                                  if (row._original.Linename) {
-                                    olname = row._original.Linename;
-                                    lname =
-                                      row._original.Linename.replace(
-                                        "  ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
-                                  }
-                                  if (row._original.LineName) {
-                                    olname = row._original.LineName;
-                                    lname =
-                                      row._original.LineName.replace(
-                                        "  ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
-                                  }
-                                  var mode = this.state.ModeofTransport;
-
-                                  if (mode === "Ocean" && lname !== "") {
-                                    return (
-                                      <React.Fragment>
-                                        <div className="rate-tab-img">
-                                          <img
-                                            title={olname}
-                                            alt={olname}
-                                            src={
-                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                                              lname
-                                            }
-                                          />
-                                        </div>
-                                      </React.Fragment>
-                                    );
-                                  } else if (
-                                    mode == "Air" ||
-                                    (mode == "AIR" && lname !== "")
-                                  ) {
-                                    return (
-                                      <React.Fragment>
-                                        <div className="rate-tab-img">
-                                          <img
-                                            title={olname}
-                                            alt={olname}
-                                            src={
-                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                                              lname
-                                            }
-                                          />
-                                        </div>
-                                      </React.Fragment>
-                                    );
-                                  } else {
-                                    return (
-                                      <React.Fragment>
-                                        <div className="rate-tab-img">
-                                          <img
-                                            title={olname}
-                                            src={
-                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
-                                            }
-                                            alt={olname}
-                                          />
-                                        </div>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
-                                accessor: "lineName"
-                                // minWidth: 200
-                              },
-                              {
-                                accessor: "POL",
-
-                                Cell: row => {
-                                  if (
-                                    this.state.Booking[0].CargoType === "LCL" ||
-                                    this.state.Booking[0].CargoType === "FCL" ||
-                                    this.state.Booking[0].CargoType === "AIR"
-                                  ) {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POL</p>
-                                        <p className="details-para">
-                                          {row.original.POL}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  } else {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POL</p>
-                                        <p className="details-para">
-                                          {row.original.OriginName}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                }
-                              },
-                              {
-                                accessor: "POD",
-                                Cell: row => {
-                                  if (
-                                    this.state.Booking[0].CargoType === "LCL" ||
-                                    this.state.Booking[0].CargoType === "FCL" ||
-                                    this.state.Booking[0].CargoType === "AIR"
-                                  ) {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POD</p>
-                                        <p className="details-para">
-                                          {row.original.POD}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  } else {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POD</p>
-                                        <p className="details-para">
-                                          {row.original.DestinationName}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                }
-                              },
-                              {
-                                minWidth: 120,
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">
-                                        Transit port
-                                      </p>
-                                      <p className="details-para">
-                                        {row.original.TransshipmentPort}
-                                      </p>
-                                    </>
-                                  );
-                                },
-                                accessor: "TransshipmentPort",
-                                filterable: true
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Free Time</p>
-                                      <p className="details-para"></p>
-                                    </>
-                                  );
-                                },
-                                accessor: "freeTime",
-                                filterable: true
-                                // minWidth: 80
-                              },
-
-                              {
-                                accessor: "ContainerType",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">Container</p>
-                                      <p className="details-para">
-                                        {row.original.ContainerType}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "ExpiryDate",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">Expiry</p>
-                                      <p className="details-para">
-                                        {new Date(
-                                          row.original.ExpiryDate
-                                        ).toLocaleDateString("en-US")}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">TT (Days)</p>
-                                      {this.state.ContainerLoad !== "INLAND" ? (
-                                        <p className="details-para">
-                                          {row.original.TransitTime}
-                                        </p>
-                                      ) : (
-                                        <p className="details-para">
-                                          {row.original.TransitTime}
-                                        </p>
-                                      )}
-                                    </>
-                                  );
-                                },
-                                accessor: "TransitTime"
-                                // minWidth: 60
-                              },
-                              {
-                                accessor: "Total",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">Price</p>
-                                      <p className="details-para">
-                                        {row.original.Total}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              }
-                            ]
-                          }
-                        ]}
-                        data={this.state.QuotationData}
-                        minRows={1}
-                        showPagination={false}
-                        className="-striped -highlight no-mid-align"
-                        SubComponent={row => {
-                          return (
-                            <div style={{ padding: "20px 0" }}>
-                              <ReactTable
-                                data={this.state.QuotationSubData.filter(
-                                  x =>
-                                    x.SaleQuoteID ===
-                                      row.original.SaleQuoteID1 ||
-                                    row.original.SaleQuoteID
-                                )}
-                                columns={[
-                                  {
-                                    columns: [
-                                      {
-                                        Header: "C. Description",
-                                        accessor: "ChargeDesc"
-                                      },
-                                      {
-                                        Header: "C.Name",
-                                        accessor: "ChargeCode"
-                                      },
-                                      {
-                                        Header: "Units",
-                                        accessor: "Chargeitem"
-                                      },
-                                      {
-                                        Header: "Unit Price",
-                                        accessor: "Amount"
-                                      },
-                                      {
-                                        Header: "Final Payment",
-                                        accessor: "Total"
-                                      }
-                                    ]
-                                  }
-                                ]}
-                                // defaultPageSize={3}
-                                minRows={1}
-                                showPagination={false}
-                              />
-                            </div>
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="rate-final-contr">
-                    <Collapse in={this.state.showContent}>
-                      <div>
-                        <div
-                          className="title-border py-3"
-                          style={{ marginBottom: "15px" }}
-                        >
-                          <h3>Rate Query</h3>
-                        </div>
-                        <div className="row">
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">Shipment Type</p>
-                            <p className="details-para">
-                              {/* {Booking.length > 0
+                    <div className="rate-final-contr">
+                      <Collapse in={this.state.showContent}>
+                        <div>
+                          <div
+                            className="title-border py-3"
+                            style={{ marginBottom: "15px" }}
+                          >
+                            <h3>Rate Query</h3>
+                          </div>
+                          <div className="row">
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">Shipment Type</p>
+                              <p className="details-para">
+                                {/* {Booking.length > 0
                                 ? Booking[0].ShipmentType
                                 : null} */}
-                              {this.state.ShipmentType}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">Mode of Transport</p>
-                            <p className="details-para">
-                              {/* {Booking.length > 0
-                                ? Booking[0].ModeOfTransport
-                                : null} */}
-                              {this.state.ModeofTransport}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">Container Load</p>
-                            <p className="details-para">
-                              {/* {Booking.length > 0 ? Booking[0].CargoType : null} */}
-                              {this.state.ContainerLoad !== ""
-                                ? this.state.ContainerLoad
-                                : ""}
-                            </p>
-                          </div>
-                          {this.state.ContainerLoad == "FCL" ? (
-                            <>
-                              <div className="col-12 col-sm-4 col-md-4 col-lg-3">
-                                <p className="details-title">Equipment Types</p>
-                                <p className="details-para">
-                                  {this.state.EquipmentTypes}
-                                </p>
-                              </div>
-                              <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                                <p className="details-title">
-                                  Special Equipment
-                                </p>
-                                <p className="details-para"></p>
-                              </div>
-                            </>
-                          ) : (
-                            ""
-                          )}
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">HazMat</p>
-                            <p className="details-para">
-                              {/* {this.state.EquipmentTypes} */}
-                              {this.state.HazMat === 0 ? "No" : "Yes"}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">Customs Clearance</p>
-                            <p className="details-para">
-                              {/* {this.state.EquipmentTypes} */}
-                              {this.state.Customs_Clearance === 0
-                                ? "No"
-                                : "Yes"}
-                            </p>
-                          </div>
-                          {this.state.ContainerLoad === "LCL" ||
-                          this.state.ContainerLoad === "AIR" ||
-                          this.state.ContainerLoad === "LTL" ? (
-                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                              <p className="details-title">Unstackable</p>
-                              <p className="details-para">
-                                {/* {this.state.EquipmentTypes} */}
-                                {this.state.Unstackable === 0 ? "No" : "Yes"}
+                                {this.state.ShipmentType}
                               </p>
                             </div>
-                          ) : (
-                            ""
-                          )}
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">Inco Terms</p>
-                            <p className="details-para">
-                              {this.state.IncoTerm}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">Type of Move</p>
-                            <p className="details-para">
-                              {this.state.typeofMove}
-                            </p>
-                          </div>
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">Mode of Transport</p>
+                              <p className="details-para">
+                                {/* {Booking.length > 0
+                                ? Booking[0].ModeOfTransport
+                                : null} */}
+                                {this.state.ModeofTransport}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">Container Load</p>
+                              <p className="details-para">
+                                {/* {Booking.length > 0 ? Booking[0].CargoType : null} */}
+                                {this.state.ContainerLoad !== ""
+                                  ? this.state.ContainerLoad
+                                  : ""}
+                              </p>
+                            </div>
+                            {this.state.ContainerLoad == "FCL" ? (
+                              <>
+                                <div className="col-12 col-sm-4 col-md-4 col-lg-3">
+                                  <p className="details-title">
+                                    Equipment Types
+                                  </p>
+                                  <p className="details-para">
+                                    {this.state.EquipmentTypes}
+                                  </p>
+                                </div>
+                                <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                                  <p className="details-title">
+                                    Special Equipment
+                                  </p>
+                                  <p className="details-para"></p>
+                                </div>
+                              </>
+                            ) : (
+                              ""
+                            )}
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">HazMat</p>
+                              <p className="details-para">
+                                {/* {this.state.EquipmentTypes} */}
+                                {this.state.HazMat === 0 ? "No" : "Yes"}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">Customs Clearance</p>
+                              <p className="details-para">
+                                {/* {this.state.EquipmentTypes} */}
+                                {this.state.Customs_Clearance === 0
+                                  ? "No"
+                                  : "Yes"}
+                              </p>
+                            </div>
+                            {this.state.ContainerLoad === "LCL" ||
+                            this.state.ContainerLoad === "AIR" ||
+                            this.state.ContainerLoad === "LTL" ? (
+                              <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                                <p className="details-title">Unstackable</p>
+                                <p className="details-para">
+                                  {/* {this.state.EquipmentTypes} */}
+                                  {this.state.Unstackable === 0 ? "No" : "Yes"}
+                                </p>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">Inco Terms</p>
+                              <p className="details-para">
+                                {this.state.IncoTerm}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">Type of Move</p>
+                              <p className="details-para">
+                                {this.state.typeofMove}
+                              </p>
+                            </div>
 
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">POL</p>
-                            <p className="details-para">
-                              {Booking.length > 0 ? Booking[0].POL : null}
-                              {this.state.QuotationData.length > 0
-                                ? this.state.QuotationData[0].POL
-                                : ""}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">POD</p>
-                            <p className="details-para">
-                              {Booking.length > 0 ? Booking[0].POD : null}
-                              {this.state.QuotationData.length > 0
-                                ? this.state.QuotationData[0].POD
-                                : ""}
-                            </p>
-                          </div>
-                          {/* <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">POL</p>
+                              <p className="details-para">
+                                {Booking.length > 0 ? Booking[0].POL : null}
+                                {this.state.QuotationData.length > 0
+                                  ? this.state.QuotationData[0].POL
+                                  : ""}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
+                              <p className="details-title">POD</p>
+                              <p className="details-para">
+                                {Booking.length > 0 ? Booking[0].POD : null}
+                                {this.state.QuotationData.length > 0
+                                  ? this.state.QuotationData[0].POD
+                                  : ""}
+                              </p>
+                            </div>
+                            {/* <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                             <p className="details-title">PU Address</p>
                           </div>
                           <div className="col-12 col-sm-4 col-md-3 col-lg-3">
                             <p className="details-title">Delivery Address</p>
                           </div> */}
+                          </div>
                         </div>
-                      </div>
-                    </Collapse>
-                    <div
-                      className="text-right"
-                      style={{ marginBottom: "15px" }}
-                    >
-                      <button
-                        className={className}
-                        id="toggler"
-                        onClick={() =>
-                          this.setState({
-                            showContent: !this.state.showContent
-                          })
-                        }
-                      >
-                        {this.state.showContent ? (
-                          <span>VIEW LESS</span>
-                        ) : (
-                          <span>VIEW MORE</span>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="rate-final-contr">
-                    <div>
+                      </Collapse>
                       <div
-                        className="title-border title-border-t py-3"
+                        className="text-right"
                         style={{ marginBottom: "15px" }}
                       >
-                        <h3>Customer Details</h3>
+                        <button
+                          className={className}
+                          id="toggler"
+                          onClick={() =>
+                            this.setState({
+                              showContent: !this.state.showContent
+                            })
+                          }
+                        >
+                          {this.state.showContent ? (
+                            <span>VIEW LESS</span>
+                          ) : (
+                            <span>VIEW MORE</span>
+                          )}
+                        </button>
                       </div>
-                      <div className="">
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Account/Customer</p>
+                    </div>
 
-                            <p className="details-para">
-                              {/* {selectedType === "Shipper"
+                    <div className="rate-final-contr">
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
+                          <h3>Customer Details</h3>
+                        </div>
+                        <div className="">
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">Account/Customer</p>
+
+                              <p className="details-para">
+                                {/* {selectedType === "Shipper"
                                 ? Booking[0].Shipper_Name
                                 : selectedType === "Consignee"
                                 ? Booking[0].Consignee_Name
                                 : null} */}
-                              {/* {Booking.length > 0
+                                {/* {Booking.length > 0
                                 ? Booking[0].company_name
                                 : ""} */}
 
-                              {this.state.company_name}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {/* {Booking.length > 0
+                                {this.state.company_name}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">Address</p>
+                              <p className="details-para">
+                                {/* {Booking.length > 0
                                 ? Booking[0].Company_Address
                                 : ""} */}
-                              {this.state.Company_Address}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Notification Person</p>
-                            <p className="details-para">
-                              {/* {Booking.length > 0
+                                {this.state.Company_Address}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">
+                                Notification Person
+                              </p>
+                              <p className="details-para">
+                                {/* {Booking.length > 0
                                 ? Booking[0].contact_name
                                 : ""}
                                */}
-                              {this.state.contact_name}
-                            </p>
+                                {this.state.contact_name}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div>
-                      <div
-                        style={{ marginBottom: "15px" }}
-                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
-                      >
-                        <h3 style={{ display: "inline" }}>Consignee Details</h3>
-                        <input
-                          type="checkbox"
-                          onChange={this.HandleRadioBtn.bind(this, "Conshinee")}
-                          name="cust-select"
-                          id="Conshinee"
-                          checked={this.state.isConshinee}
-                          value="Consignee"
-                        />
-                        <label className="d-flex" htmlFor="Conshinee">
-                          Consignee
-                        </label>
+                      <div>
+                        <div
+                          style={{ marginBottom: "15px" }}
+                          className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                        >
+                          <h3 style={{ display: "inline" }}>
+                            Consignee Details
+                          </h3>
+                          <input
+                            type="checkbox"
+                            onChange={this.HandleRadioBtn.bind(
+                              this,
+                              "Conshinee"
+                            )}
+                            name="cust-select"
+                            id="Conshinee"
+                            checked={this.state.isConshinee}
+                            value="Consignee"
+                          />
+                          <label className="d-flex" htmlFor="Conshinee">
+                            Consignee
+                          </label>
+                        </div>
+                        <div>
+                          {this.state.isConshinee === false ? (
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
+                                <p className="details-title">Consignee Name</p>
+                                {this.state.userType !== "Customer" ? (
+                                  <input
+                                    type="text"
+                                    name="Consignee"
+                                    value={this.state.consigneeVal}
+                                  />
+                                ) : (
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Consignee}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          // width:"100%",
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                        value={item.Company_ID}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Consignee"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Consignee"
+                                    )}
+                                    value={this.state.fields["Consignee"]}
+                                  />
+                                )}
+                              </div>
+
+                              <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                                <p className="details-title">Address</p>
+                                <select
+                                  onChange={this.AddressChange.bind(
+                                    this,
+                                    "Consignee"
+                                  )}
+                                  value={this.state.Conshinee_AddressID}
+                                >
+                                  <option>Select</option>
+
+                                  {this.state.conshineeAddData.length > 0
+                                    ? this.state.conshineeAddData.map(
+                                        (item, i) => (
+                                          <option
+                                            key={i}
+                                            value={item.AddressID}
+                                          >
+                                            {item.Cust_Address}
+                                          </option>
+                                        )
+                                      )
+                                    : ""
+                                  //<option>Other</option>
+                                  }
+                                  <option>Other</option>
+                                </select>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4 login-fields">
+                                <p className="details-title">&nbsp;</p>
+                                {this.state.conshineeother === true ? (
+                                  <textarea
+                                    className="form-control"
+                                    style={{ width: "100%", resize: "none" }}
+                                    value={this.state.Consignee_Displayas}
+                                    onChange={this.HandleConsineeAddressChange.bind(
+                                      this
+                                    )}
+                                  ></textarea>
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="">
+                              <div className="row">
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">
+                                    Consignee Name
+                                  </p>
+
+                                  <p className="details-para">
+                                    {this.state.company_name}
+                                  </p>
+                                </div>
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">Address</p>
+                                  <p className="details-para">
+                                    {this.state.Company_Address}
+                                  </p>
+                                </div>
+                                {/* <div className="col-12 col-sm-6 col-md-4">
+                              <p className="details-title">
+                                Notification Person
+                              </p>
+                              <p className="details-para">
+                                {this.state.contact_name}
+                              </p>
+                            </div> */}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <div>
-                        {this.state.isConshinee === false ? (
-                          <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
-                              <p className="details-title">Consignee Name</p>
-                              {this.state.userType !== "Customer" ? (
-                                <input
-                                  type="text"
-                                  name="Consignee"
-                                  value={this.state.consigneeVal}
-                                />
-                              ) : (
-                                <Autocomplete
-                                  getItemValue={item => item.Company_Name}
-                                  items={this.state.Consignee}
-                                  renderItem={(item, isHighlighted) => (
-                                    <div
-                                      style={{
-                                        // width:"100%",
-                                        background: isHighlighted
-                                          ? "lightgray"
-                                          : "white"
-                                      }}
-                                      value={item.Company_ID}
-                                    >
-                                      {item.Company_Name}
-                                    </div>
-                                  )}
-                                  onChange={this.HandleChangeCon.bind(
-                                    this,
-                                    "Consignee"
-                                  )}
-                                  // menuStyle={this.state.menuStyle}
-                                  onSelect={this.handleSelectCon.bind(
-                                    this,
-                                    item => item.Company_ID,
-                                    "Consignee"
-                                  )}
-                                  value={this.state.fields["Consignee"]}
-                                />
+                        <div
+                          style={{ marginBottom: "15px" }}
+                          className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                        >
+                          <h3 style={{ display: "inline" }}>Shipper Details</h3>
+                          <div style={{ display: "inline", float: "left" }}>
+                            <input
+                              type="checkbox"
+                              onChange={this.HandleRadioBtn.bind(
+                                this,
+                                "Shipper"
                               )}
-                            </div>
-
-                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                              <p className="details-title">Address</p>
-                              <select
-                                onChange={this.AddressChange.bind(
-                                  this,
-                                  "Consignee"
+                              name="cust-select"
+                              id="Shipper"
+                              checked={this.state.isShipper}
+                              value="Shipper"
+                            />
+                            <label
+                              className="d-flex flex-column align-items-center"
+                              htmlFor="Shipper"
+                            >
+                              Shipper
+                            </label>
+                          </div>
+                        </div>
+                        <div>
+                          {this.state.isShipper === false ? (
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
+                                <p className="details-title">Shipper Name</p>
+                                {this.state.userType !== "Customer" ? (
+                                  <input
+                                    type="text"
+                                    name="Shipper"
+                                    onChange={this.HandleChangeCon_Ship}
+                                    value={this.state.shipperval}
+                                  />
+                                ) : (
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Shipper}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    value={this.state.fields["Shipper"]}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Shipper"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Shipper"
+                                    )}
+                                  />
                                 )}
-                                value={this.state.Conshinee_AddressID}
-                              >
-                                <option>Select</option>
+                                {/* <p className="details-para">
+                              {Booking3.length > 0 ? Booking3[0].Shipper : null}
+                            </p> */}
+                              </div>
 
-                                {this.state.conshineeAddData.length > 0
-                                  ? this.state.conshineeAddData.map(
-                                      (item, i) => (
+                              <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                                <p className="details-title">Address</p>
+
+                                <select
+                                  onChange={this.AddressChange.bind(
+                                    this,
+                                    "Shipper"
+                                  )}
+                                  value={this.state.Shipper_AddressID}
+                                >
+                                  <option>Select</option>
+
+                                  {this.state.shipperAddData.length > 0
+                                    ? this.state.shipperAddData.map(
+                                        (item, i) => (
+                                          <option
+                                            key={i}
+                                            value={item.AddressID}
+                                          >
+                                            {item.Cust_Address}
+                                          </option>
+                                        )
+                                      )
+                                    : ""}
+                                  <option>Other</option>
+                                </select>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4 login-fields">
+                                <p className="details-title">&nbsp;</p>
+                                {this.state.shipperother === true ? (
+                                  <textarea
+                                    className="form-control"
+                                    style={{ width: "100%", resize: "none" }}
+                                    value={this.state.Shipper_Displayas}
+                                    onChange={this.HandleShipperAddressChange.bind(
+                                      this
+                                    )}
+                                  ></textarea>
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="">
+                              <div className="row">
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">Shipper Name</p>
+
+                                  <p className="details-para">
+                                    {this.state.company_name}
+                                  </p>
+                                </div>
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">Address</p>
+                                  <p className="details-para">
+                                    {this.state.Company_Address}
+                                  </p>
+                                </div>
+                                {/* <div className="col-12 col-sm-6 col-md-4">
+                              <p className="details-title">
+                                Notification Person
+                              </p>
+                              <p className="details-para">
+                                {this.state.contact_name}
+                              </p>
+                            </div> */}
+                              </div>
+                            </div>
+                          )}{" "}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div
+                          style={{ marginBottom: "15px" }}
+                          className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                        >
+                          <h3 style={{ display: "inline" }}>Buyer Details</h3>
+                          <input
+                            type="checkbox"
+                            onChange={this.HandleRadioBtn.bind(this, "Buyer")}
+                            name="cust-select"
+                            id="Buyer"
+                            checked={this.state.isBuyer}
+                            value="Buyer"
+                          />
+                          <label className="d-flex" htmlFor="Buyer">
+                            Buyer
+                          </label>
+                        </div>
+                        <div>
+                          {this.state.isBuyer === false ? (
+                            <div className="row">
+                              <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
+                                <p className="details-title">Buyer Name</p>
+                                <p className="details-para">
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Buyer}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    value={this.state.fields["Buyer"]}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Buyer"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Buyer"
+                                    )}
+                                  />
+                                </p>
+                              </div>
+                              <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                                <p className="details-title">Address</p>
+
+                                <select
+                                  onChange={this.AddressChange.bind(
+                                    this,
+                                    "Buyer"
+                                  )}
+                                  value={this.state.Buyer_AddressID}
+                                >
+                                  <option>Select</option>
+
+                                  {this.state.buyerAddData.length > 0
+                                    ? this.state.buyerAddData.map((item, i) => (
                                         <option key={i} value={item.AddressID}>
                                           {item.Cust_Address}
                                         </option>
-                                      )
-                                    )
-                                  : ""
-                                //<option>Other</option>
-                                }
-                                <option>Other</option>
-                              </select>
-                            </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
-                              <p className="details-title">&nbsp;</p>
-                              {this.state.conshineeother === true ? (
-                                <textarea
-                                  className="form-control"
-                                  style={{ width: "100%", resize: "none" }}
-                                  value={this.state.Consignee_Displayas}
-                                  onChange={this.HandleConsineeAddressChange.bind(
-                                    this
-                                  )}
-                                ></textarea>
-                              ) : null}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="">
-                            <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
-                                <p className="details-title">Consignee Name</p>
-
-                                <p className="details-para">
-                                  {this.state.company_name}
-                                </p>
+                                      ))
+                                    : ""}
+                                  <option>Other</option>
+                                </select>
                               </div>
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
-                                <p className="details-title">Address</p>
-                                <p className="details-para">
-                                  {this.state.Company_Address}
-                                </p>
+                              <div className="col-12 col-sm-6 col-md-4 login-fields">
+                                <p className="details-title">&nbsp;</p>
+                                {this.state.buyerother === true ? (
+                                  <textarea
+                                    className="form-control"
+                                    style={{ width: "100%", resize: "none" }}
+                                    value={this.state.Buyer_Displayas}
+                                    onChange={this.HandleBuyerAddressChange.bind(
+                                      this
+                                    )}
+                                  ></textarea>
+                                ) : null}
                               </div>
-                              {/* <div className="col-12 col-sm-6 col-md-4">
-                              <p className="details-title">
-                                Notification Person
-                              </p>
-                              <p className="details-para">
-                                {this.state.contact_name}
-                              </p>
-                            </div> */}
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        style={{ marginBottom: "15px" }}
-                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
-                      >
-                        <h3 style={{ display: "inline" }}>Shipper Details</h3>
-                        <div style={{ display: "inline", float: "left" }}>
-                          <input
-                            type="checkbox"
-                            onChange={this.HandleRadioBtn.bind(this, "Shipper")}
-                            name="cust-select"
-                            id="Shipper"
-                            checked={this.state.isShipper}
-                            value="Shipper"
-                          />
-                          <label
-                            className="d-flex flex-column align-items-center"
-                            htmlFor="Shipper"
-                          >
-                            Shipper
-                          </label>
-                        </div>
-                      </div>
-                      <div>
-                        {this.state.isShipper === false ? (
-                          <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
-                              <p className="details-title">Shipper Name</p>
-                              {this.state.userType !== "Customer" ? (
-                                <input
-                                  type="text"
-                                  name="Shipper"
-                                  onChange={this.HandleChangeCon_Ship}
-                                  value={this.state.shipperval}
-                                />
-                              ) : (
-                                <Autocomplete
-                                  getItemValue={item => item.Company_Name}
-                                  items={this.state.Shipper}
-                                  renderItem={(item, isHighlighted) => (
-                                    <div
-                                      style={{
-                                        background: isHighlighted
-                                          ? "lightgray"
-                                          : "white"
-                                      }}
-                                    >
-                                      {item.Company_Name}
-                                    </div>
-                                  )}
-                                  value={this.state.fields["Shipper"]}
-                                  onChange={this.HandleChangeCon.bind(
-                                    this,
-                                    "Shipper"
-                                  )}
-                                  // menuStyle={this.state.menuStyle}
-                                  onSelect={this.handleSelectCon.bind(
-                                    this,
-                                    item => item.Company_ID,
-                                    "Shipper"
-                                  )}
-                                />
-                              )}
-                              {/* <p className="details-para">
-                              {Booking3.length > 0 ? Booking3[0].Shipper : null}
-                            </p> */}
-                            </div>
+                          ) : (
+                            <div className="">
+                              <div className="row">
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">Buyer Name</p>
 
-                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                              <p className="details-title">Address</p>
-
-                              <select
-                                onChange={this.AddressChange.bind(
-                                  this,
-                                  "Shipper"
-                                )}
-                                value={this.state.Shipper_AddressID}
-                              >
-                                <option>Select</option>
-
-                                {this.state.shipperAddData.length > 0
-                                  ? this.state.shipperAddData.map((item, i) => (
-                                      <option key={i} value={item.AddressID}>
-                                        {item.Cust_Address}
-                                      </option>
-                                    ))
-                                  : ""}
-                                <option>Other</option>
-                              </select>
-                            </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
-                              <p className="details-title">&nbsp;</p>
-                              {this.state.shipperother === true ? (
-                                <textarea
-                                  className="form-control"
-                                  style={{ width: "100%", resize: "none" }}
-                                  value={this.state.Shipper_Displayas}
-                                  onChange={this.HandleShipperAddressChange.bind(
-                                    this
-                                  )}
-                                ></textarea>
-                              ) : null}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="">
-                            <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
-                                <p className="details-title">Shipper Name</p>
-
-                                <p className="details-para">
-                                  {this.state.company_name}
-                                </p>
-                              </div>
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
-                                <p className="details-title">Address</p>
-                                <p className="details-para">
-                                  {this.state.Company_Address}
-                                </p>
-                              </div>
-                              {/* <div className="col-12 col-sm-6 col-md-4">
-                              <p className="details-title">
-                                Notification Person
-                              </p>
-                              <p className="details-para">
-                                {this.state.contact_name}
-                              </p>
-                            </div> */}
-                            </div>
-                          </div>
-                        )}{" "}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div
-                        style={{ marginBottom: "15px" }}
-                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
-                      >
-                        <h3 style={{ display: "inline" }}>Buyer Details</h3>
-                        <input
-                          type="checkbox"
-                          onChange={this.HandleRadioBtn.bind(this, "Buyer")}
-                          name="cust-select"
-                          id="Buyer"
-                          checked={this.state.isBuyer}
-                          value="Buyer"
-                        />
-                        <label className="d-flex" htmlFor="Buyer">
-                          Buyer
-                        </label>
-                      </div>
-                      <div>
-                        {this.state.isBuyer === false ? (
-                          <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
-                              <p className="details-title">Buyer Name</p>
-                              <p className="details-para">
-                                <Autocomplete
-                                  getItemValue={item => item.Company_Name}
-                                  items={this.state.Buyer}
-                                  renderItem={(item, isHighlighted) => (
-                                    <div
-                                      style={{
-                                        background: isHighlighted
-                                          ? "lightgray"
-                                          : "white"
-                                      }}
-                                    >
-                                      {item.Company_Name}
-                                    </div>
-                                  )}
-                                  value={this.state.fields["Buyer"]}
-                                  onChange={this.HandleChangeCon.bind(
-                                    this,
-                                    "Buyer"
-                                  )}
-                                  // menuStyle={this.state.menuStyle}
-                                  onSelect={this.handleSelectCon.bind(
-                                    this,
-                                    item => item.Company_ID,
-                                    "Buyer"
-                                  )}
-                                />
-                              </p>
-                            </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                              <p className="details-title">Address</p>
-
-                              <select
-                                onChange={this.AddressChange.bind(
-                                  this,
-                                  "Buyer"
-                                )}
-                                value={this.state.Buyer_AddressID}
-                              >
-                                <option>Select</option>
-
-                                {this.state.buyerAddData.length > 0
-                                  ? this.state.buyerAddData.map((item, i) => (
-                                      <option key={i} value={item.AddressID}>
-                                        {item.Cust_Address}
-                                      </option>
-                                    ))
-                                  : ""}
-                                <option>Other</option>
-                              </select>
-                            </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
-                              <p className="details-title">&nbsp;</p>
-                              {this.state.buyerother === true ? (
-                                <textarea
-                                  className="form-control"
-                                  style={{ width: "100%", resize: "none" }}
-                                  value={this.state.Buyer_Displayas}
-                                  onChange={this.HandleBuyerAddressChange.bind(
-                                    this
-                                  )}
-                                ></textarea>
-                              ) : null}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="">
-                            <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
-                                <p className="details-title">Buyer Name</p>
-
-                                <p className="details-para">
-                                  {this.state.company_name}
-                                </p>
-                              </div>
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
-                                <p className="details-title">Address</p>
-                                <p className="details-para">
-                                  {this.state.Company_Address}
-                                </p>
-                              </div>
-                              {/* <div className="col-12 col-sm-6 col-md-4">
+                                  <p className="details-para">
+                                    {this.state.company_name}
+                                  </p>
+                                </div>
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">Address</p>
+                                  <p className="details-para">
+                                    {this.state.Company_Address}
+                                  </p>
+                                </div>
+                                {/* <div className="col-12 col-sm-6 col-md-4">
                             <p className="details-title">
                               Notification Person
                             </p>
@@ -3171,120 +3260,127 @@ class RateFinalizingStillBooking extends Component {
                               {this.state.contact_name}
                             </p>
                           </div> */}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        style={{ marginBottom: "15px" }}
-                        className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
-                      >
-                        <h3 style={{ display: "inline" }}>Notify Details</h3>
-                        <input
-                          type="checkbox"
-                          onChange={this.HandleRadioBtn.bind(this, "Notify")}
-                          name="cust-select"
-                          id="Notify"
-                          checked={this.state.isNotify}
-                          value="Notify"
-                        />
-                        <label className="d-flex" htmlFor="Notify">
-                          Notify
-                        </label>
+                          )}
+                        </div>
                       </div>
                       <div>
-                        {this.state.isNotify === false ? (
-                          <div className="row">
-                            <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
-                              <p className="details-title">Notify Party Name</p>
-                              <p className="details-para">
-                                <Autocomplete
-                                  getItemValue={item => item.Company_Name}
-                                  items={this.state.Notify}
-                                  renderItem={(item, isHighlighted) => (
-                                    <div
-                                      style={{
-                                        background: isHighlighted
-                                          ? "lightgray"
-                                          : "white"
-                                      }}
-                                    >
-                                      {item.Company_Name}
-                                    </div>
-                                  )}
-                                  value={this.state.fields["Notify"]}
-                                  onChange={this.HandleChangeCon.bind(
-                                    this,
-                                    "Notify"
-                                  )}
-                                  // menuStyle={this.state.menuStyle}
-                                  onSelect={this.handleSelectCon.bind(
-                                    this,
-                                    item => item.Company_ID,
-                                    "Notify"
-                                  )}
-                                />
-                              </p>
-                            </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                              <p className="details-title">Address</p>
-
-                              <select
-                                onChange={this.AddressChange.bind(
-                                  this,
-                                  "Notify"
-                                )}
-                                value={this.state.Notify_AddressID}
-                              >
-                                <option>Select</option>
-
-                                {this.state.notifyAddData.length > 0
-                                  ? this.state.notifyAddData.map((item, i) => (
-                                      <option key={i} value={item.AddressID}>
-                                        {item.Cust_Address}
-                                      </option>
-                                    ))
-                                  : ""
-                                //<option>Other</option>
-                                }
-                                <option>Other</option>
-                              </select>
-                            </div>
-                            <div className="col-12 col-sm-6 col-md-4 login-fields">
-                              <p className="details-title">&nbsp;</p>
-                              {this.state.notiother === true ? (
-                                <textarea
-                                  className="form-control"
-                                  style={{ width: "100%", resize: "none" }}
-                                  value={this.state.Notify_Displayas}
-                                  onChange={this.HandleNotifyAddressChange.bind(
-                                    this
-                                  )}
-                                ></textarea>
-                              ) : null}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="">
+                        <div
+                          style={{ marginBottom: "15px" }}
+                          className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
+                        >
+                          <h3 style={{ display: "inline" }}>Notify Details</h3>
+                          <input
+                            type="checkbox"
+                            onChange={this.HandleRadioBtn.bind(this, "Notify")}
+                            name="cust-select"
+                            id="Notify"
+                            checked={this.state.isNotify}
+                            value="Notify"
+                          />
+                          <label className="d-flex" htmlFor="Notify">
+                            Notify
+                          </label>
+                        </div>
+                        <div>
+                          {this.state.isNotify === false ? (
                             <div className="row">
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <div className="col-12 col-sm-6 col-md-4 login-fields divblock r-border">
                                 <p className="details-title">
                                   Notify Party Name
                                 </p>
-
                                 <p className="details-para">
-                                  {this.state.company_name}
+                                  <Autocomplete
+                                    getItemValue={item => item.Company_Name}
+                                    items={this.state.Notify}
+                                    renderItem={(item, isHighlighted) => (
+                                      <div
+                                        style={{
+                                          background: isHighlighted
+                                            ? "lightgray"
+                                            : "white"
+                                        }}
+                                      >
+                                        {item.Company_Name}
+                                      </div>
+                                    )}
+                                    value={this.state.fields["Notify"]}
+                                    onChange={this.HandleChangeCon.bind(
+                                      this,
+                                      "Notify"
+                                    )}
+                                    // menuStyle={this.state.menuStyle}
+                                    onSelect={this.handleSelectCon.bind(
+                                      this,
+                                      item => item.Company_ID,
+                                      "Notify"
+                                    )}
+                                  />
                                 </p>
                               </div>
-                              <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
                                 <p className="details-title">Address</p>
-                                <p className="details-para">
-                                  {this.state.Company_Address}
-                                </p>
+
+                                <select
+                                  onChange={this.AddressChange.bind(
+                                    this,
+                                    "Notify"
+                                  )}
+                                  value={this.state.Notify_AddressID}
+                                >
+                                  <option>Select</option>
+
+                                  {this.state.notifyAddData.length > 0
+                                    ? this.state.notifyAddData.map(
+                                        (item, i) => (
+                                          <option
+                                            key={i}
+                                            value={item.AddressID}
+                                          >
+                                            {item.Cust_Address}
+                                          </option>
+                                        )
+                                      )
+                                    : ""
+                                  //<option>Other</option>
+                                  }
+                                  <option>Other</option>
+                                </select>
                               </div>
-                              {/* <div className="col-12 col-sm-6 col-md-4">
+                              <div className="col-12 col-sm-6 col-md-4 login-fields">
+                                <p className="details-title">&nbsp;</p>
+                                {this.state.notiother === true ? (
+                                  <textarea
+                                    className="form-control"
+                                    style={{ width: "100%", resize: "none" }}
+                                    value={this.state.Notify_Displayas}
+                                    onChange={this.HandleNotifyAddressChange.bind(
+                                      this
+                                    )}
+                                  ></textarea>
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="">
+                              <div className="row">
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">
+                                    Notify Party Name
+                                  </p>
+
+                                  <p className="details-para">
+                                    {this.state.company_name}
+                                  </p>
+                                </div>
+                                <div className="col-12 col-sm-6 col-md-4 r-border">
+                                  <p className="details-title">Address</p>
+                                  <p className="details-para">
+                                    {this.state.Company_Address}
+                                  </p>
+                                </div>
+                                {/* <div className="col-12 col-sm-6 col-md-4">
                           <p className="details-title">
                             Notification Person
                           </p>
@@ -3292,201 +3388,246 @@ class RateFinalizingStillBooking extends Component {
                             {this.state.contact_name}
                           </p>
                         </div> */}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="row">
-                      <div className="col-12 col-sm-6 col-md-4 login-fields">
-                        <p className="details-title">Commodity</p>
-                        <select
-                          disabled={true}
-                          value={Number(this.state.selectedCommodity)}
+                      <div className="row">
+                        <div className="col-12 col-sm-6 col-md-4 login-fields">
+                          <p className="details-title">Commodity</p>
+                          <select
+                            disabled={true}
+                            value={Number(this.state.selectedCommodity)}
+                          >
+                            <option>Select</option>
+                            {this.state.commodityData.map((item, i) => (
+                              <option key={i} value={item.id}>
+                                {item.Commodity}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ width: "100%", marginBottom: "15px" }}
                         >
-                          <option>Select</option>
-                          {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.id}>
-                              {item.Commodity}
-                            </option>
-                          ))}
-                        </select>
+                          <h3>Cargo Details</h3>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <div
-                        className="title-border title-border-t py-3"
-                        style={{ width: "100%", marginBottom: "15px" }}
-                      >
-                        <h3>Cargo Details</h3>
+                      <div className="align-center">
+                        <button
+                          onClick={this.toggleEdit}
+                          style={{ margin: "0 0 15px 0" }}
+                          className="butn more-padd"
+                        >
+                          Cargo Details
+                        </button>
                       </div>
-                    </div>
-                    <div className="align-center">
-                      <button
-                        onClick={this.toggleEdit}
-                        style={{ margin: "0 0 15px 0" }}
-                        className="butn more-padd"
-                      >
-                        Cargo Details
-                      </button>
-                    </div>
-                    <div className="row ratefinalpgn">
-                      {this.state.eqmtType.length > 0 ? "" : null}
-                      {this.state.multiCargo.length > 0 ? (
+                      <div className="row ratefinalpgn">
+                        {this.state.eqmtType.length > 0 ? "" : null}
+                        {this.state.multiCargo.length > 0 ? (
+                          <ReactTable
+                            columns={[
+                              {
+                                columns: [
+                                  {
+                                    Header: "Package Type",
+                                    accessor: "PackageType"
+                                  },
+
+                                  {
+                                    Header: "Quantity",
+                                    accessor: "Quantity"
+                                  },
+                                  {
+                                    Header: "Length",
+                                    accessor: "Lengths"
+                                  },
+                                  {
+                                    Header: "Width",
+                                    accessor: "Width"
+                                  },
+                                  {
+                                    Header: "Height",
+                                    accessor: "Height"
+                                  },
+                                  {
+                                    Header: "Gross Weight",
+                                    accessor: "GrossWt"
+                                  },
+                                  {
+                                    Header: "Volume Weight",
+                                    accessor: "VolumeWeight"
+                                  }
+                                ]
+                              }
+                            ]}
+                            data={this.state.multiCargo}
+                            minRows={0}
+                            showPagination={false}
+                            className="-striped -highlight"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="row cargodetailsB"></div>
+
+                      <div className="rename-cntr login-fields d-block">
+                        {/* <input
+                        type="file"
+                        onChange={this.onDocumentChangeHandler}
+                      ></input> */}
+                        <div className="d-flex w-100 mt-4 align-items-center">
+                          <div className="w-100">
+                            <input
+                              id="file-upload"
+                              className="file-upload d-none"
+                              type="file"
+                              onChange={this.onDocumentChangeHandler}
+                            />
+                            <label htmlFor="file-upload">
+                              <div className="file-icon">
+                                <img src={FileUpload} alt="file-upload" />
+                              </div>
+                              Add File
+                            </label>
+                          </div>
+                        </div>
+                        <br />
+
                         <ReactTable
                           columns={[
                             {
                               columns: [
                                 {
-                                  Header: "Package Type",
-                                  accessor: "PackageType"
+                                  Header: "File name",
+                                  accessor: "FileName"
                                 },
 
                                 {
-                                  Header: "Quantity",
-                                  accessor: "Quantity"
-                                },
-                                {
-                                  Header: "Length",
-                                  accessor: "Lengths"
-                                },
-                                {
-                                  Header: "Width",
-                                  accessor: "Width"
-                                },
-                                {
-                                  Header: "Height",
-                                  accessor: "Height"
-                                },
-                                {
-                                  Header: "Gross Weight",
-                                  accessor: "GrossWt"
-                                },
-                                {
-                                  Header: "Volume Weight",
-                                  accessor: "VolumeWeight"
+                                  Header: "Action",
+                                  Cell: row => {
+                                    if (
+                                      row.original.FilePath !== undefined &&
+                                      row.original.FileName !== "No File Found"
+                                    ) {
+                                      return (
+                                        <div className="action-cntr">
+                                          <a
+                                            onClick={e =>
+                                              // this.HandleDowloadFile(e, row)
+                                              this.HandleFileOpen(
+                                                e,
+                                                row.original.FilePath
+                                              )
+                                            }
+                                          >
+                                            <img
+                                              title={"Download"}
+                                              style={{
+                                                cursor: "pointer"
+                                              }}
+                                              className="actionicon"
+                                              src={Download}
+                                              alt="download-icon"
+                                            />
+                                          </a>
+                                          <a
+                                            onClick={e =>
+                                              this.HandleDocumentDelete(e, row)
+                                            }
+                                          >
+                                            <img
+                                              title={"Delete"}
+                                              style={{
+                                                cursor: "pointer"
+                                              }}
+                                              className="actionicon"
+                                              src={Delete}
+                                              alt="download-icon"
+                                            />
+                                          </a>
+                                        </div>
+                                      );
+                                    } else if (
+                                      row.original.FilePath !== "" &&
+                                      row.original.FileName !== "No File Found"
+                                    ) {
+                                      return (
+                                        <></>
+                                        // <div className="action-cntr">
+                                        //   <a
+                                        //     onClick={e =>
+                                        //       this.HandleDocumentDelete(e, row)
+                                        //     }
+                                        //   >
+                                        //     <img
+                                        //       title={"Delete"}
+                                        //       style={{
+                                        //         cursor: "pointer"
+                                        //       }}
+                                        //       className="actionicon"
+                                        //       F
+                                        //       src={Delete}
+                                        //       alt="download-icon"
+                                        //     />
+                                        //   </a>
+                                        // </div>
+                                      );
+                                    } else {
+                                      return <></>;
+                                    }
+                                  }
                                 }
                               ]
                             }
                           ]}
-                          data={this.state.multiCargo}
+                          data={this.state.FileData}
                           minRows={0}
                           showPagination={false}
-                          className="-striped -highlight"
                         />
-                      ) : null}
-                    </div>
-                    <div className="row cargodetailsB"></div>
-
-                    <div className="rename-cntr login-fields d-block">
-                      {/* <input
-                        type="file"
-                        onChange={this.onDocumentChangeHandler}
-                      ></input> */}
-                      <div className="d-flex w-100 mt-4 align-items-center">
-                        <div className="w-100">
-                          <input
-                            id="file-upload"
-                            className="file-upload d-none"
-                            type="file"
-                            onChange={this.onDocumentChangeHandler}
-                          />
-                          <label htmlFor="file-upload">
-                            <div className="file-icon">
-                              <img src={FileUpload} alt="file-upload" />
-                            </div>
-                            Add File
-                          </label>
-                        </div>
-                      </div>
-                      <br />
-
-                      <ReactTable
-                        columns={[
-                          {
-                            columns: [
-                              {
-                                Header: "File name",
-                                accessor: "FileName"
-                              },
-
-                              {
-                                Header: "Action",
-                                Cell: row => {
-                                  if (
-                                    row.original.FilePath !== "" &&
-                                    row.original.FileName !== "File Not Found"
-                                  ) {
-                                    return (
-                                      <div className="action-cntr">
-                                        <a
-                                          onClick={e =>
-                                            // this.HandleDowloadFile(e, row)
-                                            this.HandleFileOpen(
-                                              e,
-                                              row.original.FilePath
-                                            )
-                                          }
-                                        >
-                                          <img
-                                            className="actionicon"
-                                            src={Download}
-                                            alt="download-icon"
-                                          />
-                                        </a>
-                                      </div>
-                                    );
-                                  } else {
-                                    return <></>;
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        ]}
-                        data={this.state.FileData}
-                        minRows={0}
-                        showPagination={false}
-                      />
-                      {/* {this.state.FileData.length > 0
+                        {/* {this.state.FileData.length > 0
                         ? this.CreateFileElement()
                         : null} */}
-                    </div>
+                      </div>
 
-                    <center>
-                      <button
-                        disabled={this.state.loding === true ? true : false}
-                        onClick={
-                          this.state.copy === true
-                            ? this.HandleBookigClone.bind(this)
-                            : this.HandleBookingUpdate.bind(this)
-                        }
-                        className="butn more-padd mt-4"
-                      >
-                        {this.state.loding == true ? (
-                          <>
-                            <i
-                              style={{ marginRight: 15 }}
-                              className="fa fa-refresh fa-spin"
-                            ></i>
-                            {"Please Wait ..."}
-                          </>
-                        ) : (
-                          <>
-                            {this.state.copy === true
-                              ? "Booking Clone"
-                              : this.state.BookingNo !== ""
-                              ? "Update Booking"
-                              : ""}
-                          </>
-                        )}
-                      </button>
-                    </center>
+                      <center>
+                        <button
+                          disabled={this.state.loding === true ? true : false}
+                          onClick={
+                            this.state.copy === true
+                              ? this.HandleBookigClone.bind(this)
+                              : this.HandleBookingUpdate.bind(this)
+                          }
+                          className="butn more-padd mt-4"
+                        >
+                          {this.state.loding == true ? (
+                            <>
+                              <i
+                                style={{ marginRight: 15 }}
+                                className="fa fa-refresh fa-spin"
+                              ></i>
+                              {"Please Wait ..."}
+                            </>
+                          ) : (
+                            <>
+                              {this.state.copy === true
+                                ? "Booking Clone"
+                                : this.state.BookingNo !== ""
+                                ? "Update Booking"
+                                : ""}
+                            </>
+                          )}
+                        </button>
+                      </center>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}{" "}
           </div>
         </div>
         <NotificationContainer leaveTimeout="3000" />

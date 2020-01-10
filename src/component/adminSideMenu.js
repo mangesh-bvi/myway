@@ -9,6 +9,7 @@ import DashboardIcon from "./../assets/img/dashboard.png";
 import QuotesIcon from "./../assets/img/quotes.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
+import { Link } from "react-router-dom";
 
 class AdminSideMenu extends Component {
   constructor(props) {
@@ -25,54 +26,54 @@ class AdminSideMenu extends Component {
       <div className="d-flex flex-column justify-content-between h-100">
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
-            <a href="view-user">
+            <Link to="/view-user">
               <img
                 src={DashboardIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />{" "}
               User Listing
-            </a>
+            </Link>
           </li>
           <li className="sidemenu-ul-li">
-            <a href="add-user">
+            <Link to="/add-user">
               <img
                 src={QuotesIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />{" "}
               Add User
-            </a>
+            </Link>
           </li>
           <li className="sidemenu-ul-li">
-            <a href="add-sales-user">
+            <Link to="/add-sales-user">
               <img
                 src={QuotesIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />{" "}
               Add Sales User
-            </a>
+            </Link>
           </li>
           <li className="sidemenu-ul-li">
-            <a href="event-management">
+            <Link to="/event-management">
               <img
                 src={QuotesIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
-              />{" "}
+              />
               Add Event
-            </a>
+            </Link>
           </li>
           <li className="sidemenu-ul-li">
-            <a href="activity-log">
+            <Link to="/activity-log">
               <img
                 src={QuotesIcon}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
-              />{" "}
+              />
               Activity Log
-            </a>
+            </Link>
           </li>
           {/* <li className="sidemenu-ul-li">
               <img

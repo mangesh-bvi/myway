@@ -10,15 +10,15 @@ import "./index.css";
 import Login from "./pages/Login";
 
 import * as serviceWorker from "./serviceWorker";
+// import { Router,  Route } from "react-router-dom";
 
- 
 import Dashboard from "./pages/Dashboard";
 import ChangePassword from "./pages/ChangePassword";
 import ForgotPassword from "./pages/ForgotPassword";
 
 import Passcode from "./pages/Passcode";
 import UpdateForgotPassword from "./pages/updateforgotpassword";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import UserAgreement from "./pages/UserAgreement";
 import QRCode from "./pages/QRCode";
@@ -56,70 +56,75 @@ import "./assets/css/responsive.css";
 
 // import Signin from './pages/Signin';
 
-import BookingView from './pages/BookingView'
+import BookingView from "./pages/BookingView";
 import BookingInsert from "./pages/Booking-Insert";
 
 //import TestGoogleAPI from "./pages/testGoogleAPI"
- 
 
 ReactDOM.render(
   <Router>
-    <Route exact path="/" component={Login} />
-    <Route exact path="/login" component={Login} />
-    <Route exact path="/dashboard" component={Dashboard} />
-    <Route exact path="/changepassword" component={ChangePassword} />
-    <Route exact path="/forgotpassword" component={ForgotPassword} />
-    <Route exact path="/passcode" component={Passcode} />
-    <Route
-      exact
-      path="/updateforgotpassword"
-      component={UpdateForgotPassword}
-    />
-    <Route exact path="/user-agreement" component={UserAgreement} />
-    {/* <Route exact path="/popup" component={PopupModal} /> */}
+    <Switch>
+      <Route exact path="/" component={Login} />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/dashboard" component={Dashboard} />
+      <Route exact path="/changepassword" component={ChangePassword} />
+      <Route exact path="/forgotpassword" component={ForgotPassword} />
+      <Route exact path="/passcode" component={Passcode} />
+      <Route
+        exact
+        path="/updateforgotpassword"
+        component={UpdateForgotPassword}
+      />
+      <Route exact path="/user-agreement" component={UserAgreement} />
+      {/* <Route exact path="/popup" component={PopupModal} /> */}
 
-    <Route exact path="/qrcode" component={QRCode} />
-    <Route exact path="/shipment-summary" component={ShippingDetails} />
-    <Route exact path="/shipment-details" component={ShippingDetailsTwo} />
-    <Route exact path="/green-counter" component={GreenCounter} />
-    <Route exact path="/shipment-planner" component={ShipmentPlanner} />
-    <Route exact path="/rate-search" component={RateSearch} />
-    <Route exact path="/mywayMessage" component={myWayMessage} />
-    <Route exact path="/new-rate-search" component={NewRateSearch} />
-    <Route exact path="/add-user" component={AddUser} />
-    <Route exact path="/rate-table" component={RateTable} />
-    <Route exact path="/spot-rate" component={SpotRate} />
-    <Route exact path="/spot-rate-table" component={SpotRateTable} />
-    <Route exact path="/quote-table" component={QuoteTable} />
-    <Route exact path="/booking-table" component={BookingTable} />
-    <Route exact path="/view-user" component={ViewUser} />
-    <Route exact path="/add-sales-user" component={AddSalesUser} />
-    <Route exact path="/analytics" component={Analytics} />
-    <Route exact path="/rate-finalizing" component={RateFinalizing} />
-    <Route exact path="/booking-view" component={BookingView} />
-    <Route exact path="/booking-insert" component={BookingInsert} />
-    <Route
-      exact
-      path="/rate-finalizing-still"
-      component={RateFinalizingStill}
-    />
-    <Route exact path="/spot-rate-details" component={SpotRateDetails} />
-    <Route exact path="/event-management" component={EventManagement} />
-    <Route exact path="/add-event-management" component={AddEventManagement} />
-    <Route exact path="/activity-log" component={ActivityLog} />
-    <Route exact path="/sales-activity-log" component={SalesActivityLog} />
-    <Route exact path="/myorder" component={MyOrder} />
-    <Route exact path="/reports" component={Reports} />
-    <Route exact path="/report-details" component={ReportDetails} />
-    <Route
-      exact
-      path="/rate-finalizing-still-booking"
-      component={RateFinalizingStillBooking}
-    />
-    <Route exact path="/track-shipment" component={TrackShipment} />
-    <Route exact path="/track-shipment2" component={TrackShipment2} />
-    {/* <Route exact path="/testGoogleAPI" component={TestGoogleAPI} /> */}
-    {/* <Route  path="/" component={Login} />   */}
+      <Route exact path="/qrcode" component={QRCode} />
+      <Route exact path="/shipment-summary" component={ShippingDetails} />
+      <Route exact path="/shipment-details" component={ShippingDetailsTwo} />
+      <Route exact path="/green-counter" component={GreenCounter} />
+      <Route exact path="/shipment-planner" component={ShipmentPlanner} />
+      <Route exact path="/rate-search" component={RateSearch} />
+      <Route exact path="/mywayMessage" component={myWayMessage} />
+      <Route exact path="/new-rate-search" component={NewRateSearch} />
+      <Route exact path="/add-user" component={AddUser} />
+      <Route exact path="/rate-table" component={RateTable} />
+      <Route exact path="/spot-rate" component={SpotRate} />
+      <Route exact path="/spot-rate-table" component={SpotRateTable} />
+      <Route exact path="/quote-table" component={QuoteTable} />
+      <Route exact path="/booking-table" component={BookingTable} />
+      <Route exact path="/view-user" component={ViewUser} />
+      <Route exact path="/add-sales-user" component={AddSalesUser} />
+      <Route exact path="/analytics" component={Analytics} />
+      <Route exact path="/rate-finalizing" component={RateFinalizing} />
+      <Route exact path="/booking-view" component={BookingView} />
+      <Route exact path="/booking-insert" component={BookingInsert} />
+      <Route
+        exact
+        path="/rate-finalizing-still"
+        component={RateFinalizingStill}
+      />
+      <Route exact path="/spot-rate-details" component={SpotRateDetails} />
+      <Route exact path="/event-management" component={EventManagement} />
+      <Route
+        exact
+        path="/add-event-management"
+        component={AddEventManagement}
+      />
+      <Route exact path="/activity-log" component={ActivityLog} />
+      <Route exact path="/sales-activity-log" component={SalesActivityLog} />
+      <Route exact path="/myorder" component={MyOrder} />
+      <Route exact path="/reports" component={Reports} />
+      <Route exact path="/report-details" component={ReportDetails} />
+      <Route
+        exact
+        path="/rate-finalizing-still-booking"
+        component={RateFinalizingStillBooking}
+      />
+      <Route exact path="/track-shipment" component={TrackShipment} />
+      <Route exact path="/track-shipment2" component={TrackShipment2} />
+      {/* <Route exact path="/testGoogleAPI" component={TestGoogleAPI} /> */}
+      {/* <Route  path="/" component={Login} />   */}
+    </Switch>
   </Router>,
   document.getElementById("root")
 );

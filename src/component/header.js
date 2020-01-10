@@ -16,7 +16,7 @@ import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
 import { Link, Route } from "react-router-dom";
-import { withRouter } from "react-router-dom";
+import { withRouter } from "react-router";
 
 // import { OverlayTrigger, Popover ,Button} from "react-bootstrap";
 import axios from "axios";
@@ -30,7 +30,6 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import RateFinalizingStill from "../pages/rateFinalizingStill";
 
 class Header extends Component {
   constructor(props) {
@@ -137,7 +136,7 @@ class Header extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      //debugger;
 
       // self.state.Notificationcount = response.data.Table.length;
       var today = new Date();
@@ -166,7 +165,7 @@ class Header extends Component {
   }
 
   toggle() {
-    debugger;
+    //debugger;
     let self = this;
     var UserID = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -178,7 +177,7 @@ class Header extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      //debugger;
       var ActivityDateArry = response.data.Table;
       if (ActivityDateArry.length > 0) {
         self.setState({
@@ -299,14 +298,14 @@ class Header extends Component {
       });
     } else if (Type === "SalesQuote") {
       var ptype = Product;
-      var qnumber = qnumber;
+      var qnumber = RefNo;
       var Status = ProductStatus;
       var detail = {
         Quotes: qnumber,
         Type: ptype,
         Status: Status
       };
-      debugger;
+      //debugger;
 
       this.props.history.push({
         pathname: "rate-finalizing-still",
@@ -315,42 +314,46 @@ class Header extends Component {
         }
       });
     } else {
-      // window.location.href = "shipment-details?hblno=" + RefNo;
+      this.props.history.push({
+        pathname: "shipment-details",
+        state: { detail: RefNo }
+      });
     }
   }
 
-  // RedirectoShipment(RefNo, ID, Type, Product, ProductStatus) {
-  //   debugger;
-  //   let self = this;
-  //   if (Type === "Booking") {
-  //     self.props.history.push({
-  //       pathname: "booking-view",
-  //       state: {
-  //         bookingNo: ID,
-  //         Mode: Product
-  //       }
-  //     });
-  //   } else if (Type === "SalesQuote") {
-  //     var ptype = Product;
-  //     var qnumber = qnumber;
-  //     var Status = ProductStatus;
-  //     var detail = {
-  //       Quotes: qnumber,
-  //       Type: ptype,
-  //       Status: Status
-  //     };
-  //     debugger;
-
-  //     self.props.history.push({
-  //       pathname: "rate-finalizing-still"
-  //       // state: { detail: detail }
-  //     });
-  //   } else {
-  //     // window.location.href = "shipment-details?hblno=" + RefNo;
-  //   }
-  // }
-  HandleActivityClick() {
+  HandleActivityClick(ActivityTypeID, MODE, CSV) {
     debugger;
+    var ActivityTypeID = ActivityTypeID;
+    var MODE = MODE;
+
+    if (ActivityTypeID === 3) {
+      this.props.history.push({
+        pathname: "shipment-details",
+        state: { detail: CSV }
+      });
+    } else if (ActivityTypeID === 5 && MODE !== "") {
+      var detail = {
+        Quotes: CSV,
+        Type: MODE,
+        
+      };
+      this.props.history.push({
+        pathname: "rate-finalizing-still",
+        state: {
+          detail: detail
+        }
+      });
+    } else if (ActivityTypeID === 30 && MODE !== "") {
+      this.props.history.push({
+        pathname: "booking-view",
+        state: {
+          bookingNo: CSV,
+          Mode: MODE
+        }
+      });
+    } else {
+      NotificationManager.error("No Redirect");
+    }
   }
 
   activatePlaylist() {
@@ -399,18 +402,27 @@ class Header extends Component {
     if (this.state.ActivityDateArry.length > 0) {
       adataval = this.state.ActivityDateArry.map((item, i) =>
         this.state.ActivityDateArry.length == 0 ? (
-          <div className="active-log-pop">
-            <span>{item.CNT + " "}</span>{" "}
-            <label>
-              {item.ActivityDesc}
-            </label>
+          <div
+            className="active-log-pop"
+            key={i}
+            onClick={() => {
+              self.HandleActivityClick(item.ActivityTypeID, item.MODE,item.CSV);
+            }}
+          >
+            <span>{item.CNT + " "}</span> <label>{item.ActivityDesc}</label>
             {item.CSV}
             <br />
             {/* <label>{item.ActMessage}</label> */}
             <label>{item.SingleActDate}</label>
           </div>
         ) : (
-          <div className="active-log-pop">
+          <div
+            className="active-log-pop"
+            key={i}
+            onClick={() => {
+              self.HandleActivityClick(item.ActivityTypeID, item.MODE,item.CSV);
+            }}
+          >
             <span>{item.CNT + " "}</span>
             <label>{item.ActivityDesc}</label>
             <sap>{item.CSV}</sap>
@@ -443,16 +455,16 @@ class Header extends Component {
                   ) === "Sales User"
                     ? this.state.searchButn && (
                         <li>
-                          <a href="/rate-search" className="header-btn">
+                          <Link className="header-btn" to="/rate-search">
                             SEARCH RATES
-                          </a>
+                          </Link>
                         </li>
                       )
                     : this.state.searchButn && (
                         <li>
-                          <a href="/new-rate-search" className="header-btn">
+                          <Link className="header-btn" to="/new-rate-search">
                             SEARCH RATES
-                          </a>
+                          </Link>
                         </li>
                       )}
                   <li>
@@ -756,4 +768,4 @@ class Header extends Component {
     );
   }
 }
-export default Header;
+export default withRouter(Header);

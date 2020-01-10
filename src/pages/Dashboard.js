@@ -441,6 +441,11 @@ class Dashboard extends Component {
             <p>
               POD : <span>{book.POD}</span>
             </p>
+            <p>
+              <span className="shipment-status" title="Status">
+                {book.Status}
+              </span>
+            </p>
             <hr className="horizontal-line" />
           </div>
         );

@@ -126,7 +126,8 @@ class Analytics extends Component {
       cargoTypeFCL: true,
       cargoTypeLCL: false,
       checkFTL: true,
-      checkLTL: false
+      checkLTL: false,
+      loding: false
     };
     this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
   }
@@ -138,6 +139,124 @@ class Analytics extends Component {
   handleAnalyticsShipment(event) {
     let self = this;
     debugger;
+
+    if (
+      this.state.toggleShipShip === true &&
+      this.state.toggleFclLcl === false
+    ) {
+      NotificationManager.error("Please select FCL or LCL");
+    } else if (
+      this.state.toggleRoadShip === true &&
+      this.state.toggleFtlLtl === false
+    ) {
+      NotificationManager.error("Please select FTL or LTL");
+    } else {
+      var FromDate = "";
+      var ToDate = "";
+      var ActiveFlag = "A";
+
+      var Mode = "A,FCL,LCL,FTL,LTL";
+      var period = document.getElementById("drp-period-shipment").value;
+      var DatedBy = document.getElementById("Datedbydrp").value;
+
+      if (event != null) {
+        // alert(event.target.id)
+
+        if (event.target.id == "shipment-view-btn") {
+          var ActiveFlagele = document.getElementsByName("ship-type");
+          for (var i = 0; i < ActiveFlagele.length; i++) {
+            if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
+          }
+
+          var Modeele = document.getElementsByName("ship-way");
+          var modegetElementsByName = "";
+          if (Modeele.length > 0) {
+            for (var i = 0; i < Modeele.length; i++) {
+              if (Modeele[i].checked) Mode = Modeele[i].value;
+
+              if (Mode == "O") {
+                Mode = "FCL,LCL";
+                modegetElementsByName = "sea-opt";
+              }
+
+              if (Mode == "I") {
+                Mode = "FTL,LTL";
+                modegetElementsByName = "road-opt";
+              }
+            }
+          }
+          //sea-opt
+          var ModeeleOther = document.getElementsByName(modegetElementsByName);
+          if (ModeeleOther.length > 0) {
+            for (var i = 0; i < ModeeleOther.length; i++) {
+              if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
+            }
+          }
+        }
+      } else {
+        //All
+        document.getElementById("active-ship").click();
+      }
+
+      if (period == "M") {
+        var tempfromdate = document
+          .getElementById("datpicker-from-shipment")
+          .value.split("/"); //05/12/2019
+        var temptodate = document
+          .getElementById("datpicker-to-shipment")
+          .value.split("/");
+        FromDate = tempfromdate[1] + "-" + tempfromdate[0] + "-01";
+        ToDate = temptodate[1] + "-" + temptodate[0] + "-01";
+      } else if (period == "W") {
+        var tempfromdate = document
+          .getElementById("datpicker-from-shipment")
+          .value.split("/"); //05/12/2019
+        var temptodate = document
+          .getElementById("datpicker-to-shipment")
+          .value.split("/");
+        FromDate =
+          tempfromdate[2] + "-" + tempfromdate[0] + "-" + tempfromdate[1];
+        ToDate = temptodate[2] + "-" + temptodate[0] + "-" + temptodate[1];
+      } else if (period == "Y") {
+        var tempfromdate = document.getElementById("date-year-shipment").value;
+        FromDate = tempfromdate + "-01-01";
+        ToDate = tempfromdate + "-12-31";
+      }
+      var g1 = new Date(FromDate);
+      var g2 = new Date(ToDate);
+
+      if (g1.getTime() > g2.getTime()) {
+        NotificationManager.error("To date should be greater then From date.");
+        document.getElementById("datpicker-to-shipment").focus();
+        return false;
+      }
+
+      var axiosdata = {
+        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        FromDate: FromDate,
+        ToDate: ToDate,
+        ActiveFlag: ActiveFlag,
+        Mode: Mode,
+        period: period,
+        //ShipperID:1340354108
+        DatedBy: DatedBy
+      };
+
+      this.setShipmentGraph(axiosdata);
+    }
+  }
+
+  handleViewAnalyticsShipment(event) {
+    let self = this;
+    debugger;
+    if (
+      this.state.toggleAIR === false &&
+      this.state.toggleShipShip === false &&
+      this.state.toggleRoadShip === false
+    ) {
+      NotificationManager.error("please select mode of transport");
+      return false;
+    }
     if (
       this.state.toggleShipShip === true &&
       this.state.toggleFclLcl === false
@@ -245,7 +364,9 @@ class Analytics extends Component {
   }
 
   setShipmentGraph(axiosdata) {
+    this.setState({ loding: true });
     let self = this;
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentAnalyticsAPI`,
@@ -255,7 +376,7 @@ class Analytics extends Component {
       .then(function(response) {
         debugger;
 
-        self.setState({ graphShipmentdataset: [] });
+        self.setState({ graphShipmentdataset: [], loding: false });
         var Segregatedby = document.getElementById("SegregatedBydrp").value;
         //ValueChart
         var Table = [];
@@ -856,15 +977,11 @@ class Analytics extends Component {
       this.state.toggleAIR == true ||
       this.state.toggleShipShip == true ||
       this.state.toggleRoadShip == true
-    )
-    {
+    ) {
       this.props.history.push("reports");
-    }
-    else
-    {
+    } else {
       NotificationManager.error("please select atlest one Mode of transport");
     }
-      
   }
   render() {
     var buyerShipmentData = {
@@ -1092,7 +1209,7 @@ class Analytics extends Component {
                     </button>
                     <button
                       className="butn mt-0"
-                      onClick={this.handleAnalyticsShipment.bind(this)}
+                      onClick={this.handleViewAnalyticsShipment.bind(this)}
                       id="shipment-view-btn"
                     >
                       view
@@ -1217,24 +1334,20 @@ class Analytics extends Component {
                     </select>
                   </div> */}
                 </div>
-                <div className="row">
-                  <div className="col-md-9">
-                    <Bar
-                      data={buyerShipmentData}
-                      width={100}
-                      height={50}
-                      options={volumeOptions}
-                    />
+                {this.state.loding === true ? (
+                  <div className="loader-icon"></div>
+                ) : (
+                  <div className="row">
+                    <div className="col-md-9">
+                      <Bar
+                        data={buyerShipmentData}
+                        width={100}
+                        height={50}
+                        options={volumeOptions}
+                      />
+                    </div>
                   </div>
-                  {/* <div className="col-md-3">
-                    <Doughnut
-                      data={greenCounterdata}
-                      width={700}
-                      height={600}
-                      options={greencounterOption}
-                    />
-                  </div> */}
-                </div>
+                )}
               </div>
               <div
                 className="tab-pane fade"

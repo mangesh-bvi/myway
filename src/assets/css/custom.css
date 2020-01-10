@@ -669,9 +669,9 @@ table tbody tr:last-child {
 .sect-padd > .row:last-child {
   margin-bottom: -20px;
 }
-.shipper-details .details-para {
+/* .shipper-details .details-para {
   color: #636466;
-}
+} */
 .shipper-details .details-title {
   font-size: 15px;
 }
@@ -2262,7 +2262,7 @@ input[type="range"]::-moz-range-track {
   left: 0;
   /* height: 100vh; */
   bottom: 0;
-  background: rgba(0, 0, 0, 0.1) url("../img/loader.gif") no-repeat center
+  background:transparent url("../img/loader.gif") no-repeat center
     center;
   background-size: 60px;
   z-index: 5;
@@ -4392,6 +4392,6 @@ progress::-webkit-progress-bar {
   /* width: 25%; */
 }
 .active-log-pop {
-  max-height: 300px;
+  max-height: 200px;
   overflow: auto;
 }

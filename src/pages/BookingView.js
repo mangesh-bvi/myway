@@ -10,7 +10,7 @@ import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
 import Download from "./../assets/img/csv.png";
-
+import { withRouter } from "react-router";
 import { encryption, convertToPlain } from "../helpers/encryption";
 const imageAsset = "./../assets/img";
 const fetch = require("node-fetch");
@@ -98,12 +98,46 @@ class BookingView extends Component {
       HAZMAT: 0,
       eqtType: "",
       NonStackable: 0,
-      Customs_Clearance: 0
+      Customs_Clearance: 0,
+      loding: false
     };
     // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
+
+  // componentDidUpdate() {
+  //   debugger;
+  //   var BookingNo = this.state.BookingNo;
+  //   if (BookingNo !== this.props.location.state.bookingNo) {
+  //     var ModeofTransport = this.props.location.state.Mode;
+  //     var userType = encryption(
+  //       window.localStorage.getItem("usertype"),
+  //       "desc"
+  //     );
+  //     debugger;
+  //     this.setState({
+  //       BookingNo: this.props.location.state.bookingNo,
+  //       userType,
+  //       isView: true,
+  //       loding:false,
+  //       ModeofTransport: ModeofTransport
+  //     });
+
+  //     if (ModeofTransport === "AIR") {
+  //       this.HandleCommodityDropdown();
+  //       this.HandlePackgeTypeData();
+  //       this.BookigGridDetailsListAIR();
+  //       this.NonCustomerList();
+  //     } else {
+  //       this.HandleCommodityDropdown();
+  //       this.HandlePackgeTypeData();
+  //       this.BookigGridDetailsList();
+  //       this.NonCustomerList();
+  //     }
+  //   }
+  // }
+
   componentDidMount() {
-    debugger;
+    //debugger
     if (this.props.location.state.BookingNo && this.props.location.state.Mode) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -360,7 +394,7 @@ class BookingView extends Component {
   };
 
   GetImageURL(imageObj) {
-    debugger;
+    //debugger
     let URL = imageAsset + "/ATAFreight_console.png";
     new Promise(resolve => {
       const img = new Image();
@@ -380,6 +414,7 @@ class BookingView extends Component {
 
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
+    this.setState({ loding: true });
     let self = this;
 
     var bookingId = self.state.BookingNo;
@@ -394,7 +429,7 @@ class BookingView extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        //debugger
         QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -423,6 +458,7 @@ class BookingView extends Component {
               }
             }
             self.setState({
+              loding: false,
               QuotationData,
               QuotationSubData,
               ShipmentType,
@@ -513,6 +549,7 @@ class BookingView extends Component {
               Company_AddressID = Notify_AddressID;
             }
             self.setState({
+              loding: false,
               DefaultEntityTypeID,
               companyID,
               CompanyAddress,
@@ -593,6 +630,7 @@ class BookingView extends Component {
   }
 
   BookigGridDetailsListAIR() {
+    this.setState({ loding: true });
     let self = this;
 
     var bookingId = self.state.BookingNo;
@@ -607,7 +645,7 @@ class BookingView extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        //debugger
         QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -622,8 +660,6 @@ class BookingView extends Component {
         var ShipmentType = "";
         var eqtType = "";
         var NonStackable = 0;
-
-        console.log(Booking);
 
         if (typeof QuotationData !== "undefined") {
           if (QuotationData.length > 0 && QuotationSubData.length > 0) {
@@ -649,7 +685,7 @@ class BookingView extends Component {
             });
           }
         }
-    
+
         if (typeof eqmtType !== "undefined") {
           if (eqmtType.length > 0) {
             self.setState({ eqmtType });
@@ -698,6 +734,7 @@ class BookingView extends Component {
             var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
 
             self.setState({
+              loding: false,
               DefaultEntityTypeID,
 
               ModeofTransport,
@@ -733,11 +770,9 @@ class BookingView extends Component {
             });
           }
 
-          if ((FileData.length > 0)) {
+          if (FileData.length > 0) {
             self.setState({ FileData });
-          }
-          else
-          {
+          } else {
             self.setState({ FileData: [{ FileName: "No File Found" }] });
           }
         }
@@ -768,7 +803,7 @@ class BookingView extends Component {
   }
 
   HandleFileOpen(filePath) {
-    debugger;
+    //debugger
     var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -855,9 +890,11 @@ class BookingView extends Component {
   }
 
   render() {
+    console.log(this.state.loding);
+    
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
-      debugger;
+      //debugger
       commodityName = this.state.commodityData.filter(
         x => x.id === this.state.selectedCommodity
       )[0].Commodity;
@@ -884,379 +921,399 @@ class BookingView extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Booking Details</h2>
             </div>
-            <div className="row">
-              <div className="col-md-12">
-                <div className="pb-4" style={{ backgroundColor: "#fff" }}>
-                  <div className="rate-final-contr">
-                    <div className="title-border d-flex align-items-center justify-content-between py-3">
-                      <h3>Quotation Price</h3>
-                    </div>
-                    <div className="react-rate-table">
-                      <ReactTable
-                        columns={[
-                          {
-                            columns: [
-                              {
-                                Cell: ({ original, row }) => {
-                                  i++;
-                                  debugger;
-                                  var lname = "";
-                                  var olname = "";
-                                  if (row._original.Linename) {
-                                    olname = row._original.Linename;
-                                    lname =
-                                      row._original.Linename.replace(
-                                        "  ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
-                                  }
-                                  if (row._original.LineName) {
-                                    olname = row._original.LineName;
-                                    lname =
-                                      row._original.LineName.replace(
-                                        "  ",
-                                        "_"
-                                      ).replace(" ", "_") + ".png";
-                                  }
+            {this.state.loding === true ? (
+              <div className="loader-icon"></div>
+            ) : (
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="pb-4" style={{ backgroundColor: "#fff" }}>
+                    <div className="rate-final-contr">
+                      <div className="title-border d-flex align-items-center justify-content-between py-3">
+                        <h3>Quotation Price</h3>
+                      </div>
+                      <div className="react-rate-table">
+                        <ReactTable
+                          columns={[
+                            {
+                              columns: [
+                                {
+                                  Cell: ({ original, row }) => {
+                                    i++;
+                                    //debugger
+                                    var lname = "";
+                                    var olname = "";
+                                    if (row._original.Linename) {
+                                      olname = row._original.Linename;
+                                      lname =
+                                        row._original.Linename.replace(
+                                          "  ",
+                                          "_"
+                                        ).replace(" ", "_") + ".png";
+                                    }
+                                    if (row._original.LineName) {
+                                      olname = row._original.LineName;
+                                      lname =
+                                        row._original.LineName.replace(
+                                          "  ",
+                                          "_"
+                                        ).replace(" ", "_") + ".png";
+                                    }
 
-                                  var mode = this.state.ModeofTransport;
+                                    var mode = this.state.ModeofTransport;
 
-                                  if (mode === "Ocean" && lname !== "") {
-                                    return (
-                                      <React.Fragment>
-                                        <div className="rate-tab-img">
-                                          <img
-                                            title={olname}
-                                            alt={olname}
-                                            src={
-                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                                              lname
-                                            }
-                                          />
-                                        </div>
-                                      </React.Fragment>
-                                    );
-                                  } else if (mode == "Air" ||mode == "AIR" && lname !== "") {
-                                    return (
-                                      <React.Fragment>
-                                        <div className="rate-tab-img">
-                                          <img
-                                            title={olname}
-                                            alt={olname}
-                                            src={
-                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                                              lname
-                                            }
-                                          />
-                                        </div>
-                                      </React.Fragment>
-                                    );
-                                  } else {
-                                    return (
-                                      <React.Fragment>
-                                        <div className="rate-tab-img">
-                                          <img
-                                            title={olname}
-                                            src={
-                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
-                                            }
-                                            alt={olname}
-                                          />
-                                        </div>
-                                      </React.Fragment>
-                                    );
+                                    if (mode === "Ocean" && lname !== "") {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              alt={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                                lname
+                                              }
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    } else if (
+                                      mode == "Air" ||
+                                      (mode == "AIR" && lname !== "")
+                                    ) {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              alt={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                lname
+                                              }
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <div className="rate-tab-img">
+                                            <img
+                                              title={olname}
+                                              src={
+                                                "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                              }
+                                              alt={olname}
+                                            />
+                                          </div>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  },
+                                  accessor: "lineName"
+                                  // minWidth: 200
+                                },
+                                {
+                                  accessor: "POL",
+                                  Cell: row => {
+                                    if (
+                                      this.state.ModeofTransport === "inland"
+                                    ) {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POL</p>
+                                          <p className="details-para">
+                                            {row.original.OriginName}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POL</p>
+                                          <p className="details-para">
+                                            {row.original.POL}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    }
                                   }
                                 },
-                                accessor: "lineName"
-                                // minWidth: 200
-                              },
-                              {
-                                accessor: "POL",
-                                Cell: row => {
-                                  if (this.state.ModeofTransport === "inland") {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POL</p>
-                                        <p className="details-para">
-                                          {row.original.OriginName}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  } else {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POL</p>
-                                        <p className="details-para">
-                                          {row.original.POL}
-                                        </p>
-                                      </React.Fragment>
-                                    );
+                                {
+                                  accessor: "POD",
+                                  Cell: row => {
+                                    if (
+                                      this.state.ModeofTransport === "inland"
+                                    ) {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POD</p>
+                                          <p className="details-para">
+                                            {row.original.DestinationName}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <p className="details-title">POD</p>
+                                          <p className="details-para">
+                                            {row.original.POD}
+                                          </p>
+                                        </React.Fragment>
+                                      );
+                                    }
                                   }
-                                }
-                              },
-                              {
-                                accessor: "POD",
-                                Cell: row => {
-                                  if (this.state.ModeofTransport === "inland") {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POD</p>
-                                        <p className="details-para">
-                                          {row.original.DestinationName}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  } else {
-                                    return (
-                                      <React.Fragment>
-                                        <p className="details-title">POD</p>
-                                        <p className="details-para">
-                                          {row.original.POD}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                }
-                              },
-                              {
-                                minWidth: 120,
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">
-                                        Transit port
-                                      </p>
-                                      <p className="details-para">
-                                        {row.original.TransshipmentPort}
-                                      </p>
-                                    </>
-                                  );
                                 },
-                                accessor: "TransshipmentPort",
-                                filterable: true
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Free Time</p>
-                                      <p className="details-para"></p>
-                                    </>
-                                  );
+                                {
+                                  minWidth: 120,
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">
+                                          Transit port
+                                        </p>
+                                        <p className="details-para">
+                                          {row.original.TransshipmentPort}
+                                        </p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "TransshipmentPort",
+                                  filterable: true
                                 },
-                                accessor: "freeTime",
-                                filterable: true
-                                // minWidth: 80
-                              },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">
+                                          Free Time
+                                        </p>
+                                        <p className="details-para"></p>
+                                      </>
+                                    );
+                                  },
+                                  accessor: "freeTime",
+                                  filterable: true
+                                  // minWidth: 80
+                                },
 
-                              {
-                                accessor: "ContainerType",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">Container</p>
-                                      <p className="details-para">
-                                        {row.original.ContainerType}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                accessor: "ExpiryDate",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">Expiry</p>
-                                      <p className="details-para">
-                                        {new Date(
-                                          row.original.ExpiryDate
-                                        ).toLocaleDateString("en-US")}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              },
-                              {
-                                Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">TT (Days)</p>
-                                      {this.state.ContainerLoad !== "INLAND" ? (
-                                        <p className="details-para">
-                                          {row.original.TransitTime}
+                                {
+                                  accessor: "ContainerType",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">
+                                          Container
                                         </p>
-                                      ) : (
                                         <p className="details-para">
-                                          {row.original.TransitTime}
+                                          {row.original.ContainerType}
                                         </p>
-                                      )}
-                                    </>
-                                  );
-                                },
-                                accessor: "TransitTime"
-                                // minWidth: 60
-                              },
-                              {
-                                accessor: "Total",
-                                Cell: row => {
-                                  return (
-                                    <React.Fragment>
-                                      <p className="details-title">Price</p>
-                                      <p className="details-para">
-                                        {row.original.Total}
-                                      </p>
-                                    </React.Fragment>
-                                  );
-                                }
-                              }
-                            ]
-                          }
-                        ]}
-                        data={this.state.QuotationData}
-                        minRows={0}
-                        showPagination={false}
-                        className="-striped -highlight"
-                        SubComponent={row => {
-                          return (
-                            <div style={{ padding: "20px 0" }}>
-                              <ReactTable
-                                data={this.state.QuotationSubData.filter(
-                                  x =>
-                                    x.SaleQuoteID === row.original.SaleQuoteID1
-                                )}
-                                columns={[
-                                  {
-                                    columns: [
-                                      {
-                                        Header: "C. Description",
-                                        accessor: "ChargeDesc"
-                                      },
-                                      {
-                                        Header: "C.Name",
-                                        accessor: "ChargeCode"
-                                      },
-                                      {
-                                        Header: "Units",
-                                        accessor: "Chargeitem"
-                                      },
-                                      {
-                                        Header: "Unit Price",
-                                        accessor: "Amount"
-                                      },
-                                      {
-                                        Header: "Final Payment",
-                                        accessor: "Total"
-                                      }
-                                    ]
+                                      </React.Fragment>
+                                    );
                                   }
-                                ]}
-                                // defaultPageSize={3}
-                                minRows={1}
-                                showPagination={false}
-                              />
-                            </div>
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="rate-final-contr">
-                    <Collapse in={this.state.showContent}>
-                      <div>
-                        <div
-                          className="title-border py-3"
-                          style={{ marginBottom: "15px" }}
-                        >
-                          <h3>Rate Query</h3>
-                        </div>
-                        <div className="row">
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Shipment Type</p>
-                            <p className="details-para">
-                              {this.state.ShipmentType}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Mode of Transport</p>
-                            <p className="details-para">
-                              {this.state.ModeofTransport}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Container Load</p>
-                            <p className="details-para">
-                              {this.state.CargoType}
-                            </p>
-                          </div>
-                          {this.state.CargoType === "FCL" ? (
-                            <>
-                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
-                                <p className="details-title">Equipment Types</p>
-                                <p className="details-para">
-                                  {this.state.eqtType}
-                                </p>
+                                },
+                                {
+                                  accessor: "ExpiryDate",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">Expiry</p>
+                                        <p className="details-para">
+                                          {new Date(
+                                            row.original.ExpiryDate
+                                          ).toLocaleDateString("en-US")}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                },
+                                {
+                                  Cell: row => {
+                                    return (
+                                      <>
+                                        <p className="details-title">
+                                          TT (Days)
+                                        </p>
+                                        {this.state.ContainerLoad !==
+                                        "INLAND" ? (
+                                          <p className="details-para">
+                                            {row.original.TransitTime}
+                                          </p>
+                                        ) : (
+                                          <p className="details-para">
+                                            {row.original.TransitTime}
+                                          </p>
+                                        )}
+                                      </>
+                                    );
+                                  },
+                                  accessor: "TransitTime"
+                                  // minWidth: 60
+                                },
+                                {
+                                  accessor: "Total",
+                                  Cell: row => {
+                                    return (
+                                      <React.Fragment>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.Total}
+                                        </p>
+                                      </React.Fragment>
+                                    );
+                                  }
+                                }
+                              ]
+                            }
+                          ]}
+                          data={this.state.QuotationData}
+                          minRows={0}
+                          showPagination={false}
+                          className="-striped -highlight"
+                          SubComponent={row => {
+                            return (
+                              <div style={{ padding: "20px 0" }}>
+                                <ReactTable
+                                  data={this.state.QuotationSubData.filter(
+                                    x =>
+                                      x.SaleQuoteID ===
+                                      row.original.SaleQuoteID1
+                                  )}
+                                  columns={[
+                                    {
+                                      columns: [
+                                        {
+                                          Header: "C. Description",
+                                          accessor: "ChargeDesc"
+                                        },
+                                        {
+                                          Header: "C.Name",
+                                          accessor: "ChargeCode"
+                                        },
+                                        {
+                                          Header: "Units",
+                                          accessor: "Chargeitem"
+                                        },
+                                        {
+                                          Header: "Unit Price",
+                                          accessor: "Amount"
+                                        },
+                                        {
+                                          Header: "Final Payment",
+                                          accessor: "Total"
+                                        }
+                                      ]
+                                    }
+                                  ]}
+                                  // defaultPageSize={3}
+                                  minRows={1}
+                                  showPagination={false}
+                                />
                               </div>
-                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                                <p className="details-title">
-                                  Special Equipment
-                                </p>
-                                <p className="details-para"></p>
-                              </div>
-                            </>
-                          ) : (
-                            ""
-                          )}
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">HazMat</p>
-                            <p className="details-para">
-                              {this.state.HAZMAT === 1
-                                ? "Yes"
-                                : this.state.HAZMAT === 0
-                                ? "No"
-                                : ""}
-                            </p>
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="rate-final-contr">
+                      <Collapse in={this.state.showContent}>
+                        <div>
+                          <div
+                            className="title-border py-3"
+                            style={{ marginBottom: "15px" }}
+                          >
+                            <h3>Rate Query</h3>
                           </div>
-                          {this.state.CargoType === "FCL" ||
-                          this.state.CargoType === "FTL" ? (
-                            ""
-                          ) : (
+                          <div className="row">
                             <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                              <p className="details-title">Unstackable</p>
+                              <p className="details-title">Shipment Type</p>
                               <p className="details-para">
-                                {this.state.NonStackable === 0 ? "No" : "Yes"}
+                                {this.state.ShipmentType}
                               </p>
                             </div>
-                          )}
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Customs Clearance</p>
-                            <p className="details-para">
-                              {this.state.Customs_Clearance === 1
-                                ? "Yes"
-                                : "No"}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Inco Terms</p>
-                            <p className="details-para">
-                              {this.state.Incoterm}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">Type of Move</p>
-                            <p className="details-para">
-                              {this.state.TypeofMove}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
-                            <p className="details-title">POL</p>
-                            <p className="details-para">{this.state.POL}</p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
-                            <p className="details-title">POD</p>
-                            <p className="details-para">{this.state.POD}</p>
-                          </div>
-                          {/* <div className="col-md-4">
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">Mode of Transport</p>
+                              <p className="details-para">
+                                {this.state.ModeofTransport}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">Container Load</p>
+                              <p className="details-para">
+                                {this.state.CargoType}
+                              </p>
+                            </div>
+                            {this.state.CargoType === "FCL" ? (
+                              <>
+                                <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                                  <p className="details-title">
+                                    Equipment Types
+                                  </p>
+                                  <p className="details-para">
+                                    {this.state.eqtType}
+                                  </p>
+                                </div>
+                                <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                  <p className="details-title">
+                                    Special Equipment
+                                  </p>
+                                  <p className="details-para"></p>
+                                </div>
+                              </>
+                            ) : (
+                              ""
+                            )}
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">HazMat</p>
+                              <p className="details-para">
+                                {this.state.HAZMAT === 1
+                                  ? "Yes"
+                                  : this.state.HAZMAT === 0
+                                  ? "No"
+                                  : ""}
+                              </p>
+                            </div>
+                            {this.state.CargoType === "FCL" ||
+                            this.state.CargoType === "FTL" ? (
+                              ""
+                            ) : (
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                <p className="details-title">Unstackable</p>
+                                <p className="details-para">
+                                  {this.state.NonStackable === 0 ? "No" : "Yes"}
+                                </p>
+                              </div>
+                            )}
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">Customs Clearance</p>
+                              <p className="details-para">
+                                {this.state.Customs_Clearance === 1
+                                  ? "Yes"
+                                  : "No"}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">Inco Terms</p>
+                              <p className="details-para">
+                                {this.state.Incoterm}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">Type of Move</p>
+                              <p className="details-para">
+                                {this.state.TypeofMove}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                              <p className="details-title">POL</p>
+                              <p className="details-para">{this.state.POL}</p>
+                            </div>
+                            <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                              <p className="details-title">POD</p>
+                              <p className="details-para">{this.state.POD}</p>
+                            </div>
+                            {/* <div className="col-md-4">
                             <p className="details-title">PU Address</p>
                             <p className="details-para">
                               Lotus Park, Goregaon (E), Mumbai : 400099
@@ -1268,320 +1325,338 @@ class BookingView extends Component {
                               Lotus Park, Goregaon (E), Mumbai : 400099
                             </p>
                           </div> */}
-                        </div>
-                      </div>
-                    </Collapse>
-                    <div
-                      className="text-right"
-                      style={{ marginBottom: "15px" }}
-                    >
-                      <button
-                        className={className}
-                        id="toggler"
-                        onClick={() =>
-                          this.setState({
-                            showContent: !this.state.showContent
-                          })
-                        }
-                      >
-                        {this.state.showContent ? (
-                          <span>VIEW LESS</span>
-                        ) : (
-                          <span>VIEW MORE</span>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="rate-final-contr">
-                    <div>
-                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
-                        <h3>Customer Details</h3>
-                      </div>
-                      <div className="">
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Account/Customer</p>
-                            <p className="details-para">
-                              {this.state.company_name}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {this.state.Company_Address}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Notification Person</p>
-                            <p className="details-para">
-                              {this.state.contact_name}
-                            </p>
                           </div>
                         </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      {this.state.isInsert === true ? (
-                        <div className="rate-radio-cntr">
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="exist-cust"
-                              checked={
-                                this.state.selectedType === "Consignee"
-                                  ? true
-                                  : false
-                              }
-                              value="Consignee"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="exist-cust"
-                            >
-                              Consignee
-                            </label>
-                          </div>
-                          <div>
-                            <input
-                              type="radio"
-                              onChange={this.HandleRadioBtn}
-                              name="cust-select"
-                              id="new-cust"
-                              checked={
-                                this.state.selectedType === "Shipper"
-                                  ? true
-                                  : false
-                              }
-                              value="Shipper"
-                            />
-                            <label
-                              className="d-flex flex-column align-items-center"
-                              htmlFor="new-cust"
-                            >
-                              Shipper
-                            </label>
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
-                    <div>
-                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
-                        <h3>Consignee Details</h3>
-                      </div>
-                      <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                            <p className="details-title">Consignee Name</p>
-                            <p className="details-para">
-                              {this.state.fields["Consignee"]}
-                            </p>
-                          </div>
-
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {this.state.Consignee_Displayas}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
-                        <h3>Shipper Details</h3>
-                      </div>
-                      <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                            <p className="details-title">Shipper Name</p>
-                            <p className="details-para">
-                              {this.state.fields["Shipper"]}
-                            </p>
-                          </div>
-
-                          <div className="col-12 col-sm-6 col-md-4 r-border">
-                            <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {this.state.Shipper_Displayas}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
-                        <h3>Buyer Details</h3>
-                      </div>
-                      <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                            <p className="details-title">Buyer Name</p>
-                            <p className="details-para">
-                              {this.state.BuyerName}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                            <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {this.state.Buyer_Displayas !== ""
-                                ? this.state.Buyer_Displayas
-                                : null}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="title-border title-border-t py-3" style={{marginBottom:"15px"}}>
-                        <h3>Notify Party Details</h3>
-                      </div>
-                      <div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                            <p className="details-title">Notify Party Name</p>
-                            <p className="details-para">
-                              {this.state.NotifyName}
-                            </p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                            <p className="details-title">Address</p>
-                            <p className="details-para">
-                              {this.state.Notify_Displayas !== ""
-                                ? this.state.Notify_Displayas
-                                : null}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
-                        <p className="details-title">Commodity</p>
-                        <p className="details-para">{commodityName}</p>
-                      </div>
-                    </div>
-                    <div>
+                      </Collapse>
                       <div
-                        className="title-border title-border-t py-3"
-                        style={{ width: "100%" }}
+                        className="text-right"
+                        style={{ marginBottom: "15px" }}
                       >
-                        <h3>Cargo Details</h3>
+                        <button
+                          className={className}
+                          id="toggler"
+                          onClick={() =>
+                            this.setState({
+                              showContent: !this.state.showContent
+                            })
+                          }
+                        >
+                          {this.state.showContent ? (
+                            <span>VIEW LESS</span>
+                          ) : (
+                            <span>VIEW MORE</span>
+                          )}
+                        </button>
                       </div>
                     </div>
-                    <div className="row ratefinalpgn">
-                      {this.state.eqmtType.length > 0 ? "" : null}
-                      {this.state.multiCBM.length > 0 ? (
+
+                    <div className="rate-final-contr">
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
+                          <h3>Customer Details</h3>
+                        </div>
+                        <div className="">
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">Account/Customer</p>
+                              <p className="details-para">
+                                {this.state.company_name}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">Address</p>
+                              <p className="details-para">
+                                {this.state.Company_Address}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">
+                                Notification Person
+                              </p>
+                              <p className="details-para">
+                                {this.state.contact_name}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        {this.state.isInsert === true ? (
+                          <div className="rate-radio-cntr">
+                            <div>
+                              <input
+                                type="radio"
+                                onChange={this.HandleRadioBtn}
+                                name="cust-select"
+                                id="exist-cust"
+                                checked={
+                                  this.state.selectedType === "Consignee"
+                                    ? true
+                                    : false
+                                }
+                                value="Consignee"
+                              />
+                              <label
+                                className="d-flex flex-column align-items-center"
+                                htmlFor="exist-cust"
+                              >
+                                Consignee
+                              </label>
+                            </div>
+                            <div>
+                              <input
+                                type="radio"
+                                onChange={this.HandleRadioBtn}
+                                name="cust-select"
+                                id="new-cust"
+                                checked={
+                                  this.state.selectedType === "Shipper"
+                                    ? true
+                                    : false
+                                }
+                                value="Shipper"
+                              />
+                              <label
+                                className="d-flex flex-column align-items-center"
+                                htmlFor="new-cust"
+                              >
+                                Shipper
+                              </label>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
+                          <h3>Consignee Details</h3>
+                        </div>
+                        <div>
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                              <p className="details-title">Consignee Name</p>
+                              <p className="details-para">
+                                {this.state.fields["Consignee"]}
+                              </p>
+                            </div>
+
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">Address</p>
+                              <p className="details-para">
+                                {this.state.Consignee_Displayas}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
+                          <h3>Shipper Details</h3>
+                        </div>
+                        <div>
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                              <p className="details-title">Shipper Name</p>
+                              <p className="details-para">
+                                {this.state.fields["Shipper"]}
+                              </p>
+                            </div>
+
+                            <div className="col-12 col-sm-6 col-md-4 r-border">
+                              <p className="details-title">Address</p>
+                              <p className="details-para">
+                                {this.state.Shipper_Displayas}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
+                          <h3>Buyer Details</h3>
+                        </div>
+                        <div>
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                              <p className="details-title">Buyer Name</p>
+                              <p className="details-para">
+                                {this.state.BuyerName}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                              <p className="details-title">Address</p>
+                              <p className="details-para">
+                                {this.state.Buyer_Displayas !== ""
+                                  ? this.state.Buyer_Displayas
+                                  : null}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ marginBottom: "15px" }}
+                        >
+                          <h3>Notify Party Details</h3>
+                        </div>
+                        <div>
+                          <div className="row">
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                              <p className="details-title">Notify Party Name</p>
+                              <p className="details-para">
+                                {this.state.NotifyName}
+                              </p>
+                            </div>
+                            <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                              <p className="details-title">Address</p>
+                              <p className="details-para">
+                                {this.state.Notify_Displayas !== ""
+                                  ? this.state.Notify_Displayas
+                                  : null}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
+                          <p className="details-title">Commodity</p>
+                          <p className="details-para">{commodityName}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          className="title-border title-border-t py-3"
+                          style={{ width: "100%" }}
+                        >
+                          <h3>Cargo Details</h3>
+                        </div>
+                      </div>
+                      <div className="row ratefinalpgn">
+                        {this.state.eqmtType.length > 0 ? "" : null}
+                        {this.state.multiCBM.length > 0 ? (
+                          <ReactTable
+                            columns={[
+                              {
+                                columns: [
+                                  {
+                                    Header: "Package Type",
+                                    accessor: "PackageType"
+                                  },
+                                  {
+                                    Header: "Quantity",
+                                    accessor: "QTY"
+                                  },
+                                  {
+                                    Header: "Length",
+                                    accessor: "Lengths"
+                                  },
+                                  {
+                                    Header: "Width",
+                                    accessor: "Width"
+                                  },
+                                  {
+                                    Header: "Height",
+                                    accessor: "Height"
+                                  },
+                                  {
+                                    Header: "Gross Weight",
+                                    accessor: "GrossWeight"
+                                  },
+                                  {
+                                    Header: "Volume Weight",
+                                    accessor: "VolumeWeight"
+                                  }
+                                ]
+                              }
+                            ]}
+                            data={this.state.multiCBM}
+                            minRows={0}
+                            showPagination={false}
+                            className="-striped -highlight"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="row cargodetailsB"></div>
+
+                      <div>
+                        <div
+                          className="title-border-t py-3"
+                          style={{ width: "100%" }}
+                        >
+                          <h3>Documents</h3>
+                        </div>
+                      </div>
+                      <div className="rename-cntr login-fields d-block">
                         <ReactTable
                           columns={[
                             {
                               columns: [
                                 {
-                                  Header: "Package Type",
-                                  accessor: "PackageType"
+                                  Header: "File name",
+                                  accessor: "FileName"
                                 },
+
                                 {
-                                  Header: "Quantity",
-                                  accessor: "QTY"
-                                },
-                                {
-                                  Header: "Length",
-                                  accessor: "Lengths"
-                                },
-                                {
-                                  Header: "Width",
-                                  accessor: "Width"
-                                },
-                                {
-                                  Header: "Height",
-                                  accessor: "Height"
-                                },
-                                {
-                                  Header: "Gross Weight",
-                                  accessor: "GrossWeight"
-                                },
-                                {
-                                  Header: "Volume Weight",
-                                  accessor: "VolumeWeight"
+                                  Header: "Action",
+                                  Cell: row => {
+                                    if (
+                                      row.original.FilePath !== "" &&
+                                      row.original.FileName !== "No File Found"
+                                    ) {
+                                      return (
+                                        <div className="action-cntr">
+                                          <a
+                                            onClick={e =>
+                                              this.HandleFileOpen(
+                                                row.original.FilePath
+                                              )
+                                            }
+                                          >
+                                            <img
+                                              style={{
+                                                cursor: "pointer"
+                                              }}
+                                              className="actionicon"
+                                              src={Download}
+                                              alt="download-icon"
+                                            />
+                                          </a>
+                                        </div>
+                                      );
+                                    } else {
+                                      return <></>;
+                                    }
+                                  }
                                 }
                               ]
                             }
                           ]}
-                          data={this.state.multiCBM}
+                          data={this.state.FileData}
                           minRows={0}
                           showPagination={false}
-                          className="-striped -highlight"
                         />
-                      ) : null}
-                    </div>
-                    <div className="row cargodetailsB"></div>
-
-                    <div>
-                      <div
-                        className="title-border-t py-3"
-                        style={{ width: "100%" }}
-                      >
-                        <h3>Documents</h3>
                       </div>
-                    </div>
-                    <div className="rename-cntr login-fields d-block">
-                      <ReactTable
-                        columns={[
-                          {
-                            columns: [
-                              {
-                                Header: "File name",
-                                accessor: "FileName"
-                              },
-
-                              {
-                                Header: "Action",
-                                Cell: row => {
-                                  if (
-                                    row.original.FilePath !== "" &&
-                                    row.original.FileName !== "No File Found"
-                                  ) {
-                                    return (
-                                      <div className="action-cntr">
-                                        <a
-                                          onClick={e =>
-                                            this.HandleFileOpen(
-                                              row.original.FilePath
-                                            )
-                                          }
-                                        >
-                                          <img
-                                            style={{
-                                              cursor: "pointer"
-                                            }}
-                                            className="actionicon"
-                                            src={Download}
-                                            alt="download-icon"
-                                          />
-                                        </a>
-                                      </div>
-                                    );
-                                  } else {
-                                    return <></>;
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        ]}
-                        data={this.state.FileData}
-                        minRows={0}
-                        showPagination={false}
-                      />
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </React.Fragment>
@@ -1589,4 +1664,4 @@ class BookingView extends Component {
   }
 }
 
-export default BookingView;
+export default withRouter(BookingView);
