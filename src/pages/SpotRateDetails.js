@@ -722,7 +722,7 @@ class SpotRateDetails extends Component {
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
                     <div>
-                      <div className="title-border py-3">
+                      <div style={{marginBottom:"15px"}} className="title-border py-3">
                         <h3>
                           Rate Query -{" "}
                           {this.state.spotrateresponseTbl.RateQueryId}
@@ -760,7 +760,7 @@ class SpotRateDetails extends Component {
                           <p className="details-title">Special Equipment</p>
                           <p className="details-para"></p>
                         </div> */}
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">
                             {/* HazMat &amp; Unstackable */}
                             HazMat
@@ -774,7 +774,7 @@ class SpotRateDetails extends Component {
                           )}
                         </div>
 
-                        <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">NonStackable</p>
 
                           {this.state.spotrateresponseTbl.NonStackable && (
@@ -816,7 +816,7 @@ class SpotRateDetails extends Component {
                           this.state.spotrateresponseTbl.TypeofMove.toLowerCase() ===
                           "port to port" ? (
                             <>
-                              <div className="col-12 col-sm-4 col-md-3 col-lg-3">
+                              <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                                 <p className="details-title">POL</p>
                                 <p className="details-para">
                                   {this.state.spotrateresponseTbl.PickUpAddress}
@@ -975,6 +975,7 @@ class SpotRateDetails extends Component {
                     <div className="row">
                       <div className="col-12 col-sm-6 col-md-4">
                         <p className="details-title">Commodity</p>
+                        <div class="login-fields">
                         {/* <input type="text" value="Dummy" disabled /> */}
                         <select
                           value={this.state.spotrateresponseTbl.CommodityID}
@@ -987,6 +988,7 @@ class SpotRateDetails extends Component {
                             </option>
                           ))}
                         </select>
+                        </div>
                       </div>
                     </div>
                     <div>
