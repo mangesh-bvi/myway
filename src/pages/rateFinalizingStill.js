@@ -2226,7 +2226,8 @@ class RateFinalizingStill extends Component {
                         <div className="row">
                           {" "}
                           <div className="col-md-12 login-fields">
-                            <p className="details-title">Cargo Details</p>
+                            <div className="d-flex justify-content-between">
+                              <p className="details-title">Cargo Details</p>
                             {this.state.ContainerLoad === "AIR" ||
                             this.state.ContainerLoad === "LCL" ||
                             this.state.ContainerLoad === "LTL" ? (
@@ -2236,6 +2237,7 @@ class RateFinalizingStill extends Component {
                             ) : (
                               ""
                             )}
+                            </div>
 
                             <div className="ag-fresh redirect-row">
                               <ReactTable

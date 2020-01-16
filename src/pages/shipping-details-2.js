@@ -1181,7 +1181,7 @@ class ShippingDetailsTwo extends Component {
 
                           <span
                             className="clr-green"
-                            style={{ overflow: "initial" }}
+                            style={{ overflow: "initial", marginTop: "20px"  }}
                           >
                             POL
                           </span>
@@ -1283,7 +1283,7 @@ class ShippingDetailsTwo extends Component {
                           </div>
                           <span
                             className="clr-green"
-                            style={{ overflow: "initial" }}
+                            style={{ overflow: "initial", marginTop: "20px" }}
                           >
                             POD
                           </span>
