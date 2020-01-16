@@ -1859,7 +1859,7 @@ class RateTable extends Component {
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 3
-                ? "rename-cntr login-fields position-relative w-92"
+                ? "rename-cntr cusrename login-fields position-relative w-92"
                 : ""
             }
           >
@@ -1970,7 +1970,7 @@ class RateTable extends Component {
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 2
-                ? "rename-cntr login-fields position-relative w-92"
+                ? "rename-cntr cusrename login-fields position-relative w-92"
                 : ""
             }
           >
@@ -2069,7 +2069,7 @@ class RateTable extends Component {
           <div
             className={
               this.state.typeofMove === 1 || this.state.typeofMove === 2
-                ? "rename-cntr login-fields position-relative w-92"
+                ? "rename-cntr cusrename login-fields position-relative w-92"
                 : ""
             }
           >
@@ -4113,7 +4113,7 @@ class RateTable extends Component {
                     <p class="upto-days">{this.state.valueAmt} </p>
                     <span className="cust-labl clr-green">Faster</span>
                     <span className="cust-labl clr-red">Cheaper</span>
-                    <div className="d-flex" style={{ margin: "0 0px 0 12px" }}>
+                    <div className="d-flex" style={{ margin: "0" }}>
                       <span className="clr-green dragvalue">
                         {this.state.MinTT + " Days"}
                       </span>

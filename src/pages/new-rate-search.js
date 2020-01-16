@@ -1296,14 +1296,14 @@ class NewRateSearch extends Component {
     return this.state.referType.map((el, i) => {
       return (
         <div key={i} className="row cbm-space">
-          <div className="col-md">
+          <div className="">
             <div className="spe-equ">
               <label className="mt-2" name="ContainerCode">
                 {el.ContainerCode}
               </label>
             </div>
           </div>
-          <div className="col-md">
+          <div className="">
             <div className="spe-equ">
               <input
                 type="text"
@@ -1314,7 +1314,7 @@ class NewRateSearch extends Component {
               />
             </div>
           </div>
-          <div className="col-md">
+          <div className="">
             <div className="spe-equ">
               <input
                 type="text"
@@ -1325,8 +1325,8 @@ class NewRateSearch extends Component {
               />
             </div>
           </div>
-          <div className="col-md mt-2">
-            <div className="rate-radio-cntr mt-3 mb-0">
+          <div className="">
+            <div className="rate-radio-cntr mt-4 mb-0">
               <div>
                 <input
                   type="radio"

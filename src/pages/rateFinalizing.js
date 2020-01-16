@@ -5723,7 +5723,7 @@ class RateFinalizing extends Component {
                         </div>
                         <div className="">
                           <div className="row">
-                            <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock">
+                            <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock r-border">
                               <p className="details-title">Account/Customer</p>
                               {this.state.toggleAddProfitBtn && (
                                 <p className="details-para">
@@ -5781,7 +5781,7 @@ class RateFinalizing extends Component {
                                 null
                               ) : null}
                             </div>
-                            <div className="col-12 col-sm-4 col-md-4 col-lg-6">
+                            <div className="col-12 col-sm-4 col-md-4 col-lg-6 r-border">
                               <p className="details-title">Address</p>
                               <p className="details-para">
                                 {/* Lotus Park, Goregaon (E), Mumbai : 400099 */}
@@ -5848,14 +5848,14 @@ class RateFinalizing extends Component {
                             >
                               Cargo Details
                             </button>
-                          </div>
-                          {this.state.containerLoadType === "AIR" ||
+                            {this.state.containerLoadType === "AIR" ||
                           "LCL" ||
                           "LTL" ? (
-                            <p>CMB {this.state.cbmVal}</p>
+                            <p className="cmblabel">CMB {this.state.cbmVal}</p>
                           ) : (
                             ""
                           )}
+                          </div>
                         </div>
                         <div className="rate-final-contr">
                           <div className="ag-fresh redirect-row">

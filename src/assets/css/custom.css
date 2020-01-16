@@ -775,7 +775,7 @@ table tbody tr:last-child {
   text-align: center;
 }
 .desti-places span {
-  font-size: 16px;
+  font-size: 11px;
   color: #333;
 }
 .desti-places {
@@ -785,7 +785,7 @@ table tbody tr:last-child {
 }
 .progress-sect {
   /*  */
-  padding: 60px 40px 0px 30px;
+  padding: 20px 40px 20px 30px;
 }
 .ship-detail-map {
   height: 300px;
@@ -1226,13 +1226,13 @@ table tbody tr:last-child {
   font-family: "Medium Font";
   letter-spacing: 0.5px;
   position: relative;
-  padding-left: 30px;
+  padding-left: 22px;
   cursor: pointer;
 }
 .rate-radio-cntr input + label::before {
   content: "";
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   position: absolute;
   border: 1px solid #bebebe;
   left: 0;
@@ -1248,11 +1248,11 @@ table tbody tr:last-child {
 }
 .rate-radio-cntr input:checked + label::after {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   position: absolute;
   background-color: #002d73;
-  left: 4px;
+  left: 2px;
   top: 50%;
   transform: translateY(-50%);
   border-radius: 50%;
@@ -1429,6 +1429,9 @@ table tbody tr:last-child {
 }
 .spe-equ .rate-dropdown {
   margin: initial;
+}
+.spe-equ input[type="text"] {
+  width: 125px;
 }
 .spe-equ input[type="text"],
 .rate-address,
@@ -1905,7 +1908,7 @@ input[type="range"]::-moz-range-track {
   text-transform: uppercase;
   position: absolute;
   left: 10px;
-  top: calc(50% - 13px);
+  top: calc(50% - 17px);
   transform: translateY(-50%);
 }
 .rate-table-range .cust-labl.clr-red {
@@ -2605,6 +2608,7 @@ input[type="range"]::-moz-range-track {
 .dragvalue {
   padding: 0 5px 0 0;
   font-size: 12px;
+  white-space: nowrap;
 }
 .dragvalue2 {
   padding: 0 0px 0 10px;
@@ -4203,6 +4207,23 @@ select option {
   background-color: #ededed;
 }
 
+
+.cusrename div:first-child {
+  display: block !important;
+  width: 100%;
+}
+
+.cusrename div:last-child {
+  z-index: 9;
+}
+.cmblabel {
+  font-weight: 600;
+  margin: 5px 5px 0;
+}
+
+
+
+
 @media (min-width: 768px) {
   .cus-w .col-lg-3 {
     flex: 0 0 28.333333%;
@@ -4312,27 +4333,34 @@ select option {
 
 progress {
   border: none;
+  height: 5px;
+  border-radius: 50px;
   background: #f1f2f2;
 }
 
 progress::-moz-progress-bar {
   background: lightcolor;
+  border-radius: 50px;
 }
 
 progress.ticket-progress.progress-red::-webkit-progress-value {
   background: #eb0029;
+  border-radius: 50px;
 }
 
 progress.ticket-progress.progress-yellow::-webkit-progress-value {
   background: #ffb400;
+  border-radius: 50px;
 }
 
 progress.ticket-progress.progress-green::-webkit-progress-value {
   background: #39b54a;
+  border-radius: 50px;
 }
 
 progress::-webkit-progress-bar {
   background-color: #f1f2f2;
+  border-radius: 50px;
 }
 
 @media only screen and (max-width: 768px) {
@@ -4365,7 +4393,7 @@ progress::-webkit-progress-bar {
 .mobilenumber-resp .line-resol {
   border-right: 2px solid black;
   /* padding: 3px; */
-  top: 33px;
+  top: 39px;
   position: relative;
   /* right: -20px; */
 }
@@ -4381,7 +4409,7 @@ progress::-webkit-progress-bar {
 .mobilenumber-resp .line-resol {
   border-right: 2px solid black;
   /* padding: 3px; */
-  top: 33px;
+  top: 39px;
   position: relative;
   /* right: -20px; */
 }
