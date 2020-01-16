@@ -5241,17 +5241,18 @@ class RateFinalizing extends Component {
                                           rateId =
                                             row._original.saleQuoteLineID;
                                         }
-                                        var url="";
-                                        if(this.state.containerLoadType==="FCL")
-                                        {
-                                          url="https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/"+lname;
+                                        var url = "";
+                                        if (
+                                          this.state.containerLoadType === "FCL"
+                                        ) {
+                                          url =
+                                            "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                            lname;
+                                        } else {
+                                          url =
+                                            "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png";
                                         }
-                                        else
 
-                                        {
-                                          url="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
-                                        }
-                                        
                                         return (
                                           <React.Fragment>
                                             <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -5278,9 +5279,7 @@ class RateFinalizing extends Component {
                                               <img
                                                 title={olname}
                                                 alt={olname}
-                                                src={
-                                                   url
-                                                }
+                                                src={url}
                                               />
                                             </div>
                                           </React.Fragment>
@@ -6131,114 +6130,114 @@ class RateFinalizing extends Component {
                           ) : (
                             ""
                           )}
-                          </div>
                         </div>
-                        <div className="rate-final-contr">
-                          <div className="ag-fresh redirect-row">
-                            {TruckDetailsArr.length !== 0 ? "" : null}
+                      </div>
+                      <div className="rate-final-contr">
+                        <div className="ag-fresh redirect-row">
+                          {TruckDetailsArr.length !== 0 ? "" : null}
 
-                            {PackageDetailsArr.length !== 0 ? (
-                              <ReactTable
-                                data={PackageDetailsArr}
-                                filterable
-                                minRows={1}
-                                showPagination={false}
-                                columns={[
-                                  {
-                                    Header: "Pack.Type",
-                                    accessor: "ContainerType",
-                                    minWidth: 110
-                                  },
-                                  {
-                                    Header: "Quantity",
-                                    accessor: "Quantity",
-                                    show:
-                                      this.state.containerLoadType.toUpperCase() ==
-                                      "FCL"
-                                        ? false
-                                        : true
-                                  },
-                                  {
-                                    Header: "Lenght",
-                                    accessor: "Lenght"
-                                  },
-                                  {
-                                    Header: "Width",
-                                    accessor: "Width"
-                                  },
-                                  {
-                                    Header: "Height",
-                                    accessor: "Height"
-                                  },
-                                  {
-                                    Header: "Gross Weight",
-                                    accessor: "Weight",
-                                    minWidth: 140
-                                    //editable: this.state.containerLoadType == "Air" ? true : false
-                                  },
-                                  // {
-                                  //   Header: "Temp.",
-                                  //   accessor: "Temperature"
-                                  // },
-                                  {
-                                    Header:
-                                      this.state.containerLoadType.toUpperCase() ==
-                                      "LCL"
-                                        ? "CBM"
-                                        : "Chargable Weight",
-                                    accessor: "CBM",
-                                    show:
-                                      this.state.containerLoadType.toUpperCase() ==
-                                      "FCL"
-                                        ? false
-                                        : true
-                                  }
-                                ]}
-                                className="-striped -highlight"
-                                defaultPageSize={2000}
-                                //getTrProps={this.HandleRowClickEvt}
-                                //minRows={1}
-                              />
-                            ) : null}
-                          </div>
+                          {PackageDetailsArr.length !== 0 ? (
+                            <ReactTable
+                              data={PackageDetailsArr}
+                              filterable
+                              minRows={1}
+                              showPagination={false}
+                              columns={[
+                                {
+                                  Header: "Pack.Type",
+                                  accessor: "ContainerType",
+                                  minWidth: 110
+                                },
+                                {
+                                  Header: "Quantity",
+                                  accessor: "Quantity",
+                                  show:
+                                    this.state.containerLoadType.toUpperCase() ==
+                                    "FCL"
+                                      ? false
+                                      : true
+                                },
+                                {
+                                  Header: "Lenght",
+                                  accessor: "Lenght"
+                                },
+                                {
+                                  Header: "Width",
+                                  accessor: "Width"
+                                },
+                                {
+                                  Header: "Height",
+                                  accessor: "Height"
+                                },
+                                {
+                                  Header: "Gross Weight",
+                                  accessor: "Weight",
+                                  minWidth: 140
+                                  //editable: this.state.containerLoadType == "Air" ? true : false
+                                },
+                                // {
+                                //   Header: "Temp.",
+                                //   accessor: "Temperature"
+                                // },
+                                {
+                                  Header:
+                                    this.state.containerLoadType.toUpperCase() ==
+                                    "LCL"
+                                      ? "CBM"
+                                      : "Chargable Weight",
+                                  accessor: "CBM",
+                                  show:
+                                    this.state.containerLoadType.toUpperCase() ==
+                                    "FCL"
+                                      ? false
+                                      : true
+                                }
+                              ]}
+                              className="-striped -highlight"
+                              defaultPageSize={2000}
+                              //getTrProps={this.HandleRowClickEvt}
+                              //minRows={1}
+                            />
+                          ) : null}
                         </div>
+                      </div>
 
-                        <div className="row">
-                          <div className="col-md-6 login-fields">
-                            <p className="details-title">Commodity</p>
-                            <select
-                              //disabled={true}
-                              value={this.state.CommodityID}
-                              onChange={this.commoditySelect.bind(this)}
-                            >
-                              {/* <option value="select">Select</option> */}
-                              {this.state.commodityData.map((item, i) => (
-                                <option key={i} value={item.id}>
-                                  {item.Commodity}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          {/* <div className="col-md-6 login-fields">
+                      <div className="row">
+                        <div className="col-md-6 login-fields">
+                          <p className="details-title">Commodity</p>
+                          <select
+                            //disabled={true}
+                            value={this.state.CommodityID}
+                            onChange={this.commoditySelect.bind(this)}
+                          >
+                            {/* <option value="select">Select</option> */}
+                            {this.state.commodityData.map((item, i) => (
+                              <option key={i} value={item.id}>
+                                {item.Commodity}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        {/* <div className="col-md-6 login-fields">
                         <p className="details-title">Cargo Details</p>
                         <select onChange={this.cargoSelect.bind(this)}>
                           <option value="select">Select</option>
                           <option value="new">New</option>
                         </select>
                       </div> */}
-                        </div>
+                      </div>
 
-                        <div className="text-right">
-                          {/* <a href={Dummy} target="_blank" className="butn mr-3">
+                      <div className="text-right">
+                        {/* <a href={Dummy} target="_blank" className="butn mr-3">
                         Preview
                       </a> */}
-                          <button
-                            onClick={this.togglePreview}
-                            className="butn more-padd mr-3"
-                          >
-                            Preview
-                          </button>
-                          {/* <a
+                        <button
+                          onClick={this.togglePreview}
+                          className="butn more-padd mr-3"
+                        >
+                          Preview
+                        </button>
+                        {/* <a
                         href="quote-table"
                         className={
                           this.state.commoditySelect == "select" ||
@@ -6249,41 +6248,40 @@ class RateFinalizing extends Component {
                       >
                         Send
                       </a> */}
-                          <button
-                            // onClick={this.SendQuote}
-                            disabled={this.state.loding === true ? true : false}
-                            onClick={
-                              this.state.isCopy === true
-                                ? this.SendRequestCopy
-                                : this.SendRequest
-                            }
-                            className={
-                              this.state.commoditySelect == "select" // ||
-                                ? // this.state.cargoSelect == "select"
-                                  "butn cancel-butn no-butn"
-                                : "butn"
-                            }
-                          >
-                            {this.state.loding == true ? (
-                              <>
-                                <i
-                                  style={{ marginRight: 15 }}
-                                  className="fa fa-refresh fa-spin"
-                                ></i>
-                                {"Please Wait ..."}
-                              </>
-                            ) : (
-                              <>
-                                {encryption(
-                                  window.localStorage.getItem("usertype"),
-                                  "desc"
-                                ) != "Customer"
-                                  ? "Send"
-                                  : "Confirm And Approve"}
-                              </>
-                            )}
-                          </button>
-                        </div>
+                        <button
+                          // onClick={this.SendQuote}
+                          disabled={this.state.loding === true ? true : false}
+                          onClick={
+                            this.state.isCopy === true
+                              ? this.SendRequestCopy
+                              : this.SendRequest
+                          }
+                          className={
+                            this.state.commoditySelect == "select" // ||
+                              ? // this.state.cargoSelect == "select"
+                                "butn cancel-butn no-butn"
+                              : "butn"
+                          }
+                        >
+                          {this.state.loding == true ? (
+                            <>
+                              <i
+                                style={{ marginRight: 15 }}
+                                className="fa fa-refresh fa-spin"
+                              ></i>
+                              {"Please Wait ..."}
+                            </>
+                          ) : (
+                            <>
+                              {encryption(
+                                window.localStorage.getItem("usertype"),
+                                "desc"
+                              ) != "Customer"
+                                ? "Send"
+                                : "Confirm And Approve"}
+                            </>
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>
