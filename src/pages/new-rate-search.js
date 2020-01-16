@@ -600,6 +600,7 @@ class NewRateSearch extends Component {
     document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
   }
   removeClickTruckType(i) {
+    debugger;
     let TruckTypeData = [...this.state.TruckTypeData];
     TruckTypeData.splice(i, 1);
     this.setState({ TruckTypeData });
@@ -768,6 +769,7 @@ class NewRateSearch extends Component {
   }
 
   HandlePUPDAddress(field, e) {
+    debugger;
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -783,7 +785,7 @@ class NewRateSearch extends Component {
         "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
         e.target.value +
         "&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&sessiontoken=2333"; // site that doesn’t send Access-Control-*
-      fetch(url)
+      fetch(proxyurl + url)
         .then(res => res.json())
         .then(response => {
           for (let i = 0; i < response.predictions.length; i++) {
@@ -1266,9 +1268,14 @@ class NewRateSearch extends Component {
   }
 
   removeClickSpacEqmtType(i) {
+    debugger;
     let spacEqmtType = [...this.state.spacEqmtType];
     spacEqmtType.splice(i, 1);
-    this.setState({ spacEqmtType });
+    let flattack_openTop = [...this.state.flattack_openTop];
+    if (this.state.flattack_openTop.length > 0) {
+      flattack_openTop.splice(i - 1, 1);
+    }
+    this.setState({ spacEqmtType, flattack_openTop });
   }
 
   //// end spacEqmtType dyamanic element
@@ -1510,7 +1517,7 @@ class NewRateSearch extends Component {
           </div>
         </div> */}
 
-        <div className="">
+        {/* <div className="">
           <div className="spe-equ">
             <i
               className="fa fa-minus mt-2"
@@ -1518,7 +1525,7 @@ class NewRateSearch extends Component {
               onClick={this.removeClickMultiCBM.bind(this)}
             ></i>
           </div>
-        </div>
+        </div> */}
       </div>
     ));
   }
@@ -1605,11 +1612,13 @@ class NewRateSearch extends Component {
     }
   }
   removeClickMultiCBM(i) {
+    debugger;
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop.splice(i, 1);
     this.setState({ flattack_openTop });
   }
   removeSpecEquip(i) {
+    debugger;
     this.setState({
       specialEquipment: false,
       spacEqmtType: [],
@@ -1728,6 +1737,7 @@ class NewRateSearch extends Component {
   }
 
   newremoveClick(i) {
+    debugger;
     let users = [...this.state.users];
     if (users[i].ContainerName === "Special Equipment") {
       this.setState({ specialEquipment: false, isSpacialEqt: true });
@@ -2831,6 +2841,7 @@ class NewRateSearch extends Component {
   }
 
   removeClick(i) {
+    debugger;
     let values = [...this.state.values];
     values.splice(i, 1);
     this.setState({ values });
@@ -2858,12 +2869,20 @@ class NewRateSearch extends Component {
         </>
       );
     }
+    var colClassName = "";
+    if (localStorage.getItem("isColepse") === "true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
 
     return (
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt" style={{ background: "transparent" }}>

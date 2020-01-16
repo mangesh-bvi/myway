@@ -274,11 +274,19 @@ class GreenCounter extends Component {
       ]
     };
     var lbl = { 1: "1M", 2: "2M", 3: "3M" };
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
 

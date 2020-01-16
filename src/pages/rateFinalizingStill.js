@@ -930,7 +930,7 @@ class RateFinalizingStill extends Component {
       method: "post",
       url: `${appSettings.APIURL}/DownloadFTPFile`,
       data: {
-        MywayUserID: 874588,
+        MywayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
         FilePath: item.original.FilePath
       },
       responseType: "blob",
@@ -1425,9 +1425,13 @@ class RateFinalizingStill extends Component {
       }, 1000);
     });
   }
+  handleChangePage() {
+    window.history.back();
+  }
 
   render() {
-    console.log(this.state.ContainerLoad);
+    console.log(this.state.filterrateSubDetails);
+
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -1442,11 +1446,19 @@ class RateFinalizingStill extends Component {
     var DocumentCharges = [];
     var i = 0;
     const { CargoDetailsArr, DocumentDetails } = this.state;
+    var colClassName = "";
+    if (localStorage.getItem("isColepse") === "true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <React.Fragment>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt no-bg">
@@ -1466,6 +1478,12 @@ class RateFinalizingStill extends Component {
               })()}
               {/* <h2>Rate Query Details</h2> */}{" "}
               <h2>{this.state.loding === true ? "" : status}</h2>
+              <button
+                onClick={this.handleChangePage.bind(this)}
+                className="butn mt-0"
+              >
+                Back
+              </button>
             </div>
             {this.state.loding === true ? (
               <div className="loader-icon"></div>
@@ -2211,7 +2229,7 @@ class RateFinalizingStill extends Component {
                             <p className="details-title">Cargo Details</p>
                             {this.state.ContainerLoad === "AIR" ||
                             this.state.ContainerLoad === "LCL" ||
-                            this.state.ContainerLoad ===  "LTL" ? (
+                            this.state.ContainerLoad === "LTL" ? (
                               <p className="details-title">
                                 CBM:-{this.state.cbmVal}
                               </p>
@@ -2826,29 +2844,31 @@ class RateFinalizingStill extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.CargoDetailsArr.map(item1 => (
-                              <tr>
-                                <td>{item1.ContainerType}</td>
-                                <td>{item1.Quantity}</td>
-                                <td>{item1.Lenght}</td>
-                                <td>{item1.Width}</td>
-                                <td>{item1.Height}</td>
-                                <td>{item1.Weight}</td>
-                                {this.state.ContainerLoad.toUpperCase() ===
-                                  "FCL" ||
-                                this.state.ContainerLoad.toUpperCase() ===
-                                  "FTL" ? (
-                                  ""
-                                ) : (
-                                  <td>
+                            {this.state.CargoDetailsArr.length > 0
+                              ? this.state.CargoDetailsArr.map(item1 => (
+                                  <tr>
+                                    <td>{item1.ContainerType}</td>
+                                    <td>{item1.Quantity}</td>
+                                    <td>{item1.Lenght}</td>
+                                    <td>{item1.Width}</td>
+                                    <td>{item1.Height}</td>
+                                    <td>{item1.Weight}</td>
                                     {this.state.ContainerLoad.toUpperCase() ===
-                                    "AIR"
-                                      ? item1.VolumeWeight
-                                      : item1.Volume}
-                                  </td>
-                                )}
-                              </tr>
-                            ))}
+                                      "FCL" ||
+                                    this.state.ContainerLoad.toUpperCase() ===
+                                      "FTL" ? (
+                                      ""
+                                    ) : (
+                                      <td>
+                                        {this.state.ContainerLoad.toUpperCase() ===
+                                        "AIR"
+                                          ? item1.VolumeWeight
+                                          : item1.Volume}
+                                      </td>
+                                    )}
+                                  </tr>
+                                ))
+                              : ""}
                           </tbody>
                         </table>
                       </div>
@@ -2989,22 +3009,24 @@ class RateFinalizingStill extends Component {
                                 </tr>
                               </thead>
                               <tbody>
-                                {this.state.CargoDetailsArr.map(item1 => (
-                                  <tr>
-                                    <td>{item1.PackageType}</td>
-                                    <td>{item1.Quantity}</td>
-                                    <td>{item1.Lenght}</td>
-                                    <td>{item1.Width}</td>
-                                    <td>{item1.Height}</td>
-                                    <td>{item1.Weight}</td>
-                                    <td>
-                                      {this.state.ContainerLoad.toUpperCase() ===
-                                      "AIR"
-                                        ? item1.VolumeWeight
-                                        : item1.Volume}
-                                    </td>
-                                  </tr>
-                                ))}
+                                {this.state.CargoDetailsArr.length > 0
+                                  ? this.state.CargoDetailsArr.map(item1 => (
+                                      <tr>
+                                        <td>{item1.PackageType}</td>
+                                        <td>{item1.Quantity}</td>
+                                        <td>{item1.Lenght}</td>
+                                        <td>{item1.Width}</td>
+                                        <td>{item1.Height}</td>
+                                        <td>{item1.Weight}</td>
+                                        <td>
+                                          {this.state.ContainerLoad.toUpperCase() ===
+                                          "AIR"
+                                            ? item1.VolumeWeight
+                                            : item1.Volume}
+                                        </td>
+                                      </tr>
+                                    ))
+                                  : ""}
                               </tbody>
                             </table>
                           </div>
@@ -3077,7 +3099,7 @@ class RateFinalizingStill extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.filterrateSubDetails.map(item1 => (
+                            {this.state.filterrateSubDetails.length>0 &&this.state.filterrateSubDetails!==undefined?this.state.filterrateSubDetails.map(item1 => (
                               <tr>
                                 <td>{item1.ChargeDesc}</td>
                                 <td>{item1.Amount}</td>
@@ -3085,7 +3107,7 @@ class RateFinalizingStill extends Component {
                                 <td>{item1.Tax}</td>
                                 <td>{item1.Total}</td>
                               </tr>
-                            ))}
+                            )):""}
                           </tbody>
                         </table>
                       </div>
@@ -3106,7 +3128,7 @@ class RateFinalizingStill extends Component {
                               <th></th>
 
                               <th>
-                                {this.state.filterrateSubDetails.length !== 0
+                                {this.state.filterrateSubDetails.length > 0 &&this.state.filterrateSubDetails!==undefined
                                   ? this.state.filterrateSubDetails.reduce(
                                       (sum, filterrateSubDetails) =>
                                         sum +

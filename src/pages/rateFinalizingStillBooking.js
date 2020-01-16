@@ -2305,8 +2305,8 @@ class RateFinalizingStillBooking extends Component {
         if (
           response.data.Table[0].Result === "Docuement deleted successfully"
         ) {
-           var FileData=self.state.FileData;
-           FileData.splice(row.index)
+          var FileData = self.state.FileData;
+          FileData.splice(row.index);
         }
       });
     } else {
@@ -2326,6 +2326,9 @@ class RateFinalizingStillBooking extends Component {
       }
     }
   }
+  handleChangePage() {
+    window.history.back();
+  }
   render() {
     const { Booking } = this.state;
     console.log(this.state.ContainerLoad);
@@ -2342,12 +2345,19 @@ class RateFinalizingStillBooking extends Component {
     }
 
     let i = 0;
-
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <React.Fragment>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt no-bg">
@@ -2363,6 +2373,12 @@ class RateFinalizingStillBooking extends Component {
                     : bNumber
                   : ""}
               </h2>
+              <button
+                onClick={this.handleChangePage.bind(this)}
+                className="butn mt-0"
+              >
+                Back
+              </button>
             </div>
             {this.state.newloding === true ? (
               <div className="loader-icon"></div>

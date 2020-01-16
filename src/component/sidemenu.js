@@ -37,7 +37,8 @@ class SideMenu extends Component {
       bookPendingCount: "0",
       activeRateSearch: "",
       activeSpotList: "",
-      modalProfile: false
+      modalProfile: false,
+      isColClick: false
     };
 
     this.highlightClass = this.highlightClass.bind(this);
@@ -95,18 +96,26 @@ class SideMenu extends Component {
   }
 
   sidebarCollapse(e) {
+    debugger;
     // alert(e.classList.contains("abc"));
     // console.log(e.currentTarget.parentNode);
-    if (e.currentTarget.parentNode.parentNode.classList.contains("colap")) {
+    // if (e.currentTarget.parentNode.parentNode.classList.contains("colap")) {
+    if (localStorage.getItem("isColepse")==="true") {
       e.currentTarget.parentNode.parentNode.classList.remove("colap");
+
+      localStorage.setItem("isColepse", false);
+      this.setState({ isColClick: false });
     } else {
+      localStorage.setItem("isColepse", true);
       e.currentTarget.parentNode.parentNode.classList.add("colap");
+      
+      this.setState({ isColClick: true });
     }
   }
 
   highlightClass(e) {
     debugger;
-    console.log(e.classList);
+    // console.log(e.classList);
 
     var elems = document.getElementsByClassName("side-menus");
     // elems.forEach(element => {
@@ -120,6 +129,14 @@ class SideMenu extends Component {
   }
 
   render() {
+    // var colClassName = "";
+    // if (window.localStorage.getItem("isColepse")) {
+    //   debugger;
+    //   colClassName = "side-arrow colap";
+    // } else {
+    //   debugger;
+    //   colClassName = "side-arrow";
+    // }
     var urlShipSum = window.location.pathname;
     window.localStorage.setItem("defShipActKey", "0");
     if (urlShipSum === "/shipment-summary") {

@@ -56,12 +56,20 @@ class SpotRate extends Component {
   }
 
   render() {
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         <NotificationContainer leaveTimeout="3000" />
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt no-bg min-hei-auto">

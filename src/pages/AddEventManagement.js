@@ -33,7 +33,7 @@ class AddEventManagement extends Component {
   }
 
   handleSubmit(e) {
-    debugger
+    debugger;
     // const docData = new FormData();
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     var ActionModes = 0;
@@ -169,18 +169,38 @@ class AddEventManagement extends Component {
 
     return IsExists;
   }
-
+  handleChangePage() {
+    window.history.back();
+  }
   render() {
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <AdminSideMenu />
           </div>
           <div className="cls-rt">
             <div class="title-sect title-border">
               <h2>Manage Event</h2>
+              {this.props.location.state != undefined ? (
+                <button
+                  onClick={this.handleChangePage.bind(this)}
+                  className="butn mt-0"
+                >
+                  Back
+                </button>
+              ) : (
+                ""
+              )}
             </div>
             <div className="container add-user-cntr">
               <div className="row mt-3">

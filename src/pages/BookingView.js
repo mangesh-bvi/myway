@@ -888,10 +888,11 @@ class BookingView extends Component {
       });
     }
   }
+  handleChangePage() {
+    window.history.back();
+  }
 
   render() {
-    console.log(this.state.loding);
-    
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
       //debugger
@@ -906,20 +907,30 @@ class BookingView extends Component {
     } else {
       className = "butn m-0";
     }
-
-    // var sizeOf = require("image-size");
-    // var dimensions = sizeOf("./../assets/img/maersk.png");
-    // console.log(dimensions.width, dimensions.height);
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <React.Fragment>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Booking Details</h2>
+              <button
+                onClick={this.handleChangePage.bind(this)}
+                className="butn mt-0"
+              >
+                Back
+              </button>
             </div>
             {this.state.loding === true ? (
               <div className="loader-icon"></div>

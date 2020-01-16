@@ -722,14 +722,24 @@ class AddSalesUser extends React.Component {
       selectedFileName: event.target.files[0].name
     });
   };
-
+  handleChangePage() {
+    window.history.back();
+  }
   render() {
     var a = 1;
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <AdminSideMenu />
           </div>
           <div className="cls-rt">
@@ -742,6 +752,16 @@ class AddSalesUser extends React.Component {
                     return <h2>Add Sales User</h2>;
                   }
                 })()}
+                {this.props.location.state != undefined ? (
+                  <button
+                    onClick={this.handleChangePage.bind(this)}
+                    className="butn mt-0"
+                  >
+                    Back
+                  </button>
+                ) : (
+                  ""
+                )}
               </div>
 
               <div className="container add-user-cntr">

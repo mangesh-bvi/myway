@@ -518,6 +518,14 @@ class Dashboard extends Component {
         return;
       }
     });
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         {}
@@ -525,7 +533,7 @@ class Dashboard extends Component {
         <Headers />
 
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt">

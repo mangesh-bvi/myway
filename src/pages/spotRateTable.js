@@ -185,11 +185,19 @@ class SpotRateTable extends Component {
         new Moment(b.CreatedDate).format("YYYYMMDD") -
         new Moment(a.CreatedDate).format("YYYYMMDD")
     );
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt">

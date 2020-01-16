@@ -244,7 +244,7 @@ class Login extends React.Component {
   toggleSalesLoginPage() {
     var checkedCompData = this.state.checked;
     var finalselectedData = [];
-    let self=this;
+    let self = this;
     for (var i = 0; i < checkedCompData.length; i++) {
       finalselectedData.push(parseInt(checkedCompData[i]));
     }
@@ -261,7 +261,7 @@ class Login extends React.Component {
     })
       .then(function(response) {
         debugger;
-        self.props.history.push("/rate-search")
+        self.props.history.push("/rate-search");
         // window.location.href = "./rate-search";
       })
       .catch(error => {
@@ -305,6 +305,7 @@ class Login extends React.Component {
             "username",
             encryption(data.Table[0].UserName, "enc")
           );
+          window.localStorage.setItem("isColepse", false);
           window.localStorage.setItem(
             "firstname",
             encryption(data.Table[0].FirstName, "enc")
@@ -391,7 +392,6 @@ class Login extends React.Component {
                 modalSalesLogin: !self.state.modalSalesLogin
               });
             }
-            
           } else if (
             userTypeName === "Sales User" &&
             SalesCompanyPopupFlag === 0
@@ -445,6 +445,9 @@ class Login extends React.Component {
       console.log(await publicIp.v4());
       window.localStorage.setItem("ipaddress", await publicIp.v4());
     })();
+  }
+  checkboxCheck(e) {
+    debugger;
   }
   render() {
     let self = this;
@@ -551,6 +554,7 @@ class Login extends React.Component {
             <ModalBody>
               <div>
                 <CheckboxTree
+                  onClick={this.checkboxCheck.bind(this)}
                   nodes={self.state.nodes}
                   checked={self.state.checked}
                   expanded={this.state.expanded}

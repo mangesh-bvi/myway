@@ -1010,12 +1010,20 @@ class Analytics extends Component {
     let optionSupplierName = this.state.setSupplierdrop.map((item, i) => (
       <option value={item.ShipperID}>{item.ShipperName}</option>
     ));
-
+    var colClassName = "";
+    // if (localStorage.getItem("isColepse")==="true"==="true") {
+      if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <React.Fragment>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt">

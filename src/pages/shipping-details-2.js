@@ -483,8 +483,10 @@ class ShippingDetailsTwo extends Component {
       var ModeType = response.data.Table[0].ModeOfTransport;
       var POLPODData = response.data.Table5;
       var Table9 = response.data.Table9;
+      var eve =response.data.Table[0].Event;
 
       self.setState({
+        eve,
         detailsData: shipmentdata.Table[0],
         ShipperID: shipmentdata.Table[0].ShipperId,
         addressData: shipmentdata.Table1,
@@ -955,11 +957,19 @@ class ShippingDetailsTwo extends Component {
     } else {
       className = "butn view-btn";
     }
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt">

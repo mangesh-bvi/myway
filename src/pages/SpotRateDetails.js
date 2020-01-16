@@ -673,11 +673,12 @@ class SpotRateDetails extends Component {
   }
 
   HandleViewRateData() {
-    debugger
+    debugger;
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
   render() {
+    const { spotrateresponseTbl1, spotrateresponseTbl3 } = this.state;
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -686,13 +687,29 @@ class SpotRateDetails extends Component {
     }
 
     var i = 0;
-    const { spotrateresponseTbl1, spotrateresponseTbl3 } = this.state;
+    var equType = "";
+    if (spotrateresponseTbl1.length > 0) {
+      debugger;
+      for (let j = 0; j < spotrateresponseTbl1.length; j++) {
+        if (!equType.includes(spotrateresponseTbl1[j].Container)) {
+          equType += spotrateresponseTbl1[j].Container;
+        }
+      }
+    }
+    var colClassName = "";
+    if (localStorage.getItem("isColepse") === "true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
 
     return (
       <React.Fragment>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt no-bg">
@@ -722,7 +739,10 @@ class SpotRateDetails extends Component {
                 <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                   <div className="rate-final-contr">
                     <div>
-                      <div style={{marginBottom:"15px"}} className="title-border py-3">
+                      <div
+                        style={{ marginBottom: "15px" }}
+                        className="title-border py-3"
+                      >
                         <h3>
                           Rate Query -{" "}
                           {this.state.spotrateresponseTbl.RateQueryId}
@@ -749,17 +769,23 @@ class SpotRateDetails extends Component {
                             {this.state.Mode}
                           </p>
                         </div>
-                        {/* <div className="col-md-4">
-                          <p className="details-title">Equipment Types</p>
-                          <p className="details-para">
-                          {spotrateresponseTbl1.length > 0 ?
-                          spotrateresponseTbl1[0].ContainerCode : ""}
-                          </p>
-                        </div> */}
-                        {/* <div className="col-md-4">
-                          <p className="details-title">Special Equipment</p>
-                          <p className="details-para"></p>
-                        </div> */}
+                        {this.state.Mode === "FCL" ? (
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                            <p className="details-title">Equipment Types</p>
+                            <p className="details-para">{equType}</p>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        {this.state.Mode === "FCL" ? (
+                          <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                            <p className="details-title">Special Equipment</p>
+                            <p className="details-para"></p>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+
                         <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                           <p className="details-title">
                             {/* HazMat &amp; Unstackable */}
@@ -976,18 +1002,19 @@ class SpotRateDetails extends Component {
                       <div className="col-12 col-sm-6 col-md-4">
                         <p className="details-title">Commodity</p>
                         <div class="login-fields">
-                        {/* <input type="text" value="Dummy" disabled /> */}
-                        <select
-                          value={this.state.spotrateresponseTbl.CommodityID}
-                        >
-                          <option>Select</option>
-                          <option>All</option>
-                          {this.state.commodityData.map((item, i) => (
-                            <option key={i} value={item.id}>
-                              {item.Commodity}
-                            </option>
-                          ))}
-                        </select>
+                          {/* <input type="text" value="Dummy" disabled /> */}
+                          <select
+                            disabled={true}
+                            value={this.state.spotrateresponseTbl.CommodityID}
+                          >
+                            <option>Select</option>
+                            <option>All</option>
+                            {this.state.commodityData.map((item, i) => (
+                              <option key={i} value={item.id}>
+                                {item.Commodity}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -1043,10 +1070,10 @@ class SpotRateDetails extends Component {
                                     //   Header: "Equipment Type",
                                     //   accessor: ""
                                     // },
-                                    // {
-                                    //   Header: "Package Type",
-                                    //   accessor: ""
-                                    // },
+                                    {
+                                      Header: "Package Type",
+                                      accessor: "PackageType"
+                                    },
                                     {
                                       Header: "Quantity",
                                       accessor: "Quantity"
@@ -1071,8 +1098,14 @@ class SpotRateDetails extends Component {
                                     },
 
                                     {
-                                      Header: "Volume Weight",
-                                      accessor: "VolumeWT"
+                                      Header:
+                                        this.state.Mode != "LCL"
+                                          ? "Volume Weight"
+                                          : "Volume",
+                                      accessor:
+                                        this.state.Mode != "LCL"
+                                          ? "VolumeWT"
+                                          : "Volume"
                                     }
                                   ]
                                 }
@@ -1080,286 +1113,301 @@ class SpotRateDetails extends Component {
                               className="-striped -highlight"
                               defaultPageSize={10}
                               minRows={1}
-                              //getTrProps={this.HandleRowClickEvt}
                             />
                           </div>
-                          {/* }})()} */}
                         </div>
                         {/* <input type="text" value="Dummy" disabled /> */}
                         <br />
                         {this.state.Status === "Rate added by Local Pricing" ? (
-                        <><p className="details-title">Quotation Details</p>
+                          <>
+                            <p className="details-title">Quotation Details</p>
 
-                        <ReactTable
-                          columns={[
-                            {
-                              columns: [
+                            <ReactTable
+                              columns={[
                                 {
-                                  Cell: ({ original, row }) => {
-                                    i++;
-                                    debugger;
-                                    var lname = "";
-                                    var olname = "";
-                                    if (row._original.Linename) {
-                                      olname = row._original.Linename;
-                                      lname =
-                                        row._original.Linename.replace(
-                                          "  ",
-                                          "_"
-                                        ).replace(" ", "_") + ".png";
-                                    }
-                                    if (row._original.LineName) {
-                                      olname = row._original.LineName;
-                                      lname =
-                                        row._original.LineName.replace(
-                                          "  ",
-                                          "_"
-                                        ).replace(" ", "_") + ".png";
-                                    }
-                                    if (row._original.lineName) {
-                                      olname = row._original.lineName;
-                                      lname =
-                                        row._original.lineName
-                                          .replace("  ", "_")
-                                          .replace(" ", "_") + ".png";
-                                    }
-                                    var mode =
-                                      this.state.ModeofTransport ||
-                                      this.state.ModeOfTransport;
+                                  columns: [
+                                    {
+                                      Cell: ({ original, row }) => {
+                                        i++;
+                                        debugger;
+                                        var lname = "";
+                                        var olname = "";
+                                        if (row._original.Linename) {
+                                          olname = row._original.Linename;
+                                          lname =
+                                            row._original.Linename.replace(
+                                              "  ",
+                                              "_"
+                                            ).replace(" ", "_") + ".png";
+                                        }
+                                        if (row._original.LineName) {
+                                          olname = row._original.LineName;
+                                          lname =
+                                            row._original.LineName.replace(
+                                              "  ",
+                                              "_"
+                                            ).replace(" ", "_") + ".png";
+                                        }
+                                        if (row._original.lineName) {
+                                          olname = row._original.lineName;
+                                          lname =
+                                            row._original.lineName
+                                              .replace("  ", "_")
+                                              .replace(" ", "_") + ".png";
+                                        }
+                                        var mode =
+                                          this.state.ModeofTransport ||
+                                          this.state.ModeOfTransport;
 
-                                    if (mode === "Ocean" && lname !== "") {
-                                      return (
-                                        <React.Fragment>
-                                          <div className="rate-tab-img">
-                                            <img
-                                              title={olname}
-                                              alt={olname}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                                                lname
+                                        if (mode === "Ocean" && lname !== "") {
+                                          var url="";
+                                          if(this.state.Mode=="FCL")
+                                          {
+                                            url="https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +lname;
+                                          }
+                                          else
+                                          {
+                                            url="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png";
+                                          }
+                                          return (
+                                            <React.Fragment>
+                                              <div className="rate-tab-img">
+                                                <img
+                                                  title={olname}
+                                                  alt={olname}
+                                                  src={url}
+                                                />
+                                              </div>
+                                            </React.Fragment>
+                                          );
+                                        } else if (
+                                          mode == "Air" &&
+                                          lname !== ""
+                                        ) {
+                                          return (
+                                            <React.Fragment>
+                                              <div className="rate-tab-img">
+                                                <img
+                                                  title={olname}
+                                                  alt={olname}
+                                                  src={
+                                                    "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                    lname
+                                                  }
+                                                />
+                                              </div>
+                                            </React.Fragment>
+                                          );
+                                        } else {
+                                          return (
+                                            <React.Fragment>
+                                              <div className="rate-tab-img">
+                                                <img
+                                                  title={olname}
+                                                  src={
+                                                    "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                                  }
+                                                  alt={olname}
+                                                />
+                                              </div>
+                                            </React.Fragment>
+                                          );
+                                        }
+                                      },
+                                      accessor: "lineName",
+                                      Header: "Line Name"
+                                      // minWidth: 200
+                                    },
+                                    {
+                                      Header: "POL",
+                                      accessor: "POL",
+                                      Cell: row => {
+                                        return (
+                                          <React.Fragment>
+                                            {/* <p className="details-title">POL</p> */}
+                                            <p className=" ">
+                                              {row.original.OriginPort_Name}
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    },
+                                    {
+                                      Header: "POD",
+                                      accessor: "POD",
+                                      Cell: row => {
+                                        return (
+                                          <React.Fragment>
+                                            {/* <p className="details-title">POL</p> */}
+                                            <p className=" ">
+                                              {
+                                                row.original
+                                                  .DestinationPort_Name
                                               }
-                                            />
-                                          </div>
-                                        </React.Fragment>
-                                      );
-                                    } else if (mode == "Air" && lname !== "") {
-                                      return (
-                                        <React.Fragment>
-                                          <div className="rate-tab-img">
-                                            <img
-                                              title={olname}
-                                              alt={olname}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
-                                                lname
-                                              }
-                                            />
-                                          </div>
-                                        </React.Fragment>
-                                      );
-                                    } else {
-                                      return (
-                                        <React.Fragment>
-                                          <div className="rate-tab-img">
-                                            <img
-                                              title={olname}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
-                                              }
-                                              alt={olname}
-                                            />
-                                          </div>
-                                        </React.Fragment>
-                                      );
-                                    }
-                                  },
-                                  accessor: "lineName",
-                                  Header: "Line Name"
-                                  // minWidth: 200
-                                },
-                                {
-                                  Header: "POL",
-                                  accessor: "POL",
-                                  Cell: row => {
-                                    return (
-                                      <React.Fragment>
-                                        {/* <p className="details-title">POL</p> */}
-                                        <p className=" ">
-                                          {row.original.OriginPort_Name}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
-                                {
-                                  Header: "POD",
-                                  accessor: "POD",
-                                  Cell: row => {
-                                    return (
-                                      <React.Fragment>
-                                        {/* <p className="details-title">POL</p> */}
-                                        <p className=" ">
-                                          {row.original.DestinationPort_Name}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    },
 
-                                {
-                                  Header: "Transshipment Port",
-                                  accessor: "TranshipmentPorts",
-                                  Cell: row => {
-                                    debugger;
-                                    return (
-                                      <React.Fragment>
-                                        {/* <p className="details-title">
+                                    {
+                                      Header: "Transshipment Port",
+                                      accessor: "TranshipmentPorts",
+                                      Cell: row => {
+                                        debugger;
+                                        return (
+                                          <React.Fragment>
+                                            {/* <p className="details-title">
                                             Container
                                           </p> */}
-                                        <p className=" ">
-                                          {row.original.TranshipmentPorts}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
+                                            <p className=" ">
+                                              {row.original.TranshipmentPorts}
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    },
 
-                                {
-                                  Header: "Free Time",
-                                  accessor: "FreeTime",
-                                  Cell: row => {
-                                    debugger;
-                                    return (
-                                      <React.Fragment>
-                                        {/* <p className="details-title">
+                                    {
+                                      Header: "Free Time",
+                                      accessor: "FreeTime",
+                                      Cell: row => {
+                                        debugger;
+                                        return (
+                                          <React.Fragment>
+                                            {/* <p className="details-title">
                                             Container
                                           </p> */}
-                                        <p className=" ">
-                                          {row.original.FreeTime}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
+                                            <p className=" ">
+                                              {row.original.FreeTime}
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    },
 
-                                {
-                                  Header: "Container Type",
-                                  accessor: "Container",
-                                  Cell: row => {
-                                    return (
-                                      <React.Fragment>
-                                        {/* <p className="details-title">
+                                    {
+                                      Header: "Container Type",
+                                      accessor: "Container",
+                                      Cell: row => {
+                                        return (
+                                          <React.Fragment>
+                                            {/* <p className="details-title">
                                             Container
                                           </p> */}
-                                        <p className=" ">
-                                          {row.original.Container}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
-                                {
-                                  Header: "Transit Time",
-                                  accessor: "TransitTime",
-                                  Cell: row => {
-                                    return (
-                                      <React.Fragment>
-                                        {/* <p className="details-title">
+                                            <p className=" ">
+                                              {row.original.Container}
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    },
+                                    {
+                                      Header: "Transit Time",
+                                      accessor: "TransitTime",
+                                      Cell: row => {
+                                        return (
+                                          <React.Fragment>
+                                            {/* <p className="details-title">
                                             Container
                                           </p> */}
-                                        <p className=" ">
-                                          {row.original.TransitTime}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
+                                            <p className=" ">
+                                              {row.original.TransitTime}
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    },
 
-                                {
-                                  Header: "Expiry Date",
-                                  accessor: "ExpiryDate",
-                                  Cell: row => {
-                                    return (
-                                      <React.Fragment>
-                                        {/* <p className="details-title">
+                                    {
+                                      Header: "Expiry Date",
+                                      accessor: "ExpiryDate",
+                                      Cell: row => {
+                                        return (
+                                          <React.Fragment>
+                                            {/* <p className="details-title">
                                             Expiry
                                           </p> */}
-                                        <p className=" ">
-                                          {new Date(
-                                            row.original.ExpiryDate
-                                          ).toLocaleDateString("en-US")}
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                },
+                                            <p className=" ">
+                                              {new Date(
+                                                row.original.ExpiryDate
+                                              ).toLocaleDateString("en-US")}
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    },
 
-                                {
-                                  Header: "Price",
-                                  accessor: "Total",
-                                  Cell: row => {
-                                    return (
-                                      <React.Fragment>
-                                        <p className=" ">
-                                          {
-                                            row.original
-                                              .TotalAmountInBaseCureency
-                                          }
-                                        </p>
-                                      </React.Fragment>
-                                    );
-                                  }
-                                }
-                              ]
-                            }
-                          ]}
-                          data={this.state.QuotationData}
-                          minRows={0}
-                          showPagination={false}
-                          className="-striped -highlight no-mid-align"
-                          SubComponent={row => {
-                            return (
-                              <div style={{ padding: "20px 0" }}>
-                                <ReactTable
-                                  data={this.state.QuotationSubData.filter(
-                                    x =>
-                                      x.RateLineID === row.original.RateLineID
-                                  )}
-                                  columns={[
                                     {
-                                      columns: [
-                                        {
-                                          Header: "C. Description",
-                                          accessor: "ChargeType"
-                                        },
-                                        {
-                                          Header: "C.Name",
-                                          accessor: "ChargeCode"
-                                        },
-                                        {
-                                          Header: "Units",
-                                          accessor: "ChargeItem"
-                                        },
-                                        {
-                                          Header: "Unit Price",
-                                          accessor: "Rate"
-                                        },
-                                        {
-                                          Header: "Final Payment",
-                                          accessor: "TotalAmount"
-                                        }
-                                      ]
+                                      Header: "Price",
+                                      accessor: "Total",
+                                      Cell: row => {
+                                        return (
+                                          <React.Fragment>
+                                            <p className=" ">
+                                              {
+                                                row.original
+                                                  .TotalAmountInBaseCureency
+                                              }
+                                            </p>
+                                          </React.Fragment>
+                                        );
+                                      }
                                     }
-                                  ]}
-                                  minRows={1}
-                                  // defaultPageSize={3}
-                                  showPagination={false}
-                                />
-                              </div>
-                            );
-                          }}
-                        /></>
-                        ):""}
+                                  ]
+                                }
+                              ]}
+                              data={this.state.QuotationData}
+                              minRows={0}
+                              showPagination={false}
+                              className="-striped -highlight no-mid-align"
+                              SubComponent={row => {
+                                return (
+                                  <div style={{ padding: "20px 0" }}>
+                                    <ReactTable
+                                      data={this.state.QuotationSubData.filter(
+                                        x =>
+                                          x.RateLineID ===
+                                          row.original.RateLineID
+                                      )}
+                                      columns={[
+                                        {
+                                          columns: [
+                                            {
+                                              Header: "C. Description",
+                                              accessor: "ChargeType"
+                                            },
+                                            {
+                                              Header: "C.Name",
+                                              accessor: "ChargeCode"
+                                            },
+                                            {
+                                              Header: "Units",
+                                              accessor: "ChargeItem"
+                                            },
+                                            {
+                                              Header: "Unit Price",
+                                              accessor: "Rate"
+                                            },
+                                            {
+                                              Header: "Final Payment",
+                                              accessor: "TotalAmount"
+                                            }
+                                          ]
+                                        }
+                                      ]}
+                                      minRows={1}
+                                      // defaultPageSize={3}
+                                      showPagination={false}
+                                    />
+                                  </div>
+                                );
+                              }}
+                            />
+                          </>
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </div>
 

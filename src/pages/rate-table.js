@@ -91,44 +91,6 @@ const PODMaps = compose(
   </GoogleMap>
 ));
 
-const AutoCompletePOLMaps = compose(
-  withScriptjs,
-  withGoogleMap
-)(props => (
-  <GoogleMap
-    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
-    defaultZoom={2}
-  >
-    <Autocomplete
-      placeholder="Enter POL"
-      className="w-100"
-      name=""
-      type="text"
-      onPlaceSelected={props.onPlaceSelected}
-      types={["(regions)"]}
-    />
-  </GoogleMap>
-));
-
-const AutoCompletePODMaps = compose(
-  withScriptjs,
-  withGoogleMap
-)(props => (
-  <GoogleMap
-    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
-    defaultZoom={2}
-  >
-    <Autocomplete
-      placeholder="Enter POD"
-      className="w-100"
-      name=""
-      type="text"
-      onPlaceSelected={props.onPlaceSelected}
-      types={["(regions)"]}
-    />
-  </GoogleMap>
-));
-
 class RateTable extends Component {
   constructor(props) {
     super(props);
@@ -551,7 +513,8 @@ class RateTable extends Component {
                 podmarkerData.push(mapPositionPOD);
               }
             }
-
+            debugger;
+            // this.state.multiCBM = this.props.location.state.multiCBM;
             this.setState({
               spolAddress,
               spodAddress,
@@ -730,6 +693,8 @@ class RateTable extends Component {
     debugger;
     var compID = 0;
     var baseCurrency = "";
+    var multiCBM = this.props.location.state.multiCBM;
+    
     this.setState({ loading: true });
     var incoTerms = this.props.location.state.incoTerms;
     this.setState({ incoTerms });
@@ -955,11 +920,9 @@ class RateTable extends Component {
   }
 
   checkSelection(evt, row) {
-    console.log(row.index);
     let tempRate = this.state.RateDetails;
     tempRate[row.index].checkbx = evt.target.checked;
     this.setState({ RateDetails: tempRate });
-    console.log(this.state.RateDetails[row.index]);
   }
 
   HandleRateDetailsFCL(paramData) {
@@ -1175,6 +1138,7 @@ class RateTable extends Component {
       //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
       // }
       var incoTerms = paramData.incoTerms;
+      debugger;
       this.setState({
         multiCBM: paramData.multiCBM,
         shipmentType: paramData.shipmentType,
@@ -3511,6 +3475,21 @@ class RateTable extends Component {
     var destinationAddress = "";
     var originPort_ID = "";
     var destinationPort_ID = "";
+    var CompanyID = 0;
+    if (
+      encryption(window.localStorage.getItem("usertype"), "desc") !== "Customer"
+    ) {
+      if (this.state.companyId === 0) {
+        CompanyID = encryption(
+          window.localStorage.getItem("companyid"),
+          "desc"
+        );
+      } else {
+        CompanyID = this.state.companyId;
+      }
+    } else {
+      CompanyID = encryption(window.localStorage.getItem("companyid"), "desc");
+    }
 
     for (var i = 0; i < param.TruckTypeData.length; i++) {
       truckTypeData.push({
@@ -3707,7 +3686,7 @@ class RateTable extends Component {
         DestinationAddressDetails: destUpAddressDetails[0],
         RateQueryDim: multiCBMData,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        CompanyID: 1457295703,
+        CompanyID: CompanyID,
         CommodityID: parseInt(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
@@ -4052,11 +4031,19 @@ class RateTable extends Component {
     } else {
       classname = "butn btn-sizeRate";
     }
+    var colClassName = "";
+    if (localStorage.getItem("isColepse") === "true") {
+      // debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      // debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           {/* <NotificationContainer /> */}
@@ -5580,55 +5567,58 @@ class RateTable extends Component {
                       ))}
                     </select>
                   </div>
-
-                  <div className="rate-radio-cntr justify-content-center">
-                    <div>
-                      <input
-                        type="radio"
-                        name="cmbTypeRadio"
-                        id="exist-cust"
-                        value="ALL"
-                        style={{ display: "none" }}
-                        checked={
-                          this.state.cmbTypeRadio === "ALL" ? true : false
-                        }
-                        // onChange={
-                        //   this.state.containerLoadType !== "FTL"
-                        //     ? this.cmbTypeRadioChange.bind(this)
-                        //     : null
-                        // }
-                        onChange={this.cmbTypeRadioChange.bind(this)}
-                      />
-                      <label
-                        className="d-flex flex-column align-items-center"
-                        htmlFor="exist-cust"
-                      >
-                        Dimensions
-                      </label>
+                  {this.state.containerLoadType !== "FCL" &&
+                  this.state.containerLoadType !== "FTL" ? (
+                    <div className="rate-radio-cntr justify-content-center">
+                      <div>
+                        <input
+                          type="radio"
+                          name="cmbTypeRadio"
+                          id="exist-cust"
+                          value="ALL"
+                          style={{ display: "none" }}
+                          checked={
+                            this.state.cmbTypeRadio === "ALL" ? true : false
+                          }
+                          // onChange={
+                          //   this.state.containerLoadType !== "FTL"
+                          //     ? this.cmbTypeRadioChange.bind(this)
+                          //     : null
+                          // }
+                          onChange={this.cmbTypeRadioChange.bind(this)}
+                        />
+                        <label
+                          className="d-flex flex-column align-items-center"
+                          htmlFor="exist-cust"
+                        >
+                          Dimensions
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          type="radio"
+                          name="cmbTypeRadio"
+                          id="new-cust"
+                          value="CBM"
+                          style={{ display: "none" }}
+                          checked={
+                            this.state.cmbTypeRadio !== "ALL" ? true : false
+                          }
+                          onChange={this.cmbTypeRadioChange.bind(this)}
+                        />
+                        <label
+                          className="d-flex flex-column align-items-center"
+                          htmlFor="new-cust"
+                        >
+                          {this.state.containerLoadType === "AIR"
+                            ? "Chargable Weight"
+                            : "CBM"}
+                        </label>
+                      </div>
                     </div>
-                    <div>
-                      <input
-                        type="radio"
-                        name="cmbTypeRadio"
-                        id="new-cust"
-                        value="CBM"
-                        style={{ display: "none" }}
-                        checked={
-                          this.state.cmbTypeRadio !== "ALL" ? true : false
-                        }
-                        onChange={this.cmbTypeRadioChange.bind(this)}
-                      />
-                      <label
-                        className="d-flex flex-column align-items-center"
-                        htmlFor="new-cust"
-                      >
-                        {this.state.containerLoadType === "AIR"
-                          ? "Chargable Weight"
-                          : "CBM"}
-                      </label>
-                    </div>
-                  </div>
-
+                  ) : (
+                    ""
+                  )}
                   <div className="rename-cntr login-fields align-items-start">
                     <label>Cargo</label>
                     <div className="w-100">

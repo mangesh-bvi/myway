@@ -1355,11 +1355,19 @@ class AddUser extends React.Component {
 
   render() {
     var a = 1;
+    var colClassName = "";
+    if (localStorage.getItem("isColepse")==="true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <AdminSideMenu />
           </div>
           <div className="cls-rt">

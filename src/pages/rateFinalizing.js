@@ -130,7 +130,8 @@ class RateFinalizing extends Component {
       profitLossAmt: 0,
       profitLossPer: 0,
       newloding: false,
-      cbmVal: ""
+      cbmVal: "",
+      reloding: false
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -1368,7 +1369,7 @@ class RateFinalizing extends Component {
     debugger;
 
     if (this.state.selectedDataRow.length > 0) {
-      this.setState({ loding: true });
+      this.setState({ reloding: true });
       var txtRequestDiscount,
         txtRequestFreeTime,
         txtRequestComments = "";
@@ -1946,7 +1947,7 @@ class RateFinalizing extends Component {
                     if (SalesQuoteNo) {
                       self.setState({
                         SalesQuoteNo,
-                        loding: false
+                        reloding: false
                       });
 
                       self.AcceptQuotes();
@@ -2445,7 +2446,7 @@ class RateFinalizing extends Component {
                   PackageType: multiCBM[i].PackageType
                 });
               }
-            } else {
+            } else if (this.state.cmbTypeRadio === "CBM"){
               RateQueryDim.push({
                 Quantity: 0,
                 Lengths: 0,
@@ -2453,9 +2454,25 @@ class RateFinalizing extends Component {
                 Height: 0,
                 GrossWt: 0,
                 VolumeWeight: 0,
-                Volume: parseFloat(this.state.cbmVal),
+                Volume: parseFloat(this.state.cbmVal)||0,
                 PackageType: 0
               });
+            }
+            else
+            {
+              for (var i = 0; i < multiCBM.length; i++) {
+                //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+                RateQueryDim.push({
+                  Quantity: multiCBM[i].Quantity,
+                  Lengths: multiCBM[i].Length,
+                  Width: multiCBM[i].Width,
+                  Height: multiCBM[i].height,
+                  GrossWt: multiCBM[i].GrossWeight,
+                  VolumeWeight: 0,
+                  Volume: 0,
+                  PackageType: multiCBM[i].PackageType
+                });
+              }
             }
           } else {
             if (this.state.cmbTypeRadio === "ALL") {
@@ -2472,7 +2489,7 @@ class RateFinalizing extends Component {
                   PackageType: multiCBM[i].PackageType
                 });
               }
-            } else {
+            }  else if (this.state.cmbTypeRadio === "CBM"){
               RateQueryDim.push({
                 Quantity: 0,
                 Lengths: 0,
@@ -2480,9 +2497,25 @@ class RateFinalizing extends Component {
                 Height: 0,
                 GrossWt: 0,
                 VolumeWeight: 0,
-                Volume: parseFloat(this.state.cbmVal),
+                Volume: parseFloat(this.state.cbmVal)||0,
                 PackageType: 0
               });
+            }
+            else
+            {
+              for (var i = 0; i < multiCBM.length; i++) {
+                //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+                RateQueryDim.push({
+                  Quantity: multiCBM[i].Quantity,
+                  Lengths: multiCBM[i].Lengths,
+                  Width: multiCBM[i].Width,
+                  Height: multiCBM[i].Height,
+                  GrossWt: multiCBM[i].GrossWt,
+                  VolumeWeight: multiCBM[i].VolumeWeight,
+                  Volume: multiCBM[i].Volume,
+                  PackageType: multiCBM[i].PackageType
+                });
+              }
             }
           }
         } else if (containerLoadType == "FTL") {
@@ -2527,7 +2560,7 @@ class RateFinalizing extends Component {
                 PackageType: multiCBM[i].PackageType
               });
             }
-          } else {
+          } else if (this.state.cmbTypeRadio === "CBM"){
             RateQueryDim.push({
               Quantity: 0,
               Lengths: 0,
@@ -2538,6 +2571,22 @@ class RateFinalizing extends Component {
               Volume: parseFloat(this.state.cbmVal),
               PackageType: ""
             });
+          }
+          else
+          {
+            for (var i = 0; i < multiCBM.length; i++) {
+              //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
+              RateQueryDim.push({
+                Quantity: multiCBM[i].Quantity,
+                Lengths: multiCBM[i].Length,
+                Width: multiCBM[i].Width,
+                Height: multiCBM[i].height,
+                GrossWt: multiCBM[i].GrossWeight,
+                VolumeWeight: 0,
+                Volume: 0,
+                PackageType: multiCBM[i].PackageType
+              });
+            }
           }
           // var cbmVal = this.state.cbmVal;
           // debugger;
@@ -2927,18 +2976,25 @@ class RateFinalizing extends Component {
         if (this.state.cmbTypeRadio === "ALL") {
           RateQueryDimData = RateQueryDim;
         } else {
-          RateQueryDimData = [
-            {
-              Quantity: 0,
-              Lengths: 0,
-              Width: 0,
-              Height: 0,
-              GrossWt: 0,
-              VolumeWeight: 0,
-              Volume: parseFloat(this.state.cbmVal),
-              PackageType: ""
-            }
-          ];
+          if (
+            this.state.containerLoadType === "FCL" ||
+            this.state.containerLoadType === "FTL"
+          ) {
+            RateQueryDimData = RateQueryDim;
+          } else {
+            RateQueryDimData = [
+              {
+                Quantity: 0,
+                Lengths: 0,
+                Width: 0,
+                Height: 0,
+                GrossWt: 0,
+                VolumeWeight: 0,
+                Volume: parseFloat(this.state.cbmVal) || 0,
+                PackageType: ""
+              }
+            ];
+          }
         }
         debugger;
         var senrequestpara = {
@@ -3284,17 +3340,21 @@ class RateFinalizing extends Component {
         // else
         // {
         var newrateSubDetails = {};
-        if (
-          element.LineName ==
-          (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
-        ) {
-          // }
-          // this.state.rateDetails[i].TotalAmount =
-          //   this.state.rateDetails[i].TotalAmount +
-          //   this.state.rateDetails[i].ContainerQuantity *
-          //     e.target.getAttribute("data-amountinbasecurrency");
+        // if (
+        //   element.LineName ==
+        //   (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
+        // ) {
+        // }
+        // this.state.rateDetails[i].TotalAmount =
+        //   this.state.rateDetails[i].TotalAmount +
+        //   this.state.rateDetails[i].ContainerQuantity *
+        //     e.target.getAttribute("data-amountinbasecurrency");
 
-          if (this.state.isCopy === true) {
+        if (this.state.isCopy === true) {
+          if (
+            element.LineName ==
+            (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
+          ) {
             var total = 0;
             var currency = "";
 
@@ -3302,7 +3362,9 @@ class RateFinalizing extends Component {
             total = data[0];
             currency = data[1];
 
-            var final_sum = parseFloat(total) + parseFloat(e.target.value);
+            var final_sum = (
+              parseFloat(total) + parseFloat(e.target.value)
+            ).toFixed(2);
 
             this.state.rateDetails[i].Total = final_sum + " " + currency;
 
@@ -3338,15 +3400,111 @@ class RateFinalizing extends Component {
               newrateSubDetails
             );
           } else {
-            this.state.rateDetails[i].TotalAmount =
+            if (
+              this.state.containerLoadType == "FTL" ||
+              this.state.containerLoadType == "LTL" ||
+              this.state.containerLoadType == "LCL"
+            ) {
+              var total = 0;
+              var currency = "";
+
+              var data = this.state.rateDetails[i].Total.split(" ");
+              total = data[0];
+              currency = data[1];
+
+              var final_sum = (
+                parseFloat(total) + parseFloat(e.target.value)
+              ).toFixed(2);
+
+              this.state.rateDetails[i].Total = final_sum + " " + currency;
+
+              var calAmount = parseFloat(e.target.value);
+
+              var newrateSubDetails = {
+                ChargeID: 0,
+                BuyRate: parseFloat(e.target.value),
+                Rate: parseFloat(e.target.value),
+                Currency: e.target.getAttribute("data-currency"),
+                saleQuoteLineID: this.state.rateDetails[i].saleQuoteLineID,
+                ChargeCode: e.target.getAttribute("data-chargedesc"),
+                ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                Tax: 0,
+                Chargeitem: e.target.getAttribute("data-chargeitem"),
+                Exrate: e.target.getAttribute("data-ExRate"),
+                ChargeType: e.target.getAttribute("data-chargetype"),
+                TotalAmount: parseFloat(calAmount),
+                Amount:
+                  e.target.value + " " + e.target.getAttribute("data-currency"),
+                BaseCurrency: e.target.getAttribute("data-currency")
+              };
+              if (
+                this.state.containerLoadType == "FTL" ||
+                this.state.containerLoadType == "LTL"
+              ) {
+                newrateSubDetails.RateLineID = this.state.rateDetails[
+                  i
+                ].RateLineID;
+              }
+
+              this.state.rateSubDetails = this.state.rateSubDetails.concat(
+                newrateSubDetails
+              );
+            }
+          }
+          // var total = 0;
+          // var currency = "";
+
+          // var data = this.state.rateDetails[i].Total.split(" ");
+          // total = data[0];
+          // currency = data[1];
+
+          // var final_sum = parseFloat(total) + parseFloat(e.target.value);
+
+          // this.state.rateDetails[i].Total = final_sum + " " + currency;
+
+          // var calAmount = parseFloat(e.target.value);
+
+          // var newrateSubDetails = {
+          //   ChargeID: 0,
+          //   BuyRate: parseFloat(e.target.value),
+          //   Rate: parseFloat(e.target.value),
+          //   Currency: e.target.getAttribute("data-currency"),
+          //   saleQuoteLineID: this.state.rateDetails[i].saleQuoteLineID,
+          //   ChargeCode: e.target.getAttribute("data-chargedesc"),
+          //   ChargeDesc: e.target.getAttribute("data-chargedesc"),
+          //   Tax: 0,
+          //   Chargeitem: e.target.getAttribute("data-chargeitem"),
+          //   Exrate: e.target.getAttribute("data-ExRate"),
+          //   ChargeType: e.target.getAttribute("data-chargetype"),
+          //   TotalAmount: parseFloat(calAmount),
+          //   Amount:
+          //     e.target.value + " " + e.target.getAttribute("data-currency"),
+          //   BaseCurrency: e.target.getAttribute("data-currency")
+          // };
+          // if (
+          //   this.state.containerLoadType == "FTL" ||
+          //   this.state.containerLoadType == "LTL"
+          // ) {
+          //   newrateSubDetails.RateLineID = this.state.rateDetails[i].RateLineID;
+          // }
+
+          // this.state.rateSubDetails = this.state.rateSubDetails.concat(
+          //   newrateSubDetails
+          // );
+        } else {
+          if (
+            element.LineName ==
+            (rateDetailsarr[i].lineName || rateDetailsarr[i].Linename)
+          ) {
+            this.state.rateDetails[i].TotalAmount = (
               parseFloat(
                 this.state.rateDetails[i].TotalAmount == null
                   ? 0
                   : this.state.rateDetails[i].TotalAmount
-              ) + parseFloat(e.target.value);
+              ) + parseFloat(e.target.value)
+            ).toFixed(2);
 
             var calAmount = parseFloat(e.target.value);
-
             var newrateSubDetails = {
               ChargeID: 0,
               BuyRate: parseFloat(e.target.value),
@@ -3374,9 +3532,53 @@ class RateFinalizing extends Component {
             this.state.rateSubDetails = this.state.rateSubDetails.concat(
               newrateSubDetails
             );
+          } else {
+            if (
+              this.state.containerLoadType == "FTL" ||
+              this.state.containerLoadType == "LTL" ||
+              this.state.containerLoadType == "LCL"
+            ) {
+              this.state.rateDetails[i].TotalAmount = (
+                parseFloat(
+                  this.state.rateDetails[i].TotalAmount == null
+                    ? 0
+                    : this.state.rateDetails[i].TotalAmount
+                ) + parseFloat(e.target.value)
+              ).toFixed(2);
+
+              var calAmount = parseFloat(e.target.value);
+              var newrateSubDetails = {
+                ChargeID: 0,
+                BuyRate: parseFloat(e.target.value),
+                Rate: parseFloat(e.target.value),
+                Currency: e.target.getAttribute("data-currency"),
+                RateLineID: this.state.rateDetails[i].RateLineId,
+                ChargeCode: e.target.getAttribute("data-chargedesc"),
+                ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                Tax: 0,
+                ChargeItem: e.target.getAttribute("data-chargeitem"),
+                Exrate: 1,
+                ChargeType: e.target.getAttribute("data-chargetype"),
+                TotalAmount: parseFloat(calAmount),
+                BaseCurrency: e.target.getAttribute("data-currency")
+              };
+              if (
+                this.state.containerLoadType == "FTL" ||
+                this.state.containerLoadType == "LTL"
+              ) {
+                newrateSubDetails.RateLineID = this.state.rateDetails[
+                  i
+                ].RateLineID;
+              }
+
+              this.state.rateSubDetails = this.state.rateSubDetails.concat(
+                newrateSubDetails
+              );
+            }
           }
         }
       }
+      // }
       this.forceUpdate();
     }
     if (!e.target.checked) {
@@ -3395,8 +3597,7 @@ class RateFinalizing extends Component {
             var amount = this.processText(this.state.rateDetails[i].Total);
 
             this.state.rateDetails[i].Total =
-              parseFloat(amount[0]) -
-              parseFloat(e.target.value) +
+              (parseFloat(amount[0]) - parseFloat(e.target.value)).toFixed(2) +
               " " +
               amount[1];
 
@@ -3409,9 +3610,10 @@ class RateFinalizing extends Component {
               }
             }
           } else {
-            this.state.rateDetails[i].TotalAmount =
+            this.state.rateDetails[i].TotalAmount = (
               parseFloat(this.state.rateDetails[i].TotalAmount) -
-              parseFloat(e.target.value);
+              parseFloat(e.target.value)
+            ).toFixed(2);
 
             for (var j = 0; j <= this.state.rateSubDetails.length - 1; j++) {
               if (
@@ -3419,6 +3621,46 @@ class RateFinalizing extends Component {
                 e.target.getAttribute("data-chargedesc")
               ) {
                 this.state.rateSubDetails.splice(j--, 1);
+              }
+            }
+          }
+        } else {
+          if (
+            this.state.containerLoadType == "FTL" ||
+            this.state.containerLoadType == "LTL" ||
+            this.state.containerLoadType == "LCL"
+          ) {
+            if (this.state.isCopy === true) {
+              var amount = this.processText(this.state.rateDetails[i].Total);
+
+              this.state.rateDetails[i].Total =
+                (parseFloat(amount[0]) - parseFloat(e.target.value)).toFixed(
+                  2
+                ) +
+                " " +
+                amount[1];
+
+              for (var j = 0; j <= this.state.rateSubDetails.length - 1; j++) {
+                if (
+                  this.state.rateSubDetails[j]["ChargeCode"] ==
+                  e.target.getAttribute("data-chargedesc")
+                ) {
+                  this.state.rateSubDetails.splice(j--, 1);
+                }
+              }
+            } else {
+              this.state.rateDetails[i].TotalAmount = (
+                parseFloat(this.state.rateDetails[i].TotalAmount) -
+                parseFloat(e.target.value)
+              ).toFixed(2);
+
+              for (var j = 0; j <= this.state.rateSubDetails.length - 1; j++) {
+                if (
+                  this.state.rateSubDetails[j]["ChargeCode"] ==
+                  e.target.getAttribute("data-chargedesc")
+                ) {
+                  this.state.rateSubDetails.splice(j--, 1);
+                }
               }
             }
           }
@@ -4494,7 +4736,16 @@ class RateFinalizing extends Component {
 
   render() {
     var i = 0;
-    console.log(this.state.cbmVal);
+    var equipVal = "";
+    if (this.state.selected.length > 0) {
+    } else {
+      debugger;
+      for (let j = 0; j < this.state.rateDetails.length; j++) {
+        if (!equipVal.includes(this.state.rateDetails[j].ContainerType)) {
+          equipVal += this.state.rateDetails[j].ContainerType;
+        }
+      }
+    }
 
     const checkLocalCharges = this.state.arrLocalsCharges.map((item, index) => {
       let amtSign;
@@ -4791,11 +5042,19 @@ class RateFinalizing extends Component {
     var DocumentCharges = [];
     // var containerLoadType = this.props.location.state.containerLoadType
     const { PackageDetailsArr, TruckDetailsArr } = this.state;
+    var colClassName = "";
+    if (localStorage.getItem("isColepse") === "true") {
+      debugger;
+      colClassName = "cls-flside colap";
+    } else {
+      debugger;
+      colClassName = "cls-flside";
+    }
     return (
       <React.Fragment>
         <Headers />
         <div className="cls-ofl">
-          <div className="cls-flside">
+          <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt no-bg min-hei-auto">
@@ -4982,6 +5241,17 @@ class RateFinalizing extends Component {
                                           rateId =
                                             row._original.saleQuoteLineID;
                                         }
+                                        var url="";
+                                        if(this.state.containerLoadType==="FCL")
+                                        {
+                                          url="https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/"+lname;
+                                        }
+                                        else
+
+                                        {
+                                          url="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                        }
+                                        
                                         return (
                                           <React.Fragment>
                                             <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -5009,8 +5279,7 @@ class RateFinalizing extends Component {
                                                 title={olname}
                                                 alt={olname}
                                                 src={
-                                                  "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
-                                                  lname
+                                                   url
                                                 }
                                               />
                                             </div>
@@ -5587,11 +5856,17 @@ class RateFinalizing extends Component {
                               </div>
                               <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                                 <p className="details-title">Equipment Types</p>
-                                {this.state.selected.map((item, i) => (
-                                  <p className="details-para" key={i}>
-                                    {item.StandardContainerCode}
-                                  </p>
-                                ))}
+                                {this.state.selected.length > 0 ? (
+                                  <>
+                                    {this.state.selected.map((item, i) => (
+                                      <p className="details-para" key={i}>
+                                        {item.StandardContainerCode}
+                                      </p>
+                                    ))}
+                                  </>
+                                ) : (
+                                  <p className="details-para">{equipVal}</p>
+                                )}
                               </div>
                               <div className="col-12 col-sm-6 col-md-4 col-xl-3 r-border">
                                 <p className="details-title">
@@ -5850,8 +6125,8 @@ class RateFinalizing extends Component {
                             </button>
                           </div>
                           {this.state.containerLoadType === "AIR" ||
-                          "LCL" ||
-                          "LTL" ? (
+                          this.state.containerLoadType === "LCL" ||
+                          this.state.containerLoadType === "LTL" ? (
                             <p>CMB {this.state.cbmVal}</p>
                           ) : (
                             ""
@@ -6219,10 +6494,10 @@ class RateFinalizing extends Component {
                 <div className="text-center">
                   <Button
                     className="butn"
-                    disabled={this.state.loding === true ? true : false}
+                    disabled={this.state.reloding === true ? true : false}
                     onClick={this.SendRequestChange}
                   >
-                    {this.state.loding == true ? (
+                    {this.state.reloding == true ? (
                       <>
                         <i
                           style={{ marginRight: 15 }}

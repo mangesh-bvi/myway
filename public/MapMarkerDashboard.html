@@ -168,7 +168,7 @@
         padding-top: 10px;
         margin-right: 15px;
       }
-      #mapOcean {
+      /* #mapOcean {
         opacity: 0.5;
       }
       #mapAir {
@@ -179,7 +179,7 @@
       }
       #mapBooking {
         opacity: 0.5;
-      }
+      } */
     </style>
     <script
       async
@@ -255,7 +255,7 @@
         );
 
         delayBlue = new google.maps.MarkerImage(
-          "blue-delay.png",
+          "img/blue-ship-delay.png",
           null /* size is determined at runtime */,
           null /* origin is 0,0 */,
           null /* anchor is bottom center of the scaled image */,
@@ -270,7 +270,7 @@
       }
 
       function setMarkers(map, locations) {
-        //debugger;
+        debugger;
         var marker, i;
 
         for (i = 0; i < locations.length; i++) {
@@ -284,6 +284,7 @@
           if (shipmentType == "Air") image = bluePlane;
           if (shipmentType == "Booking") image = bookingBlue;
           if (shipmentType == "Booking-Ocean") image = bookingBlue;
+          if (shipmentType == "Delay-Ocean") image = delayBlue;
           if (shipmentType == "Delay-Ocean") image = delayBlue;
 
           var latlngset = new google.maps.LatLng(lat, lng);
@@ -850,14 +851,34 @@
             isOceanOn = 1;
           }
 
-          if (toogleData === "Ocean" && isOceanOn !== 0) {
+          if (toogleData === "Ocean" && isOceanOn === 0) {
             $("div > img[src='img/blue-ship.png']").hide();
             $("#mapOcean").css("opacity", "0.5");
             // isOceanOn = 1;
           } else {
             $("div > img[src='img/blue-ship.png']").show();
             $("#mapOcean").css("opacity", "1");
-
+            if (isAirOn == 1) {
+              $("div > img[src='img/blue-plane.png']").show();
+              $("#mapAir").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-plane.png']").hide();
+              $("#mapAir").css("opacity", "0.5");
+            }
+            if (isDelayShipment == 1) {
+              $("div > img[src='img/blue-ship-delay.png']").show();
+              $("#mapDelay").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-ship-delay.png']").hide();
+              $("#mapDelay").css("opacity", "0.5");
+            }
+            if (isNewBooking == 1) {
+              $("div > img[src='img/blue-booking.png']").show();
+              $("#mapBooking").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-booking.png']").hide();
+              $("#mapBooking").css("opacity", "0.5");
+            }
             // isOceanOn = 0;
           }
         }
@@ -869,7 +890,7 @@
             isAirOn = 1;
           }
 
-          if (toogleData === "Air" && isAirOn !== 0) {
+          if (toogleData === "Air" && isAirOn === 0) {
             $("div > img[src='img/blue-plane.png']").hide();
             $("#mapAir").css("opacity", "0.5");
             // isAirOn = 1;
@@ -877,6 +898,28 @@
             $("div > img[src='img/blue-plane.png']").show();
             $("#mapAir").css("opacity", "1");
             // isAirOn = 0;
+            if (isOceanOn == 1) {
+              $("div > img[src='img/blue-ship.png']").show();
+              $("#mapOcean").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-ship.png']").hide();
+              $("#mapOcean").css("opacity", "0.5");
+            }
+
+            if (isDelayShipment == 1) {
+              $("div > img[src='img/blue-ship-delay.png']").show();
+              $("#mapDelay").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-ship-delay.png']").hide();
+              $("#mapDelay").css("opacity", "0.5");
+            }
+            if (isNewBooking == 1) {
+              $("div > img[src='img/blue-booking.png']").show();
+              $("#mapBooking").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-booking.png']").hide();
+              $("#mapBooking").css("opacity", "0.5");
+            }
           }
         }
 
@@ -887,13 +930,36 @@
             isDelayShipment = 1;
           }
 
-          if (toogleData === "DelayShipment" && isDelayShipment !== 0) {
-            $("div > img[src='img/delay-shipment.png']").hide();
+          if (toogleData === "DelayShipment" && isDelayShipment === 0) {
+            $("div > img[src='img/blue-ship-delay.png']").hide();
             $("#mapDelay").css("opacity", "0.5");
             // isDelayShipment = 1;
           } else {
-            $("div > img[src='img/delay-shipment.png']").show();
+            $("div > img[src='img/blue-ship-delay.png']").show();
             $("#mapDelay").css("opacity", "1");
+
+            if (isOceanOn == 1) {
+              $("div > img[src='img/blue-ship.png']").show();
+              $("#mapOcean").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-ship.png']").hide();
+              $("#mapOcean").css("opacity", "0.5");
+            }
+
+            if (isAirOn == 1) {
+              $("div > img[src='img/blue-plane.png']").show();
+              $("#mapAir").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-plane.png']").hide();
+              $("#mapAir").css("opacity", "0.5");
+            }
+            if (isNewBooking == 1) {
+              $("div > img[src='img/blue-booking.png']").show();
+              $("#mapBooking").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-booking.png']").hide();
+              $("#mapBooking").css("opacity", "0.5");
+            }
             // isDelayShipment = 0;
           }
         }
@@ -905,7 +971,7 @@
             isNewBooking = 1;
           }
 
-          if (toogleData === "NewBooking" && isNewBooking !== 0) {
+          if (toogleData === "NewBooking" && isNewBooking === 0) {
             $("div > img[src='img/blue-booking.png']").hide();
             $("#mapBooking").css("opacity", "0.5");
             // isNewBooking = 1;
@@ -913,6 +979,28 @@
             $("div > img[src='img/blue-booking.png']").show();
             $("#mapBooking").css("opacity", "1");
             // isNewBooking = 0;
+            if (isOceanOn == 1) {
+              $("div > img[src='img/blue-ship.png']").show();
+              $("#mapOcean").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-ship.png']").hide();
+              $("#mapOcean").css("opacity", "0.5");
+            }
+
+            if (isAirOn == 1) {
+              $("div > img[src='img/blue-plane.png']").show();
+              $("#mapAir").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-plane.png']").hide();
+              $("#mapAir").css("opacity", "0.5");
+            }
+            if (isDelayShipment == 1) {
+              $("div > img[src='img/blue-ship-delay.png']").show();
+              $("#mapDelay").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-ship-delay.png']").hide();
+              $("#mapDelay").css("opacity", "0.5");
+            }
           }
         }
 
@@ -1008,7 +1096,7 @@
         >
           <img
             id="mapDelay"
-            src="img/delay-shipment.png"
+            src="img/blue-ship-delay.png"
             alt="delay icon"
             style="height: auto;"
           />
