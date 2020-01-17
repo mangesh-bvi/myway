@@ -1642,6 +1642,7 @@ class NewRateSearch extends Component {
             min={1}
             placeholder="QTY"
             name="ContainerQuantity"
+            style={{width:"40px"}}
             value={el.ContainerQuantity || ""}
             //onKeyDown={this.newhandleChange.bind(this, i)}
             onChange={this.newhandleChange.bind(this, i)}

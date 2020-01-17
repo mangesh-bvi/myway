@@ -6202,7 +6202,7 @@ class RateFinalizing extends Component {
                         </div>
                       </div>
 
-                      <div className="row">
+                      <div className="">
                         <div className="col-md-6 login-fields">
                           <p className="details-title">Commodity</p>
                           <select
