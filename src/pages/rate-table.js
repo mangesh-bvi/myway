@@ -205,7 +205,8 @@ class RateTable extends Component {
       minamount: 0,
       spolAddress: "",
       spodAddress: "",
-      cmbTypeRadio: ""
+      cmbTypeRadio: "",
+      packageTypeData:[]
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -218,7 +219,7 @@ class RateTable extends Component {
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
     this.custClearToggle = this.custClearToggle.bind(this);
-    this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.HandlePackgeTypeData=this.HandlePackgeTypeData.bind(this);
     this.spotRateSubmit = this.spotRateSubmit.bind(this);
     this.toggleQuantPOLSave = this.toggleQuantPOLSave.bind(this);
     this.toggleQuantPODSave = this.toggleQuantPODSave.bind(this);
@@ -234,10 +235,11 @@ class RateTable extends Component {
   };
 
   componentDidMount() {
-    document.addEventListener("mousedown", this.handleClickOutside);
+     
 
     setTimeout(() => {
       this.HandleCommodityData();
+      this.HandlePackgeTypeData()
     }, 100);
 
     if (typeof this.props.location.state !== "undefined") {
@@ -248,7 +250,7 @@ class RateTable extends Component {
           var spolAddress = paramData.POL;
           var spodAddress = paramData.POD;
           var multiCBM = paramData.multiCBM;
-          // this.setState({spolAddress,spodAddress,multiCBM})
+          this.setState({multiCBM})
           // var modeofTransport = this.props.location.state.containerLoadType;
           if (paramData.typesofMove === "p2p") {
             this.state.polArray.push({
@@ -1285,340 +1287,7 @@ class RateTable extends Component {
       });
   }
 
-  // HandleSportRateDetailsFCL(paramData) {
-  //   debugger;
-  //   var dataParameter = {};
-  //   var pickUpAddress = {
-  //     Street: "",
-  //     Country: "",
-  //     State: "",
-  //     City: "",
-  //     ZipCode: ""
-  //   };
-  //   var destUpAddress = {
-  //     Street: "",
-  //     Country: "",
-  //     State: "",
-  //     City: "",
-  //     ZipCode: ""
-  //   };
-  //   if (paramData.isSearch) {
-  //     var rTypeofMove =
-  //       paramData.typesofMove === "p2p"
-  //         ? 1
-  //         : paramData.typesofMove === "d2p"
-  //         ? 2
-  //         : paramData.typesofMove === "d2d"
-  //         ? 4
-  //         : paramData.typesofMove === "p2d"
-  //         ? 3
-  //         : 0;
-
-  //     var rModeofTransport =
-  //       paramData.modeoftransport === "SEA"
-  //         ? "Ocean"
-  //         : paramData.modeoftransport === "AIR"
-  //         ? "Air"
-  //         : paramData.modeoftransport === "ROAD"
-  //         ? "inland"
-  //         : "";
-  //     var polAddress = paramData.polfullAddData;
-  //     var podAddress = paramData.podfullAddData;
-
-  //     var containerdetails = paramData.users;
-
-  //     var polLatLng = new Object();
-  //     var podLatLng = new Object();
-
-  //     var polmapData = polAddress.GeoCoordinate;
-  //     var polmarkerData = [];
-  //     if (typeof polmapData !== "undefined" && polmapData !== null) {
-  //       polLatLng.lat = Number(polmapData.split(",")[0]);
-  //       polLatLng.lng = Number(polmapData.split(",")[1]);
-
-  //       polmarkerData.push(polLatLng);
-  //     } else {
-  //       var mapPositionPOL = paramData.mapPositionPOL;
-  //       if (mapPositionPOL !== null && typeof mapPositionPOL !== "undefined") {
-  //         polmarkerData.push(mapPositionPOL);
-  //       }
-  //     }
-  //     var podmapData = podAddress.GeoCoordinate;
-  //     var podmarkerData = [];
-  //     if (typeof podmapData !== "undefined" && podmapData !== null) {
-  //       podLatLng.lat = Number(podmapData.split(",")[0]);
-  //       podLatLng.lng = Number(podmapData.split(",")[1]);
-
-  //       podmarkerData.push(podLatLng);
-  //     } else {
-  //       var mapPositionPOD = paramData.mapPositionPOD;
-  //       if (mapPositionPOD !== null && typeof mapPositionPOD !== "undefined") {
-  //         podmarkerData.push(mapPositionPOD);
-  //       }
-  //     }
-
-  //     this.setState({
-  //       mapPositionPOL: polmarkerData,
-  //       markerPositionPOD: podmarkerData,
-  //       users: paramData.users,
-  //       selected: paramData.selected
-  //     });
-
-  //     var selectedPOL =
-  //       paramData.polfullAddData.NameWoDiacritics || paramData.PickupCity;
-  //     var SelectPOD =
-  //       paramData.podfullAddData.NameWoDiacritics || paramData.DeliveryCity;
-  //     var selectedPOLPOD = selectedPOL + " To " + SelectPOD;
-
-  //     var cmbvalue = paramData.cbmVal;
-  //     if (cmbvalue != "") {
-  //       cmbvalue = parseInt(cmbvalue);
-  //     } else {
-  //       cmbvalue = 0;
-  //     }
-
-  //     if (paramData.typesofMove === "d2p") {
-  //       pickUpAddress = paramData.fullAddressPOL[0];
-  //     } else if (paramData.typesofMove === "p2d") {
-  //       destUpAddress = paramData.fullAddressPOD[0];
-  //     } else if (paramData.typesofMove === "d2d") {
-  //       pickUpAddress = paramData.fullAddressPOL[0];
-  //       destUpAddress = paramData.fullAddressPOD[0];
-  //     }
-
-  //     dataParameter = {
-  //       QuoteType: paramData.containerLoadType,
-  //       ModeOfTransport: rModeofTransport,
-  //       Type: paramData.shipmentType,
-  //       TypeOfMove: rTypeofMove,
-  //       BaseCurrency: paramData.currencyCode,
-
-  //       Containerdetails: containerdetails,
-
-  //       RateQueryDim: paramData.multiCBM,
-  //       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-  //     };
-
-  //     if (
-  //       encryption(window.localStorage.getItem("usertype"), "desc") ===
-  //       "Customer"
-  //     ) {
-  //       paramData.companyId = encryption(
-  //         window.localStorage.getItem("companyid"),
-  //         "desc"
-  //       );
-  //     }
-
-  //     dataParameter.Commodity = this.state.CommodityID;
-  //     dataParameter.CustomerId = parseInt(paramData.companyId);
-  //     dataParameter.PickUpAddressDetails = pickUpAddress;
-  //     dataParameter.DestinationAddressDetails = destUpAddress;
-  //     dataParameter.HazMat = paramData.HazMat === false ? 0 : 1;
-  //     dataParameter.IsSearchFromSpotRate = 1;
-
-  //     if (this.props.location.state.spotrateresponseTbl) {
-  //       var rateid = this.props.location.state.spotrateresponseTbl;
-  //       dataParameter.RatequeryID = rateid.RateQueryId;
-  //     } else {
-  //       dataParameter.RatequeryID = 0;
-  //     }
-
-  //     if (paramData.Custom_Clearance) {
-  //       dataParameter.CustomClearance =
-  //         paramData.Custom_Clearance === true ? 1 : 0;
-  //     } else {
-  //       dataParameter.CustomClearance = 0;
-  //     }
-
-  //     dataParameter.NonStackable = paramData.NonStackable === false ? 0 : 1;
-
-  //     var EquipmentType = [];
-  //     if (paramData.StandardContainerCode != undefined) {
-  //       EquipmentType = paramData.StandardContainerCode;
-  //     } else {
-  //       EquipmentType = paramData.EquipmentType;
-  //     }
-  //     var sportMultiPOL = [];
-  //     var sportMultiPOD = [];
-
-  //     if (this.props.location.state.spotrateresponseTbl1) {
-  //       var sdata = this.props.location.state.spotrateresponseTbl1;
-  //       for (let i = 0; i < sdata.length; i++) {
-  //         var objPOL = new Object();
-  //         objPOL.POL = sdata[i].OriginPort_Name;
-  //         objPOL.POLGeoCordinate = sdata[i].POLGeoCordinate;
-
-  //         sportMultiPOL.push(objPOL);
-
-  //         var objPOD = new Object();
-  //         objPOD.POD = sdata[i].DestinationPort_Name;
-  //         objPOD.PODGeoCordinate = sdata[i].PODGeoCordinate;
-
-  //         sportMultiPOD.push(objPOD);
-  //       }
-  //     }
-
-  //     dataParameter.MultiplePOL = sportMultiPOL;
-
-  //     dataParameter.MultiplePOD = sportMultiPOD;
-
-  //     var incoTerms = paramData.incoTerms;
-  //     this.setState({
-  //       polFilterArray: sportMultiPOL,
-  //       podFilterArray: sportMultiPOD,
-  //       shipmentType: paramData.shipmentType,
-  //       modeoftransport: paramData.modeoftransport,
-  //       containerLoadType: paramData.containerLoadType,
-  //       typeofMove: rTypeofMove,
-  //       selectaddress: selectedPOLPOD,
-  //       HazMat: paramData.HazMat,
-  //       NonStackable: paramData.NonStackable,
-  //       Custom_Clearance: paramData.Custom_Clearance,
-  //       SpacialEqmt: paramData.SpacialEqmt,
-  //       EquipmentType: EquipmentType,
-  //       spacEqmtType: paramData.spacEqmtType,
-  //       referType: paramData.referType,
-  //       flattack_openTop: paramData.flattack_openTop,
-  //       spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
-  //       specialEqtSelect: paramData.specialEqtSelect,
-  //       refertypeSelect: paramData.refertypeSelect,
-  //       specialEquipment: paramData.specialEquipment,
-  //       incoTerms,
-  //       polfullAddData: paramData.polfullAddData,
-  //       podfullAddData: paramData.podfullAddData,
-  //       currencyCode: paramData.currencyCode,
-  //       TruckType: paramData.TruckType,
-  //       TruckTypeData: paramData.TruckTypeData,
-  //       // OriginGeoCordinates: paramData.OriginGeoCordinates,
-  //       // DestGeoCordinate: paramData.DestGeoCordinate,
-  //       pickUpAddress: paramData.fullAddressPOL,
-  //       destAddress: paramData.fullAddressPOD,
-  //       multiCBM: paramData.multiCBM,
-  //       packageTypeData: paramData.packageTypeData,
-  //       fields: paramData.fields,
-  //       puAdd: paramData.puAdd,
-  //       DeliveryCity: paramData.DeliveryCity,
-  //       typesofMove: paramData.typesofMove,
-  //       // polArray:this.state.polArray,
-  //       // podArray:this.state.podArray,
-  //       // polFilterArray:this.state.polFilterArray,
-  //       // podFilterArray:this.state.podFilterArray,
-  //       ChargeableWeight: cmbvalue,
-  //       ModeOfTransport: rModeofTransport,
-  //       TypeOfMove: rTypeofMove,
-  //       PortOfDischargeCode:
-  //         paramData.containerLoadType == "AIR"
-  //           ? podAddress.Location !== "" && podAddress.Location !== undefined
-  //             ? podAddress.Location
-  //             : ""
-  //           : podAddress.UNECECode !== "" && podAddress.UNECECode !== undefined
-  //           ? podAddress.UNECECode
-  //           : "",
-  //       PortOfLoadingCode:
-  //         paramData.containerLoadType == "AIR"
-  //           ? polAddress.Location !== "" && polAddress.Location !== undefined
-  //             ? polAddress.Location
-  //             : ""
-  //           : polAddress.UNECECode !== "" && polAddress.UNECECode !== undefined
-  //           ? polAddress.UNECECode
-  //           : "",
-  //       Containerdetails: containerdetails,
-  //       OriginGeoCordinates:
-  //         polAddress.GeoCoordinate !== "" &&
-  //         polAddress.GeoCoordinate !== undefined
-  //           ? polAddress.GeoCoordinate
-  //           : paramData.OriginGeoCordinates,
-  //       DestGeoCordinate:
-  //         podAddress.GeoCoordinate !== "" &&
-  //         podAddress.GeoCoordinate !== undefined
-  //           ? podAddress.GeoCoordinate
-  //           : paramData.DestGeoCordinate,
-  //       PickupCity:
-  //         polAddress.NameWoDiacritics !== "" &&
-  //         polAddress.NameWoDiacritics !== undefined
-  //           ? polAddress.NameWoDiacritics
-  //           : "",
-  //       DeliveryCity:
-  //         podAddress.NameWoDiacritics !== "" &&
-  //         podAddress.NameWoDiacritics !== undefined
-  //           ? podAddress.NameWoDiacritics
-  //           : paramData.DeliveryCity,
-  //       Currency: paramData.currencyCode,
-  //       isSearch: paramData.isSearch,
-  //       cbmVal: paramData.cbmVal,
-  //       companyId: paramData.companyId,
-  //       companyName: paramData.companyName,
-  //       companyAddress: paramData.companyAddress,
-  //       contactName: paramData.contactName,
-  //       contactEmail: paramData.contactEmail
-  //     });
-  //   }
-
-  //   debugger;
-  //   let self = this;
-  //   axios({
-  //     method: "post",
-  //     url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
-  //     data: dataParameter,
-  //     headers: authHeader()
-  //   })
-  //     .then(function(response) {
-  //       debugger;
-  //       //console.log(response);
-  //       var ratetable = response.data.Table;
-  //       var ratetable1 = response.data.Table1;
-  //       var ratetable2 = response.data.Table2;
-
-  //       if (ratetable.length > 0) {
-  //         if (ratetable != null) {
-  //           var MinTTArray = [];
-  //           var MaxTTArray = [];
-  //           var AmtArray = [];
-  //           for (let i = 0; i < ratetable.length; i++) {
-  //             MinTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[0]));
-  //             MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]));
-  //             AmtArray.push(ratetable[i].TotalAmount);
-  //           }
-  //           self.setState({
-  //             RateDetails: ratetable,
-  //             tempRateDetails: ratetable,
-  //             loading: false,
-  //             commodityData: ratetable2,
-  //             MinTT: Math.min(...MinTTArray),
-  //             MaxTT: Math.max(...MaxTTArray),
-  //             MinAmt: Math.min(...AmtArray),
-  //             MaxAmt: Math.max(...AmtArray),
-  //             value: Math.max(...MaxTTArray),
-  //             valueAmt: Math.max(...AmtArray)
-  //           });
-  //         }
-  //         if (ratetable1 != null) {
-  //           self.setState({
-  //             RateSubDetails: ratetable1
-  //           });
-  //         }
-  //       } else {
-  //         self.setState({
-  //           loading: false
-  //         });
-  //       }
-  //     })
-  //     .catch(error => {
-  //       debugger;
-  //       var edata = error.response.data.split(":")[1];
-  //       var errorData = edata
-  //         .replace("}", "")
-  //         .replace(/'/g, "")
-  //         .replace(/ +/g, "");
-  //       if (errorData == "No Records Found") {
-  //         var RateDetails = [];
-  //         setTimeout(() => {
-  //           self.setState({ RateDetails });
-  //         }, 100);
-  //       }
-  //     });
-  // }
-
+   
   toggleChangePOLPOD(i, field, geoCoordinate) {
     debugger;
     if (field == "POL") {
@@ -3230,6 +2899,7 @@ class RateTable extends Component {
   }
 
   CreateMultiCBM() {
+    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -4021,11 +3691,31 @@ class RateTable extends Component {
 
     this.setState({ cmbTypeRadio: value });
   }
+  HandlePackgeTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/PackageTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ packageTypeData: data });
+    });
+  }
+
+onErrorImg(e)
+{
+  
+  return e.target.src="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+}
 
   render() {
     var i = 0;
     var classname = "";
-
+    console.log(this.state.multiCBM);
+    
     if (this.state.isViewRate == true) {
       classname = "butn btn-sizeRate disabled";
     } else {
@@ -4312,18 +4002,7 @@ class RateTable extends Component {
                               }
                             ></POLMaps>
                           </div>
-                          {/* <div className="d-flex">
-                            <input
-                              id="pol-pod"
-                              type="checkbox"
-                              name="address"
-                              checked={true}
-                            />
-                            <label htmlFor="pol-pod">
-                              {this.state.selectaddress}
-                            </label>
-                          </div> */}
-                          {/* <span>900$</span> */}
+                         
                         </div>
                         <div className="pol-pod">
                           <span>POD</span>
@@ -4351,18 +4030,7 @@ class RateTable extends Component {
                               </h5>
                             </div>
                           ))}
-                          {/* <div className="d-flex">
-                            <input
-                              id="pol-pod"
-                              type="checkbox"
-                              name="address"
-                              checked={true}
-                            />
-                            <label htmlFor="pol-pod">
-                              {this.state.selectaddress}
-                            </label>
-                          </div> */}
-                          {/* <span>900$</span> */}
+                          
                         </div>
                       </div>
                     </div>
@@ -4542,6 +4210,7 @@ class RateTable extends Component {
                                               "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                                             }
                                             alt={row._original.lineName}
+                                            onError={this.onErrorImg.bind(this)}
                                           />
                                         </div>
                                       </React.Fragment>
@@ -4597,7 +4266,13 @@ class RateTable extends Component {
                                               lname
                                             }
                                             alt={row._original.lineName}
+                                            // ref={img => this.img = img} onError={
+                                            //   () => this.img.src = 'https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png'
+                                            // }
+                                            onError={this.onErrorImg.bind(this)}  
                                           />
+
+                                          
                                         </div>
                                       </React.Fragment>
                                     );
@@ -4643,6 +4318,7 @@ class RateTable extends Component {
                                             src={
                                               "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                                             }
+                                            onError={this.onErrorImg.bind(this)}
                                             alt={row._original.lineName}
                                           />
                                         </div>

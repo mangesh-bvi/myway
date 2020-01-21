@@ -422,7 +422,6 @@
 
                     //debugger;
                     if (datas.length > 0) {
-                      console.log(datas.length);
                       var marketContent = "<div id='rootElement'>";
                       var marketInnerContent = "";
                       for (var i = 0; i < datas.length; i++) {
@@ -430,7 +429,59 @@
                         var ContainerNo = datas[i]["ContainerNo"];
                         var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                         var myDatacontainerType = datas[i]["CargoType"];
-                        if (myDatacontainerType != "Consolidated") {
+                        var ModeOfTransport=datas[i]["ModeOfTransport"];
+                        debugger;
+                        if(ModeOfTransport.toUpperCase()==="AIR")
+                        {
+                          marketContent="<div id='rootElement' style='float: right;margin-right: 10px;'>"
+                          if (myDatacontainerType != "Consolidated") {
+                          //////Actual Content
+                          var innerContentDatas ="";
+                          //   "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                          // innerContentDatas =
+                          //   innerContentDatas +
+                          //   "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
+                          //   ContainerNo +
+                          //   "' aria-expanded='false' aria-controls='" +
+                          //   ContainerNo +
+                          //   "'>";
+                          // innerContentDatas =
+                          //   innerContentDatas +
+                          //   "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
+                          //   HBLNum +
+                          //   "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
+                          //   ContainerNo +
+                          //   "</p></a></div></h5></div>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div id='" +
+                            ContainerNo +
+                            "'>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div class='card-header hbl-bor'> <h5><div role='button' href='#" +
+                            HBLNum +
+                            "'>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                            HBLNum +
+                            "' target='_parent'>" +
+                            HBLNum +
+                            " </a></p></div>";
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                            invoiceIds +
+                            ",</p> </div> </p></div></h5></div></div></div></div></div>";
+
+                          marketInnerContent =
+                            marketInnerContent + innerContentDatas;
+                        }
+                        }
+                        else
+                        {
+                          if (myDatacontainerType != "Consolidated") {
                           //////Actual Content
                           var innerContentDatas =
                             "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
@@ -474,6 +525,8 @@
                           marketInnerContent =
                             marketInnerContent + innerContentDatas;
                         }
+                        }
+                        
                       }
 
                       if (innerConsolidateData != "") {
@@ -615,7 +668,7 @@
                 var innerConsolidateData = "";
                 if (filterData.length > 0) {
                   for (var k = 0; k < filterData.length; k++) {
-                    //debugger;
+                    debugger;
 
                     var CinnerContentDatas = "";
                     var ContNo = filterData[k];
@@ -683,63 +736,122 @@
                   var marketContent = "<div id='rootElement'>";
                   var marketInnerContent = "";
                   for (var i = 0; i < datas.length; i++) {
+                    var ModeOfTransport = datas[i]["ModeOfTransport"];
                     var HBLNum = datas[i]["HBL#"];
                     var ContainerNo = datas[i]["ContainerNo"];
                     var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                     var myDatacontainerType = datas[i]["CargoType"];
-                    if (myDatacontainerType != "Consolidated") {
-                      //////Actual Content
-                      var innerContentDatas =
-                        "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
-                      innerContentDatas =
-                        innerContentDatas +
-                        "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
-                        ContainerNo +
-                        "' aria-expanded='false' aria-controls='" +
-                        ContainerNo +
-                        "'>";
-                      innerContentDatas =
-                        innerContentDatas +
-                        "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
-                        HBLNum +
-                        "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
-                        ContainerNo +
-                        "</p></a></div></h5></div>";
-                      //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
-                      if (HBLNum == enteredHBLNum) {
+                    if (ModeOfTransport.toUpperCase() === "AIR") {
+                      marketContent="<div id='rootElement' style='float: right;margin-right: 10px;'>"
+                      if (myDatacontainerType != "Consolidated") {
+                        //////Actual Content
+                        // var innerContentDatas =
+                        //   "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                        // innerContentDatas =
+                        //   innerContentDatas +
+                        //   "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
+                        //   ContainerNo +
+                        //   "' aria-expanded='false' aria-controls='" +
+                        //   ContainerNo +
+                        //   "'>";
+                        // innerContentDatas =
+                        //   innerContentDatas +
+                        //   "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
+                        //   HBLNum +
+                        //   "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
+                        //   ContainerNo +
+                        //   "</p></a></div></h5></div>";
+                        //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        if (HBLNum == enteredHBLNum) {
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div id='" +
+                            ContainerNo +
+                            "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        } else {
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div id='" +
+                            ContainerNo +
+                            "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        }
+
                         innerContentDatas =
                           innerContentDatas +
-                          "<div id='" +
-                          ContainerNo +
-                          "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
-                      } else {
+                          "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
+                          HBLNum +
+                          "' >";
                         innerContentDatas =
                           innerContentDatas +
-                          "<div id='" +
-                          ContainerNo +
-                          "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                          "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                          HBLNum +
+                          "' target='_parent'>" +
+                          HBLNum +
+                          " </a></p></div>";
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                          invoiceIds +
+                          ",</p> </div> </p></div></h5></div></div></div></div></div>";
+
+                        marketInnerContent =
+                          marketInnerContent + innerContentDatas;
                       }
+                    } else {
+                      if (myDatacontainerType != "Consolidated") {
+                        //////Actual Content
+                        var innerContentDatas =
+                          "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
+                          ContainerNo +
+                          "' aria-expanded='false' aria-controls='" +
+                          ContainerNo +
+                          "'>";
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
+                          HBLNum +
+                          "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
+                          ContainerNo +
+                          "</p></a></div></h5></div>";
+                        //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        if (HBLNum == enteredHBLNum) {
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div id='" +
+                            ContainerNo +
+                            "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        } else {
+                          innerContentDatas =
+                            innerContentDatas +
+                            "<div id='" +
+                            ContainerNo +
+                            "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                        }
 
-                      innerContentDatas =
-                        innerContentDatas +
-                        "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
-                        HBLNum +
-                        "' >";
-                      innerContentDatas =
-                        innerContentDatas +
-                        "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
-                        HBLNum +
-                        "' target='_parent'>" +
-                        HBLNum +
-                        " </a></p></div>";
-                      innerContentDatas =
-                        innerContentDatas +
-                        "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
-                        invoiceIds +
-                        ",</p> </div> </p></div></h5></div></div></div></div></div>";
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
+                          HBLNum +
+                          "' >";
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                          HBLNum +
+                          "' target='_parent'>" +
+                          HBLNum +
+                          " </a></p></div>";
+                        innerContentDatas =
+                          innerContentDatas +
+                          "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                          invoiceIds +
+                          ",</p> </div> </p></div></h5></div></div></div></div></div>";
 
-                      marketInnerContent =
-                        marketInnerContent + innerContentDatas;
+                        marketInnerContent =
+                          marketInnerContent + innerContentDatas;
+                      }
                     }
                   }
                   //marketContent = marketContent + marketInnerContent + "</div>";

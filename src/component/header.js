@@ -7,11 +7,10 @@ import "../assets/css/custom.css";
 import BellIcon from "./../assets/img/bell.png";
 import ChatIcon from "./../assets/img/chat-old.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
-import PhoneIcon from "./../assets/img/phone.png";
-import QRCode from "../pages/QRCode";
+
 import UserIcon from "./../assets/img/user.png";
 import ActivityLogIcon from "./../assets/img/activity-log.png";
-import ProfileSettingIcon from "./../assets/img/profilesetting.png";
+
 import LogoutIcon from "./../assets/img/logout.png";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
@@ -30,6 +29,7 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import Autocomplete from "react-autocomplete";
 
 class Header extends Component {
   constructor(props) {
@@ -45,7 +45,13 @@ class Header extends Component {
       selectedFile: "",
       selectedFileName: "",
       popupHBLNO: "",
-      ActivityDateArry: []
+      ActivityDateArry: [],
+      selectedType: "",
+      customerData: [],
+      fields: {},
+      CompanyID: 0,
+      companyName: "",
+      CompanyAddress: ""
     };
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
@@ -99,7 +105,11 @@ class Header extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      self.setState({ DropdownCommonMessage: response.data });
+      debugger;
+      self.setState({
+        DropdownCommonMessage: response.data,
+        selectedType: "Subject"
+      });
     });
   }
   toggleDocu() {
@@ -232,8 +242,8 @@ class Header extends Component {
       txtshipmentcomment.focus();
       return false;
     }
-
-    var today = new Date();
+var CustomerID=this.state.CustomerID;
+    
 
     //alert(txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year);
     let self = this;
@@ -244,15 +254,9 @@ class Header extends Component {
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
         ReferenceNo: txtShipmentNo.value.trim(),
-        TypeOfMessage: drpshipment.value.trim(),
-        // Message:
-        //   txtshipmentcomment.value.trim() +
-        //   " on " +
-        //   day +
-        //   " " +
-        //   month_names[month_index] +
-        //   " " +
-        //   year
+        TypeOfMessage: drpshipment.value.trim(),         
+        CustomerID:CustomerID,
+        SubjectMessage:"",
         Message: txtshipmentcomment.value.trim()
       },
       headers: authHeader()
@@ -334,8 +338,7 @@ class Header extends Component {
     } else if (ActivityTypeID === 5 && MODE !== "") {
       var detail = {
         Quotes: CSV,
-        Type: MODE,
-        
+        Type: MODE
       };
       this.props.history.push({
         pathname: "rate-finalizing-still",
@@ -356,11 +359,73 @@ class Header extends Component {
     }
   }
 
-  activatePlaylist() {
-    // you code
-    alert(1);
-    // this.props.history.push("/booking-table");
+  HandleChangeCon(field, e) {
+    //debugger;;
+    let self = this;
+    self.state.error = "";
+    var customertxtlen = e.target.value;
+
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+    if (fields[field].length >= 2) {
+      self.setState({ fields });
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerAutoSearchMessage`,
+        data: {
+          UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+          CompanyName: customertxtlen,
+          
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+
+        if (response.data.length != 0) {
+          if (field == "CustomerList") {
+            self.setState({
+              customerData: response.data,
+              fields
+            });
+          } else {
+            self.setState({
+              customerData: response.data,
+              fields
+            });
+          }
+        } else {
+          self.state.error = "Please enter valid Consignee";
+        }
+        self.setState({
+          error: self.state.error
+        });
+      });
+    } else {
+      self.setState({
+        customerData: [],
+        fields
+      });
+    }
   }
+
+  handleSelectCon(field, value, e) {
+    let fields = this.state.fields;
+    fields[field] = value;
+    var compId = e.Company_ID;
+    var compName = e.Company_Name;
+    var companyAddress = e.CompanyAddress;
+    var contactName = e.ContactName;
+    var contactEmail = e.ContactEmail;
+    this.setState({
+      fields,
+      CompanyID: compId,
+      CompanyName: compName,
+      CompanyAddress: companyAddress,
+      ContactName: contactName,
+      ContactEmail: contactEmail
+    });
+  }
+
   render() {
     let self = this;
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
@@ -406,7 +471,11 @@ class Header extends Component {
             className="active-log-pop"
             key={i}
             onClick={() => {
-              self.HandleActivityClick(item.ActivityTypeID, item.MODE,item.CSV);
+              self.HandleActivityClick(
+                item.ActivityTypeID,
+                item.MODE,
+                item.CSV
+              );
             }}
           >
             <span>{item.CNT + " "}</span> <label>{item.ActivityDesc}</label>
@@ -420,7 +489,11 @@ class Header extends Component {
             className="active-log-pop"
             key={i}
             onClick={() => {
-              self.HandleActivityClick(item.ActivityTypeID, item.MODE,item.CSV);
+              self.HandleActivityClick(
+                item.ActivityTypeID,
+                item.MODE,
+                item.CSV
+              );
             }}
           >
             <span>{item.CNT + " "}</span>
@@ -509,7 +582,7 @@ class Header extends Component {
                     />
                     {/* <label style={{fontSize:"12px" , fontWeight: "bold" , color: "#1a1919"}}>Live Chat</label> */}
                     <Modal
-                      className="delete-popup pol-pod-popup"
+                      className="delete-popup"
                       isOpen={this.state.modalDocu}
                       toggle={this.toggleDocu}
                       centered={true}
@@ -537,9 +610,48 @@ class Header extends Component {
                               <option value="0">Select</option>
                               {/* <option value="Shipment">Shipment</option> */}
                               {optionItems}
-                              <option value="Subject">Subject</option>
+                              <option value="Subject" selected>
+                                Subject
+                              </option>
                             </select>
                           </div>
+                          {this.state.selectedType === "Subject" ? (
+                            <div className="rename-cntr login-fields cusrename1">
+                              <Autocomplete
+                                id="searchtxt"
+                                className="title-sect p-0 pt-2"
+                                getItemValue={item => item.Company_Name}
+                                items={this.state.customerData}
+                                renderItem={(item, isHighlighted) => (
+                                  <div
+                                    style={{
+                                      background: isHighlighted
+                                        ? "lightgray"
+                                        : "white",
+                                      padding: "5px"
+                                    }}
+                                  >
+                                    {item.Company_Name}
+                                  </div>
+                                )}
+                                value={this.state.fields["Company_Name"]}
+                                onChange={this.HandleChangeCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                menuStyle={this.state.menuStyle}
+                                onSelect={this.handleSelectCon.bind(
+                                  this,
+                                  "Company_Name"
+                                )}
+                                inputProps={{
+                                  placeholder: "Search Account/Consignee"
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            ""
+                          )}
                           <div className="rename-cntr login-fields">
                             <input
                               id="txtShipmentNo"

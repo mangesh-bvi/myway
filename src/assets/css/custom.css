@@ -4423,3 +4423,8 @@ progress::-webkit-progress-bar {
   max-height: 200px;
   overflow: auto;
 }
+.cusrename1 div:first-child
+{
+  display: block !important;
+  width: 100% !important;
+}

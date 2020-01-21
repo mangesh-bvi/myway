@@ -21,7 +21,7 @@ class ChangePassword extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
-    debugger;
+    //debugger;
     if (encryption(window.localStorage.getItem("username"),"desc") == null) {
       window.location.href = "./";
     }
@@ -32,7 +32,7 @@ class ChangePassword extends React.Component {
     });
   }
   handleSubmit(e) {
-   debugger;
+   //debugger;
     //  e.preventDefault();
     var oldpwd =encryption(window.localStorage.getItem("password"),"desc");
     this.setState({ submitted: true });
@@ -43,6 +43,7 @@ class ChangePassword extends React.Component {
     }
     if (password === newpassword) {
       ChangePasswordCheck(oldpwd, newpassword);
+    //debugger;
     } else {
       NotificationManager.error("Confirmed password is not matched");
     }
@@ -100,13 +101,14 @@ class ChangePassword extends React.Component {
             </div>
           </div>
         </div>
+        <NotificationContainer/>
       </section>
     );
   }
 }
 
 function ChangePasswordCheck(password, newpassword) {
-  debugger;
+  //debugger;
   const requestOptions = {
     method: "POST",
     headers: authHeader(),
@@ -119,15 +121,17 @@ function ChangePasswordCheck(password, newpassword) {
     })
   };
   return fetch(`${appSettings.APIURL}/ChangeUserPassword`, requestOptions)
-    .then(handleResponse)
+    .then(handleResponse
+      
+      )
     .catch(error => {
-      debugger;
+      ////debugger;
       console.log(error);
     });
 }
 
 function handleResponse(response) {
-debugger;
+//debugger;
   console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);
@@ -135,6 +139,7 @@ debugger;
       NotificationManager.error("Internal Server error. Please contact administrator.");
     } else {
       NotificationManager.success("Password change successfully");
+      window.location.href = "./";
     }
 
     return data;

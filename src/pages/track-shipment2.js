@@ -7,9 +7,7 @@ import {
   Modal,
   ModalBody
 } from "reactstrap";
-import GoogleMapReact from "google-map-react";
-import Headers from "../component/header";
-import SideMenu from "../component/sidemenu";
+
 // import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import FileUpload from "./../assets/img/file.png";
@@ -19,14 +17,14 @@ import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
 import Inland from "./../assets/img/inland.png";
 import Delivery from "./../assets/img/delivery.png";
-import Eye from "./../assets/img/eye.png";
-import Delete from "./../assets/img/red-delete-icon.png";
-import Download from "./../assets/img/csv.png";
+import Plane from "./../assets/img/plane.png";
+import Truck from "./../assets/img/truck.png";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 import ReactTable from "react-table";
+
 import "react-table/react-table.css";
 import {
   NotificationContainer,
@@ -42,18 +40,6 @@ import {
 } from "react-google-maps";
 const { compose } = require("recompose");
 
-var docuemntFileName = "";
-
-const SourceIcon = () => (
-  <div className="map-icon source-icon">
-    <img src={ShipWhite} />
-  </div>
-);
-const DestiIcon = () => (
-  <div className="map-icon desti-icon">
-    <img src={ShipWhite} />
-  </div>
-);
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
@@ -239,7 +225,13 @@ class TrackShipment2 extends Component {
       iframeKey: 0,
       modalShare: false,
       HBLNumber: "",
-      showData: false
+      showData: false,
+      Table9: [],
+      POLPODData: [],
+      eve: "",
+      DData: "",
+      ModeType: "",
+      loading: false
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -261,18 +253,29 @@ class TrackShipment2 extends Component {
       "GreenLineData"
     );
     let self = this;
-    var url = window.location.href.slice(window.location.href.indexOf("?") + 1);
-    // if (url != "" && url != null) {
-    self.HandleShipmentDetails(url);
-    self.setState({
-      addWat: url
-    });
-    //  if (typeof this.props.location.state != "undefined") {
-    //   var hblno = this.props.location.state.detail;
-    //   self.HandleShipmentDetails(hblno);
-    //   //self.handleActivityList();
-    //   self.setState({ HblNo: hblno });
-    //  }
+    if (window.location.href.indexOf("?") > 0) {
+      var url = window.location.href.slice(
+        window.location.href.indexOf("?") + 1
+      );
+
+      if (url) {
+        // if (url != "" && url != null) {
+        // self.HandleShipmentDetails(url);
+        self.setState({
+          showData: false,
+          addWat: url,
+          HBLNumber: url.replace("%20", " ").trim(),
+          loading: false
+        });
+      }
+    } else {
+      self.setState({
+        showData: false,
+        addWat: "",
+        HBLNumber: "",
+        loading: false
+      });
+    }
   }
 
   SendMessage = () => {
@@ -322,91 +325,6 @@ class TrackShipment2 extends Component {
   };
   HandleMapDetailsData(mdetails) {
     debugger;
-
-    // var PinModalData = [];
-    // var RouteData = [];
-
-    // for (let i = 0; i < DetailsData.length; i++) {
-    //   var finalList = new Object();
-
-    //   // var orderId = DetailsData[i].ORDERID;
-    //   finalList.ORDERID = DetailsData[i].ORDERID;
-    //   finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
-    //   finalList.StartLocation = DetailsData[i].StartLocation;
-    //   finalList.ShipperName = DetailsData[i].ShipperName;
-    //   finalList.EndLocation = DetailsData[i].EndLocation;
-    //   finalList.ConsigneeName = DetailsData[i].ConsigneeName;
-    //   finalList.NTransit_Time = DetailsData[i].NTransit_Time;
-    //   finalList.NMax_Transit_Time = DetailsData[i].NMax_Transit_Time;
-    //   finalList.NMin_Transit_Time = DetailsData[i].NMin_Transit_Time;
-    //   finalList.CTransShipPort = DetailsData[i].CTransShipPort;
-    //   finalList.CType = DetailsData[i].CType;
-    //   finalList.Line = DetailsData[i].Line;
-    //   finalList.NEdLocationID = DetailsData[i].NEdLocationID;
-    //   finalList.NStLocationID = DetailsData[i].NStLocationID;
-    //   finalList.NTransRouteID = DetailsData[i].NTransRouteID;
-    //   finalList.SLinerID = DetailsData[i].SLinerID;
-    //   finalList.TransitType = DetailsData[i].TransitType;
-
-    //   //Start Location Lat lng
-    //   var CStLatLong = DetailsData[i].CStLatLong;
-    //   var startlatlng = [];
-    //   var startlatlnglst = new Object();
-    //   startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
-    //   startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
-    //   startlatlng.push(startlatlnglst);
-
-    //   finalList.StartLatLng = startlatlng;
-
-    //   // End Location Lat Lng
-    //   var CEdLatLong = DetailsData[i].CEdLatLong;
-    //   var endlatlng = [];
-    //   var endlatlnglst = new Object();
-    //   endlatlnglst.lat = Number(CEdLatLong.split(",")[0]);
-    //   endlatlnglst.lng = Number(CEdLatLong.split(",")[1]);
-    //   endlatlng.push(endlatlnglst);
-    //   finalList.EndLatLng = endlatlng;
-
-    //   //CRouteLatLong Lat Lng
-    //   // Rounting line
-    //   var cRouteLatLong = DetailsData[i].CRouteLatLong;
-    //   if (cRouteLatLong.length > 0) {
-    //     var routeArray = [];
-    //     var ComplexData = [];
-    //     routeArray.push(cRouteLatLong.split(";"));
-
-    //     var routlen = routeArray[0];
-    //     for (let k = 0; k < routlen.length; k++) {
-    //       var routelatlng = new Object();
-    //       var latlngvar = routlen[k];
-    //       routelatlng.lat = Number(latlngvar.split(",")[0]);
-    //       routelatlng.lng = Number(latlngvar.split(",")[1]);
-    //       ComplexData.push(routelatlng);
-    //     }
-    //     finalList.CRouteLatLong = ComplexData;
-    //   } else {
-    //     finalList.CRouteLatLong = null;
-    //   }
-
-    //   PinModalData.push(finalList);
-
-    //   // Rounting line
-    //   var RouteLatLong = DetailsData[i].RouteLatLong;
-    //   var RouteArray = [];
-    //   // var ComplexData = [];
-    //   RouteArray.push(RouteLatLong.split(";"));
-
-    //   var routlen = RouteArray[0];
-    //   for (let k = 0; k < routlen.length; k++) {
-    //     var routelatlng = new Object();
-    //     var latlngvar = routlen[k];
-    //     routelatlng.lat = Number(latlngvar.split(",")[0]);
-    //     routelatlng.lng = Number(latlngvar.split(",")[1]);
-    //     RouteData.push(routelatlng);
-    //   }
-    // }
-
-    // self.setState({ MapsDetailsData: PinModalData });
 
     var mydata = mdetails.Table;
     let self = this;
@@ -559,12 +477,13 @@ class TrackShipment2 extends Component {
       method: "get",
       url: `${appSettings.APIURL}/AnonymousBindShipmentSummaryMap`,
       params: {
-        Token: Encodedhblno
+        Token: Encodedhblno.replace("%20", " ")
       }
       //headers: authHeader()
     }).then(function(response) {
       debugger;
       var resdata = response.data;
+      self.setState({ loading: false ,showData:true});
       self.HandleMapDetailsData(resdata);
     });
   }
@@ -624,12 +543,13 @@ class TrackShipment2 extends Component {
 
   HandleShipmentDetails(Encodedhblno) {
     debugger;
+    this.setState({ loading: true });
     let self = this;
     axios({
       method: "get",
       url: `${appSettings.APIURL}/AnonymousShipmentSummaryDetailsAPI`,
       params: {
-        Token: Encodedhblno
+        Token: Encodedhblno.replace("%20", " ")
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
         // UserId: 874588,
@@ -639,7 +559,15 @@ class TrackShipment2 extends Component {
     }).then(function(response) {
       debugger;
       var shipmentdata = response.data;
+      var POLPODData = response.data.Table5;
+      var eve = response.data.Table[0].Event;
+      var ModeType = response.data.Table[0].ModeOfTransport;
+      var Table9 = response.data.Table9;
       self.setState({
+        POLPODData,
+        Table9,
+        eve,
+        ModeType,
         addWat: shipmentdata.Table[0].HBLNO,
         detailsData: shipmentdata.Table[0],
         addressData: shipmentdata.Table1,
@@ -647,10 +575,13 @@ class TrackShipment2 extends Component {
         containerDetails: shipmentdata.Table3,
         bookedStatus: shipmentdata.Table4,
         packageDetails: shipmentdata.Table7,
+        DData:
+          shipmentdata.Table2[shipmentdata.Table2.length - 1]["Arrival Date"],
         ShipmentExistsInWatchList:
           shipmentdata.Table6[0].ShipmentExistsInWatchList,
         packageViewMore: shipmentdata.Table8
       });
+
       var sid = shipmentdata.Table[0].ShipperId;
       var cid = shipmentdata.Table[0].ConsigneeID;
       self.HandleShipmentDetailsMap(Encodedhblno);
@@ -843,8 +774,15 @@ class TrackShipment2 extends Component {
   }
   HandleSubmit() {
     debugger;
-    if (this.state.addWat.trim() === this.state.HBLNumber) {
-      this.setState({ showData: true });
+    if (this.state.addWat.replace("%20", " ").trim() === this.state.HBLNumber) {
+      // this.setState({ showData: true });
+      var HBLNO = this.state.HBLNumber;
+
+      this.HandleShipmentDetails(HBLNO);
+    } else if (this.state.HBLNumber && this.state.addWat == "") {
+      var HBLNO = this.state.HBLNumber;
+
+      this.HandleShipmentDetails(HBLNO);
     } else {
       NotificationManager.error("Please enter Valid HBL#");
     }
@@ -854,15 +792,11 @@ class TrackShipment2 extends Component {
     let self = this;
     const {
       detailsData,
-      addressData,
+      POLPODData,
       containerData,
-      containerDetails,
-      ShowCard,
-      documentData,
+
       bookedStatus,
-      MapsDetailsData,
-      packageDetails,
-      packageViewMore,
+
       packageTable
     } = this.state;
 
@@ -929,67 +863,68 @@ class TrackShipment2 extends Component {
             : bookedStatus[index].ActualDate;
       }
     }
-    console.log(bookDate, "book");
-    console.log(departedDate, "departure");
-    console.log(arrivedDate, "arrived");
-    console.log(deliverDate, "deliver");
-    // let Watchlist = "";
-    // if (this.state.ShipmentExistsInWatchList == 0) {
-    //   Watchlist = (
-    //     <>
-    //     <button onClick={this.handleChangePage.bind(this)} className="butn mt-0">
-    //         Back
-    //       </button>
-    //       <button onClick={this.handleAddToWatchList} className="butn mt-0">
-    //         Add Watchlist
-    //       </button>
-    //     </>
-    //   );
-    // } else {
-    //   Watchlist = (
-    //     <>
-    //       <button onClick={this.handleRemoveWatchList} className="butn mt-0">
-    //         Remove Watchlist
-    //       </button>
-    //     </>
-    //   );
-    // }
-
-    let MsgActivityTab = "";
-    if (this.state.MessagesActivityDetails != null) {
-      if (this.state.MessagesActivityDetails.length > 0) {
-        MsgActivityTab = (
-          <div class="d-flex flex-column-reverse">
-            {this.state.MessagesActivityDetails.map(team => (
-              <div class="p-2">
-                <p style={{ fontWeight: "600" }}>{team.Message}</p>
-
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <span>
-                      Created by:
-                      {encryption(
-                        window.localStorage.getItem("username"),
-                        "desc"
-                      )}
-                    </span>
-                  </div>
-                  ({team.MessageCreationTime})
-                </div>
-                <hr />
-              </div>
-            ))}
-          </div>
-        );
+    var eventColor = "";
+    if (this.state.eve !== "") {
+      if (this.state.eve === "On Time") {
+        eventColor = "green";
+      } else if (this.state.eve === "Delay Risk") {
+        eventColor = "yellow";
+      } else if (this.state.eve === "Behind Schedule") {
+        eventColor = "red";
       }
     }
+    var perBooking = "0";
+    var POLPODDatalen = this.state.POLPODData.length;
+    debugger;
+    if (this.state.Table9.length > 0) {
+      debugger;
+      var Transshipped = this.state.Table9.filter(
+        x => x.Status === "Transshipped"
+      ).length;
 
+      var Arriveddata = this.state.Table9.filter(x => x.Status === "Arrived")
+        .length;
+      var Delivered = this.state.Table9.filter(x => x.Status === "Delivered")
+        .length;
+      if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
+        var total = parseInt(100 / (Transshipped + 1));
+        var finalTotal = 0;
+        if (Transshipped == 1) {
+          finalTotal = total / this.state.POLPODData.length;
+        }
+        perBooking = (total + finalTotal) * Transshipped + "";
+      }
+      if (Transshipped > 0 && Arriveddata > 0 && Delivered === 0) {
+        var total = parseInt(100 / (Transshipped + 1));
+        var finalTotal = 0;
+        if (Transshipped == 1) {
+          finalTotal = total / this.state.POLPODData.length;
+        }
+        perBooking = (total + finalTotal) * Transshipped + "";
+      }
+
+      if (Transshipped >= 1 && Arriveddata >= 1) {
+        perBooking = "100";
+      }
+      if (Transshipped >= 1 && Delivered >= 1) {
+        perBooking = "100";
+      }
+      if (Transshipped == 0 && Arriveddata > 0) {
+        perBooking = "100";
+      }
+      if (Transshipped == 0 && Delivered > 0) {
+        perBooking = "100";
+      }
+    }
     let className = "butn view-btn less-btn";
     if (this.state.showContent == true) {
       className = "butn view-btn less-btn";
     } else {
       className = "butn view-btn";
     }
+    console.log(this.state.showData, "----------showdata");
+    console.log(this.state.loading, "----------loading");
+
     return (
       <div>
         {/* <Headers /> */}
@@ -1001,7 +936,8 @@ class TrackShipment2 extends Component {
             <div className="container-fluid">
               <div>
                 <div className="title-sect ts-head">
-                  {this.state.showData === false ? (
+                  {this.state.showData === false &&
+                  this.state.loading === true ? (
                     <h2>Track Shipment</h2>
                   ) : (
                     <h2>Track Shipment - {detailsData.HBLNO}</h2>
@@ -1010,7 +946,12 @@ class TrackShipment2 extends Component {
               </div>
               <div className="row">
                 <div className="col-12">
-                  <labal className="details-title" style={{marginRight:"10px"}}>Enter HBL#</labal>
+                  <labal
+                    className="details-title"
+                    style={{ marginRight: "10px" }}
+                  >
+                    Enter HBL#
+                  </labal>
                   <input
                     type="text"
                     name="HBLNO"
@@ -1018,11 +959,21 @@ class TrackShipment2 extends Component {
                     value={this.state.HBLNumber}
                     onChange={this.HandleChangeHBL.bind(this)}
                   />
-                  <button onClick={this.HandleSubmit.bind(this)} className="butn view-btn">Submit</button>
+                  <button
+                    onClick={this.HandleSubmit.bind(this)}
+                    className="butn view-btn"
+                  >
+                    Submit
+                  </button>
                 </div>
                 {this.state.showData === false ? (
-                  ""
+                  this.state.loading == true ? (
+                    <div className="loader-icon"></div>
+                  ) : (
+                    ""
+                  )
                 ) : (
+                  // ""
                   <div className="row">
                     <div className="col-md-7">
                       <ul className="nav cust-tabs" role="tablist">
@@ -1051,14 +1002,15 @@ class TrackShipment2 extends Component {
                             <div className="row">
                               <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                 <p className="details-title">HBL#</p>
-                                <a href="#!" className="details-para">
+                                <span  className="details-para">
                                   {detailsData.HBLNO}
-                                  <input
+                                 
+                                </span>
+                                <input
                                     type="hidden"
                                     value={detailsData.HBLNO}
                                     id="popupHBLNO"
                                   />
-                                </a>
                               </div>
                               <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                 <p className="details-title">BL#</p>
@@ -1117,62 +1069,160 @@ class TrackShipment2 extends Component {
 
                           <div className="progress-sect">
                             <div className="d-flex align-items-center">
-                              <span className="clr-green">POL</span>
+                              <div className="mobilenumber-resp"></div>
+
+                              <span
+                                className="clr-green"
+                                style={{
+                                  overflow: "initial",
+                                  marginTop: "20px"
+                                }}
+                              >
+                                POL
+                              </span>
                               <div className="pol-pod-progress">
-                                <Progress
-                                  value={
-                                    deliverDate !== ""
-                                      ? "100"
-                                      : arrivedDate !== ""
-                                      ? "90"
-                                      : departedDate !== ""
-                                      ? "50"
-                                      : bookDate !== ""
-                                      ? "0"
-                                      : "0"
+                                <div className="mobilenumber-resp">
+                                  {this.state.POLPODData.map(function(id, i) {
+                                    var wid = 100 / (POLPODDatalen - 1);
+                                    var wid1 = 100 / POLPODDatalen;
+                                    // var fwid = wid + wid / 2 + "%";
+
+                                    if (i === 0) {
+                                      return (
+                                        <label
+                                          className="resol"
+                                          style={{ width: wid1 + "%" }}
+                                        >
+                                          {/* <span className="line-resol" style={{left: wid + "%"}}></span> */}
+                                          <span
+                                            className="progspan"
+                                            style={{
+                                              display: "block",
+                                              float:
+                                                POLPODDatalen < 2
+                                                  ? "left"
+                                                  : "none"
+                                            }}
+                                          >
+                                            {/* {id["POL/POD"]} */}
+                                          </span>
+                                        </label>
+                                      );
+                                    }
+                                    if (i >= 1 && i < POLPODDatalen - 1) {
+                                      var fwidth = wid * i;
+                                      return (
+                                        <label
+                                          className="resol"
+                                          style={{ width: wid1 + "%" }}
+                                        >
+                                          <span
+                                            className="line-resol"
+                                            style={{ left: fwidth + "%" }}
+                                          ></span>
+                                          <span
+                                            className="progspan"
+                                            style={{ display: "block" }}
+                                          >
+                                            {id["POL/POD"]}
+                                          </span>
+                                        </label>
+                                      );
+                                    }
+                                    if (i === POLPODDatalen - 1) {
+                                      return (
+                                        <label
+                                          className="resol"
+                                          style={{
+                                            width: wid1 + "%"
+                                          }}
+                                        >
+                                          {/* <span className="line-resol"></span> */}
+                                          <span
+                                            className="progspan"
+                                            style={{
+                                              display: "block",
+                                              float:
+                                                POLPODDatalen < 2
+                                                  ? "right"
+                                                  : "none"
+                                            }}
+                                          >
+                                            {/* {id["POL/POD"]} */}
+                                          </span>
+                                        </label>
+                                      );
+                                    }
+                                  })}
+
+                                  {/* <label className="resol">
+                                <span className="line-resol"></span>B
+                              </label>
+                              <label className="resol">
+                                <span className="line-resol"></span>C
+                              </label>
+                              <label className="resol">
+                                <span className="line-resol"></span>D
+                                </label> */}
+                                </div>
+                                {/* <Progress className="ticket-progress" color={eventColor} value={perBooking} /> */}
+                                <progress
+                                  className={
+                                    "ticket-progress progress-" + eventColor
                                   }
-                                />
-                                <span
-                                  className="pol-pod-percent"
                                   style={{
-                                    left:
-                                      deliverDate !== ""
-                                        ? "100%"
-                                        : arrivedDate !== ""
-                                        ? "90%"
-                                        : departedDate !== ""
-                                        ? "50%"
-                                        : bookDate !== ""
-                                        ? "0%"
-                                        : "0%"
+                                    width: "100%",
+                                    "::-webkit-progress-value": {
+                                      background: "#000000"
+                                    }
                                   }}
-                                >
-                                  {deliverDate !== ""
-                                    ? "100%"
-                                    : arrivedDate !== ""
-                                    ? "90%"
-                                    : departedDate !== ""
-                                    ? "50%"
-                                    : bookDate !== ""
-                                    ? "0%"
-                                    : "0%"}
-                                </span>
+                                  value={Number(perBooking)}
+                                  max="100"
+                                ></progress>
                               </div>
-                              <span className="clr-green">POD</span>
+                              <span
+                                className="clr-green"
+                                style={{
+                                  overflow: "initial",
+                                  marginTop: "20px"
+                                }}
+                              >
+                                POD
+                              </span>
                             </div>
                             <div className="desti-places">
-                              <span>
-                                {containerData.length > 0
-                                  ? containerData[0].DeparturePortName
-                                  : ""}
-                              </span>
-                              <span>
-                                {containerData.length > 0
-                                  ? containerData[0].DestinationPortName
-                                  : ""}
-                              </span>
+                              {POLPODData.length < 2 ? (
+                                <>
+                                  <span>
+                                    {POLPODData.length > 0
+                                      ? POLPODData[0]["POL/POD"]
+                                      : ""}
+                                  </span>
+                                  <span>
+                                    {POLPODData.length > 0
+                                      ? POLPODData[1]["POL/POD"]
+                                      : ""}
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <span>
+                                    {POLPODData.length > 0
+                                      ? POLPODData[0]["POL/POD"]
+                                      : ""}
+                                  </span>
+                                  <span>
+                                    {POLPODData.length > 0
+                                      ? POLPODData[POLPODData.length - 1][
+                                          "POL/POD"
+                                        ]
+                                      : ""}
+                                  </span>
+                                </>
+                              )}
                             </div>
                           </div>
+
                           {containerData.map(function(routedata, i = 0) {
                             i++;
                             return (
@@ -1183,9 +1233,17 @@ class TrackShipment2 extends Component {
                                     : "Routing Information" - i}
                                 </p>
                                 <div className="row mid-border">
-                                  <div className="col-md-6 details-border" style={{border:"none"}}>
+                                  <div
+                                    className="col-md-6 details-border"
+                                    style={{ border: "none" }}
+                                  >
                                     <div className="row">
-                                      <div className="col-md-6 details-border" style={{alignItems: "center"}}>
+                                      <div
+                                        className="col-md-6 details-border"
+                                        style={{
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <p className="details-title">
                                           Type Of Move
                                         </p>
@@ -1219,9 +1277,17 @@ class TrackShipment2 extends Component {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="col-md-6 details-border" style={{border:"none"}}>
+                                  <div
+                                    className="col-md-6 details-border"
+                                    style={{ border: "none" }}
+                                  >
                                     <div className="row">
-                                      <div className="col-md-6 details-border" style={{alignItems: "center"}}>
+                                      <div
+                                        className="col-md-6 details-border"
+                                        style={{
+                                          alignItems: "center"
+                                        }}
+                                      >
                                         <p className="details-title">
                                           Departure Date
                                         </p>
@@ -1355,17 +1421,35 @@ class TrackShipment2 extends Component {
                         </div>
                         <div className="shipment-track-cntr">
                           <div className="shipment-track">
-                            <div>
+                            <div className="flex-grow-1">
                               <p className="est-title">
                                 Estimated Time of Arrival
                               </p>
-                              <p className="est-time">
-                                9 October 2019, 90:45:56 Min
-                              </p>
+                              <div className="d-flex justify-content-between">
+                                <p className="est-time">
+                                  {/* {this.state.containerData[0].DepartureDate} */}
+                                  {this.state.DData}
+                                  {/* 4545 */}
+                                </p>
+                                <p
+                                  className="est-time eve-clr"
+                                  color={eventColor}
+                                >
+                                  {this.state.eve !== "N/A"
+                                    ? this.state.eve
+                                    : ""}
+                                </p>
+                              </div>
                             </div>
                             <div className="ship-white-cntr">
                               <div className="ship-white">
-                                <img src={ShipWhite} alt="ship icon" />
+                                {this.state.ModeType === "Air" ? (
+                                  <img src={Plane} alt="Air icon" />
+                                ) : this.state.ModeType === "Ocean" ? (
+                                  <img src={ShipWhite} alt="ship icon" />
+                                ) : this.state.ModeType === "Inland" ? (
+                                  <img src={Truck} alt="Truck icon" />
+                                ) : null}
                               </div>
                             </div>
                           </div>

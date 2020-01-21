@@ -520,12 +520,11 @@ class Dashboard extends Component {
     });
     var colClassName = "";
     if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+      
       colClassName = "cls-flside colap";
     } else {
-      debugger;
-      colClassName = "cls-flside";
-    }
+             colClassName = "cls-flside";
+           }
     return (
       <div>
         {}

@@ -86,7 +86,7 @@ class Login extends React.Component {
   }
 
   HandleDisplaySalesPersonData(sData) {
-    debugger;
+    //debugger;
     //get Companies
     let self = this;
     var mydata = sData; //JSON.parse(data);
@@ -135,7 +135,7 @@ class Login extends React.Component {
       //officeName
       //Company_Name
       //Company_ID
-      //debugger;
+      ////debugger;
       var Company_Name = item.Company_Name;
       var Company_ID = item.Company_ID;
       var Company_Name = item.Company_Name;
@@ -168,7 +168,7 @@ class Login extends React.Component {
     ////Company
     for (var i = 0; i < iCompanies; i++) {
       //for (var i = 0; i < 15; i++) {
-      //debugger;
+      ////debugger;
       var selectedoffId = distinctOffice[i]["OfficeID"];
 
       var salesPersonDataByComp = {};
@@ -231,7 +231,7 @@ class Login extends React.Component {
 
       finalNode.push(salesPersonDataByComp);
     }
-    debugger;
+    //debugger;
     //self.setState({ nodes: finalNode, checked: ["352200103, 1337604146"] });
     // self.setState({ nodes: finalNode, checked: ["1420702123"] });
     //self.setState({ nodes: finalNode, checked: ["1420702123"] });
@@ -260,12 +260,12 @@ class Login extends React.Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        //debugger;
         self.props.history.push("/rate-search");
         // window.location.href = "./rate-search";
       })
       .catch(error => {
-        console.log(error);
+        
       });
   }
 
@@ -275,7 +275,7 @@ class Login extends React.Component {
     });
   }
   handleSubmit(e) {
-    debugger;
+    ////debugger;
     let self = this;
     e.preventDefault();
     this.setState({ submitted: true, loading: true });
@@ -283,7 +283,7 @@ class Login extends React.Component {
     window.localStorage.setItem("password", encryption(password, "enc"));
     if (username !== "" && password !== "") {
       var ipaddress = window.localStorage.getItem("ipaddress");
-      console.log("axios" + new Date());
+      
       axios({
         method: "post",
         url: `${appSettings.APIURL}/Login`,
@@ -296,7 +296,7 @@ class Login extends React.Component {
         headers: authHeader("no")
       })
         .then(function(response) {
-          debugger;
+          ////debugger;
 
           var data = response.data;
           window.localStorage.setItem("st", new Date());
@@ -369,7 +369,7 @@ class Login extends React.Component {
             "emailid",
             encryption(data.Table[0].email_id, "enc")
           );
-          debugger;
+          ////debugger;
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
 
@@ -379,14 +379,14 @@ class Login extends React.Component {
           var ProfileTypen = userType[0].ProfileType;
           var SalesCompanyPopupFlag = userType[0].SalesCompanyPopupFlag;
           if (userTypeName === "Sales User" && SalesCompanyPopupFlag === 1) {
-            debugger;
+            //debugger;
             if (
               userTypeName === "Sales User" &&
               ProfileTypen &&
               SalesCompanyPopupFlag === 1
             ) {
               var sData = response.data.Table3;
-              debugger;
+              //debugger;
               self.HandleDisplaySalesPersonData(sData);
               self.setState({
                 modalSalesLogin: !self.state.modalSalesLogin
@@ -424,7 +424,7 @@ class Login extends React.Component {
           setTimeout(5000);
         });
     } else {
-      debugger;
+      //debugger;
       this.setState({ settoaste: true, loading: true });
 
       var error = username === "" ? "Please enter the username\n" : "";
@@ -440,15 +440,15 @@ class Login extends React.Component {
 
   componentDidMount() {
     localStorage.clear();
+    
     const publicIp = require("public-ip");
     (async () => {
-      console.log(await publicIp.v4());
+      
       window.localStorage.setItem("ipaddress", await publicIp.v4());
     })();
   }
-  checkboxCheck(e) {
-    debugger;
-  }
+   
+    
   render() {
     let self = this;
     //  const { username, password } = this.state;
@@ -554,7 +554,7 @@ class Login extends React.Component {
             <ModalBody>
               <div>
                 <CheckboxTree
-                  onClick={this.checkboxCheck.bind(this)}
+                  
                   nodes={self.state.nodes}
                   checked={self.state.checked}
                   expanded={this.state.expanded}
@@ -611,10 +611,10 @@ function GenerateToken(username, password) {
 }
 
 function TokenhandleResponse(response) {
-  debugger;
+  //debugger;
   //alert(1);
   return response.text().then(text => {
-    debugger;
+    //debugger;
     const data = text && JSON.parse(text);
     if (!response.ok) {
       //alert('oops!error occured');

@@ -1316,6 +1316,7 @@ class NewRateSearch extends Component {
                 type="text"
                 name="ContainerQuantity"
                 placeholder="Quantity"
+                style={{width:"40px"}}
                 value={el.ContainerQuantity || ""}
                 onChange={this.UISpecialChange.bind(this, i)}
               />
@@ -1642,6 +1643,7 @@ class NewRateSearch extends Component {
             min={1}
             placeholder="QTY"
             name="ContainerQuantity"
+            style={{width:"40px"}}
             value={el.ContainerQuantity || ""}
             //onKeyDown={this.newhandleChange.bind(this, i)}
             onChange={this.newhandleChange.bind(this, i)}
@@ -1813,6 +1815,7 @@ class NewRateSearch extends Component {
         }
       }
     }
+    debugger;
     return zipcode;
   };
 
@@ -2871,10 +2874,10 @@ class NewRateSearch extends Component {
     }
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
-      debugger;
+      
       colClassName = "cls-flside colap";
     } else {
-      debugger;
+      
       colClassName = "cls-flside";
     }
 

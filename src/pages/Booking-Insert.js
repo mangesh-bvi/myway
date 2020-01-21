@@ -1986,10 +1986,10 @@ class BookingInsert extends Component {
     }
     var colClassName = "";
     if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+      // debugger;
       colClassName = "cls-flside colap";
     } else {
-      debugger;
+      // debugger;
       colClassName = "cls-flside";
     }
     return (

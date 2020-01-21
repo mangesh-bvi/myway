@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
 import {
   UncontrolledCollapse,
-  Progress,
+  
   Button,
   Modal,
   ModalBody
@@ -34,9 +34,9 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import StepZilla from "react-stepzilla";
 
-var docuemntFileName = "";
+
+
 
 class ShippingDetailsTwo extends Component {
   constructor(props) {
@@ -848,8 +848,7 @@ class ShippingDetailsTwo extends Component {
     }
 
     var perBooking = "0";
-    var locName = "";
-    var statusid = 0;
+  
 
     var POLPODDatalen = POLPODData.length;
     var eventColor = "";
@@ -875,11 +874,21 @@ class ShippingDetailsTwo extends Component {
         .length;
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        perBooking = total * Transshipped + "";
+        var finalTotal=0;
+        if(Transshipped==1)
+        {
+          finalTotal=total/this.state.POLPODData.length;
+        }
+        perBooking = (total + finalTotal) * Transshipped + "";
       }
       if (Transshipped > 0 && Arriveddata > 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        perBooking = total * Transshipped + "";
+        var finalTotal=0;
+        if(Transshipped==1)
+        {
+          finalTotal=total/this.state.POLPODData.length;
+        }
+        perBooking = (total+finalTotal) * Transshipped + "";
       }
 
       if (Transshipped >= 1 && Arriveddata >= 1) {
@@ -1145,38 +1154,7 @@ class ShippingDetailsTwo extends Component {
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
                           <div className="mobilenumber-resp">
-                            {/* <span className="line-respo"></span>
-                            <label className="respo">Response</label> */}
-                            {/* {this.state.POLPODData.map(function(id, i) {
-                              
-                              var per = 100 / POLPODDatalen;
-                              if (i === 0) {
-                                return (
-                                  <div className="desti-places">
-                                    {id["POL/POD"]}
-                                  </div>
-                                );
-                              } else if (i > 1 && i==POLPODDatalen-1) {
-                                return (
-                                  <label className="resol">
-                                    <span className="line-resol"></span>
-                                    {id["POL/POD"]}
-                                  </label>
-                                );
-                              } else {
-                                return (
-                                  <div className="desti-places">
-                                    {id["POL/POD"]}
-                                  </div>
-                                );
-                              }
-
-                              
-                            })} */}
-                            {/* <label className="resol">
-                              <span className="line-resol"></span>
-                              Resolution
-                            </label> */}
+                             
                           </div>
 
                           <span
@@ -1317,37 +1295,7 @@ class ShippingDetailsTwo extends Component {
                             </>
                           )}
                         </div>
-                        {/* <div className="desti-places">
-                          {POLPODData.length < 2 ? (
-                            <>
-                              <span>
-                                {containerData.length > 0
-                                  ? containerData[0].DeparturePortName.split(
-                                      ","
-                                    )[0]
-                                  : ""}
-                              </span>
-
-                              <span>
-                                {containerData.length > 0
-                                  ? containerData[
-                                      containerData.length - 1
-                                    ].DestinationPortName.split(",")[0]
-                                  : ""}
-                              </span>
-                            </>
-                          ) : (
-                            POLPODData.map(function(ld, i) {
-                              // if (i == 0) {
-                              //   return <></>;
-                              // } else if (i > 1 && i===POLPODData.length-1 ) {
-                              //   return <span>{ld["POL/POD"]}</span>;
-                              // }
-
-                              return <span>{ld["POL/POD"] + ","}</span>;
-                            })
-                          )}
-                        </div> */}
+                         
                       </div>
                       {containerData.map(function(routedata, i = 0) {
                         i++;
