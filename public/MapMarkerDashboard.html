@@ -16,16 +16,15 @@
 
       #map_canvas {
         height: 100%;
-      }
-
+      }   
       .dash-search-cntr2 {
         position: absolute;
         top: 10px;
         left: 215px;
         z-index: 1;
       }
-
       .dash-search-cntr2 input {
+        width: 60px;
         height: 40px;
         padding-left: 16px;
         border: 0px;
@@ -33,7 +32,10 @@
         padding-right: 45px;
         /* box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1); */
       }
-
+      .dash-search-cntr2 input:focus{
+        width: 150px !important;
+        transition: all .5s ease;
+      }
       .dash-search-cntr2 .fa-search {
         background: #002d73;
         border-radius: 50%;
