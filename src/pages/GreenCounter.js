@@ -290,7 +290,7 @@ class GreenCounter extends Component {
             <SideMenu />
           </div>
 
-          <div className="cls-rt">
+          <div className="cls-rt" style={{backgroundColor:"transparent"}}>
             <div className="row grncuntr">
               <div className="col-md-6">
                 <div className="card carbonechart">
