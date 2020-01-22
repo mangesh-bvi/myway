@@ -1907,7 +1907,7 @@ input[type="range"]::-moz-range-track {
   font-family: "Bold Font";
   text-transform: uppercase;
   position: absolute;
-  left: 10px;
+  left: calc(8%);
   top: calc(50% - 17px);
   transform: translateY(-50%);
 }
@@ -4427,4 +4427,10 @@ progress::-webkit-progress-bar {
 {
   display: block !important;
   width: 100% !important;
+}
+.dragbar {
+    margin: auto;
+    float: none;
+    display: block;
+    text-align: center;
 }

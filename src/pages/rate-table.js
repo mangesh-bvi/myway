@@ -3790,7 +3790,7 @@ onErrorImg(e)
                     <p class="upto-days">{this.state.valueAmt} </p>
                     <span className="cust-labl clr-green">Faster</span>
                     <span className="cust-labl clr-red">Cheaper</span>
-                    <div className="d-flex" style={{ margin: "0" }}>
+                    <div className="dragbar" style={{ margin: "0" }}>
                       <span className="clr-green dragvalue">
                         {this.state.MinTT + " Days"}
                       </span>
