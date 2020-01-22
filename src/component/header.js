@@ -242,8 +242,8 @@ class Header extends Component {
       txtshipmentcomment.focus();
       return false;
     }
-var CustomerID=this.state.CustomerID;
-    
+    var CustomerID = this.state.CompanyID;
+    debugger;
 
     //alert(txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year);
     let self = this;
@@ -254,9 +254,9 @@ var CustomerID=this.state.CustomerID;
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
         ReferenceNo: txtShipmentNo.value.trim(),
-        TypeOfMessage: drpshipment.value.trim(),         
-        CustomerID:CustomerID,
-        SubjectMessage:"",
+        TypeOfMessage: drpshipment.value.trim(),
+        CustomerID: CustomerID,
+        SubjectMessage: "",
         Message: txtshipmentcomment.value.trim()
       },
       headers: authHeader()
@@ -374,8 +374,7 @@ var CustomerID=this.state.CustomerID;
         url: `${appSettings.APIURL}/CustomerAutoSearchMessage`,
         data: {
           UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-          CompanyName: customertxtlen,
-          
+          CompanyName: customertxtlen
         },
         headers: authHeader()
       }).then(function(response) {
@@ -426,6 +425,12 @@ var CustomerID=this.state.CustomerID;
     });
   }
 
+  HandleChangeType(e) {
+    debugger;
+    var value = e.target.value;
+
+    this.setState({ selectedType: value });
+  }
   render() {
     let self = this;
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
@@ -455,7 +460,7 @@ var CustomerID=this.state.CustomerID;
 
     let optionItems = this.state.DropdownCommonMessage.map((planet, i) =>
       i == 0 ? (
-        <option key={i} value={planet.ID} selected="selected">
+        <option key={i} value= {planet.Value} selected="selected">
           {planet.Value}
         </option>
       ) : (
@@ -606,7 +611,10 @@ var CustomerID=this.state.CustomerID;
                         >
                           <h3 className="mb-4">Send Message</h3>
                           <div className="rename-cntr login-fields">
-                            <select id="drpshipment">
+                            <select
+                              id="drpshipment"
+                              onChange={this.HandleChangeType.bind(this)}
+                            >
                               <option value="0">Select</option>
                               {/* <option value="Shipment">Shipment</option> */}
                               {optionItems}
@@ -615,7 +623,11 @@ var CustomerID=this.state.CustomerID;
                               </option>
                             </select>
                           </div>
-                          {this.state.selectedType === "Subject" ? (
+                          {this.state.selectedType === "Subject" &&
+                          encryption(
+                            window.localStorage.getItem("usertype"),
+                            "desc"
+                          ) === "Sales User" ? (
                             <div className="rename-cntr login-fields cusrename1">
                               <Autocomplete
                                 id="searchtxt"
@@ -656,7 +668,17 @@ var CustomerID=this.state.CustomerID;
                             <input
                               id="txtShipmentNo"
                               type="text"
-                              placeholder="Enter Shipment No."
+                              placeholder={
+                                this.state.selectedType === "Shipment"
+                                  ? "Enter Shipment No."
+                                  :this.state.selectedType === "Sales Quote"
+                                  ? "Enter Sales Quote No."
+                                  :this.state.selectedType === "Booking"
+                                  ? "Enter Booking No."
+                                  : this.state.selectedType === "Subject"
+                                  ? "Enter Subject"
+                                  : ""
+                              }
                               value={popupHBLNO}
                               onChange={this.onShipmentNoChangeHandler}
                             />

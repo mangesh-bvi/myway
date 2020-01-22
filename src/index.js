@@ -120,8 +120,8 @@ ReactDOM.render(
         path="/rate-finalizing-still-booking"
         component={RateFinalizingStillBooking}
       />
-      <Route exact path="/track-shipment" component={TrackShipment} />
-      <Route exact path="/track-shipment2" component={TrackShipment2} />
+      <Route exact path="/track-shipment" component={TrackShipment2} />
+      <Route exact path="/track-shipment2" component={TrackShipment} />
       {/* <Route exact path="/testGoogleAPI" component={TestGoogleAPI} /> */}
       {/* <Route  path="/" component={Login} />   */}
     </Switch>

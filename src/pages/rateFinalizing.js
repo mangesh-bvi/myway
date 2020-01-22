@@ -23,6 +23,18 @@ import {
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 
+var base64Img = null;
+imgToBase64("octocat.jpg", function(base64) {
+  base64Img = base64;
+});
+
+var margins = {
+  top: 70,
+  bottom: 40,
+  left: 30,
+  width: 550
+};
+
 class RateFinalizing extends Component {
   constructor(props) {
     super(props);
@@ -132,7 +144,8 @@ class RateFinalizing extends Component {
       profitLossPer: 0,
       newloding: false,
       cbmVal: "",
-      reloding: false
+      reloding: false,
+      sendFile: null
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -487,7 +500,7 @@ class RateFinalizing extends Component {
           }
         }
         const newSelected = Object.assign({}, this.state.cSelectedRow);
-        ////debugger;;;
+        debugger;
         var selectedRow = [];
         for (let i = 0; i < rateDetails.length; i++) {
           ////debugger;;;
@@ -753,7 +766,15 @@ class RateFinalizing extends Component {
             const newSelected = Object.assign({}, self.state.cSelectedRow);
             ////debugger;;;
             var rateDetails = response.data.Table1;
+            var rateSubDetailsdata = response.data.Table2;
+            var profitLossAmt = 0;
 
+            var profitLossPer = 0;
+
+            var finalprofitLossAmt = 0;
+            var finalprofitLossPer = 0;
+            var BuyRate = 0;
+            debugger;
             for (let i = 0; i < rateDetails.length; i++) {
               var idrate = 0;
               if (rateDetails[i].saleQuoteLineID) {
@@ -772,8 +793,28 @@ class RateFinalizing extends Component {
                     : false,
                   selectedDataRow: selectedRow
                 });
+
+                var rateSubDetailsdata1 = rateSubDetailsdata.filter(
+                  x => x.saleQuoteLineID == rateDetails[i].saleQuoteLineID
+                );
+
+                for (let j = 0; j < rateSubDetailsdata1.length; j++) {
+                  var total = parseFloat(
+                    rateSubDetailsdata1[j].Total.split(" ")[0]
+                  );
+                  profitLossAmt += total - rateSubDetailsdata1[j].BuyRate;
+                  BuyRate += rateSubDetailsdata1[j].BuyRate;
+                }
+                profitLossPer = (profitLossAmt * 100) / BuyRate;
+                finalprofitLossAmt = profitLossAmt + finalprofitLossAmt;
+
+                finalprofitLossPer = profitLossPer + finalprofitLossPer;
               }
             }
+            self.setState({
+              profitLossAmt: finalprofitLossAmt,
+              profitLossPer: finalprofitLossPer
+            });
 
             if (response.data.Table1 != null) {
               if (response.data.Table1.length > 0) {
@@ -977,6 +1018,7 @@ class RateFinalizing extends Component {
           // specialEqtSelect: true,
           // specialEquipment:true
         });
+
         self.forceUpdate();
         self.HandleLocalCharges();
         self.HandleSurCharges();
@@ -2730,13 +2772,13 @@ class RateFinalizing extends Component {
 
                       self.AcceptQuotes();
 
-                      // setTimeout(function() {
-                      //   window.location.href = "quote-table";
-                      // }, 1000);
+                      setTimeout(function() {
+                        window.location.href = "quote-table";
+                      }, 1000);
                     } else {
-                      // setTimeout(function() {
-                      //   window.location.href = "quote-table";
-                      // }, 1000);
+                      setTimeout(function() {
+                        window.location.href = "quote-table";
+                      }, 1000);
                     }
                     // window.location.href = "quote-table";
                   }
@@ -3804,8 +3846,10 @@ class RateFinalizing extends Component {
 
         var Messagebody =
           "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
-
-        self.SendMail(SalesQuoteNumber, Messagebody);
+        // self.getFileData();
+        setTimeout(() => {
+          self.SendMail(SalesQuoteNumber, Messagebody);
+        }, 100);
       })
       .catch(error => {
         //debugger;;
@@ -3816,37 +3860,70 @@ class RateFinalizing extends Component {
       });
   }
 
-  SendMail(SalesQuoteNumber, Messagebody) {
+  getFileData() {
     debugger;
-    // this.togglePreview()
-    // var w = document.getElementById("printDiv").offsetWidth;
-    // var h = document.getElementById("printDiv").offsetHeight;
-    // html2canvas(document.getElementById('printDiv'), {
+    this.togglePreview();
+    var file = null;
+    const input = document.getElementById("printDiv");
+    const pdf = new jsPDF("portrait", "mm", "a4");
 
-    //   dpi: 300, // Set to 300 DPI
-    //   scale: 3, // Adjusts your resolution
-    //   onrendered: function(canvas) {
-    //     debugger
-    //     var img = canvas.toDataURL("image/jpeg", 1);
-    //     var doc = new jsPDF("L", "px", [500, 500]);
-    //     doc.addImage(img, "JPEG", 0, 0, 500, 500);
-    //     doc.save("sample-file.pdf");
-    //     console.log(doc)
-    //   }
+    // domtoimage.toPng(input).then(imgData => {
+    //   this.togglePreview();
+    //   pdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
+    //   pdf.save("download.pdf");
+    //   let obj = {};
+    //   obj.pdfContent = pdf.output("datauristring");
+
+    //   file = this.dataURLtoFile(obj.pdfContent);
+    //   this.setState({ sendFile: file });
+    //   debugger;
+    //   this.SendMail(this.state.SalesQuoteNo,"");
     // });
 
-    // this.togglePreview()
+    // pdf.fromHTML(document.getElementById('printDiv'),
+    // margins.left, // x coord
+    // margins.top,
+    // {
+    //   // y coord
+    //   width: margins.width// max width of content on PDF
+    // },function(dispose) {
+    //   debugger
+    //   headerFooterFormatting(pdf)
+    //   pdf.save("download.pdf");
+    // },
+    // margins);
+    var doc = new jsPDF();
+    var elementHandler = {
+      "#ignorePDF": function(element, renderer) {
+        return true;
+      }
+    };
+    doc.fromHTML(input, 15, 0.5, {
+      width: 180,
+      elementHandlers: elementHandler
+    });
+    doc.save("abc.pdf");
+  }
+
+  SendMail(SalesQuoteNumber, Messagebody) {
+    debugger;
+
+    // this.getFileData();
+    var fd = new FormData();
+    fd.append("CustomerID", 0);
+
+    fd.append("SalesPersonID", 0);
+    fd.append("SalesQuoteNumber", SalesQuoteNumber);
+    fd.append(
+      "MyWayUserID",
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
+    fd.append("SalesQuotePreviewDoc", this.state.sendFile);
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteMailAPI`,
-      data: {
-        CustomerID: 0,
-        SalesPersonID: 0,
-        SalesQuoteNumber: SalesQuoteNumber,
-        Body: Messagebody,
-        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-      },
+      data: fd,
       headers: authHeader()
     })
       .then(function(response) {
@@ -4392,6 +4469,10 @@ class RateFinalizing extends Component {
     var selectedRow = [];
     var BuyRate = 0;
     var rateSubDetails = [];
+    var profitLossAmt = 0;
+    var profitLossAmt1 = this.state.profitLossAmt;
+    var profitLossPer = 0;
+    var profitLossPer1 = this.state.profitLossPer;
     if (this.state.isCopy === true) {
       rateSubDetails = this.state.rateSubDetails.filter(
         d => d.saleQuoteLineID === rowData._original.saleQuoteLineID
@@ -4404,35 +4485,151 @@ class RateFinalizing extends Component {
 
     if (this.state.selectedDataRow.length == 0) {
       selectedRow.push(rowData._original);
-      this.setState({
-        selectedDataRow: selectedRow
-      });
+
+      if(this.state.isCopy===true)
+      {
+        for (let j = 0; j < rateSubDetails.length; j++) {
+          var total = parseFloat(rateSubDetails[j].Total.split(" ")[0]);
+          profitLossAmt +=
+          total - rateSubDetails[j].BuyRate;
+          BuyRate += rateSubDetails[j].BuyRate;
+        }
+        profitLossPer = (profitLossAmt * 100) / BuyRate;
+        var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
+  
+        var finalprofitLossPer = profitLossPer + profitLossPer1;
+        this.setState({
+          selectedDataRow: selectedRow,
+          profitLossAmt: finalprofitLossAmt,
+          profitLossPer: finalprofitLossPer
+        });
+      }
+      else
+      {
+        for (let j = 0; j < rateSubDetails.length; j++) {
+          profitLossAmt +=
+            rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
+          BuyRate += rateSubDetails[j].BuyRate;
+        }
+        profitLossPer = (profitLossAmt * 100) / BuyRate;
+        var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
+  
+        var finalprofitLossPer = profitLossPer + profitLossPer1;
+        this.setState({
+          selectedDataRow: selectedRow,
+          profitLossAmt: finalprofitLossAmt,
+          profitLossPer: finalprofitLossPer
+        });
+
+      }
+     
     } else {
       if (this.state.isCopy === true) {
         if (newSelected[rateID] === true) {
           for (var i = 0; i < this.state.selectedDataRow.length; i++) {
-            if (
-              this.state.selectedDataRow[i].saleQuoteLineID ===
-              rowData._original.saleQuoteLineID
-            ) {
-              selectedRow.splice(i, 1);
+            // if (
+            //   this.state.selectedDataRow[i].saleQuoteLineID ===
+            //   rowData._original.saleQuoteLineID
+            // ) {
 
-              break;
-            } else {
-              selectedRow = this.state.selectedDataRow;
-              selectedRow.push(rowData._original);
-              break;
+            //   selectedRow.splice(i, 1);
+            //   for (let j = 0; j < rateSubDetails.length; j++) {
+            //     var total=parseFloat(rateSubDetails[j].Total.split(" ")[0]);
+            //     profitLossAmt +=
+            //     total - rateSubDetails[j].BuyRate;
+            //     BuyRate += rateSubDetails[j].BuyRate;
+            //   }
+            //   profitLossPer += (profitLossAmt * 100) / BuyRate;
+            //   var finalprofitLossAmt = profitLossAmt - profitLossAmt1;
+
+            //   var finalprofitLossPer = profitLossPer - profitLossPer1;
+            //   this.setState({
+            //     profitLossAmt: finalprofitLossAmt,
+            //     profitLossPer: finalprofitLossPer
+            //   });
+
+            //   break;
+            // } else {
+
+            selectedRow = this.state.selectedDataRow;
+            selectedRow.push(rowData._original);
+
+            for (let j = 0; j < rateSubDetails.length; j++) {
+              var total = parseFloat(rateSubDetails[j].Total.split(" ")[0]);
+              profitLossAmt += total - rateSubDetails[j].BuyRate;
+              BuyRate += rateSubDetails[j].BuyRate;
             }
+            profitLossPer += (profitLossAmt * 100) / BuyRate;
+            var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
+
+            var finalprofitLossPer = profitLossPer + profitLossPer1;
+            this.setState({
+              profitLossAmt: finalprofitLossAmt,
+              profitLossPer: finalprofitLossPer
+            });
+            break;
+            // }
           }
         } else {
           for (var i = 0; i < this.state.selectedDataRow.length; i++) {
-            if (
-              this.state.selectedDataRow[i].RateLineId ===
-              rowData._original.RateLineId
-            ) {
-              selectedRow = this.state.selectedDataRow;
-              selectedRow.splice(i, 1);
-              break;
+            selectedRow = this.state.selectedDataRow;
+            if (this.state.isCopy === true) {
+              if (
+                this.state.selectedDataRow[i].saleQuoteLineID ===
+                rowData._original.saleQuoteLineID
+              ) {
+                selectedRow.splice(i, 1);
+                // delete selectedRow[i];
+                for (let j = 0; j < rateSubDetails.length; j++) {
+                  var total = parseFloat(rateSubDetails[j].Total.split(" ")[0]);
+                  profitLossAmt += total - rateSubDetails[j].BuyRate;
+                  BuyRate += rateSubDetails[j].BuyRate;
+                }
+                profitLossPer += (profitLossAmt * 100) / BuyRate;
+                var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
+
+                var finalprofitLossPer = profitLossPer1 - profitLossPer;
+
+                if(selectedRow.length>0)
+                {
+                  this.setState({
+                    profitLossAmt: finalprofitLossAmt,
+                    profitLossPer: finalprofitLossPer
+                  });
+                }
+                else
+
+                {
+                  this.setState({
+                    profitLossAmt: 0,
+                    profitLossPer: 0
+                  });
+                }
+                
+              }
+            } else {
+              if (
+                this.state.selectedDataRow[i].RateLineId ===
+                rowData._original.RateLineId
+              ) {
+                selectedRow = this.state.selectedDataRow;
+                selectedRow.splice(i, 1);
+                for (let j = 0; j < rateSubDetails.length; j++) {
+                  var total = parseFloat(rateSubDetails[j].Total.split(" ")[0]);
+
+                  profitLossAmt += total - rateSubDetails[j].BuyRate;
+                  BuyRate += rateSubDetails[j].BuyRate;
+                }
+                profitLossPer = (profitLossAmt * 100) / BuyRate;
+                var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
+
+                var finalprofitLossPer = profitLossPer1 - profitLossPer;
+                this.setState({
+                  profitLossAmt: finalprofitLossAmt,
+                  profitLossPer: finalprofitLossPer
+                });
+                break;
+              }
             }
           }
         }
@@ -4448,15 +4645,17 @@ class RateFinalizing extends Component {
               break;
             } else {
               for (let j = 0; j < rateSubDetails.length; j++) {
-                this.state.profitLossAmt +=
+                profitLossAmt +=
                   rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
                 BuyRate += rateSubDetails[j].BuyRate;
               }
-              this.state.profitLossPer +=
-                (this.state.profitLossAmt * 100) / BuyRate;
+              profitLossPer += (profitLossAmt * 100) / BuyRate;
+              var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
+
+              var finalprofitLossPer = profitLossPer + profitLossPer1;
               this.setState({
-                profitLossAmt: this.state.profitLossAmt,
-                profitLossPer: this.state.profitLossPer
+                profitLossAmt: finalprofitLossAmt,
+                profitLossPer: finalprofitLossPer
               });
               selectedRow = this.state.selectedDataRow;
               selectedRow.push(rowData._original);
@@ -4465,13 +4664,58 @@ class RateFinalizing extends Component {
           }
         } else {
           for (var i = 0; i < this.state.selectedDataRow.length; i++) {
-            if (
-              this.state.selectedDataRow[i].RateLineId ===
-              rowData._original.RateLineId
-            ) {
-              selectedRow = this.state.selectedDataRow;
-              selectedRow.splice(i, 1);
-              break;
+            if (this.state.isCopy === true) {
+              if (
+                this.state.selectedDataRow[i].saleQuoteLineID ===
+                rowData._original.saleQuoteLineID
+              ) {
+                selectedRow = this.state.selectedDataRow;
+                selectedRow.splice(i, 1);
+                for (let j = 0; j < rateSubDetails.length; j++) {
+                  var total = parseFloat(rateSubDetails[j].Total.split(" ")[0]);
+                  profitLossAmt += total - rateSubDetails[j].BuyRate;
+                  BuyRate += rateSubDetails[j].BuyRate;
+                }
+                profitLossPer = (profitLossAmt * 100) / BuyRate;
+                var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
+
+                var finalprofitLossPer = profitLossPer1 - profitLossPer;
+                if (selectedRow.length > 0) {
+                  this.setState({
+                    profitLossAmt: finalprofitLossAmt,
+                    profitLossPer: finalprofitLossPer
+                  });
+                } else {
+                  this.setState({
+                    profitLossAmt: 0,
+                    profitLossPer: 0
+                  });
+                }
+
+                break;
+              }
+            } else {
+              if (
+                this.state.selectedDataRow[i].RateLineId ===
+                rowData._original.RateLineId
+              ) {
+                selectedRow = this.state.selectedDataRow;
+                selectedRow.splice(i, 1);
+                for (let j = 0; j < rateSubDetails.length; j++) {
+                  profitLossAmt +=
+                    rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
+                  BuyRate += rateSubDetails[j].BuyRate;
+                }
+                profitLossPer = (profitLossAmt * 100) / BuyRate;
+                var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
+
+                var finalprofitLossPer = profitLossPer1 - profitLossPer;
+                this.setState({
+                  profitLossAmt: finalprofitLossAmt,
+                  profitLossPer: finalprofitLossPer
+                });
+                break;
+              }
             }
           }
         }
@@ -4550,17 +4794,46 @@ class RateFinalizing extends Component {
     //   }
     // });
 
-    const input = document.getElementById("printDiv");
-    const pdf = new jsPDF();
-    if (pdf) {
-      domtoimage.toPng(input).then(imgData => {
-        debugger;
-        pdf.addImage(imgData, "JPEG", 20, 50, 200, 400);
-        pdf.save("download.pdf");
-      });
-      debugger;
-    }
+    // const input = document.getElementById("printDiv");
+    // const pdf = new jsPDF("portrait", "mm", "a4");
+    // if (pdf) {
+    //   domtoimage.toPng(input).then(imgData => {
+    //     debugger;
+    //     pdf.addImage(imgData, "JPEG", 0,0,210, 297);
+    //     pdf.save("download.pdf");
+    //   });
+    //   debugger;
+    //   let obj = {};
+    //   obj.pdfContent = pdf.output("datauristring");
+    //   var jsonData = JSON.stringify(obj);
+    //   console.log(pdf, "-----pdf--------------");
+    //   console.log(obj, "--obj---");
+    //   console.log(jsonData, "--jsonData---");
+    //   var file = this.dataURLtoFile(obj.pdfContent);
+    //   console.log(file, "----------file---------");
+    // }
   }
+
+  dataURLtoFile(dataurl) {
+    var arr = dataurl.split(","),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], "generated.pdf", { type: mime });
+  }
+
+  onErrorImg(e)
+{
+  
+  return e.target.src="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+}
+
 
   render() {
     var i = 0;
@@ -4619,6 +4892,7 @@ class RateFinalizing extends Component {
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
+                
               />
             </span>
             <span>
@@ -5105,6 +5379,7 @@ class RateFinalizing extends Component {
                                                 title={olname}
                                                 alt={olname}
                                                 src={url}
+                                                onError={this.onErrorImg.bind(this)}
                                               />
                                             </div>
                                           </React.Fragment>
@@ -5152,6 +5427,7 @@ class RateFinalizing extends Component {
                                                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                                                   lname
                                                 }
+                                                onError={this.onErrorImg.bind(this)}
                                               />
                                             </div>
                                           </React.Fragment>
@@ -6395,7 +6671,7 @@ class RateFinalizing extends Component {
               >
                 <span>&times;</span>
               </button>
-              <button onClick={this.printModalPopUp.bind(this)}>Print</button>
+              {/* <button onClick={this.printModalPopUp.bind(this)}>Print</button> */}
               <div id="printDiv">
                 <div className="row" style={{ margin: 0 }}>
                   <div className="logohheader">
@@ -6804,7 +7080,7 @@ class RateFinalizing extends Component {
                                 ) == "Customer" &&
                                 this.state.ProfitAmount !== "" ? (
                                   ""
-                                ) : (
+                                ) : this.state.ProfitAmount > 0 ? (
                                   <tr>
                                     <td>Profit Amount </td>
                                     <td> </td>
@@ -6816,6 +7092,8 @@ class RateFinalizing extends Component {
                                       {item.BaseCurrency}{" "}
                                     </td>
                                   </tr>
+                                ) : (
+                                  ""
                                 )}
                               </tbody>
                             </table>
@@ -7369,3 +7647,54 @@ class RateFinalizing extends Component {
 }
 
 export default RateFinalizing;
+function headerFooterFormatting(doc) {
+  var totalPages = doc.internal.getNumberOfPages();
+
+  for (var i = totalPages; i >= 1; i--) {
+    //make this page, the current page we are currently working on.
+    doc.setPage(i);
+
+    header(doc);
+
+    footer(doc, i, totalPages);
+  }
+}
+
+function header(doc) {
+  // doc.setFontSize(30);
+  // doc.setTextColor(40);
+  // doc.setFontStyle('normal');
+
+  if (base64Img) {
+    doc.addImage(base64Img, "JPEG", margins.left, 10, 40, 40);
+  }
+
+  // doc.text("Report Header Template", margins.left + 50, 40 );
+
+  // doc.line(3, 70, margins.width + 43,70); // horizontal line
+}
+
+function imgToBase64(url, callback, imgVariable) {
+  if (!window.FileReade) {
+    callback(null);
+    return;
+  }
+  var xhr = new XMLHttpRequest();
+  xhr.responseType = "blob";
+  xhr.onload = function() {
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      imgVariable = reader.result.replace("text/xml", "image/jpeg");
+      callback(imgVariable);
+    };
+    reader.readAsDataURL(xhr.response);
+  };
+  xhr.open("GET", url);
+  xhr.send();
+}
+
+function footer(doc, pageNumber, totalPages) {
+  // var str = "Page " + pageNumber + " of " + totalPages
+  // // doc.setFontSize(10);
+  // doc.text(str, margins.left, doc.internal.pageSize.height - 20);
+}
