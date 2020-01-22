@@ -848,19 +848,30 @@ class RateTable extends Component {
     var rateSubDetails = this.state.RateSubDetails.filter(
       d => d.RateLineID === RateLineID
     );
+    var profitLossAmt=0;
+    var profitLossAmt1=this.state.profitLossAmt
+    var profitLossPer=0;
+    var profitLossPer1=this.state.profitLossPer;
     if (this.state.selectedDataRow.length == 0) {
       selectedRow.push(rowData._original);
+    
+
       for (let j = 0; j < rateSubDetails.length; j++) {
-        this.state.profitLossAmt +=
+        profitLossAmt +=
           rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
         BuyRate += rateSubDetails[j].BuyRate;
       }
-      this.state.profitLossPer += (this.state.profitLossAmt * 100) / BuyRate;
+      profitLossPer = (profitLossAmt * 100) / BuyRate;
+      var finalprofitLossAmt=profitLossAmt+profitLossAmt1;
+      
+      var finalprofitLossPer=profitLossPer+profitLossPer1;
+
+      
 
       this.setState({
         selectedDataRow: selectedRow,
-        profitLossAmt: this.state.profitLossAmt,
-        profitLossPer: this.state.profitLossPer
+        profitLossAmt:finalprofitLossAmt ,
+        profitLossPer: finalprofitLossPer
       });
     } else {
       if (newSelected[RateLineID] === true) {
@@ -876,24 +887,34 @@ class RateTable extends Component {
             _originalrateid = rowData._original.RateLineId;
           }
 
-          if (
-            thisrateid == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID
-          ) {
-            selectedRow.splice(i, 1);
+          // if (
+          //   thisrateid == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID
+          // ) {
+          //   selectedRow.splice(i, 1);
 
-            break;
-          } else {
+          //   break;
+          // } else {
             selectedRow = this.state.selectedDataRow;
             selectedRow.push(rowData._original);
+            
+            for (let j = 0; j < rateSubDetails.length; j++) {
+              profitLossAmt +=
+                rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
+              BuyRate += rateSubDetails[j].BuyRate;
+            }
+            profitLossPer = (profitLossAmt * 100) / BuyRate;
+            var finalprofitLossAmt=profitLossAmt+profitLossAmt1;
+      
+            var finalprofitLossPer = profitLossPer + profitLossPer1;
+            this.setState({
+              
+              profitLossAmt:finalprofitLossAmt ,
+              profitLossPer: finalprofitLossPer
+            });
             break;
-          }
+          // }
         }
-        for (let j = 0; j < rateSubDetails.length; j++) {
-          this.state.profitLossAmt +=
-            rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
-          BuyRate += rateSubDetails[j].BuyRate;
-        }
-        this.state.profitLossPer = (this.state.profitLossAmt * 100) / BuyRate;
+      
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
@@ -902,22 +923,36 @@ class RateTable extends Component {
           ) {
             selectedRow = this.state.selectedDataRow;
             selectedRow.splice(i, 1);
+
+            for (let j = 0; j < rateSubDetails.length; j++) {
+              profitLossAmt +=
+                rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
+              BuyRate += rateSubDetails[j].BuyRate;
+            }
+            profitLossPer = (profitLossAmt * 100) / BuyRate;
+            var finalprofitLossAmt=profitLossAmt1-profitLossAmt;
+      
+            var finalprofitLossPer = profitLossPer1-profitLossPer  ;
+            this.setState({
+              
+              profitLossAmt:finalprofitLossAmt ,
+              profitLossPer: finalprofitLossPer
+            });
             break;
           }
         }
-        for (let j = 0; j < rateSubDetails.length; j++) {
-          this.state.profitLossAmt -=
-            rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
-          BuyRate -= rateSubDetails[j].BuyRate;
-        }
+        // for (let j = 0; j < rateSubDetails.length; j++) {
+        //   this.state.profitLossAmt -=
+        //     rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
+        //   BuyRate -= rateSubDetails[j].BuyRate;
+        // }
 
-        this.state.profitLossPer = (this.state.profitLossAmt * 100) / BuyRate;
+        // this.state.profitLossPer = (this.state.profitLossAmt * 100) / BuyRate;
       }
     }
     this.setState({
       selectedDataRow: selectedRow,
-      profitLossAmt: this.state.profitLossAmt,
-      profitLossPer: this.state.profitLossPer
+    
     });
   }
 

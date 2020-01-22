@@ -260,13 +260,14 @@ class TrackShipment2 extends Component {
 
       if (url) {
         // if (url != "" && url != null) {
-        // self.HandleShipmentDetails(url);
+        
         self.setState({
-          showData: false,
+          showData: true,
           addWat: url,
           HBLNumber: url.replace("%20", " ").trim(),
           loading: false
         });
+        self.HandleShipmentDetails(url);
       }
     } else {
       self.setState({
@@ -447,14 +448,30 @@ class TrackShipment2 extends Component {
 
       ///Line data
 
-      var RouteLatLong = mydata[i]["RouteLatLong"];
-      var splitRouteLatLong = RouteLatLong.split(";");
-      for (var j = 0; j < splitRouteLatLong.length; j++) {
-        var lineData = {};
-        var tempSData = splitRouteLatLong[j].split(",");
-        lineData.lat = Number(tempSData[0]);
-        lineData.lng = Number(tempSData[1]);
-        allLineData.push(lineData);
+      var RouteLatLong = mydata[i]["GeoCoord"];
+      // var splitRouteLatLong = RouteLatLong.split(";");
+      // for (var j = 0; j < splitRouteLatLong.length; j++) {
+      //   var lineData = {};
+      //   var tempSData = splitRouteLatLong[j].split(",");
+      //   lineData.lat = Number(tempSData[0]);
+      //   lineData.lng = Number(tempSData[1]);
+      //   allLineData.push(lineData);
+      // }
+      var Not_Data = 0;
+      if (RouteLatLong) {
+        var splitRouteLatLong = RouteLatLong.split(";");
+        for (var j = 0; j < splitRouteLatLong.length; j++) {
+          var lineData = {};
+          var tempSData = splitRouteLatLong[j].split(",");
+          if (tempSData.length > 1) {
+            lineData.lat = Number(tempSData[0]);
+            lineData.lng = Number(tempSData[1]);
+            allLineData.push(lineData);
+          }
+        }
+      } else {
+        debugger;
+        Not_Data = i;
       }
 
       //mainLineData = allLineData;
@@ -779,7 +796,7 @@ class TrackShipment2 extends Component {
       var HBLNO = this.state.HBLNumber;
 
       this.HandleShipmentDetails(HBLNO);
-    } else if (this.state.HBLNumber && this.state.addWat == "") {
+    } else if (this.state.HBLNumber) {
       var HBLNO = this.state.HBLNumber;
 
       this.HandleShipmentDetails(HBLNO);
@@ -1230,7 +1247,7 @@ class TrackShipment2 extends Component {
                                 <p className="details-heading title-border title-border-t">
                                   {containerData.length === 1
                                     ? "Routing Information"
-                                    : "Routing Information" - i}
+                                    : "Routing Information -" + i}
                                 </p>
                                 <div className="row mid-border">
                                   <div

@@ -59,7 +59,7 @@ class ShippingDetails extends Component {
       mapDis: "block",
       copied: false,
 
-      shareLink: "http://mywayqa.demo.brainvire.net/track-shipment2?",
+      shareLink: "http://mywayqa.demo.brainvire.net/track-shipment?",
 
       filterAll: "",
       filtered: [],
@@ -133,7 +133,7 @@ class ShippingDetails extends Component {
     this.setState(prevState => ({
       modalShare: !prevState.modalShare,
       copied: false,
-      shareLink: URL + "/track-shipment2?hblno="
+      shareLink: URL + "/track-shipment?hblno="
     }));
   }
 
@@ -141,7 +141,7 @@ class ShippingDetails extends Component {
     debugger;
     evt.stopPropagation();
     var URL = window.location.host;
-    var shareLink = URL + "/track-shipment2?";
+    var shareLink = URL + "/track-shipment?";
     var hblNo = row.original["Encoding_HBl#"];
     this.setState(prevState => ({
       modalShare: !prevState.modalShare,
