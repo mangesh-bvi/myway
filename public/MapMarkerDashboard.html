@@ -2,7 +2,8 @@
 
 <html>
   <head>
-    <link rel="stylesheet" href="./../src/assets/css/responsive.css" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="stylesheet" href="../src/assets/css/responsive.css" />
     <style type="text/css">
       html {
         height: 100%;
@@ -26,15 +27,36 @@
       }
 
       .dash-search-cntr2 input {
+        width: 93px;
         height: 40px;
         padding-left: 16px;
         border: 0px;
         border-radius: 50px;
         padding-right: 45px;
+        position: relative;
+        padding: 12px 20px 12px 10px;
+        -webkit-transition: width 0.4s ease-in-out;
+        transition: width 0.4s ease-in-out;
         /* box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1); */
       }
-
-      .dash-search-cntr2 .fa-search {
+      .dash-search-cntr2 input:focus{
+        width: 150px !important;
+        transition: all .5s ease;
+      }
+      .searchimg {
+        position: relative;
+      }
+      .searchimg::before {
+        content: url('img/searchicon.png');
+        position: absolute;
+        right: 7px;
+        top: 7px;
+        width: 30px;
+        height: 30px;
+        z-index: 9999;
+        padding: 0;
+      }
+      /* .dash-search-cntr2 .fa-search {
         background: #002d73;
         border-radius: 50%;
         height: 30px;
@@ -47,7 +69,7 @@
         line-height: 28px;
         color: #fff;
         cursor: pointer;
-      }
+      } */
 
       .map-filter {
         position: absolute;
@@ -1277,18 +1299,20 @@
     <!-- AQTY158984 -->
     <div style="position: relative;">
       <div class="dash-search-cntr2">
-        <input
+        <div class="searchimg">
+          <input
           type="text"
           id="dataNumber"
           placeholder="Search here..."
           value=""
         />
-        <i
+        </div>
+        <!-- <i
           class="fa fa-search"
           aria-hidden="true"
           id="testId"
           onclick="ShowMarker();"
-        ></i>
+        ></i> -->
       </div>
       <div class="map-filter" onclick="togglehandleHamb();">
         <div class="map-icon-cntr" onclick="toggleMapdata();">

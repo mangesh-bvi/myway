@@ -316,7 +316,7 @@ class BookingTable extends Component {
                   {
                     columns: [
                       {
-                        Header: "No.",
+                        Header: "Booking No.",
                         accessor: "BookingNo"
                       },
                       {

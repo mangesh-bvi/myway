@@ -2473,7 +2473,7 @@ class ShippingDetailsTwo extends Component {
                       type="button"
                       className="close"
                       data-dismiss="modal"
-                      // onClick={this.toggleDocu}
+                      onClick={this.toggleDocu}
                     >
                       <span>&times;</span>
                     </button>

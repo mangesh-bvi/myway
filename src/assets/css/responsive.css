@@ -463,6 +463,20 @@ input[type="range"] {
 input[type="range"] {
   width: 60px !important;
 }
+.map-filter {
+  position: absolute;
+  top: 55px;
+  left: 10px;
+}
+.dash-search-cntr2 {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  z-index: 1;
+}
+.dash-search-cntr2 input {
+  width: 165px;
+}
 }
 @media (min-width: 320px) and (max-width: 460px) {
   .login-between {
