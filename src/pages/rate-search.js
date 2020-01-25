@@ -9,6 +9,7 @@ import ExistCust from "./../assets/img/exist-cust.png";
 import NewCust from "./../assets/img/new-cust.png";
 import SideMenu from "../component/sidemenu";
 import Autocomplete from "react-autocomplete";
+import { encryption } from "../helpers/encryption";
 
 class RateSearch extends Component {
   constructor(props) {
@@ -76,7 +77,8 @@ class RateSearch extends Component {
         url: `${appSettings.APIURL}/CustomerList`,
         data: {
           CustomerName: e.target.value,
-          CustomerType: "Existing"
+          CustomerType: "Existing",
+          MyWayUserID:  encryption(window.localStorage.getItem("userid"), "desc")
         },
         headers: authHeader()
       }).then(function(response) {

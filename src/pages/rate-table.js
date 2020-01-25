@@ -1134,7 +1134,7 @@ class RateTable extends Component {
           "desc"
         );
       }
-
+debugger;
       dataParameter.Commodity = this.state.CommodityID;
       dataParameter.CustomerId = parseInt(paramData.companyId);
       dataParameter.PickUpAddressDetails = pickUpAddress;
@@ -2725,7 +2725,10 @@ class RateTable extends Component {
     ) {
       this.HandleMultiPOLPODFilter();
     } else {
-      this.HandleRateDetailsFCL(this.state);
+      setTimeout(() => {
+        this.HandleRateDetailsFCL(this.state);  
+      }, 100);
+      
     }
   }
 

@@ -110,6 +110,7 @@ function handleResponse(response) {
     } else {
       window.localStorage.setItem("email",encryption(data[0].EmailID,"enc"));
       window.localStorage.setItem("passcode",encryption(data[0].PassCode,"enc"));
+      console.log(data[0].PassCode);
       window.location.href = "./passcode";
     }
     return data;

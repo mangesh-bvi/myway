@@ -1,12 +1,6 @@
 import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
-import {
-  UncontrolledCollapse,
-  
-  Button,
-  Modal,
-  ModalBody
-} from "reactstrap";
+import { UncontrolledCollapse, Button, Modal, ModalBody } from "reactstrap";
 
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -34,9 +28,6 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-
-
-
 
 class ShippingDetailsTwo extends Component {
   constructor(props) {
@@ -115,7 +106,7 @@ class ShippingDetailsTwo extends Component {
     } else if (typeof this.props.location.state != "undefined") {
       var hblno = this.props.location.state.detail;
       var event = this.props.location.state.event || "";
-      var pageName = this.props.location.state.pageName||"";
+      var pageName = this.props.location.state.pageName || "";
       if (event !== "N/A") {
         self.setState({ eve: event });
       }
@@ -425,6 +416,12 @@ class ShippingDetailsTwo extends Component {
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail.trim();
     }
+    else
+    {
+      HblNo=this.state.addWat ||this.state.HblNo
+    }
+
+    
 
     axios({
       method: "post",
@@ -473,7 +470,7 @@ class ShippingDetailsTwo extends Component {
       data: {
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
-        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        UserId:parseFloat( encryption(window.localStorage.getItem("userid"), "desc")),
         HBLNo: HblNo
       },
       headers: authHeader()
@@ -483,7 +480,7 @@ class ShippingDetailsTwo extends Component {
       var ModeType = response.data.Table[0].ModeOfTransport;
       var POLPODData = response.data.Table5;
       var Table9 = response.data.Table9;
-      var eve =response.data.Table[0].Event;
+      var eve = response.data.Table[0].Event;
 
       self.setState({
         eve,
@@ -848,7 +845,6 @@ class ShippingDetailsTwo extends Component {
     }
 
     var perBooking = "0";
-  
 
     var POLPODDatalen = POLPODData.length;
     var eventColor = "";
@@ -874,23 +870,39 @@ class ShippingDetailsTwo extends Component {
         .length;
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        var finalTotal=0;
-        if(Transshipped==1)
-        {
-          finalTotal=total/this.state.POLPODData.length;
+        var finalTotal = 0;
+        if (Transshipped == 1) {
+          finalTotal = total / this.state.POLPODData.length;
         }
         perBooking = (total + finalTotal) * Transshipped + "";
       }
       if (Transshipped > 0 && Arriveddata > 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        var finalTotal=0;
-        if(Transshipped==1)
-        {
-          finalTotal=total/this.state.POLPODData.length;
+        var finalTotal = 0;
+        if (Transshipped == 1) {
+          finalTotal = total / this.state.POLPODData.length;
         }
-        perBooking = (total+finalTotal) * Transshipped + "";
+        perBooking = (total + finalTotal) * Transshipped + "";
       }
+      if (
+        this.state.POLPODData.length == 2 &&
+        Transshipped == 0 &&
+        Arriveddata == 0 &&
+        Delivered == 0
+      ) {
+        perBooking = "50";
+      }
+      if (
+        this.state.POLPODData.length > 2 &&
+        Transshipped == 0 &&
+        Arriveddata == 0 &&
+        Delivered == 0
+      ) {
 
+        var per=100/(this.state.POLPODData.length+1);
+
+        perBooking = (per/2) +"";
+      }
       if (Transshipped >= 1 && Arriveddata >= 1) {
         perBooking = "100";
       }
@@ -967,7 +979,7 @@ class ShippingDetailsTwo extends Component {
       className = "butn view-btn";
     }
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
+    if (localStorage.getItem("isColepse") === "true") {
       debugger;
       colClassName = "cls-flside colap";
     } else {
@@ -1121,7 +1133,7 @@ class ShippingDetailsTwo extends Component {
                         <div className="row">
                           {addressData.map(function(addkey, i) {
                             //  <p className="details-heading" key={i}>{addkey.EntityType}</p>
-                            debugger  
+                            debugger;
                             return (
                               <div
                                 className="col-md-6 details-border shipper-details"
@@ -1133,12 +1145,14 @@ class ShippingDetailsTwo extends Component {
                                 <p className="details-title">
                                   {addkey.CustomerName}
                                 </p>
-                                
+
                                 {/* <p className="details-title">
                                   Blueground Turizm Ve Services Hizmetleri
                                   Ticaret A.S.
                                 </p> */}
-                                <p className="details-para">{addkey.Address1}</p>
+                                <p className="details-para">
+                                  {addkey.Address1}
+                                </p>
                               </div>
                             );
                           })}
@@ -1153,13 +1167,11 @@ class ShippingDetailsTwo extends Component {
                       </div>
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
-                          <div className="mobilenumber-resp">
-                             
-                          </div>
+                          <div className="mobilenumber-resp"></div>
 
                           <span
                             className="clr-green"
-                            style={{ overflow: "initial", marginTop: "20px"  }}
+                            style={{ overflow: "initial", marginTop: "20px" }}
                           >
                             POL
                           </span>
@@ -1295,7 +1307,6 @@ class ShippingDetailsTwo extends Component {
                             </>
                           )}
                         </div>
-                         
                       </div>
                       {containerData.map(function(routedata, i = 0) {
                         i++;
@@ -1917,7 +1928,64 @@ class ShippingDetailsTwo extends Component {
                         </div>
                       </div>
 
-                      {approvedDate !== "" &&
+                      {approvedDate == "" &&
+                      bookDate == "" &&
+                      departedDate === "" &&
+                      arrivedDate === "" &&
+                      deliverDate === ""?<div class="track-details">
+                      <div class={approvedisActive}>
+                        <div class="track-img-cntr">
+                          <div class="track-img ">
+                            <img src={ApprovedImg} alt="booked icon" />
+                          </div>
+                        </div>
+                        <p>
+                          <span>Approved : </span>
+                          
+                        </p>
+                      </div>
+                      <div class="track-line-cntr">
+                        <div class="track-img-cntr">
+                          <div class="track-img">
+                            <img src={Booked} alt="transit icon" />
+                          </div>
+                        </div>
+                        <p>
+                          <span>Booked : </span>
+                        </p>
+                      </div>
+                      <div class="track-line-cntr">
+                        <div class="track-img-cntr">
+                          <div class="track-img">
+                            <img src={Departed} alt="transit icon" />
+                          </div>
+                        </div>
+                        <p>
+                          <span>Departed : </span>
+                        </p>
+                      </div>
+                      <div class="track-line-cntr">
+                        <div class="track-img-cntr">
+                          <div class="track-img">
+                            <img src={Arrived} alt="arrived icon" />
+                          </div>
+                        </div>
+                        <p>
+                          <span>Arrived : </span>
+                        </p>
+                      </div>
+
+                      <div class="track-line-cntr">
+                        <div class="track-img-cntr">
+                          <div class="track-img">
+                            <img src={Delivery} alt="delivery icon" />
+                          </div>
+                        </div>
+                        <p>
+                          <span>Delivered : </span>
+                        </p>
+                      </div>
+                    </div>:approvedDate !== "" &&
                       bookDate == "" &&
                       departedDate === "" &&
                       arrivedDate === "" &&

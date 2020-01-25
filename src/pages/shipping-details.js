@@ -313,7 +313,8 @@ class ShippingDetails extends Component {
         url: `${appSettings.APIURL}/CustomerList`,
         data: {
           CustomerName: e.target.value,
-          CustomerType: "Existing"
+          CustomerType: "Existing",
+          MyWayUserID:  encryption(window.localStorage.getItem("userid"), "desc")
         },
         headers: authHeader()
       })

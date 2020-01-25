@@ -1975,6 +1975,10 @@ class BookingInsert extends Component {
   handleChangePage() {
     window.history.back();
   }
+  onErrorImg(e) {
+    return (e.target.src =
+      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+  }
 
   render() {
     let i = 0;
@@ -1985,7 +1989,7 @@ class BookingInsert extends Component {
       className = "butn m-0";
     }
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
+    if (localStorage.getItem("isColepse") === "true") {
       // debugger;
       colClassName = "cls-flside colap";
     } else {
@@ -2077,6 +2081,9 @@ class BookingInsert extends Component {
                                             <img
                                               title={olname}
                                               alt={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
                                                 lname
@@ -2112,6 +2119,9 @@ class BookingInsert extends Component {
                                             <img
                                               title={olname}
                                               alt={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                                                 lname
@@ -2146,6 +2156,9 @@ class BookingInsert extends Component {
                                           <div className="rate-tab-img">
                                             <img
                                               title={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                                               }

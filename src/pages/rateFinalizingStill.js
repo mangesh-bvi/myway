@@ -180,7 +180,10 @@ class RateFinalizingStill extends Component {
     })
       .then(function(response) {
         debugger;
-
+      var  RateDetails= response.data.Table1;
+       var SubRateDetails= response.data.Table2;
+       var multiCBM= response.data.Table3;
+       var DocumentDetails= response.data.Table4;
         var TypeofMove = "";
         var IncoTerms = "";
         var CargoDetailsArr = [];
@@ -309,10 +312,10 @@ class RateFinalizingStill extends Component {
           }
         }
         self.setState({
-          RateDetails: response.data.Table1,
-          SubRateDetails: response.data.Table2,
-          multiCBM: response.data.Table3,
-          DocumentDetails: response.data.Table4
+          RateDetails: RateDetails,
+          SubRateDetails: SubRateDetails,
+          multiCBM:multiCBM,
+          DocumentDetails:DocumentDetails
         });
         if (response.data.Table4.length === 0) {
           self.setState({
@@ -1421,7 +1424,13 @@ class RateFinalizingStill extends Component {
     }, 10);
   }
 
+  onErrorImg(e) {
+    return (e.target.src =
+      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+  }
+
   render() {
+    
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -1628,6 +1637,7 @@ class RateFinalizingStill extends Component {
                                                 title={olname}
                                                 alt={olname}
                                                 src={url}
+                                                onError={this.onErrorImg.bind(this)}
                                               />
                                             </div>
                                           </React.Fragment>
@@ -1642,6 +1652,7 @@ class RateFinalizingStill extends Component {
                                               <img
                                                 title={olname}
                                                 alt={olname}
+                                                onError={this.onErrorImg.bind(this)}
                                                 src={
                                                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                                                   lname
@@ -1656,6 +1667,7 @@ class RateFinalizingStill extends Component {
                                             <div className="rate-tab-img">
                                               <img
                                                 title={olname}
+                                                onError={this.onErrorImg.bind(this)}
                                                 src={
                                                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                                                 }
@@ -1845,13 +1857,22 @@ class RateFinalizingStill extends Component {
                                           " " +
                                           remo;
                                       }
+                                      var total =
+                                        parseFloat(
+                                          row.original.Total.split(" ")[0]
+                                        ) + (row.original.Profit || 0);
+                                      var base = row.original.Total.split(
+                                        " "
+                                      )[1];
+                                      var totalAmount = total + " " + base;
+
                                       return (
                                         <>
                                           <p className="details-title">Price</p>
                                           <p className="details-para">
                                             {row.original.Total !== "" &&
                                             row.original.Total !== null
-                                              ? final
+                                              ? totalAmount
                                               : ""}
                                           </p>
                                         </>
@@ -3017,10 +3038,8 @@ class RateFinalizingStill extends Component {
                           <table className="table table-responsive">
                             {(() => {
                               this.state.filterrateSubDetails =
-                                this.state.ContainerLoad !== "FCL" &&
-                                this.state.ContainerLoad !== "AIR"
-                                  ? this.state.ContainerLoad !== "INLAND"
-                                    ? this.state.SubRateDetails.filter(
+                                this.state.ContainerLoad !== "FCL" &&this.state.ContainerLoad !== "AIR"? this.state.ContainerLoad !== "INLAND"?
+                                 this.state.SubRateDetails.filter(
                                         d =>
                                           d.saleQuoteLineID ===
                                           item.SaleQuoteIDLineID

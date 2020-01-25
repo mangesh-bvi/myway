@@ -98,12 +98,13 @@ class myWayMessage extends Component {
     let self = this;
     var hbllNo = this.state.ReferenceNo;
     var msgg = this.state.msgg;
+ 
     var paramdata = {
       UserID: encryption(window.localStorage.getItem("userid"), "desc"),
       ReferenceNo: this.state.ReferenceNo,
       TypeOfMessage: this.state.selectedItem.MessageType,
       Message: this.state.msgg,
-      SubjectMessage: this.state.selectedItem.MessageTitle,
+      SubjectMessage: this.state.selectedItem.MessageTitle||"",
       MessageID: this.state.selectedItem.MessageId
     };
 

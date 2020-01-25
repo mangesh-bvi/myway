@@ -27,11 +27,14 @@ class Passcode extends React.Component {
   }
   handleSubmit(e) {    
     //  e.preventDefault();
-    var username = window.localStorage.getItem(encryption("username","desc"));
+    debugger;
+    var username = encryption(window.localStorage.getItem("email"),"desc");
+    var passcode=encryption(window.localStorage.getItem("passcode"),"desc");
+
     this.setState({ submitted: true });
-    const { emailaddress, passcode } = this.state;
-    if (emailaddress !== "" && passcode !== "") {
-      ValidatePassCode(emailaddress, passcode);
+    // const { emailaddress, passcode } = this.state;
+    if (username !== "" && passcode !== "") {
+      ValidatePassCode(username, passcode);
     } else {
       // var error= username===''?'Please enter the username\n':'';
       //     error+=password===''?'Please enter the passowrd':'';
@@ -78,6 +81,7 @@ class Passcode extends React.Component {
 }
 
 function ValidatePassCode(emailaddress, passcode) {
+  debugger;
   const requestOptions = {
     method: "POST",
     headers: authHeader("no"),

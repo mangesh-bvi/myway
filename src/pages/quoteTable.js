@@ -63,13 +63,7 @@ class QuoteTable extends Component {
 
   HandleListShipmentSummey(quetype) {
     let self = this;
-    // localStorage.removeItem(
-    //   "quotepending",
-    //   "quotecurrent",
-    //   "quoteexpired",
-    //   "quoterejected",
-    //   "quoteapproved"
-    // );
+   
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
@@ -201,11 +195,7 @@ class QuoteTable extends Component {
     var { quotesData } = this.state;
 
     const Moment = require("moment");
-    const array = [
-      { date: "2018-05-11" },
-      { date: "2018-05-12" },
-      { date: "2018-05-10" }
-    ];
+   
     dataQuote = quotesData.sort(
       (a, b) =>
         new Moment(b.CreatedDate).format("YYYYMMDD") -
@@ -213,10 +203,10 @@ class QuoteTable extends Component {
     );
     var colClassName = "";
     if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+     
       colClassName = "cls-flside colap";
     } else {
-      debugger;
+     
       colClassName = "cls-flside";
     }
 

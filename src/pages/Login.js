@@ -296,7 +296,7 @@ class Login extends React.Component {
         headers: authHeader("no")
       })
         .then(function(response) {
-          ////debugger;
+          debugger;
 
           var data = response.data;
           window.localStorage.setItem("st", new Date());

@@ -26,7 +26,8 @@ class BookingTable extends Component {
       filterAll: "",
       bookingData: [],
       startDate: someDate.setMonth(someDate.getMonth() - 1),
-      endDate: new Date().setHours(0, 0, 0, 0)
+      endDate: new Date().setHours(0, 0, 0, 0),
+      status: ""
     };
     this.HandleBookingList = this.HandleBookingList.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -39,9 +40,32 @@ class BookingTable extends Component {
       modalDel: !prevState.modalDel
     }));
   }
+  componentDidUpdate() {
+    debugger;
+    if (this.props.location.state) {
+      var status = this.props.location.state.status;
+      if (this.state.status !== status) {
+        this.setState({ status });
+        setTimeout(() => {
+          this.HandleBookingList();
+        }, 100);
+      }
+    } else {
+      // this.HandleBookingList();
+    }
+  }
 
   componentDidMount() {
-    this.HandleBookingList();
+    debugger;
+    if (this.props.location.state) {
+      var status = this.props.location.state.status;
+      this.setState({ status });
+      setTimeout(() => {
+        this.HandleBookingList();
+      }, 100);
+    } else {
+      this.HandleBookingList();
+    }
   }
 
   HandleBookingList() {
@@ -63,7 +87,30 @@ class BookingTable extends Component {
         rejected = 0;
       data = response.data;
       if (data.length > 0) {
-        self.setState({ bookingData: data }); ///problem not working setstat undefined
+        if (self.state.status === "Approved") {
+          var filterData = data.filter(x => x.Status === self.state.status);
+          if (filterData.length > 0) {
+            self.setState({ bookingData: filterData });
+          } else {
+            self.setState({ bookingData: filterData });
+          }
+        } else if (self.state.status === "Pending") {
+          var filterData = data.filter(x => x.Status === self.state.status);
+          if (filterData.length > 0) {
+            self.setState({ bookingData: filterData });
+          } else {
+            self.setState({ bookingData: filterData });
+          }
+        } else if (self.state.status === "Rejected") {
+          var filterData = data.filter(x => x.Status === self.state.status);
+          if (filterData.length > 0) {
+            self.setState({ bookingData: filterData });
+          } else {
+            self.setState({ bookingData: filterData });
+          }
+        } else {
+          self.setState({ bookingData: data }); ///problem not working setstat undefined
+        }
       }
       for (let i = 0; i < data.length; i++) {
         if (data[i].Status === "Approved") {
@@ -118,10 +165,17 @@ class BookingTable extends Component {
   HandleRowClickEvt(evt, row) {
     debugger;
     var BookingNo = row.original["BookingID"];
+    var BookingNostr = row.original["BookingNo"];
+
     var Mode = row.original["Mode"];
     this.props.history.push({
       pathname: "booking-view",
-      state: { BookingNo: BookingNo, isView: true, Mode: Mode }
+      state: {
+        BookingNo: BookingNo,
+        isView: true,
+        Mode: Mode,
+        BookingNostr: BookingNostr
+      }
     });
   }
   HandleDocumentView(evt, row) {
@@ -172,21 +226,33 @@ class BookingTable extends Component {
   render() {
     const { bookingData } = this.state;
     var dataQuote = [];
+    var finalFilterData = [];
     // var { quotesData } = this.state;
 
     const Moment = require("moment");
-    
+
     dataQuote = bookingData.sort(
       (a, b) =>
         new Moment(b.CreatedDate).format("YYYYMMDD") -
         new Moment(a.CreatedDate).format("YYYYMMDD")
     );
+    if (dataQuote.length > 0) {
+      finalFilterData = dataQuote.filter(
+        d =>
+          new Date(d.CreatedDate) >=
+            new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
+          new Date(d.CreatedDate) <=
+            new Date(this.state.endDate).setHours(0, 0, 0, 0)
+      );
+    } else {
+      finalFilterData = [{ POL: "No Record Found" }];
+    }
+    console.log(finalFilterData, "--------dataQuote");
+
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -238,13 +304,8 @@ class BookingTable extends Component {
             <div className="ag-fresh">
               <ReactTable
                 // data={bookingData}
-                data={dataQuote.filter(
-                  d =>
-                    new Date(d.CreatedDate) >=
-                      new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
-                    new Date(d.CreatedDate) <=
-                      new Date(this.state.endDate).setHours(0, 0, 0, 0)
-                )}
+                data={finalFilterData}
+                // data={dataQuote}
                 noDataText=""
                 onFilteredChange={this.onFilteredChange.bind(this)}
                 filtered={this.state.filtered}
@@ -301,7 +362,7 @@ class BookingTable extends Component {
                                       this.HandleRowClickEvt(e, row)
                                     }
                                   />
- {/* <img
+                                  {/* <img
                                     className="actionicon"
                                     src={Edit}
                                     alt="view-icon"

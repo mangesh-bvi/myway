@@ -509,12 +509,16 @@ class AddSalesUser extends React.Component {
         .then(function(response) {
           debugger;
           NotificationManager.success(response.data[0].Message);
-          this.setState({ loading: false });
+          self.setState({ loading: false });
+          setTimeout(() => {
+            self.props.history.push("view-user");  
+          }, 1000);
+          
         })
         .catch(error => console.log(error.response));
     } else {
       debugger;
-      this.setState({ settoaste: true, loading: true });
+      this.setState({ settoaste: true, loading: false });
     }
   }
 
@@ -1197,13 +1201,13 @@ class AddSalesUser extends React.Component {
                           onClick={this.handleSubmit}
                           disabled={this.state.loading != true ? false : true}
                         >
-                          {this.state.loading != true
-                            ? this.state.loading && (
+                          {this.state.loading == true
+                            ?  
                                 <i
                                   style={{ marginRight: 15 }}
                                   className="fa fa-refresh fa-spin"
                                 ></i>
-                              )
+                              
                             : null}
                           {this.state.loading ? "Please Wait ..." : "Submit"}
                         </button>

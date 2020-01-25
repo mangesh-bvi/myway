@@ -305,13 +305,14 @@ class Dashboard extends Component {
     }
   }
 
-  handleBooking(bookingNo, mode) {
+  handleBooking(bookingNo, mode,BookingNo) {
     // debugger;
     var bookingNo = bookingNo;
     var Mode = mode;
+    var BookingNostr=BookingNo
     this.props.history.push({
       pathname: "booking-view",
-      state: { bookingNo: bookingNo, Mode: Mode }
+      state: { bookingNo: bookingNo, Mode: Mode ,BookingNostr:BookingNostr}
     });
   }
   handleQuote(qnumber, type, status) {
@@ -326,6 +327,8 @@ class Dashboard extends Component {
     });
   }
   render() {
+    
+
     let className = "dash-map1";
     if (
       encryption(window.localStorage.getItem("usertype"), "desc") ==
@@ -423,7 +426,7 @@ class Dashboard extends Component {
                 style={{ color: "#000", cursor: "pointer" }}
                 // onClick={() => this.handleBooking.bind(this)}
                 onClick={() =>
-                  self.handleBooking(book.BookingID, book.BookingType)
+                  self.handleBooking(book.BookingID, book.BookingType,book.BookingNo)
                 }
               >
                 {book.BookingNo}
@@ -519,12 +522,11 @@ class Dashboard extends Component {
       }
     });
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-             colClassName = "cls-flside";
-           }
+      colClassName = "cls-flside";
+    }
     return (
       <div>
         {}

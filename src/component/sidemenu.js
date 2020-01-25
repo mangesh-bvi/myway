@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router";
 import "../styles/custom.css";
 import { Accordion, Button, Card } from "react-bootstrap";
 import GreenCounterIcon from "./../assets/img/green-counter-side.png";
@@ -9,16 +10,15 @@ import RatesIcon from "./../assets/img/rates-side.png";
 import AdminIcon from "./../assets/img/admin-side.png";
 import ChatIcon from "./../assets/img/chat.png";
 import sideArrow from "./../assets/img/side-arr.png";
-import Menubars from "./../assets/img/menubars.png";
+
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
 import DashboardIcon from "./../assets/img/dashboard-side.png";
 import PhoneIcon from "./../assets/img/phone.png";
 import QRCode from "../pages/QRCode";
-import UserIcon from "./../assets/img/user.png";
-import ActivityLogIcon from "./../assets/img/activity-log.png";
+
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
-import LogoutIcon from "./../assets/img/logout.png";
+
 import QuotesIcon from "./../assets/img/quotes-side.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
@@ -96,11 +96,7 @@ class SideMenu extends Component {
   }
 
   sidebarCollapse(e) {
-    debugger;
-    // alert(e.classList.contains("abc"));
-    // console.log(e.currentTarget.parentNode);
-    // if (e.currentTarget.parentNode.parentNode.classList.contains("colap")) {
-    if (localStorage.getItem("isColepse")==="true") {
+    if (localStorage.getItem("isColepse") === "true") {
       e.currentTarget.parentNode.parentNode.classList.remove("colap");
 
       localStorage.setItem("isColepse", false);
@@ -108,35 +104,37 @@ class SideMenu extends Component {
     } else {
       localStorage.setItem("isColepse", true);
       e.currentTarget.parentNode.parentNode.classList.add("colap");
-      
+
       this.setState({ isColClick: true });
     }
   }
 
   highlightClass(e) {
     debugger;
-    // console.log(e.classList);
 
     var elems = document.getElementsByClassName("side-menus");
-    // elems.forEach(element => {
-    //   debugger;
-    //   element.classList.remove("active-menu");
-    // });
+
     for (let i = 0; i < elems.length; i++) {
       elems[i].classList.remove("active-menu");
     }
     e.currentTarget.classList.add("active-menu");
   }
 
+  clickBookingType(e) {
+    debugger;
+    var value = e.target.getAttribute("data-Quetye");
+    if (value === "" || value === null) {
+      this.props.history.push("booking-table");
+    } else {
+      this.props.history.push({
+        pathname: "booking-table",
+        state: {
+          status: value
+        }
+      });
+    }
+  }
   render() {
-    // var colClassName = "";
-    // if (window.localStorage.getItem("isColepse")) {
-    //   debugger;
-    //   colClassName = "side-arrow colap";
-    // } else {
-    //   debugger;
-    //   colClassName = "side-arrow";
-    // }
     var urlShipSum = window.location.pathname;
     window.localStorage.setItem("defShipActKey", "0");
     if (urlShipSum === "/shipment-summary") {
@@ -183,33 +181,15 @@ class SideMenu extends Component {
       window.localStorage.setItem("defActKey", "0");
     }
 
-    // var urlShipSum = window.location.pathname;
-    // window.localStorage.setItem("defspotActKey", "0");
-    // if (urlShipSum === "/spot-rate-table") {
-    //   window.localStorage.setItem("defspotActKey", "1");
-    // } else {
-    //   window.localStorage.setItem("defspotActKey", "0");
-    // }
-
     return (
       <div
         className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
         id="sidemenubar"
       >
-        {/* <i
-          class="fa fa-arrow-right side-arrow"
-          aria-hidden="true"
-          onClick={this.sidebarCollapse.bind(this)}
-        ></i> */}
         <div className="side-arrow" onClick={this.sidebarCollapse.bind(this)}>
           <img src={sideArrow} alt="side arrow" />
         </div>
-        {/* <img
-          src={Menubars}
-          alt="Menu Bars"
-          className="menubars"
-          id="menubars"
-        /> */}
+
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
             <Link
@@ -422,18 +402,6 @@ class SideMenu extends Component {
                 <Accordion.Collapse eventKey="1">
                   <Card.Body>
                     <ul className="shipment-ul">
-                      {/* <li>
-                        <label
-                          className="shipment-ul-lilbl1"
-                          data-Quetye="Current"
-                          onClick={this.clickQuetesType.bind(this)}
-                        >
-                          Current
-                        </label>
-                        <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("quotecurrent")}
-                        </label>
-                      </li> */}
                       <li>
                         <label
                           className="shipment-ul-lilbl1"
@@ -443,7 +411,6 @@ class SideMenu extends Component {
                           Pending
                         </label>
                         <label className="shipment-ul-lilbl2">
-                          {/* {parseFloat(window.localStorage.getItem("quotepending")) + parseFloat(window.localStorage.getItem("quotecurrent"))} */}
                           {window.localStorage.getItem("quotepending")}
                         </label>
                       </li>
@@ -493,15 +460,6 @@ class SideMenu extends Component {
             className="sidemenu-ul-li shipmentli"
             style={{ borderTop: "1px solid #265eb5" }}
           >
-            {/* <Link to="/booking-table">
-              <img
-                src={GreenCounterIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Bookings
-            </Link> */}
-
             <Accordion
               defaultActiveKey={window.localStorage.getItem("bookingKey")}
             >
@@ -523,19 +481,37 @@ class SideMenu extends Component {
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
-                        <label className="shipment-ul-lilbl1">Pending</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Pending"
+                          onClick={this.clickBookingType.bind(this)}
+                        >
+                          Pending
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("bookpending")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Approved</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Approved"
+                          onClick={this.clickBookingType.bind(this)}
+                        >
+                          Approved
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("bookapproved")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Rejected</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Rejected"
+                          onClick={this.clickBookingType.bind(this)}
+                        >
+                          Rejected
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("bookrejected")}
                         </label>
@@ -804,4 +780,4 @@ class SideMenu extends Component {
   }
 }
 
-export default SideMenu;
+export default withRouter(SideMenu);

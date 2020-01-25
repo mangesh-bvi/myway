@@ -187,7 +187,7 @@ class Header extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      //debugger;
+      debugger;
       var ActivityDateArry = response.data.Table;
       if (ActivityDateArry.length > 0) {
         self.setState({
@@ -215,24 +215,24 @@ class Header extends Component {
     });
   };
 
-  onSetting() {
-    // document.getElementById("dvsetting").className.remove("cls-hide");
-  }
+   
 
   SendMessage = () => {
+    debugger;
     var drpshipment = document.getElementById("drpshipment");
     var txtShipmentNo = document.getElementById("txtShipmentNo");
     var txtshipmentcomment = document.getElementById("txtshipmentcomment");
 
     if (drpshipment.value.trim() == "0") {
       //alert("Please select shipment type");
-      NotificationManager.error("Please select shipment type");
+      NotificationManager.error("Please Select Type");
       drpshipment.focus();
       return false;
     }
+    
     if (txtShipmentNo.value.trim() == "") {
       //alert("Please enter shipment no.");
-      NotificationManager.error("Please enter shipment no.");
+      NotificationManager.error(this.state.selectedType==="Subject"?"Please Enter Subject":"Please Enter "+this.state.selectedType + " No");
       txtShipmentNo.focus();
       return false;
     }
@@ -296,6 +296,7 @@ class Header extends Component {
       this.props.history.push({
         pathname: "booking-view",
         state: {
+          BookingNostr: RefNo,
           bookingNo: ID,
           Mode: Product
         }
@@ -460,7 +461,7 @@ class Header extends Component {
 
     let optionItems = this.state.DropdownCommonMessage.map((planet, i) =>
       i == 0 ? (
-        <option key={i} value= {planet.Value} selected="selected">
+        <option key={i} value={planet.Value} selected="selected">
           {planet.Value}
         </option>
       ) : (
@@ -671,9 +672,9 @@ class Header extends Component {
                               placeholder={
                                 this.state.selectedType === "Shipment"
                                   ? "Enter Shipment No."
-                                  :this.state.selectedType === "Sales Quote"
+                                  : this.state.selectedType === "Sales Quote"
                                   ? "Enter Sales Quote No."
-                                  :this.state.selectedType === "Booking"
+                                  : this.state.selectedType === "Booking"
                                   ? "Enter Booking No."
                                   : this.state.selectedType === "Subject"
                                   ? "Enter Subject"

@@ -2,6 +2,7 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
+
 import {
   NotificationContainer,
   NotificationManager
@@ -25,14 +26,15 @@ class Updateforgotpassword extends React.Component {
     });
   }
   handleSubmit(e) {
+    debugger;
     this.setState({ submitted: true });
-    const { emailaddress, passcode } = this.state;
-    if (emailaddress !== "" && passcode !== "") {
-      ValidatePassCode(emailaddress, passcode);
+
+    var userid = window.localStorage.getItem("userid");
+
+    if (this.state.password === this.state.confirmPassword) {
+      ValidatePassCode(userid, this.state.password);
     } else {
-      // var error= username===''?'Please enter the username\n':'';
-      //     error+=password===''?'Please enter the passowrd':'';
-      NotificationManager.error("error");
+      NotificationManager.error("New password and Confirm password Not Match");
     }
   }
   render() {
@@ -78,12 +80,14 @@ class Updateforgotpassword extends React.Component {
             </div>
           </div>
         </div>
+        <NotificationContainer />
       </section>
     );
   }
 }
 
 function ValidatePassCode(UserId, Password) {
+  debugger;
   const requestOptions = {
     method: "POST",
     headers: authHeader("no"),
