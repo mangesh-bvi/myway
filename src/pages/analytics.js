@@ -249,14 +249,14 @@ class Analytics extends Component {
   handleViewAnalyticsShipment(event) {
     let self = this;
     debugger;
-    if (
-      this.state.toggleAIR === false &&
-      this.state.toggleShipShip === false &&
-      this.state.toggleRoadShip === false
-    ) {
-      NotificationManager.error("please select mode of transport");
-      return false;
-    }
+    // if (
+    //   this.state.toggleAIR === false &&
+    //   this.state.toggleShipShip === false &&
+    //   this.state.toggleRoadShip === false
+    // ) {
+    //   NotificationManager.error("please select mode of transport");
+    //   return false;
+    // }
     if (
       this.state.toggleShipShip === true &&
       this.state.toggleFclLcl === false
