@@ -166,6 +166,7 @@ class BookingTable extends Component {
     debugger;
     var BookingNo = row.original["BookingID"];
     var BookingNostr = row.original["BookingNo"];
+    var Status = row.original["Status"];
 
     var Mode = row.original["Mode"];
     this.props.history.push({
@@ -174,7 +175,8 @@ class BookingTable extends Component {
         BookingNo: BookingNo,
         isView: true,
         Mode: Mode,
-        BookingNostr: BookingNostr
+        BookingNostr: BookingNostr,
+        Status: Status
       }
     });
   }

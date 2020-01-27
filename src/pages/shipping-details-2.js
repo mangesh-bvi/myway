@@ -21,6 +21,7 @@ import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 import Plane from "./../assets/img/plane.png";
 import Truck from "./../assets/img/truck.png";
+import PDF from "./../assets/img/pdf.png";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import {
@@ -1764,7 +1765,12 @@ class ShippingDetailsTwo extends Component {
 
                                 {
                                   Header: "Title",
-                                  accessor: "DocumentDescription"
+                                  accessor: "DocumentDescription",
+                                  Cell: row => {
+                                    return (
+                                      <div>{row.original["DocumentDescription"]}<img src={PDF} alt="PDF icon" className="cls-pdf"/></div>
+                                    )
+                                  }
                                 },
                                 {
                                   Header: "Action",
@@ -1784,14 +1790,15 @@ class ShippingDetailsTwo extends Component {
                                               this.HandleDocumentView(e, row)
                                             }
                                           /> */}
-                                          <img
+                                          {row.original["DocumentType"] == "Uploaded"?
+                                          (<img
                                             className="actionicon"
                                             src={Delete}
                                             alt="delete-icon"
                                             onClick={e =>
                                               this.HandleDocumentDelete(e, row)
                                             }
-                                          />
+                                          />):null}
                                           <img
                                             className="actionicon"
                                             src={Download}

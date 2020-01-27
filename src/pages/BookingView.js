@@ -100,7 +100,8 @@ class BookingView extends Component {
       NonStackable: 0,
       Customs_Clearance: 0,
       loding: false,
-      BookingNostr: ""
+      BookingNostr: "",
+      Status: ""
     };
   }
 
@@ -132,6 +133,7 @@ class BookingView extends Component {
       var ModeofTransport = this.props.location.state.Mode;
       var isView = this.props.location.state.isView;
       var BookingNostr = this.props.location.state.BookingNostr;
+      var Status = this.props.location.state.Status;
 
       if (isView) {
         this.setState({
@@ -139,7 +141,8 @@ class BookingView extends Component {
           BookingNo,
           userType,
           isView: true,
-          ModeofTransport: ModeofTransport
+          ModeofTransport: ModeofTransport,
+          Status: Status
         });
         if (ModeofTransport === "AIR") {
           setTimeout(() => {
@@ -920,8 +923,10 @@ class BookingView extends Component {
               <h2>
                 {this.state.loding === true
                   ? "Booking View"
-                  : "Booking View " + this.state.BookingNostr}
+                  : "Booking View " + this.state.BookingNostr+" "}
+                  
               </h2>
+              <h2>{this.state.Status}</h2>
               <button
                 onClick={this.handleChangePage.bind(this)}
                 className="butn mt-0"

@@ -4434,3 +4434,7 @@ progress::-webkit-progress-bar {
     display: block;
     text-align: center;
 }
+.cls-pdf{
+  width: 25px;
+  margin-left: 13px;
+}
