@@ -2755,6 +2755,7 @@ input[type="range"]::-moz-range-track {
   width: 25px;
   margin-top: 12px;
   cursor: pointer;
+  transform: rotate(-90deg);
 }
 .header-chat-icon {
   height: auto;

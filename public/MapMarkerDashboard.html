@@ -46,7 +46,7 @@
       .searchimg {
         position: relative;
       }
-      .searchimg::before {
+      /* .searchimg::before {
         content: url('img/searchicon.png');
         position: absolute;
         right: 7px;
@@ -55,8 +55,8 @@
         height: 30px;
         z-index: 9999;
         padding: 0;
-      }
-      /* .dash-search-cntr2 .fa-search {
+      } */
+      .dash-search-cntr2 .fa-search {
         background: #002d73;
         border-radius: 50%;
         height: 30px;
@@ -69,7 +69,7 @@
         line-height: 28px;
         color: #fff;
         cursor: pointer;
-      } */
+      }
 
       .map-filter {
         position: absolute;
@@ -413,7 +413,7 @@
                         debugger;
 
                         var CinnerContentDatas = "";
-                        var ContNo = filterData[k].replace(" ","_");
+                        var ContNo = filterData[k].replace(/%20/g, " ");
                         var fContNo= filterData[k];
                         var tempData = datas.filter(
                           x =>
@@ -483,7 +483,7 @@
                       var marketInnerContent = "";
                       for (var i = 0; i < datas.length; i++) {
                         var HBLNum = datas[i]["HBL#"];
-                        var ContainerNo = datas[i]["ContainerNo"];
+                        var ContainerNo = datas[i]["ContainerNo"].replace(/%20/g, " ");
                         var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                         var myDatacontainerType = datas[i]["CargoType"];
                         if (myDatacontainerType != "Consolidated") {
@@ -649,7 +649,7 @@
                 Authorization: token
               },
               success: function(data) {
-                //debugger;
+                debugger;
                 var datas = data.Table1;
                 var filterData = [];
                 for (var j = 0; j < datas.length; j++) {
@@ -673,13 +673,14 @@
                 var innerConsolidateData = "";
                 if (filterData.length > 0) {
                   for (var k = 0; k < filterData.length; k++) {
-                    //debugger;
+                    debugger;
 
                     var CinnerContentDatas = "";
-                    var ContNo = filterData[k];
+                    var ContNo = filterData[k].replace(/%20/g, " ");
+                    var fContNo = filterData[k];
                     var tempData = datas.filter(
                       x =>
-                        (x.ContainerNo === ContNo) &
+                        (x.ContainerNo === fContNo) &
                         (x.CargoType === "Consolidated")
                     );
                     CinnerContentDatas =
@@ -742,7 +743,7 @@
                   var marketInnerContent = "";
                   for (var i = 0; i < datas.length; i++) {
                     var HBLNum = datas[i]["HBL#"];
-                    var ContainerNo = datas[i]["ContainerNo"];
+                    var ContainerNo = datas[i]["ContainerNo"].replace(/%20/g, " ");
                     var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                     var myDatacontainerType = datas[i]["CargoType"];
                     if (myDatacontainerType != "Consolidated") {
@@ -1307,12 +1308,12 @@
           value=""
         />
         </div>
-        <!-- <i
+        <i
           class="fa fa-search"
           aria-hidden="true"
           id="testId"
           onclick="ShowMarker();"
-        ></i> -->
+        ></i>
       </div>
       <div class="map-filter" onclick="togglehandleHamb();">
         <div class="map-icon-cntr" onclick="toggleMapdata();">

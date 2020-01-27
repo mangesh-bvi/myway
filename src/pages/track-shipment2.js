@@ -472,10 +472,26 @@ class TrackShipment2 extends Component {
 
       //mainLineData = allLineData;
     }
+
+    var imgType = "";
+    if (this.state.ModeType.toUpperCase() === "AIR") {
+      imgType = "AIR";
+    } else if (this.state.ModeType.toUpperCase() === "OCEAN") {
+      imgType = "OCEAN";
+    } else {
+      imgType = "ROAD";
+    }
+    debugger;
+    
+    
+    
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
     localStorage.removeItem("AllLineData");
-
+    localStorage.removeItem("imgType");
+    localStorage.removeItem("VesselData");
+    
+    localStorage.setItem("imgType", JSON.stringify(imgType));
     localStorage.setItem("VesselData", JSON.stringify(VesselData));
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
@@ -900,17 +916,26 @@ class TrackShipment2 extends Component {
     }
     var perBooking = "0";
     var POLPODDatalen = this.state.POLPODData.length;
-    debugger;
+    
     if (this.state.Table9.length > 0) {
-      debugger;
+      
       var Transshipped = this.state.Table9.filter(
         x => x.Status === "Transshipped"
       ).length;
 
+      var Bookedd = this.state.Table9.filter(x => x.Status === "Booked").length;
+      var Departedd = this.state.Table9.filter(x => x.Status === "Departed")
+        .length;
       var Arriveddata = this.state.Table9.filter(x => x.Status === "Arrived")
         .length;
       var Delivered = this.state.Table9.filter(x => x.Status === "Delivered")
         .length;
+      if (Bookedd == 1) {
+        
+
+        perBooking = "0";
+      }
+      
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
         var finalTotal = 0;
@@ -928,6 +953,7 @@ class TrackShipment2 extends Component {
         perBooking = (total + finalTotal) * Transshipped + "";
       }
       if (
+        Departedd==1 &&
         this.state.POLPODData.length == 2 &&
         Transshipped == 0 &&
         Arriveddata == 0 &&
@@ -936,6 +962,7 @@ class TrackShipment2 extends Component {
         perBooking = "50";
       }
       if (
+        Departedd==1 &&
         this.state.POLPODData.length > 2 &&
         Transshipped == 0 &&
         Arriveddata == 0 &&
@@ -943,8 +970,11 @@ class TrackShipment2 extends Component {
       ) {
         var per = 100 / (this.state.POLPODData.length + 1);
 
-        perBooking = per / 2 + "";
+        perBooking = (per+ (per/ 2 ))+ "";
+
+        // perBooking="50"
       }
+
       if (Transshipped >= 1 && Arriveddata >= 1) {
         perBooking = "100";
       }

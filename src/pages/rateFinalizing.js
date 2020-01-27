@@ -3380,7 +3380,7 @@ class RateFinalizing extends Component {
         if (rateSubDetailsarr[i].ChargeCode == "Freight") {
           rateSubDetailsarr[i].Total =
             parseFloat(rateSubDetailsarr[i].Total.split(" ")[0]) +
-            parseFloat(alledProfitAmount) +
+            parseFloat(this.state.ProfitAmount) +
             " " +
             rateSubDetailsarr[i].Total.split(" ")[1];
           break;
@@ -3389,13 +3389,13 @@ class RateFinalizing extends Component {
         if (rateSubDetailsarr[i].ChargeCode == "Freight") {
           rateSubDetailsarr[i].TotalAmount =
             parseFloat(rateSubDetailsarr[i].TotalAmount) +
-            parseFloat(alledProfitAmount);
+            parseFloat(this.state.ProfitAmount);
           break;
         }
       }
     }
     var finalprofitLossAmt =
-      this.state.profitLossAmt - parseFloat(alledProfitAmount);
+    profitLossAmt+ parseFloat(this.state.ProfitAmount);
 
     var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
 
@@ -3403,26 +3403,26 @@ class RateFinalizing extends Component {
       profitLossAmt: finalprofitLossAmt,
       profitLossPer: finalprofitLossPer
     });
-    var rateDetailsarr = this.state.selectedDataRow;
+    // var rateDetailsarr = this.state.selectedDataRow;
 
-    var subratedetails = [];
-    for (let i = 0; i < rateDetailsarr.length; i++) {
-      if (this.state.isCopy === true) {
-        var data = this.state.rateSubDetails.filter(
-          x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
-        );
-        subratedetails = data;
-      } else {
-        var data = this.state.rateSubDetails.filter(
-          x => x.RateLineID === rateDetailsarr[i].RateLineId
-        );
-        for (let i = 0; i < data.length; i++) {
-          subratedetails.push(data[i]);
-        }
-        // subratedetails.push(data);
-      }
-    }
-    var rateSubDetailsarr = subratedetails;
+    // var subratedetails = [];
+    // for (let i = 0; i < rateDetailsarr.length; i++) {
+    //   if (this.state.isCopy === true) {
+    //     var data = this.state.rateSubDetails.filter(
+    //       x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
+    //     );
+    //     subratedetails = data;
+    //   } else {
+    //     var data = this.state.rateSubDetails.filter(
+    //       x => x.RateLineID === rateDetailsarr[i].RateLineId
+    //     );
+    //     for (let i = 0; i < data.length; i++) {
+    //       subratedetails.push(data[i]);
+    //     }
+    //     // subratedetails.push(data);
+    //   }
+    // }
+    // var rateSubDetailsarr = subratedetails;
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
       if (this.state.isCopy == true) {
@@ -3438,29 +3438,30 @@ class RateFinalizing extends Component {
       }
     }
 
-    for (var i = 0; i <= rateSubDetailsarr.length; i++) {
-      debugger;
-      if (this.state.isCopy == true) {
-        if (rateSubDetailsarr[i].ChargeCode == "Freight") {
-          rateSubDetailsarr[i].Total =
-            parseFloat(rateSubDetailsarr[i].Amount.split(" ")[0]) +
-            parseFloat(this.state.ProfitAmount) +
-            " " +
-            rateSubDetailsarr[i].Amount.split(" ")[1];
-          break;
-        }
-      } else {
-        if (rateSubDetailsarr[i].ChargeCode == "Freight") {
-          rateSubDetailsarr[i].TotalAmount =
-            parseFloat(rateSubDetailsarr[i].TotalAmount) +
-            parseFloat(this.state.ProfitAmount);
-          break;
-        }
-      }
-    }
+    // for (var i = 0; i <= rateSubDetailsarr.length; i++) {
+    //   debugger;
+    //   if (this.state.isCopy == true) {
+    //     if (rateSubDetailsarr[i].ChargeCode == "Freight") {
+    //       rateSubDetailsarr[i].Total =
+    //         parseFloat(rateSubDetailsarr[i].Amount.split(" ")[0]) +
+    //         parseFloat(this.state.ProfitAmount) +
+    //         " " +
+    //         rateSubDetailsarr[i].Amount.split(" ")[1];
+    //       break;
+    //     }
+    //   } else {
+    //     if (rateSubDetailsarr[i].ChargeCode == "Freight") {
+    //       rateSubDetailsarr[i].TotalAmount =
+    //         parseFloat(rateSubDetailsarr[i].TotalAmount) +
+    //         parseFloat(this.state.ProfitAmount);
+    //       break;
+    //     }
+    //   }
+    // }
     this.setState(prevState => ({
       modalProfit: false
     }));
+    debugger;
     BuyRate = 0;
     profitLossAmt = 0;
     for (let j = 0; j < rateSubDetailsarr.length; j++) {
@@ -3475,15 +3476,15 @@ class RateFinalizing extends Component {
         BuyRate += rateSubDetailsarr[j].BuyRate;
       }
     }
-    var finalprofitLossAmt =
-      finalprofitLossAmt + parseFloat(this.state.ProfitAmount);
+    // var finalprofitLossAmt =
+    //   finalprofitLossAmt + parseFloat(this.state.ProfitAmount);
 
-    var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
+    // var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
 
-    this.setState({
-      profitLossAmt: finalprofitLossAmt,
-      profitLossPer: finalprofitLossPer
-    });
+    // this.setState({
+    //   profitLossAmt: finalprofitLossAmt,
+    //   profitLossPer: finalprofitLossPer
+    // });
     this.setState({
       toggleProfitRemoveBtn: true,
       Addedprofit: this.state.ProfitAmount
@@ -5317,9 +5318,9 @@ class RateFinalizing extends Component {
                   BuyRate += rateSubDetails[j].BuyRate;
                 }
                 profitLossPer = (profitLossAmt * 100) / BuyRate;
-                var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
+                var finalprofitLossAmt = profitLossAmt-profitLossAmt1 ;
 
-                var finalprofitLossPer = profitLossPer1 - profitLossPer;
+                var finalprofitLossPer =profitLossPer- profitLossPer1  ;
                 if (selectedRow.length > 0) {
                   this.setState({
                     BuyRate,
@@ -5352,11 +5353,19 @@ class RateFinalizing extends Component {
                 var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
 
                 var finalprofitLossPer = profitLossPer1 - profitLossPer;
-                this.setState({
-                  BuyRate,
-                  profitLossAmt: finalprofitLossAmt,
-                  profitLossPer: finalprofitLossPer
-                });
+                if (selectedRow.length > 0) {
+                  this.setState({
+                    BuyRate,
+                    profitLossAmt: finalprofitLossAmt,
+                    profitLossPer: finalprofitLossPer
+                  });
+                } else {
+                  this.setState({
+                    BuyRate: 0,
+                    profitLossAmt: 0,
+                    profitLossPer: 0
+                  });
+                }
                 break;
               }
             }

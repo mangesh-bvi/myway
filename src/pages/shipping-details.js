@@ -238,7 +238,16 @@ class ShippingDetails extends Component {
           if (pol !== "No record found" && pol !== "No Record Found") {
             var hblNo = column.original["HBL#"];
             var eventManage = column.original["Event"];
-            this.HandleChangeShipmentDetails(hblNo, eventManage);
+            if(hblNo)
+            {
+              this.HandleChangeShipmentDetails(hblNo, eventManage);
+            }
+            else
+            {
+              NotificationManager.error("HBL No not Found");
+              return false;
+            }
+            
           }
         }
       }

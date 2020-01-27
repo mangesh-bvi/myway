@@ -31,7 +31,11 @@
       var linesData = JSON.parse(linesData);
       var greenRouteData = JSON.parse(localStorage.getItem("GreenLineData"));
       var VesselDatalatlng = JSON.parse(localStorage.getItem("VesselData"));
+      var imgType = JSON.parse(localStorage.getItem("imgType"));
       var ocean;
+      var air;
+      var road;
+
       //var beaches = [
       //['1',49.24859,8.887826,'Falg 1'],
       //['2',18.971783,72.833437,'Falg 2'],
@@ -113,19 +117,38 @@
           null /* size is determined at runtime */,
           null /* origin is 0,0 */,
           null /* anchor is bottom center of the scaled image */,
-          new google.maps.Size(32, 32)
+          new google.maps.Size(48, 48)
         );
-
+        air = new google.maps.MarkerImage(
+          "img/plane.png",
+          null /* size is determined at runtime */,
+          null /* origin is 0,0 */,
+          null /* anchor is bottom center of the scaled image */,
+          new google.maps.Size(48, 48)
+        );
+        road = new google.maps.MarkerImage(
+          "img/truck.png",
+          null /* size is determined at runtime */,
+          null /* origin is 0,0 */,
+          null /* anchor is bottom center of the scaled image */,
+          new google.maps.Size(48, 48)
+        );
         setVesselMarkers(map);
       }
       function setVesselMarkers(map) {
+        var image=ocean;
+        if(imgType==="AIR")image=air;
+        if(imgType==="OCEAN")image=ocean;
+        if(imgType==="ROAD")image=road;
+        
         var VesselData = new google.maps.Marker({
           position: VesselDatalatlng,
-          icon: ocean,
-          map: map
+          icon: image,
+          map: map,
+          optimized: false
         });
-        
-        map.setCenter(VesselDatalatlng,3)
+
+        map.setCenter(VesselDatalatlng, 3);
       }
 
       // Use the DOM setInterval() function to change the offset of the symbol
