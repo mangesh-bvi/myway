@@ -12,6 +12,7 @@ import Autocomplete from "react-autocomplete";
 import Download from "./../assets/img/csv.png";
 import { withRouter } from "react-router";
 import { encryption, convertToPlain } from "../helpers/encryption";
+import PDF from "./../assets/img/pdf.png";
 const imageAsset = "./../assets/img";
 const fetch = require("node-fetch");
 
@@ -1631,7 +1632,17 @@ class BookingView extends Component {
                               columns: [
                                 {
                                   Header: "File name",
-                                  accessor: "FileName"
+                                  accessor: "FileName",
+                                  Cell: row => {
+                                    if (row.original.FileName !== "No File Found") {
+                                    return (
+                                      <div><img src={PDF} alt="PDF icon" className="cls-pdf"/>{row.original.FileName}</div>
+                                    )
+                                    }
+                                    else{
+                                      return <>{row.original.FileName}</>;
+                                    }
+                                  }
                                 },
 
                                 {

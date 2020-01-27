@@ -1801,9 +1801,13 @@ class ShippingDetailsTwo extends Component {
                                   Header: "Title",
                                   accessor: "DocumentDescription",
                                   Cell: row => {
+                                    if (row.value == "No Data Found") {
+                                      return <div>{row.value}</div>;
+                                    }else{
                                     return (
                                       <div>{row.original["DocumentDescription"]}<img src={PDF} alt="PDF icon" className="cls-pdf"/></div>
                                     )
+                                    }
                                   }
                                 },
                                 {
