@@ -19,6 +19,7 @@ import Moment from "react-moment";
 import ATA from "./../assets/img/ATAFreight_console.png";
 import Download from "./../assets/img/csv.png";
 import Delete from "./../assets/img/red-delete-icon.png";
+import PDF from "./../assets/img/pdf.png";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -2368,7 +2369,17 @@ class RateFinalizingStill extends Component {
                                 columns={[
                                   {
                                     Header: "File Name",
-                                    accessor: "FileName"
+                                    accessor: "FileName",
+                                    Cell: row => {
+                                      if (row.original.FileName !== "No File Found") {
+                                      return (
+                                        <div><img src={PDF} alt="PDF icon" className="cls-pdf"/>{row.original.FileName}</div>
+                                      )
+                                      }
+                                      else{
+                                        return <>{row.original.FileName}</>;
+                                      }
+                                    }
                                   },
                                   {
                                     Header: "Action",
