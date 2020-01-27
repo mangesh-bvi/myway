@@ -4259,12 +4259,7 @@ onErrorImg(e)
                                     mode == "AIR" &&
                                     lname !== ""
                                   ) {
-                                    // var fs = require('fs');
-
-                                    // if (fs.exists("https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +lname) == true)
-                                    // {
-
-                                    // }
+                                    
                                     return (
                                       <React.Fragment>
                                         <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -4413,7 +4408,7 @@ onErrorImg(e)
                                   return (
                                     <>
                                       <p className="details-title">
-                                        Transit port
+                                      Transit Port
                                       </p>
                                       <p className="details-para">
                                         {row.original.TransshipmentPort}

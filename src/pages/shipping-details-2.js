@@ -287,6 +287,7 @@ class ShippingDetailsTwo extends Component {
 
       var RouteLatLong = mydata[i]["GeoCoord"];
       var Not_Data = 0;
+      var VesselData={};
       if (RouteLatLong) {
         var splitRouteLatLong = RouteLatLong.split(";");
         for (var j = 0; j < splitRouteLatLong.length; j++) {
@@ -301,11 +302,14 @@ class ShippingDetailsTwo extends Component {
       } else {
         debugger;
         Not_Data = i;
+        
+        VesselData=allLineData[allLineData.length-1];
       }
     }
 
     debugger;
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
+    localStorage.setItem("VesselData", JSON.stringify(VesselData));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
     self.setState({ iframeKey: self.state.iframeKey + 1 });
@@ -416,13 +420,9 @@ class ShippingDetailsTwo extends Component {
     var HblNo;
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail.trim();
+    } else {
+      HblNo = this.state.addWat || this.state.HblNo;
     }
-    else
-    {
-      HblNo=this.state.addWat ||this.state.HblNo
-    }
-
-    
 
     axios({
       method: "post",
@@ -471,7 +471,9 @@ class ShippingDetailsTwo extends Component {
       data: {
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
-        UserId:parseFloat( encryption(window.localStorage.getItem("userid"), "desc")),
+        UserId: parseFloat(
+          encryption(window.localStorage.getItem("userid"), "desc")
+        ),
         HBLNo: HblNo
       },
       headers: authHeader()
@@ -599,13 +601,7 @@ class ShippingDetailsTwo extends Component {
         self.HandleShipmentDocument();
       })
       .catch(error => {
-        debugger;
-        // var temperror = error.response.data;
-        // var err = temperror.split(":");
-        // var actData = [];
-        // actData.push({ DocumentDescription: "No Data Found" });
-
-        // self.setState({ documentData: actData });
+        
       });
   }
 
@@ -639,12 +635,9 @@ class ShippingDetailsTwo extends Component {
     this.setState({ ShowCard: !this.state.ShowCard });
   }
 
-  onEntered() {
-    // this.setState({ status: "Opened" });
-    console.log(1);
-  }
+   
   handleChangePage() {
-    // window.history.back();
+    
     var pageName = this.state.pageName;
 
     if (pageName === "Dashboard") {
@@ -674,7 +667,6 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       NotificationManager.success(response.data[0].Result);
       self.setState({ ShipmentExistsInWatchList: 1 });
     });
@@ -687,11 +679,6 @@ class ShippingDetailsTwo extends Component {
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail;
     }
-    // if (typeof this.props.location.state != "undefined") {
-
-    var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    //alert(HblNo)
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
@@ -712,7 +699,7 @@ class ShippingDetailsTwo extends Component {
         var temperror = error.response.data;
         var err = temperror.split(":");
       });
-    // }
+    
   }
   handleBackBtn = () => {
     window.history.back();
@@ -860,7 +847,6 @@ class ShippingDetailsTwo extends Component {
     }
 
     if (this.state.Table9.length > 0) {
-      debugger;
       var Transshipped = this.state.Table9.filter(
         x => x.Status === "Transshipped"
       ).length;
@@ -899,10 +885,9 @@ class ShippingDetailsTwo extends Component {
         Arriveddata == 0 &&
         Delivered == 0
       ) {
+        var per = 100 / (this.state.POLPODData.length + 1);
 
-        var per=100/(this.state.POLPODData.length+1);
-
-        perBooking = (per/2) +"";
+        perBooking = per / 2 + "";
       }
       if (Transshipped >= 1 && Arriveddata >= 1) {
         perBooking = "100";
@@ -981,10 +966,8 @@ class ShippingDetailsTwo extends Component {
     }
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
-      debugger;
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -1050,35 +1033,18 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="details-tab"
                     >
-                      {/* <div className="sect-padd">
-                        <p className="details-heading">Booking Details</p>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Mode Of Transport</p>
-                            <p className="details-para">Ocean</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Cargo Type</p>
-                            <p className="details-para">FCL</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Inco Terms</p>
-                            <p className="details-para">EXW</p>
-                          </div>
-                        </div>
-                      </div> */}
                       <div className="sect-padd">
                         <div className="row">
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">HBL#</p>
-                            <a href="#!" className="details-para">
+                            <span href="#!" className="details-para">
                               {detailsData.HBLNO}
                               <input
                                 type="hidden"
                                 value={detailsData.HBLNO}
                                 id="popupHBLNO"
                               />
-                            </a>
+                            </span>
                           </div>
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">BL#</p>
@@ -1134,7 +1100,7 @@ class ShippingDetailsTwo extends Component {
                         <div className="row">
                           {addressData.map(function(addkey, i) {
                             //  <p className="details-heading" key={i}>{addkey.EntityType}</p>
-                            debugger;
+
                             return (
                               <div
                                 className="col-md-6 details-border shipper-details"
@@ -1943,64 +1909,65 @@ class ShippingDetailsTwo extends Component {
                       bookDate == "" &&
                       departedDate === "" &&
                       arrivedDate === "" &&
-                      deliverDate === ""?<div class="track-details">
-                      <div class={approvedisActive}>
-                        <div class="track-img-cntr">
-                          <div class="track-img ">
-                            <img src={ApprovedImg} alt="booked icon" />
-                          </div>
-                        </div>
-                        <p>
-                          <span>Approved : </span>
-                          
-                        </p>
-                      </div>
-                      <div class="track-line-cntr">
-                        <div class="track-img-cntr">
-                          <div class="track-img">
-                            <img src={Booked} alt="transit icon" />
-                          </div>
-                        </div>
-                        <p>
-                          <span>Booked : </span>
-                        </p>
-                      </div>
-                      <div class="track-line-cntr">
-                        <div class="track-img-cntr">
-                          <div class="track-img">
-                            <img src={Departed} alt="transit icon" />
-                          </div>
-                        </div>
-                        <p>
-                          <span>Departed : </span>
-                        </p>
-                      </div>
-                      <div class="track-line-cntr">
-                        <div class="track-img-cntr">
-                          <div class="track-img">
-                            <img src={Arrived} alt="arrived icon" />
-                          </div>
-                        </div>
-                        <p>
-                          <span>Arrived : </span>
-                        </p>
-                      </div>
-
-                      <div class="track-line-cntr">
-                        <div class="track-img-cntr">
-                          <div class="track-img">
-                            <img src={Delivery} alt="delivery icon" />
-                          </div>
-                        </div>
-                        <p>
-                          <span>Delivered : </span>
-                        </p>
-                      </div>
-                    </div>:approvedDate !== "" &&
-                      bookDate == "" &&
-                      departedDate === "" &&
-                      arrivedDate === "" &&
                       deliverDate === "" ? (
+                        <div class="track-details">
+                          <div class={approvedisActive}>
+                            <div class="track-img-cntr">
+                              <div class="track-img ">
+                                <img src={ApprovedImg} alt="booked icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Approved : </span>
+                            </p>
+                          </div>
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Booked} alt="transit icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Booked : </span>
+                            </p>
+                          </div>
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Departed} alt="transit icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Departed : </span>
+                            </p>
+                          </div>
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Arrived} alt="arrived icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Arrived : </span>
+                            </p>
+                          </div>
+
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Delivery} alt="delivery icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Delivered : </span>
+                            </p>
+                          </div>
+                        </div>
+                      ) : approvedDate !== "" &&
+                        bookDate == "" &&
+                        departedDate === "" &&
+                        arrivedDate === "" &&
+                        deliverDate === "" ? (
                         <div class="track-details">
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">

@@ -22,8 +22,6 @@
   <body>
     <div id="map"></div>
     <script>
-       
-
       var baloonData = localStorage.getItem("BaloonData");
       var flagData = localStorage.getItem("FlagsData");
       var linesData = localStorage.getItem("AllLineData");
@@ -32,7 +30,8 @@
       var beaches = JSON.parse(flagData);
       var linesData = JSON.parse(linesData);
       var greenRouteData = JSON.parse(localStorage.getItem("GreenLineData"));
-
+      var VesselDatalatlng = JSON.parse(localStorage.getItem("VesselData"));
+      var ocean;
       //var beaches = [
       //['1',49.24859,8.887826,'Falg 1'],
       //['2',18.971783,72.833437,'Falg 2'],
@@ -45,13 +44,12 @@
 
       function initMap() {
         var map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 1,
+          zoom: 2,
           mapTypeId: "terrain",
           gestureHandling: "cooperative",
-          center: new google.maps.LatLng(20.0071393, 64.4206358),
+          center: new google.maps.LatLng(20.0071393, 64.4206358)
         });
 
-        
         // Define the symbol, using one of the predefined paths ('CIRCLE')
         // supplied by the Google Maps JavaScript API.
         var lineSymbol = {
@@ -109,6 +107,25 @@
          map: map,
          });
          */
+
+        ocean = new google.maps.MarkerImage(
+          "img/ship.png",
+          null /* size is determined at runtime */,
+          null /* origin is 0,0 */,
+          null /* anchor is bottom center of the scaled image */,
+          new google.maps.Size(32, 32)
+        );
+
+        setVesselMarkers(map);
+      }
+      function setVesselMarkers(map) {
+        var VesselData = new google.maps.Marker({
+          position: VesselDatalatlng,
+          icon: ocean,
+          map: map
+        });
+        
+        map.setCenter(VesselDatalatlng,3)
       }
 
       // Use the DOM setInterval() function to change the offset of the symbol
