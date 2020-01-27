@@ -261,7 +261,7 @@ class TrackShipment2 extends Component {
 
       if (url) {
         // if (url != "" && url != null) {
-        
+
         self.setState({
           showData: true,
           addWat: url,
@@ -450,15 +450,9 @@ class TrackShipment2 extends Component {
       ///Line data
 
       var RouteLatLong = mydata[i]["GeoCoord"];
-      // var splitRouteLatLong = RouteLatLong.split(";");
-      // for (var j = 0; j < splitRouteLatLong.length; j++) {
-      //   var lineData = {};
-      //   var tempSData = splitRouteLatLong[j].split(",");
-      //   lineData.lat = Number(tempSData[0]);
-      //   lineData.lng = Number(tempSData[1]);
-      //   allLineData.push(lineData);
-      // }
+
       var Not_Data = 0;
+      var VesselData = {};
       if (RouteLatLong) {
         var splitRouteLatLong = RouteLatLong.split(";");
         for (var j = 0; j < splitRouteLatLong.length; j++) {
@@ -473,6 +467,7 @@ class TrackShipment2 extends Component {
       } else {
         debugger;
         Not_Data = i;
+        VesselData = allLineData[allLineData.length - 1];
       }
 
       //mainLineData = allLineData;
@@ -481,7 +476,7 @@ class TrackShipment2 extends Component {
     localStorage.removeItem("FlagsData");
     localStorage.removeItem("AllLineData");
 
-    debugger;
+    localStorage.setItem("VesselData", JSON.stringify(VesselData));
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
@@ -501,7 +496,7 @@ class TrackShipment2 extends Component {
     }).then(function(response) {
       debugger;
       var resdata = response.data;
-      self.setState({ loading: false ,showData:true});
+      self.setState({ loading: false, showData: true });
       self.HandleMapDetailsData(resdata);
     });
   }
@@ -946,10 +941,9 @@ class TrackShipment2 extends Component {
         Arriveddata == 0 &&
         Delivered == 0
       ) {
+        var per = 100 / (this.state.POLPODData.length + 1);
 
-        var per=100/(this.state.POLPODData.length+1);
-
-        perBooking = (per/2) +"";
+        perBooking = per / 2 + "";
       }
       if (Transshipped >= 1 && Arriveddata >= 1) {
         perBooking = "100";

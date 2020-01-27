@@ -834,7 +834,7 @@ class ShippingDetails extends Component {
                           Header: "Mode",
                           accessor: "ModeOfTransport",
                           sortable: true,
-                          filterable: true
+                          
                         },
                         {
                           Header: "Consignee",
@@ -1068,8 +1068,10 @@ class ShippingDetails extends Component {
                           threshold: matchSorter.rankings.WORD_STARTS_WITH
                         });
                         if (result.length > 0) {
+                          debugger;
                           return result;
                         } else {
+                          debugger;
                           result = [{ POL: "No Record Found" }];
                           return result;
                         }

@@ -2538,7 +2538,7 @@ class RateFinalizingStillBooking extends Component {
                                     return (
                                       <>
                                         <p className="details-title">
-                                          Transit port
+                                        Transit Port
                                         </p>
                                         <p className="details-para">
                                           {row.original.TransshipmentPort}
