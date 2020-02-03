@@ -38,6 +38,7 @@ class RateFinalizing extends Component {
       cargoSelect: "select",
       rateQuery: true,
       rateDetails: [],
+      newrateDetailsData: [],
       rateSubDetails: [],
 
       ////
@@ -136,7 +137,10 @@ class RateFinalizing extends Component {
       sendFile: null,
       showUpdate: false,
       BuyRate: 0,
-      fCommodityID: 0
+      fCommodityID: 0,
+      localsurAmount: 0,
+      manProfitAmt: [],
+      localProfitamt: []
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -163,6 +167,7 @@ class RateFinalizing extends Component {
     if (typeof this.props.location.state !== "undefined") {
       if (this.props.location.state.Quote == undefined) {
         var rateDetails = this.props.location.state.selectedDataRow;
+        var newrateDetailsData = this.props.location.state.selectedDataRow;
         // var selectedDataRow = this.props.location.state.selectedDataRow;
         var rateOrgDetails = [];
         var rateSubDetails = this.props.location.state.RateSubDetails;
@@ -495,6 +500,8 @@ class RateFinalizing extends Component {
         const newSelected = Object.assign({}, this.state.cSelectedRow);
         debugger;
         var selectedRow = [];
+        var manProfitAmt = [];
+        var localProfitamt = [];
         for (let i = 0; i < rateDetails.length; i++) {
           ////debugger;;;
           var idrate = 0;
@@ -505,11 +512,17 @@ class RateFinalizing extends Component {
               Total: rateDetails[i].TotalAmount
             });
 
+            manProfitAmt.push({ RateLineId: idrate, Total: 0 });
+            localProfitamt.push({ RateLineId: idrate, Total: 0 });
+
             newSelected[rateDetails[i].RateLineId] = !this.state.cSelectedRow[
               rateDetails[i].RateLineId
             ];
             selectedRow.push(rateDetails[i]);
+
             this.setState({
+              manProfitAmt,
+              localProfitamt,
               cSelectedRow: rateDetails[i].RateLineId ? newSelected : false
             });
           }
@@ -522,8 +535,12 @@ class RateFinalizing extends Component {
             newSelected[rateDetails[i].RateLineID] = !this.state.cSelectedRow[
               rateDetails[i].RateLineID
             ];
+            manProfitAmt.push({ RateLineId: idrate, Total: 0 });
+            localProfitamt.push({ RateLineId: idrate, Total: 0 });
             selectedRow.push(rateDetails[i]);
             this.setState({
+              manProfitAmt,
+              localProfitamt,
               cSelectedRow: rateDetails[i].RateLineID ? newSelected : false
             });
           }
@@ -537,6 +554,7 @@ class RateFinalizing extends Component {
           profitLossPer: this.props.location.state.profitLossPer,
           selectedDataRow: selectedRow,
           rateDetails: rateDetails,
+          newrateDetailsData: newrateDetailsData,
           rateOrgDetails: rateOrgDetails,
           rateSubDetails: rateSubDetails,
           HazMat: HazMat,
@@ -769,7 +787,11 @@ class RateFinalizing extends Component {
             var finalprofitLossPer = 0;
             var BuyRate = 0;
             debugger;
+            var manProfitAmt = [];
+            var localProfitamt = [];
             for (let i = 0; i < rateDetails.length; i++) {
+              profitLossAmt = 0;
+              BuyRate=0;
               var idrate = 0;
               if (
                 rateDetails[i].saleQuoteLineID &&
@@ -780,6 +802,8 @@ class RateFinalizing extends Component {
                   RateLineId: idrate,
                   Total: rateDetails[i].Total
                 });
+                manProfitAmt.push({ RateLineId: idrate, Total: 0 });
+                localProfitamt.push({ RateLineId: idrate, Total: 0 });
 
                 newSelected[rateDetails[i].saleQuoteLineID] = !self.state
                   .cSelectedRow[rateDetails[i].saleQuoteLineID];
@@ -802,6 +826,7 @@ class RateFinalizing extends Component {
                   profitLossAmt += total - rateSubDetailsdata1[j].BuyRate;
                   BuyRate += rateSubDetailsdata1[j].BuyRate;
                 }
+                profitLossAmt+=rateDetails[i].Profit
                 profitLossPer = (profitLossAmt * 100) / BuyRate;
                 finalprofitLossAmt = profitLossAmt + finalprofitLossAmt;
 
@@ -810,6 +835,8 @@ class RateFinalizing extends Component {
             }
             self.setState({
               BuyRate,
+              manProfitAmt,
+              localProfitamt,
               profitLossAmt: finalprofitLossAmt,
               profitLossPer: finalprofitLossPer
             });
@@ -1236,13 +1263,13 @@ class RateFinalizing extends Component {
               this.state.rateOrgDetails[i].RateLineId ===
               this.state.selectedDataRow[0].saleQuoteLineID
             ) {
-              var total = parseFloat(
-                this.state.selectedDataRow[0].Total.split(" ")[0]
-              );
-              var total1 = parseFloat(
-                this.state.rateOrgDetails[i].Total.split(" ")[0]
-              );
-              ProfitAmount = total - total1;
+              // var total = parseFloat(
+              //   this.state.selectedDataRow[0].Total.split(" ")[0]
+              // );
+              // var total1 = parseFloat(
+              //   this.state.rateOrgDetails[i].Total.split(" ")[0]
+              // );
+              ProfitAmount = this.state.manProfitAmt[i].Total;
               if (ProfitAmount > 0) {
                 showUpdate = true;
               }
@@ -1253,10 +1280,11 @@ class RateFinalizing extends Component {
             this.state.rateOrgDetails[i].RateLineId ===
             this.state.selectedDataRow[0].RateLineId
           ) {
-            ProfitAmount =
-              this.state.selectedDataRow[0].TotalAmount -
-              this.state.rateOrgDetails[i].Total;
-            if (ProfitAmount > 0) {
+            debugger;
+
+            ProfitAmount = this.state.manProfitAmt[i].Total;
+
+            if (this.state.manProfitAmt[i].Total > 0) {
               showUpdate = true;
             }
           }
@@ -1345,6 +1373,7 @@ class RateFinalizing extends Component {
   }
 
   togglePreview() {
+    debugger;
     this.setState(prevState => ({
       modalPreview: !prevState.modalPreview
     }));
@@ -2762,8 +2791,10 @@ class RateFinalizing extends Component {
               data[0].RateLineId === this.state.rateOrgDetails[j].RateLineId &&
               data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
             ) {
-              aProfit =
-                data[0].TotalAmount - this.state.rateOrgDetails[j].Total;
+              // aProfit =
+              //   data[0].TotalAmount - this.state.rateOrgDetails[j].Total;
+              aProfit = this.state.manProfitAmt[j].Total;
+
               rateid = this.state.rateOrgDetails[j].RateLineId;
             } else {
               aProfit = 0;
@@ -3248,13 +3279,8 @@ class RateFinalizing extends Component {
               this.state.rateOrgDetails[i].RateLineId ===
               this.state.selectedDataRow[0].saleQuoteLineID
             ) {
-              var total = parseFloat(
-                this.state.selectedDataRow[0].Total.split(" ")[0]
-              );
-              var total1 = parseFloat(
-                this.state.rateOrgDetails[i].Total.split(" ")[0]
-              );
-              alledProfitAmount = total - total1;
+              alledProfitAmount = this.state.manProfitAmt[i].Total;
+
               if (alledProfitAmount > 0) {
                 showUpdate = true;
               }
@@ -3265,9 +3291,7 @@ class RateFinalizing extends Component {
             this.state.rateOrgDetails[i].RateLineId ===
             this.state.selectedDataRow[0].RateLineId
           ) {
-            alledProfitAmount =
-              this.state.selectedDataRow[0].TotalAmount -
-              this.state.rateOrgDetails[i].Total;
+            alledProfitAmount = this.state.manProfitAmt[i].Total;
             if (alledProfitAmount > 0) {
               showUpdate = true;
             }
@@ -3284,9 +3308,22 @@ class RateFinalizing extends Component {
         );
         subratedetails = data;
         debugger;
+        var getindex = this.state.manProfitAmt.findIndex(
+          x => x.RateLineId == rateDetailsarr[i].saleQuoteLineID
+        );
+        this.state.manProfitAmt[getindex].Total = parseFloat(
+          this.state.ProfitAmount
+        );
       } else {
         var data = this.state.rateSubDetails.filter(
           x => x.RateLineID === rateDetailsarr[i].RateLineId
+        );
+
+        var getindex = this.state.manProfitAmt.findIndex(
+          x => x.RateLineId == rateDetailsarr[i].RateLineId
+        );
+        this.state.manProfitAmt[getindex].Total = parseFloat(
+          this.state.ProfitAmount
         );
         for (let i = 0; i < data.length; i++) {
           subratedetails.push(data[i]);
@@ -3314,7 +3351,9 @@ class RateFinalizing extends Component {
                 parseFloat(alledProfitAmount) +
                 " " +
                 rateDetailsarr[i].Total.split(" ")[1];
-
+              this.state.manProfitAmt[i].Total = parseFloat(
+                this.state.ProfitAmount
+              );
               for (var i = 0; i <= rateSubDetailsarr.length; i++) {
                 if (rateSubDetailsarr[i].ChargeCode == "Freight") {
                   rateSubDetailsarr[i].Total =
@@ -3383,6 +3422,7 @@ class RateFinalizing extends Component {
             parseFloat(this.state.ProfitAmount) +
             " " +
             rateSubDetailsarr[i].Total.split(" ")[1];
+
           break;
         }
       } else {
@@ -3390,12 +3430,13 @@ class RateFinalizing extends Component {
           rateSubDetailsarr[i].TotalAmount =
             parseFloat(rateSubDetailsarr[i].TotalAmount) +
             parseFloat(this.state.ProfitAmount);
+
           break;
         }
       }
     }
     var finalprofitLossAmt =
-    profitLossAmt+ parseFloat(this.state.ProfitAmount);
+      profitLossAmt + parseFloat(this.state.ProfitAmount);
 
     var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
 
@@ -3403,26 +3444,6 @@ class RateFinalizing extends Component {
       profitLossAmt: finalprofitLossAmt,
       profitLossPer: finalprofitLossPer
     });
-    // var rateDetailsarr = this.state.selectedDataRow;
-
-    // var subratedetails = [];
-    // for (let i = 0; i < rateDetailsarr.length; i++) {
-    //   if (this.state.isCopy === true) {
-    //     var data = this.state.rateSubDetails.filter(
-    //       x => x.saleQuoteLineID === rateDetailsarr[i].saleQuoteLineID
-    //     );
-    //     subratedetails = data;
-    //   } else {
-    //     var data = this.state.rateSubDetails.filter(
-    //       x => x.RateLineID === rateDetailsarr[i].RateLineId
-    //     );
-    //     for (let i = 0; i < data.length; i++) {
-    //       subratedetails.push(data[i]);
-    //     }
-    //     // subratedetails.push(data);
-    //   }
-    // }
-    // var rateSubDetailsarr = subratedetails;
 
     for (var i = 0; i < rateDetailsarr.length; i++) {
       if (this.state.isCopy == true) {
@@ -3438,26 +3459,6 @@ class RateFinalizing extends Component {
       }
     }
 
-    // for (var i = 0; i <= rateSubDetailsarr.length; i++) {
-    //   debugger;
-    //   if (this.state.isCopy == true) {
-    //     if (rateSubDetailsarr[i].ChargeCode == "Freight") {
-    //       rateSubDetailsarr[i].Total =
-    //         parseFloat(rateSubDetailsarr[i].Amount.split(" ")[0]) +
-    //         parseFloat(this.state.ProfitAmount) +
-    //         " " +
-    //         rateSubDetailsarr[i].Amount.split(" ")[1];
-    //       break;
-    //     }
-    //   } else {
-    //     if (rateSubDetailsarr[i].ChargeCode == "Freight") {
-    //       rateSubDetailsarr[i].TotalAmount =
-    //         parseFloat(rateSubDetailsarr[i].TotalAmount) +
-    //         parseFloat(this.state.ProfitAmount);
-    //       break;
-    //     }
-    //   }
-    // }
     this.setState(prevState => ({
       modalProfit: false
     }));
@@ -3476,15 +3477,7 @@ class RateFinalizing extends Component {
         BuyRate += rateSubDetailsarr[j].BuyRate;
       }
     }
-    // var finalprofitLossAmt =
-    //   finalprofitLossAmt + parseFloat(this.state.ProfitAmount);
 
-    // var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
-
-    // this.setState({
-    //   profitLossAmt: finalprofitLossAmt,
-    //   profitLossPer: finalprofitLossPer
-    // });
     this.setState({
       toggleProfitRemoveBtn: true,
       Addedprofit: this.state.ProfitAmount
@@ -3523,10 +3516,24 @@ class RateFinalizing extends Component {
           parseFloat(this.state.ProfitAmount) +
           " " +
           rateDetailsarr[i].Total.split(" ")[1];
+
+        var getindex = this.state.manProfitAmt.findIndex(
+          x => x.RateLineId == rateDetailsarr[i].saleQuoteLineID
+        );
+        this.state.manProfitAmt[getindex].Total += parseFloat(
+          this.state.ProfitAmount
+        );
       } else {
         rateDetailsarr[i].TotalAmount =
           parseFloat(rateDetailsarr[i].TotalAmount) +
           parseFloat(this.state.ProfitAmount);
+
+        var getindex = this.state.manProfitAmt.findIndex(
+          x => x.RateLineId == rateDetailsarr[i].RateLineId
+        );
+        this.state.manProfitAmt[getindex].Total += parseFloat(
+          this.state.ProfitAmount
+        );
       }
     }
 
@@ -3548,15 +3555,15 @@ class RateFinalizing extends Component {
             parseFloat(this.state.ProfitAmount) +
             " " +
             rateSubDetailsarr[0][i].Total.split(" ")[1];
+          break;
         }
-        break;
       } else {
         if (rateSubDetailsarr[i].ChargeCode == "Freight") {
           rateSubDetailsarr[i].TotalAmount =
             parseFloat(rateSubDetailsarr[i].TotalAmount) +
             parseFloat(this.state.ProfitAmount);
+          break;
         }
-        break;
       }
     }
 
@@ -3595,7 +3602,8 @@ class RateFinalizing extends Component {
               var total = this.state.selectedDataRow[0].Total.split(" ")[0];
               var total1 = this.state.rateOrgDetails[i].Total.split(" ")[0];
 
-              alledProfitAmount = total - total1;
+              // alledProfitAmount = total - total1;
+              alledProfitAmount = this.state.manProfitAmt[i].Total;
             }
           }
         } else {
@@ -3603,9 +3611,7 @@ class RateFinalizing extends Component {
             this.state.rateOrgDetails[i].RateLineId ===
             this.state.selectedDataRow[0].RateLineId
           ) {
-            alledProfitAmount =
-              this.state.selectedDataRow[0].TotalAmount -
-              this.state.rateOrgDetails[i].Total;
+            alledProfitAmount = this.state.manProfitAmt[i].Total;
             if (alledProfitAmount > 0) {
               showUpdate = true;
             }
@@ -3613,7 +3619,7 @@ class RateFinalizing extends Component {
         }
       }
     }
-    if (alledProfitAmount === this.state.ProfitAmount) {
+    if (alledProfitAmount === parseFloat(this.state.ProfitAmount)) {
       var rateDetailsarr = this.state.selectedDataRow;
 
       var subratedetails = [];
@@ -3652,6 +3658,12 @@ class RateFinalizing extends Component {
               " " +
               rateDetailsarr[i].Total.split(" ")[1];
 
+            var getindex = this.state.manProfitAmt.findIndex(
+              x => x.RateLineId == rateDetailsarr[i].saleQuoteLineID
+            );
+            this.state.manProfitAmt[getindex].Total -= parseFloat(
+              this.state.ProfitAmount
+            );
             for (var i = 0; i <= rateSubDetailsarr.length; i++) {
               if (rateSubDetailsarr[i].ChargeCode == "Freight") {
                 rateSubDetailsarr[i].Total =
@@ -3659,14 +3671,11 @@ class RateFinalizing extends Component {
                   parseFloat(this.state.ProfitAmount) +
                   " " +
                   rateSubDetailsarr[i].Total.split(" ")[1];
-
-                break;
               }
+              break;
             }
           } else {
-            NotificationManager.error(
-              "Price should not be less than " + rateOrgDetailsarr[0].Total
-            );
+            NotificationManager.error("Please enter valid profit amount.");
           }
         } else {
           var rateOrgDetailsarr = this.state.rateOrgDetails.filter(
@@ -3680,19 +3689,22 @@ class RateFinalizing extends Component {
             rateDetailsarr[i].TotalAmount =
               parseFloat(rateDetailsarr[i].TotalAmount) -
               parseFloat(this.state.ProfitAmount);
-
+            var getindex = this.state.manProfitAmt.findIndex(
+              x => x.RateLineId == rateDetailsarr[i].RateLineId
+            );
+            this.state.manProfitAmt[getindex].Total -= parseFloat(
+              this.state.ProfitAmount
+            );
             for (var j = 0; j <= rateSubDetailsarr.length; j++) {
               if (rateSubDetailsarr[j].ChargeCode == "Freight") {
                 rateSubDetailsarr[j].TotalAmount =
                   parseFloat(rateSubDetailsarr[j].TotalAmount) -
                   parseFloat(this.state.ProfitAmount);
-                break;
               }
+              break;
             }
           } else {
-            NotificationManager.error(
-              "Price should not be less than " + rateOrgDetailsarr[0].Total
-            );
+            NotificationManager.error("Please enter valid profit amount.");
           }
         }
       }
@@ -3730,9 +3742,7 @@ class RateFinalizing extends Component {
       });
       this.forceUpdate();
     } else {
-      NotificationManager.error(
-        "Please Enter give profit" + this.state.ProfitAmount
-      );
+      NotificationManager.error("Please enter valid profit amount.");
     }
   }
 
@@ -3747,6 +3757,9 @@ class RateFinalizing extends Component {
     debugger;
     var rateDetailsarr = this.state.selectedDataRow;
     var getindex = 0;
+    var BuyRate = 0;
+    var profitLossAmt = this.state.profitLossAmt || 0;
+    var profitLossPer = this.state.profitLossPer || 0;
     if (e.target.checked) {
       for (var i = 0; i < rateDetailsarr.length; i++) {
         var newrateSubDetails = {};
@@ -3782,24 +3795,61 @@ class RateFinalizing extends Component {
                 final_sum + " " + currency;
 
               var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount + calAmount;
 
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.saleQuoteLineID ===
+                  this.state.rateDetails[getindex].saleQuoteLineID
+              );
+
+              debugger;
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                var newtotal = DatarateSubDetails[j].Total.split(" ")[0];
+                newprofitLossAmt +=
+                  parseFloat(newtotal) - DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+
+              var finalprofitLossAmt = profitLossAmt - newprofitLossAmt;
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt += finalAmountInBaseCurrency;
+              BuyRate += element.Buying;
+              finalprofitLossAmt += newprofitLossAmt;
+              var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+              // var profitLossPer1 = (finalprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: finalprofitLossAmt,
+                profitLossPer: finalprofitLossPer
+              });
+
+              this.setState({ localsurAmount });
               var newrateSubDetails = {
-                ChargeID: 0,
-                BuyRate: parseFloat(e.target.value),
-                Rate: parseFloat(e.target.value),
-                Currency: e.target.getAttribute("data-currency"),
+                ChargeID: element.ChargeID,
+                BuyRate: element.Buying,
+                Rate: parseFloat(element.AmountInBaseCurrency),
+                Currency: element.Currency,
                 saleQuoteLineID: this.state.rateDetails[getindex]
                   .saleQuoteLineID,
-                ChargeCode: e.target.getAttribute("data-chargedesc"),
-                ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                ChargeCode: element.ChargeCode,
+                ChargeDesc: element.ChargeDesc,
                 Tax: 0,
-                Chargeitem: e.target.getAttribute("data-chargeitem"),
-                Exrate: e.target.getAttribute("data-ExRate"),
-                ChargeType: e.target.getAttribute("data-chargetype"),
-                TotalAmount: parseFloat(calAmount),
-                Amount:
-                  e.target.value + " " + e.target.getAttribute("data-currency"),
-                BaseCurrency: e.target.getAttribute("data-currency")
+                ChargeItem: element.ChargeItem,
+                Exrate: element.Exrate,
+                ChargeType: element.ChargeCode,
+                Total:
+                  parseFloat(element.AmountInBaseCurrency) +
+                  " " +
+                  element.BaseCurrency,
+                BaseCurrency: element.BaseCurrency
               };
               if (
                 this.state.containerLoadType == "FTL" ||
@@ -3822,32 +3872,67 @@ class RateFinalizing extends Component {
               total = data[0];
               currency = data[1];
 
-              var final_sum = (
-                parseFloat(total) + parseFloat(e.target.value)
-              );
+              var final_sum = parseFloat(total) + parseFloat(e.target.value);
 
               this.state.rateDetails[getindex].Total =
                 final_sum + " " + currency;
 
               var calAmount = parseFloat(e.target.value);
 
+              var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount + calAmount;
+
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.RateLineID === this.state.rateDetails[getindex].RateLineId
+              );
+
+              debugger;
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                var newtotal = DatarateSubDetails[j].Total.split(" ")[0];
+                newprofitLossAmt +=
+                  parseFloat(newtotal) - DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+
+              var finalprofitLossAmt = profitLossAmt - newprofitLossAmt;
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt += finalAmountInBaseCurrency;
+              BuyRate += element.Buying;
+              finalprofitLossAmt += newprofitLossAmt;
+              var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+              // var profitLossPer1 = (finalprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: finalprofitLossAmt,
+                profitLossPer: finalprofitLossPer
+              });
+
               var newrateSubDetails = {
-                ChargeID: 0,
-                BuyRate: parseFloat(e.target.value),
-                Rate: parseFloat(e.target.value),
-                Currency: e.target.getAttribute("data-currency"),
+                ChargeID: element.ChargeID,
+                BuyRate: element.Buying,
+                Rate: parseFloat(element.AmountInBaseCurrency),
+                Currency: element.Currency,
                 saleQuoteLineID: this.state.rateDetails[getindex]
                   .saleQuoteLineID,
-                ChargeCode: e.target.getAttribute("data-chargedesc"),
-                ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                ChargeCode: element.ChargeCode,
+                ChargeDesc: element.ChargeDesc,
                 Tax: 0,
-                Chargeitem: e.target.getAttribute("data-chargeitem"),
-                Exrate: e.target.getAttribute("data-ExRate"),
-                ChargeType: e.target.getAttribute("data-chargetype"),
-                TotalAmount: parseFloat(calAmount),
-                Amount:
-                  e.target.value + " " + e.target.getAttribute("data-currency"),
-                BaseCurrency: e.target.getAttribute("data-currency")
+                ChargeItem: element.ChargeItem,
+                Exrate: element.Exrate,
+                ChargeType: element.ChargeCode,
+                Total:
+                  parseFloat(element.AmountInBaseCurrency) +
+                  " " +
+                  element.BaseCurrency,
+                BaseCurrency: element.BaseCurrency
               };
               if (
                 this.state.containerLoadType == "FTL" ||
@@ -3882,23 +3967,60 @@ class RateFinalizing extends Component {
               this.state.rateDetails[i].Total = final_sum + " " + currency;
 
               var calAmount = parseFloat(e.target.value);
+              var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount + calAmount;
+
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.RateLineID === this.state.rateDetails[getindex].RateLineId
+              );
+
+              debugger;
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                var newtotal = DatarateSubDetails[j].Total.split(" ")[0];
+                newprofitLossAmt +=
+                  parseFloat(newtotal) - DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+
+              var finalprofitLossAmt = profitLossAmt - newprofitLossAmt;
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt += finalAmountInBaseCurrency;
+              BuyRate += element.Buying;
+              finalprofitLossAmt += newprofitLossAmt;
+              var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+              // var profitLossPer1 = (finalprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: finalprofitLossAmt,
+                profitLossPer: finalprofitLossPer
+              });
 
               var newrateSubDetails = {
-                ChargeID: 0,
-                BuyRate: parseFloat(e.target.value),
-                Rate: parseFloat(e.target.value),
-                Currency: e.target.getAttribute("data-currency"),
-                saleQuoteLineID: this.state.rateDetails[i].saleQuoteLineID,
-                ChargeCode: e.target.getAttribute("data-chargedesc"),
-                ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                ChargeID: element.ChargeID,
+                BuyRate: element.Buying,
+                Rate: parseFloat(element.AmountInBaseCurrency),
+                Currency: element.Currency,
+                saleQuoteLineID: this.state.rateDetails[getindex]
+                  .saleQuoteLineID,
+                ChargeCode: element.ChargeCode,
+                ChargeDesc: element.ChargeDesc,
                 Tax: 0,
-                Chargeitem: e.target.getAttribute("data-chargeitem"),
-                Exrate: e.target.getAttribute("data-ExRate"),
-                ChargeType: e.target.getAttribute("data-chargetype"),
-                TotalAmount: parseFloat(calAmount),
-                Amount:
-                  e.target.value + " " + e.target.getAttribute("data-currency"),
-                BaseCurrency: e.target.getAttribute("data-currency")
+                ChargeItem: element.ChargeItem,
+                Exrate: element.Exrate,
+                ChargeType: element.ChargeCode,
+                Total:
+                  parseFloat(element.AmountInBaseCurrency) +
+                  " " +
+                  element.BaseCurrency,
+                BaseCurrency: element.BaseCurrency
               };
               if (
                 this.state.containerLoadType == "FTL" ||
@@ -3925,28 +4047,62 @@ class RateFinalizing extends Component {
                   x => x.RateLineId === rateDetailsarr[i].RateLineId
                 );
 
-                this.state.rateDetails[getindex].TotalAmount = (
+                this.state.rateDetails[getindex].TotalAmount =
                   parseFloat(
                     this.state.rateDetails[getindex].TotalAmount == null
                       ? 0
                       : this.state.rateDetails[getindex].TotalAmount
-                  ) + parseFloat(e.target.value)
-                );
+                  ) + parseFloat(e.target.value);
 
                 var calAmount = parseFloat(e.target.value);
+                var localsurAmount = this.state.localsurAmount + calAmount;
+
+                var DatarateSubDetails = this.state.rateSubDetails.filter(
+                  x =>
+                    x.RateLineID === this.state.rateDetails[getindex].RateLineId
+                );
+
+                debugger;
+                var newprofitLossAmt = 0;
+                var BuyRate = 0;
+                var finalAmountInBaseCurrency =
+                  element.AmountInBaseCurrency - element.Buying;
+                for (let j = 0; j < DatarateSubDetails.length; j++) {
+                  newprofitLossAmt +=
+                    DatarateSubDetails[j].TotalAmount -
+                    DatarateSubDetails[j].BuyRate;
+                  BuyRate += DatarateSubDetails[j].BuyRate;
+                }
+
+                var finalprofitLossAmt = profitLossAmt - newprofitLossAmt;
+                var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+                var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+                newprofitLossAmt += finalAmountInBaseCurrency;
+                BuyRate += element.Buying;
+                finalprofitLossAmt += newprofitLossAmt;
+                var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+                finalprofitLossPer += profitLossPer;
+
+                this.setState({
+                  profitLossAmt: finalprofitLossAmt,
+                  profitLossPer: finalprofitLossPer
+                });
+
+                this.setState({ localsurAmount });
                 var newrateSubDetails = {
-                  ChargeID: 0,
-                  BuyRate: parseFloat(e.target.value),
-                  Rate: parseFloat(e.target.value),
-                  Currency: e.target.getAttribute("data-currency"),
+                  ChargeID: element.ChargeID,
+                  BuyRate: element.Buying,
+                  Rate: parseFloat(element.AmountInBaseCurrency),
+                  Currency: element.Currency,
                   RateLineID: this.state.rateDetails[getindex].RateLineId,
-                  ChargeCode: e.target.getAttribute("data-chargedesc"),
-                  ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                  ChargeCode: element.ChargeCode,
+                  ChargeDesc: element.ChargeDesc,
                   Tax: 0,
-                  ChargeItem: e.target.getAttribute("data-chargeitem"),
-                  Exrate: 1,
-                  ChargeType: e.target.getAttribute("data-chargetype"),
-                  TotalAmount: parseFloat(calAmount),
+                  ChargeItem: element.ChargeItem,
+                  Exrate: element.Exrate,
+                  ChargeType: element.ChargeCode,
+                  TotalAmount: parseFloat(element.AmountInBaseCurrency),
                   BaseCurrency: e.target.getAttribute("data-currency")
                 };
                 if (
@@ -3967,28 +4123,63 @@ class RateFinalizing extends Component {
                 x => x.RateLineId === rateDetailsarr[i].RateLineId
               );
 
-              this.state.rateDetails[getindex].TotalAmount = (
+              this.state.rateDetails[getindex].TotalAmount =
                 parseFloat(
                   this.state.rateDetails[getindex].TotalAmount == null
                     ? 0
                     : this.state.rateDetails[getindex].TotalAmount
-                ) + parseFloat(e.target.value)
-              );
+                ) + parseFloat(e.target.value);
 
               var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount + calAmount;
+
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.RateLineID === this.state.rateDetails[getindex].RateLineId
+              );
+
+              debugger;
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                newprofitLossAmt +=
+                  DatarateSubDetails[j].TotalAmount -
+                  DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+
+              var finalprofitLossAmt = profitLossAmt - newprofitLossAmt;
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt += finalAmountInBaseCurrency;
+              BuyRate += element.Buying;
+              finalprofitLossAmt += newprofitLossAmt;
+
+              var profitLossPer = (finalprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: finalprofitLossAmt,
+                profitLossPer: finalprofitLossPer
+              });
+
+              this.setState({ localsurAmount });
               var newrateSubDetails = {
-                ChargeID: 0,
-                BuyRate: parseFloat(e.target.value),
-                Rate: parseFloat(e.target.value),
-                Currency: e.target.getAttribute("data-currency"),
+                ChargeID: element.ChargeID,
+                BuyRate: element.Buying,
+                Rate: parseFloat(element.AmountInBaseCurrency),
+                Currency: element.Currency,
                 RateLineID: this.state.rateDetails[getindex].RateLineId,
-                ChargeCode: e.target.getAttribute("data-chargedesc"),
-                ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                ChargeCode: element.ChargeCode,
+                ChargeDesc: element.ChargeDesc,
                 Tax: 0,
-                ChargeItem: e.target.getAttribute("data-chargeitem"),
-                Exrate: 1,
-                ChargeType: e.target.getAttribute("data-chargetype"),
-                TotalAmount: parseFloat(calAmount),
+                ChargeItem: element.ChargeItem,
+                Exrate: element.Exrate,
+                ChargeType: element.ChargeCode,
+                TotalAmount: parseFloat(element.AmountInBaseCurrency),
                 BaseCurrency: e.target.getAttribute("data-currency")
               };
               if (
@@ -4019,19 +4210,54 @@ class RateFinalizing extends Component {
               ).toFixed(2);
 
               var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount + calAmount;
+
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.RateLineID === this.state.rateDetails[getindex].RateLineId
+              );
+
+              debugger;
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                newprofitLossAmt +=
+                  DatarateSubDetails[j].TotalAmount -
+                  DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+
+              var finalprofitLossAmt = profitLossAmt - newprofitLossAmt;
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt += finalAmountInBaseCurrency;
+              BuyRate += element.Buying;
+              finalprofitLossAmt += newprofitLossAmt;
+              var profitLossPer = (finalprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: finalprofitLossAmt,
+                profitLossPer: finalprofitLossPer
+              });
+
+              this.setState({ localsurAmount });
               var newrateSubDetails = {
-                ChargeID: 0,
-                BuyRate: parseFloat(e.target.value),
-                Rate: parseFloat(e.target.value),
-                Currency: e.target.getAttribute("data-currency"),
-                RateLineID: this.state.rateDetails[i].RateLineId,
-                ChargeCode: e.target.getAttribute("data-chargedesc"),
-                ChargeDesc: e.target.getAttribute("data-chargedesc"),
+                ChargeID: element.ChargeID,
+                BuyRate: element.Buying,
+                Rate: parseFloat(element.AmountInBaseCurrency),
+                Currency: element.Currency,
+                RateLineID: this.state.rateDetails[getindex].RateLineId,
+                ChargeCode: element.ChargeCode,
+                ChargeDesc: element.ChargeDesc,
                 Tax: 0,
-                ChargeItem: e.target.getAttribute("data-chargeitem"),
-                Exrate: 1,
-                ChargeType: e.target.getAttribute("data-chargetype"),
-                TotalAmount: parseFloat(calAmount),
+                ChargeItem: element.ChargeItem,
+                Exrate: element.Exrate,
+                ChargeType: element.ChargeCode,
+                TotalAmount: parseFloat(element.AmountInBaseCurrency),
                 BaseCurrency: e.target.getAttribute("data-currency")
               };
               if (
@@ -4080,16 +4306,54 @@ class RateFinalizing extends Component {
               );
 
               this.state.rateDetails[getindex].Total =
-                (parseFloat(amount[0]) - parseFloat(e.target.value)) +
+                parseFloat(amount[0]) -
+                parseFloat(e.target.value) +
                 " " +
                 amount[1];
 
-              for (var j = 0; j <= this.state.rateSubDetails.length - 1; j++) {
+              var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount - calAmount;
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.saleQuoteLineID ===
+                  this.state.rateDetails[getindex].saleQuoteLineID
+              );
+
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                var newtotal = DatarateSubDetails[j].Total.split(" ")[0];
+                newprofitLossAmt += newtotal - DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+              debugger;
+
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt -= finalAmountInBaseCurrency;
+              BuyRate -= element.Buying;
+
+              var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: profitLossAmt - finalAmountInBaseCurrency,
+                profitLossPer: finalprofitLossPer
+              });
+
+              this.setState({ localsurAmount });
+
+              for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
-                  e.target.getAttribute("data-chargedesc")
+                  element.ChargeCode
                 ) {
-                  this.state.rateSubDetails.splice(j--, 1);
+                  this.state.rateSubDetails.splice(j, 1);
+                  break;
                 }
               }
             } else {
@@ -4097,24 +4361,54 @@ class RateFinalizing extends Component {
                 var amount = this.processText(
                   this.state.rateDetails[getindex].Total
                 );
-
                 this.state.rateDetails[getindex].Total =
                   (parseFloat(amount[0]) - parseFloat(e.target.value)).toFixed(
                     2
                   ) +
                   " " +
                   amount[1];
+                var calAmount = parseFloat(e.target.value);
+                var localsurAmount = this.state.localsurAmount - calAmount;
+                var DatarateSubDetails = this.state.rateSubDetails.filter(
+                  x =>
+                    x.saleQuoteLineID ===
+                    this.state.rateDetails[getindex].saleQuoteLineID
+                );
 
-                for (
-                  var j = 0;
-                  j <= this.state.rateSubDetails.length - 1;
-                  j++
-                ) {
+                var newprofitLossAmt = 0;
+                var BuyRate = 0;
+                var finalAmountInBaseCurrency =
+                  element.AmountInBaseCurrency - element.Buying;
+
+                for (let j = 0; j < DatarateSubDetails.length; j++) {
+                  newprofitLossAmt +=
+                    DatarateSubDetails[j].TotalAmount -
+                    DatarateSubDetails[j].BuyRate;
+                  BuyRate += DatarateSubDetails[j].BuyRate;
+                }
+                var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+                var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+                newprofitLossAmt -= finalAmountInBaseCurrency;
+                BuyRate -= element.Buying;
+
+                var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+                finalprofitLossPer += profitLossPer;
+
+                this.setState({
+                  profitLossAmt: profitLossAmt - finalAmountInBaseCurrency,
+                  profitLossPer: finalprofitLossPer
+                });
+
+                this.setState({ localsurAmount });
+
+                for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                   if (
                     this.state.rateSubDetails[j]["ChargeCode"] ==
-                    e.target.getAttribute("data-chargedesc")
+                    element.ChargeCode
                   ) {
-                    this.state.rateSubDetails.splice(j--, 1);
+                    this.state.rateSubDetails.splice(j, 1);
+                    break;
                   }
                 }
               }
@@ -4128,36 +4422,106 @@ class RateFinalizing extends Component {
               element.ContainerType ===
                 this.state.rateDetails[getindex].ContainerType
             ) {
-              this.state.rateDetails[getindex].TotalAmount = (
+              this.state.rateDetails[getindex].TotalAmount =
                 parseFloat(this.state.rateDetails[getindex].TotalAmount) -
-                parseFloat(e.target.value)
-              ) ;
+                parseFloat(e.target.value);
 
-              for (var j = 0; j <= this.state.rateSubDetails.length - 1; j++) {
+              var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount - calAmount;
+
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.RateLineID === this.state.rateDetails[getindex].RateLineId
+              );
+
+              debugger;
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                newprofitLossAmt +=
+                  DatarateSubDetails[j].TotalAmount -
+                  DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt -= finalAmountInBaseCurrency;
+              BuyRate -= element.Buying;
+
+              var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: profitLossAmt - finalAmountInBaseCurrency,
+                profitLossPer: finalprofitLossPer
+              });
+
+              this.setState({ localsurAmount });
+
+              for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
-                  e.target.getAttribute("data-chargedesc")
+                  element.ChargeCode
                 ) {
-                  this.state.rateSubDetails.splice(j--, 1);
+                  this.state.rateSubDetails.splice(j, 1);
+                  break;
                 }
               }
             } else {
               if (this.state.containerLoadType === "AIR") {
-                this.state.rateDetails[getindex].TotalAmount = (
+                this.state.rateDetails[getindex].TotalAmount =
                   parseFloat(this.state.rateDetails[getindex].TotalAmount) -
-                  parseFloat(e.target.value)
-                ) ;
+                  parseFloat(e.target.value);
 
-                for (
-                  var j = 0;
-                  j <= this.state.rateSubDetails.length - 1;
-                  j++
-                ) {
+                var calAmount = parseFloat(e.target.value);
+                var localsurAmount = this.state.localsurAmount - calAmount;
+
+                var DatarateSubDetails = this.state.rateSubDetails.filter(
+                  x =>
+                    x.RateLineID === this.state.rateDetails[getindex].RateLineId
+                );
+
+                debugger;
+                var newprofitLossAmt = 0;
+                var BuyRate = 0;
+                var finalAmountInBaseCurrency =
+                  element.AmountInBaseCurrency - element.Buying;
+
+                for (let j = 0; j < DatarateSubDetails.length; j++) {
+                  newprofitLossAmt +=
+                    DatarateSubDetails[j].TotalAmount -
+                    DatarateSubDetails[j].BuyRate;
+                  BuyRate += DatarateSubDetails[j].BuyRate;
+                }
+
+                var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+                var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+                newprofitLossAmt -= finalAmountInBaseCurrency;
+                BuyRate -= element.Buying;
+
+                var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+                finalprofitLossPer += profitLossPer;
+
+                this.setState({
+                  profitLossAmt: profitLossAmt - finalAmountInBaseCurrency,
+                  profitLossPer: finalprofitLossPer
+                });
+
+                this.setState({ localsurAmount });
+
+                for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                   if (
                     this.state.rateSubDetails[j]["ChargeCode"] ==
-                    e.target.getAttribute("data-chargedesc")
+                    element.ChargeCode
                   ) {
-                    this.state.rateSubDetails.splice(j--, 1);
+                    this.state.rateSubDetails.splice(j, 1);
+                    break;
                   }
                 }
               }
@@ -4173,30 +4537,103 @@ class RateFinalizing extends Component {
               var amount = this.processText(this.state.rateDetails[i].Total);
 
               this.state.rateDetails[i].Total =
-                (parseFloat(amount[0]) - parseFloat(e.target.value)) +
+                parseFloat(amount[0]) -
+                parseFloat(e.target.value) +
                 " " +
                 amount[1];
 
-              for (var j = 0; j <= this.state.rateSubDetails.length - 1; j++) {
+              var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount - calAmount;
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.saleQuoteLineID ===
+                  this.state.rateDetails[getindex].saleQuoteLineID
+              );
+
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                newprofitLossAmt +=
+                  DatarateSubDetails[j].TotalAmount -
+                  DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt -= finalAmountInBaseCurrency;
+              BuyRate -= element.Buying;
+
+              var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: profitLossAmt - finalAmountInBaseCurrency,
+                profitLossPer: finalprofitLossPer
+              });
+
+              this.setState({ localsurAmount });
+
+              for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
-                  e.target.getAttribute("data-chargedesc")
+                  element.ChargeCode
                 ) {
-                  this.state.rateSubDetails.splice(j--, 1);
+                  this.state.rateSubDetails.splice(j, 1);
+                  break;
                 }
               }
             } else {
-              this.state.rateDetails[i].TotalAmount = (
+              this.state.rateDetails[i].TotalAmount =
                 parseFloat(this.state.rateDetails[i].TotalAmount) -
-                parseFloat(e.target.value)
-              ) ;
+                parseFloat(e.target.value);
 
-              for (var j = 0; j <= this.state.rateSubDetails.length - 1; j++) {
+              var calAmount = parseFloat(e.target.value);
+              var localsurAmount = this.state.localsurAmount - calAmount;
+
+              var DatarateSubDetails = this.state.rateSubDetails.filter(
+                x =>
+                  x.RateLineID === this.state.rateDetails[getindex].RateLineId
+              );
+
+              debugger;
+              var newprofitLossAmt = 0;
+              var BuyRate = 0;
+              var finalAmountInBaseCurrency =
+                element.AmountInBaseCurrency - element.Buying;
+
+              for (let j = 0; j < DatarateSubDetails.length; j++) {
+                newprofitLossAmt +=
+                  DatarateSubDetails[j].TotalAmount -
+                  DatarateSubDetails[j].BuyRate;
+                BuyRate += DatarateSubDetails[j].BuyRate;
+              }
+
+              var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+              var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+              newprofitLossAmt -= finalAmountInBaseCurrency;
+              BuyRate -= element.Buying;
+
+              var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+              finalprofitLossPer += profitLossPer;
+
+              this.setState({
+                profitLossAmt: profitLossAmt - finalAmountInBaseCurrency,
+                profitLossPer: finalprofitLossPer
+              });
+              this.setState({ localsurAmount });
+
+              for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
-                  e.target.getAttribute("data-chargedesc")
+                  element.ChargeCode
                 ) {
-                  this.state.rateSubDetails.splice(j--, 1);
+                  this.state.rateSubDetails.splice(j, 1);
+                  break;
                 }
               }
             }
@@ -4330,7 +4767,7 @@ class RateFinalizing extends Component {
               " (" +
               flattack_openTop[i].SpecialContainerCode +
               ")",
-            Quantity: flattack_openTop[i].Quantity,
+            Quantity: this.state.users[0].ContainerQuantity,
             Lenght: flattack_openTop[i].length,
             Width: flattack_openTop[i].width,
             Height: flattack_openTop[i].height,
@@ -5318,9 +5755,9 @@ class RateFinalizing extends Component {
                   BuyRate += rateSubDetails[j].BuyRate;
                 }
                 profitLossPer = (profitLossAmt * 100) / BuyRate;
-                var finalprofitLossAmt = profitLossAmt-profitLossAmt1 ;
+                var finalprofitLossAmt = profitLossAmt - profitLossAmt1;
 
-                var finalprofitLossPer =profitLossPer- profitLossPer1  ;
+                var finalprofitLossPer = profitLossPer - profitLossPer1;
                 if (selectedRow.length > 0) {
                   this.setState({
                     BuyRate,
@@ -5379,12 +5816,8 @@ class RateFinalizing extends Component {
   }
 
   handleChangeDiscount(e) {
-    //debugger;;
     var jiji = e.target.value;
 
-    // if (isNaN(jiji)) {
-    //   return false;
-    // }
     var splitText = jiji.split(".");
     var index = jiji.indexOf(".");
     if (index != -1) {
@@ -5404,7 +5837,6 @@ class RateFinalizing extends Component {
     }
   }
   cmbTypeRadioChange(e) {
-    //debugger;;
     var value = e.target.value;
 
     this.setState({ cmbTypeRadio: value });
@@ -5417,53 +5849,9 @@ class RateFinalizing extends Component {
 
   printModalPopUp() {
     debugger;
-    // var divToPrint = document.getElementById("printDiv");
-    // var newWin = window.open("", "Print-Window");
-    // newWin.document.open();
-    // newWin.document.write(
-    //   '<html><body onload="window.print()">' +
-    //     divToPrint.innerHTML +
-    //     "</body></html>"
-    // );
-    // newWin.document.close();
-    // setTimeout(function() {
-    //   newWin.close();
-    // }, 10);
 
     var w = document.getElementById("printDiv").offsetWidth;
     var h = document.getElementById("printDiv").offsetHeight;
-    // html2canvas(document.getElementById("printDiv"), {
-
-    //   dpi: 300, // Set to 300 DPI
-    //   scale: 3, // Adjusts your resolution
-    //   onrendered: function(canvas) {
-    //     debugger
-    //     var img = canvas.toDataURL("image/jpeg", 1);
-    //     var doc = new jsPDF('L', 'px', [w, h]);
-    //   doc.addImage(img, 'JPEG', 0, 0, w, h);
-    //     doc.save("sample-file.pdf");
-    //     console.log(doc)
-    //   }
-    // });
-
-    // const input = document.getElementById("printDiv");
-    // const pdf = new jsPDF("portrait", "mm", "a4");
-    // if (pdf) {
-    //   domtoimage.toPng(input).then(imgData => {
-    //     debugger;
-    //     pdf.addImage(imgData, "JPEG", 0,0,210, 297);
-    //     pdf.save("download.pdf");
-    //   });
-    //   debugger;
-    //   let obj = {};
-    //   obj.pdfContent = pdf.output("datauristring");
-    //   var jsonData = JSON.stringify(obj);
-    //   console.log(pdf, "-----pdf--------------");
-    //   console.log(obj, "--obj---");
-    //   console.log(jsonData, "--jsonData---");
-    //   var file = this.dataURLtoFile(obj.pdfContent);
-    //   console.log(file, "----------file---------");
-    // }
   }
 
   dataURLtoFile(dataurl) {
@@ -5537,9 +5925,7 @@ class RateFinalizing extends Component {
               <img
                 title={item.LineName}
                 alt={item.LineName}
-                onError={this.onErrorImg.bind(
-                  this
-                )}
+                onError={this.onErrorImg.bind(this)}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
                   item.LineName.replace(" ", "_") +
@@ -5579,9 +5965,7 @@ class RateFinalizing extends Component {
               <img
                 alt={item.LineName}
                 title={item.LineName}
-                onError={this.onErrorImg.bind(
-                  this
-                )}
+                onError={this.onErrorImg.bind(this)}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                   item.LineName.replace(" ", "_") +
@@ -5621,9 +6005,7 @@ class RateFinalizing extends Component {
               <img
                 title={item.LineName}
                 alt={item.LineName}
-                onError={this.onErrorImg.bind(
-                  this
-                )}
+                onError={this.onErrorImg.bind(this)}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                 }
@@ -5677,9 +6059,7 @@ class RateFinalizing extends Component {
               <img
                 title={item.LineName}
                 alt={item.LineName}
-                onError={this.onErrorImg.bind(
-                  this
-                )}
+                onError={this.onErrorImg.bind(this)}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
                   item.LineName.replace(" ", "_") +
@@ -5720,9 +6100,7 @@ class RateFinalizing extends Component {
               <img
                 title={item.LineName}
                 alt={item.LineName}
-                onError={this.onErrorImg.bind(
-                  this
-                )}
+                onError={this.onErrorImg.bind(this)}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                   item.LineName.replace(" ", "_") +
@@ -5763,9 +6141,7 @@ class RateFinalizing extends Component {
               <img
                 title={item.LineName}
                 alt={item.LineName}
-                onError={this.onErrorImg.bind(
-                  this
-                )}
+                onError={this.onErrorImg.bind(this)}
                 src={
                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                 }
@@ -5906,13 +6282,13 @@ class RateFinalizing extends Component {
                             </div>
                             <div className="text-center">
                               {this.state.toggleIsEdit && (
-                                <button
-                                  onClick={this.RequestChangeMsgModal}
-                                  className="butn more-padd m-0"
-                                >
-                                  Request Change
-                                </button>
-                              )}
+                              <button
+                                onClick={this.RequestChangeMsgModal}
+                                className="butn more-padd m-0"
+                              >
+                                Request Change
+                              </button>
+                               )} 
                             </div>
                           </div>
                         </div>
@@ -6254,7 +6630,7 @@ class RateFinalizing extends Component {
                                       return (
                                         <>
                                           <p className="details-title">
-                                            Transshipment Port
+                                            Transit port
                                           </p>
                                           <p className="details-para">
                                             {row.original.TransshipmentPort}
@@ -6339,13 +6715,18 @@ class RateFinalizing extends Component {
                                   {
                                     Cell: row => {
                                       if (this.state.isCopy === true) {
+                                        var total =
+                                          parseFloat(
+                                            row.original.Total.split(" ")[0]
+                                          ) + row.original.Profit;
+
                                         return (
                                           <>
                                             <p className="details-title">
                                               Price
                                             </p>
                                             <p className="details-para">
-                                              {row.original.Total}
+                                              {total + " "+row.original.Total.split(" ")[1]}
                                             </p>
                                           </>
                                         );

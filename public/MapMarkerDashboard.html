@@ -322,7 +322,7 @@
       }
 
       function setMarkers(map, locations) {
-        //debugger;
+        debugger;
         var marker, i;
 
         for (i = 0; i < locations.length; i++) {
@@ -413,7 +413,7 @@
                         debugger;
 
                         var CinnerContentDatas = "";
-                        var ContNo = filterData[k].replace(/%20/g, " ");
+                        var ContNo = filterData[k].replace(/ +/g, "");;
                         var fContNo= filterData[k];
                         var tempData = datas.filter(
                           x =>
@@ -676,7 +676,7 @@
                     debugger;
 
                     var CinnerContentDatas = "";
-                    var ContNo = filterData[k].replace(/%20/g, " ");
+                    var ContNo = filterData[k].replace(/ +/g, "");;
                     var fContNo = filterData[k];
                     var tempData = datas.filter(
                       x =>

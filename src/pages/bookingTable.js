@@ -249,7 +249,7 @@ class BookingTable extends Component {
     } else {
       finalFilterData = [{ POL: "No Record Found" }];
     }
-    console.log(finalFilterData, "--------dataQuote");
+    
 
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
@@ -352,70 +352,28 @@ class BookingTable extends Component {
                         Cell: row => {
                           debugger;
                           if (row.row.POL !== "No Record Found") {
-                            if (row.original.Status === "Pending") {
-                              return (
-                                <div className="action-cntr">
-                                  {/* <a> */}
-                                  <img
-                                    className="actionicon"
-                                    src={Eye}
-                                    alt="view-icon"
-                                    onClick={e =>
-                                      this.HandleRowClickEvt(e, row)
-                                    }
-                                  />
-                                  {/* <img
-                                    className="actionicon"
-                                    src={Edit}
-                                    alt="view-icon"
-                                    onClick={e =>
-                                      this.HandleDocumentView(e, row)
-                                    }
-                                  /> */}
-                                  <img
-                                    className="actionicon"
-                                    src={Copy}
-                                    alt="view-icon"
-                                    onClick={e => this.HandleCopyClick(e, row)}
-                                  />
-                                </div>
-                              );
-                            }
-                            if (row.original.Status === "Approved") {
-                              return (
-                                <div className="action-cntr">
-                                  <img
-                                    className="actionicon"
-                                    src={Eye}
-                                    alt="view-icon"
-                                    onClick={e =>
-                                      this.HandleRowClickEvt(e, row)
-                                    }
-                                  />
-
-                                  <img
-                                    className="actionicon"
-                                    src={Edit}
-                                    alt="view-icon"
-                                    onClick={e =>
-                                      this.HandleDocumentView(e, row)
-                                    }
-                                  />
-
-                                  <img
-                                    className="actionicon"
-                                    src={Copy}
-                                    alt="view-icon"
-                                    onClick={e => this.HandleCopyClick(e, row)}
-                                  />
-                                </div>
-                              );
-                            }
-                            if (row.original.Status === "Rejected") {
-                              return <></>;
-                            }
-                          } else {
-                            return <></>;
+                            return (
+                              <div className="action-cntr">
+                                {/* <a> */}
+                                <img
+                                  className="actionicon"
+                                  src={Eye}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleRowClickEvt(e, row)}
+                                />
+                                
+                                <img
+                                  className="actionicon"
+                                  src={Copy}
+                                  alt="view-icon"
+                                  onClick={e => this.HandleCopyClick(e, row)}
+                                />
+                              </div>
+                            );
+                          }
+                          else
+                          {
+                            return<></>
                           }
                         }
                       }

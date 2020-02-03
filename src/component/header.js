@@ -51,17 +51,22 @@ class Header extends Component {
       fields: {},
       CompanyID: 0,
       companyName: "",
-      CompanyAddress: ""
+      CompanyAddress: "",
+      selectedCurrency: "USD",
+      profileImgURL: ""
     };
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
-    // this.RedirectoShipment = this.RedirectoShipment.bind(this);
-    // this.HandleActivityClick = this.HandleActivityClick.bind(this);
-    // this.activatePlaylist = this.activatePlaylist.bind(this);
   }
 
+  // componentWillUpdate()
+  // {
+  //   debugger;
+
+  // }
   componentDidMount() {
+    debugger;
     if (encryption(window.localStorage.getItem("username"), "desc") == null) {
       window.location.href = "./login";
     } else {
@@ -73,10 +78,7 @@ class Header extends Component {
         window.localStorage.getItem("companyname"),
         "desc"
       );
-      // document.getElementById("spnFirstName").textContent = encryption(
-      //   window.localStorage.getItem("username"),
-      //   "desc"
-      // );
+
       document.getElementById("spnLastLogin").textContent = encryption(
         window.localStorage.getItem("lastlogindate"),
         "desc"
@@ -94,8 +96,6 @@ class Header extends Component {
       this.setState({ searchButn: false });
     }
 
-    // window.addEventListener("load", this.BindNotifiation);
-
     this.BindNotifiation();
 
     let self = this;
@@ -105,12 +105,20 @@ class Header extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       self.setState({
         DropdownCommonMessage: response.data,
         selectedType: "Subject"
       });
     });
+
+    var Imgurl = encryption(window.localStorage.getItem("UserLogo"), "desc");
+    if (Imgurl != "") {
+      var profileImgURL = encryption(
+        window.localStorage.getItem("UserLogo"),
+        "desc"
+      );
+      this.setState({ profileImgURL });
+    }
   }
   toggleDocu() {
     this.setState(prevState => ({
@@ -215,8 +223,6 @@ class Header extends Component {
     });
   };
 
-   
-
   SendMessage = () => {
     debugger;
     var drpshipment = document.getElementById("drpshipment");
@@ -229,10 +235,14 @@ class Header extends Component {
       drpshipment.focus();
       return false;
     }
-    
+
     if (txtShipmentNo.value.trim() == "") {
       //alert("Please enter shipment no.");
-      NotificationManager.error(this.state.selectedType==="Subject"?"Please Enter Subject":"Please Enter "+this.state.selectedType + " No");
+      NotificationManager.error(
+        this.state.selectedType === "Subject"
+          ? "Please Enter Subject"
+          : "Please Enter " + this.state.selectedType + " No"
+      );
       txtShipmentNo.focus();
       return false;
     }
@@ -432,6 +442,29 @@ class Header extends Component {
 
     this.setState({ selectedType: value });
   }
+  getCurrencyRate(e) {
+    debugger;
+    var currency = e.target.value;
+
+    // let self=this;
+    // window.localStorage.removeItem("CurrencyData");
+    var url = "https://api.exchangeratesapi.io/latest?base=" + currency;
+    fetch(url)
+      .then(response => response.json())
+
+      .then(data => {
+        console.log(data, "-------------Currencydata");
+        // window.localStorage.removeItem("CurrencyData");
+      })
+      // Catch any errors we hit and update the app
+      .catch(error => {
+        console.log(error);
+      });
+  }
+  onErrorImg(e) {
+    return (e.target.src =
+      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+  }
   render() {
     let self = this;
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
@@ -546,6 +579,16 @@ class Header extends Component {
                           </Link>
                         </li>
                       )}
+                  {/* <li>
+                    <select
+                      onChange={this.getCurrencyRate.bind(this)}
+                      // value={this.state.selectedCurrency}
+                    >
+                      <option value="USD">USD</option>
+                      <option value="INR">INR</option>
+                      <option value="TRY">TL</option>
+                    </select>
+                  </li> */}
                   <li>
                     <div className="dropdown" style={{ position: "relative" }}>
                       <img
@@ -718,9 +761,10 @@ class Header extends Component {
                     <ul className="header-ul-login-dtls">
                       <li>
                         <img
-                          src={LoginActore}
-                          alt="login-actore-icon"
+                          src={this.state.profileImgURL}
+                          alt="login-actore"
                           className="rounded-circle header-login-actore-icon"
+                          onError={this.onErrorImg.bind(this)}
                         />
                       </li>
 

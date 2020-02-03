@@ -2265,8 +2265,7 @@ input[type="range"]::-moz-range-track {
   left: 0;
   /* height: 100vh; */
   bottom: 0;
-  background:transparent url("../img/loader.gif") no-repeat center
-    center;
+  background: transparent url("../img/loader.gif") no-repeat center center;
   background-size: 60px;
   z-index: 5;
 }
@@ -2765,7 +2764,7 @@ input[type="range"]::-moz-range-track {
 }
 
 .header-login-actore-icon {
-  height: auto;
+  height: 45px;
   width: 38px;
   padding: 5px 0;
 }
@@ -4208,7 +4207,6 @@ select option {
   background-color: #ededed;
 }
 
-
 .cusrename div:first-child {
   display: block !important;
   width: 100%;
@@ -4221,9 +4219,6 @@ select option {
   font-weight: 600;
   margin: 5px 5px 0;
 }
-
-
-
 
 @media (min-width: 768px) {
   .cus-w .col-lg-3 {
@@ -4424,18 +4419,20 @@ progress::-webkit-progress-bar {
   max-height: 200px;
   overflow: auto;
 }
-.cusrename1 div:first-child
-{
+.cusrename1 div:first-child {
   display: block !important;
   width: 100% !important;
 }
 .dragbar {
-    margin: auto;
-    float: none;
-    display: block;
-    text-align: center;
+  margin: auto;
+  float: none;
+  display: block;
+  text-align: center;
 }
-.cls-pdf{
+.cls-pdf {
   width: 25px;
   margin-right: 13px;
+}
+.profileIMG {
+  height: 115px;
 }

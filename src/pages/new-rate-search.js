@@ -642,7 +642,9 @@ class NewRateSearch extends Component {
     fields[field] = value;
 
     if (field === "pol") {
+      
       if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+        this.state.errors["POLAddress"]=""
         var geoCoordinate = id.GeoCoordinate.split(",");
         var mapPositionPOL = new Object();
         mapPositionPOL.lat = parseFloat(geoCoordinate[0]);
@@ -655,6 +657,7 @@ class NewRateSearch extends Component {
       }
     } else {
       if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
+        this.state.errors["PODAddress"]=""
         var geoCoordinate = id.GeoCoordinate.split(",");
         var mapPositionPOD = new Object();
         mapPositionPOD.lat = parseFloat(geoCoordinate[0]);
@@ -844,12 +847,14 @@ class NewRateSearch extends Component {
         }
 
         if (field == "PUAddress") {
+          
           this.state.fullAddressPOL.push({
             Area: area,
             City: city,
             State: state,
             ZipCode: zipcode,
             Country: country
+            
           });
 
           var originGeoCordinates = latValue + "," + lngValue;
@@ -871,6 +876,7 @@ class NewRateSearch extends Component {
           });
           this.addressChange("puAdd", address);
         } else if (field == "PDAddress") {
+          
           var destGeoCordinate = latValue + "," + lngValue;
           this.state.fullAddressPOD.push({
             Area: area,
@@ -1110,17 +1116,6 @@ class NewRateSearch extends Component {
             [name]: value === "" ? 0 : value
           };
         }
-
-        // var validNumber = new RegExp(/^\d*\.?\d*$/);
-        // if (value === "" || validNumber.test(value)) {
-        //   if ((parseFloat(value) * 100) % 1 > 0) {
-        //   } else {
-        //     multiCBM[i] = {
-        //       ...multiCBM[i],
-        //       [name]: value === "" ? 0 : value
-        //     };
-        //   }
-        // }
       } else {
         multiCBM[i] = {
           ...multiCBM[i],
@@ -1316,7 +1311,7 @@ class NewRateSearch extends Component {
                 type="text"
                 name="ContainerQuantity"
                 placeholder="Quantity"
-                style={{width:"40px"}}
+                style={{ width: "40px" }}
                 value={el.ContainerQuantity || ""}
                 onChange={this.UISpecialChange.bind(this, i)}
               />
@@ -1643,7 +1638,7 @@ class NewRateSearch extends Component {
             min={1}
             placeholder="QTY"
             name="ContainerQuantity"
-            style={{width:"40px"}}
+            style={{ width: "40px" }}
             value={el.ContainerQuantity || ""}
             //onKeyDown={this.newhandleChange.bind(this, i)}
             onChange={this.newhandleChange.bind(this, i)}
@@ -2874,10 +2869,8 @@ class NewRateSearch extends Component {
     }
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
-      
       colClassName = "cls-flside colap";
     } else {
-      
       colClassName = "cls-flside";
     }
 
@@ -3736,9 +3729,13 @@ class NewRateSearch extends Component {
                         />
                       )}
                     </div>
-                    <span className="equip-error">
-                      {this.state.errors["POLAddress"]}
-                    </span>
+                    {this.state.errors["POLAddress"] !== "" ? (
+                      <span className="equip-error">
+                        {this.state.errors["POLAddress"]}
+                      </span>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   <div className="col-md-6">
@@ -3915,9 +3912,14 @@ class NewRateSearch extends Component {
                         />
                       )}
                     </div>
-                    <span className="equip-error">
-                      {this.state.errors["PODAddress"]}
-                    </span>
+
+                    {this.state.errors["PODAddress"] !== "" ? (
+                      <span className="equip-error">
+                        {this.state.errors["PODAddress"]}
+                      </span>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
               </div>

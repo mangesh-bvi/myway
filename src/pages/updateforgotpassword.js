@@ -111,7 +111,10 @@ function handleResponse(response) {
       NotificationManager.error("Oops! error occured");
     } else {
       NotificationManager.success("Password has been updated successfully");
-      window.location.href = "./login";
+      setTimeout(() => {
+        window.location.href = "./login";  
+      }, 1000);
+      
     }
 
     return data;

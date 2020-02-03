@@ -149,7 +149,10 @@ class RateFinalizingStillBooking extends Component {
       multiCargo: [],
       CargoDetails: [],
       loding: false,
-      newloding: false
+      newloding: false,
+      ChgWeight: 0,
+      cbmVal: "",
+      cmbTypeRadio:"ALL"
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -178,14 +181,7 @@ class RateFinalizingStillBooking extends Component {
           copy: true,
           ModeofTransport
         });
-        // if (ModeofTransport === "AIR") {
-        //   setTimeout(() => {
-        //     this.HandleCommodityDropdown();
-        //     this.HandlePackgeTypeData();
-        //     this.BookigGridDetailsListAIR();
-        //     this.NonCustomerList();
-        //   }, 300);
-        // } else {
+      
         setTimeout(() => {
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
@@ -211,14 +207,7 @@ class RateFinalizingStillBooking extends Component {
           isView: true,
           ModeofTransport
         });
-        // if (ModeofTransport === "AIR") {
-        //   setTimeout(() => {
-        //     this.HandleCommodityDropdown();
-        //     this.HandlePackgeTypeData();
-        //     this.BookigGridDetailsListAIR();
-        //     this.NonCustomerList();
-        //   }, 300);
-        // } else {
+         
         setTimeout(() => {
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
@@ -1977,12 +1966,8 @@ class RateFinalizingStillBooking extends Component {
               type="text"
               onChange={this.HandleChangeMultiCBM.bind(this, i)}
               placeholder={el.GrossWeight === 0 ? "GW(Kg)" : "GW(Kg)"}
-              name="GrossWeight"
-              value={
-                this.state.isCopy == true
-                  ? el.GrossWeight
-                  : el.GrossWeight || ""
-              }
+              name="GrossWt"
+              value={el.GrossWt || ""}
               className="w-100"
             />
           </div>
@@ -2329,9 +2314,20 @@ class RateFinalizingStillBooking extends Component {
   handleChangePage() {
     window.history.back();
   }
+  HandleCMBtextChange(e) {
+    var Textvalue = e.target.value;
+
+    this.setState({ cbmVal: Textvalue });
+  }
+  cmbTypeRadioChange(e) {
+    debugger;
+    var value = e.target.value;
+
+    this.setState({ cmbTypeRadio: value });
+  }
   render() {
     const { Booking } = this.state;
-    console.log(this.state.ContainerLoad);
+
     var bNumber = "";
     if (Booking.length > 0) {
       bNumber = Booking[0].strBooking_No;
@@ -2346,11 +2342,9 @@ class RateFinalizingStillBooking extends Component {
 
     let i = 0;
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -2364,7 +2358,7 @@ class RateFinalizingStillBooking extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>
                 {this.state.copy === true
-                  ? "Booking Clone"
+                  ? "Booking Copy"
                   : this.state.BookingNo !== "" && this.state.isView === true
                   ? "Update Booking"
                   : this.state.BookingNo !== "" && this.state.isView === true
@@ -2538,7 +2532,7 @@ class RateFinalizingStillBooking extends Component {
                                     return (
                                       <>
                                         <p className="details-title">
-                                        Transit Port
+                                          Transit Port
                                         </p>
                                         <p className="details-para">
                                           {row.original.TransshipmentPort}
@@ -3396,14 +3390,6 @@ class RateFinalizingStillBooking extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                          <p className="details-title">
-                            Notification Person
-                          </p>
-                          <p className="details-para">
-                            {this.state.contact_name}
-                          </p>
-                        </div> */}
                               </div>
                             </div>
                           )}
@@ -3572,27 +3558,7 @@ class RateFinalizingStillBooking extends Component {
                                       row.original.FilePath !== "" &&
                                       row.original.FileName !== "No File Found"
                                     ) {
-                                      return (
-                                        <></>
-                                        // <div className="action-cntr">
-                                        //   <a
-                                        //     onClick={e =>
-                                        //       this.HandleDocumentDelete(e, row)
-                                        //     }
-                                        //   >
-                                        //     <img
-                                        //       title={"Delete"}
-                                        //       style={{
-                                        //         cursor: "pointer"
-                                        //       }}
-                                        //       className="actionicon"
-                                        //       F
-                                        //       src={Delete}
-                                        //       alt="download-icon"
-                                        //     />
-                                        //   </a>
-                                        // </div>
-                                      );
+                                      return <></>;
                                     } else {
                                       return <></>;
                                     }
@@ -3631,7 +3597,7 @@ class RateFinalizingStillBooking extends Component {
                           ) : (
                             <>
                               {this.state.copy === true
-                                ? "Booking Clone"
+                                ? "Booking Copy"
                                 : this.state.BookingNo !== ""
                                 ? "Update Booking"
                                 : ""}
@@ -3672,11 +3638,80 @@ class RateFinalizingStillBooking extends Component {
             >
               <h3 className="mb-4">Edit Cargo Details</h3>
               <>
-                {this.state.containerLoadType === "FCL"
-                  ? ""
-                  : this.state.containerLoadType === "FTL"
-                  ? ""
-                  : this.CreateMultiCBM()}
+                <div className="rate-radio-cntr justify-content-center">
+                  <div>
+                    <input
+                      type="radio"
+                      name="cmbTypeRadio"
+                      id="exist-cust"
+                      value="ALL"
+                      style={{ display: "none" }}
+                      checked={this.state.cmbTypeRadio === "ALL" ? true : false}
+                      // onChange={
+                      //   this.state.containerLoadType !== "FTL"
+                      //     ? this.cmbTypeRadioChange.bind(this)
+                      //     : null
+                      // }
+                      onChange={this.cmbTypeRadioChange.bind(this)}
+                    />
+                    <label
+                      className="d-flex flex-column align-items-center"
+                      htmlFor="exist-cust"
+                    >
+                      Dimensions
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="cmbTypeRadio"
+                      id="new-cust"
+                      value="CBM"
+                      style={{ display: "none" }}
+                      checked={this.state.cmbTypeRadio !== "ALL" ? true : false}
+                      onChange={this.cmbTypeRadioChange.bind(this)}
+                    />
+                    <label
+                      className="d-flex flex-column align-items-center"
+                      htmlFor="new-cust"
+                    >
+                      {this.state.ContainerLoad === "AIR"
+                        ? "Chargable Weight"
+                        : "CBM"}
+                    </label>
+                  </div>
+                </div>
+                {this.state.containerLoadType === "FCL" ? (
+                  ""
+                ) : this.state.containerLoadType === "FTL" ? (
+                  ""
+                ) : (
+                  <>
+                    {this.state.cmbTypeRadio === "ALL" ? (
+                      this.CreateMultiCBM()
+                    ) : (
+                      <div className="col-md-4 m-auto">
+                        <div className="spe-equ">
+                          <input
+                            type="text"
+                            minLength={1}
+                            onChange={this.HandleCMBtextChange.bind(this)}
+                            placeholder={
+                              this.state.modeoftransport != "AIR" ? "CBM" : "KG"
+                            }
+                            className="w-100"
+                            value={this.state.cbmVal}
+                          />
+                        </div>
+                        <span className="equip-error">
+                          {/* {this.state.errors["CBM"]} */}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )
+                // this.CreateMultiCBM()}
+                }
               </>
 
               <div className="text-center">

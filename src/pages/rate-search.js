@@ -47,6 +47,7 @@ class RateSearch extends Component {
   }
 
   componentDidMount() {
+    debugger;
     // document.getElementById("SearchRate").classList.add("disableRates");
 
     document.getElementById("SearchRate").classList.add("disableRates");
@@ -55,8 +56,13 @@ class RateSearch extends Component {
   HandelPageredireact() {
     this.props.history.push({
       pathname: "new-rate-search",
-      state: { companyId: this.state.companyId, companyName: this.state.companyName, 
-        companyAddress: this.state.companyAddress, contactName: this.state.contactName, contactEmail: this.state.contactEmail }
+      state: {
+        companyId: this.state.companyId,
+        companyName: this.state.companyName,
+        companyAddress: this.state.companyAddress,
+        contactName: this.state.contactName,
+        contactEmail: this.state.contactEmail
+      }
     });
   }
   HandleChangeCon(field, e) {
@@ -71,21 +77,20 @@ class RateSearch extends Component {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     if (fields[field].length >= 3) {
-      self.setState({fields})
+      self.setState({ fields });
       axios({
         method: "post",
         url: `${appSettings.APIURL}/CustomerList`,
         data: {
           CustomerName: e.target.value,
           CustomerType: "Existing",
-          MyWayUserID:  encryption(window.localStorage.getItem("userid"), "desc")
+          MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
         },
         headers: authHeader()
       }).then(function(response) {
         debugger;
 
-        if(response.data.Table.length != 0)
-        {
+        if (response.data.Table.length != 0) {
           if (field == "CustomerList") {
             self.setState({
               customerData: response.data.Table,
@@ -97,9 +102,8 @@ class RateSearch extends Component {
               fields
             });
           }
-        }
-        else{
-          self.state.error = "Please enter valid Consignee"      
+        } else {
+          self.state.error = "Please enter valid Consignee";
         }
         self.setState({
           error: self.state.error
@@ -111,7 +115,6 @@ class RateSearch extends Component {
         fields
       });
     }
-
   }
   HandleChangeSelect(field, e) {
     debugger;
@@ -141,7 +144,6 @@ class RateSearch extends Component {
       companyAddress: companyAddress,
       contactName: contactName,
       contactEmail: contactEmail
-
     });
     document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -167,22 +169,13 @@ class RateSearch extends Component {
     }
   }
 
-  HideSearchText() {
-    // document.getElementById("searchtxt").style.display = "none";
-    // document.getElementById("SearchRate").classList.remove("disableRates");
-  }
-  ShowSearchText() {
-    // document.getElementById("SearchRate").classList.add("disableRates");
-    // document.getElementById("searchtxt").style.display = "block";
-  }
+   
 
   render() {
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
 
@@ -264,9 +257,7 @@ class RateSearch extends Component {
                     />
                   ) : null}
 
-                    <span style={{ color: "red" }}>
-                      {this.state.error}
-                    </span>
+                  <span style={{ color: "red" }}>{this.state.error}</span>
                 </div>
               </div>
               <button

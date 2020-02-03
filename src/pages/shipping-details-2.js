@@ -304,7 +304,6 @@ class ShippingDetailsTwo extends Component {
           }
         }
       } else {
-         
         Not_Data = i;
 
         VesselData = allLineData[allLineData.length - 1];
@@ -319,7 +318,6 @@ class ShippingDetailsTwo extends Component {
     } else {
       imgType = "ROAD";
     }
-    
 
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
@@ -876,9 +874,7 @@ class ShippingDetailsTwo extends Component {
       var Delivered = this.state.Table9.filter(x => x.Status === "Delivered")
         .length;
       if (Bookedd == 1) {
-        var  
-
-        perBooking = "0";
+        var perBooking = "0";
       }
 
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
@@ -1249,15 +1245,7 @@ class ShippingDetailsTwo extends Component {
                                   }
                                 })}
 
-                              {/* <label className="resol">
-                                <span className="line-resol"></span>B
-                              </label>
-                              <label className="resol">
-                                <span className="line-resol"></span>C
-                              </label>
-                              <label className="resol">
-                                <span className="line-resol"></span>D
-                                </label> */}
+                              
                             </div>
                             {/* <Progress className="ticket-progress" color={eventColor} value={perBooking} /> */}
                             <progress
@@ -1283,18 +1271,17 @@ class ShippingDetailsTwo extends Component {
                         </div>
                         <div className="desti-places">
                           {POLPODData.length < 2 ? (
-                            <>
-                              <span>
-                                {POLPODData.length > 0
-                                  ? POLPODData[0]["POL/POD"]
-                                  : ""}
-                              </span>
-                              <span>
-                                {POLPODData.length > 0
-                                  ? POLPODData[1]["POL/POD"]
-                                  : ""}
-                              </span>
-                            </>
+                            POLPODData.length == 1 ? (
+                              <>
+                                <span>{POLPODData[0]?POLPODData[0]["POL/POD"]: ""}</span>
+                                <span>{POLPODData[1]?POLPODData[1]["POL/POD"]: ""}</span>
+                              </>
+                            ) : (
+                              <>
+                                <span></span>
+                                <span></span>
+                              </>
+                            )
                           ) : (
                             <>
                               <span>
@@ -1805,10 +1792,17 @@ class ShippingDetailsTwo extends Component {
                                   Cell: row => {
                                     if (row.value == "No Data Found") {
                                       return <div>{row.value}</div>;
-                                    }else{
-                                    return (
-                                      <div>{row.original["DocumentDescription"]}<img src={PDF} alt="PDF icon" className="cls-pdf"/></div>
-                                    )
+                                    } else {
+                                      return (
+                                        <div>
+                                          {row.original["DocumentDescription"]}
+                                          <img
+                                            src={PDF}
+                                            alt="PDF icon"
+                                            className="cls-pdf"
+                                          />
+                                        </div>
+                                      );
                                     }
                                   }
                                 },
@@ -2546,7 +2540,7 @@ class ShippingDetailsTwo extends Component {
                           {this.state.selectedFileName}
                         </p>
                       </div>
-                     
+
                       <Button
                         className="butn"
                         onClick={() => {

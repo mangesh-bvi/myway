@@ -27,6 +27,14 @@ import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import { Modal, ModalBody } from "reactstrap";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import { authHeader } from "../helpers/authHeader";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class SideMenu extends Component {
   constructor(props) {
@@ -38,14 +46,20 @@ class SideMenu extends Component {
       activeRateSearch: "",
       activeSpotList: "",
       modalProfile: false,
-      isColClick: false
+      isColClick: false,
+      profileImgURL: "",
+      imageFile: {},
+      loading: false
     };
 
     this.highlightClass = this.highlightClass.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
   }
-
+  shouldComponentUpdate(nextProps, nextState) {
+    return true;
+  }
   componentDidMount() {
+    debugger
     var previousAir = window.localStorage.getItem("aircount");
     var previousQuotePending = window.localStorage.getItem("quotepending");
     var previousBookPending = window.localStorage.getItem("bookpending");
@@ -68,6 +82,12 @@ class SideMenu extends Component {
         });
       }
     }, 1);
+
+    var profileImgURL = encryption(
+      window.localStorage.getItem("UserLogo"),
+      "desc"
+    );
+    this.setState({ profileImgURL });
   }
 
   clickShipmentType(e) {
@@ -110,8 +130,6 @@ class SideMenu extends Component {
   }
 
   highlightClass(e) {
-    debugger;
-
     var elems = document.getElementsByClassName("side-menus");
 
     for (let i = 0; i < elems.length; i++) {
@@ -121,7 +139,6 @@ class SideMenu extends Component {
   }
 
   clickBookingType(e) {
-    debugger;
     var value = e.target.getAttribute("data-Quetye");
     if (value === "" || value === null) {
       this.props.history.push("booking-table");
@@ -132,6 +149,80 @@ class SideMenu extends Component {
           status: value
         }
       });
+    }
+  }
+
+  handleSubmit() {
+    debugger;
+    this.setState({ loading: true });
+    let self = this;
+    var formData = new FormData();
+    // if (Object.keys(this.state.imageFile).length>0) {
+    var userid = parseInt(
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
+    formData.append("ProfilePicPath", this.state.imageFile);
+    formData.append("UserID", userid);
+    formData.append(
+      "UserName",
+      encryption(window.localStorage.getItem("username"), "desc")
+    );
+    formData.append("ModifiedBy", userid);
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/UpdateProfilePic`,
+      data: formData,
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        if (response.data.Table.length > 0) {
+          self.setState({
+            profileImgURL: response.data.Table[0].UserLogo
+          });
+          NotificationManager.success(response.data.Table[0].Result);
+          window.localStorage.setItem(
+            "UserLogo",
+            encryption(response.data.Table[0].UserLogo, "enc")
+          );
+          var pathname = self.props.location.pathname;
+          self.setState({ loading: false });
+          self.toggleProfile();
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1000);
+
+          self.forceUpdate();
+        }
+      })
+      .catch(error => {
+        self.setState({ loading: false });
+        NotificationManager.error(error.response.data);
+      });
+  }
+  handleFile(e) {
+    debugger;
+    var file = e.target.files[0];
+    var t = file.type
+      .split("/")
+      .pop()
+      .toLowerCase();
+
+    if (t != "jpeg" && t != "jpg" && t != "png" && t != "gif") {
+      NotificationManager.error("Please select valid profile image");
+    } else {
+      var reader = new FileReader();
+
+      var imgtag = document.getElementById("profileImg");
+      imgtag.title = file.name;
+
+      reader.onload = function(e) {
+        imgtag.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+      this.setState({ imageFile: file });
     }
   }
   render() {
@@ -186,6 +277,7 @@ class SideMenu extends Component {
         className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
         id="sidemenubar"
       >
+        <NotificationContainer />
         <div className="side-arrow" onClick={this.sidebarCollapse.bind(this)}>
           <img src={sideArrow} alt="side arrow" />
         </div>
@@ -563,16 +655,7 @@ class SideMenu extends Component {
               <span className="menuname">Analytics</span>
             </Link>
           </li>
-          {/* <li className="sidemenu-ul-li">
-            <Link to="/reports">
-              <img
-                src={AnalyticsIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Reports
-            </Link>
-          </li> */}
+
           {(() => {
             if (
               encryption(window.localStorage.getItem("usertype"), "desc") ===
@@ -594,12 +677,6 @@ class SideMenu extends Component {
             }
           })()}
           {(() => {
-            // if (
-            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
-            //     "Customer" &&
-            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
-            //     "Sales User"
-            // ) {
             if (
               encryption(window.localStorage.getItem("isAdmin"), "desc") === "Y"
             ) {
@@ -634,46 +711,33 @@ class SideMenu extends Component {
             <div class="dropdown-menu">
               <ul className="profile-ul">
                 <li className="profile-setting-li">
-                  <a href="mywayMessage">
+                  <Link to="mywayMessage">
                     <img
                       src={ChatIcon}
                       alt="profile-icon"
                       className="profilesetting-icon"
                     />
                     Messages
-                  </a>
+                  </Link>
                 </li>
-                {/* <li
-                  className="activitylog-li"
-                  onClick={this.toggle.bind(this)}
-                  id="abcd"
-                >
-                  <img
-                    src={ActivityLogIcon}
-                    alt="activity-log"
-                    className="activitylog-icon"
-                  />
-                  Activity Log
-                </li> */}
+
                 <li className="profile-setting-li">
-                  <a href="changePassword">
+                  <Link to="changePassword">
                     <img
                       src={ProfileSettingIcon}
                       alt="profile-icon"
                       className="profilesetting-icon"
                     />
                     Change Password
-                  </a>
+                  </Link>
                 </li>
                 <li className="profile-setting-li" onClick={this.toggleProfile}>
-                  <a href="#!">
-                    <img
-                      src={ProfileSettingIcon}
-                      alt="profile-icon"
-                      className="profilesetting-icon"
-                    />
-                    Profile Settings
-                  </a>
+                  <img
+                    src={ProfileSettingIcon}
+                    alt="profile-icon"
+                    className="profilesetting-icon"
+                  />
+                  Profile Settings
                 </li>
                 <li className="profile-setting-li">
                   {/* <a href=""> */}
@@ -718,7 +782,11 @@ class SideMenu extends Component {
             >
               <div className="d-flex align-items-center text-left">
                 <div className="prof-img">
-                  <img src={LoginActore} />
+                  <img
+                    id="profileImg"
+                    className="profileIMG"
+                    src={this.state.profileImgURL}
+                  />
                 </div>
                 <div className="pl-3">
                   <p className="prof-name">
@@ -743,7 +811,7 @@ class SideMenu extends Component {
                       id="file-upload"
                       className="file-upload d-none"
                       type="file"
-                      onChange={this.onDocumentChangeHandler}
+                      onChange={this.handleFile.bind(this)}
                     />
                     <label htmlFor="file-upload">
                       <div className="file-icon">
@@ -755,17 +823,23 @@ class SideMenu extends Component {
                 </div>
                 <p className="file-name">{this.state.selectedFileName}</p>
               </div>
-              <Button
-                className="butn"
-                onClick={() => {
-                  this.toggleProfile();
-                  // this.onDocumentClickHandler();
-                }}
-              >
+              {/* <Button className="butn" onClick={this.handleSubmit.bind(this)}>
                 Submit
-              </Button>
+              </Button> */}
+              <button
+                className="butn btn btn-secondary"
+                onClick={this.handleSubmit.bind(this)}
+              >
+                {this.state.loading == true ? (
+                  <i
+                    style={{ marginRight: 15 }}
+                    className="fa fa-refresh fa-spin"
+                  ></i>
+                ) : null}
+                {this.state.loading ? "Please Wait ..." : "Submit"}
+              </button>
               <Button
-                className="butn cancel-butn"
+                className="butn cancel-butn btn btn-secondary"
                 onClick={() => {
                   this.toggleProfile();
                 }}

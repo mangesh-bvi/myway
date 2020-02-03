@@ -2739,7 +2739,7 @@ class RateFinalizingStill extends Component {
             >
               <span>&times;</span>
             </button>
-            <button onClick={this.printModalPopUp.bind(this)}>Print</button>
+            {/* <button onClick={this.printModalPopUp.bind(this)}>Print</button> */}
             <div id="printDiv">
               <div className="row" style={{ margin: 0 }}>
                 <div className="logohheader">

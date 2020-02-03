@@ -21,7 +21,7 @@ class AddUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading:false,
+      loading: false,
       values: [],
       selectCountry: [
         // { key: "1", value: "India" },
@@ -628,7 +628,7 @@ class AddUser extends React.Component {
   }
 
   handleBlurUser(field, e) {
-    debugger;
+     
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -909,7 +909,7 @@ class AddUser extends React.Component {
     let HideInvoiceDetails = "";
     var RegisteredCompany = "";
     var Modules = "";
-    this.setState({loading:true})
+    this.setState({ loading: true });
     // if (this.state.isAir === true) {
     //   ModeOfTransport+="A";
     // }
@@ -1088,7 +1088,7 @@ class AddUser extends React.Component {
         method: "post",
         url: `${appSettings.APIURL}/CreateUserWithDoc`,
         data: docData,
-         
+
         headers: authHeader()
       })
         .then(function(response) {
@@ -1181,7 +1181,6 @@ class AddUser extends React.Component {
     });
 
     Modules = Modules.slice(0, -1);
-     
 
     docData.append("UserID", this.props.location.state.detail);
     docData.append("UserName", this.state.fields["username"]);
@@ -1226,7 +1225,7 @@ class AddUser extends React.Component {
         method: "post",
         url: `${appSettings.APIURL}/UpdateUserWithDoc`,
         data: docData,
-        
+
         headers: authHeader()
       })
         .then(function(response) {
@@ -1356,11 +1355,9 @@ class AddUser extends React.Component {
   render() {
     var a = 1;
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -1913,7 +1910,7 @@ class AddUser extends React.Component {
                           className="butn mb-2"
                           onClick={this.handleSubmit}
                         >
-                         {this.state.loading != true
+                          {this.state.loading != true
                             ? this.state.loading && (
                                 <i
                                   style={{ marginRight: 15 }}

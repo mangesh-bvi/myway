@@ -231,6 +231,10 @@ class AddSalesUser extends React.Component {
   }
 
   handleBlurUser(field, e) {
+    if (this.props.location.state) {
+      return false;
+    }
+
     debugger;
     let self = this;
     let fields = this.state.fields;
@@ -511,9 +515,8 @@ class AddSalesUser extends React.Component {
           NotificationManager.success(response.data[0].Message);
           self.setState({ loading: false });
           setTimeout(() => {
-            self.props.history.push("view-user");  
+            self.props.history.push("view-user");
           }, 1000);
-          
         })
         .catch(error => console.log(error.response));
     } else {
@@ -732,11 +735,9 @@ class AddSalesUser extends React.Component {
   render() {
     var a = 1;
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -1201,14 +1202,12 @@ class AddSalesUser extends React.Component {
                           onClick={this.handleSubmit}
                           disabled={this.state.loading != true ? false : true}
                         >
-                          {this.state.loading == true
-                            ?  
-                                <i
-                                  style={{ marginRight: 15 }}
-                                  className="fa fa-refresh fa-spin"
-                                ></i>
-                              
-                            : null}
+                          {this.state.loading == true ? (
+                            <i
+                              style={{ marginRight: 15 }}
+                              className="fa fa-refresh fa-spin"
+                            ></i>
+                          ) : null}
                           {this.state.loading ? "Please Wait ..." : "Submit"}
                         </button>
                       );

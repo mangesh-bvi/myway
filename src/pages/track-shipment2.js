@@ -482,15 +482,13 @@ class TrackShipment2 extends Component {
       imgType = "ROAD";
     }
     debugger;
-    
-    
-    
+
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
     localStorage.removeItem("AllLineData");
     localStorage.removeItem("imgType");
     localStorage.removeItem("VesselData");
-    
+
     localStorage.setItem("imgType", JSON.stringify(imgType));
     localStorage.setItem("VesselData", JSON.stringify(VesselData));
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
@@ -574,47 +572,63 @@ class TrackShipment2 extends Component {
     debugger;
     this.setState({ loading: true });
     let self = this;
-    axios({
-      method: "get",
-      url: `${appSettings.APIURL}/AnonymousShipmentSummaryDetailsAPI`,
-      params: {
-        Token: Encodedhblno.replace("%20", " ")
-        // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
-        // HBLNo: HblNo //HblNo
-        // UserId: 874588,
-        // HBLNo: hblno //HblNo
-      }
-      //headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var shipmentdata = response.data;
-      var POLPODData = response.data.Table5;
-      var eve = response.data.Table[0].Event;
-      var ModeType = response.data.Table[0].ModeOfTransport;
-      var Table9 = response.data.Table9;
-      self.setState({
-        POLPODData,
-        Table9,
-        eve,
-        ModeType,
-        addWat: shipmentdata.Table[0].HBLNO,
-        detailsData: shipmentdata.Table[0],
-        addressData: shipmentdata.Table1,
-        containerData: shipmentdata.Table2,
-        containerDetails: shipmentdata.Table3,
-        bookedStatus: shipmentdata.Table4,
-        packageDetails: shipmentdata.Table7,
-        DData:
-          shipmentdata.Table2[shipmentdata.Table2.length - 1]["Arrival Date"],
-        ShipmentExistsInWatchList:
-          shipmentdata.Table6[0].ShipmentExistsInWatchList,
-        packageViewMore: shipmentdata.Table8
-      });
+    if (Encodedhblno) {
+      axios({
+        method: "get",
+        url: `${appSettings.APIURL}/AnonymousShipmentSummaryDetailsAPI`,
+        params: {
+          Token: Encodedhblno.replace("%20", " ")
+          // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
+          // HBLNo: HblNo //HblNo
+          // UserId: 874588,
+          // HBLNo: hblno //HblNo
+        }
+        //headers: authHeader()
+      })
+        .then(function(response) {
+          debugger;
+          var shipmentdata = response.data;
+          var POLPODData = response.data.Table5;
+          var eve = response.data.Table[0].Event;
+          var ModeType = response.data.Table[0].ModeOfTransport;
+          var Table9 = response.data.Table9;
+          self.setState({
+            POLPODData,
+            Table9,
+            eve,
+            ModeType,
+            addWat: shipmentdata.Table[0].HBLNO,
+            detailsData: shipmentdata.Table[0],
+            addressData: shipmentdata.Table1,
+            containerData: shipmentdata.Table2,
+            containerDetails: shipmentdata.Table3,
+            bookedStatus: shipmentdata.Table4,
+            packageDetails: shipmentdata.Table7,
+            DData:
+              shipmentdata.Table2[shipmentdata.Table2.length - 1][
+                "Arrival Date"
+              ],
+            ShipmentExistsInWatchList:
+              shipmentdata.Table6[0].ShipmentExistsInWatchList,
+            packageViewMore: shipmentdata.Table8
+          });
 
-      var sid = shipmentdata.Table[0].ShipperId;
-      var cid = shipmentdata.Table[0].ConsigneeID;
-      self.HandleShipmentDetailsMap(Encodedhblno);
-    });
+          var sid = shipmentdata.Table[0].ShipperId;
+          var cid = shipmentdata.Table[0].ConsigneeID;
+          self.HandleShipmentDetailsMap(Encodedhblno);
+        })
+        .catch(error => {
+          debugger;
+          var temperror = error.response.data;
+          var err = temperror.split(":");
+
+          NotificationManager.error(err[1].replace("}", ""));
+          this.setState({ loading: false, showData: false });
+        });
+    } else {
+      NotificationManager.error("Please enter #HBL");
+      this.setState({ loading: false, showData: false });
+    }
   }
   onDocumentChangeHandler = event => {
     this.setState({
@@ -916,9 +930,8 @@ class TrackShipment2 extends Component {
     }
     var perBooking = "0";
     var POLPODDatalen = this.state.POLPODData.length;
-    
+
     if (this.state.Table9.length > 0) {
-      
       var Transshipped = this.state.Table9.filter(
         x => x.Status === "Transshipped"
       ).length;
@@ -931,11 +944,9 @@ class TrackShipment2 extends Component {
       var Delivered = this.state.Table9.filter(x => x.Status === "Delivered")
         .length;
       if (Bookedd == 1) {
-        
-
         perBooking = "0";
       }
-      
+
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
         var finalTotal = 0;
@@ -953,7 +964,7 @@ class TrackShipment2 extends Component {
         perBooking = (total + finalTotal) * Transshipped + "";
       }
       if (
-        Departedd==1 &&
+        Departedd == 1 &&
         this.state.POLPODData.length == 2 &&
         Transshipped == 0 &&
         Arriveddata == 0 &&
@@ -962,7 +973,7 @@ class TrackShipment2 extends Component {
         perBooking = "50";
       }
       if (
-        Departedd==1 &&
+        Departedd == 1 &&
         this.state.POLPODData.length > 2 &&
         Transshipped == 0 &&
         Arriveddata == 0 &&
@@ -970,7 +981,7 @@ class TrackShipment2 extends Component {
       ) {
         var per = 100 / (this.state.POLPODData.length + 1);
 
-        perBooking = (per+ (per/ 2 ))+ "";
+        perBooking = per + per / 2 + "";
 
         // perBooking="50"
       }
@@ -994,8 +1005,6 @@ class TrackShipment2 extends Component {
     } else {
       className = "butn view-btn";
     }
-    console.log(this.state.showData, "----------showdata");
-    console.log(this.state.loading, "----------loading");
 
     return (
       <div>
@@ -1009,7 +1018,7 @@ class TrackShipment2 extends Component {
               <div>
                 <div className="title-sect ts-head">
                   {this.state.showData === false &&
-                  this.state.loading === true ? (
+                  this.state.loading === false ? (
                     <h2>Track Shipment</h2>
                   ) : (
                     <h2>Track Shipment - {detailsData.HBLNO}</h2>

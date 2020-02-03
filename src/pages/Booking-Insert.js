@@ -205,6 +205,7 @@ class BookingInsert extends Component {
         }, 100);
       }
     }
+    
   }
 
   HandleGetSalesQuotaionINLAND() {
@@ -226,6 +227,7 @@ class BookingInsert extends Component {
       var Booking = response.data.Table;
       var CargoDetails = response.data.Table3;
       var FileData = response.data.Table4;
+      var ChgWeight = 0;
       var multiCargo = [];
       if (CargoDetails.length > 0) {
         for (let i = 0; i < CargoDetails.length; i++) {
@@ -259,8 +261,10 @@ class BookingInsert extends Component {
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var TypeofMove = QuotationData[0].TypeOfMove;
-
+        ChgWeight = QuotationData[0].ChgWeight || 0;
         self.setState({
+          cbmVal: ChgWeight,
+          ChgWeight,
           multiCargo,
           CargoDetails,
           QuotationData,
@@ -304,16 +308,27 @@ class BookingInsert extends Component {
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
 
+      for (let i = 0; i < QuotationData.length; i++)
       for (let i = 0; i < QuotationData.length; i++) {
-        newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
-          .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
-        selectedRow.push(QuotationData[i]);
-        self.setState({
-          cSelectedRow: QuotationData[i].SaleQuoteIDLineID
-            ? newSelected
-            : false,
-          selectedDataRow: selectedRow
-        });
+        if (!isNaN(QuotationData[i].saleQuoteLineID)) {
+          newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+            .cSelectedRow[QuotationData[i].saleQuoteLineID];
+          selectedRow.push(QuotationData[i]);
+          self.setState({
+            cSelectedRow: newSelected,
+            selectedDataRow: selectedRow
+          });
+        } else {
+          newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
+            .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
+          selectedRow.push(QuotationData[i]);
+          self.setState({
+            cSelectedRow: QuotationData[i].SaleQuoteIDLineID
+              ? newSelected
+              : false,
+            selectedDataRow: selectedRow
+          });
+        }
       }
     });
   }
@@ -369,8 +384,10 @@ class BookingInsert extends Component {
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var TypeofMove = QuotationData[0].TypeOfMove;
-
+        var ChgWeight = QuotationData[0].ChgWeight || 0;
         self.setState({
+          cbmVal: ChgWeight,
+          ChgWeight,
           CargoDetails,
           multiCargo,
           QuotationData,
@@ -415,15 +432,28 @@ class BookingInsert extends Component {
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
 
-      for (let i = 0; i < QuotationData.length; i++) {
-        newSelected[QuotationData[i].saleQuoteLineID] = !self.state
-          .cSelectedRow[QuotationData[i].saleQuoteLineID];
-        selectedRow.push(QuotationData[i]);
-        self.setState({
-          cSelectedRow: QuotationData[i].saleQuoteLineID ? newSelected : false,
-          selectedDataRow: selectedRow
-        });
-      }
+      for (let i = 0; i < QuotationData.length; i++)
+        for (let i = 0; i < QuotationData.length; i++) {
+          if (!isNaN(QuotationData[i].saleQuoteLineID)) {
+            newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+              .cSelectedRow[QuotationData[i].saleQuoteLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: newSelected,
+              selectedDataRow: selectedRow
+            });
+          } else {
+            newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
+              .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: QuotationData[i].SaleQuoteIDLineID
+                ? newSelected
+                : false,
+              selectedDataRow: selectedRow
+            });
+          }
+        }
     });
   }
 
@@ -514,8 +544,10 @@ class BookingInsert extends Component {
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var ContainerCode = QuotationData[0].ContainerCode;
-
+        var ChgWeight = QuotationData[0].ChgWeight || 0;
         self.setState({
+          cbmVal: ChgWeight,
+          ChgWeight,
           QuotationData,
           QuotationSubData,
           selectedCommodity,
@@ -529,15 +561,28 @@ class BookingInsert extends Component {
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
 
-      for (let i = 0; i < QuotationData.length; i++) {
-        newSelected[QuotationData[i].saleQuoteLineID] = !self.state
-          .cSelectedRow[QuotationData[i].saleQuoteLineID];
-        selectedRow.push(QuotationData[i]);
-        self.setState({
-          cSelectedRow: QuotationData[i].saleQuoteLineID ? newSelected : false,
-          selectedDataRow: selectedRow
-        });
-      }
+      for (let i = 0; i < QuotationData.length; i++)
+        for (let i = 0; i < QuotationData.length; i++) {
+          if (!isNaN(QuotationData[i].saleQuoteLineID)) {
+            newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+              .cSelectedRow[QuotationData[i].saleQuoteLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: newSelected,
+              selectedDataRow: selectedRow
+            });
+          } else {
+            newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
+              .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: QuotationData[i].SaleQuoteIDLineID
+                ? newSelected
+                : false,
+              selectedDataRow: selectedRow
+            });
+          }
+        }
     });
   }
 
@@ -547,11 +592,12 @@ class BookingInsert extends Component {
     debugger;
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
+    var MyWayUserID=encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
-      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
+      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo,MyWayUserID:MyWayUserID },
       headers: authHeader()
     }).then(function(response) {
       debugger;
@@ -560,6 +606,7 @@ class BookingInsert extends Component {
       var Booking = response.data.Table;
       var CargoDetails = response.data.Table3;
       var FileData = response.data.Table4;
+      var ChgWeight = 0;
       var multiCargo = [];
       if (CargoDetails.length > 0) {
         for (let i = 0; i < CargoDetails.length; i++) {
@@ -575,7 +622,7 @@ class BookingInsert extends Component {
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
           objcargo.Volume = CargoDetails[i].Volume || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
-
+          objcargo.ChgWeight = CargoDetails[i].ChgWeight || 0;
           multiCargo.push(objcargo);
         }
       }
@@ -592,8 +639,11 @@ class BookingInsert extends Component {
         var SaleQuoteID = QuotationData[0].SaleQuoteID;
         var SaleQuoteIDLineID = QuotationData[0].SaleQuoteIDLineID;
         var TypeofMove = QuotationData[0].TypeOfMove;
-
+        ChgWeight = QuotationData[0].ChgWeight || 0;
         self.setState({
+          cbmVal: ChgWeight,
+          cmbTypeRadio: ChgWeight > 0 ? "CMB" : "ALL",
+          ChgWeight,
           CargoDetails,
           QuotationData,
           multiCargo,
@@ -635,21 +685,34 @@ class BookingInsert extends Component {
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
 
-      for (let i = 0; i < QuotationData.length; i++) {
-        newSelected[QuotationData[i].saleQuoteLineID] = !self.state
-          .cSelectedRow[QuotationData[i].saleQuoteLineID];
-        selectedRow.push(QuotationData[i]);
-        self.setState({
-          cSelectedRow: QuotationData[i].saleQuoteLineID ? newSelected : false,
-          selectedDataRow: selectedRow
-        });
-      }
+      for (let i = 0; i < QuotationData.length; i++)
+        for (let i = 0; i < QuotationData.length; i++) {
+          if (!isNaN(QuotationData[i].saleQuoteLineID)) {
+            newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+              .cSelectedRow[QuotationData[i].saleQuoteLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: newSelected,
+              selectedDataRow: selectedRow
+            });
+          } else {
+            newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
+              .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: QuotationData[i].SaleQuoteIDLineID
+                ? newSelected
+                : false,
+              selectedDataRow: selectedRow
+            });
+          }
+        }
     });
   }
 
   ////booking insert
 
-  HandleBookigInsert() {
+  HandleBookingInsert() {
     let self = this;
     if (this.state.selectedDataRow.length === 1) {
       if (
@@ -778,36 +841,44 @@ class BookingInsert extends Component {
         // }
 
         var BookingDim = [];
+        if (this.state.cmbTypeRadio == "ALL") {
+          if (this.state.multiCBM.length > 0) {
+            for (let i = 0; i < this.state.multiCBM.length; i++) {
+              var cargoData = new Object();
 
-        if (this.state.multiCBM.length > 0) {
-          for (let i = 0; i < this.state.multiCBM.length; i++) {
-            var cargoData = new Object();
+              cargoData.BookingPackID =
+                this.state.multiCBM[i].BookingPackID || 0;
+              cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
+              cargoData.Quantity = this.state.multiCBM[i].Quantity || 0;
+              cargoData.Lengths = this.state.multiCBM[i].Length || 0;
+              cargoData.Width = this.state.multiCBM[i].Width || 0;
+              cargoData.Height = this.state.multiCBM[i].height || 0;
+              cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
+              cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
+              cargoData.Volume = this.state.multiCBM[i].Volume || 0;
 
-            cargoData.BookingPackID = this.state.multiCBM[i].BookingPackID || 0;
-            cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
-            cargoData.Quantity = this.state.multiCBM[i].QTY || 0;
-            cargoData.Lengths = this.state.multiCBM[i].Length || 0;
-            cargoData.Width = this.state.multiCBM[i].Width || 0;
-            cargoData.Height = this.state.multiCBM[i].height || 0;
-            cargoData.GrossWt = this.state.multiCBM[i].GrossWeight || 0;
-            cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-            cargoData.Volume = this.state.multiCBM[i].Volume || 0;
-
-            BookingDim.push(cargoData);
+              BookingDim.push(cargoData);
+            }
           }
         } else {
-          var cargoData = new Object();
-          cargoData.BookingPackID = 0;
-          cargoData.PackageType = "";
-          cargoData.Quantity = 0;
-          cargoData.Lengths = 0;
-          cargoData.Width = 0;
-          cargoData.Height = 0;
-          cargoData.GrossWt = 0;
-          cargoData.VolumeWeight = 0;
-          cargoData.Volume = 0;
-          BookingDim.push(cargoData);
+         
+            
+              var cargoData = new Object();
+
+              cargoData.BookingPackID =0;
+              cargoData.PackageType =  "";
+              cargoData.Quantity =  0;
+              cargoData.Lengths = 0;
+              cargoData.Width = 0;
+              cargoData.Height = 0;
+              cargoData.GrossWt =  0;
+              cargoData.VolumeWeight =  0;
+              cargoData.Volume = this.state.cbmVal || 0;
+
+              BookingDim.push(cargoData);
+           
         }
+         
 
         var BookingDocs = [];
         for (let i = 0; i < this.state.FileData.length; i++) {
@@ -1857,28 +1928,13 @@ class BookingInsert extends Component {
       </div>
     ));
   }
-
-  // toggleRow(rateID, rowData) {
-  //   debugger;
-
-  //   if (this.state.checkList === "") {
-  //     this.setState({ checkList: saleQuoteLineID });
-  //   } else {
-  //     if (this.state.checkList === saleQuoteLineID) {
-  //       this.setState({ checkList: "" });
-  //     } else {
-  //       NotificationManager.error("Please select only one quotation.");
-  //     }
-  //   }
-  // }
+ 
 
   toggleRow(rateID, rowData) {
     debugger;
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
-    this.setState({
-      cSelectedRow: rateID ? newSelected : false
-    });
+   
     var selectedRow = [];
 
     if (this.state.selectedDataRow.length == 0) {
@@ -1916,6 +1972,7 @@ class BookingInsert extends Component {
       }
     }
     this.setState({
+      cSelectedRow: newSelected,
       selectedDataRow: selectedRow
     });
   }
@@ -2093,6 +2150,7 @@ class BookingInsert extends Component {
                                         </React.Fragment>
                                       );
                                     } else if (mode == "Air" && lname !== "") {
+                                      debugger;
                                       return (
                                         <React.Fragment>
                                           <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -2234,7 +2292,7 @@ class BookingInsert extends Component {
                                     return (
                                       <>
                                         <p className="details-title">
-                                        Transit Port
+                                          Transit Port
                                         </p>
                                         <p className="details-para">
                                           {row.original.TransshipmentPort}
@@ -3104,7 +3162,10 @@ class BookingInsert extends Component {
                                   accessor: "GrossWeight"
                                 },
                                 {
-                                  Header: "Volume Weight",
+                                  Header:
+                                    this.state.ChgWeight == 0
+                                      ? "Volume Weight"
+                                      : "ChgWeight",
                                   accessor: "VolumeWeight"
                                 }
                               ]
@@ -3225,7 +3286,7 @@ class BookingInsert extends Component {
                   </div>
                   <center>
                     <button
-                      onClick={this.HandleBookigInsert.bind(this)}
+                      onClick={this.HandleBookingInsert.bind(this)}
                       className="butn more-padd mt-4"
                       disabled={this.state.loding === true ? true : false}
                     >
@@ -3327,7 +3388,7 @@ class BookingInsert extends Component {
                             className="d-flex flex-column align-items-center"
                             htmlFor="new-cust"
                           >
-                            {this.state.containerLoadType === "AIR"
+                            {this.state.ContainerLoad === "AIR"
                               ? "Chargable Weight"
                               : "CBM"}
                           </label>
