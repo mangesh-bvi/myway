@@ -200,7 +200,6 @@
       #mapBooking {
         opacity: 0.5;
       } */
-      
     </style>
     <script
       async
@@ -454,7 +453,7 @@
                         debugger;
                         if(ModeOfTransport.toUpperCase()==="AIR")
                         {
-                          marketContent="<div id='rootElement' style='float: right;margin-right: 10px;'>"
+                          marketContent="<div id='rootElement' style='margin-right: 10px;margin-left: 10px'>"
                           if (myDatacontainerType != "Consolidated") {
                           //////Actual Content
                           var innerContentDatas ="";
@@ -763,7 +762,7 @@
                     var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                     var myDatacontainerType = datas[i]["CargoType"];
                     if (ModeOfTransport.toUpperCase() === "AIR") {
-                      marketContent="<div id='rootElement' style='float: right;margin-right: 10px;'>"
+                      marketContent="<div id='rootElement' style='margin-right: 10px;margin-left: 10px'>"
                       if (myDatacontainerType != "Consolidated") {
                         //////Actual Content
                         // var innerContentDatas =
