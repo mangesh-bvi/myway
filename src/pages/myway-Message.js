@@ -168,7 +168,7 @@ class myWayMessage extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Chat</h2>
             </div>
-            <div class="container p-0">
+            <div class="">
               <h3 class=" text-center"></h3>
               <div class="messaging">
                 <div class="inbox_msg">

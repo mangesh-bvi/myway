@@ -2853,7 +2853,7 @@ class BookingInsert extends Component {
                         </div>
                       </div>
 
-                      <div>
+                      <div className="">
                         <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                           <h3 style={{ display: "inline" }}>Buyer Details</h3>
                           <input
@@ -2873,7 +2873,7 @@ class BookingInsert extends Component {
                             <div className="row">
                               <div className="col-12 col-sm-6 col-md-4 login-fields insert-drpdwn divblock">
                                 <p className="details-title">Buyer Name</p>
-                                <p className="details-para position-relative">
+                                <p className="position-relative">
                                   <Autocomplete
                                     getItemValue={item => item.Company_Name}
                                     items={this.state.Buyer}
@@ -2972,7 +2972,7 @@ class BookingInsert extends Component {
                           )}
                         </div>
                       </div>
-                      <div>
+                      <div className="">
                         <div className="title-border-t py-3 remember-forgot book-ins-sect rate-checkbox">
                           <h3 style={{ display: "inline" }}>Notify Details</h3>
                           <input
@@ -2994,7 +2994,7 @@ class BookingInsert extends Component {
                                 <p className="details-title">
                                   Notify Party Name
                                 </p>
-                                <p className="details-para position-relative">
+                                <p className="position-relative">
                                   <Autocomplete
                                     getItemValue={item => item.Company_Name}
                                     items={this.state.Notify}

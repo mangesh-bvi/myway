@@ -4440,3 +4440,6 @@ progress::-webkit-progress-bar {
 .CurrencyCodecss{
   width: 150px;
 }
+.shidat .react-datepicker-popper {
+  left: -40px !important;
+}

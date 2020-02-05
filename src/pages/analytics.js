@@ -1135,6 +1135,16 @@ class Analytics extends Component {
                   Invoices
                 </a>
               </li>
+              <li style={{margin: "-3px 15px 0px auto"}}>
+              <button
+                      onClick={this.handleReportClick.bind(this)}
+                      href="/reports"
+                      className="butn mt-0 blue-butn"
+                    >
+                      Reports
+                    </button>
+              </li>
+                    
             </ul>
             <div className="tab-content cust-tabs-content">
               <div
@@ -1301,13 +1311,13 @@ class Analytics extends Component {
                     >
                       view
                     </button>
-                    <button
+                    {/* <button
                       onClick={this.handleReportClick.bind(this)}
                       href="/reports"
                       className="butn mt-0 blue-butn"
                     >
                       Reports
-                    </button>
+                    </button> */}
                   </div>
                 </div>
                 <div className="ana-radio-cntr">
@@ -1342,8 +1352,89 @@ class Analytics extends Component {
                       {/* <option value="ValueChart">Value Chart</option> */}
                     </select>
                   </div>
+
+                     <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>Dated&nbsp;by </span>
+                    <select id="Datedbydrp">
+                      <option value="Delivery Date" seected>
+                        Delivery Date
+                      </option>
+                      <option value="Booking Date">Booking Date</option>
+                      <option value="Dispatched Date">Dispatched Date</option>
+                    </select>
+                  </div>
+                  {this.state.toggleShipmentYearDate && (
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                      <span>Year</span>
+                      <select id="date-year-shipment">
+                        {this.buildOptions()}
+                      </select>
+                    </div>
+                  )}
+                  {!this.state.toggleShipmentYearDate && (
+                    <div className="login-fields mb-0 d-flex align-items-center">
+                      <span>From </span>
+
+                      {this.state.toggleShipmentWeekDate && (
+                        <DatePicker
+                          id="datpicker-from-shipment"
+                          className="ana-to"
+                          selected={this.state.startDate}
+                          onChange={this.handleChangeStart}
+                          maxDate={new Date()}
+                          showWeekNumbers
+                        />
+                      )}
+                      {this.state.toggleShipmentMonthDate && (
+                        <DatePicker
+                          id="datpicker-from-shipment"
+                          className="ana-to"
+                          selected={this.state.startDate}
+                          onChange={this.handleChangeStart}
+                          dateFormat="MM/yyyy"
+                          maxDate={new Date()}
+                          showMonthYearPicker
+                        />
+                      )}
+                    </div>
+                  )}
+                  {!this.state.toggleShipmentYearDate && (
+                    <div className="login-fields mb-0 d-flex align-items-center shidat">
+                      <span>To </span>
+                      {this.state.toggleShipmentWeekDate && (
+                        <DatePicker
+                          id="datpicker-to-shipment"
+                          className="ana-to"
+                          selected={this.state.endDate}
+                          onChange={this.handleChangeEnd}
+                          maxDate={new Date()}
+                          showWeekNumbers
+                        />
+                      )}
+                      {this.state.toggleShipmentMonthDate && (
+                        <DatePicker
+                          id="datpicker-to-shipment"
+                          className="ana-to"
+                          selected={this.state.endDate}
+                          onChange={this.handleChangeEnd}
+                          dateFormat="MM/yyyy"
+                          maxDate={new Date()}
+                          showMonthYearPicker
+                        />
+                      )}
+                    </div>
+                  )}
+                  {/* <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>Values </span>
+                    <select>
+                      <option>$1 - $100</option>
+                      <option>$101 - $200</option>
+                      <option>$201 - $300</option>
+                    </select>
+                  </div> */}
+
                 </div>
-                <div className="ana-radio-cntr">
+                {/* <div className="ana-radio-cntr">
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Dated&nbsp;by </span>
                     <select id="Datedbydrp">
@@ -1415,8 +1506,15 @@ class Analytics extends Component {
                       )}
                     </div>
                   )}
-                  
-                </div>
+                  <div className="login-fields mb-0 d-flex align-items-center">
+                    <span>Values </span>
+                    <select>
+                      <option>$1 - $100</option>
+                      <option>$101 - $200</option>
+                      <option>$201 - $300</option>
+                    </select>
+                  </div>
+                </div> */}
                 {this.state.loding === true ? (
                   <div className="loader-icon"></div>
                 ) : (
@@ -1582,9 +1680,9 @@ class Analytics extends Component {
                     >
                       view
                     </button>
-                    <a href="/reports" className="butn mt-0 blue-butn">
+                    {/* <a href="/reports" className="butn mt-0 blue-butn">
                       Reports
-                    </a>
+                    </a> */}
                   </div>
                 </div>
                 <div className="ana-radio-cntr">
