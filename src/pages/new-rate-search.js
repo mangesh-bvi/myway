@@ -264,31 +264,16 @@ class NewRateSearch extends Component {
       }
     }
     this.HandleCounterListBind();
-    // this.HandleCommodityData();
     this.HandlePackgeTypeData();
     this.HandleTruckTypeData();
   }
+  componentDidUpdate()
+  {
+    console.log("new rate search page")
+  }
 
-  // HandleStateValue(pValues) {
-  //   this.setState({
-  //     shipmentType: paramData.shipmentType,
-  //     modeoftransport: paramData.modeoftransport,
-  //     containerLoadType: paramData.containerLoadType,
-  //     typeofMove: rTypeofMove,
-  //     selectaddress: selectedPOLPOD,
-  //     HazMat: paramData.HazMat,
-  //     NonStackable: paramData.NonStackable,
-  //     Custom_Clearance: paramData.Custom_Clearance,
-  //     SpacialEqmt: paramData.SpacialEqmt,
-  //     EquipmentType: paramData.StandardContainerCode,
-  //     spacEqmtType: paramData.spacEqmtType,
-  //     referType: paramData.referType,
-  //     flattack_openTop: paramData.flattack_openTop,
-  //     spacEqmtTypeSelect: paramData.spacEqmtTypeSelect,
-  //     specialEqtSelect: paramData.specialEqtSelect,
-  //     refertypeSelect: paramData.refertypeSelect
-  //   });
-  // }
+
+ 
   handleValidation() {
     debugger;
     let errors = this.state.errors;
@@ -2737,6 +2722,7 @@ class NewRateSearch extends Component {
   };
 
   specEquipChange = (value, option) => {
+    debugger
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
       if (
@@ -3395,8 +3381,7 @@ class NewRateSearch extends Component {
                         onChange={this.toggleHazMat.bind(this)}
                       />
                       <label htmlFor="haz-mat">HazMat</label>
-                      {/* <input id="unstack" type="checkbox" name={"haz-mat"} />
-                      <label htmlFor="unstack">Unstackable</label> */}
+                     
                       {this.unStack}
                       <input
                         id="cust-clear"

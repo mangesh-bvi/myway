@@ -291,7 +291,7 @@ class ShippingDetails extends Component {
     self.setState({
       fields
     });
-    if (fields[field].length > 3) {
+    if (fields[field].length >= 3) {
       debugger;
       axios({
         method: "post",
@@ -389,7 +389,7 @@ class ShippingDetails extends Component {
       let self = this;
       let fields = this.state.fields;
       fields[field] = e.target.value;
-      if (fields[field].length > 3) {
+      if (fields[field].length >= 3) {
         self.setState({
           fields,
           POL: []

@@ -132,7 +132,7 @@ class RateFinalizing extends Component {
       profitLossAmt: 0,
       profitLossPer: 0,
       newloding: false,
-      cbmVal: "",
+      cbmVal: "0",
       reloding: false,
       sendFile: null,
       showUpdate: false,
@@ -140,7 +140,10 @@ class RateFinalizing extends Component {
       fCommodityID: 0,
       localsurAmount: 0,
       manProfitAmt: [],
-      localProfitamt: []
+      localProfitamt: [],
+      expanded: {},
+      currencyAmount: 0,
+      sBaseCurrency: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -410,6 +413,7 @@ class RateFinalizing extends Component {
             }
           }
         } else if (containerLoadType == "AIR") {
+          debugger;
           if (multiCBM != null) {
             if (multiCBM.length > 0) {
               for (var i = 0; i < multiCBM.length; i++) {
@@ -445,7 +449,9 @@ class RateFinalizing extends Component {
                     Width: multiCBM[i].Width,
                     Height: multiCBM[i].Height,
                     Weight: multiCBM[i].GrossWt,
-                    CBM: multiCBM[i].VolumeWeight,
+                    Volume: 0,
+                    VolumeWeight:
+                      multiCBM[i].VolumeWeight || multiCBM[i].VolumeWT,
                     Editable: true
                   });
                 }
@@ -544,11 +550,21 @@ class RateFinalizing extends Component {
               cSelectedRow: rateDetails[i].RateLineID ? newSelected : false
             });
           }
-
-          // this.state.cSelectedRow = !this.state.cSelectedRow[rateDetails[i].RateLineId]
         }
 
+        var custID = this.props.location.state.companyId;
+        var Customer = this.props.location.state.Customer;
+        var cbmVal = this.props.location.state.cbmVal;
+        if (cbmVal == "") {
+          cbmVal = "0";
+        }
+        if (Customer != "") {
+          this.HandleChangeConNew(Customer);
+        }
+
+        this.handleGetBaseCurrency()
         this.setState({
+          cbmVal,
           cmbTypeRadio: this.props.location.state.cmbTypeRadio,
           profitLossAmt: this.props.location.state.profitLossAmt,
           profitLossPer: this.props.location.state.profitLossPer,
@@ -647,10 +663,9 @@ class RateFinalizing extends Component {
         this.HandleSalesQuoteView(qData);
         this.HandlePackgeTypeData();
       }
-      // if (this.props.location.state.isCopy === true) {
-      //   ////debugger;;;
+
       this.HandleCommodityDropdown();
-      // }
+
       this.HandleSalesQuoteConditions();
     }
 
@@ -659,6 +674,32 @@ class RateFinalizing extends Component {
     ) {
       this.setState({ toggleAddProfitBtn: false });
     }
+  }
+
+  handleGetBaseCurrency() {
+    var selectedCurrency = window.localStorage.getItem("currencyCode");
+
+    let self=this;
+    var base = "";
+    if (selectedCurrency === "TL") {
+      base = "TRY";
+    } else {
+      base = selectedCurrency;
+    }
+    var url = "https://api.exchangeratesapi.io/latest?base=" + base;
+    axios({
+      method: "get",
+      url: url
+    }).then(function(response) {
+      debugger;
+
+      
+      // currencyAmount: 0,
+      var sBaseCurrency=selectedCurrency;
+      self.setState({sBaseCurrency});
+
+      // window.location.reload(false);
+    });
   }
 
   HandleSalesQuoteView(param) {
@@ -791,7 +832,7 @@ class RateFinalizing extends Component {
             var localProfitamt = [];
             for (let i = 0; i < rateDetails.length; i++) {
               profitLossAmt = 0;
-              BuyRate=0;
+              BuyRate = 0;
               var idrate = 0;
               if (
                 rateDetails[i].saleQuoteLineID &&
@@ -826,7 +867,7 @@ class RateFinalizing extends Component {
                   profitLossAmt += total - rateSubDetailsdata1[j].BuyRate;
                   BuyRate += rateSubDetailsdata1[j].BuyRate;
                 }
-                profitLossAmt+=rateDetails[i].Profit
+                profitLossAmt += rateDetails[i].Profit;
                 profitLossPer = (profitLossAmt * 100) / BuyRate;
                 finalprofitLossAmt = profitLossAmt + finalprofitLossAmt;
 
@@ -1354,6 +1395,7 @@ class RateFinalizing extends Component {
     this.setState(prevState => ({
       modalRequest: !prevState.modalRequest
     }));
+    this.setState({ discountval: 0 });
     this.RequestChangeMsgModalClose();
   }
 
@@ -1413,9 +1455,14 @@ class RateFinalizing extends Component {
   }
 
   SendRequestChange() {
-    ////debugger;;;
+    debugger;
 
     if (this.state.selectedDataRow.length > 0) {
+      if (this.state.CompanyID === 0) {
+        NotificationManager.error("Please Select Customer");
+        return false;
+      }
+
       this.setState({ reloding: true });
       var txtRequestDiscount,
         txtRequestFreeTime,
@@ -1493,8 +1540,10 @@ class RateFinalizing extends Component {
           });
         }
         if (containerLoadType == "LCL") {
+          debugger;
           FCLSQBaseFreight.push({
-            RateID: rateDetailsarr[i].RateLineID,
+            RateID:
+              rateDetailsarr[i].RateLineID || rateDetailsarr[i].RateLineId,
             RateType: rateDetailsarr[i].TypeOfRate
           });
         } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
@@ -1706,20 +1755,20 @@ class RateFinalizing extends Component {
           }
         }
       } else if (containerLoadType == "LCL") {
-        ////debugger;;;
+        debugger;
         var multiCBM = this.state.multiCBM;
         if (this.state.isediting) {
           if (this.state.cmbTypeRadio === "ALL") {
             for (var i = 0; i < multiCBM.length; i++) {
               //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
               RateQueryDim.push({
-                Quantity: multiCBM[i].Quantity,
-                Lengths: multiCBM[i].Length,
-                Width: multiCBM[i].Width,
-                Height: multiCBM[i].height,
-                GrossWt: multiCBM[i].GrossWeight,
-                VolumeWeight: 0,
-                Volume: 0,
+                Quantity: parseFloat(multiCBM[i].Quantity),
+                Lengths: parseFloat(multiCBM[i].Length),
+                Width: parseFloat(multiCBM[i].Width),
+                Height: parseFloat(multiCBM[i].height),
+                GrossWt: parseFloat(multiCBM[i].GrossWeight),
+                VolumeWeight: parseFloat(multiCBM[i].VolumeWeight),
+                Volume: parseFloat(multiCBM[i].Volume),
                 PackageType: multiCBM[i].PackageType
               });
             }
@@ -1960,10 +2009,10 @@ class RateFinalizing extends Component {
         OriginGeoCordinates: this.props.location.state.OriginGeoCordinates,
         DestGeoCordinate: this.props.location.state.DestGeoCordinate,
         BaseCurrency: rateSubDetailsarr[0].BaseCurrency,
-        NonStackable: this.props.location.state.NonStackable,
+        NonStackable: this.props.location.state.NonStackable == false ? 0 : 1,
         MyWayComments: txtRequestComments,
-        MyWayDiscount: txtRequestDiscount,
-        MyWayFreeTime: txtRequestFreeTime,
+        MyWayDiscount: parseFloat(txtRequestDiscount),
+        MyWayFreeTime: parseFloat(txtRequestFreeTime),
         IsRequestForChange: 1,
         SQCharges: FCLSQCharges,
         RateTypes: FCLSQBaseFreight
@@ -5817,7 +5866,9 @@ class RateFinalizing extends Component {
 
   handleChangeDiscount(e) {
     var jiji = e.target.value;
-
+    if (isNaN(jiji)) {
+      return false;
+    }
     var splitText = jiji.split(".");
     var index = jiji.indexOf(".");
     if (index != -1) {
@@ -5873,9 +5924,49 @@ class RateFinalizing extends Component {
       "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
   }
 
+  HandleChangeConNew(name) {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/CustomerList`,
+      data: {
+        CustomerName: name,
+        CustomerType: "Existing",
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+      },
+      headers: authHeader()
+    }).then(function(response) {
+      debugger;
+      var data = response.data.Table;
+
+      if (data.length === 1) {
+        var companyID = data[0].Company_ID;
+        var companyId = data[0].Company_ID;
+        var CompanyName = data[0].Company_Name;
+
+        var Company_Address = data[0].CompanyAddress;
+
+        var CompanyAddress = data[0].CompanyAddress;
+        var ContactName = data[0].ContactName;
+        var custNotification = data[0].ContactName;
+        self.setState({
+          companyID,
+          companyId,
+          CompanyName,
+          Company_Address,
+          CompanyAddress,
+          ContactName,
+          custNotification
+        });
+      }
+    });
+  }
+
   render() {
     var i = 0;
     var equipVal = "";
+    console.log(this.state.cbmVal);
     if (this.state.selected.length > 0) {
     } else {
       for (let j = 0; j < this.state.rateDetails.length; j++) {
@@ -6282,13 +6373,13 @@ class RateFinalizing extends Component {
                             </div>
                             <div className="text-center">
                               {this.state.toggleIsEdit && (
-                              <button
-                                onClick={this.RequestChangeMsgModal}
-                                className="butn more-padd m-0"
-                              >
-                                Request Change
-                              </button>
-                               )} 
+                                <button
+                                  onClick={this.RequestChangeMsgModal}
+                                  className="butn more-padd m-0"
+                                >
+                                  Request Change
+                                </button>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -6726,7 +6817,11 @@ class RateFinalizing extends Component {
                                               Price
                                             </p>
                                             <p className="details-para">
-                                              {total + " "+row.original.Total.split(" ")[1]}
+                                              {total +
+                                                " " +
+                                                row.original.Total.split(
+                                                  " "
+                                                )[1]}
                                             </p>
                                           </>
                                         );
@@ -6807,6 +6902,22 @@ class RateFinalizing extends Component {
                             //     }
                             //   });
                             // }}
+
+                            expanded={this.state.expanded}
+                            onExpandedChange={(newExpanded, index, event) => {
+                              if (newExpanded[index[0]] === false) {
+                                newExpanded = {};
+                              } else {
+                                Object.keys(newExpanded).map(k => {
+                                  newExpanded[k] =
+                                    parseInt(k) === index[0] ? {} : false;
+                                });
+                              }
+                              this.setState({
+                                ...this.state,
+                                expanded: newExpanded
+                              });
+                            }}
                             data={this.state.rateDetails}
                             defaultPageSize={1000}
                             className="-striped -highlight no-mid-align"
@@ -7309,7 +7420,7 @@ class RateFinalizing extends Component {
                           {this.state.containerLoadType === "AIR" ||
                           this.state.containerLoadType === "LCL" ||
                           this.state.containerLoadType === "LTL" ? (
-                            <p>CMB {this.state.cbmVal}</p>
+                            <p>CMB:{this.state.cbmVal}</p>
                           ) : (
                             ""
                           )}
@@ -7368,7 +7479,7 @@ class RateFinalizing extends Component {
                                     "LCL"
                                       ? "CBM"
                                       : "Chargable Weight",
-                                  accessor: "CBM",
+                                  accessor: "VolumeWeight",
                                   show:
                                     this.state.containerLoadType.toUpperCase() ==
                                     "FCL"

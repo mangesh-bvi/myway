@@ -59,7 +59,7 @@ class SideMenu extends Component {
     return true;
   }
   componentDidMount() {
-    debugger
+    
     var previousAir = window.localStorage.getItem("aircount");
     var previousQuotePending = window.localStorage.getItem("quotepending");
     var previousBookPending = window.localStorage.getItem("bookpending");
@@ -153,7 +153,7 @@ class SideMenu extends Component {
   }
 
   handleSubmit() {
-    debugger;
+    ////debugger;
     this.setState({ loading: true });
     let self = this;
     var formData = new FormData();
@@ -176,7 +176,7 @@ class SideMenu extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        ////debugger;
         if (response.data.Table.length > 0) {
           self.setState({
             profileImgURL: response.data.Table[0].UserLogo
@@ -202,7 +202,7 @@ class SideMenu extends Component {
       });
   }
   handleFile(e) {
-    debugger;
+    //debugger;
     var file = e.target.files[0];
     var t = file.type
       .split("/")

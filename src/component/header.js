@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
 import { Popover, Button } from "antd";
-
+import Select from "react-select";
 import Logo from "./../assets/img/logo.png";
 import "../assets/css/custom.css";
 import BellIcon from "./../assets/img/bell.png";
@@ -53,20 +53,23 @@ class Header extends Component {
       companyName: "",
       CompanyAddress: "",
       selectedCurrency: "USD",
-      profileImgURL: ""
+      profileImgURL: "",
+      currencyData: [],
+      currencyCode: "",
+      currencyObj: {}
     };
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
+    this.handleCurrencyBind = this.handleCurrencyBind.bind(this);
   }
 
-  // componentWillUpdate()
-  // {
-  //   debugger;
+  componentDidUpdate() {
+    // debugger;
+    // this.state.currencyCode=window.localStorage.getItem("currencyCode")
+  }
 
-  // }
   componentDidMount() {
-    debugger;
     if (encryption(window.localStorage.getItem("username"), "desc") == null) {
       window.location.href = "./login";
     } else {
@@ -119,7 +122,34 @@ class Header extends Component {
       );
       this.setState({ profileImgURL });
     }
+    this.handleCurrencyBind();
   }
+
+  handleCurrencyBind() {
+    let self = this;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/IncoTermsAPI`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var currencyData = response.data.Table4;
+      self.setState({
+        currencyData
+      });
+      debugger;
+      var currencyObj = window.localStorage.getItem("currencyObj");
+      var currencyCode = window.localStorage.getItem("currencyObj");
+
+      if (currencyCode && currencyObj) {
+        debugger;
+        var data = JSON.parse(currencyCode);
+
+        self.setState({ currencyObj: data, currencyCode });
+      }
+    });
+  }
+
   toggleDocu() {
     this.setState(prevState => ({
       modalDocu: !prevState.modalDocu
@@ -442,31 +472,67 @@ class Header extends Component {
 
     this.setState({ selectedType: value });
   }
-  getCurrencyRate(e) {
-    debugger;
-    var currency = e.target.value;
 
-    // let self=this;
-    // window.localStorage.removeItem("CurrencyData");
-    var url = "https://api.exchangeratesapi.io/latest?base=" + currency;
-    fetch(url)
-      .then(response => response.json())
-
-      .then(data => {
-        console.log(data, "-------------Currencydata");
-        // window.localStorage.removeItem("CurrencyData");
-      })
-      // Catch any errors we hit and update the app
-      .catch(error => {
-        console.log(error);
-      });
-  }
   onErrorImg(e) {
     return (e.target.src =
       "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
   }
+
+  HandleCurrencyChange(e) {
+    debugger;
+
+    this.setState({
+      currencyCode: e.CurrencyCode,
+      currencyObj: e
+    });
+    window.localStorage.setItem("currencyCode", e.CurrencyCode);
+    window.localStorage.setItem("currencyObj", JSON.stringify(e));
+
+    setTimeout(() => {
+      this.getCurrencyBaseValue();
+    }, 100);
+  }
+
+  getCurrencyBaseValue() {
+    var selectedCurrency = this.state.currencyCode;
+
+    var base = "";
+    if (selectedCurrency === "TL") {
+      base = "TRY";
+    } else {
+      base = selectedCurrency;
+    }
+    var url = "https://api.exchangeratesapi.io/latest?base=" + base;
+    axios({
+      method: "get",
+      url: url
+    }).then(function(response) {
+      debugger;
+      window.location.reload(false);
+    });
+  }
   render() {
     let self = this;
+
+    console.log(
+      this.state.currencyObj,
+      "------------------currencyObj-----------"
+    );
+
+    // const {currencyCode}=this.state;
+    // console.log(this.state.currencyCode,"-----------currencyCode");
+    // var currencyCode =null;
+    // if (this.state.currencyData.length > 0) {
+    //   debugger;
+    //   currencyCode = { CurrencyCode: "USD", BaseCurrencyName: "US Dollars" };
+    // } else {
+    //   var obj = new Object();
+
+    //   obj.CurrencyCode = "USD";
+    //   obj.BaseCurrencyName = "US Dollars";
+    //   currencyCode = JSON.parse(obj);
+    // }
+
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
       <div
         key={i}
@@ -579,16 +645,23 @@ class Header extends Component {
                           </Link>
                         </li>
                       )}
-                  {/* <li>
-                    <select
-                      onChange={this.getCurrencyRate.bind(this)}
-                      // value={this.state.selectedCurrency}
-                    >
-                      <option value="USD">USD</option>
-                      <option value="INR">INR</option>
-                      <option value="TRY">TL</option>
-                    </select>
-                  </li> */}
+                  <li>
+                    <Select
+                      className="rate-dropdown mt-0 CurrencyCodecss "
+                      closeMenuOnSelect={true}
+                      getOptionLabel={option => option.BaseCurrencyName}
+                      getOptionValue={option => option.CurrencyCode}
+                      // components={animatedComponents}
+                      value={this.state.currencyObj}
+                      isSearchable={false}
+                      options={this.state.currencyData}
+                      onChange={this.HandleCurrencyChange.bind(this)}
+                      defaultValue={{
+                        BaseCurrencyName: "US Dollars",
+                        CurrencyCode: "USD"
+                      }}
+                    />
+                  </li>
                   <li>
                     <div className="dropdown" style={{ position: "relative" }}>
                       <img
@@ -607,21 +680,6 @@ class Header extends Component {
                     </div>
                   </li>
 
-                  {/* <li style={{ padding: "10px 15px" }}>
-                  <div className="dropdown">
-                    <img
-                      className="header-phone-icon dropdown-toggle"
-                      data-toggle="dropdown"
-                      id="qrCode"
-                      src={PhoneIcon}
-                      alt="mobile-icon"
-                    />
-
-                    <div className="dropdown-menu qr-code-dropdown">
-                      <QRCode />
-                    </div>
-                  </div>
-                </li> */}
                   <li className="br-none" style={{ padding: "20px" }}>
                     <img
                       src={ChatIcon}

@@ -733,6 +733,7 @@ class Analytics extends Component {
   handleAnalyticsInvoice(event) {
     let self = this;
 
+    
     // if (
     //   this.state.toggleShipInv === true &&
     //   this.state.toggleInvFclLcl === false
@@ -840,6 +841,7 @@ class Analytics extends Component {
   }
 
   setSupplierdrop(axiosdata) {
+    
     let self = this;
     axios({
       method: "post",
@@ -875,10 +877,10 @@ class Analytics extends Component {
 
   setgrafval(axiosdata) {
     debugger;
-    this.setState({ loding: true });
+ 
 
     let self = this;
-
+    self.setState({ loding: true });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/InvoiceAnalyticsAPI`,
@@ -936,9 +938,9 @@ class Analytics extends Component {
             }
 
             var label = "";
-            if (this.state.cargoTypeFCL == true) {
+            if (self.state.cargoTypeFCL == true) {
               label = "FCL";
-            } else if (this.state.cargoTypeFCL == true) {
+            } else if (self.state.cargoTypeFCL == true) {
               label = "LCL";
             } else {
               label = "Ocean";
@@ -962,9 +964,9 @@ class Analytics extends Component {
             }
 
             var label = "";
-            if (this.state.checkFTL == true) {
+            if (self.state.checkFTL == true) {
               label = "FTL";
-            } else if (this.state.checkLTL == true) {
+            } else if (self.state.checkLTL == true) {
               label = "LTL";
             } else {
               label = "Ocean";
@@ -983,9 +985,10 @@ class Analytics extends Component {
       })
       .catch(error => {
         var temperror = error;
-        var err = temperror.split(":");
+        console.log(temperror)
+        // var err = temperror.split(":");
         // alert(err[1].replace("}", ""));
-        NotificationManager.error(err[1].replace("}", ""));
+        // NotificationManager.error(err[1].replace("}", ""));
         self.setState({ graphdataset: [], loding: false });
       });
   }
@@ -1060,6 +1063,8 @@ class Analytics extends Component {
     });
   }
   render() {
+    console.log(this.state.loding);
+    
     var buyerShipmentData = {
       labels: this.state.grafShipmentlabels,
       datasets: this.state.graphShipmentdataset
@@ -1410,14 +1415,7 @@ class Analytics extends Component {
                       )}
                     </div>
                   )}
-                  {/* <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>Values </span>
-                    <select>
-                      <option>$1 - $100</option>
-                      <option>$101 - $200</option>
-                      <option>$201 - $300</option>
-                    </select>
-                  </div> */}
+                  
                 </div>
                 {this.state.loding === true ? (
                   <div className="loader-icon"></div>

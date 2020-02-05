@@ -13,7 +13,7 @@ import "react-notifications/lib/notifications.css";
 
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import CheckboxTree from "react-checkbox-tree";
- 
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -41,7 +41,7 @@ class Login extends React.Component {
   }
 
   HandleDisplaySalesPersonData(sData) {
-    //debugger;
+    debugger;
     //get Companies
     let self = this;
     var mydata = sData; //JSON.parse(data);
@@ -165,6 +165,7 @@ class Login extends React.Component {
             ///Set checked Node
             //if(bMapped.toString() == "true")
             if (bMapped === true) {
+              debugger;
               var tData = cvId.toString();
               checkedNode.push(tData);
             }
@@ -186,10 +187,8 @@ class Login extends React.Component {
 
       finalNode.push(salesPersonDataByComp);
     }
-    //debugger;
-    //self.setState({ nodes: finalNode, checked: ["352200103, 1337604146"] });
-    // self.setState({ nodes: finalNode, checked: ["1420702123"] });
-    //self.setState({ nodes: finalNode, checked: ["1420702123"] });
+    debugger;
+
     self.setState({ nodes: finalNode, checked: checkedNode });
   }
   toggleSalesLogin() {
@@ -284,6 +283,14 @@ class Login extends React.Component {
             encryption(data.Table[0].UserId, "enc")
           );
 
+          var obj = new Object();
+
+          obj.CurrencyCode = "USD";
+          obj.BaseCurrencyName = "US Dollars";
+
+          window.localStorage.setItem("currencyObj", JSON.stringify(obj));
+
+          window.localStorage.setItem("currencyCode", "USD");
           window.localStorage.removeItem("myUserId");
           window.localStorage.setItem("myUserId", data.Table[0].UserId);
 
@@ -406,7 +413,6 @@ class Login extends React.Component {
   }
 
   render() {
-     
     let self = this;
     //  const { username, password } = this.state;
     const { loading } = this.state;

@@ -206,7 +206,9 @@ class RateTable extends Component {
       spolAddress: "",
       spodAddress: "",
       cmbTypeRadio: "",
-      packageTypeData:[]
+      packageTypeData: [],
+      Company: "",
+      selectedCurrency: ""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -219,7 +221,7 @@ class RateTable extends Component {
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
     this.custClearToggle = this.custClearToggle.bind(this);
-    this.HandlePackgeTypeData=this.HandlePackgeTypeData.bind(this);
+    this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
     this.spotRateSubmit = this.spotRateSubmit.bind(this);
     this.toggleQuantPOLSave = this.toggleQuantPOLSave.bind(this);
     this.toggleQuantPODSave = this.toggleQuantPODSave.bind(this);
@@ -233,13 +235,12 @@ class RateTable extends Component {
     },
     zoom: 11
   };
+  
 
   componentDidMount() {
-     
-
     setTimeout(() => {
       this.HandleCommodityData();
-      this.HandlePackgeTypeData()
+      this.HandlePackgeTypeData();
     }, 100);
 
     if (typeof this.props.location.state !== "undefined") {
@@ -250,7 +251,7 @@ class RateTable extends Component {
           var spolAddress = paramData.POL;
           var spodAddress = paramData.POD;
           var multiCBM = paramData.multiCBM;
-          this.setState({multiCBM})
+          this.setState({ multiCBM });
           // var modeofTransport = this.props.location.state.containerLoadType;
           if (paramData.typesofMove === "p2p") {
             this.state.polArray.push({
@@ -452,7 +453,10 @@ class RateTable extends Component {
               : paramData.Custom_Clearance;
           this.state.containerLoadType = paramData.containerLoadType;
           this.state.users = paramData.users;
+          var Customer = paramData.Customer;
+
           this.setState({
+            Customer,
             cmbTypeRadio: paramData.cmbTypeRadio,
             polArray: this.state.polArray,
             podArray: this.state.podArray,
@@ -517,10 +521,12 @@ class RateTable extends Component {
             }
             debugger;
             // this.state.multiCBM = this.props.location.state.multiCBM;
+            var currencyCode = paramData.currencyCode;
+
             this.setState({
               spolAddress,
               spodAddress,
-
+              currencyCode,
               mapPositionPOL: polmarkerData,
               markerPositionPOD: podmarkerData,
               polfullAddData: paramData.polfullAddData,
@@ -578,15 +584,7 @@ class RateTable extends Component {
 
   toggleQuantPOLSave() {
     debugger;
-
-    // if (this.props.location.state.PageName === "SportRateView") {
-    //   this.state.polFilterArray = this.state.polArray.slice(1);
-    //   this.setState(prevState => ({
-    //     polFilterArray: this.state.polFilterArray,
-    //     modalPOL: !this.state.modalPOL
-    //     //modalQuant: !prevState.modalQuant
-    //   }));
-    // } else {
+ 
     this.state.polFilterArray = this.state.polArray;
     this.setState(() => ({
       loading: true,
@@ -602,14 +600,7 @@ class RateTable extends Component {
   toggleQuantPODSave() {
     debugger;
 
-    // if (this.props.location.state.PageName === "SportRateView") {
-    //   this.state.podFilterArray = this.state.podArray.slice(1);
-    //   this.setState(prevState => ({
-    //     podFilterArray: this.state.podFilterArray,
-    //     modalPOD: !this.state.modalPOD
-    //     //modalQuant: !prevState.modalQuant
-    //   }));
-    // } else {
+     
     this.state.podFilterArray = this.state.podArray;
     this.setState(() => ({
       loading: true,
@@ -696,7 +687,7 @@ class RateTable extends Component {
     var compID = 0;
     var baseCurrency = "";
     var multiCBM = this.props.location.state.multiCBM;
-    
+
     this.setState({ loading: true });
     var incoTerms = this.props.location.state.incoTerms;
     this.setState({ incoTerms });
@@ -715,12 +706,29 @@ class RateTable extends Component {
       this.setState({ currencyCode: baseCurrency });
     }
 
+
+
+    var newcurrencyCode = window.localStorage.getItem("currencyCode");
+    var NewselectedCurrency = "";
+
+    if (newcurrencyCode) {
+      if (this.state.currencyCode === newcurrencyCode) {
+        NewselectedCurrency = this.state.currencyCode;
+      } else {
+        NewselectedCurrency = newcurrencyCode;
+      }
+    } else {
+      NewselectedCurrency = this.state.currencyCode;
+    }
+
+
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
       data: {
         CustomerId: compID,
-        BaseCurrency: baseCurrency,
+        BaseCurrency: NewselectedCurrency,
         QuoteType: this.state.containerLoadType,
         ModeOfTransport: rModeofTransport,
         Type: this.state.shipmentType,
@@ -806,20 +814,7 @@ class RateTable extends Component {
           loading: false
         });
       }
-
-      // if (ratetable != null) {
-      //   self.setState({
-      //     commodityData,
-      //     RateDetails: ratetable,
-      //     tempRateDetails: ratetable,
-      //     loading: false
-      //   });
-      // }
-      // if (ratetable1 != null) {
-      //   self.setState({
-      //     RateSubDetails: ratetable1
-      //   });
-      // }
+ 
     });
     // // }
   }
@@ -848,13 +843,12 @@ class RateTable extends Component {
     var rateSubDetails = this.state.RateSubDetails.filter(
       d => d.RateLineID === RateLineID
     );
-    var profitLossAmt=0;
-    var profitLossAmt1=this.state.profitLossAmt
-    var profitLossPer=0;
-    var profitLossPer1=this.state.profitLossPer;
+    var profitLossAmt = 0;
+    var profitLossAmt1 = this.state.profitLossAmt;
+    var profitLossPer = 0;
+    var profitLossPer1 = this.state.profitLossPer;
     if (this.state.selectedDataRow.length == 0) {
       selectedRow.push(rowData._original);
-    
 
       for (let j = 0; j < rateSubDetails.length; j++) {
         profitLossAmt +=
@@ -862,15 +856,13 @@ class RateTable extends Component {
         BuyRate += rateSubDetails[j].BuyRate;
       }
       profitLossPer = (profitLossAmt * 100) / BuyRate;
-      var finalprofitLossAmt=profitLossAmt+profitLossAmt1;
-      
-      var finalprofitLossPer=profitLossPer+profitLossPer1;
+      var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
 
-      
+      var finalprofitLossPer = profitLossPer + profitLossPer1;
 
       this.setState({
         selectedDataRow: selectedRow,
-        profitLossAmt:finalprofitLossAmt ,
+        profitLossAmt: finalprofitLossAmt,
         profitLossPer: finalprofitLossPer
       });
     } else {
@@ -886,35 +878,26 @@ class RateTable extends Component {
             thisrateid = this.state.selectedDataRow[i].RateLineId;
             _originalrateid = rowData._original.RateLineId;
           }
+ 
+          selectedRow = this.state.selectedDataRow;
+          selectedRow.push(rowData._original);
 
-          // if (
-          //   thisrateid == _originalrateid //== undefined ? rowData._original.RateLineId : rowData._original.RateLineID
-          // ) {
-          //   selectedRow.splice(i, 1);
+          for (let j = 0; j < rateSubDetails.length; j++) {
+            profitLossAmt +=
+              rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
+            BuyRate += rateSubDetails[j].BuyRate;
+          }
+          profitLossPer = (profitLossAmt * 100) / BuyRate;
+          var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
 
-          //   break;
-          // } else {
-            selectedRow = this.state.selectedDataRow;
-            selectedRow.push(rowData._original);
-            
-            for (let j = 0; j < rateSubDetails.length; j++) {
-              profitLossAmt +=
-                rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
-              BuyRate += rateSubDetails[j].BuyRate;
-            }
-            profitLossPer = (profitLossAmt * 100) / BuyRate;
-            var finalprofitLossAmt=profitLossAmt+profitLossAmt1;
-      
-            var finalprofitLossPer = profitLossPer + profitLossPer1;
-            this.setState({
-              
-              profitLossAmt:finalprofitLossAmt ,
-              profitLossPer: finalprofitLossPer
-            });
-            break;
+          var finalprofitLossPer = profitLossPer + profitLossPer1;
+          this.setState({
+            profitLossAmt: finalprofitLossAmt,
+            profitLossPer: finalprofitLossPer
+          });
+          break;
           // }
         }
-      
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           if (
@@ -930,29 +913,21 @@ class RateTable extends Component {
               BuyRate += rateSubDetails[j].BuyRate;
             }
             profitLossPer = (profitLossAmt * 100) / BuyRate;
-            var finalprofitLossAmt=profitLossAmt1-profitLossAmt;
-      
-            var finalprofitLossPer = profitLossPer1-profitLossPer  ;
+            var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
+
+            var finalprofitLossPer = profitLossPer1 - profitLossPer;
             this.setState({
-              
-              profitLossAmt:finalprofitLossAmt ,
+              profitLossAmt: finalprofitLossAmt,
               profitLossPer: finalprofitLossPer
             });
             break;
           }
         }
-        // for (let j = 0; j < rateSubDetails.length; j++) {
-        //   this.state.profitLossAmt -=
-        //     rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
-        //   BuyRate -= rateSubDetails[j].BuyRate;
-        // }
-
-        // this.state.profitLossPer = (this.state.profitLossAmt * 100) / BuyRate;
+      
       }
     }
     this.setState({
-      selectedDataRow: selectedRow,
-    
+      selectedDataRow: selectedRow
     });
   }
 
@@ -1063,7 +1038,21 @@ class RateTable extends Component {
         pickUpAddress = paramData.fullAddressPOL[0];
         destUpAddress = paramData.fullAddressPOD[0];
       }
+      debugger;
+      var currencyCode = this.state.currencyCode;
+      var newcurrencyCode = window.localStorage.getItem("currencyCode");
+      var NewselectedCurrency = "";
 
+      if (newcurrencyCode) {
+        if (currencyCode === newcurrencyCode) {
+          NewselectedCurrency = this.state.currencyCode;
+        } else {
+          NewselectedCurrency = newcurrencyCode;
+        }
+      } else {
+        NewselectedCurrency = this.state.currencyCode;
+      }
+   
       dataParameter = {
         QuoteType: paramData.containerLoadType,
         ModeOfTransport: rModeofTransport,
@@ -1107,7 +1096,7 @@ class RateTable extends Component {
           podAddress.NameWoDiacritics !== undefined
             ? podAddress.NameWoDiacritics
             : paramData.fullAddressPOD[0].City,
-        Currency: paramData.currencyCode,
+        Currency: NewselectedCurrency, //paramData.currencyCode,
         //ChargeableWeight: cmbvalue,
         //RateQueryDim: paramData.multiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
@@ -1134,7 +1123,7 @@ class RateTable extends Component {
           "desc"
         );
       }
-debugger;
+      debugger;
       dataParameter.Commodity = this.state.CommodityID;
       dataParameter.CustomerId = parseInt(paramData.companyId);
       dataParameter.PickUpAddressDetails = pickUpAddress;
@@ -1150,30 +1139,6 @@ debugger;
         EquipmentType = paramData.EquipmentType;
       }
 
-      // if(paramData.typesofMove === "p2p")
-      // {this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      // this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      // this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "d2p") {
-      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:paramData.podfullAddData.UNECECode,PODGeoCordinate:paramData.podfullAddData.GeoCoordinate,Address:paramData.fields.pod, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "d2d") {
-      //   this.state.polArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:'',POLGeoCordinate:paramData.OriginGeoCordinates,Address:paramData.puAdd, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      // }
-      // if (paramData.typesofMove === "p2d") {
-      //   this.state.polArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      //   this.state.podArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      //   this.state.polFilterArray.push({POL:paramData.polfullAddData.UNECECode,POLGeoCordinate:paramData.polfullAddData.GeoCoordinate,Address:paramData.fields.pol, IsFilter:true});
-      //   this.state.podFilterArray.push({POD:'',PODGeoCordinate:paramData.DestGeoCordinate,Address:paramData.DeliveryCity, IsFilter:true});
-      // }
       var incoTerms = paramData.incoTerms;
       debugger;
       this.setState({
@@ -1201,8 +1166,7 @@ debugger;
         currencyCode: paramData.currencyCode,
         TruckType: paramData.TruckType,
         TruckTypeData: paramData.TruckTypeData,
-        // OriginGeoCordinates: paramData.OriginGeoCordinates,
-        // DestGeoCordinate: paramData.DestGeoCordinate,
+
         pickUpAddress: paramData.fullAddressPOL,
         destAddress: paramData.fullAddressPOD,
         multiCBM: paramData.multiCBM,
@@ -1322,7 +1286,6 @@ debugger;
       });
   }
 
-   
   toggleChangePOLPOD(i, field, geoCoordinate) {
     debugger;
     if (field == "POL") {
@@ -2726,9 +2689,8 @@ debugger;
       this.HandleMultiPOLPODFilter();
     } else {
       setTimeout(() => {
-        this.HandleRateDetailsFCL(this.state);  
+        this.HandleRateDetailsFCL(this.state);
       }, 100);
-      
     }
   }
 
@@ -2937,7 +2899,6 @@ debugger;
   }
 
   CreateMultiCBM() {
-    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -3743,17 +3704,16 @@ debugger;
     });
   }
 
-onErrorImg(e)
-{
-  
-  return e.target.src="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
-}
+  onErrorImg(e) {
+    return (e.target.src =
+      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+  }
 
   render() {
     var i = 0;
     var classname = "";
     console.log(this.state.multiCBM);
-    
+
     if (this.state.isViewRate == true) {
       classname = "butn btn-sizeRate disabled";
     } else {
@@ -4040,7 +4000,6 @@ onErrorImg(e)
                               }
                             ></POLMaps>
                           </div>
-                         
                         </div>
                         <div className="pol-pod">
                           <span>POD</span>
@@ -4068,7 +4027,6 @@ onErrorImg(e)
                               </h5>
                             </div>
                           ))}
-                          
                         </div>
                       </div>
                     </div>
@@ -4259,7 +4217,6 @@ onErrorImg(e)
                                     mode == "AIR" &&
                                     lname !== ""
                                   ) {
-                                    
                                     return (
                                       <React.Fragment>
                                         <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -4302,10 +4259,8 @@ onErrorImg(e)
                                             // ref={img => this.img = img} onError={
                                             //   () => this.img.src = 'https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png'
                                             // }
-                                            onError={this.onErrorImg.bind(this)}  
+                                            onError={this.onErrorImg.bind(this)}
                                           />
-
-                                          
                                         </div>
                                       </React.Fragment>
                                     );
@@ -4408,7 +4363,7 @@ onErrorImg(e)
                                   return (
                                     <>
                                       <p className="details-title">
-                                      Transit Port
+                                        Transit Port
                                       </p>
                                       <p className="details-para">
                                         {row.original.TransshipmentPort}
@@ -4567,6 +4522,22 @@ onErrorImg(e)
                         //     }
                         //   });
                         // }}
+
+                        expanded={this.state.expanded}
+                        onExpandedChange={(newExpanded, index, event) => {
+                          if (newExpanded[index[0]] === false) {
+                            newExpanded = {};
+                          } else {
+                            Object.keys(newExpanded).map(k => {
+                              newExpanded[k] =
+                                parseInt(k) === index[0] ? {} : false;
+                            });
+                          }
+                          this.setState({
+                            ...this.state,
+                            expanded: newExpanded
+                          });
+                        }}
                         data={this.state.tempRateDetails}
                         defaultPageSize={10}
                         className="-striped -highlight no-mid-align"

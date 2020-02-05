@@ -100,7 +100,7 @@ class SpotRateDetails extends Component {
       cbmWidth: "",
       cbmHeight: "",
       cbmQuantity: "1",
-      cbmVal: "",
+      cbmVal: "0",
       PODData: [],
       POLData: [],
       puAdd: "",
@@ -153,7 +153,8 @@ class SpotRateDetails extends Component {
       Status: "",
       IsSpotRate: false,
       IsRequestForChange: false,
-      CustomerID: 0
+      CustomerID: 0,
+      Company: ""
     };
     //this.setratequery = this.setratequery.bind(this);
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -204,6 +205,22 @@ class SpotRateDetails extends Component {
             var QuotationSubData = response.data.Table2;
             var RateQueryData = response.data.Table;
 
+            // var rateDim = response.data.Table3;
+            // var newRateDim = [];
+            // for (let i = 0; i < rateDim.length; i++) {
+            //   var rateObj = new Object();
+
+            //   rateObj.PackageType = rateDim[i].PackageType || "";
+            //   rateObj.Quantity = rateDim[i].Quantity || 0;
+            //   rateObj.Lengths = rateDim[i].Lengths || 0;
+            //   rateObj.Width = rateDim[i].Width || 0;
+            //   rateObj.Height = rateDim[i].Height || 0;
+            //   rateObj.Volume = rateDim[i].Height || 0;
+            //   rateObj.GrossWt = rateDim[i].Height || 0;
+            //   rateObj.VolumeWT = rateDim[i].Height || 0;
+            //   newRateDim.push(rateObj);
+            // }
+
             if (response != null) {
               if (response.data != null) {
                 if (QuotationData.length > 0) {
@@ -243,9 +260,11 @@ class SpotRateDetails extends Component {
                   var IsRequestForChange = RateQueryData[0].IsRequestForChange;
                   var IsSpotRate = RateQueryData[0].IsSpotRate;
                   var CustomerID = RateQueryData[0].CustomerID;
+                  var Customer = RateQueryData[0].Customer;
 
                   self.setState({
                     CustomerID,
+                    Customer,
                     IsRequestForChange,
                     IsSpotRate,
                     shipmentType,
@@ -258,7 +277,9 @@ class SpotRateDetails extends Component {
                 }
                 if (response.data.Table1 != null) {
                   if (response.data.Table1.length > 0) {
+                    var cbmVal = spotrateresponseTbl1[0].CBM || "0";
                     self.setState({
+                      cbmVal,
                       spotrateresponseTbl1: spotrateresponseTbl1
                     });
                   }
@@ -273,6 +294,7 @@ class SpotRateDetails extends Component {
                 if (response.data.Table3 != null) {
                   if (response.data.Table3.length > 0) {
                     self.setState({
+                      // multiCBM: newRateDim,
                       spotrateresponseTbl3: response.data.Table3
                     });
                   }
@@ -545,23 +567,18 @@ class SpotRateDetails extends Component {
     }
 
     if (this.state.spotrateresponseTbl3.length != null) {
+      debugger;
       if (this.state.spotrateresponseTbl3.length > 0) {
         for (var i = 0; i < this.state.spotrateresponseTbl3.length; i++) {
           multiCBM.push({
-            PackageType:
-              this.state.spotrateresponseTbl3[i].PackageType == null
-                ? ""
-                : this.state.spotrateresponseTbl3[i].PackageType,
-            Quantity: this.state.spotrateresponseTbl3[i].Quantity,
-            Lengths: this.state.spotrateresponseTbl3[i].Lengths,
-            Width: this.state.spotrateresponseTbl3[i].Width,
-            Height: this.state.spotrateresponseTbl3[i].Height,
-            GrossWt: this.state.spotrateresponseTbl3[i].GrossWt,
-            VolumeWeight: 0,
-            Volume:
-              this.state.spotrateresponseTbl3[i].Volume == null
-                ? 0
-                : this.state.spotrateresponseTbl3[i].Volume
+            PackageType: this.state.spotrateresponseTbl3[i].PackageType || "",
+            Quantity: this.state.spotrateresponseTbl3[i].Quantity || 0,
+            Lengths: this.state.spotrateresponseTbl3[i].Lengths || 0,
+            Width: this.state.spotrateresponseTbl3[i].Width || 0,
+            Height: this.state.spotrateresponseTbl3[i].Height || 0,
+            GrossWt: this.state.spotrateresponseTbl3[i].GrossWt || 0,
+            VolumeWeight: this.state.spotrateresponseTbl3[i].VolumeWT || 0,
+            Volume: this.state.spotrateresponseTbl3[i].Volume || 0
           });
         }
       }
@@ -570,7 +587,6 @@ class SpotRateDetails extends Component {
     this.state.selected = selected;
     this.state.users = users;
     this.state.multiCBM = multiCBM;
-
     const { spotrateresponseTbl } = this.state;
     this.state.Custom_Clearance = spotrateresponseTbl.Custom_Clearance;
     this.state.puAdd = spotrateresponseTbl.PickUpAddress;
@@ -608,6 +624,7 @@ class SpotRateDetails extends Component {
     this.state.RatequeryID = this.state.spotrateresponseTbl.RateQueryId;
     debugger;
     self.setState({
+      
       Custom_Clearance: this.state.Custom_Clearance,
       DeliveryCity: this.state.DeliveryCity,
       DestGeoCordinate: "",
@@ -698,15 +715,14 @@ class SpotRateDetails extends Component {
     }
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
-      debugger;
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
 
     return (
       <React.Fragment>
+        <NotificationContainer />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -1020,7 +1036,15 @@ class SpotRateDetails extends Component {
                     </div>
                     <div>
                       <div className="col-md-12 login-fields">
-                        <p className="details-title">Cargo Details</p>
+                        <div className="title-border py-3 d-flex align-items-center justify-content-between">
+                          <p className="details-title">Cargo Details</p>
+                          {this.state.Mode == "FCL" &&
+                          this.state.Mode === "FTL" ? (
+                            ""
+                          ) : (
+                            <p>CBM:{this.state.cbmVal}</p>
+                          )}
+                        </div>
                         <div className="" style={{ width: "100%" }}>
                           <div className="ag-fresh">
                             {/* {(() => {
@@ -1160,14 +1184,14 @@ class SpotRateDetails extends Component {
                                           this.state.ModeOfTransport;
 
                                         if (mode === "Ocean" && lname !== "") {
-                                          var url="";
-                                          if(this.state.Mode=="FCL")
-                                          {
-                                            url="https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +lname;
-                                          }
-                                          else
-                                          {
-                                            url="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png";
+                                          var url = "";
+                                          if (this.state.Mode == "FCL") {
+                                            url =
+                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              lname;
+                                          } else {
+                                            url =
+                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png";
                                           }
                                           return (
                                             <React.Fragment>
@@ -1342,14 +1366,12 @@ class SpotRateDetails extends Component {
                                       Header: "Price",
                                       accessor: "Total",
                                       Cell: row => {
+                                        var total = row.original.TotalAmountInBaseCureency.toFixed(
+                                          2
+                                        );
                                         return (
                                           <React.Fragment>
-                                            <p className=" ">
-                                              {
-                                                row.original
-                                                  .TotalAmountInBaseCureency
-                                              }
-                                            </p>
+                                            <p className=" ">{total}</p>
                                           </React.Fragment>
                                         );
                                       }
@@ -1480,7 +1502,6 @@ class SpotRateDetails extends Component {
                       ]
                     }
                   ]}
-                  defaultPageSize={3}
                   minRows={1}
                   showPagination={false}
                 />
