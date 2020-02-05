@@ -13,52 +13,7 @@ import "react-notifications/lib/notifications.css";
 
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import CheckboxTree from "react-checkbox-tree";
-// import FontAwesomeIcon from 'font-awesome';
-
-// import { connect } from 'react-redux'
-// const nodes = [
-//   {
-//     value: "mars",
-//     label: "Mars",
-//     children: [
-//       {
-//         value: "phobos",
-//         label: "Phobos",
-//         children: [{ value: "phobos-chileden", label: "phobos-chileden" }]
-//       },
-//       { value: "deimos", label: "Deimos" }
-//     ]
-//   },
-//   {
-//     value: "mars1",
-//     label: "Mars1",
-//     children: [
-//       {
-//         value: "phobos",
-//         label: "Phobos1",
-//         children: [{ value: "phobos-chileden", label: "phobos-chileden-1" }]
-//       },
-//       { value: "deimos", label: "Deimos1" }
-//     ]
-//   }
-//   {
-//     value: 352200103,
-//     label: "ATA MUMBAI",
-//     children: [
-//       {
-//         value: 1337604146,
-//         label: "Satish Gage",
-//         children: [{ value: 0, label: 0 }]
-//       },
-//       {
-//         value: 1337604158,
-//         label: "Sanjana Bagwe",
-//         children: [{ value: 1, label: 1 }]
-//       }
-//     ]
-//   }
-// ];
-
+ 
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -254,19 +209,16 @@ class Login extends React.Component {
       url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        //CompanyID: [1456412466, 1424312173, 1420702123]
+
         CompanyID: finalselectedData
       },
       headers: authHeader()
     })
       .then(function(response) {
-        //debugger;
+        debugger;
         self.props.history.push("/rate-search");
-        // window.location.href = "./rate-search";
       })
-      .catch(error => {
-        
-      });
+      .catch(error => {});
   }
 
   handlechange(e) {
@@ -283,7 +235,7 @@ class Login extends React.Component {
     window.localStorage.setItem("password", encryption(password, "enc"));
     if (username !== "" && password !== "") {
       var ipaddress = window.localStorage.getItem("ipaddress");
-      
+
       axios({
         method: "post",
         url: `${appSettings.APIURL}/Login`,
@@ -296,7 +248,7 @@ class Login extends React.Component {
         headers: authHeader("no")
       })
         .then(function(response) {
-          ////debugger;
+          debugger;
 
           var data = response.data;
           window.localStorage.setItem("st", new Date());
@@ -349,6 +301,12 @@ class Login extends React.Component {
             "companyname",
             encryption(data.Table[0].Company_Name, "enc")
           );
+          if (data.Table[0].UserLogo) {
+            window.localStorage.setItem(
+              "UserLogo",
+              encryption(data.Table[0].UserLogo, "enc")
+            );
+          }
 
           if (data.Table[0].UserType == "Customer") {
             window.localStorage.setItem(
@@ -440,16 +398,15 @@ class Login extends React.Component {
 
   componentDidMount() {
     localStorage.clear();
-    
+
     const publicIp = require("public-ip");
     (async () => {
-      
       window.localStorage.setItem("ipaddress", await publicIp.v4());
     })();
   }
-   
-    
+
   render() {
+     
     let self = this;
     //  const { username, password } = this.state;
     const { loading } = this.state;
@@ -554,7 +511,6 @@ class Login extends React.Component {
             <ModalBody>
               <div>
                 <CheckboxTree
-                  
                   nodes={self.state.nodes}
                   checked={self.state.checked}
                   expanded={this.state.expanded}

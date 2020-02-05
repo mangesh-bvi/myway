@@ -19,6 +19,7 @@ import Moment from "react-moment";
 import ATA from "./../assets/img/ATAFreight_console.png";
 import Download from "./../assets/img/csv.png";
 import Delete from "./../assets/img/red-delete-icon.png";
+import PDF from "./../assets/img/pdf.png";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -180,7 +181,10 @@ class RateFinalizingStill extends Component {
     })
       .then(function(response) {
         debugger;
-
+        var RateDetails = response.data.Table1;
+        var SubRateDetails = response.data.Table2;
+        var multiCBM = response.data.Table3;
+        var DocumentDetails = response.data.Table4;
         var TypeofMove = "";
         var IncoTerms = "";
         var CargoDetailsArr = [];
@@ -274,26 +278,26 @@ class RateFinalizingStill extends Component {
                 var table = response.data.Table3;
                 for (var i = 0; i < table.length; i++) {
                   CargoDetailsArr.push({
-                    PackageType: table[i].PackageType,
+                    PackageType: table[i].PackageType || "",
                     SpecialContainerCode: table[i].PackageType + "_" + i,
-                    ContainerType: table[i].PackageType,
+                    ContainerType: table[i].PackageType || "",
                     Packaging: "-",
-                    Quantity: table[i].Quantity,
-                    Lenght: table[i].Length,
-                    Width: table[i].Width,
-                    Height: table[i].height,
-                    Weight: table[i].GrossWeight,
-                    Gross_Weight: "-",
-                    Temperature: "-",
+                    Quantity: table[i].Quantity || 0,
+                    Lenght: table[i].Length || 0,
+                    Width: table[i].Width || 0,
+                    Height: table[i].height || 0,
+                    Weight: table[i].GrossWeight || 0,
+                    Gross_Weight: "-" || "",
+                    Temperature: "-" || "",
                     CBM:
                       response.data.Table[0].ModeOfTransport.toUpperCase() ===
                       "AIR"
                         ? table[i].ChgWeight
                         : table[i].CBM === undefined
                         ? "-"
-                        : table[i].CBM,
-                    Volume: "-",
-                    VolumeWeight: "-",
+                        : table[i].CBM || 0,
+                    Volume: table[i].Volume || 0,
+                    VolumeWeight: table[i].VolumeWeight || 0,
                     Editable: true
                   });
                 }
@@ -309,10 +313,10 @@ class RateFinalizingStill extends Component {
           }
         }
         self.setState({
-          RateDetails: response.data.Table1,
-          SubRateDetails: response.data.Table2,
-          multiCBM: response.data.Table3,
-          DocumentDetails: response.data.Table4
+          RateDetails: RateDetails,
+          SubRateDetails: SubRateDetails,
+          multiCBM: multiCBM,
+          DocumentDetails: DocumentDetails
         });
         if (response.data.Table4.length === 0) {
           self.setState({
@@ -1421,6 +1425,11 @@ class RateFinalizingStill extends Component {
     }, 10);
   }
 
+  onErrorImg(e) {
+    return (e.target.src =
+      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+  }
+
   render() {
     let className = "butn m-0";
     if (this.state.showContent == true) {
@@ -1628,6 +1637,9 @@ class RateFinalizingStill extends Component {
                                                 title={olname}
                                                 alt={olname}
                                                 src={url}
+                                                onError={this.onErrorImg.bind(
+                                                  this
+                                                )}
                                               />
                                             </div>
                                           </React.Fragment>
@@ -1642,6 +1654,9 @@ class RateFinalizingStill extends Component {
                                               <img
                                                 title={olname}
                                                 alt={olname}
+                                                onError={this.onErrorImg.bind(
+                                                  this
+                                                )}
                                                 src={
                                                   "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                                                   lname
@@ -1656,6 +1671,9 @@ class RateFinalizingStill extends Component {
                                             <div className="rate-tab-img">
                                               <img
                                                 title={olname}
+                                                onError={this.onErrorImg.bind(
+                                                  this
+                                                )}
                                                 src={
                                                   "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                                                 }
@@ -1732,7 +1750,7 @@ class RateFinalizingStill extends Component {
                                       return (
                                         <>
                                           <p className="details-title">
-                                            TransShipment Port
+                                          Transit Port
                                           </p>
                                           {this.state.ContainerLoad !==
                                           "INLAND" ? (
@@ -1845,13 +1863,22 @@ class RateFinalizingStill extends Component {
                                           " " +
                                           remo;
                                       }
+                                      var total =
+                                        parseFloat(
+                                          row.original.Total.split(" ")[0]
+                                        ) + (row.original.Profit || 0);
+                                      var base = row.original.Total.split(
+                                        " "
+                                      )[1];
+                                      var totalAmount = total + " " + base;
+
                                       return (
                                         <>
                                           <p className="details-title">Price</p>
                                           <p className="details-para">
                                             {row.original.Total !== "" &&
                                             row.original.Total !== null
-                                              ? final
+                                              ? totalAmount
                                               : ""}
                                           </p>
                                         </>
@@ -2220,7 +2247,7 @@ class RateFinalizingStill extends Component {
                         <div className="row">
                           {" "}
                           <div className="col-md-12 login-fields">
-                            <div className="d-flex justify-content-between">
+                            {/* <div className="d-flex justify-content-between">
                               <p className="details-title">Cargo Details</p>
                               {this.state.ContainerLoad === "AIR" ||
                               this.state.ContainerLoad === "LCL" ||
@@ -2231,7 +2258,7 @@ class RateFinalizingStill extends Component {
                               ) : (
                                 ""
                               )}
-                            </div>
+                            </div> */}
 
                             <div className="ag-fresh redirect-row">
                               <ReactTable
@@ -2264,12 +2291,24 @@ class RateFinalizingStill extends Component {
                                     Header: "Gross Weight",
                                     accessor: "Weight"
                                     //editable: this.state.containerLoadType == "Air" ? true : false
+                                  },
+                                  {
+                                    Header: "CBM",
+                                    accessor: "CBM",
+                                    show:
+                                      this.state.ContainerLoad == "AIR"||this.state.ContainerLoad == "LTL"||this.state.ContainerLoad == "LCL"
+                                        ? true
+                                        : false
+                                  },
+
+                                  {
+                                    Header: "VolumeWeight",
+                                    accessor: "VolumeWeight",
+                                    show:
+                                      this.state.ContainerLoad == "FCL"||this.state.ContainerLoad == "FTL"
+                                        ? true
+                                        : false
                                   }
-                                  // {
-                                  //     Header: "CBM",
-                                  //     accessor: "CBM"
-                                  //     // show:  this.state.containerLoadType == "Air" ? false : true
-                                  //   }
 
                                   // {
                                   //   Header: "Temp.",
@@ -2330,7 +2369,17 @@ class RateFinalizingStill extends Component {
                                 columns={[
                                   {
                                     Header: "File Name",
-                                    accessor: "FileName"
+                                    accessor: "FileName",
+                                    Cell: row => {
+                                      if (row.original.FileName !== "No File Found") {
+                                      return (
+                                        <div><img src={PDF} alt="PDF icon" className="cls-pdf"/>{row.original.FileName}</div>
+                                      )
+                                      }
+                                      else{
+                                        return <>{row.original.FileName}</>;
+                                      }
+                                    }
                                   },
                                   {
                                     Header: "Action",
@@ -2690,7 +2739,7 @@ class RateFinalizingStill extends Component {
             >
               <span>&times;</span>
             </button>
-            <button onClick={this.printModalPopUp.bind(this)}>Print</button>
+            {/* <button onClick={this.printModalPopUp.bind(this)}>Print</button> */}
             <div id="printDiv">
               <div className="row" style={{ margin: 0 }}>
                 <div className="logohheader">

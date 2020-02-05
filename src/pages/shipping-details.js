@@ -3,10 +3,8 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
-import "../assets/css/react-table.css";
-import GoogleMapReact from "google-map-react";
-import ShipWhite from "./../assets/img/ship-white.png";
-import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
+import "../assets/css/react-table.css"; 
+import { Button, Modal, ModalBody } from "reactstrap";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -184,11 +182,7 @@ class ShippingDetails extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-      // var air = 0,
-      //   ocean = 0,
-      //   inland = 0;
-
-      //ModeOfTransport
+     
 
       var data = response.data.Table1;
       var inland = data.filter(x => x.ModeOfTransport === "Inland").length;
@@ -202,21 +196,13 @@ class ShippingDetails extends Component {
         }
       }
       self.setState({ shipmentSummary: data });
-      // for (let i = 0; i < data.length; i++) {
-      //   if (data[i].ModeOfTransport === "Ocean") {
-      //     ocean = ocean + 1;
-      //   } else if (data[i].ModeOfTransport === "Air") {
-      //     air = air + 1;
-      //   } else if (data[i].ModeOfTransport === "Inland") {
-      //     inland = inland + 1;
-      //   }
-      // }
+      
 
       window.localStorage.setItem("aircount", air);
       window.localStorage.setItem("oceancount", ocean);
       window.localStorage.setItem("inlandcount", inland);
 
-      ///problem not working setstat undefined
+      
     });
   }
 
@@ -238,7 +224,12 @@ class ShippingDetails extends Component {
           if (pol !== "No record found" && pol !== "No Record Found") {
             var hblNo = column.original["HBL#"];
             var eventManage = column.original["Event"];
-            this.HandleChangeShipmentDetails(hblNo, eventManage);
+            if (hblNo) {
+              this.HandleChangeShipmentDetails(hblNo, eventManage);
+            } else {
+              NotificationManager.error("HBL No not Found");
+              return false;
+            }
           }
         }
       }
@@ -256,13 +247,7 @@ class ShippingDetails extends Component {
     this.setState({ listDis: "none", mapDis: "block" });
   }
 
-  static defaultProps = {
-    center: {
-      lat: 59.95,
-      lng: 30.33
-    },
-    zoom: 11
-  };
+   
 
   toggleAdvSearch() {
     this.setState(prevState => ({
@@ -313,7 +298,8 @@ class ShippingDetails extends Component {
         url: `${appSettings.APIURL}/CustomerList`,
         data: {
           CustomerName: e.target.value,
-          CustomerType: "Existing"
+          CustomerType: "Existing",
+          MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
         },
         headers: authHeader()
       })
@@ -691,11 +677,9 @@ class ShippingDetails extends Component {
   render() {
     const { shipmentSummary } = this.state;
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -760,9 +744,7 @@ class ShippingDetails extends Component {
                 </div>
               </div>
               <div style={{ display: this.state.listDis }} className="map-tab">
-                <div className="full-map">
-                   
-                </div>
+                <div className="full-map"></div>
               </div>
               <div
                 style={{ display: this.state.mapDis }}
@@ -832,8 +814,7 @@ class ShippingDetails extends Component {
                           },
                           Header: "Mode",
                           accessor: "ModeOfTransport",
-                          sortable: true,
-                          filterable: true
+                          sortable: true
                         },
                         {
                           Header: "Consignee",
@@ -968,7 +949,7 @@ class ShippingDetails extends Component {
                           Header: "Event",
                           accessor: "Event",
                           Cell: row => {
-                            debugger
+                            debugger;
                             if (row.value == "N/A") {
                               return (
                                 <div>
@@ -1067,8 +1048,10 @@ class ShippingDetails extends Component {
                           threshold: matchSorter.rankings.WORD_STARTS_WITH
                         });
                         if (result.length > 0) {
+                          debugger;
                           return result;
                         } else {
+                          debugger;
                           result = [{ POL: "No Record Found" }];
                           return result;
                         }
@@ -1165,21 +1148,7 @@ class ShippingDetails extends Component {
                               >
                                 Consignee
                               </label>
-                              {/* <Select
-                            className="rate-dropdown track-dropdown"
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={optionsOrigin}
-                            /> */}
-                              {/* <Autosuggest
-                            suggestions={suggestions1}
-                            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested1}
-                            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-                            getSuggestionValue={this.getSuggestionValue1}
-                            renderSuggestion={this.renderSuggestion1}
-                            inputProps={inputProps}
-                          /> */}
+                             
                               <div className="position-relative">
                                 <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
                                   <Autocomplete

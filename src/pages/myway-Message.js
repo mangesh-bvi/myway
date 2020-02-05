@@ -98,12 +98,13 @@ class myWayMessage extends Component {
     let self = this;
     var hbllNo = this.state.ReferenceNo;
     var msgg = this.state.msgg;
+ 
     var paramdata = {
       UserID: encryption(window.localStorage.getItem("userid"), "desc"),
       ReferenceNo: this.state.ReferenceNo,
       TypeOfMessage: this.state.selectedItem.MessageType,
       Message: this.state.msgg,
-      SubjectMessage: this.state.selectedItem.MessageTitle,
+      SubjectMessage: this.state.selectedItem.MessageTitle||"",
       MessageID: this.state.selectedItem.MessageId
     };
 
@@ -167,7 +168,7 @@ class myWayMessage extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>Chat</h2>
             </div>
-            <div class="container p-0">
+            <div class="">
               <h3 class=" text-center"></h3>
               <div class="messaging">
                 <div class="inbox_msg">

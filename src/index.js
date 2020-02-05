@@ -121,7 +121,7 @@ ReactDOM.render(
         component={RateFinalizingStillBooking}
       />
       <Route exact path="/track-shipment" component={TrackShipment2} />
-      <Route exact path="/track-shipment2" component={TrackShipment} />
+      {/* <Route exact path="/track-shipment2" component={TrackShipment} /> */}
       {/* <Route exact path="/testGoogleAPI" component={TestGoogleAPI} /> */}
       {/* <Route  path="/" component={Login} />   */}
     </Switch>

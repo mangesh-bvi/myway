@@ -9,6 +9,7 @@ export function authHeader(token = "token") {
       "X-Frame-Options": "sameorigin"
     };
   } else {
+    
     // var token=window.localStorage.getItem('token');
     var msDiff =
       new Date().getTime() -
@@ -16,6 +17,7 @@ export function authHeader(token = "token") {
     var mm = Math.floor(msDiff / 1000 / 60);
     if (mm > 110) {
       //diff_minutes();
+      debugger;
       window.localStorage.clear();
       window.location.href = "./";
     } else {

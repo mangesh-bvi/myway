@@ -12,6 +12,7 @@ import Autocomplete from "react-autocomplete";
 import Download from "./../assets/img/csv.png";
 import { withRouter } from "react-router";
 import { encryption, convertToPlain } from "../helpers/encryption";
+import PDF from "./../assets/img/pdf.png";
 const imageAsset = "./../assets/img";
 const fetch = require("node-fetch");
 
@@ -99,45 +100,31 @@ class BookingView extends Component {
       eqtType: "",
       NonStackable: 0,
       Customs_Clearance: 0,
-      loding: false
+      loding: false,
+      BookingNostr: "",
+      Status: ""
     };
-    // this.HandleFileOpen = this.HandleFileOpen.bind(this);
   }
 
-  // componentDidUpdate() {
-  //   debugger;
-  //   var BookingNo = this.state.BookingNo;
-  //   if (BookingNo !== this.props.location.state.bookingNo) {
-  //     var ModeofTransport = this.props.location.state.Mode;
-  //     var userType = encryption(
-  //       window.localStorage.getItem("usertype"),
-  //       "desc"
-  //     );
-  //     debugger;
-  //     this.setState({
-  //       BookingNo: this.props.location.state.bookingNo,
-  //       userType,
-  //       isView: true,
-  //       loding:false,
-  //       ModeofTransport: ModeofTransport
-  //     });
-
-  //     if (ModeofTransport === "AIR") {
-  //       this.HandleCommodityDropdown();
-  //       this.HandlePackgeTypeData();
-  //       this.BookigGridDetailsListAIR();
-  //       this.NonCustomerList();
-  //     } else {
-  //       this.HandleCommodityDropdown();
-  //       this.HandlePackgeTypeData();
-  //       this.BookigGridDetailsList();
-  //       this.NonCustomerList();
-  //     }
-  //   }
-  // }
+  componentDidUpdate() {
+    debugger;
+    if (this.props.location.state) {
+      var status = this.props.location.state.status;
+      if (status) {
+        if (this.state.status !== status) {
+          this.setState({ status });
+          setTimeout(() => {
+            this.HandleBookingList();
+          }, 100);
+        }
+      }
+    } else {
+      // this.HandleBookingList();
+    }
+  }
 
   componentDidMount() {
-    //debugger
+    debugger;
     if (this.props.location.state.BookingNo && this.props.location.state.Mode) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -146,12 +133,17 @@ class BookingView extends Component {
       var BookingNo = this.props.location.state.BookingNo;
       var ModeofTransport = this.props.location.state.Mode;
       var isView = this.props.location.state.isView;
+      var BookingNostr = this.props.location.state.BookingNostr;
+      var Status = this.props.location.state.Status;
+
       if (isView) {
         this.setState({
+          BookingNostr,
           BookingNo,
           userType,
           isView: true,
-          ModeofTransport: ModeofTransport
+          ModeofTransport: ModeofTransport,
+          Status: Status
         });
         if (ModeofTransport === "AIR") {
           setTimeout(() => {
@@ -177,11 +169,12 @@ class BookingView extends Component {
         );
         var BookingNo = this.props.location.state.bookingNo;
         var ModeofTransport = this.props.location.state.Mode;
-
+        var BookingNostr = this.props.location.state.BookingNostr;
         this.setState({
           BookingNo,
           userType,
-          isView: true
+          isView: true,
+          BookingNostr
         });
         if (ModeofTransport === "AIR") {
           setTimeout(() => {
@@ -892,7 +885,13 @@ class BookingView extends Component {
     window.history.back();
   }
 
+  onErrorImg(e) {
+    return (e.target.src =
+      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+  }
+
   render() {
+    console.log(this.state.BookingNostr);
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
       //debugger
@@ -908,11 +907,9 @@ class BookingView extends Component {
       className = "butn m-0";
     }
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -924,7 +921,13 @@ class BookingView extends Component {
           </div>
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
-              <h2>Booking Details</h2>
+              <h2>
+                {this.state.loding === true
+                  ? "Booking View"
+                  : "Booking View " + this.state.BookingNostr+" "}
+                  
+              </h2>
+              <h2>{this.state.Status}</h2>
               <button
                 onClick={this.handleChangePage.bind(this)}
                 className="butn mt-0"
@@ -979,6 +982,9 @@ class BookingView extends Component {
                                             <img
                                               title={olname}
                                               alt={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
                                                 lname
@@ -997,6 +1003,9 @@ class BookingView extends Component {
                                             <img
                                               title={olname}
                                               alt={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                                                 lname
@@ -1011,6 +1020,9 @@ class BookingView extends Component {
                                           <div className="rate-tab-img">
                                             <img
                                               title={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                                               }
@@ -1188,8 +1200,8 @@ class BookingView extends Component {
                                 <ReactTable
                                   data={this.state.QuotationSubData.filter(
                                     x =>
-                                      x.SaleQuoteID ===
-                                      row.original.SaleQuoteID1
+                                      x.saleQuoteLineID ===
+                                      row.original.saleQuoteLineID
                                   )}
                                   columns={[
                                     {
@@ -1620,7 +1632,17 @@ class BookingView extends Component {
                               columns: [
                                 {
                                   Header: "File name",
-                                  accessor: "FileName"
+                                  accessor: "FileName",
+                                  Cell: row => {
+                                    if (row.original.FileName !== "No File Found") {
+                                    return (
+                                      <div><img src={PDF} alt="PDF icon" className="cls-pdf"/>{row.original.FileName}</div>
+                                    )
+                                    }
+                                    else{
+                                      return <>{row.original.FileName}</>;
+                                    }
+                                  }
                                 },
 
                                 {

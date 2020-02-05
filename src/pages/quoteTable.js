@@ -9,9 +9,9 @@ import { encryption } from "../helpers/encryption";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
- 
+
 import Copy from "./../assets/img/copy.png";
- 
+
 import Eye from "./../assets/img/eye.png";
 import matchSorter from "match-sorter";
 import ReactTable from "react-table";
@@ -63,13 +63,7 @@ class QuoteTable extends Component {
 
   HandleListShipmentSummey(quetype) {
     let self = this;
-    // localStorage.removeItem(
-    //   "quotepending",
-    //   "quotecurrent",
-    //   "quoteexpired",
-    //   "quoterejected",
-    //   "quoteapproved"
-    // );
+
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
@@ -199,24 +193,37 @@ class QuoteTable extends Component {
   render() {
     var dataQuote = [];
     var { quotesData } = this.state;
-
+    var NewdataQuote = [];
     const Moment = require("moment");
-    const array = [
-      { date: "2018-05-11" },
-      { date: "2018-05-12" },
-      { date: "2018-05-10" }
-    ];
+
     dataQuote = quotesData.sort(
       (a, b) =>
         new Moment(b.CreatedDate).format("YYYYMMDD") -
         new Moment(a.CreatedDate).format("YYYYMMDD")
     );
+    if (dataQuote.length > 0) {
+      NewdataQuote = dataQuote.filter(
+        d =>
+          new Date(d.CreatedDate) >=
+            new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
+          new Date(d.CreatedDate) <=
+            new Date(this.state.endDate).setHours(0, 0, 0, 0)
+      );
+    } else {
+      NewdataQuote = [{ POD: "No Record Found" }];
+    }
+     if(NewdataQuote.length>0)
+     {
+
+     }
+     else
+     {
+      NewdataQuote = [{ POD: "No Record Found" }];
+     }
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
 
@@ -268,13 +275,7 @@ class QuoteTable extends Component {
             </div>
             <div className="ag-fresh redirect-row">
               <ReactTable
-                data={dataQuote.filter(
-                  d =>
-                    new Date(d.CreatedDate) >=
-                      new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
-                    new Date(d.CreatedDate) <=
-                      new Date(this.state.endDate).setHours(0, 0, 0, 0)
-                )}
+                data={NewdataQuote}
                 noDataText=""
                 onFilteredChange={this.onFilteredChange.bind(this)}
                 filtered={this.state.filtered}

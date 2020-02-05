@@ -1,12 +1,6 @@
 import React, { Component, Fragment } from "react";
 import "../styles/custom.css";
-import {
-  UncontrolledCollapse,
-  
-  Button,
-  Modal,
-  ModalBody
-} from "reactstrap";
+import { UncontrolledCollapse, Button, Modal, ModalBody } from "reactstrap";
 
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -27,6 +21,7 @@ import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 import Plane from "./../assets/img/plane.png";
 import Truck from "./../assets/img/truck.png";
+import PDF from "./../assets/img/pdf.png";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import {
@@ -34,9 +29,6 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-
-
-
 
 class ShippingDetailsTwo extends Component {
   constructor(props) {
@@ -115,7 +107,7 @@ class ShippingDetailsTwo extends Component {
     } else if (typeof this.props.location.state != "undefined") {
       var hblno = this.props.location.state.detail;
       var event = this.props.location.state.event || "";
-      var pageName = this.props.location.state.pageName||"";
+      var pageName = this.props.location.state.pageName || "";
       if (event !== "N/A") {
         self.setState({ eve: event });
       }
@@ -182,6 +174,7 @@ class ShippingDetailsTwo extends Component {
     //var mainLineData = [];
 
     var allLineData = [];
+    debugger;
     for (var i = 0; i < mydata.length; i++) {
       var BlocationData = {};
       var flagsData = {};
@@ -220,13 +213,15 @@ class ShippingDetailsTwo extends Component {
           " ) days</b></p></div>";
 
         flagsData.title = "";
-        flagsData.Blat = endLatLong.split(",")[0];
-        flagsData.Blong = endLatLong.split(",")[1];
-        flagsData.baddr = fcontent;
+        if (endLatLong) {
+          flagsData.Blat = endLatLong.split(",")[0];
+          flagsData.Blong = endLatLong.split(",")[1];
+          flagsData.baddr = fcontent;
+        }
+        flags.push(flagsData);
         ////flags.push(endLatLong);
 
         balloons.push(BlocationData);
-        flags.push(flagsData);
       }
 
       ////Ballon with last order's End address
@@ -247,11 +242,12 @@ class ShippingDetailsTwo extends Component {
           ") days</b></p></div>";
 
         BlocationData.title = "";
-        BlocationData.lat = endLatLong.split(",")[0];
-        BlocationData.long = endLatLong.split(",")[1];
-        BlocationData.addr = Econtent;
-        ////balloons.push(endLatLong);
-
+        if (endLatLong) {
+          BlocationData.lat = endLatLong.split(",")[0];
+          BlocationData.long = endLatLong.split(",")[1];
+          BlocationData.addr = Econtent;
+          ////balloons.push(endLatLong);
+        }
         balloons.push(BlocationData);
       }
 
@@ -295,6 +291,7 @@ class ShippingDetailsTwo extends Component {
 
       var RouteLatLong = mydata[i]["GeoCoord"];
       var Not_Data = 0;
+      var VesselData = {};
       if (RouteLatLong) {
         var splitRouteLatLong = RouteLatLong.split(";");
         for (var j = 0; j < splitRouteLatLong.length; j++) {
@@ -307,13 +304,30 @@ class ShippingDetailsTwo extends Component {
           }
         }
       } else {
-        debugger;
         Not_Data = i;
+
+        VesselData = allLineData[allLineData.length - 1];
       }
     }
 
-    debugger;
+    var imgType = "";
+    if (this.state.ModeType.toUpperCase() === "AIR") {
+      imgType = "AIR";
+    } else if (this.state.ModeType.toUpperCase() === "OCEAN") {
+      imgType = "OCEAN";
+    } else {
+      imgType = "ROAD";
+    }
+
+    localStorage.removeItem("BaloonData");
+    localStorage.removeItem("FlagsData");
+    localStorage.removeItem("AllLineData");
+    localStorage.removeItem("imgType");
+    localStorage.removeItem("VesselData");
+
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
+    localStorage.setItem("imgType", JSON.stringify(imgType));
+    localStorage.setItem("VesselData", JSON.stringify(VesselData));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
     self.setState({ iframeKey: self.state.iframeKey + 1 });
@@ -424,6 +438,8 @@ class ShippingDetailsTwo extends Component {
     var HblNo;
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail.trim();
+    } else {
+      HblNo = this.state.addWat || this.state.HblNo;
     }
 
     axios({
@@ -473,7 +489,9 @@ class ShippingDetailsTwo extends Component {
       data: {
         // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
         // HBLNo: HblNo //HblNo
-        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+        UserId: parseFloat(
+          encryption(window.localStorage.getItem("userid"), "desc")
+        ),
         HBLNo: HblNo
       },
       headers: authHeader()
@@ -483,7 +501,7 @@ class ShippingDetailsTwo extends Component {
       var ModeType = response.data.Table[0].ModeOfTransport;
       var POLPODData = response.data.Table5;
       var Table9 = response.data.Table9;
-      var eve =response.data.Table[0].Event;
+      var eve = response.data.Table[0].Event;
 
       self.setState({
         eve,
@@ -600,15 +618,7 @@ class ShippingDetailsTwo extends Component {
         NotificationManager.success(response.data[0].Result);
         self.HandleShipmentDocument();
       })
-      .catch(error => {
-        debugger;
-        // var temperror = error.response.data;
-        // var err = temperror.split(":");
-        // var actData = [];
-        // actData.push({ DocumentDescription: "No Data Found" });
-
-        // self.setState({ documentData: actData });
-      });
+      .catch(error => {});
   }
 
   togglePackage(cargoId) {
@@ -641,12 +651,7 @@ class ShippingDetailsTwo extends Component {
     this.setState({ ShowCard: !this.state.ShowCard });
   }
 
-  onEntered() {
-    // this.setState({ status: "Opened" });
-    console.log(1);
-  }
   handleChangePage() {
-    // window.history.back();
     var pageName = this.state.pageName;
 
     if (pageName === "Dashboard") {
@@ -676,7 +681,6 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       NotificationManager.success(response.data[0].Result);
       self.setState({ ShipmentExistsInWatchList: 1 });
     });
@@ -689,11 +693,6 @@ class ShippingDetailsTwo extends Component {
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail;
     }
-    // if (typeof this.props.location.state != "undefined") {
-
-    var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    //alert(HblNo)
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
@@ -714,7 +713,6 @@ class ShippingDetailsTwo extends Component {
         var temperror = error.response.data;
         var err = temperror.split(":");
       });
-    // }
   }
   handleBackBtn = () => {
     window.history.back();
@@ -745,6 +743,7 @@ class ShippingDetailsTwo extends Component {
 
   render() {
     let self = this;
+    console.log(this.state.POLPODData);
 
     const {
       detailsData,
@@ -848,7 +847,6 @@ class ShippingDetailsTwo extends Component {
     }
 
     var perBooking = "0";
-  
 
     var POLPODDatalen = POLPODData.length;
     var eventColor = "";
@@ -868,27 +866,54 @@ class ShippingDetailsTwo extends Component {
         x => x.Status === "Transshipped"
       ).length;
 
+      var Bookedd = this.state.Table9.filter(x => x.Status === "Booked").length;
+      var Departedd = this.state.Table9.filter(x => x.Status === "Departed")
+        .length;
       var Arriveddata = this.state.Table9.filter(x => x.Status === "Arrived")
         .length;
       var Delivered = this.state.Table9.filter(x => x.Status === "Delivered")
         .length;
+      if (Bookedd == 1) {
+        var perBooking = "0";
+      }
+
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        var finalTotal=0;
-        if(Transshipped==1)
-        {
-          finalTotal=total/this.state.POLPODData.length;
+        var finalTotal = 0;
+        if (Transshipped == 1) {
+          finalTotal = total / this.state.POLPODData.length;
         }
         perBooking = (total + finalTotal) * Transshipped + "";
       }
       if (Transshipped > 0 && Arriveddata > 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
-        var finalTotal=0;
-        if(Transshipped==1)
-        {
-          finalTotal=total/this.state.POLPODData.length;
+        var finalTotal = 0;
+        if (Transshipped == 1) {
+          finalTotal = total / this.state.POLPODData.length;
         }
-        perBooking = (total+finalTotal) * Transshipped + "";
+        perBooking = (total + finalTotal) * Transshipped + "";
+      }
+      if (
+        Departedd == 1 &&
+        this.state.POLPODData.length == 2 &&
+        Transshipped == 0 &&
+        Arriveddata == 0 &&
+        Delivered == 0
+      ) {
+        perBooking = "50";
+      }
+      if (
+        Departedd == 1 &&
+        this.state.POLPODData.length > 2 &&
+        Transshipped == 0 &&
+        Arriveddata == 0 &&
+        Delivered == 0
+      ) {
+        var per = 100 / (this.state.POLPODData.length + 1);
+
+        perBooking = per + per / 2 + "";
+
+        // perBooking="50"
       }
 
       if (Transshipped >= 1 && Arriveddata >= 1) {
@@ -967,11 +992,9 @@ class ShippingDetailsTwo extends Component {
       className = "butn view-btn";
     }
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -1037,35 +1060,18 @@ class ShippingDetailsTwo extends Component {
                       role="tabpanel"
                       aria-labelledby="details-tab"
                     >
-                      {/* <div className="sect-padd">
-                        <p className="details-heading">Booking Details</p>
-                        <div className="row">
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Mode Of Transport</p>
-                            <p className="details-para">Ocean</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Cargo Type</p>
-                            <p className="details-para">FCL</p>
-                          </div>
-                          <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
-                            <p className="details-title">Inco Terms</p>
-                            <p className="details-para">EXW</p>
-                          </div>
-                        </div>
-                      </div> */}
                       <div className="sect-padd">
                         <div className="row">
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">HBL#</p>
-                            <a href="#!" className="details-para">
+                            <span href="#!" className="details-para">
                               {detailsData.HBLNO}
                               <input
                                 type="hidden"
                                 value={detailsData.HBLNO}
                                 id="popupHBLNO"
                               />
-                            </a>
+                            </span>
                           </div>
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                             <p className="details-title">BL#</p>
@@ -1121,7 +1127,7 @@ class ShippingDetailsTwo extends Component {
                         <div className="row">
                           {addressData.map(function(addkey, i) {
                             //  <p className="details-heading" key={i}>{addkey.EntityType}</p>
-                            debugger  
+
                             return (
                               <div
                                 className="col-md-6 details-border shipper-details"
@@ -1133,12 +1139,14 @@ class ShippingDetailsTwo extends Component {
                                 <p className="details-title">
                                   {addkey.CustomerName}
                                 </p>
-                                
+
                                 {/* <p className="details-title">
                                   Blueground Turizm Ve Services Hizmetleri
                                   Ticaret A.S.
                                 </p> */}
-                                <p className="details-para">{addkey.Address1}</p>
+                                <p className="details-para">
+                                  {addkey.Address1}
+                                </p>
                               </div>
                             );
                           })}
@@ -1153,96 +1161,91 @@ class ShippingDetailsTwo extends Component {
                       </div>
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
-                          <div className="mobilenumber-resp">
-                             
-                          </div>
+                          <div className="mobilenumber-resp"></div>
 
                           <span
                             className="clr-green"
-                            style={{ overflow: "initial", marginTop: "20px"  }}
+                            style={{ overflow: "initial", marginTop: "20px" }}
                           >
                             POL
                           </span>
                           <div className="pol-pod-progress">
                             <div className="mobilenumber-resp">
-                              {this.state.POLPODData.map(function(id, i) {
-                                var wid = 100 / (POLPODDatalen - 1);
-                                var wid1 = 100 / POLPODDatalen;
-                                // var fwid = wid + wid / 2 + "%";
+                              {this.state.ModeOfTransport != "Inland" &&
+                                this.state.POLPODData.map(function(id, i) {
+                                  var wid = 100 / (POLPODDatalen - 1);
+                                  var wid1 = 100 / POLPODDatalen;
+                                  // var fwid = wid + wid / 2 + "%";
 
-                                if (i === 0) {
-                                  return (
-                                    <label
-                                      className="resol"
-                                      style={{ width: wid1 + "%" }}
-                                    >
-                                      {/* <span className="line-resol" style={{left: wid + "%"}}></span> */}
-                                      <span
-                                        className="progspan"
+                                  if (i === 0) {
+                                    return (
+                                      <label
+                                        className="resol"
+                                        style={{ width: wid1 + "%" }}
+                                      >
+                                        {/* <span className="line-resol" style={{left: wid + "%"}}></span> */}
+                                        <span
+                                          className="progspan"
+                                          style={{
+                                            display: "block",
+                                            float:
+                                              POLPODDatalen < 2
+                                                ? "left"
+                                                : "none"
+                                          }}
+                                        >
+                                          {/* {id["POL/POD"]} */}
+                                        </span>
+                                      </label>
+                                    );
+                                  }
+                                  if (i >= 1 && i < POLPODDatalen - 1) {
+                                    var fwidth = wid * i;
+                                    return (
+                                      <label
+                                        className="resol"
+                                        style={{ width: wid1 + "%" }}
+                                      >
+                                        <span
+                                          className="line-resol"
+                                          style={{ left: fwidth + "%" }}
+                                        ></span>
+                                        <span
+                                          className="progspan"
+                                          style={{ display: "block" }}
+                                        >
+                                          {id["POL/POD"]}
+                                        </span>
+                                      </label>
+                                    );
+                                  }
+                                  if (i === POLPODDatalen - 1) {
+                                    return (
+                                      <label
+                                        className="resol"
                                         style={{
-                                          display: "block",
-                                          float:
-                                            POLPODDatalen < 2 ? "left" : "none"
+                                          width: wid1 + "%"
                                         }}
                                       >
-                                        {/* {id["POL/POD"]} */}
-                                      </span>
-                                    </label>
-                                  );
-                                }
-                                if (i >= 1 && i < POLPODDatalen - 1) {
-                                  var fwidth = wid * i;
-                                  return (
-                                    <label
-                                      className="resol"
-                                      style={{ width: wid1 + "%" }}
-                                    >
-                                      <span
-                                        className="line-resol"
-                                        style={{ left: fwidth + "%" }}
-                                      ></span>
-                                      <span
-                                        className="progspan"
-                                        style={{ display: "block" }}
-                                      >
-                                        {id["POL/POD"]}
-                                      </span>
-                                    </label>
-                                  );
-                                }
-                                if (i === POLPODDatalen - 1) {
-                                  return (
-                                    <label
-                                      className="resol"
-                                      style={{
-                                        width: wid1 + "%"
-                                      }}
-                                    >
-                                      {/* <span className="line-resol"></span> */}
-                                      <span
-                                        className="progspan"
-                                        style={{
-                                          display: "block",
-                                          float:
-                                            POLPODDatalen < 2 ? "right" : "none"
-                                        }}
-                                      >
-                                        {/* {id["POL/POD"]} */}
-                                      </span>
-                                    </label>
-                                  );
-                                }
-                              })}
+                                        {/* <span className="line-resol"></span> */}
+                                        <span
+                                          className="progspan"
+                                          style={{
+                                            display: "block",
+                                            float:
+                                              POLPODDatalen < 2
+                                                ? "right"
+                                                : "none"
+                                          }}
+                                        >
+                                          {/* {id["POL/POD"]} */}
+                                        </span>
+                                      </label>
+                                    );
+                                  }
+                                })}
 
-                              {/* <label className="resol">
-                                <span className="line-resol"></span>B
-                              </label>
-                              <label className="resol">
-                                <span className="line-resol"></span>C
-                              </label>
-                              <label className="resol">
-                                <span className="line-resol"></span>D
-                                </label> */}
+                              
                             </div>
                             {/* <Progress className="ticket-progress" color={eventColor} value={perBooking} /> */}
                             <progress
@@ -1268,18 +1271,17 @@ class ShippingDetailsTwo extends Component {
                         </div>
                         <div className="desti-places">
                           {POLPODData.length < 2 ? (
-                            <>
-                              <span>
-                                {POLPODData.length > 0
-                                  ? POLPODData[0]["POL/POD"]
-                                  : ""}
-                              </span>
-                              <span>
-                                {POLPODData.length > 0
-                                  ? POLPODData[1]["POL/POD"]
-                                  : ""}
-                              </span>
-                            </>
+                            POLPODData.length == 1 ? (
+                              <>
+                                <span>{POLPODData[0]?POLPODData[0]["POL/POD"]: ""}</span>
+                                <span>{POLPODData[1]?POLPODData[1]["POL/POD"]: ""}</span>
+                              </>
+                            ) : (
+                              <>
+                                <span></span>
+                                <span></span>
+                              </>
+                            )
                           ) : (
                             <>
                               <span>
@@ -1295,7 +1297,6 @@ class ShippingDetailsTwo extends Component {
                             </>
                           )}
                         </div>
-                         
                       </div>
                       {containerData.map(function(routedata, i = 0) {
                         i++;
@@ -1787,7 +1788,23 @@ class ShippingDetailsTwo extends Component {
 
                                 {
                                   Header: "Title",
-                                  accessor: "DocumentDescription"
+                                  accessor: "DocumentDescription",
+                                  Cell: row => {
+                                    if (row.value == "No Data Found") {
+                                      return <div>{row.value}</div>;
+                                    } else {
+                                      return (
+                                        <div>
+                                          {row.original["DocumentDescription"]}
+                                          <img
+                                            src={PDF}
+                                            alt="PDF icon"
+                                            className="cls-pdf"
+                                          />
+                                        </div>
+                                      );
+                                    }
+                                  }
                                 },
                                 {
                                   Header: "Action",
@@ -1807,14 +1824,20 @@ class ShippingDetailsTwo extends Component {
                                               this.HandleDocumentView(e, row)
                                             }
                                           /> */}
-                                          <img
-                                            className="actionicon"
-                                            src={Delete}
-                                            alt="delete-icon"
-                                            onClick={e =>
-                                              this.HandleDocumentDelete(e, row)
-                                            }
-                                          />
+                                          {row.original["DocumentType"] ==
+                                          "Uploaded" ? (
+                                            <img
+                                              className="actionicon"
+                                              src={Delete}
+                                              alt="delete-icon"
+                                              onClick={e =>
+                                                this.HandleDocumentDelete(
+                                                  e,
+                                                  row
+                                                )
+                                              }
+                                            />
+                                          ) : null}
                                           <img
                                             className="actionicon"
                                             src={Download}
@@ -1917,11 +1940,69 @@ class ShippingDetailsTwo extends Component {
                         </div>
                       </div>
 
-                      {approvedDate !== "" &&
+                      {approvedDate == "" &&
                       bookDate == "" &&
                       departedDate === "" &&
                       arrivedDate === "" &&
                       deliverDate === "" ? (
+                        <div class="track-details">
+                          <div class={approvedisActive}>
+                            <div class="track-img-cntr">
+                              <div class="track-img ">
+                                <img src={ApprovedImg} alt="booked icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Approved : </span>
+                            </p>
+                          </div>
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Booked} alt="transit icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Booked : </span>
+                            </p>
+                          </div>
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Departed} alt="Departed" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Departed : </span>
+                            </p>
+                          </div>
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Arrived} alt="arrived icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Arrived : </span>
+                            </p>
+                          </div>
+
+                          <div class="track-line-cntr">
+                            <div class="track-img-cntr">
+                              <div class="track-img">
+                                <img src={Delivery} alt="delivery icon" />
+                              </div>
+                            </div>
+                            <p>
+                              <span>Delivered : </span>
+                            </p>
+                          </div>
+                        </div>
+                      ) : approvedDate !== "" &&
+                        bookDate == "" &&
+                        departedDate === "" &&
+                        arrivedDate === "" &&
+                        deliverDate === "" ? (
                         <div class="track-details">
                           <div class={approvedisActive}>
                             <div class="track-img-cntr">
@@ -1947,7 +2028,7 @@ class ShippingDetailsTwo extends Component {
                           <div class="track-line-cntr">
                             <div class="track-img-cntr">
                               <div class="track-img">
-                                <img src={Departed} alt="transit icon" />
+                                <img src={Departed} alt="Departed" />
                               </div>
                             </div>
                             <p>
@@ -2008,7 +2089,7 @@ class ShippingDetailsTwo extends Component {
                           <div class="track-line-cntr">
                             <div class="track-img-cntr">
                               <div class="track-img">
-                                <img src={Departed} alt="transit icon" />
+                                <img src={Departed} alt="Departed" />
                               </div>
                             </div>
                             <p>
@@ -2076,7 +2157,7 @@ class ShippingDetailsTwo extends Component {
                           <div class="track-line-cntr active">
                             <div class="track-img-cntr">
                               <div class="track-img">
-                                <img src={Departed} alt="transit icon" />
+                                <img src={Departed} alt="Departed" />
                               </div>
                             </div>
                             <p>
@@ -2144,7 +2225,7 @@ class ShippingDetailsTwo extends Component {
                           <div class="track-line-cntr active">
                             <div class="track-img-cntr">
                               <div class="track-img">
-                                <img src={Departed} alt="transit icon" />
+                                <img src={Departed} alt="Departed" />
                               </div>
                             </div>
                             <p>
@@ -2213,7 +2294,7 @@ class ShippingDetailsTwo extends Component {
                           <div class="track-line-cntr active">
                             <div class="track-img-cntr">
                               <div class="track-img">
-                                <img src={Departed} alt="transit icon" />
+                                <img src={Departed} alt="Departed" />
                               </div>
                             </div>
                             <p>
@@ -2262,7 +2343,7 @@ class ShippingDetailsTwo extends Component {
                           <div class="track-line-cntr">
                             <div class="track-img-cntr">
                               <div class="track-img">
-                                <img src={Departed} alt="transit icon" />
+                                <img src={Departed} alt="Departed" />
                               </div>
                             </div>
                             <p>
@@ -2405,7 +2486,7 @@ class ShippingDetailsTwo extends Component {
                       type="button"
                       className="close"
                       data-dismiss="modal"
-                      // onClick={this.toggleDocu}
+                      onClick={this.toggleDocu}
                     >
                       <span>&times;</span>
                     </button>
@@ -2459,35 +2540,7 @@ class ShippingDetailsTwo extends Component {
                           {this.state.selectedFileName}
                         </p>
                       </div>
-                      {/* <div className="rename-cntr login-fields d-block">
-                        <div className="d-flex w-100 align-items-center">
-                          <label>Consignee Document</label>
-                          <div className="w-100">
-                            <input
-                              id="docu-upload"
-                              className="file-upload d-none"
-                              type="file"
-                              onChange={this.onDocumentConsignee}
-                            />
-                            <label htmlFor="docu-upload">
-                              <div className="file-icon">
-                                <img src={FileUpload} alt="file-upload" />
-                              </div>
-                              Add Consignee Files
-                            </label>
-                          </div>
-                        </div>
-                        <p className="file-name">
-                          {this.state.consigneeFileName}
-                        </p>
-                      </div> */}
-                      {/* <div>
-                      <input
-                        type="button"
-                        onClick={this.onDocumentClickHandler}
-                        value="Save"
-                      ></input>
-                    </div> */}
+
                       <Button
                         className="butn"
                         onClick={() => {

@@ -16,6 +16,7 @@ import Transit from "./../assets/img/transit-small.png";
 import Departed from "./../assets/img/departed.png";
 import Arrived from "./../assets/img/arrived.png";
 import Inland from "./../assets/img/inland.png";
+import ApprovedImg from "./../assets/img/approved-status.png";
 import Delivery from "./../assets/img/delivery.png";
 import Plane from "./../assets/img/plane.png";
 import Truck from "./../assets/img/truck.png";
@@ -260,7 +261,7 @@ class TrackShipment2 extends Component {
 
       if (url) {
         // if (url != "" && url != null) {
-        
+
         self.setState({
           showData: true,
           addWat: url,
@@ -449,15 +450,9 @@ class TrackShipment2 extends Component {
       ///Line data
 
       var RouteLatLong = mydata[i]["GeoCoord"];
-      // var splitRouteLatLong = RouteLatLong.split(";");
-      // for (var j = 0; j < splitRouteLatLong.length; j++) {
-      //   var lineData = {};
-      //   var tempSData = splitRouteLatLong[j].split(",");
-      //   lineData.lat = Number(tempSData[0]);
-      //   lineData.lng = Number(tempSData[1]);
-      //   allLineData.push(lineData);
-      // }
+
       var Not_Data = 0;
+      var VesselData = {};
       if (RouteLatLong) {
         var splitRouteLatLong = RouteLatLong.split(";");
         for (var j = 0; j < splitRouteLatLong.length; j++) {
@@ -472,15 +467,30 @@ class TrackShipment2 extends Component {
       } else {
         debugger;
         Not_Data = i;
+        VesselData = allLineData[allLineData.length - 1];
       }
 
       //mainLineData = allLineData;
     }
+
+    var imgType = "";
+    if (this.state.ModeType.toUpperCase() === "AIR") {
+      imgType = "AIR";
+    } else if (this.state.ModeType.toUpperCase() === "OCEAN") {
+      imgType = "OCEAN";
+    } else {
+      imgType = "ROAD";
+    }
+    debugger;
+
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
     localStorage.removeItem("AllLineData");
+    localStorage.removeItem("imgType");
+    localStorage.removeItem("VesselData");
 
-    debugger;
+    localStorage.setItem("imgType", JSON.stringify(imgType));
+    localStorage.setItem("VesselData", JSON.stringify(VesselData));
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
@@ -500,7 +510,7 @@ class TrackShipment2 extends Component {
     }).then(function(response) {
       debugger;
       var resdata = response.data;
-      self.setState({ loading: false ,showData:true});
+      self.setState({ loading: false, showData: true });
       self.HandleMapDetailsData(resdata);
     });
   }
@@ -562,47 +572,63 @@ class TrackShipment2 extends Component {
     debugger;
     this.setState({ loading: true });
     let self = this;
-    axios({
-      method: "get",
-      url: `${appSettings.APIURL}/AnonymousShipmentSummaryDetailsAPI`,
-      params: {
-        Token: Encodedhblno.replace("%20", " ")
-        // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
-        // HBLNo: HblNo //HblNo
-        // UserId: 874588,
-        // HBLNo: hblno //HblNo
-      }
-      //headers: authHeader()
-    }).then(function(response) {
-      debugger;
-      var shipmentdata = response.data;
-      var POLPODData = response.data.Table5;
-      var eve = response.data.Table[0].Event;
-      var ModeType = response.data.Table[0].ModeOfTransport;
-      var Table9 = response.data.Table9;
-      self.setState({
-        POLPODData,
-        Table9,
-        eve,
-        ModeType,
-        addWat: shipmentdata.Table[0].HBLNO,
-        detailsData: shipmentdata.Table[0],
-        addressData: shipmentdata.Table1,
-        containerData: shipmentdata.Table2,
-        containerDetails: shipmentdata.Table3,
-        bookedStatus: shipmentdata.Table4,
-        packageDetails: shipmentdata.Table7,
-        DData:
-          shipmentdata.Table2[shipmentdata.Table2.length - 1]["Arrival Date"],
-        ShipmentExistsInWatchList:
-          shipmentdata.Table6[0].ShipmentExistsInWatchList,
-        packageViewMore: shipmentdata.Table8
-      });
+    if (Encodedhblno) {
+      axios({
+        method: "get",
+        url: `${appSettings.APIURL}/AnonymousShipmentSummaryDetailsAPI`,
+        params: {
+          Token: Encodedhblno.replace("%20", " ")
+          // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
+          // HBLNo: HblNo //HblNo
+          // UserId: 874588,
+          // HBLNo: hblno //HblNo
+        }
+        //headers: authHeader()
+      })
+        .then(function(response) {
+          debugger;
+          var shipmentdata = response.data;
+          var POLPODData = response.data.Table5;
+          var eve = response.data.Table[0].Event;
+          var ModeType = response.data.Table[0].ModeOfTransport;
+          var Table9 = response.data.Table9;
+          self.setState({
+            POLPODData,
+            Table9,
+            eve,
+            ModeType,
+            addWat: shipmentdata.Table[0].HBLNO,
+            detailsData: shipmentdata.Table[0],
+            addressData: shipmentdata.Table1,
+            containerData: shipmentdata.Table2,
+            containerDetails: shipmentdata.Table3,
+            bookedStatus: shipmentdata.Table4,
+            packageDetails: shipmentdata.Table7,
+            DData:
+              shipmentdata.Table2[shipmentdata.Table2.length - 1][
+                "Arrival Date"
+              ],
+            ShipmentExistsInWatchList:
+              shipmentdata.Table6[0].ShipmentExistsInWatchList,
+            packageViewMore: shipmentdata.Table8
+          });
 
-      var sid = shipmentdata.Table[0].ShipperId;
-      var cid = shipmentdata.Table[0].ConsigneeID;
-      self.HandleShipmentDetailsMap(Encodedhblno);
-    });
+          var sid = shipmentdata.Table[0].ShipperId;
+          var cid = shipmentdata.Table[0].ConsigneeID;
+          self.HandleShipmentDetailsMap(Encodedhblno);
+        })
+        .catch(error => {
+          debugger;
+          var temperror = error.response.data;
+          var err = temperror.split(":");
+
+          NotificationManager.error(err[1].replace("}", ""));
+          this.setState({ loading: false, showData: false });
+        });
+    } else {
+      NotificationManager.error("Please enter #HBL");
+      this.setState({ loading: false, showData: false });
+    }
   }
   onDocumentChangeHandler = event => {
     this.setState({
@@ -817,6 +843,8 @@ class TrackShipment2 extends Component {
       packageTable
     } = this.state;
 
+    let approvedisActive = "";
+    let approvedDate = "";
     let bookingIsActive = "";
     let bookDate = "";
     let departedIsActive = "";
@@ -828,7 +856,17 @@ class TrackShipment2 extends Component {
     let deliveredIsActive = "";
     let deliverDate = "";
     for (let index = 0; index < bookedStatus.length; index++) {
-      if (bookedStatus[index].Status == "Booked") {
+      if (bookedStatus[index].Status == "Approved") {
+        approvedisActive =
+          bookedStatus[index].ActualDate == null ||
+          bookedStatus[index].ActualDate == ""
+            ? "track-line-cntr"
+            : "track-line-cntr active";
+        approvedDate =
+          bookedStatus[index].ActualDate == null
+            ? "ETA " + bookedStatus[index].EstimationDate
+            : bookedStatus[index].ActualDate;
+      } else if (bookedStatus[index].Status == "Booked") {
         bookingIsActive =
           bookedStatus[index].ActualDate == null ||
           bookedStatus[index].ActualDate == ""
@@ -892,17 +930,23 @@ class TrackShipment2 extends Component {
     }
     var perBooking = "0";
     var POLPODDatalen = this.state.POLPODData.length;
-    debugger;
+
     if (this.state.Table9.length > 0) {
-      debugger;
       var Transshipped = this.state.Table9.filter(
         x => x.Status === "Transshipped"
       ).length;
 
+      var Bookedd = this.state.Table9.filter(x => x.Status === "Booked").length;
+      var Departedd = this.state.Table9.filter(x => x.Status === "Departed")
+        .length;
       var Arriveddata = this.state.Table9.filter(x => x.Status === "Arrived")
         .length;
       var Delivered = this.state.Table9.filter(x => x.Status === "Delivered")
         .length;
+      if (Bookedd == 1) {
+        perBooking = "0";
+      }
+
       if (Transshipped > 0 && Arriveddata === 0 && Delivered === 0) {
         var total = parseInt(100 / (Transshipped + 1));
         var finalTotal = 0;
@@ -918,6 +962,28 @@ class TrackShipment2 extends Component {
           finalTotal = total / this.state.POLPODData.length;
         }
         perBooking = (total + finalTotal) * Transshipped + "";
+      }
+      if (
+        Departedd == 1 &&
+        this.state.POLPODData.length == 2 &&
+        Transshipped == 0 &&
+        Arriveddata == 0 &&
+        Delivered == 0
+      ) {
+        perBooking = "50";
+      }
+      if (
+        Departedd == 1 &&
+        this.state.POLPODData.length > 2 &&
+        Transshipped == 0 &&
+        Arriveddata == 0 &&
+        Delivered == 0
+      ) {
+        var per = 100 / (this.state.POLPODData.length + 1);
+
+        perBooking = per + per / 2 + "";
+
+        // perBooking="50"
       }
 
       if (Transshipped >= 1 && Arriveddata >= 1) {
@@ -939,8 +1005,6 @@ class TrackShipment2 extends Component {
     } else {
       className = "butn view-btn";
     }
-    console.log(this.state.showData, "----------showdata");
-    console.log(this.state.loading, "----------loading");
 
     return (
       <div>
@@ -954,7 +1018,7 @@ class TrackShipment2 extends Component {
               <div>
                 <div className="title-sect ts-head">
                   {this.state.showData === false &&
-                  this.state.loading === true ? (
+                  this.state.loading === false ? (
                     <h2>Track Shipment</h2>
                   ) : (
                     <h2>Track Shipment - {detailsData.HBLNO}</h2>
@@ -1019,15 +1083,14 @@ class TrackShipment2 extends Component {
                             <div className="row">
                               <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                 <p className="details-title">HBL#</p>
-                                <span  className="details-para">
+                                <span className="details-para">
                                   {detailsData.HBLNO}
-                                 
                                 </span>
                                 <input
-                                    type="hidden"
-                                    value={detailsData.HBLNO}
-                                    id="popupHBLNO"
-                                  />
+                                  type="hidden"
+                                  value={detailsData.HBLNO}
+                                  id="popupHBLNO"
+                                />
                               </div>
                               <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                 <p className="details-title">BL#</p>
@@ -1470,143 +1533,448 @@ class TrackShipment2 extends Component {
                               </div>
                             </div>
                           </div>
-                          <div className="track-details">
-                            <div className={bookingIsActive}>
-                              <div className="track-img-cntr">
-                                <div className="track-img">
-                                  <img src={Booked} alt="booked icon" />
+                          {approvedDate == "" &&
+                          bookDate == "" &&
+                          departedDate === "" &&
+                          arrivedDate === "" &&
+                          deliverDate === "" ? (
+                            <div class="track-details">
+                              <div class={approvedisActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={ApprovedImg} alt="booked icon" />
+                                  </div>
                                 </div>
+                                <p>
+                                  <span>Approved : </span>
+                                </p>
                               </div>
-                              <p>
-                                <span>Booked : </span>
-                                {bookDate}
-                              </p>
-                            </div>
-                            <div className={departedIsActive + " active"}>
-                              <div className="track-img-cntr">
-                                <div className="track-img">
-                                  {/* <img src={Departed} alt="departed icon" /> */}
-                                  <img
-                                    src={
-                                      departedDate === "" ||
-                                      departedDate === null
-                                        ? Transit
-                                        : Departed
-                                    }
-                                    alt="departed icon"
-                                  />
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Booked} alt="transit icon" />
+                                  </div>
                                 </div>
+                                <p>
+                                  <span>Booked : </span>
+                                </p>
                               </div>
-                              <p>
-                                <span>
-                                  {departedDate === "" || departedDate === null
-                                    ? "On the way"
-                                    : "Departed :"}
-                                </span>
-                                {departedDate}
-                              </p>
-                            </div>
-                            <div
-                              className={
-                                departedDate === "" || departedDate === null
-                                  ? "track-line-cntr"
-                                  : "track-line-cntr active"
-                              }
-                            >
-                              <div className="track-img-cntr">
-                                <div className="track-img">
-                                  <img
-                                    src={
-                                      departedDate === "" ||
-                                      departedDate === null
-                                        ? Departed
-                                        : arrivedDate !== null ||
-                                          arrivedDate !== ""
-                                        ? Arrived
-                                        : Transit
-                                    }
-                                    alt="transit icon"
-                                  />
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Departed} alt="transit icon" />
+                                  </div>
                                 </div>
+                                <p>
+                                  <span>Departed : </span>
+                                </p>
                               </div>
-                              <p>
-                                <span>
-                                  {departedDate === "" || departedDate === null
-                                    ? "Departed : "
-                                    : arrivedDate !== null || arrivedDate !== ""
-                                    ? "Arrived : "
-                                    : "On the way"}
-                                </span>
-                                {arrivedDate !== null || arrivedDate !== ""
-                                  ? arrivedDate
-                                  : null}
-                                {/* {arrivedDate} */}
-                              </p>
-                            </div>
-                            <div className={arrivedIsActive}>
-                              <div className="track-img-cntr">
-                                <div className="track-img">
-                                  {/* <img src={Arrived} alt="arrived icon" /> */}
-                                  <img
-                                    src={
-                                      deliverDate !== null || deliverDate !== ""
-                                        ? Transit
-                                        : Arrived
-                                    }
-                                    alt="arrived icon"
-                                  />
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Arrived} alt="arrived icon" />
+                                  </div>
                                 </div>
+                                <p>
+                                  <span>Arrived : </span>
+                                </p>
                               </div>
-                              <p>
-                                <span>
-                                  {arrivedDate === "" || arrivedDate === null
-                                    ? "Arrived : "
-                                    : deliverDate !== null || deliverDate !== ""
-                                    ? "On the way"
-                                    : "Delivered : "}
-                                </span>
-                                {/* {arrivedDate} */}
-                                {deliverDate !== null || deliverDate !== ""
-                                  ? deliverDate
-                                  : null}
-                              </p>
-                            </div>
-                            <div className={inlandIsActive}>
-                              <div className="track-img-cntr">
-                                <div className="track-img">
-                                  <img src={Inland} alt="inland icon" />
+
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Delivery} alt="delivery icon" />
+                                  </div>
                                 </div>
-                              </div>
-                              <p>
-                                <span>Inland Transportation : </span>
-                                {inlandDate}
-                              </p>
-                            </div>
-                            {/* {deliverDate !== null || deliverDate !== "" ? null : (
-                          <div className={deliveredIsActive}>
-                            <div className="track-img-cntr">
-                              <div className="track-img">
-                                <img src={Delivery} alt="delivery icon" />
+                                <p>
+                                  <span>Delivered : </span>
+                                </p>
                               </div>
                             </div>
-                            <p>
-                              <span>Delivered : </span>
-                              {deliverDate}
-                            </p>
+                          ) : approvedDate !== "" &&
+                            bookDate == "" &&
+                            departedDate === "" &&
+                            arrivedDate === "" &&
+                            deliverDate === "" ? (
+                            <div class="track-details">
+                              <div class={approvedisActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={ApprovedImg} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Approved : </span>
+                                  {approvedDate}
+                                </p>
+                              </div>
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Booked} alt="transit icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Booked : </span>
+                                </p>
+                              </div>
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Departed} alt="transit icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Departed : </span>
+                                </p>
+                              </div>
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Arrived} alt="arrived icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Arrived : </span>
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Delivery} alt="delivery icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Delivered : </span>
+                                </p>
+                              </div>
+                            </div>
+                          ) : approvedDate !== "" &&
+                            bookDate !== "" &&
+                            departedDate === "" &&
+                            arrivedDate === "" &&
+                            deliverDate === "" ? (
+                            <div class="track-details">
+                              <div class={approvedisActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={ApprovedImg} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Approved : </span>
+                                  {approvedDate}
+                                </p>
+                              </div>
+                              <div class={bookingIsActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={Booked} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Booked : </span>
+                                  {bookDate}
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Departed} alt="transit icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Departed : </span>
+                                </p>
+                              </div>
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Arrived} alt="arrived icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Arrived : </span>
+                                </p>
+                              </div>
+                              {/* <div class="track-hide">
+                        <div class="track-img-cntr">
+                          <div class="track-img">
+                            <img src="" alt="inland icon" />
                           </div>
-                        )} */}
-                            <div className={deliveredIsActive}>
-                              <div className="track-img-cntr">
-                                <div className="track-img">
-                                  <img src={Delivery} alt="delivery icon" />
+                        </div>
+                        <p>
+                          <span>Inland Transportation : </span>
+                        </p>
+                      </div> */}
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Delivery} alt="delivery icon" />
+                                  </div>
                                 </div>
+                                <p>
+                                  <span>Delivered : </span>
+                                </p>
                               </div>
-                              <p>
-                                <span>Delivered : </span>
-                                {deliverDate}
-                              </p>
                             </div>
+                          ) : departedDate !== "" &&
+                            arrivedDate === "" &&
+                            deliverDate == "" ? (
+                            <div class="track-details">
+                              <div class={approvedisActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={ApprovedImg} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Approved : </span>
+                                  {approvedDate}
+                                </p>
+                              </div>
+                              <div class={bookingIsActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={Booked} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Booked : </span>
+                                  {bookDate}
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Departed} alt="transit icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Departed : </span>
+                                  {departedDate}
+                                </p>
+                              </div>
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Transit} alt="departed icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>On the Way</span>
+                                </p>
+                              </div>
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Arrived} alt="arrived icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Arrived : </span>
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Delivery} alt="delivery icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Delivered : </span>
+                                </p>
+                              </div>
+                            </div>
+                          ) : arrivedDate !== "" && deliverDate === "" ? (
+                            <div class="track-details">
+                              <div class={approvedisActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={ApprovedImg} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Approved : </span>
+                                  {approvedDate}
+                                </p>
+                              </div>
+                              <div class={bookingIsActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={Booked} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Booked : </span>
+                                  {bookDate}
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Departed} alt="transit icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Departed : </span>
+                                  {departedDate}
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Arrived} alt="arrived icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Arrived : </span>
+                                  {arrivedDate}
+                                </p>
+                              </div>
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Transit} alt="departed icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>On the Way</span>
+                                </p>
+                              </div>
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Delivery} alt="delivery icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Delivered : </span>
+                                </p>
+                              </div>
+                            </div>
+                          ) : deliverDate !== "" ? (
+                            <div class="track-details">
+                              <div class={approvedisActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={ApprovedImg} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Approved : </span>
+                                  {approvedDate}
+                                </p>
+                              </div>
+                              <div class={bookingIsActive}>
+                                <div class="track-img-cntr">
+                                  <div class="track-img ">
+                                    <img src={Booked} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Booked : </span>
+                                  {bookDate}
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Departed} alt="transit icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Departed : </span>
+                                  {departedDate}
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Arrived} alt="arrived icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Arrived : </span>
+                                  {arrivedDate}
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr active">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Delivery} alt="delivery icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Delivered : </span>
+                                  {deliverDate}
+                                </p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div class="track-details">
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Booked} alt="booked icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Booked : </span>
+                                </p>
+                              </div>
+
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Departed} alt="transit icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Departed : </span>
+                                </p>
+                              </div>
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Arrived} alt="arrived icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Arrived : </span>
+                                </p>
+                              </div>
+                              {/* <div class="track-hide">
+                        <div class="track-img-cntr">
+                          <div class="track-img">
+                            <img src="" alt="inland icon" />
                           </div>
+                        </div>
+                        <p>
+                          <span>Inland Transportation : </span>
+                        </p>
+                      </div> */}
+                              <div class="track-line-cntr">
+                                <div class="track-img-cntr">
+                                  <div class="track-img">
+                                    <img src={Delivery} alt="delivery icon" />
+                                  </div>
+                                </div>
+                                <p>
+                                  <span>Delivered : </span>
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

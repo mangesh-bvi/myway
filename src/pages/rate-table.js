@@ -1134,7 +1134,7 @@ class RateTable extends Component {
           "desc"
         );
       }
-
+debugger;
       dataParameter.Commodity = this.state.CommodityID;
       dataParameter.CustomerId = parseInt(paramData.companyId);
       dataParameter.PickUpAddressDetails = pickUpAddress;
@@ -2725,7 +2725,10 @@ class RateTable extends Component {
     ) {
       this.HandleMultiPOLPODFilter();
     } else {
-      this.HandleRateDetailsFCL(this.state);
+      setTimeout(() => {
+        this.HandleRateDetailsFCL(this.state);  
+      }, 100);
+      
     }
   }
 
@@ -3432,7 +3435,7 @@ class RateTable extends Component {
         DestinationAddressDetails: destUpAddressDetails[0],
         RateQueryDim: multiCBMData,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        CompanyID: 1457295703,
+        CompanyID: CompanyID,
         CommodityID: parseInt(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
@@ -3458,7 +3461,7 @@ class RateTable extends Component {
         DestinationAddressDetails: destUpAddressDetails[0],
         RateQueryDim: MultiCBM,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        CompanyID: 1457295703,
+        CompanyID: CompanyID,
         CommodityID: parseInt(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
@@ -4256,12 +4259,7 @@ onErrorImg(e)
                                     mode == "AIR" &&
                                     lname !== ""
                                   ) {
-                                    // var fs = require('fs');
-
-                                    // if (fs.exists("https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +lname) == true)
-                                    // {
-
-                                    // }
+                                    
                                     return (
                                       <React.Fragment>
                                         <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -4410,7 +4408,7 @@ onErrorImg(e)
                                   return (
                                     <>
                                       <p className="details-title">
-                                        Transit port
+                                      Transit Port
                                       </p>
                                       <p className="details-para">
                                         {row.original.TransshipmentPort}

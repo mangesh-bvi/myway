@@ -17,13 +17,15 @@
 
       #map_canvas {
         height: 100%;
-      }   
+      }
+
       .dash-search-cntr2 {
         position: absolute;
         top: 10px;
         left: 215px;
         z-index: 1;
       }
+
       .dash-search-cntr2 input {
         width: 93px;
         height: 40px;
@@ -44,7 +46,7 @@
       .searchimg {
         position: relative;
       }
-      .searchimg::before {
+      /* .searchimg::before {
         content: url('img/searchicon.png');
         position: absolute;
         right: 7px;
@@ -53,8 +55,8 @@
         height: 30px;
         z-index: 9999;
         padding: 0;
-      }
-      /* .dash-search-cntr2 .fa-search {
+      } */
+      .dash-search-cntr2 .fa-search {
         background: #002d73;
         border-radius: 50%;
         height: 30px;
@@ -67,7 +69,7 @@
         line-height: 28px;
         color: #fff;
         cursor: pointer;
-      } */
+      }
 
       .map-filter {
         position: absolute;
@@ -188,7 +190,7 @@
         padding-top: 10px;
         margin-right: 15px;
       }
-      /* #mapOcean {
+      #mapOcean {
         opacity: 0.5;
       }
       #mapAir {
@@ -199,7 +201,7 @@
       }
       #mapBooking {
         opacity: 0.5;
-      } */
+      }
     </style>
     <script
       async
@@ -218,7 +220,13 @@
 
       var myOptions;
       var map;
-      var blueShip, bluePlane, bookingBlue, delayBlue;
+      var blueShip,
+        bluePlane,
+        bookingBlue,
+        delayBlue,
+        road,
+        roadDelay,
+        bluePlaneDelay;
 
       $(document).ready(function() {
         initMap();
@@ -266,6 +274,14 @@
           new google.maps.Size(32, 32)
         );
 
+        bluePlaneDelay = new google.maps.MarkerImage(
+          "img/blue-plane-delay.png",
+          null /* size is determined at runtime */,
+          null /* origin is 0,0 */,
+          null /* anchor is bottom center of the scaled image */,
+          new google.maps.Size(32, 32)
+        );
+
         bookingBlue = new google.maps.MarkerImage(
           "img/blue-booking.png",
           null /* size is determined at runtime */,
@@ -276,6 +292,22 @@
 
         delayBlue = new google.maps.MarkerImage(
           "img/blue-ship-delay.png",
+          null /* size is determined at runtime */,
+          null /* origin is 0,0 */,
+          null /* anchor is bottom center of the scaled image */,
+          new google.maps.Size(32, 32)
+        );
+
+        road = new google.maps.MarkerImage(
+          "img/blue-delay.png",
+          null /* size is determined at runtime */,
+          null /* origin is 0,0 */,
+          null /* anchor is bottom center of the scaled image */,
+          new google.maps.Size(32, 32)
+        );
+
+        roadDelay = new google.maps.MarkerImage(
+          "img/blue-delay-delay.png",
           null /* size is determined at runtime */,
           null /* origin is 0,0 */,
           null /* anchor is bottom center of the scaled image */,
@@ -305,7 +337,8 @@
           if (shipmentType == "Booking") image = bookingBlue;
           if (shipmentType == "Booking-Ocean") image = bookingBlue;
           if (shipmentType == "Delay-Ocean") image = delayBlue;
-          if (shipmentType == "Delay-Ocean") image = delayBlue;
+          if (shipmentType == "Inland") image = road;
+          if (shipmentType == "Delay-Inland") image = roadDelay;
 
           var latlngset = new google.maps.LatLng(lat, lng);
 
@@ -351,7 +384,7 @@
                     Authorization: token
                   },
                   success: function(data) {
-                    //debugger;
+                    debugger;
                     //alert('Success-2');
                     //debugger;
                     var datas = data.Table1;
@@ -377,15 +410,18 @@
                     var innerConsolidateData = "";
                     if (filterData.length > 0) {
                       for (var k = 0; k < filterData.length; k++) {
-                        //debugger;
+                        debugger;
 
                         var CinnerContentDatas = "";
-                        var ContNo = filterData[k];
+                        var ContNo = filterData[k].replace(/ +/g, "");;
+                        var fContNo= filterData[k];
                         var tempData = datas.filter(
                           x =>
-                            (x.ContainerNo === ContNo) &
+                            (x.ContainerNo === fContNo) &
                             (x.CargoType === "Consolidated")
                         );
+
+
                         CinnerContentDatas =
                           "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
                         CinnerContentDatas =
@@ -397,7 +433,7 @@
                           "'>";
                         CinnerContentDatas =
                           CinnerContentDatas +
-                          "<span class='dash-map-label'>Container No. :</span><a href='#'> " +
+                          "<span class='dash-map-label abc405'>Container No. :</span><a href='#'> " +
                           "<p title='Container No.' class='mapcontainerno'>" +
                           ContNo +
                           "</p></a></div></h5></div>"; //<hr/>
@@ -442,66 +478,15 @@
 
                     //debugger;
                     if (datas.length > 0) {
+                      debugger
                       var marketContent = "<div id='rootElement'>";
                       var marketInnerContent = "";
                       for (var i = 0; i < datas.length; i++) {
                         var HBLNum = datas[i]["HBL#"];
-                        var ContainerNo = datas[i]["ContainerNo"];
+                        var ContainerNo = datas[i]["ContainerNo"].replace(/%20/g, " ");
                         var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                         var myDatacontainerType = datas[i]["CargoType"];
-                        var ModeOfTransport=datas[i]["ModeOfTransport"];
-                        debugger;
-                        if(ModeOfTransport.toUpperCase()==="AIR")
-                        {
-                          marketContent="<div id='rootElement' style='margin-right: 10px;margin-left: 10px'>"
-                          if (myDatacontainerType != "Consolidated") {
-                          //////Actual Content
-                          var innerContentDatas ="";
-                          //   "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
-                          // innerContentDatas =
-                          //   innerContentDatas +
-                          //   "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
-                          //   ContainerNo +
-                          //   "' aria-expanded='false' aria-controls='" +
-                          //   ContainerNo +
-                          //   "'>";
-                          // innerContentDatas =
-                          //   innerContentDatas +
-                          //   "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
-                          //   HBLNum +
-                          //   "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
-                          //   ContainerNo +
-                          //   "</p></a></div></h5></div>";
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div id='" +
-                            ContainerNo +
-                            "'>";
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div class='card-header hbl-bor'> <h5><div role='button' href='#" +
-                            HBLNum +
-                            "'>";
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
-                            HBLNum +
-                            "' target='_parent'>" +
-                            HBLNum +
-                            " </a></p></div>";
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
-                            invoiceIds +
-                            ",</p> </div> </p></div></h5></div></div></div></div></div>";
-
-                          marketInnerContent =
-                            marketInnerContent + innerContentDatas;
-                        }
-                        }
-                        else
-                        {
-                          if (myDatacontainerType != "Consolidated") {
+                        if (myDatacontainerType != "Consolidated") {
                           //////Actual Content
                           var innerContentDatas =
                             "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
@@ -514,7 +499,7 @@
                             "'>";
                           innerContentDatas =
                             innerContentDatas +
-                            "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
+                            "<span class='dash-map-label abc471' style=''>Container No. :</span><a href='shipment-details?hblno=" +
                             HBLNum +
                             "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
                             ContainerNo +
@@ -545,8 +530,6 @@
                           marketInnerContent =
                             marketInnerContent + innerContentDatas;
                         }
-                        }
-                        
                       }
 
                       if (innerConsolidateData != "") {
@@ -607,12 +590,7 @@
         var content = "";
 
         var image = blueShip;
-        if (shipmentType == "Ocean") image = blueShip;
-        if (shipmentType == "Air") image = bluePlane;
-        if (shipmentType == "Booking") image = bookingBlue;
-        if (shipmentType == "Booking-Ocean") image = bookingBlue;
-        if (shipmentType == "Delay-Ocean") image = delayBlue;
-
+ 
         ////////Get Lat long from the Enter text ////////////////////
         /////////////////////////////////////////////////////////////
         $.ajax({
@@ -627,7 +605,7 @@
             Authorization: token
           },
           success: function(data) {
-            //debugger;
+            debugger;
             //alert('Success-Receive Lat:' + data.Table[0].LastLocation_Lat + ' | long:' + data.Table[0].LastLocation_Lon);
 
             // $("#loader-icon").show();
@@ -635,9 +613,16 @@
             var lng = data.Table[0].LastLocation_Lon;
             titleData = data.Table[0].Vessel;
 
-            console.log("lat:" + lat);
-            console.log("log:" + lng);
-            ////////////////////////////////////////////////////////////
+            if (data.Table[0].ModeOfTransport == "Ocean") image = blueShip;
+          if (data.Table[0].ModeOfTransport == "Air") image = bluePlane;
+          if (data.Table[0].ModeOfTransport == "Booking") image = bookingBlue;
+          if (data.Table[0].ModeOfTransport == "Booking-Ocean") image = bookingBlue;
+          if (data.Table[0].ModeOfTransport == "Delay-Ocean") image = delayBlue;
+          if (data.Table[0].ModeOfTransport == "Inland") image = road;
+          if (data.Table[0].ModeOfTransport == "Delay-Inland") image = roadDelay;
+
+
+             ////////////////////////////////////////////////////////////
             latlngset = new google.maps.LatLng(lat, lng);
             var marker = new google.maps.Marker({
               map: map,
@@ -664,7 +649,7 @@
                 Authorization: token
               },
               success: function(data) {
-                //debugger;
+                debugger;
                 var datas = data.Table1;
                 var filterData = [];
                 for (var j = 0; j < datas.length; j++) {
@@ -691,10 +676,11 @@
                     debugger;
 
                     var CinnerContentDatas = "";
-                    var ContNo = filterData[k];
+                    var ContNo = filterData[k].replace(/ +/g, "");;
+                    var fContNo = filterData[k];
                     var tempData = datas.filter(
                       x =>
-                        (x.ContainerNo === ContNo) &
+                        (x.ContainerNo === fContNo) &
                         (x.CargoType === "Consolidated")
                     );
                     CinnerContentDatas =
@@ -708,7 +694,7 @@
                       "'>";
                     CinnerContentDatas =
                       CinnerContentDatas +
-                      "<span class='dash-map-label'>Container No. :</span><a href='#'> " +
+                      "<span class='dash-map-label abc663'>Container No. :</span><a href='#'> " +
                       "<p title='Container No.' class='mapcontainerno'>" +
                       ContNo +
                       "</p></a></div></h5></div>"; //<hr/>
@@ -756,122 +742,63 @@
                   var marketContent = "<div id='rootElement'>";
                   var marketInnerContent = "";
                   for (var i = 0; i < datas.length; i++) {
-                    var ModeOfTransport = datas[i]["ModeOfTransport"];
                     var HBLNum = datas[i]["HBL#"];
-                    var ContainerNo = datas[i]["ContainerNo"];
+                    var ContainerNo = datas[i]["ContainerNo"].replace(/%20/g, " ");
                     var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                     var myDatacontainerType = datas[i]["CargoType"];
-                    if (ModeOfTransport.toUpperCase() === "AIR") {
-                      marketContent="<div id='rootElement' style='margin-right: 10px;margin-left: 10px'>"
-                      if (myDatacontainerType != "Consolidated") {
-                        //////Actual Content
-                        // var innerContentDatas =
-                        //   "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
-                        // innerContentDatas =
-                        //   innerContentDatas +
-                        //   "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
-                        //   ContainerNo +
-                        //   "' aria-expanded='false' aria-controls='" +
-                        //   ContainerNo +
-                        //   "'>";
-                        // innerContentDatas =
-                        //   innerContentDatas +
-                        //   "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
-                        //   HBLNum +
-                        //   "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
-                        //   ContainerNo +
-                        //   "</p></a></div></h5></div>";
-                        //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
-                        if (HBLNum == enteredHBLNum) {
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div id='" +
-                            ContainerNo +
-                            "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
-                        } else {
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div id='" +
-                            ContainerNo +
-                            "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
-                        }
-
+                    if (myDatacontainerType != "Consolidated") {
+                      //////Actual Content
+                      var innerContentDatas =
+                        "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
+                        ContainerNo +
+                        "' aria-expanded='false' aria-controls='" +
+                        ContainerNo +
+                        "'>";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<span class='dash-map-label abc728'>Container No. :</span><a href='shipment-details?hblno=" +
+                        HBLNum +
+                        "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
+                        ContainerNo +
+                        "</p></a></div></h5></div>";
+                      //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
+                      if (HBLNum == enteredHBLNum) {
                         innerContentDatas =
                           innerContentDatas +
-                          "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
-                          HBLNum +
-                          "' >";
+                          "<div id='" +
+                          ContainerNo +
+                          "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
+                      } else {
                         innerContentDatas =
                           innerContentDatas +
-                          "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
-                          HBLNum +
-                          "' target='_parent'>" +
-                          HBLNum +
-                          " </a></p></div>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
-                          invoiceIds +
-                          ",</p> </div> </p></div></h5></div></div></div></div></div>";
-
-                        marketInnerContent =
-                          marketInnerContent + innerContentDatas;
+                          "<div id='" +
+                          ContainerNo +
+                          "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
                       }
-                    } else {
-                      if (myDatacontainerType != "Consolidated") {
-                        //////Actual Content
-                        var innerContentDatas =
-                          "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div class='dash-flex' role='button' data-toggle='collapse' href='#" +
-                          ContainerNo +
-                          "' aria-expanded='false' aria-controls='" +
-                          ContainerNo +
-                          "'>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
-                          HBLNum +
-                          "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
-                          ContainerNo +
-                          "</p></a></div></h5></div>";
-                        //innerContentDatas = innerContentDatas + "<div id='" + ContainerNo + "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
-                        if (HBLNum == enteredHBLNum) {
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div id='" +
-                            ContainerNo +
-                            "' class='collapse show' data-parent='#accordion' aria-labelledby='heading-1'>";
-                        } else {
-                          innerContentDatas =
-                            innerContentDatas +
-                            "<div id='" +
-                            ContainerNo +
-                            "' class='collapse' data-parent='#accordion' aria-labelledby='heading-1'>";
-                        }
 
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
-                          HBLNum +
-                          "' >";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
-                          HBLNum +
-                          "' target='_parent'>" +
-                          HBLNum +
-                          " </a></p></div>";
-                        innerContentDatas =
-                          innerContentDatas +
-                          "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
-                          invoiceIds +
-                          ",</p> </div> </p></div></h5></div></div></div></div></div>";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<div class='card-header hbl-bor' id='heading-1-1'> <h5><div role='button' href='#" +
+                        HBLNum +
+                        "' >";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<div class='dash-flex dash-inner-cntr'><span class='dash-map-label'>HBL No. :</span><p title='HBL No.' class='mapcontainerno dash-hbl'><a class='dash-hbl' href='shipment-details?hblno=" +
+                        HBLNum +
+                        "' target='_parent'>" +
+                        HBLNum +
+                        " </a></p></div>";
+                      innerContentDatas =
+                        innerContentDatas +
+                        "<div><div class='dash-flex'><span class='dash-map-label'>MyWay No. :</span><p title='MyWay No.' class='mapinvoice ml-2'> " +
+                        invoiceIds +
+                        ",</p> </div> </p></div></h5></div></div></div></div></div>";
 
-                        marketInnerContent =
-                          marketInnerContent + innerContentDatas;
-                      }
+                      marketInnerContent =
+                        marketInnerContent + innerContentDatas;
                     }
                   }
                   //marketContent = marketContent + marketInnerContent + "</div>";
@@ -968,10 +895,99 @@
         }
       }
 
+      // var isOceanOn = 1,
+      //   isAirOn = 1;
+      // isDelayShipment = 1;
+      // isNewBooking = 1;
+      // function toggleMapdata(toogleData) {
+      //   debugger;
+
+      //   ////alert(1);
+      //   if (toogleData === "Ocean") {
+      //     if (isOceanOn === 1) {
+      //       isOceanOn = 0;
+      //     } else {
+      //       isOceanOn = 1;
+      //     }
+
+      //     if (toogleData === "Ocean" && isOceanOn !== 0) {
+      //       $("div > img[src='img/blue-ship.png']").hide();
+      //       $("#mapOcean").css("opacity", "0.5");
+      //       // isOceanOn = 1;
+      //     } else {
+      //       $("div > img[src='img/blue-ship.png']").show();
+      //       $("#mapOcean").css("opacity", "1");
+
+      //       // isOceanOn = 0;
+      //     }
+      //   }
+
+      //   if (toogleData === "Air") {
+      //     if (isAirOn === 1) {
+      //       isAirOn = 0;
+      //     } else {
+      //       isAirOn = 1;
+      //     }
+
+      //     if (toogleData === "Air" && isAirOn !== 0) {
+      //       $("div > img[src='img/blue-plane.png']").hide();
+      //       $("#mapAir").css("opacity", "0.5");
+      //       // isAirOn = 1;
+      //     } else {
+      //       $("div > img[src='img/blue-plane.png']").show();
+      //       $("#mapAir").css("opacity", "1");
+      //       // isAirOn = 0;
+      //     }
+      //   }
+
+      //   if (toogleData === "DelayShipment") {
+      //     if (isDelayShipment === 1) {
+      //       isDelayShipment = 0;
+      //     } else {
+      //       isDelayShipment = 1;
+      //     }
+
+      //     if (toogleData === "DelayShipment" && isDelayShipment !== 0) {
+      //       $("div > img[src='img/delay-shipment.png']").hide();
+      //       $("#mapDelay").css("opacity", "0.5");
+      //       // isDelayShipment = 1;
+      //     } else {
+      //       $("div > img[src='img/delay-shipment.png']").show();
+      //       $("#mapDelay").css("opacity", "1");
+      //       // isDelayShipment = 0;
+      //     }
+      //   }
+
+      //   if (toogleData === "NewBooking") {
+      //     if (isNewBooking === 1) {
+      //       isNewBooking = 0;
+      //     } else {
+      //       isNewBooking = 1;
+      //     }
+
+      //     if (toogleData === "NewBooking" && isNewBooking !== 0) {
+      //       $("div > img[src='img/blue-booking.png']").hide();
+      //       $("#mapBooking").css("opacity", "0.5");
+      //       // isNewBooking = 1;
+      //     } else {
+      //       $("div > img[src='img/blue-booking.png']").show();
+      //       $("#mapBooking").css("opacity", "1");
+      //       // isNewBooking = 0;
+      //     }
+      //   }
+
+      //   $("#mapOcean").show();
+      //   $("#mapAir").show();
+      //   $("#mapDelay").show();
+      //   $("#mapBooking").show();
+      // }
+
       var isOceanOn = 1,
-        isAirOn = 1;
-      isDelayShipment = 1;
-      isNewBooking = 1;
+        isAirOn = 1,
+        isDelayShipment = 1,
+        isNewBooking = 1,
+        isRoad = 1;
+
       function toggleMapdata(toogleData) {
         debugger;
 
@@ -984,33 +1000,69 @@
           }
 
           if (toogleData === "Ocean" && isOceanOn === 0) {
-            $("div > img[src='img/blue-ship.png']").hide();
-            $("#mapOcean").css("opacity", "0.5");
-            // isOceanOn = 1;
-          } else {
             $("div > img[src='img/blue-ship.png']").show();
             $("#mapOcean").css("opacity", "1");
-            if (isAirOn == 1) {
+            $("div > img[src='img/blue-ship-delay.png']").show();
+            if (isAirOn == 0) {
               $("div > img[src='img/blue-plane.png']").show();
+              $("div > img[src='img/blue-plane-delay.png']").show();
               $("#mapAir").css("opacity", "1");
             } else {
               $("div > img[src='img/blue-plane.png']").hide();
+              $("div > img[src='img/blue-plane-delay.png']").hide();
               $("#mapAir").css("opacity", "0.5");
             }
-            if (isDelayShipment == 1) {
-              $("div > img[src='img/blue-ship-delay.png']").show();
-              $("#mapDelay").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-ship-delay.png']").hide();
-              $("#mapDelay").css("opacity", "0.5");
-            }
-            if (isNewBooking == 1) {
+
+            if (isNewBooking == 0) {
               $("div > img[src='img/blue-booking.png']").show();
               $("#mapBooking").css("opacity", "1");
             } else {
               $("div > img[src='img/blue-booking.png']").hide();
               $("#mapBooking").css("opacity", "0.5");
             }
+
+            if (isDelayShipment == 0) {
+              $("div > img[src='img/blue-delay.png']").show();
+              $("div > img[src='img/blue-delay-delay.png']").show();
+              $("#mapDelay").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-delay.png']").hide();
+              $("div > img[src='img/blue-delay-delay.png']").hide();
+              $("#mapDelay").css("opacity", "0.5");
+            }
+            // isOceanOn = 1;
+          } else {
+            $("div > img[src='img/blue-ship.png']").hide();
+            $("#mapOcean").css("opacity", "0.5");
+            $("div > img[src='img/blue-ship-delay.png']").hide();
+            if (isAirOn == 0) {
+              $("div > img[src='img/blue-plane.png']").show();
+              $("div > img[src='img/blue-plane-delay.png']").show();
+              $("#mapAir").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-plane.png']").hide();
+              $("div > img[src='img/blue-plane-delay.png']").hide();
+              $("#mapAir").css("opacity", "0.5");
+            }
+
+            if (isNewBooking == 0) {
+              $("div > img[src='img/blue-booking.png']").show();
+              $("#mapBooking").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-booking.png']").hide();
+              $("#mapBooking").css("opacity", "0.5");
+            }
+
+            if (isDelayShipment == 0) {
+              $("div > img[src='img/blue-delay.png']").show();
+              $("div > img[src='img/blue-delay-delay.png']").show();
+              $("#mapDelay").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-delay.png']").hide();
+              $("div > img[src='img/blue-delay-delay.png']").hide();
+              $("#mapDelay").css("opacity", "0.5");
+            }
+
             // isOceanOn = 0;
           }
         }
@@ -1023,34 +1075,69 @@
           }
 
           if (toogleData === "Air" && isAirOn === 0) {
-            $("div > img[src='img/blue-plane.png']").hide();
-            $("#mapAir").css("opacity", "0.5");
-            // isAirOn = 1;
-          } else {
             $("div > img[src='img/blue-plane.png']").show();
+            $("div > img[src='img/blue-plane-delay.png']").show();
             $("#mapAir").css("opacity", "1");
-            // isAirOn = 0;
-            if (isOceanOn == 1) {
+
+
+            if (isOceanOn == 0) {
               $("div > img[src='img/blue-ship.png']").show();
               $("#mapOcean").css("opacity", "1");
+              $("div > img[src='img/blue-ship-delay.png']").show();
             } else {
               $("div > img[src='img/blue-ship.png']").hide();
               $("#mapOcean").css("opacity", "0.5");
+              $("div > img[src='img/blue-ship-delay.png']").hide();
             }
 
-            if (isDelayShipment == 1) {
-              $("div > img[src='img/blue-ship-delay.png']").show();
-              $("#mapDelay").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-ship-delay.png']").hide();
-              $("#mapDelay").css("opacity", "0.5");
-            }
-            if (isNewBooking == 1) {
+            if (isNewBooking == 0) {
               $("div > img[src='img/blue-booking.png']").show();
               $("#mapBooking").css("opacity", "1");
             } else {
               $("div > img[src='img/blue-booking.png']").hide();
               $("#mapBooking").css("opacity", "0.5");
+            }
+
+            if (isDelayShipment == 0) {
+              $("div > img[src='img/blue-delay.png']").show();
+              $("div > img[src='img/blue-delay-delay.png']").show();
+              $("#mapDelay").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-delay.png']").hide();
+              $("div > img[src='img/blue-delay-delay.png']").hide();
+              $("#mapDelay").css("opacity", "0.5");
+            }
+            // isAirOn = 1;
+          } else {
+            $("div > img[src='img/blue-plane.png']").hide();
+            $("#mapAir").css("opacity", "0.5");
+            $("div > img[src='img/blue-plane-delay.png']").hide();
+            if (isOceanOn == 0) {
+              $("div > img[src='img/blue-ship.png']").show();
+              $("#mapOcean").css("opacity", "1");
+              $("div > img[src='img/blue-ship-delay.png']").show();
+            } else {
+              $("div > img[src='img/blue-ship.png']").hide();
+              $("#mapOcean").css("opacity", "0.5");
+              $("div > img[src='img/blue-ship-delay.png']").hide();
+            }
+
+            if (isNewBooking == 0) {
+              $("div > img[src='img/blue-booking.png']").show();
+              $("#mapBooking").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-booking.png']").hide();
+              $("#mapBooking").css("opacity", "0.5");
+            }
+
+            if (isDelayShipment == 0) {
+              $("div > img[src='img/blue-delay.png']").show();
+              $("div > img[src='img/blue-delay-delay.png']").show();
+              $("#mapDelay").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-delay.png']").hide();
+              $("div > img[src='img/blue-delay-delay.png']").hide();
+              $("#mapDelay").css("opacity", "0.5");
             }
           }
         }
@@ -1063,34 +1150,70 @@
           }
 
           if (toogleData === "DelayShipment" && isDelayShipment === 0) {
-            $("div > img[src='img/blue-ship-delay.png']").hide();
-            $("#mapDelay").css("opacity", "0.5");
-            // isDelayShipment = 1;
-          } else {
-            $("div > img[src='img/blue-ship-delay.png']").show();
-            $("#mapDelay").css("opacity", "1");
+           
 
-            if (isOceanOn == 1) {
+            $("div > img[src='img/blue-delay.png']").show();
+            $("div > img[src='img/blue-delay-delay.png']").show();
+            $("#mapDelay").css("opacity", "1");
+            if (isOceanOn == 0) {
               $("div > img[src='img/blue-ship.png']").show();
               $("#mapOcean").css("opacity", "1");
+              $("div > img[src='img/blue-ship-delay.png']").show();
             } else {
               $("div > img[src='img/blue-ship.png']").hide();
               $("#mapOcean").css("opacity", "0.5");
+              $("div > img[src='img/blue-ship-delay.png']").hide();
             }
 
-            if (isAirOn == 1) {
-              $("div > img[src='img/blue-plane.png']").show();
-              $("#mapAir").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-plane.png']").hide();
-              $("#mapAir").css("opacity", "0.5");
-            }
-            if (isNewBooking == 1) {
+            if (isNewBooking == 0) {
               $("div > img[src='img/blue-booking.png']").show();
               $("#mapBooking").css("opacity", "1");
             } else {
               $("div > img[src='img/blue-booking.png']").hide();
               $("#mapBooking").css("opacity", "0.5");
+            }
+
+            if (isAirOn == 0) {
+              $("div > img[src='img/blue-plane.png']").show();
+              $("div > img[src='img/blue-plane-delay.png']").show();
+              $("#mapAir").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-plane.png']").hide();
+              $("div > img[src='img/blue-plane-delay.png']").hide();
+              $("#mapAir").css("opacity", "0.5");
+            }
+            // isDelayShipment = 1;
+          } else {
+            $("div > img[src='img/blue-delay-delay.png']").hide();
+            $("#mapDelay").css("opacity", "0.5");
+            $("div > img[src='img/blue-delay.png']").hide();
+
+            if (isOceanOn == 0) {
+              $("div > img[src='img/blue-ship.png']").show();
+              $("#mapOcean").css("opacity", "1");
+              $("div > img[src='img/blue-ship-delay.png']").show();
+            } else {
+              $("div > img[src='img/blue-ship.png']").hide();
+              $("#mapOcean").css("opacity", "0.5");
+              $("div > img[src='img/blue-ship-delay.png']").hide();
+            }
+
+            if (isNewBooking == 0) {
+              $("div > img[src='img/blue-booking.png']").show();
+              $("#mapBooking").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-booking.png']").hide();
+              $("#mapBooking").css("opacity", "0.5");
+            }
+
+            if (isAirOn == 0) {
+              $("div > img[src='img/blue-plane.png']").show();
+              $("div > img[src='img/blue-plane-delay.png']").show();
+              $("#mapAir").css("opacity", "1");
+            } else {
+              $("div > img[src='img/blue-plane.png']").hide();
+              $("div > img[src='img/blue-plane-delay.png']").hide();
+              $("#mapAir").css("opacity", "0.5");
             }
             // isDelayShipment = 0;
           }
@@ -1185,12 +1308,12 @@
           value=""
         />
         </div>
-        <!-- <i
+        <i
           class="fa fa-search"
           aria-hidden="true"
           id="testId"
           onclick="ShowMarker();"
-        ></i> -->
+        ></i>
       </div>
       <div class="map-filter" onclick="togglehandleHamb();">
         <div class="map-icon-cntr" onclick="toggleMapdata();">
@@ -1230,7 +1353,7 @@
         >
           <img
             id="mapDelay"
-            src="img/blue-ship-delay.png"
+            src="img/delay-shipment.png"
             alt="delay icon"
             style="height: auto;"
           />

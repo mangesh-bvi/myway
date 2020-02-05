@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router";
 import "../styles/custom.css";
 import { Accordion, Button, Card } from "react-bootstrap";
 import GreenCounterIcon from "./../assets/img/green-counter-side.png";
@@ -9,16 +10,15 @@ import RatesIcon from "./../assets/img/rates-side.png";
 import AdminIcon from "./../assets/img/admin-side.png";
 import ChatIcon from "./../assets/img/chat.png";
 import sideArrow from "./../assets/img/side-arr.png";
-import Menubars from "./../assets/img/menubars.png";
+
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
 import DashboardIcon from "./../assets/img/dashboard-side.png";
 import PhoneIcon from "./../assets/img/phone.png";
 import QRCode from "../pages/QRCode";
-import UserIcon from "./../assets/img/user.png";
-import ActivityLogIcon from "./../assets/img/activity-log.png";
+
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
-import LogoutIcon from "./../assets/img/logout.png";
+
 import QuotesIcon from "./../assets/img/quotes-side.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
@@ -27,6 +27,14 @@ import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
 import LoginActore from "./../assets/img/login-actore.jfif";
 import { Modal, ModalBody } from "reactstrap";
+import axios from "axios";
+import appSettings from "../helpers/appSetting";
+import { authHeader } from "../helpers/authHeader";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 class SideMenu extends Component {
   constructor(props) {
@@ -38,14 +46,20 @@ class SideMenu extends Component {
       activeRateSearch: "",
       activeSpotList: "",
       modalProfile: false,
-      isColClick: false
+      isColClick: false,
+      profileImgURL: "",
+      imageFile: {},
+      loading: false
     };
 
     this.highlightClass = this.highlightClass.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
   }
-
+  shouldComponentUpdate(nextProps, nextState) {
+    return true;
+  }
   componentDidMount() {
+    debugger
     var previousAir = window.localStorage.getItem("aircount");
     var previousQuotePending = window.localStorage.getItem("quotepending");
     var previousBookPending = window.localStorage.getItem("bookpending");
@@ -68,6 +82,12 @@ class SideMenu extends Component {
         });
       }
     }, 1);
+
+    var profileImgURL = encryption(
+      window.localStorage.getItem("UserLogo"),
+      "desc"
+    );
+    this.setState({ profileImgURL });
   }
 
   clickShipmentType(e) {
@@ -96,11 +116,7 @@ class SideMenu extends Component {
   }
 
   sidebarCollapse(e) {
-    debugger;
-    // alert(e.classList.contains("abc"));
-    // console.log(e.currentTarget.parentNode);
-    // if (e.currentTarget.parentNode.parentNode.classList.contains("colap")) {
-    if (localStorage.getItem("isColepse")==="true") {
+    if (localStorage.getItem("isColepse") === "true") {
       e.currentTarget.parentNode.parentNode.classList.remove("colap");
 
       localStorage.setItem("isColepse", false);
@@ -108,35 +124,108 @@ class SideMenu extends Component {
     } else {
       localStorage.setItem("isColepse", true);
       e.currentTarget.parentNode.parentNode.classList.add("colap");
-      
+
       this.setState({ isColClick: true });
     }
   }
 
   highlightClass(e) {
-    debugger;
-    // console.log(e.classList);
-
     var elems = document.getElementsByClassName("side-menus");
-    // elems.forEach(element => {
-    //   debugger;
-    //   element.classList.remove("active-menu");
-    // });
+
     for (let i = 0; i < elems.length; i++) {
       elems[i].classList.remove("active-menu");
     }
     e.currentTarget.classList.add("active-menu");
   }
 
+  clickBookingType(e) {
+    var value = e.target.getAttribute("data-Quetye");
+    if (value === "" || value === null) {
+      this.props.history.push("booking-table");
+    } else {
+      this.props.history.push({
+        pathname: "booking-table",
+        state: {
+          status: value
+        }
+      });
+    }
+  }
+
+  handleSubmit() {
+    debugger;
+    this.setState({ loading: true });
+    let self = this;
+    var formData = new FormData();
+    // if (Object.keys(this.state.imageFile).length>0) {
+    var userid = parseInt(
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
+    formData.append("ProfilePicPath", this.state.imageFile);
+    formData.append("UserID", userid);
+    formData.append(
+      "UserName",
+      encryption(window.localStorage.getItem("username"), "desc")
+    );
+    formData.append("ModifiedBy", userid);
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/UpdateProfilePic`,
+      data: formData,
+      headers: authHeader()
+    })
+      .then(function(response) {
+        debugger;
+        if (response.data.Table.length > 0) {
+          self.setState({
+            profileImgURL: response.data.Table[0].UserLogo
+          });
+          NotificationManager.success(response.data.Table[0].Result);
+          window.localStorage.setItem(
+            "UserLogo",
+            encryption(response.data.Table[0].UserLogo, "enc")
+          );
+          var pathname = self.props.location.pathname;
+          self.setState({ loading: false });
+          self.toggleProfile();
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1000);
+
+          self.forceUpdate();
+        }
+      })
+      .catch(error => {
+        self.setState({ loading: false });
+        NotificationManager.error(error.response.data);
+      });
+  }
+  handleFile(e) {
+    debugger;
+    var file = e.target.files[0];
+    var t = file.type
+      .split("/")
+      .pop()
+      .toLowerCase();
+
+    if (t != "jpeg" && t != "jpg" && t != "png" && t != "gif") {
+      NotificationManager.error("Please select valid profile image");
+    } else {
+      var reader = new FileReader();
+
+      var imgtag = document.getElementById("profileImg");
+      imgtag.title = file.name;
+
+      reader.onload = function(e) {
+        imgtag.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+      this.setState({ imageFile: file });
+    }
+  }
   render() {
-    // var colClassName = "";
-    // if (window.localStorage.getItem("isColepse")) {
-    //   debugger;
-    //   colClassName = "side-arrow colap";
-    // } else {
-    //   debugger;
-    //   colClassName = "side-arrow";
-    // }
     var urlShipSum = window.location.pathname;
     window.localStorage.setItem("defShipActKey", "0");
     if (urlShipSum === "/shipment-summary") {
@@ -183,33 +272,16 @@ class SideMenu extends Component {
       window.localStorage.setItem("defActKey", "0");
     }
 
-    // var urlShipSum = window.location.pathname;
-    // window.localStorage.setItem("defspotActKey", "0");
-    // if (urlShipSum === "/spot-rate-table") {
-    //   window.localStorage.setItem("defspotActKey", "1");
-    // } else {
-    //   window.localStorage.setItem("defspotActKey", "0");
-    // }
-
     return (
       <div
         className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
         id="sidemenubar"
       >
-        {/* <i
-          class="fa fa-arrow-right side-arrow"
-          aria-hidden="true"
-          onClick={this.sidebarCollapse.bind(this)}
-        ></i> */}
+        <NotificationContainer />
         <div className="side-arrow" onClick={this.sidebarCollapse.bind(this)}>
           <img src={sideArrow} alt="side arrow" />
         </div>
-        {/* <img
-          src={Menubars}
-          alt="Menu Bars"
-          className="menubars"
-          id="menubars"
-        /> */}
+
         <ul className="sidemenu-ul">
           <li className="sidemenu-ul-li">
             <Link
@@ -422,18 +494,6 @@ class SideMenu extends Component {
                 <Accordion.Collapse eventKey="1">
                   <Card.Body>
                     <ul className="shipment-ul">
-                      {/* <li>
-                        <label
-                          className="shipment-ul-lilbl1"
-                          data-Quetye="Current"
-                          onClick={this.clickQuetesType.bind(this)}
-                        >
-                          Current
-                        </label>
-                        <label className="shipment-ul-lilbl2">
-                          {window.localStorage.getItem("quotecurrent")}
-                        </label>
-                      </li> */}
                       <li>
                         <label
                           className="shipment-ul-lilbl1"
@@ -443,7 +503,6 @@ class SideMenu extends Component {
                           Pending
                         </label>
                         <label className="shipment-ul-lilbl2">
-                          {/* {parseFloat(window.localStorage.getItem("quotepending")) + parseFloat(window.localStorage.getItem("quotecurrent"))} */}
                           {window.localStorage.getItem("quotepending")}
                         </label>
                       </li>
@@ -493,15 +552,6 @@ class SideMenu extends Component {
             className="sidemenu-ul-li shipmentli"
             style={{ borderTop: "1px solid #265eb5" }}
           >
-            {/* <Link to="/booking-table">
-              <img
-                src={GreenCounterIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Bookings
-            </Link> */}
-
             <Accordion
               defaultActiveKey={window.localStorage.getItem("bookingKey")}
             >
@@ -523,19 +573,37 @@ class SideMenu extends Component {
                   <Card.Body>
                     <ul className="shipment-ul">
                       <li>
-                        <label className="shipment-ul-lilbl1">Pending</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Pending"
+                          onClick={this.clickBookingType.bind(this)}
+                        >
+                          Pending
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("bookpending")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Approved</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Approved"
+                          onClick={this.clickBookingType.bind(this)}
+                        >
+                          Approved
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("bookapproved")}
                         </label>
                       </li>
                       <li>
-                        <label className="shipment-ul-lilbl1">Rejected</label>
+                        <label
+                          className="shipment-ul-lilbl1"
+                          data-Quetye="Rejected"
+                          onClick={this.clickBookingType.bind(this)}
+                        >
+                          Rejected
+                        </label>
                         <label className="shipment-ul-lilbl2">
                           {window.localStorage.getItem("bookrejected")}
                         </label>
@@ -587,16 +655,7 @@ class SideMenu extends Component {
               <span className="menuname">Analytics</span>
             </Link>
           </li>
-          {/* <li className="sidemenu-ul-li">
-            <Link to="/reports">
-              <img
-                src={AnalyticsIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Reports
-            </Link>
-          </li> */}
+
           {(() => {
             if (
               encryption(window.localStorage.getItem("usertype"), "desc") ===
@@ -618,12 +677,6 @@ class SideMenu extends Component {
             }
           })()}
           {(() => {
-            // if (
-            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
-            //     "Customer" &&
-            //   encryption(window.localStorage.getItem("usertype"), "desc") !==
-            //     "Sales User"
-            // ) {
             if (
               encryption(window.localStorage.getItem("isAdmin"), "desc") === "Y"
             ) {
@@ -658,46 +711,33 @@ class SideMenu extends Component {
             <div class="dropdown-menu">
               <ul className="profile-ul">
                 <li className="profile-setting-li">
-                  <a href="mywayMessage">
+                  <Link to="mywayMessage">
                     <img
                       src={ChatIcon}
                       alt="profile-icon"
                       className="profilesetting-icon"
                     />
                     Messages
-                  </a>
+                  </Link>
                 </li>
-                {/* <li
-                  className="activitylog-li"
-                  onClick={this.toggle.bind(this)}
-                  id="abcd"
-                >
-                  <img
-                    src={ActivityLogIcon}
-                    alt="activity-log"
-                    className="activitylog-icon"
-                  />
-                  Activity Log
-                </li> */}
+
                 <li className="profile-setting-li">
-                  <a href="changePassword">
+                  <Link to="changePassword">
                     <img
                       src={ProfileSettingIcon}
                       alt="profile-icon"
                       className="profilesetting-icon"
                     />
                     Change Password
-                  </a>
+                  </Link>
                 </li>
                 <li className="profile-setting-li" onClick={this.toggleProfile}>
-                  <a href="#!">
-                    <img
-                      src={ProfileSettingIcon}
-                      alt="profile-icon"
-                      className="profilesetting-icon"
-                    />
-                    Profile Settings
-                  </a>
+                  <img
+                    src={ProfileSettingIcon}
+                    alt="profile-icon"
+                    className="profilesetting-icon"
+                  />
+                  Profile Settings
                 </li>
                 <li className="profile-setting-li">
                   {/* <a href=""> */}
@@ -742,7 +782,11 @@ class SideMenu extends Component {
             >
               <div className="d-flex align-items-center text-left">
                 <div className="prof-img">
-                  <img src={LoginActore} />
+                  <img
+                    id="profileImg"
+                    className="profileIMG"
+                    src={this.state.profileImgURL}
+                  />
                 </div>
                 <div className="pl-3">
                   <p className="prof-name">
@@ -767,7 +811,7 @@ class SideMenu extends Component {
                       id="file-upload"
                       className="file-upload d-none"
                       type="file"
-                      onChange={this.onDocumentChangeHandler}
+                      onChange={this.handleFile.bind(this)}
                     />
                     <label htmlFor="file-upload">
                       <div className="file-icon">
@@ -779,17 +823,23 @@ class SideMenu extends Component {
                 </div>
                 <p className="file-name">{this.state.selectedFileName}</p>
               </div>
-              <Button
-                className="butn"
-                onClick={() => {
-                  this.toggleProfile();
-                  // this.onDocumentClickHandler();
-                }}
-              >
+              {/* <Button className="butn" onClick={this.handleSubmit.bind(this)}>
                 Submit
-              </Button>
+              </Button> */}
+              <button
+                className="butn btn btn-secondary"
+                onClick={this.handleSubmit.bind(this)}
+              >
+                {this.state.loading == true ? (
+                  <i
+                    style={{ marginRight: 15 }}
+                    className="fa fa-refresh fa-spin"
+                  ></i>
+                ) : null}
+                {this.state.loading ? "Please Wait ..." : "Submit"}
+              </button>
               <Button
-                className="butn cancel-butn"
+                className="butn cancel-butn btn btn-secondary"
                 onClick={() => {
                   this.toggleProfile();
                 }}
@@ -804,4 +854,4 @@ class SideMenu extends Component {
   }
 }
 
-export default SideMenu;
+export default withRouter(SideMenu);

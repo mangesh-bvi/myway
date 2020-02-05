@@ -549,13 +549,15 @@ class Reports extends Component {
     });
   };
 
+  handleChangePage() {
+    window.history.back();
+  }
+
   render() {
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -568,6 +570,12 @@ class Reports extends Component {
           <div className="cls-rt">
             <div className="rate-fin-tit title-border title-sect mb-4">
               <h2>Scheduler Report</h2>
+              <button
+                onClick={this.handleChangePage.bind(this)}
+                className="butn mt-0"
+              >
+                Back
+              </button>
             </div>
             <div className="report-cntr">
               <div className="container">
