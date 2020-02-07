@@ -210,16 +210,16 @@ class QuoteTable extends Component {
             new Date(this.state.endDate).setHours(0, 0, 0, 0)
       );
     } else {
-      NewdataQuote = [{ POD: "No Record Found" }];
+      // NewdataQuote = [{ POD: "No Record Found" }];
     }
-     if(NewdataQuote.length>0)
-     {
+    //  if(NewdataQuote.length>0)
+    //  {
 
-     }
-     else
-     {
-      NewdataQuote = [{ POD: "No Record Found" }];
-     }
+    //  }
+    //  else
+    //  {
+    //   NewdataQuote = [{ POD: "No Record Found" }];
+    //  }
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";

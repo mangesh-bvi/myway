@@ -676,6 +676,7 @@ class ShippingDetails extends Component {
 
   render() {
     const { shipmentSummary } = this.state;
+    
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
@@ -705,19 +706,7 @@ class ShippingDetails extends Component {
                     onChange={this.filterAll}
                     placeholder="Search here"
                   />
-                  {/* <button
-                  onClick={this.toggleAdvSearch}
-                  className="fa fa-search-plus advsearchicon"
-                ></button> */}
-                  {/* <a
-                  href="#!"
-                  onClick={this.toggleAdvSearch}
-                  //style={{ display: this.state.mapDis }}
-                  className="butnAdv"
-                >
-                  +
-                </a> */}
-                  {/* <i class="fa fa-search-plus advsearchicon" aria-hidden="true"></i> */}
+                
                   <a
                     href="#!"
                     onClick={this.listButn}

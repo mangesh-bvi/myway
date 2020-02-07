@@ -56,17 +56,13 @@ class Header extends Component {
       profileImgURL: "",
       currencyData: [],
       currencyCode: "",
-      currencyObj: {}
+      currencyObj: {},
+      iscurrencydrp: false
     };
     this.BindNotifiation = this.BindNotifiation.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
     this.handleCurrencyBind = this.handleCurrencyBind.bind(this);
-  }
-
-  componentDidUpdate() {
-    // debugger;
-    // this.state.currencyCode=window.localStorage.getItem("currencyCode")
   }
 
   componentDidMount() {
@@ -123,6 +119,16 @@ class Header extends Component {
       this.setState({ profileImgURL });
     }
     this.handleCurrencyBind();
+    debugger;
+    var iscurrencydrp = false;
+    var pathName = this.props.location.pathname;
+    if (pathName !== "/rate-table") {
+      iscurrencydrp = true;
+      this.setState({ iscurrencydrp });
+    } else {
+      iscurrencydrp = false;
+      this.setState({ iscurrencydrp });
+    }
   }
 
   handleCurrencyBind() {
@@ -137,12 +143,12 @@ class Header extends Component {
       self.setState({
         currencyData
       });
-      debugger;
+      // debugger;
       var currencyObj = window.localStorage.getItem("currencyObj");
       var currencyCode = window.localStorage.getItem("currencyObj");
 
       if (currencyCode && currencyObj) {
-        debugger;
+        // debugger;
         var data = JSON.parse(currencyCode);
 
         self.setState({ currencyObj: data, currencyCode });
@@ -243,7 +249,8 @@ class Header extends Component {
   }
   onLogout() {
     localStorage.clear();
-    window.location.href = "./login";
+    this.props.history.push("/login");
+    // window.location.href = "./login";
   }
 
   onDocumentChangeHandler = event => {
@@ -283,20 +290,33 @@ class Header extends Component {
       return false;
     }
     var CustomerID = this.state.CompanyID;
+    if (this.state.CompanyID === 0) {
+      CustomerID = encryption(window.localStorage.getItem("companyid"), "dec");
+    } else {
+      CustomerID = this.state.CompanyID;
+    }
     debugger;
 
     //alert(txtshipmentcomment.value.trim() + " on " + day + " " + month_names[month_index] + " " + year);
     let self = this;
+
+    var ReferenceNo = "";
+    var subject = txtShipmentNo.value.trim();
+    if (this.state.selectedType === "Subject") {
+      ReferenceNo = "";
+    } else {
+      ReferenceNo = txtShipmentNo.value.trim();
+    }
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SendCommonMessage`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        ReferenceNo: txtShipmentNo.value.trim(),
+        ReferenceNo: ReferenceNo,
         TypeOfMessage: drpshipment.value.trim(),
         CustomerID: CustomerID,
-        SubjectMessage: "",
+        SubjectMessage: subject,
         Message: txtshipmentcomment.value.trim()
       },
       headers: authHeader()
@@ -419,7 +439,7 @@ class Header extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        // debugger;
 
         if (response.data.length != 0) {
           if (field == "CustomerList") {
@@ -469,8 +489,11 @@ class Header extends Component {
   HandleChangeType(e) {
     debugger;
     var value = e.target.value;
-
-    this.setState({ selectedType: value });
+    // document.getElementById("txtShipmentNo").value("");
+    // document.getElementById("txtshipmentcomment").value("");
+    // "txtshipmentcomment"
+    document.getElementById("txtshipmentcomment").value = "";
+    this.setState({ selectedType: value, popupHBLNO: "" });
   }
 
   onErrorImg(e) {
@@ -479,7 +502,7 @@ class Header extends Component {
   }
 
   HandleCurrencyChange(e) {
-    debugger;
+    // debugger;
 
     this.setState({
       currencyCode: e.CurrencyCode,
@@ -507,31 +530,12 @@ class Header extends Component {
       method: "get",
       url: url
     }).then(function(response) {
-      debugger;
+      // debugger;
       window.location.reload(false);
     });
   }
   render() {
     let self = this;
-
-    console.log(
-      this.state.currencyObj,
-      "------------------currencyObj-----------"
-    );
-
-    // const {currencyCode}=this.state;
-    // console.log(this.state.currencyCode,"-----------currencyCode");
-    // var currencyCode =null;
-    // if (this.state.currencyData.length > 0) {
-    //   debugger;
-    //   currencyCode = { CurrencyCode: "USD", BaseCurrencyName: "US Dollars" };
-    // } else {
-    //   var obj = new Object();
-
-    //   obj.CurrencyCode = "USD";
-    //   obj.BaseCurrencyName = "US Dollars";
-    //   currencyCode = JSON.parse(obj);
-    // }
 
     let optionNotificationItems = this.state.notificationData.map((item, i) => (
       <div
@@ -654,6 +658,7 @@ class Header extends Component {
                       // components={animatedComponents}
                       value={this.state.currencyObj}
                       isSearchable={false}
+                      isDisabled={this.state.iscurrencydrp}
                       options={this.state.currencyData}
                       onChange={this.HandleCurrencyChange.bind(this)}
                       defaultValue={{

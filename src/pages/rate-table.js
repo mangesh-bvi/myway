@@ -208,7 +208,11 @@ class RateTable extends Component {
       cmbTypeRadio: "",
       packageTypeData: [],
       Company: "",
-      selectedCurrency: ""
+      selectedCurrency: "",
+      usertype: "",
+      customerData: [],
+      error: "",
+      fields: {}
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -235,7 +239,6 @@ class RateTable extends Component {
     },
     zoom: 11
   };
-  
 
   componentDidMount() {
     setTimeout(() => {
@@ -584,7 +587,7 @@ class RateTable extends Component {
 
   toggleQuantPOLSave() {
     debugger;
- 
+
     this.state.polFilterArray = this.state.polArray;
     this.setState(() => ({
       loading: true,
@@ -600,7 +603,6 @@ class RateTable extends Component {
   toggleQuantPODSave() {
     debugger;
 
-     
     this.state.podFilterArray = this.state.podArray;
     this.setState(() => ({
       loading: true,
@@ -706,8 +708,6 @@ class RateTable extends Component {
       this.setState({ currencyCode: baseCurrency });
     }
 
-
-
     var newcurrencyCode = window.localStorage.getItem("currencyCode");
     var NewselectedCurrency = "";
 
@@ -720,8 +720,6 @@ class RateTable extends Component {
     } else {
       NewselectedCurrency = this.state.currencyCode;
     }
-
-
 
     axios({
       method: "post",
@@ -814,7 +812,6 @@ class RateTable extends Component {
           loading: false
         });
       }
- 
     });
     // // }
   }
@@ -847,18 +844,24 @@ class RateTable extends Component {
     var profitLossAmt1 = this.state.profitLossAmt;
     var profitLossPer = 0;
     var profitLossPer1 = this.state.profitLossPer;
+
+    var aTotalAmount = 0;
+    var nTotalAmount = 0;
     if (this.state.selectedDataRow.length == 0) {
       selectedRow.push(rowData._original);
 
       for (let j = 0; j < rateSubDetails.length; j++) {
         profitLossAmt +=
           rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
-        BuyRate += rateSubDetails[j].BuyRate;
+        // BuyRate += rateSubDetails[j].BuyRate;
       }
-      profitLossPer = (profitLossAmt * 100) / BuyRate;
+
+      var total = rowData._original.TotalAmount;
+
+      profitLossPer = (profitLossAmt * 100) / total;
       var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
 
-      var finalprofitLossPer = profitLossPer + profitLossPer1;
+      var finalprofitLossPer = profitLossPer;
 
       this.setState({
         selectedDataRow: selectedRow,
@@ -869,6 +872,8 @@ class RateTable extends Component {
       if (newSelected[RateLineID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           var thisrateid = this.state.selectedDataRow[i].RateLineID;
+          aTotalAmount += this.state.selectedDataRow[i].TotalAmount;
+
           var _originalrateid = rowData._original.RateLineID;
           if (
             this.state.containerLoadType == "FCL" ||
@@ -878,7 +883,7 @@ class RateTable extends Component {
             thisrateid = this.state.selectedDataRow[i].RateLineId;
             _originalrateid = rowData._original.RateLineId;
           }
- 
+
           selectedRow = this.state.selectedDataRow;
           selectedRow.push(rowData._original);
 
@@ -887,19 +892,22 @@ class RateTable extends Component {
               rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
             BuyRate += rateSubDetails[j].BuyRate;
           }
-          profitLossPer = (profitLossAmt * 100) / BuyRate;
-          var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
 
-          var finalprofitLossPer = profitLossPer + profitLossPer1;
-          this.setState({
-            profitLossAmt: finalprofitLossAmt,
-            profitLossPer: finalprofitLossPer
-          });
           break;
           // }
         }
+
+        nTotalAmount = aTotalAmount + rowData._original.TotalAmount;
+        var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
+        profitLossPer = (finalprofitLossAmt * 100) / nTotalAmount;
+        var finalprofitLossPer = profitLossPer;
+        this.setState({
+          profitLossAmt: finalprofitLossAmt,
+          profitLossPer: finalprofitLossPer
+        });
       } else {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
+          aTotalAmount += this.state.selectedDataRow[i].TotalAmount;
           if (
             this.state.selectedDataRow[i].RateLineID ===
             rowData._original.RateLineID
@@ -912,18 +920,18 @@ class RateTable extends Component {
                 rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
               BuyRate += rateSubDetails[j].BuyRate;
             }
-            profitLossPer = (profitLossAmt * 100) / BuyRate;
-            var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
 
-            var finalprofitLossPer = profitLossPer1 - profitLossPer;
-            this.setState({
-              profitLossAmt: finalprofitLossAmt,
-              profitLossPer: finalprofitLossPer
-            });
             break;
           }
         }
-      
+        nTotalAmount = aTotalAmount;
+        var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
+        profitLossPer = (finalprofitLossAmt * 100) / nTotalAmount;
+        var finalprofitLossPer = profitLossPer;
+        this.setState({
+          profitLossAmt: finalprofitLossAmt,
+          profitLossPer: finalprofitLossPer
+        });
       }
     }
     this.setState({
@@ -1052,7 +1060,7 @@ class RateTable extends Component {
       } else {
         NewselectedCurrency = this.state.currencyCode;
       }
-   
+
       dataParameter = {
         QuoteType: paramData.containerLoadType,
         ModeOfTransport: rModeofTransport,
@@ -2346,6 +2354,30 @@ class RateTable extends Component {
 
   //// end Commodity drop-down
   toggleSpot() {
+    debugger;
+
+    var companyName = "";
+    var companyAddress = "";
+    var contactName = "";
+    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
+    if (usertype == "Customer") {
+      companyName = encryption(
+        window.localStorage.getItem("companyname"),
+        "dec"
+      );
+      companyAddress = encryption(
+        window.localStorage.getItem("companyaddress"),
+        "dec"
+      );
+      contactName = encryption(
+        window.localStorage.getItem("contactname"),
+        "dec"
+      );
+      this.setState({ usertype, companyName, companyAddress, contactName });
+    } else {
+      usertype = "Sales User";
+      this.setState({ usertype });
+    }
     this.setState(prevState => ({
       modalSpot: !prevState.modalSpot
     }));
@@ -3442,7 +3474,7 @@ class RateTable extends Component {
       .then(function(response) {
         debugger;
         NotificationManager.success(response.data.Table[0].Message);
-
+        self.toggleSpot();
         setTimeout(function() {
           self.props.history.push("./spot-rate-table");
         }, 1000);
@@ -3708,7 +3740,84 @@ class RateTable extends Component {
     return (e.target.src =
       "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
   }
+  handleSelectCon(field, value, e) {
+    debugger;
+    let fields = this.state.fields;
+    fields[field] = value;
+    var compId = e.Company_ID;
+    var compName = e.Company_Name;
+    var companyAddress = e.CompanyAddress;
+    var contactName = e.ContactName;
 
+    this.setState({
+      fields,
+      companyId: compId,
+      companyName: compName,
+      companyAddress: companyAddress,
+      contactName: contactName
+    });
+    //document.getElementById("SearchRate").classList.remove("disableRates");
+  }
+
+  HandleChangeCon(field, e) {
+    debugger;
+    let self = this;
+    self.state.error = "";
+    var customertxtlen = e.target.value;
+    // if (customertxtlen == "") {
+    //   document.getElementById("SearchRate").classList.add("disableRates");
+    // }
+
+    let fields = this.state.fields;
+    fields[field] = e.target.value;
+
+    if (fields[field].length >= 3) {
+      self.setState({ fields });
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/CustomerList`,
+        data: {
+          CustomerName: e.target.value,
+          CustomerType: "Existing",
+          MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        debugger;
+
+        if (response.data.Table.length != 0) {
+          if (field == "CustomerList") {
+            self.setState({
+              customerData: response.data.Table,
+              fields
+            });
+          } else {
+            self.setState({
+              customerData: response.data.Table,
+              fields
+            });
+          }
+        } else {
+          self.state.error = "Please enter valid Consignee";
+        }
+        self.setState({
+          error: self.state.error
+        });
+      });
+    } else {
+      self.setState({
+        customerData: [],
+        fields
+      });
+    }
+  }
+
+  newOpen() {
+    window.open(
+      "https://org242240bd.crm.dynamics.com/main.aspx?etn=lead&pagetype=entityrecord",
+      "_blank"
+    );
+  }
   render() {
     var i = 0;
     var classname = "";
@@ -4392,11 +4501,22 @@ class RateTable extends Component {
                               },
                               {
                                 Cell: row => {
+                                  var value = "";
+                                  if (row.original.ContainerType) {
+                                    value = row.original.ContainerType;
+                                  }
+                                  if (row.original.ContainerQuantity) {
+                                    value +=
+                                      " (" +
+                                      row.original.ContainerQuantity +
+                                      ")";
+                                  }
+
                                   return (
                                     <>
                                       <p className="details-title">Container</p>
                                       <p className="details-para">
-                                        {row.original.ContainerType}
+                                      {value}
                                       </p>
                                     </>
                                   );
@@ -4405,21 +4525,7 @@ class RateTable extends Component {
                                 filterable: true
                                 //minWidth: 175
                               },
-                              // {
-                              //   Cell: row => {
-                              //     return (
-                              //       <>
-                              //         <p className="details-title">Quantity</p>
-                              //         <p className="details-para">
-                              //           {row.original.ContainerQuantity}
-                              //         </p>
-                              //       </>
-                              //     );
-                              //   },
-                              //   accessor: "ContainerType",
-                              //   filterable: true
-                              //   //minWidth: 175
-                              // },
+
                               {
                                 Cell: row => {
                                   if (
@@ -4890,10 +4996,7 @@ class RateTable extends Component {
                 <div className="pol-mar">
                   <span style={{ color: "red" }}>{this.state.errorPOL}</span>
 
-                  {/* <div className="rename-cntr login-fields position-relative"> */}
                   {this.createUIPOL()}
-
-                  {/* </div> */}
                 </div>
                 <Button className="butn" onClick={this.toggleQuantPOLSave}>
                   Done
@@ -4932,165 +5035,7 @@ class RateTable extends Component {
               </ModalBody>
             </Modal>
             {/* {------------------------------End Mutliple POD Modal----------------------} */}
-            {/* {"-------------------------Spot Rate Modal-------------------"} */}
-            <Modal
-              className={
-                this.state.containerLoadType === "FTL"
-                  ? "delete-popup text-left spot-rate-popup pol-pod-popup"
-                  : "delete-popup text-left spot-rate-popup big-popup pol-pod-popup"
-              }
-              isOpen={this.state.modalSpot}
-              toggle={this.toggleSpot}
-              centered={true}
-            >
-              {/* <h3 className="text-center">Add Below Details</h3> */}
-              <ModalBody>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  onClick={this.toggleSpot}
-                >
-                  <span>&times;</span>
-                </button>
-                <div
-                  style={{
-                    background: "#fff",
-                    borderRadius: "15px",
-                    padding: "15px"
-                  }}
-                >
-                  <div className="rename-cntr login-fields">
-                    <label>Commodity</label>
-                    <select onChange={this.filterAll}>
-                      {/* <option>Select</option>
-                    <option value="All">All</option> */}
-                      {this.state.commodityData.map((item, i) => (
-                        <option
-                          key={i}
-                          value={item.id}
-                          selected={item.Commodity === "FAK"}
-                        >
-                          {item.Commodity}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="rename-cntr login-fields align-items-start">
-                    <label>Cargo</label>
-                    <div className="w-100">
-                      {this.state.containerLoadType === "FTL" ? (
-                        this.createUITruckType()
-                      ) : this.state.containerLoadType === "FCL" ? (
-                        <>
-                          {" "}
-                          <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
-                            <Select
-                              className="rate-dropdown"
-                              getOptionLabel={option =>
-                                option.StandardContainerCode
-                              }
-                              getOptionValue={option =>
-                                option.StandardContainerCode
-                              }
-                              isMulti
-                              options={this.state.EquipmentType}
-                              // onChange={this.equipChange.bind(this)}
-                              onChange={this.newaddClick.bind(this)}
-                              value={this.state.selected}
-                              showNewOptionAtTop={false}
-                            />
-                          </div>
-                          <div className="d-flex flex-wrap justify-content-center">
-                            {this.NewcreateUI()}
-                          </div>
-                          <div className="remember-forgot d-block flex-column rate-checkbox justify-content-center">
-                            <input
-                              id="Special-equType"
-                              type="checkbox"
-                              className="d-none"
-                              name={"Special-equType"}
-                              // onChange={this.HandleSpecialEqtCheck.bind(this)}
-                            />
-                            {/* <label htmlFor="Special-equType">Special Equipment</label> */}
-                          </div>
-                          {this.state.specialEquipment === true ? (
-                            <div className="">
-                              {/* spe-equ mt-0 */}
-                              <div className="equip-plus-cntr w-100">
-                                <Select
-                                  className="rate-dropdown"
-                                  getOptionLabel={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  getOptionValue={option =>
-                                    option.SpecialContainerCode
-                                  }
-                                  options={this.state.SpacialEqmt}
-                                  placeholder="Select Kind of Special Equipment"
-                                  onChange={this.specEquipChange}
-                                  // value={thi.state.spEqtSelect}
-                                  showNewOptionAtTop={false}
-                                />
-                              </div>
-                              <div id="cbmInner">
-                                {this.state.specialEqtSelect === true ? (
-                                  this.state.flattack_openTop.length > 0 ? (
-                                    <>{this.MultiCreateCBM()}</>
-                                  ) : null
-                                ) : null}
 
-                                {this.state.refertypeSelect === true ? (
-                                  this.state.referType.length > 0 ? (
-                                    <>{this.createUISpecial()}</>
-                                  ) : null
-                                ) : null}
-
-                                {this.state.spacEqmtTypeSelect === true ? (
-                                  this.state.spacEqmtType.length > 0 ? (
-                                    <>
-                                      <div className="d-flex flex-wrap justify-content-center align-items-center">
-                                        {this.createUIspacEqmtType()}
-                                      </div>
-                                    </>
-                                  ) : null
-                                ) : null}
-                              </div>
-                            </div>
-                          ) : null}
-                        </>
-                      ) : (
-                        <>{this.CreateMultiCBM()}</>
-                      )}
-                      {/* {this.createUITruckType()} */}
-                    </div>
-                    {/* <select>
-                    <option>Select</option>
-                    <option>Select</option>
-                    <option>Select</option>
-                  </select> */}
-                  </div>
-                  <div className="text-center">
-                    <Button
-                      className="butn"
-                      onClick={() => {
-                        this.spotRateSubmit(this.state);
-                        this.toggleSpot();
-                      }}
-                    >
-                      Send
-                    </Button>
-                    <Button
-                      className="butn"
-                      onClick={this.toggleSpotCloseModal.bind(this)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              </ModalBody>
-            </Modal>
-            {/* {-------------------------End Equipment Type Modal---------------------------} */}
             {/* -----------------------Mutiple POL Modal  ------------------*/}
 
             <Modal
@@ -5205,102 +5150,34 @@ class RateTable extends Component {
                     padding: "15px"
                   }}
                 >
-                  {/* <div
-                    className="py-3"
-                   style={{marginBottom:"0px"}}
-                  >
-                    <h6>Customer Details</h6>
-                  </div>
-                  <div className="">
-                    <div className="row">
-                      <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock">
-                        <p className="details-title">Account/Customer</p>
-                        <p className="details-para">
-                         
-                        </p>
-                      </div>
-                      <div className="col-12 col-sm-4 col-md-4 col-lg-6">
-                        <p className="details-title">Address</p>
-                        <p className="details-para">
-                          
-                        </p>
-                      </div>
-                      <div className="col-12 col-sm-4 col-md-3 col-xl-3">
-                        <p className="details-title">Notification Person</p>
-                        <p className="details-para"></p>
-                      </div>
+                  <div>
+                    <div style={{ paddingBottom: "15px" }}>
+                      <h3 className="spotcustomer">Commodity</h3>
                     </div>
-                  </div> */}
-                  <div className="rename-cntr login-fields">
-                    <label>Commodity</label>
-                    <select onChange={this.filterAll}>
-                      {/* <option>Select</option>
+
+                    <div className="row rename-cntr login-fields">
+                      <select onChange={this.filterAll}>
+                        {/* <option>Select</option>
                     <option value="All">All</option> */}
-                      {this.state.commodityData.map((item, i) => (
-                        <option
-                          key={i}
-                          value={item.id}
-                          selected={item.Commodity === "FAK"}
-                        >
-                          {item.Commodity}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {this.state.containerLoadType !== "FCL" &&
-                  this.state.containerLoadType !== "FTL" ? (
-                    <div className="rate-radio-cntr justify-content-center">
-                      <div>
-                        <input
-                          type="radio"
-                          name="cmbTypeRadio"
-                          id="exist-cust"
-                          value="ALL"
-                          style={{ display: "none" }}
-                          checked={
-                            this.state.cmbTypeRadio === "ALL" ? true : false
-                          }
-                          // onChange={
-                          //   this.state.containerLoadType !== "FTL"
-                          //     ? this.cmbTypeRadioChange.bind(this)
-                          //     : null
-                          // }
-                          onChange={this.cmbTypeRadioChange.bind(this)}
-                        />
-                        <label
-                          className="d-flex flex-column align-items-center"
-                          htmlFor="exist-cust"
-                        >
-                          Dimensions
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          name="cmbTypeRadio"
-                          id="new-cust"
-                          value="CBM"
-                          style={{ display: "none" }}
-                          checked={
-                            this.state.cmbTypeRadio !== "ALL" ? true : false
-                          }
-                          onChange={this.cmbTypeRadioChange.bind(this)}
-                        />
-                        <label
-                          className="d-flex flex-column align-items-center"
-                          htmlFor="new-cust"
-                        >
-                          {this.state.containerLoadType === "AIR"
-                            ? "Chargable Weight"
-                            : "CBM"}
-                        </label>
-                      </div>
+                        {this.state.commodityData.map((item, i) => (
+                          <option
+                            key={i}
+                            value={item.id}
+                            selected={item.Commodity === "FAK"}
+                          >
+                            {item.Commodity}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                  ) : (
-                    ""
-                  )}
-                  <div className="rename-cntr login-fields align-items-start">
-                    <label>Cargo</label>
+                  </div>
+
+                  <div className="">
+                    {/* <label>Cargo</label> */}
+                    <div style={{ paddingBottom: "15px" }}>
+                      <h3 className="spotcustomer">Cargo Details</h3>
+                    </div>
+
                     <div className="w-100">
                       {this.state.containerLoadType === "FTL" ? (
                         this.createUITruckType()
@@ -5385,8 +5262,9 @@ class RateTable extends Component {
                       ) : this.state.cmbTypeRadio === "ALL" ? (
                         <>{this.CreateMultiCBM()}</>
                       ) : (
-                        <div className="col-md-4 m-auto">
+                        <div>
                           <div className="spe-equ">
+                            <label>CBM</label>
                             <input
                               type="text"
                               minLength={1}
@@ -5407,13 +5285,90 @@ class RateTable extends Component {
                       )}
                     </div>
                   </div>
+                  <div>
+                    <div style={{ paddingBottom: "15px" }}>
+                      <h3 className="spotcustomer">Customer Details</h3>
+                      {this.state.usertype == "Sales User" ? (
+                        this.state.companyName == "" ? (
+                          <button
+                            class="butn more-padd"
+                            style={{ float: "right" }}
+                            onClick={this.newOpen.bind(this)}
+                          >
+                            Create Customer
+                          </button>
+                        ) : (
+                          ""
+                        )
+                      ) : (
+                        ""
+                      )}
+                    </div>
 
+                    <div className="row">
+                      <div className="col-12 col-sm-6 col-md-4 r-border">
+                        <p className="details-title">Account/Customer</p>
+
+                        <p className="details-para lbltxtclr">
+                          {this.state.companyName == "" ? (
+                            this.state.usertype == "Sales User" ? (
+                              <div className="position-relative mt-2 spotcustdrop">
+                                <ReactAutocomplete
+                                  id="searchtxt"
+                                  className="title-sect p-0 pt-2"
+                                  getItemValue={item => item.Company_Name}
+                                  items={this.state.customerData}
+                                  renderItem={(item, isHighlighted) => (
+                                    <div
+                                      style={{
+                                        background: isHighlighted
+                                          ? "lightgray"
+                                          : "white",
+                                        padding: "5px"
+                                      }}
+                                    >
+                                      {item.Company_Name}
+                                    </div>
+                                  )}
+                                  value={this.state.fields["Company_Name"]}
+                                  onChange={this.HandleChangeCon.bind(
+                                    this,
+                                    "Company_Name"
+                                  )}
+                                  onSelect={this.handleSelectCon.bind(
+                                    this,
+                                    "Company_Name"
+                                  )}
+                                  inputProps={{
+                                    placeholder: "Search Account/Customer"
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          ) : (
+                            this.state.companyName
+                          )}
+                        </p>
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-4 r-border">
+                        <p className="details-title">Address</p>
+                        <p className="details-para">
+                          {this.state.companyAddress}
+                        </p>
+                      </div>
+                      <div className="col-12 col-sm-6 col-md-4 r-border">
+                        <p className="details-title">Notification Person</p>
+                        <p className="details-para">{this.state.contactName}</p>
+                      </div>
+                    </div>
+                  </div>
                   <div className="text-center">
                     <Button
                       className="butn"
                       onClick={() => {
                         this.spotRateSubmit(this.state);
-                        this.toggleSpot();
                       }}
                     >
                       Send

@@ -1124,13 +1124,24 @@ class BookingView extends Component {
                                 {
                                   accessor: "ContainerType",
                                   Cell: row => {
+                                    var value = "";
+                                    if (row.original.ContainerType) {
+                                      value = row.original.ContainerType;
+                                    }
+                                    if (row.original.ContainerQuantity) {
+                                      value +=
+                                        " (" +
+                                        row.original.ContainerQuantity +
+                                        ")";
+                                    }
+
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">
                                           Container
                                         </p>
                                         <p className="details-para">
-                                          {row.original.ContainerType}
+                                          {value}
                                         </p>
                                       </React.Fragment>
                                     );

@@ -1750,7 +1750,7 @@ class RateFinalizingStill extends Component {
                                       return (
                                         <>
                                           <p className="details-title">
-                                          Transit Port
+                                            Transit Port
                                           </p>
                                           {this.state.ContainerLoad !==
                                           "INLAND" ? (
@@ -1784,6 +1784,17 @@ class RateFinalizingStill extends Component {
                                   },
                                   {
                                     Cell: row => {
+                                      var value = "";
+                                      if (row.original.ContainerType) {
+                                        value = row.original.ContainerType;
+                                      }
+                                      if (row.original.ContainerQuantity) {
+                                        value +=
+                                          " (" +
+                                          row.original.ContainerQuantity +
+                                          ")";
+                                      }
+
                                       return (
                                         <>
                                           <p className="details-title">
@@ -1792,7 +1803,11 @@ class RateFinalizingStill extends Component {
                                           {this.state.ContainerLoad !==
                                           "INLAND" ? (
                                             <p className="details-para">
-                                              {row.original.ContainerType}
+                                              {/* {row.original.ContainerType +
+                                          " (" +
+                                          row.original.ContainerQuantity +
+                                          ")"} */}
+                                              {value}
                                             </p>
                                           ) : (
                                             <p className="details-para"></p>
@@ -2296,7 +2311,9 @@ class RateFinalizingStill extends Component {
                                     Header: "CBM",
                                     accessor: "CBM",
                                     show:
-                                      this.state.ContainerLoad == "AIR"||this.state.ContainerLoad == "LTL"||this.state.ContainerLoad == "LCL"
+                                      this.state.ContainerLoad == "AIR" ||
+                                      this.state.ContainerLoad == "LTL" ||
+                                      this.state.ContainerLoad == "LCL"
                                         ? true
                                         : false
                                   },
@@ -2305,7 +2322,8 @@ class RateFinalizingStill extends Component {
                                     Header: "VolumeWeight",
                                     accessor: "VolumeWeight",
                                     show:
-                                      this.state.ContainerLoad == "FCL"||this.state.ContainerLoad == "FTL"
+                                      this.state.ContainerLoad == "FCL" ||
+                                      this.state.ContainerLoad == "FTL"
                                         ? true
                                         : false
                                   }
@@ -2371,12 +2389,21 @@ class RateFinalizingStill extends Component {
                                     Header: "File Name",
                                     accessor: "FileName",
                                     Cell: row => {
-                                      if (row.original.FileName !== "No File Found") {
-                                      return (
-                                        <div><img src={PDF} alt="PDF icon" className="cls-pdf"/>{row.original.FileName}</div>
-                                      )
-                                      }
-                                      else{
+                                      if (
+                                        row.original.FileName !==
+                                        "No File Found"
+                                      ) {
+                                        return (
+                                          <div>
+                                            <img
+                                              src={PDF}
+                                              alt="PDF icon"
+                                              className="cls-pdf"
+                                            />
+                                            {row.original.FileName}
+                                          </div>
+                                        );
+                                      } else {
                                         return <>{row.original.FileName}</>;
                                       }
                                     }

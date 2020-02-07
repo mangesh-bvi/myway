@@ -128,7 +128,9 @@ class Analytics extends Component {
       checkFTL: false,
       checkLTL: false,
       loding: false,
-      isInvoice: false
+      isInvoice: false,
+      selectedtab: "shipment",
+      ReportType: "Count chart"
     };
     this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
   }
@@ -141,110 +143,119 @@ class Analytics extends Component {
     let self = this;
     debugger;
 
-    if (
-      this.state.toggleShipShip === true &&
-      this.state.toggleFclLcl === false
-    ) {
-      NotificationManager.error("Please select FCL or LCL");
-    } else if (
-      this.state.toggleRoadShip === true &&
-      this.state.toggleFtlLtl === false
-    ) {
-      NotificationManager.error("Please select FTL or LTL");
-    } else {
-      var FromDate = "";
-      var ToDate = "";
-      var ActiveFlag = "A";
+    // if (
+    //   this.state.toggleShipShip === true &&
+    //   this.state.toggleFclLcl === false
+    // ) {
+    //   NotificationManager.error("Please select FCL or LCL");
+    // } else if (
+    //   this.state.toggleRoadShip === true &&
+    //   this.state.toggleFtlLtl === false
+    // ) {
+    //   NotificationManager.error("Please select FTL or LTL");
+    // } else {
+    this.setState({
+      toggleAIR: false,
+      toggleShipShip: false,
+      toggleRoadShip: false,
+      cargoTypeFCL: false,
+      cargoTypeLCL: false,
+      checkFTL: false,
+      checkLTL: false
+    });
+    var FromDate = "";
+    var ToDate = "";
+    var ActiveFlag = "A";
 
-      var Mode = "A,FCL,LCL,FTL,LTL";
-      var period = document.getElementById("drp-period-shipment").value;
-      var DatedBy = document.getElementById("Datedbydrp").value;
+    var Mode = "A,FCL,LCL,FTL,LTL";
+    var period = document.getElementById("drp-period-shipment").value;
+    var DatedBy = document.getElementById("Datedbydrp").value;
 
-      if (event != null) {
-        // alert(event.target.id)
+    if (event != null) {
+      // alert(event.target.id)
 
-        if (event.target.id == "shipment-view-btn") {
-          var ActiveFlagele = document.getElementsByName("ship-type");
-          for (var i = 0; i < ActiveFlagele.length; i++) {
-            if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
-          }
+      if (event.target.id == "shipment-view-btn") {
+        var ActiveFlagele = document.getElementsByName("ship-type");
+        for (var i = 0; i < ActiveFlagele.length; i++) {
+          if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
+        }
 
-          var Modeele = document.getElementsByName("ship-way");
-          var modegetElementsByName = "";
-          if (Modeele.length > 0) {
-            for (var i = 0; i < Modeele.length; i++) {
-              if (Modeele[i].checked) Mode = Modeele[i].value;
+        var Modeele = document.getElementsByName("ship-way");
+        var modegetElementsByName = "";
+        if (Modeele.length > 0) {
+          for (var i = 0; i < Modeele.length; i++) {
+            if (Modeele[i].checked) Mode = Modeele[i].value;
 
-              if (Mode == "O") {
-                Mode = "FCL,LCL";
-                modegetElementsByName = "sea-opt";
-              }
-
-              if (Mode == "I") {
-                Mode = "FTL,LTL";
-                modegetElementsByName = "road-opt";
-              }
+            if (Mode == "O") {
+              Mode = "FCL,LCL";
+              modegetElementsByName = "sea-opt";
             }
-          }
-          //sea-opt
-          var ModeeleOther = document.getElementsByName(modegetElementsByName);
-          if (ModeeleOther.length > 0) {
-            for (var i = 0; i < ModeeleOther.length; i++) {
-              if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
+
+            if (Mode == "I") {
+              Mode = "FTL,LTL";
+              modegetElementsByName = "road-opt";
             }
           }
         }
-      } else {
-        //All
-        document.getElementById("active-ship").click();
+        //sea-opt
+        var ModeeleOther = document.getElementsByName(modegetElementsByName);
+        if (ModeeleOther.length > 0) {
+          for (var i = 0; i < ModeeleOther.length; i++) {
+            if (ModeeleOther[i].checked) Mode = ModeeleOther[i].value;
+          }
+        }
       }
-
-      if (period == "M") {
-        var tempfromdate = document
-          .getElementById("datpicker-from-shipment")
-          .value.split("/"); //05/12/2019
-        var temptodate = document
-          .getElementById("datpicker-to-shipment")
-          .value.split("/");
-        FromDate = tempfromdate[1] + "-" + tempfromdate[0] + "-01";
-        ToDate = temptodate[1] + "-" + temptodate[0] + "-01";
-      } else if (period == "W") {
-        var tempfromdate = document
-          .getElementById("datpicker-from-shipment")
-          .value.split("/"); //05/12/2019
-        var temptodate = document
-          .getElementById("datpicker-to-shipment")
-          .value.split("/");
-        FromDate =
-          tempfromdate[2] + "-" + tempfromdate[0] + "-" + tempfromdate[1];
-        ToDate = temptodate[2] + "-" + temptodate[0] + "-" + temptodate[1];
-      } else if (period == "Y") {
-        var tempfromdate = document.getElementById("date-year-shipment").value;
-        FromDate = tempfromdate + "-01-01";
-        ToDate = tempfromdate + "-12-31";
-      }
-      var g1 = new Date(FromDate);
-      var g2 = new Date(ToDate);
-
-      if (g1.getTime() > g2.getTime()) {
-        NotificationManager.error("To date should be greater then From date.");
-        document.getElementById("datpicker-to-shipment").focus();
-        return false;
-      }
-
-      var axiosdata = {
-        UserId: encryption(window.localStorage.getItem("userid"), "desc"),
-        FromDate: FromDate,
-        ToDate: ToDate,
-        ActiveFlag: ActiveFlag,
-        Mode: Mode,
-        period: period,
-        //ShipperID:1340354108
-        DatedBy: DatedBy
-      };
-
-      this.setShipmentGraph(axiosdata);
+    } else {
+      //All
+      document.getElementById("active-ship").click();
     }
+
+    if (period == "M") {
+      var tempfromdate = document
+        .getElementById("datpicker-from-shipment")
+        .value.split("/"); //05/12/2019
+      var temptodate = document
+        .getElementById("datpicker-to-shipment")
+        .value.split("/");
+      FromDate = tempfromdate[1] + "-" + tempfromdate[0] + "-01";
+      ToDate = temptodate[1] + "-" + temptodate[0] + "-01";
+    } else if (period == "W") {
+      var tempfromdate = document
+        .getElementById("datpicker-from-shipment")
+        .value.split("/"); //05/12/2019
+      var temptodate = document
+        .getElementById("datpicker-to-shipment")
+        .value.split("/");
+      FromDate =
+        tempfromdate[2] + "-" + tempfromdate[0] + "-" + tempfromdate[1];
+      ToDate = temptodate[2] + "-" + temptodate[0] + "-" + temptodate[1];
+    } else if (period == "Y") {
+      var tempfromdate = document.getElementById("date-year-shipment").value;
+      FromDate = tempfromdate + "-01-01";
+      ToDate = tempfromdate + "-12-31";
+    }
+    var g1 = new Date(FromDate);
+    var g2 = new Date(ToDate);
+
+    if (g1.getTime() > g2.getTime()) {
+      NotificationManager.error("To date should be greater then From date.");
+      document.getElementById("datpicker-to-shipment").focus();
+      return false;
+    }
+
+    var axiosdata = {
+      UserId: encryption(window.localStorage.getItem("userid"), "desc"),
+      FromDate: FromDate,
+      ToDate: ToDate,
+      ActiveFlag: ActiveFlag,
+      Mode: Mode,
+      period: period,
+      //ShipperID:1340354108
+      DatedBy: DatedBy
+    };
+
+    this.setShipmentGraph(axiosdata);
+    // }
   }
 
   handleViewAnalyticsShipment(event) {
@@ -252,7 +263,7 @@ class Analytics extends Component {
     debugger;
 
     var chartType = document.getElementById("SegregatedBydrp").value;
-    if (chartType == "VolumeChart") {
+    if (chartType == "Volume Chart") {
       if (
         this.state.toggleShipShip === true &&
         this.state.toggleFclLcl === false
@@ -379,6 +390,7 @@ class Analytics extends Component {
     this.setState({ loding: true });
     let self = this;
 
+    axiosdata.ReportType = this.state.ReportType;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipmentAnalyticsAPI`,
@@ -387,11 +399,6 @@ class Analytics extends Component {
     })
       .then(function(response) {
         debugger;
-
-        // if (response.data.Table.length > 0) {
-        //   return false;
-        //   self.setState({ loding: false });
-        // }
 
         self.setState({ graphShipmentdataset: [], loding: false });
         var Segregatedby = document.getElementById("SegregatedBydrp").value;
@@ -416,23 +423,30 @@ class Analytics extends Component {
           return comparison;
         }
 
-        if (Segregatedby == "CountChart") {
+        if (Segregatedby == "Count Chart") {
+          debugger;
           Table = response.data.Table.sort(compare);
           arrayAir = Table.filter(item => item.Modeoftransport == "Air");
           // arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
           // arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
-          arrayOcean = Table.filter(
-            item =>
-              item.Modeoftransport == "Fcl" || item.Modeoftransport == "Lcl"
-          );
-          arrayTruck = Table.filter(
-            item =>
-              item.Modeoftransport == "Ftl" || item.Modeoftransport == "Ltl"
-          );
+
+          // arrayOcean = Table.filter(
+          //   item =>
+          //     item.Modeoftransport == "Fcl" || item.Modeoftransport == "Lcl"
+          // );
+          arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
+
+          // arrayTruck = Table.filter(
+          //   item =>
+          //     item.Modeoftransport == "Ftl" || item.Modeoftransport == "Ltl"
+          // );
+
+          arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
+
           volumeOptions.title.text = "Total Amount of Shipments";
           volumeOptions.scales.yAxes[0].scaleLabel.labelString = "Count";
-        } else if (Segregatedby == "VolumeChart") {
-          Table = response.data.Table1;
+        } else if (Segregatedby == "Volume Chart") {
+          Table = response.data.Table;
           arrayAir = Table.filter(item => item.ModeOfTransport == "Air");
           // arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean");
           // arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland");
@@ -446,6 +460,7 @@ class Analytics extends Component {
           );
           volumeOptions.title.text = "Total Volume of Shipments";
           var ylable = "";
+          debugger;
           if (self.state.toggleAIR == true) {
             ylable = "KGS";
           } else if (self.state.cargoTypeFCL == true) {
@@ -476,9 +491,9 @@ class Analytics extends Component {
         if (arrayAir != null) {
           if (arrayAir.length > 0) {
             for (var i = 0; i < arrayAir.length; i++) {
-              if (Segregatedby == "VolumeChart") {
+              if (Segregatedby == "Volume Chart") {
                 arrayAirdata.push(arrayAir[i].Volume);
-              } else if (Segregatedby == "CountChart") {
+              } else if (Segregatedby == "Count Chart") {
                 arrayAirdata.push(arrayAir[i].NoOfShipment);
               }
             }
@@ -494,9 +509,9 @@ class Analytics extends Component {
           debugger;
           if (arrayOcean.length > 0) {
             for (var i = 0; i < arrayOcean.length; i++) {
-              if (Segregatedby == "VolumeChart") {
+              if (Segregatedby == "Volume Chart") {
                 arrayOceandata.push(arrayOcean[i].Volume);
-              } else if (Segregatedby == "CountChart") {
+              } else if (Segregatedby == "Count Chart") {
                 arrayOceandata.push(arrayOcean[i].NoOfShipment);
               }
             }
@@ -527,9 +542,9 @@ class Analytics extends Component {
           if (arrayTruck.length > 0) {
             debugger;
             for (var i = 0; i < arrayTruck.length; i++) {
-              if (Segregatedby == "VolumeChart") {
+              if (Segregatedby == "Volume Chart") {
                 arrayTruckdata.push(arrayTruck[i].Volume);
-              } else if (Segregatedby == "CountChart") {
+              } else if (Segregatedby == "Count Chart") {
                 arrayTruckdata.push(arrayTruck[i].NoOfShipment);
               }
             }
@@ -629,6 +644,7 @@ class Analytics extends Component {
   };
 
   toggleBtnsShip = e => {
+    debugger;
     if (e.target.id === "ship-ship") {
       this.setState({
         toggleShipShip: true,
@@ -647,7 +663,9 @@ class Analytics extends Component {
         toggleFclLcl: false,
         toggleFtlLtl: false,
         checkFTL: false,
-        checkLTL: false
+        checkLTL: false,
+        cargoTypeFCL: false,
+        cargoTypeLCL: false
       });
     } else if (e.target.id === "plane-ship") {
       this.setState({
@@ -665,7 +683,8 @@ class Analytics extends Component {
         cargoTypeFCL: true,
         toggleFclLcl: true,
         cargoTypeLCL: false,
-        checkFTL: true
+        checkFTL: false,
+        checkLTL:false,
       });
     } else {
       this.setState({
@@ -682,7 +701,7 @@ class Analytics extends Component {
         checkFTL: true,
         checkLTL: false,
         toggleFtlLtl: true,
-        cargoTypeFCL: true,
+        cargoTypeFCL: false,
         cargoTypeLCL: false
       });
     } else {
@@ -690,7 +709,7 @@ class Analytics extends Component {
         checkLTL: true,
         checkFTL: false,
         toggleFtlLtl: true,
-        cargoTypeFCL: true,
+        cargoTypeFCL: false,
         cargoTypeLCL: false
       });
     }
@@ -733,7 +752,17 @@ class Analytics extends Component {
   handleAnalyticsInvoice(event) {
     let self = this;
 
-    
+    this.setState({
+      toggleShipShip: false,
+      toggleRoadShip: false,
+      toggleAIR: false,
+      checkLTL: false,
+      checkFTL: false,
+      cargoTypeFCL: false,
+      cargoTypeLCL: false,
+      loding: true,
+      selectedtab: "Invoice"
+    });
     // if (
     //   this.state.toggleShipInv === true &&
     //   this.state.toggleInvFclLcl === false
@@ -841,8 +870,8 @@ class Analytics extends Component {
   }
 
   setSupplierdrop(axiosdata) {
-    
     let self = this;
+    this.setState({ loding: true });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ShipperDropdownListAPI`,
@@ -877,7 +906,6 @@ class Analytics extends Component {
 
   setgrafval(axiosdata) {
     debugger;
- 
 
     let self = this;
     self.setState({ loding: true });
@@ -890,6 +918,7 @@ class Analytics extends Component {
       .then(function(response) {
         debugger;
         self.setState({ graphdataset: [], loding: false });
+        volumeOptions.scales.yAxes[0].scaleLabel.labelString = "USD";
 
         var arraylabel = [];
         var arrayAirdata = [];
@@ -975,7 +1004,7 @@ class Analytics extends Component {
             graphdataset.push({
               label: "Truck",
               data: arrayTruckdata,
-              label:label,
+              label: label,
               backgroundColor: "#50ad84"
             });
           }
@@ -985,7 +1014,7 @@ class Analytics extends Component {
       })
       .catch(error => {
         var temperror = error;
-        console.log(temperror)
+        console.log(temperror);
         // var err = temperror.split(":");
         // alert(err[1].replace("}", ""));
         // NotificationManager.error(err[1].replace("}", ""));
@@ -1054,17 +1083,21 @@ class Analytics extends Component {
     // }
   }
 
-  handleSegregated() {
+  handleSegregated(e) {
+    debugger;
+    var value = e.target.value;
+
     this.setState({
       cargoTypeFCL: false,
       checkFTL: false,
       checkLTL: false,
-      cargoTypeLCL: false
+      cargoTypeLCL: false,
+      ReportType: value
     });
   }
   render() {
     console.log(this.state.loding);
-    
+
     var buyerShipmentData = {
       labels: this.state.grafShipmentlabels,
       datasets: this.state.graphShipmentdataset
@@ -1135,16 +1168,15 @@ class Analytics extends Component {
                   Invoices
                 </a>
               </li>
-              <li style={{margin: "-3px 15px 0px auto"}}>
-              <button
-                      onClick={this.handleReportClick.bind(this)}
-                      href="/reports"
-                      className="butn mt-0 blue-butn"
-                    >
-                      Reports
-                    </button>
+              <li style={{ margin: "-3px 15px 0px auto" }}>
+                <button
+                  onClick={this.handleReportClick.bind(this)}
+                  href="/reports"
+                  className="butn mt-0 blue-butn"
+                >
+                  Reports
+                </button>
               </li>
-                    
             </ul>
             <div className="tab-content cust-tabs-content">
               <div
@@ -1344,16 +1376,17 @@ class Analytics extends Component {
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Segregated&nbsp;by </span>
                     <select
+                      value={this.state.ReportType}
                       id="SegregatedBydrp"
                       onChange={this.handleSegregated.bind(this)}
                     >
-                      <option value="CountChart">Count Chart</option>
-                      <option value="VolumeChart">Volume Chart</option>
+                      <option value="Count Chart">Count Chart</option>
+                      <option value="Volume Chart">Volume Chart</option>
                       {/* <option value="ValueChart">Value Chart</option> */}
                     </select>
                   </div>
 
-                     <div className="login-fields mb-0 d-flex align-items-center">
+                  <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Dated&nbsp;by </span>
                     <select id="Datedbydrp">
                       <option value="Delivery Date" seected>
@@ -1432,7 +1465,6 @@ class Analytics extends Component {
                       <option>$201 - $300</option>
                     </select>
                   </div> */}
-
                 </div>
                 {/* <div className="ana-radio-cntr">
                   <div className="login-fields mb-0 d-flex align-items-center">
@@ -1766,16 +1798,20 @@ class Analytics extends Component {
                     </div>
                   )}
                 </div>
-                <div className="row">
-                  <div className="col-md-12">
-                    <Bar
-                      data={buyerData}
-                      width={100}
-                      height={50}
-                      options={volumeOptions}
-                    />
+                {this.state.loding === true ? (
+                  <div className="loader-icon"></div>
+                ) : (
+                  <div className="row">
+                    <div className="col-md-12">
+                      <Bar
+                        data={buyerData}
+                        width={100}
+                        height={50}
+                        options={volumeOptions}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

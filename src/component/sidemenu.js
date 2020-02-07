@@ -739,7 +739,7 @@ class SideMenu extends Component {
                   />
                   Profile Settings
                 </li>
-                <li className="profile-setting-li">
+                <li className="profile-setting-li dropdown">
                   {/* <a href=""> */}
                   <img
                     className="header-phone-icon dropdown-toggle"
@@ -750,7 +750,7 @@ class SideMenu extends Component {
                   />
                   Mobile App
                   {/* </a> */}
-                  <div className="dropdown-menu qr-code-dropdown">
+                  <div className="dropdown-menu">
                     <QRCode />
                   </div>
                 </li>
