@@ -4671,7 +4671,7 @@ class RateTable extends Component {
               className={
                 this.state.containerLoadType === "FTL"
                   ? "delete-popup text-left"
-                  : "delete-popup text-left big-popup"
+                  : "delete-popup text-left big-popup big-popupka"
               }
               isOpen={this.state.modalQuant}
               centered={true}

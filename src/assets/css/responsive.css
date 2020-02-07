@@ -264,6 +264,12 @@ input[type="range"] {
   .rate-bg {
     width: 100% !important;
 }
+.big-popupka {
+  max-width: 90%;
+}
+.large-popupka {
+  max-width: 80%;
+}
   .br-none {
     border-right: none !important;
   }
@@ -484,6 +490,12 @@ input[type="range"] {
   }
   .login-cntr .butn {
     margin-right: 10px;
+  }
+  .big-popupka {
+    max-width: 90%;
+  }
+  .large-popupka {
+    max-width: 80%;
   }
   .header-log {
     margin: 0;

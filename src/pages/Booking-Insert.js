@@ -3317,7 +3317,7 @@ class BookingInsert extends Component {
 
         {/* -------------------------------------Edit Modal----------------------------- */}
         <Modal
-          className="delete-popup pol-pod-popup large-popup"
+          className="delete-popup pol-pod-popup large-popup large-popupka"
           isOpen={this.state.modalEdit}
           toggle={this.toggleEdit}
           centered={true}

@@ -4443,3 +4443,9 @@ progress::-webkit-progress-bar {
 .shidat .react-datepicker-popper {
   left: -40px !important;
 }
+.big-popupka {
+  max-width: 50%;
+}
+.large-popupka {
+  max-width: 50%;
+}
