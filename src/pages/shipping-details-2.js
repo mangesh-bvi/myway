@@ -124,6 +124,13 @@ class ShippingDetailsTwo extends Component {
     let self = this;
     var hbllNo = document.getElementById("popupHBLNO").value;
     var msgg = document.getElementById("addMess").value;
+    var CustomerID = 0;
+    var usertype = encryption(window.localStorage.getItem("usertype"), "desc");
+    if (usertype == "Customer") {
+      CustomerID = encryption(window.localStorage.getItem("companyid"), "desc");
+    } else {
+      CustomerID = 0;
+    }
     if (msgg === "" || msgg === null) {
       NotificationManager.error("Please enter the message.");
     } else {
@@ -132,8 +139,10 @@ class ShippingDetailsTwo extends Component {
         url: `${appSettings.APIURL}/SendCommonMessage`,
         data: {
           UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-          ReferenceNo: hbllNo.trim(),
-          // TypeOfMessage: drpshipment.value.trim(),
+          ReferenceNo: hbllNo,
+          TypeOfMessage: "Shipment",
+          CustomerID: CustomerID,
+          SubjectMessage: hbllNo,
           Message: msgg
         },
         headers: authHeader()
@@ -698,7 +707,7 @@ class ShippingDetailsTwo extends Component {
       url: `${appSettings.APIURL}/MessagesActivityDetails`,
       data: {
         UserId: encryption(window.localStorage.getItem("userid"), "desc"),
-        HBLNO: HblNo.trim()
+        HBLNO: HblNo
       },
       headers: authHeader()
     })
@@ -1244,8 +1253,6 @@ class ShippingDetailsTwo extends Component {
                                     );
                                   }
                                 })}
-
-                              
                             </div>
                             {/* <Progress className="ticket-progress" color={eventColor} value={perBooking} /> */}
                             <progress
@@ -1273,8 +1280,16 @@ class ShippingDetailsTwo extends Component {
                           {POLPODData.length < 2 ? (
                             POLPODData.length == 1 ? (
                               <>
-                                <span>{POLPODData[0]?POLPODData[0]["POL/POD"]: ""}</span>
-                                <span>{POLPODData[1]?POLPODData[1]["POL/POD"]: ""}</span>
+                                <span>
+                                  {POLPODData[0]
+                                    ? POLPODData[0]["POL/POD"]
+                                    : ""}
+                                </span>
+                                <span>
+                                  {POLPODData[1]
+                                    ? POLPODData[1]["POL/POD"]
+                                    : ""}
+                                </span>
                               </>
                             ) : (
                               <>
@@ -1874,13 +1889,9 @@ class ShippingDetailsTwo extends Component {
                           id="addMess"
                         ></textarea>
                         <div className="text-right">
-                          <a
-                            href="#!"
-                            onClick={this.SendMessage}
-                            className="butn"
-                          >
+                          <span onClick={this.SendMessage} className="butn">
                             Post
-                          </a>
+                          </span>
                         </div>
                       </div>
                       {MsgActivityTab}

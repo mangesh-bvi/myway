@@ -2706,7 +2706,7 @@ input[type="range"]::-moz-range-track {
 }
 .header-log {
   width: 145px;
-  padding: 18px 0;
+  padding: 14px 0;
 }
 
 .header-btn {
@@ -4442,4 +4442,16 @@ progress::-webkit-progress-bar {
 }
 .shidat .react-datepicker-popper {
   left: -40px !important;
+}
+
+.spotcustomer{
+ text-align: left !important;
+ display: inline-block;    
+}
+.spotcustdrop div:first-child, .spotcustdrop div:first-child input {
+  width: 100%;
+}
+.lbltxtclr .spotcustdrop
+{
+  color: #000;
 }

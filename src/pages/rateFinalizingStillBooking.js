@@ -152,7 +152,7 @@ class RateFinalizingStillBooking extends Component {
       newloding: false,
       ChgWeight: 0,
       cbmVal: "",
-      cmbTypeRadio:"ALL"
+      cmbTypeRadio: "ALL"
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -181,7 +181,7 @@ class RateFinalizingStillBooking extends Component {
           copy: true,
           ModeofTransport
         });
-      
+
         setTimeout(() => {
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
@@ -207,7 +207,7 @@ class RateFinalizingStillBooking extends Component {
           isView: true,
           ModeofTransport
         });
-         
+
         setTimeout(() => {
           this.HandleCommodityDropdown();
           this.HandlePackgeTypeData();
@@ -2562,14 +2562,23 @@ class RateFinalizingStillBooking extends Component {
                                 {
                                   accessor: "ContainerType",
                                   Cell: row => {
+                                    var value = "";
+                                    if (row.original.ContainerType) {
+                                      value = row.original.ContainerType;
+                                    }
+                                    if (row.original.ContainerQuantity) {
+                                      value +=
+                                        " (" +
+                                        row.original.ContainerQuantity +
+                                        ")";
+                                    }
+
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">
                                           Container
                                         </p>
-                                        <p className="details-para">
-                                          {row.original.ContainerType}
-                                        </p>
+                                        <p className="details-para">{value}</p>
                                       </React.Fragment>
                                     );
                                   }

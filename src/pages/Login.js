@@ -78,11 +78,11 @@ class Login extends React.Component {
         distinctContactDisName.push({
           officeName: officeName,
           value: ContactID,
-          label: contactDName,
-          child: [
-            { value: 1, label: 2 },
-            { value: 1, label: 2 }
-          ]
+          label: contactDName
+          // child: [
+          //   { value: 1, label: 2 },
+          //   { value: 1, label: 2 }
+          // ]
         });
       }
 
@@ -124,6 +124,8 @@ class Login extends React.Component {
     for (var i = 0; i < iCompanies; i++) {
       //for (var i = 0; i < 15; i++) {
       ////debugger;
+
+      debugger;
       var selectedoffId = distinctOffice[i]["OfficeID"];
 
       var salesPersonDataByComp = {};
@@ -405,6 +407,7 @@ class Login extends React.Component {
 
   componentDidMount() {
     localStorage.clear();
+    
 
     const publicIp = require("public-ip");
     (async () => {
@@ -412,6 +415,10 @@ class Login extends React.Component {
     })();
   }
 
+  componentWillMount()
+  {
+    // window.location.reload(false); 
+  }
   render() {
     let self = this;
     //  const { username, password } = this.state;

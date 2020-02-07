@@ -560,29 +560,25 @@ class BookingInsert extends Component {
       }
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
-
-      for (let i = 0; i < QuotationData.length; i++)
+ 
         for (let i = 0; i < QuotationData.length; i++) {
           if (!isNaN(QuotationData[i].saleQuoteLineID)) {
             newSelected[QuotationData[i].saleQuoteLineID] = !self.state
               .cSelectedRow[QuotationData[i].saleQuoteLineID];
             selectedRow.push(QuotationData[i]);
-            self.setState({
-              cSelectedRow: newSelected,
-              selectedDataRow: selectedRow
-            });
+          
           } else {
             newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
               .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
             selectedRow.push(QuotationData[i]);
-            self.setState({
-              cSelectedRow: QuotationData[i].SaleQuoteIDLineID
-                ? newSelected
-                : false,
-              selectedDataRow: selectedRow
-            });
+            
           }
+          
         }
+        self.setState({
+          cSelectedRow:  newSelected,
+          selectedDataRow: selectedRow
+        });
     });
   }
 
@@ -832,13 +828,7 @@ class BookingInsert extends Component {
             saleQuoteID = qdata[0].SaleQuoteID;
           }
         }
-        // } else {
-        //   var qdata = this.state.QuotationData.filter(
-        //     x => x.SaleQuoteIDLineID === Number(this.state.checkList)
-        //   );
-        //   saleQuoteLineID = qdata[0].SaleQuoteIDLineID;
-        //   saleQuoteID = qdata[0].SaleQuoteID;
-        // }
+        
 
         var BookingDim = [];
         if (this.state.cmbTypeRadio == "ALL") {
@@ -947,7 +937,7 @@ class BookingInsert extends Component {
         );
       }
     } else {
-      NotificationManager.error("Please select only one quotation.");
+      NotificationManager.error("Please select either one quotation.");
       return false;
     }
   }
@@ -2321,13 +2311,25 @@ class BookingInsert extends Component {
                                 {
                                   accessor: "ContainerType",
                                   Cell: row => {
+
+                                    var value = "";
+                                    if (row.original.ContainerType) {
+                                      value = row.original.ContainerType;
+                                    }
+                                    if (row.original.ContainerQuantity) {
+                                      value +=
+                                        " (" +
+                                        row.original.ContainerQuantity +
+                                        ")";
+                                    }
+  
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">
                                           Container
                                         </p>
                                         <p className="details-para">
-                                          {row.original.ContainerType}
+                                        {value}
                                         </p>
                                       </React.Fragment>
                                     );

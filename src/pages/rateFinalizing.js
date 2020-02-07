@@ -562,7 +562,7 @@ class RateFinalizing extends Component {
           this.HandleChangeConNew(Customer);
         }
 
-        this.handleGetBaseCurrency()
+        this.handleGetBaseCurrency();
         this.setState({
           cbmVal,
           cmbTypeRadio: this.props.location.state.cmbTypeRadio,
@@ -679,7 +679,7 @@ class RateFinalizing extends Component {
   handleGetBaseCurrency() {
     var selectedCurrency = window.localStorage.getItem("currencyCode");
 
-    let self=this;
+    let self = this;
     var base = "";
     if (selectedCurrency === "TL") {
       base = "TRY";
@@ -693,10 +693,9 @@ class RateFinalizing extends Component {
     }).then(function(response) {
       debugger;
 
-      
       // currencyAmount: 0,
-      var sBaseCurrency=selectedCurrency;
-      self.setState({sBaseCurrency});
+      var sBaseCurrency = selectedCurrency;
+      self.setState({ sBaseCurrency });
 
       // window.location.reload(false);
     });
@@ -1401,9 +1400,13 @@ class RateFinalizing extends Component {
 
   RequestChangeMsgModal() {
     if (this.state.selectedDataRow.length > 0) {
-      this.setState(prevState => ({
-        modalRequestMsg: !prevState.modalRequestMsg
-      }));
+      if (this.state.CompanyName) {
+        this.setState(prevState => ({
+          modalRequestMsg: !prevState.modalRequestMsg
+        }));
+      } else {
+        NotificationManager.error("please select customere");
+      }
     } else {
       NotificationManager.error("Please select atleast one rate");
     }
@@ -6758,7 +6761,10 @@ class RateFinalizing extends Component {
                                             Container
                                           </p>
                                           <p className="details-para">
-                                            {row.original.ContainerType}
+                                          {row.original.ContainerType +
+                                          " (" +
+                                          row.original.ContainerQuantity +
+                                          ")"}
                                           </p>
                                         </>
                                       );
@@ -7392,7 +7398,7 @@ class RateFinalizing extends Component {
                             {this.state.toggleAddProfitBtn && (
                               <button
                                 onClick={() => {
-                                  this.toggleNewConsignee();
+                                  // this.toggleNewConsignee();
                                   this.newOpen();
                                 }}
                                 //onClick={this.toggleNewConsignee}
