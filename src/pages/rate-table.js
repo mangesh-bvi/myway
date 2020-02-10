@@ -3931,7 +3931,7 @@ class RateTable extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="col-12 col-sm-12 col-md-2">
+                <div className="col-12 col-sm-12 col-md-2 text-right">
                   <div className="rate-table-butn" style={{ padding: "0" }}>
                     <button
                       onClick={this.handleCheck.bind(this)}
@@ -4188,7 +4188,7 @@ class RateTable extends Component {
                   </div>
                 </div>
 
-                <div className="col-12 col-md-7 col-lg-9">
+                <div className="col-12 col-md-7 col-lg-9 ra-font">
                   {this.state.loading === true ? (
                     <div className="position-relative h-100">
                       <div className="loader-icon"></div>
@@ -4465,7 +4465,8 @@ class RateTable extends Component {
                                       </p>
                                     </>
                                   );
-                                }
+                                },
+                                minWidth: 90
                               },
                               {
                                 Cell: row => {
@@ -4482,7 +4483,7 @@ class RateTable extends Component {
                                 },
                                 accessor: "Transit Port",
                                 filterable: true,
-                                minWidth: 120
+                                minWidth: 100
                               },
                               {
                                 Cell: row => {
@@ -4497,7 +4498,7 @@ class RateTable extends Component {
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
-                                minWidth: 80
+                                minWidth: 90
                               },
                               {
                                 Cell: row => {

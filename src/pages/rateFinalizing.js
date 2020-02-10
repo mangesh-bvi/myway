@@ -6322,7 +6322,7 @@ class RateFinalizing extends Component {
                 <div className="row cus-w">
                   <div className="col-md-3">
                     <div className="rate-table-left rate-final-left">
-                      <div>
+                      <div className="locawid">
                         <h3>Locals</h3>
                         <div className="title-sect p-0 pt-2">
                           <input
@@ -6339,7 +6339,7 @@ class RateFinalizing extends Component {
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div className="locawid">
                         <h3>Surcharges</h3>
                         <div className="title-sect p-0 pt-2">
                           <input
@@ -6358,7 +6358,7 @@ class RateFinalizing extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-9">
+                  <div className="col-md-9 ra-font">
                     <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                       <div className="rate-final-contr">
                         <div className="title-border py-3 d-flex align-items-center justify-content-between">
@@ -6716,8 +6716,8 @@ class RateFinalizing extends Component {
                                       );
                                     },
                                     accessor: "PODName",
-                                    filterable: true
-                                    // minWidth: 175
+                                    filterable: true,
+                                    minWidth: 90
                                   },
                                   {
                                     Cell: row => {
@@ -6734,7 +6734,7 @@ class RateFinalizing extends Component {
                                     },
                                     accessor: "TransshipmentPort",
                                     filterable: true,
-                                    minWidth: 120
+                                    minWidth: 100
                                   },
                                   {
                                     Cell: row => {
@@ -6751,7 +6751,7 @@ class RateFinalizing extends Component {
                                     },
                                     accessor: "freeTime",
                                     filterable: true,
-                                    minWidth: 80
+                                    minWidth: 90
                                   },
                                   {
                                     Cell: row => {
@@ -7259,7 +7259,7 @@ class RateFinalizing extends Component {
                         </div>
                         <div className="">
                           <div className="row">
-                            <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock r-border">
+                            <div className="col-12 col-sm-4 col-md-3 col-xl-3 login-fields divblock r-border login-fiel">
                               <p className="details-title">Account/Customer</p>
                               {this.state.toggleAddProfitBtn && (
                                 <p className="details-para">
@@ -8378,7 +8378,7 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
           <Modal
-            className="delete-popup pol-pod-popup large-popup"
+            className="delete-popup pol-pod-popup large-popup large-popupka1"
             isOpen={this.state.modalEdit}
             toggle={this.toggleEdit}
             centered={true}

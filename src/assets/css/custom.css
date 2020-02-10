@@ -1737,7 +1737,7 @@ table tbody tr:last-child {
 }
 .cont-costs span {
   font-family: "Medium Font";
-  font-size: 14px;
+  font-size: 13px;
   color: #39b54a;
 }
 .cont-costs .remember-forgot > div {
@@ -2892,7 +2892,7 @@ input[type="range"]::-moz-range-track {
 .sidemenu-ul {
   padding: 0;
   list-style: none;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 .header-greencounter-icon {
   /* height: 30px; */
@@ -3057,7 +3057,7 @@ input[type="range"]::-moz-range-track {
   list-style: none;
   display: block;
   padding: 10px;
-  margin: 15px 15px 15px 50px;
+  margin: 15px 7px 15px 44px;
   border: 1px solid #264c88;
 }
 .shipment-ul li {
@@ -3197,7 +3197,7 @@ input[type="range"]::-moz-range-track {
   display: inline-block;
   font-weight: 600;
   width: 100%;
-  padding: 15px 18px;
+  padding: 10px 18px;
 }
 .sidemenu-ul-li a:hover,
 .sidemenu-ul-li a:focus {
@@ -4449,6 +4449,9 @@ progress::-webkit-progress-bar {
 .large-popupka {
   max-width: 50%;
 }
+.large-popupka1 {
+  max-width: 60%;
+}
 .spotcustomer{
  text-align: left !important;
  display: inline-block;    
@@ -4459,4 +4462,38 @@ progress::-webkit-progress-bar {
 .lbltxtclr .spotcustdrop
 {
   color: #000;
+}
+.AirColor {
+  width: 27px;
+}
+.ana-reset {
+  display: flex;
+}
+.colap .menu-optio .op{
+  padding: 10px 5px;
+}
+.menu-optio .op:hover,
+.menu-optio .op:focus {
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #012d74;
+}
+.colap .menu-optio {
+  display: block;
+}
+.colap .dropdown-menu {
+  transform: translate3d(3px, -225px, 0px) !important;
+}
+.ra-font .details-para {
+  font-size: 13px;
+}
+.ra-font .details-title {
+  font-size: 14px;
+}
+.ra-font .ReactTable .rt-tbody .rt-td {
+  padding: 10px 10px !important;
+}
+.locawid .cont-costs .remember-forgot label{
+  width: 100px;
 }

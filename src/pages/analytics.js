@@ -1328,7 +1328,7 @@ class Analytics extends Component {
                       </div>
                     )}
                   </div>
-                  <div className="ana-rep">
+                  <div className="ana-rep ana-reset">
                     <button
                       className="butn mt-0"
                       onClick={this.handleAnalyticsReset.bind(this)}
