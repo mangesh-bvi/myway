@@ -115,9 +115,12 @@ input[type="range"] {
   width: 60px !important;
 }
 .login-fields {
-  padding: 0 10px;
+  padding: 10px 10px;
   margin: 0;
   font-size: 14px;
+}
+.login-fiel {
+  padding: 0 10px !important;
 }
 .rate-tab-drop select {
   padding: 6px 40px 6px 20px;
@@ -263,6 +266,15 @@ input[type="range"] {
 @media (min-width: 320px) and (max-width: 575px) {
   .rate-bg {
     width: 100% !important;
+}
+.big-popupka {
+  max-width: 90%;
+}
+.large-popupka {
+  max-width: 80%;
+}
+.large-popupka1 {
+  max-width: 80%;
 }
   .br-none {
     border-right: none !important;
@@ -484,6 +496,15 @@ input[type="range"] {
   }
   .login-cntr .butn {
     margin-right: 10px;
+  }
+  .big-popupka {
+    max-width: 90%;
+  }
+  .large-popupka {
+    max-width: 80%;
+  }
+  .large-popupka1 {
+    max-width: 80%;
   }
   .header-log {
     margin: 0;

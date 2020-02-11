@@ -11,6 +11,13 @@ import AdminIcon from "./../assets/img/admin-side.png";
 import ChatIcon from "./../assets/img/chat.png";
 import sideArrow from "./../assets/img/side-arr.png";
 
+import PlaneColor from "./../assets/img/AirShipment-color.png";
+import PlaneWhite from "./../assets/img/hamb-plane.png";
+import OceanColor from "./../assets/img/OceanShipment-color.png";
+import ShipWhite from "./../assets/img/ship-white.png";
+import TruckColor from "./../assets/img/DelayShipment-color.png";
+import TruckWhite from "./../assets/img/shipments.png";
+
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
 import DashboardIcon from "./../assets/img/dashboard-side.png";
@@ -331,6 +338,7 @@ class SideMenu extends Component {
                           data-shptye="Air"
                           onClick={this.clickShipmentType.bind(this)}
                         >
+                        <img src={PlaneWhite} className="header-greencounter-icon AirColor" />
                           Air
                         </label>
                         <label className="shipment-ul-lilbl2">
@@ -343,6 +351,7 @@ class SideMenu extends Component {
                           data-shptye="Ocean"
                           onClick={this.clickShipmentType.bind(this)}
                         >
+                        <img src={ShipWhite} className="header-greencounter-icon AirColor" />
                           Ocean
                         </label>
                         <label className="shipment-ul-lilbl2">
@@ -355,6 +364,7 @@ class SideMenu extends Component {
                           data-shptye="Inland"
                           onClick={this.clickShipmentType.bind(this)}
                         >
+                        <img src={TruckWhite} className="header-greencounter-icon AirColor" />
                           Inland
                         </label>
                         <label className="shipment-ul-lilbl2">
@@ -697,14 +707,14 @@ class SideMenu extends Component {
           })()}
         </ul>
         <div class="dropdown">
-          <ul className="sidemenu-ul2 m-0">
-            <li style={{ width: "50%" }}>
-              <img src={InfoIcon} className="inofIcon" alt="info-icon" />
+          <ul className="sidemenu-ul2 m-0 menu-optio">
+            <li className="op" style={{ width: "100%" }}>
+              <img src={InfoIcon} className="inofIcon imgop1" alt="info-icon" />
             </li>
-            <li style={{ width: "50%" }} data-toggle="dropdown">
+            <li className="op" style={{ width: "100%" }} data-toggle="dropdown">
               <img
                 src={SettingIcon}
-                className="settingIcon"
+                className="settingIcon imgop1"
                 alt="setting-icon"
               />
             </li>

@@ -1563,7 +1563,7 @@ class RateFinalizingStill extends Component {
                   </div>
                 </div>
               </div> */}
-                  <div className="col-md-12">
+                  <div className="col-md-12 ra-font">
                     <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                       <div className="rate-final-contr">
                         <div className="title-border d-flex align-items-center justify-content-between py-3">
@@ -1780,7 +1780,7 @@ class RateFinalizingStill extends Component {
                                     },
                                     accessor: "freeTime",
                                     filterable: true,
-                                    minWidth: 100
+                                    minWidth: 90
                                   },
                                   {
                                     Cell: row => {
@@ -1922,7 +1922,7 @@ class RateFinalizingStill extends Component {
                             showPagination={false}
                             SubComponent={row => {
                               return (
-                                <div style={{ padding: "20px 0" }}>
+                                <div style={{ padding: "0px 0" }}>
                                   <ReactTable
                                     minRows={1}
                                     data={this.state.SubRateDetails.filter(
