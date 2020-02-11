@@ -2,20 +2,15 @@ import React, { Component } from "react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
-
 import ATA from "./../assets/img/ATAFreight_console.png";
-
 import Moment from "react-moment";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import { encryption } from "../helpers/encryption";
-
 import matchSorter from "match-sorter";
-import domtoimage from "dom-to-image";
 import Autocomplete from "react-autocomplete";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import {
   NotificationContainer,
@@ -285,11 +280,7 @@ class RateFinalizing extends Component {
                   CBM: "-",
                   Editable: false
                 });
-
-                // equipmentTypeArr.push({
-                //   ContainerType: users[i].StandardContainerCode,
-                //   Quantity: users[i].Quantity,
-                // })
+ 
               }
             }
           }
@@ -829,6 +820,7 @@ class RateFinalizing extends Component {
             debugger;
             var manProfitAmt = [];
             var localProfitamt = [];
+            var aTotalAmount = 0;
             for (let i = 0; i < rateDetails.length; i++) {
               profitLossAmt = 0;
               BuyRate = 0;
@@ -867,11 +859,20 @@ class RateFinalizing extends Component {
                   BuyRate += rateSubDetailsdata1[j].BuyRate;
                 }
                 profitLossAmt += rateDetails[i].Profit;
-                profitLossPer = (profitLossAmt * 100) / BuyRate;
-                finalprofitLossAmt = profitLossAmt + finalprofitLossAmt;
 
-                finalprofitLossPer = profitLossPer + finalprofitLossPer;
+                finalprofitLossAmt = profitLossAmt + finalprofitLossAmt;
               }
+            }
+
+            if (selectedRow.length > 0) {
+              aTotalAmount = selectedRow.reduce(function(prev, cur) {
+                debugger;
+                return (
+                  prev + (parseFloat(cur.Total.split(" ")[0]) + cur.Profit)
+                );
+              }, 0);
+
+              finalprofitLossPer = (finalprofitLossAmt * 100) / aTotalAmount;
             }
             self.setState({
               BuyRate,
@@ -3489,8 +3490,16 @@ class RateFinalizing extends Component {
     }
     var finalprofitLossAmt =
       profitLossAmt + parseFloat(this.state.ProfitAmount);
+    var finalprofitLossPer = 0;
 
-    var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
+    if (this.state.isCopy) {
+      var finalprofitLossPer =
+        (finalprofitLossAmt * 100) /
+        parseFloat(this.state.selectedDataRow[0].Total.split(" ")[0]);
+    } else {
+      var finalprofitLossPer =
+        (finalprofitLossAmt * 100) / this.state.selectedDataRow[0].TotalAmount;
+    }
 
     this.setState({
       profitLossAmt: finalprofitLossAmt,
@@ -3536,6 +3545,7 @@ class RateFinalizing extends Component {
     });
     this.forceUpdate();
   }
+
   hanleProfitAmountSubmit() {
     debugger;
 
@@ -3589,15 +3599,16 @@ class RateFinalizing extends Component {
       }
     }
 
-    if (this.state.isCopy == true) {
-      for (let j = 0; j < rateSubDetailsarr[0].length; j++) {
-        BuyRate += rateSubDetailsarr[0][j].BuyRate;
-      }
-    } else {
-      for (let j = 0; j < rateSubDetailsarr.length; j++) {
-        BuyRate += rateSubDetailsarr[j].BuyRate;
-      }
-    }
+    // if (this.state.isCopy == true) {
+    //   for (let j = 0; j < rateSubDetailsarr[0].length; j++) {
+    //     BuyRate += rateSubDetailsarr[0][j].BuyRate;
+    //   }
+    // } else {
+    //   debugger;
+    //   for (let j = 0; j < rateSubDetailsarr.length; j++) {
+    //     BuyRate += rateSubDetailsarr[j].BuyRate;
+    //   }
+    // }
 
     for (var i = 0; i <= rateSubDetailsarr.length; i++) {
       if (this.state.isCopy == true) {
@@ -3622,8 +3633,16 @@ class RateFinalizing extends Component {
     // var BuyRate = this.state.BuyRate;
     var finalprofitLossAmt =
       parseFloat(this.state.ProfitAmount) + this.state.profitLossAmt;
+    var finalprofitLossPer = 0;
+    if (this.state.isCopy == true) {
+      finalprofitLossPer =
+        (finalprofitLossAmt * 100) /
+        this.state.selectedDataRow[0].Total.split(" ")[0];
+    } else {
+      finalprofitLossPer =
+        (finalprofitLossAmt * 100) / this.state.selectedDataRow[0].TotalAmount;
+    }
 
-    var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
     debugger;
     this.setState(prevState => ({
       modalProfit: false
@@ -3778,8 +3797,16 @@ class RateFinalizing extends Component {
 
       var finalprofitLossAmt =
         this.state.profitLossAmt - parseFloat(this.state.ProfitAmount);
-
-      var finalprofitLossPer = (finalprofitLossAmt * 100) / BuyRate;
+      var finalprofitLossPer = 0;
+      if (this.state.isCopy) {
+        finalprofitLossPer =
+          (finalprofitLossAmt * 100) /
+          parseFloat(this.state.selectedDataRow[0].Total.split(" ")[0]);
+      } else {
+        finalprofitLossPer =
+          (finalprofitLossAmt * 100) /
+          this.state.selectedDataRow[0].TotalAmount;
+      }
 
       this.setState({
         profitLossAmt: finalprofitLossAmt,
@@ -3887,7 +3914,7 @@ class RateFinalizing extends Component {
               var newrateSubDetails = {
                 ChargeID: element.ChargeID,
                 BuyRate: element.Buying,
-                Rate: parseFloat(element.AmountInBaseCurrency),
+                Rate: parseFloat(element.Amount),
                 Currency: element.Currency,
                 saleQuoteLineID: this.state.rateDetails[getindex]
                   .saleQuoteLineID,
@@ -3970,7 +3997,7 @@ class RateFinalizing extends Component {
               var newrateSubDetails = {
                 ChargeID: element.ChargeID,
                 BuyRate: element.Buying,
-                Rate: parseFloat(element.AmountInBaseCurrency),
+                Rate: parseFloat(element.Amount),
                 Currency: element.Currency,
                 saleQuoteLineID: this.state.rateDetails[getindex]
                   .saleQuoteLineID,
@@ -4058,7 +4085,7 @@ class RateFinalizing extends Component {
               var newrateSubDetails = {
                 ChargeID: element.ChargeID,
                 BuyRate: element.Buying,
-                Rate: parseFloat(element.AmountInBaseCurrency),
+                Rate: parseFloat(element.Amount),
                 Currency: element.Currency,
                 saleQuoteLineID: this.state.rateDetails[getindex]
                   .saleQuoteLineID,
@@ -4145,7 +4172,7 @@ class RateFinalizing extends Component {
                 var newrateSubDetails = {
                   ChargeID: element.ChargeID,
                   BuyRate: element.Buying,
-                  Rate: parseFloat(element.AmountInBaseCurrency),
+                  Rate: parseFloat(element.Amount),
                   Currency: element.Currency,
                   RateLineID: this.state.rateDetails[getindex].RateLineId,
                   ChargeCode: element.ChargeCode,
@@ -4155,7 +4182,7 @@ class RateFinalizing extends Component {
                   Exrate: element.Exrate,
                   ChargeType: element.ChargeCode,
                   TotalAmount: parseFloat(element.AmountInBaseCurrency),
-                  BaseCurrency: e.target.getAttribute("data-currency")
+                  BaseCurrency:element.BaseCurrency
                 };
                 if (
                   this.state.containerLoadType == "FTL" ||
@@ -4222,7 +4249,7 @@ class RateFinalizing extends Component {
               var newrateSubDetails = {
                 ChargeID: element.ChargeID,
                 BuyRate: element.Buying,
-                Rate: parseFloat(element.AmountInBaseCurrency),
+                Rate: parseFloat(element.Amount),
                 Currency: element.Currency,
                 RateLineID: this.state.rateDetails[getindex].RateLineId,
                 ChargeCode: element.ChargeCode,
@@ -4232,7 +4259,7 @@ class RateFinalizing extends Component {
                 Exrate: element.Exrate,
                 ChargeType: element.ChargeCode,
                 TotalAmount: parseFloat(element.AmountInBaseCurrency),
-                BaseCurrency: e.target.getAttribute("data-currency")
+                BaseCurrency:element.BaseCurrency
               };
               if (
                 this.state.containerLoadType == "FTL" ||
@@ -4300,7 +4327,7 @@ class RateFinalizing extends Component {
               var newrateSubDetails = {
                 ChargeID: element.ChargeID,
                 BuyRate: element.Buying,
-                Rate: parseFloat(element.AmountInBaseCurrency),
+                Rate: parseFloat(element.Amount),
                 Currency: element.Currency,
                 RateLineID: this.state.rateDetails[getindex].RateLineId,
                 ChargeCode: element.ChargeCode,
@@ -4310,7 +4337,7 @@ class RateFinalizing extends Component {
                 Exrate: element.Exrate,
                 ChargeType: element.ChargeCode,
                 TotalAmount: parseFloat(element.AmountInBaseCurrency),
-                BaseCurrency: e.target.getAttribute("data-currency")
+                BaseCurrency: element.BaseCurrency
               };
               if (
                 this.state.containerLoadType == "FTL" ||
@@ -4328,7 +4355,27 @@ class RateFinalizing extends Component {
           }
         }
       }
+
+      debugger;
+      var finalval = this.state.profitLossAmt;
       // }
+      var aTotalAmount = 0;
+      if (this.state.selectedDataRow.length > 0) {
+        if (this.state.isCopy) {
+          aTotalAmount = this.state.selectedDataRow.reduce(function(prev, cur) {
+            debugger;
+            return prev + parseFloat(cur.Total.split(" ")[0]);
+          }, 0);
+        } else {
+          aTotalAmount = this.state.selectedDataRow.reduce(function(prev, cur) {
+            debugger;
+            return prev + cur.TotalAmount;
+          }, 0);
+        }
+      }
+
+      var finalprofitval = (finalval * 100) / aTotalAmount;
+      this.setState({ profitLossPer: finalprofitval });
       this.forceUpdate();
     }
     if (!e.target.checked) {
@@ -4692,6 +4739,25 @@ class RateFinalizing extends Component {
           }
         }
       }
+      debugger;
+      var finalval = this.state.profitLossAmt;
+      // }
+      var aTotalAmount = 0;
+      if (this.state.selectedDataRow.length > 0) {
+        if (this.state.isCopy) {
+          aTotalAmount = this.state.selectedDataRow.reduce(function(prev, cur) {
+            debugger;
+            return prev + parseFloat(cur.Total.split(" ")[0]);
+          }, 0);
+        } else {
+          aTotalAmount = this.state.selectedDataRow.reduce(function(prev, cur) {
+            debugger;
+            return prev + cur.TotalAmount;
+          }, 0);
+        }
+      }
+      var finalprofitval = (finalval * 100) / aTotalAmount;
+      this.setState({ profitLossPer: finalprofitval });
       this.forceUpdate();
     }
   }
@@ -5631,6 +5697,10 @@ class RateFinalizing extends Component {
     var profitLossAmt1 = this.state.profitLossAmt;
     var profitLossPer = 0;
     var profitLossPer1 = this.state.profitLossPer;
+
+    var aTotalAmount = 0;
+    var nTotalAmount = 0;
+
     if (this.state.isCopy === true) {
       rateSubDetails = this.state.rateSubDetails.filter(
         d => d.saleQuoteLineID === rowData._original.saleQuoteLineID
@@ -5666,10 +5736,20 @@ class RateFinalizing extends Component {
             rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
           BuyRate += rateSubDetails[j].BuyRate;
         }
-        profitLossPer = (profitLossAmt * 100) / BuyRate;
+
         var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
 
-        var finalprofitLossPer = profitLossPer + profitLossPer1;
+        // var finalprofitLossPer = profitLossPer + profitLossPer1;
+        if (selectedRow.length > 0) {
+          aTotalAmount = selectedRow.reduce(function(prev, cur) {
+            debugger;
+            return prev + cur.TotalAmount;
+          }, 0);
+        } else {
+          aTotalAmount = 0;
+        }
+        // profitLossPer = (profitLossAmt * 100) / BuyRate;
+        var finalprofitLossPer = (profitLossAmt * 100) / aTotalAmount;
         this.setState({
           BuyRate,
           selectedDataRow: selectedRow,
@@ -5692,7 +5772,15 @@ class RateFinalizing extends Component {
             profitLossPer += (profitLossAmt * 100) / BuyRate;
             var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
 
-            var finalprofitLossPer = profitLossPer + profitLossPer1;
+            if (selectedRow.length > 0) {
+              aTotalAmount = selectedRow.reduce(function(prev, cur) {
+                debugger;
+                return (
+                  prev + (parseFloat(cur.Total.split(" ")[0]) + cur.Profit)
+                );
+              }, 0);
+              finalprofitLossPer = (finalprofitLossAmt * 100) / aTotalAmount;
+            }
             this.setState({
               BuyRate,
               profitLossAmt: finalprofitLossAmt,
@@ -5710,7 +5798,7 @@ class RateFinalizing extends Component {
                 rowData._original.saleQuoteLineID
               ) {
                 selectedRow.splice(i, 1);
-                // delete selectedRow[i];
+
                 for (let j = 0; j < rateSubDetails.length; j++) {
                   var total = parseFloat(rateSubDetails[j].Total.split(" ")[0]);
                   profitLossAmt += total - rateSubDetails[j].BuyRate;
@@ -5722,6 +5810,14 @@ class RateFinalizing extends Component {
                 var finalprofitLossPer = profitLossPer1 - profitLossPer;
 
                 if (selectedRow.length > 0) {
+                  aTotalAmount = selectedRow.reduce(function(prev, cur) {
+                    debugger;
+                    return (
+                      prev + (parseFloat(cur.Total.split(" ")[0]) + cur.Profit)
+                    );
+                  }, 0);
+                  finalprofitLossPer =
+                    (finalprofitLossAmt * 100) / aTotalAmount;
                   this.setState({
                     BuyRate,
                     profitLossAmt: finalprofitLossAmt,
@@ -5778,17 +5874,29 @@ class RateFinalizing extends Component {
                   rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
                 BuyRate += rateSubDetails[j].BuyRate;
               }
-              profitLossPer += (profitLossAmt * 100) / BuyRate;
+              //asd
+
               var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
 
-              var finalprofitLossPer = profitLossPer + profitLossPer1;
+              selectedRow = this.state.selectedDataRow;
+              selectedRow.push(rowData._original);
+              if (selectedRow.length > 0) {
+                aTotalAmount = selectedRow.reduce(function(prev, cur) {
+                  debugger;
+                  return prev + cur.TotalAmount;
+                }, 0);
+              } else {
+                aTotalAmount = 0;
+              }
+
+              // var finalprofitLossPer = profitLossPer + profitLossPer1;
+              finalprofitLossPer = (finalprofitLossAmt * 100) / aTotalAmount;
+
               this.setState({
                 BuyRate,
                 profitLossAmt: finalprofitLossAmt,
                 profitLossPer: finalprofitLossPer
               });
-              selectedRow = this.state.selectedDataRow;
-              selectedRow.push(rowData._original);
               break;
             }
           }
@@ -5836,13 +5944,18 @@ class RateFinalizing extends Component {
                 for (let j = 0; j < rateSubDetails.length; j++) {
                   profitLossAmt +=
                     rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
-                  BuyRate += rateSubDetails[j].BuyRate;
                 }
-                profitLossPer = (profitLossAmt * 100) / BuyRate;
+
+                aTotalAmount = selectedRow.reduce(function(prev, cur) {
+                  debugger;
+                  return prev + cur.TotalAmount;
+                }, 0);
+
                 var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
 
-                var finalprofitLossPer = profitLossPer1 - profitLossPer;
                 if (selectedRow.length > 0) {
+                  profitLossPer = (finalprofitLossAmt * 100) / aTotalAmount;
+                  var finalprofitLossPer = profitLossPer;
                   this.setState({
                     BuyRate,
                     profitLossAmt: finalprofitLossAmt,
@@ -6761,10 +6874,10 @@ class RateFinalizing extends Component {
                                             Container
                                           </p>
                                           <p className="details-para">
-                                          {row.original.ContainerType +
-                                          " (" +
-                                          row.original.ContainerQuantity +
-                                          ")"}
+                                            {row.original.ContainerType +
+                                              " (" +
+                                              row.original.ContainerQuantity +
+                                              ")"}
                                           </p>
                                         </>
                                       );

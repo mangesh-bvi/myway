@@ -3,13 +3,7 @@ import "../styles/custom.css";
 import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
-
-import ShipBlue from "./../assets/img/blue-ship.png";
-import PlaneBlue from "./../assets/img/blue-plane.png";
-import DelayBlue from "./../assets/img/blue-delay.png";
 import WL from "./../assets/img/wl.png";
-import BookBlue from "./../assets/img/blue-booking.png";
-
 import appSettings from "../helpers/appSetting";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
@@ -18,34 +12,14 @@ import Truck from "./../assets/img/truck.png";
 import Rail from "./../assets/img/rail.png";
 import Plane from "./../assets/img/plane.png";
 
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker,
-  InfoWindow
-} from "react-google-maps";
-import Autocomplete from "react-google-autocomplete";
-
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      zoom: 3,
-      center: {
-        lat: 25.37852,
-        lng: 75.02354
-      },
-      searchData: { index: 1, lat: 17.69265, lng: 83.299995 },
-      mapsData: [],
-      selectedMarker: "",
       ActiveShipmentData: [],
       QuotesData: [],
       InvoicesData: [],
       BookingData: [],
-      ModalData: [],
-      ModalTotalMapData: [],
-      SelectPin: [],
       checkMapview: true,
       loading: true,
       watchlistLoading: true,
@@ -53,22 +27,14 @@ class Dashboard extends Component {
       quotesLoading: true,
       invoicesLoading: true,
       IsWidgets: false,
-      mapPosition: {
-        lat: 32.24165126,
-        lng: 77.78319374
-      },
       iframeKey: 0
     };
-
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
-
     this.HandleQuotesTablePage = this.HandleQuotesTablePage.bind(this);
     this.HandleBookingCardApi = this.HandleBookingCardApi.bind(this);
     this.HandleWatchListData = this.HandleWatchListData.bind(this);
   }
-
   componentDidMount() {
-    //debugger;
     let self = this;
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
@@ -85,22 +51,14 @@ class Dashboard extends Component {
   HandleShipmentPage() {
     this.props.history.push({ pathname: "shipment-summary" });
   }
-
   // Booking Card on ...View More click to rediract booking page
   HandleBookingTablePage() {
     this.props.history.push({ pathname: "booking-table" });
   }
-
   // Quotes Card on ...View More click to rediract Quotes page
   HandleQuotesTablePage() {
     this.props.history.push({ pathname: "quote-table" });
   }
-  // Invoices Card on ...View More click to rediract Quotes page
-  // HandleShipmentPage()
-  // {
-  //   this.props.history.push({pathname: "shipment-summary"});
-  // }
-
   //Booking Card Bind Api Call
   HandleBookingCardApi() {
     let self = this;
@@ -121,13 +79,14 @@ class Dashboard extends Component {
       });
     });
   }
-
+  //active shipment card in click HBL#  to rediract to shipemnt page
   HandleRediractPageShipmentDetails(hblno) {
     this.props.history.push({
       pathname: "shipment-details",
       state: { detail: hblno, pageName: "ShipmentPage" }
     });
   }
+  //Invoice Card Data API
   HandleActiveShipmentData() {
     let selt = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -146,9 +105,8 @@ class Dashboard extends Component {
       });
     });
   }
-
+  //Active Shipment Card Data API
   HandleWatchListData() {
-    //debugger;
     let selt = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     axios({
@@ -159,7 +117,6 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      // debugger;
       var activeshipment = response.data.Table;
       selt.setState({
         ActiveShipmentData: activeshipment,
@@ -167,9 +124,8 @@ class Dashboard extends Component {
       });
     });
   }
-
+  //Quote Card Data API
   HandleQuotesData() {
-    //debugger
     let selt = this;
     axios({
       method: "post",
@@ -187,136 +143,18 @@ class Dashboard extends Component {
       });
     });
   }
-  handleClick = (marker, event) => {
-    //debugger;
-    let selt = this;
-    selt.setState({ selectedMarker: "" });
-    var userID = marker.ID;
-    var latitude = marker.LastLocation_Lat;
-    var longitude = marker.LastLocation_Lon;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/ShipmentIConAPI`,
-      data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        lat: latitude,
-        lng: longitude
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      //debugger;
-
-      selt.setState({
-        selectedMarker: marker.LastLocation,
-        ModalData: response.data.Table1
-      });
-    });
-  };
-
-  HandleShipmentPin(BindingID) {
-    this.BindMapData(BindingID);
-  }
-
-  BindMapData(BindingID) {
-    //debugger;
-    let self = this;
-    var mdata;
-    var arraModalMapData = [];
-    //debugger;
-
-    if (self.ModalTotalMapData == null || self.ModalTotalMapData.length < 1) {
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/ShipmentLatLongAPI`,
-        data: {
-          UserID: encryption(window.localStorage.getItem("userid"), "desc")
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        //debugger;
-        mdata = response.data;
-        if (BindingID != "All") {
-          mdata = mdata.filter(map => map.Pin == BindingID);
-        }
-        if (mdata.length > 0) {
-          self.setState({ loading: false });
-        }
-        self.setState({ mapsData: mdata });
-        self.ModalTotalMapData = mdata;
-        var arrarSelectPin = ["Ocean", "Air", "Booking-Ocean", "Delay-Ocean"];
-
-        self.SelectPin = arrarSelectPin;
-
-        var element = !!document.getElementById("shipmentfilterdiv");
-        if (element) {
-          document.getElementById("shipmentfilterdiv").style.display = "block";
-        }
-      });
-    } else {
-      if (BindingID != "All") {
-        var index = self.SelectPin.indexOf(BindingID);
-        const div = document.getElementById(BindingID);
-        if (index > -1) {
-          self.SelectPin.splice(index, 1);
-
-          div.classList.add("cancel-btn");
-        } else {
-          div.classList.remove("cancel-btn");
-          self.SelectPin.push(BindingID);
-        }
-
-        for (var rray in self.SelectPin) {
-          arraModalMapData = arraModalMapData.concat(
-            self.ModalTotalMapData.filter(e => e.Pin == self.SelectPin[rray])
-          );
-        }
-
-        //self.ModalTotalMapData = self.ModalTotalMapData.filter(function(e) { e.Pin == BindingID},self.SelectPin)
-      }
-      // if (mdata.length > 0) {
-      //   self.setState({ loading: false });
-      // }
-      self.setState({ mapsData: arraModalMapData });
-    }
-  }
-
-  handleHamb() {
-    if (document.getElementById("Ocean").classList.contains("rem-icon")) {
-      document.getElementById("Ocean").classList.remove("rem-icon");
-    } else {
-      document.getElementById("Ocean").classList.add("rem-icon");
-    }
-    if (document.getElementById("Air").classList.contains("rem-icon")) {
-      document.getElementById("Air").classList.remove("rem-icon");
-    } else {
-      document.getElementById("Air").classList.add("rem-icon");
-    }
-    if (document.getElementById("Delay-Ocean").classList.contains("rem-icon")) {
-      document.getElementById("Delay-Ocean").classList.remove("rem-icon");
-    } else {
-      document.getElementById("Delay-Ocean").classList.add("rem-icon");
-    }
-    if (
-      document.getElementById("Booking-Ocean").classList.contains("rem-icon")
-    ) {
-      document.getElementById("Booking-Ocean").classList.remove("rem-icon");
-    } else {
-      document.getElementById("Booking-Ocean").classList.add("rem-icon");
-    }
-  }
-
-  handleBooking(bookingNo, mode,BookingNo) {
-    // debugger;
+  //booking number to click view booking page
+  handleBooking(bookingNo, mode, BookingNo) {
     var bookingNo = bookingNo;
     var Mode = mode;
-    var BookingNostr=BookingNo
+    var BookingNostr = BookingNo;
     this.props.history.push({
       pathname: "booking-view",
-      state: { bookingNo: bookingNo, Mode: Mode ,BookingNostr:BookingNostr}
+      state: { bookingNo: bookingNo, Mode: Mode, BookingNostr: BookingNostr }
     });
   }
+  //quote number to click view quote page
   handleQuote(qnumber, type, status) {
-    // debugger;
     var type = type;
     var qnumber = qnumber;
     var Status = status;
@@ -327,8 +165,6 @@ class Dashboard extends Component {
     });
   }
   render() {
-    
-
     let className = "dash-map1";
     if (
       encryption(window.localStorage.getItem("usertype"), "desc") ==
@@ -350,12 +186,7 @@ class Dashboard extends Component {
       if (i < 4) {
         return (
           <div key={i}>
-            {/* <p>
-              Shipment ID:
-              <span>{addkey.ShipmentID}</span>
-            </p> */}
             <p>
-              {/* HBL No :{" "} */}
               <span
                 onClick={() =>
                   self.HandleRediractPageShipmentDetails(addkey["HBL#"])
@@ -391,7 +222,6 @@ class Dashboard extends Component {
                     />
                   );
                 }
-                // <span>{addkey.ModeOfTransport}</span>
               })()}
             </p>
             <div className="d-flex justify-content-between">
@@ -409,9 +239,6 @@ class Dashboard extends Component {
               )}
             </div>
             <hr className="horizontal-line" />
-            {/* <p>
-              Mode of Transport :<span>{addkey.ModeOfTransport}</span>
-            </p> */}
           </div>
         );
       }
@@ -424,9 +251,12 @@ class Dashboard extends Component {
               <span
                 title={"Booking No"}
                 style={{ color: "#000", cursor: "pointer" }}
-                // onClick={() => this.handleBooking.bind(this)}
                 onClick={() =>
-                  self.handleBooking(book.BookingID, book.BookingType,book.BookingNo)
+                  self.handleBooking(
+                    book.BookingID,
+                    book.BookingType,
+                    book.BookingNo
+                  )
                 }
               >
                 {book.BookingNo}
@@ -598,7 +428,6 @@ class Dashboard extends Component {
                           )}
                         </div>
                         <div className="dash-sects-dtls">
-                          {/* <i className="fa fa-refresh fa-spin"></i> */}
                           <div className="dash-sects-dtls-inner">{Booking}</div>
                         </div>
                         <span
@@ -620,7 +449,6 @@ class Dashboard extends Component {
                           )}
                         </div>
                         <div className="dash-sects-dtls">
-                          {/* <i className="fa fa-refresh fa-spin"></i> */}
                           <div className="dash-sects-dtls-inner">{Quotes}</div>
                         </div>
                         <span

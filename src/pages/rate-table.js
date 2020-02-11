@@ -10,21 +10,15 @@ import { Button, Modal, ModalBody } from "reactstrap";
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
 import Select from "react-select";
-// import { Link } from "react-router-dom";
-import Autocomplete from "react-google-autocomplete";
 import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
   Marker
 } from "react-google-maps";
-// import GreenIcon from "./../assets/img/green-circle.png";
-// import RedIcon from "./../assets/img/red-circle.png";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
-// import $ from "jquery";
 import { encryption } from "../helpers/encryption";
-// import { parse } from "path";
 import {
   NotificationContainer,
   NotificationManager
@@ -44,22 +38,14 @@ const POLMaps = compose(
         ? props.markerPOLData[props.markerPOLData.length - 1]
         : { lat: parseFloat(32.24165126), lng: parseFloat(77.78319374) }
     }
-    // defaultZoom={9}
-    // zoom={props.zomePOL}
-    // zoom={9}
   >
     {props.markerPOLData.map((marker, i) => {
-      {
-        /* {(() => { */
-      }
       return (
         <Marker
           key={i}
-          //position={{ lat: Number(props.markerPOLData.lat), lng: Number(props.markerPOLData.lng) }}
           position={{ lat: Number(marker.lat), lng: Number(marker.lng) }}
         ></Marker>
       );
-      // })()}
     })}
   </GoogleMap>
 ));
@@ -872,7 +858,6 @@ class RateTable extends Component {
       if (newSelected[RateLineID] === true) {
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
           var thisrateid = this.state.selectedDataRow[i].RateLineID;
-          aTotalAmount += this.state.selectedDataRow[i].TotalAmount;
 
           var _originalrateid = rowData._original.RateLineID;
           if (
@@ -892,12 +877,20 @@ class RateTable extends Component {
               rateSubDetails[j].TotalAmount - rateSubDetails[j].BuyRate;
             BuyRate += rateSubDetails[j].BuyRate;
           }
-
           break;
           // }
         }
 
-        nTotalAmount = aTotalAmount + rowData._original.TotalAmount;
+        if (selectedRow.length > 0) {
+          aTotalAmount = selectedRow.reduce(function(prev, cur) {
+            debugger;
+            return prev + cur.TotalAmount;
+          }, 0);
+        } else {
+          aTotalAmount = 0;
+        }
+
+        nTotalAmount = aTotalAmount;
         var finalprofitLossAmt = profitLossAmt + profitLossAmt1;
         profitLossPer = (finalprofitLossAmt * 100) / nTotalAmount;
         var finalprofitLossPer = profitLossPer;
@@ -906,12 +899,15 @@ class RateTable extends Component {
           profitLossPer: finalprofitLossPer
         });
       } else {
+        debugger;
+        var RateLineID = 0;
+        if (rowData._original.RateLineID) {
+          RateLineID = rowData._original.RateLineID;
+        } else {
+          RateLineID = rowData._original.RateLineId;
+        }
         for (var i = 0; i < this.state.selectedDataRow.length; i++) {
-          aTotalAmount += this.state.selectedDataRow[i].TotalAmount;
-          if (
-            this.state.selectedDataRow[i].RateLineID ===
-            rowData._original.RateLineID
-          ) {
+          if (this.state.selectedDataRow[i].RateLineId === RateLineID) {
             selectedRow = this.state.selectedDataRow;
             selectedRow.splice(i, 1);
 
@@ -924,9 +920,22 @@ class RateTable extends Component {
             break;
           }
         }
+        if (selectedRow.length > 0) {
+          aTotalAmount = selectedRow.reduce(function(prev, cur) {
+            debugger;
+            return prev + cur.TotalAmount;
+          }, 0);
+        } else {
+          aTotalAmount = 0;
+        }
         nTotalAmount = aTotalAmount;
         var finalprofitLossAmt = profitLossAmt1 - profitLossAmt;
-        profitLossPer = (finalprofitLossAmt * 100) / nTotalAmount;
+        if (nTotalAmount > 0) {
+          profitLossPer = (finalprofitLossAmt * 100) / nTotalAmount;
+        } else {
+          profitLossPer = 0;
+        }
+
         var finalprofitLossPer = profitLossPer;
         this.setState({
           profitLossAmt: finalprofitLossAmt,
@@ -1183,10 +1192,7 @@ class RateTable extends Component {
         puAdd: paramData.puAdd,
         DeliveryCity: paramData.DeliveryCity,
         typesofMove: paramData.typesofMove,
-        // polArray:this.state.polArray,
-        // podArray:this.state.podArray,
-        // polFilterArray:this.state.polFilterArray,
-        // podFilterArray:this.state.podFilterArray,
+
         ChargeableWeight: cmbvalue,
         ModeOfTransport: rModeofTransport,
         TypeOfMove: rTypeofMove,
@@ -1487,10 +1493,6 @@ class RateTable extends Component {
                 onClick={this.removeClickPOL.bind(this, index)}
               ></i>
             )}
-
-            {/* <div className="rename-cntr login-fields">
-            <textarea className="txt-add" placeholder="Enter POL"></textarea>
-          </div> */}
           </div>
         </div>
       ) : (
@@ -1592,10 +1594,6 @@ class RateTable extends Component {
                 onClick={this.removeClickPOL.bind(this, index)}
               ></i>
             )}
-
-            {/* <div className="rename-cntr login-fields">
-            <textarea className="txt-add" placeholder="Enter POL"></textarea>
-          </div> */}
           </div>
         </div>
       );
@@ -1939,13 +1937,6 @@ class RateTable extends Component {
   MultiCreateCBM() {
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
-        {/* <div className="col-md">
-          <div className="spe-equ">
-            <label className="mr-0 mt-2" name="SpecialContainerCode">
-              {el.SpecialContainerCode}
-            </label>
-          </div>
-        </div> */}
         <div className="col-md">
           <div className="spe-equ">
             <select
@@ -1963,19 +1954,7 @@ class RateTable extends Component {
             </select>
           </div>
         </div>
-        {/* <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder="Quantity"
-              className="w-100"
-              name="Quantity"
-              value={el.Quantity || ""}
-              //onKeyUp={this.cbmChange}
-            />
-          </div>
-        </div> */}
+
         <div className="col-md">
           <div className="spe-equ">
             <input
@@ -2583,11 +2562,6 @@ class RateTable extends Component {
     ) {
       const address = place.formatted_address,
         addressArray = place.address_components,
-        // city = this.getCity(addressArray),
-        // area = this.getArea(addressArray),
-        // state = this.getState(addressArray),
-        // zipcode = this.getZipCode(addressArray),
-        // country = this.getCountry(addressArray),
         latValue = place.geometry.location.lat(),
         lngValue = place.geometry.location.lng();
       if (addressArray.length > 4) {
@@ -2597,13 +2571,7 @@ class RateTable extends Component {
       } else {
         this.setState({ zoomPOL: 6 });
       }
-      // this.state.fullAddressPOL.push({
-      //   Area: area,
-      //   City: city,
-      //   State: state,
-      //   ZipCode: zipcode,
-      //   Country: country
-      // });
+
       var originGeoCordinates = latValue + "," + lngValue;
       this.state.polArray.push({
         POL: "",
@@ -2612,9 +2580,6 @@ class RateTable extends Component {
         IsFilter: true
       });
       this.setState({
-        // fullAddressPOL: this.state.fullAddressPOL,
-        // PickupCity: city,
-        // OriginGeoCordinates: originGeoCordinates
         polArray: this.state.polArray
       });
       this.state.mapPositionPOL.push({
@@ -2626,12 +2591,7 @@ class RateTable extends Component {
           lat: Number(latValue),
           lng: Number(lngValue)
         }
-        // mapPositionPOL: {
-        //   lat: Number(latValue),
-        //   lng: Number(lngValue)
-        // }
       });
-      //this.addressChange("puAdd", address);
     } else {
       //multiFields[field] = "";
       this.state.errorPOL = place.formatted_address + " already exist";
@@ -2654,11 +2614,6 @@ class RateTable extends Component {
     ) {
       const address = place.formatted_address,
         addressArray = place.address_components,
-        // city = this.getCity(addressArray),
-        // area = this.getArea(addressArray),
-        // state = this.getState(addressArray),
-        // zipcode = this.getZipCode(addressArray),
-        // country = this.getCountry(addressArray),
         latValue = place.geometry.location.lat(),
         lngValue = place.geometry.location.lng();
 
@@ -3025,7 +2980,6 @@ class RateTable extends Component {
                   ? "Volume"
                   : "VolumeWeight"
               }
-              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
               placeholder={
                 this.state.containerLoadType === "LCL"
                   ? "KG"
@@ -3274,10 +3228,6 @@ class RateTable extends Component {
       destinationAddress = param.fields.pod;
       originPort_ID = param.polfullAddData.UNECECode;
       destinationPort_ID = param.podfullAddData.UNECECode;
-      //   pickUpAddress
-      // }
-      // else{
-      // pickUpAddressDetails.push({Street:param.pickUpAddress[0].Area,Country:param.pickUpAddress[0].Country,State:param.pickUpAddress[0].State,City:param.pickUpAddress[0].City,ZipCode:param.pickUpAddress[0].ZipCode})
     }
     if (param.typesofMove == "d2d") {
       pickUpAddressDetails.push({
@@ -3338,15 +3288,6 @@ class RateTable extends Component {
       originPort_ID = param.polfullAddData.UNECECode;
     }
 
-    // if(param.podfullAddData.length != 0)
-    // {
-    //   destUpAddressDetails.push({Street:'',Country:'',State:'',City:'',ZipCode:''})
-    // }
-    // else
-    // {
-    //   destUpAddressDetails.push({Street:param.destAddress[0].Area,Country:param.destAddress[0].Country,State:param.destAddress[0].State,City:param.destAddress[0].City,ZipCode:param.destAddress[0].ZipCode})
-    // }
-
     if (param.containerLoadType == "AIR" || param.containerLoadType == "FCL") {
       var multiCBMData = [];
       if (this.state.cmbTypeRadio === "CBM") {
@@ -3373,17 +3314,12 @@ class RateTable extends Component {
         PickUpAddress: pickUpAddress,
         DestinationAddress: destinationAddress,
         Total_Weight_Unit: "Kgs",
-        SalesPerson: 1452494145,
         HazMat: param.HazMat,
         ChargeableWt: param.ChargeableWeight,
         Containerdetails: containerdetails,
-        // PickUpAddressDetails:{
-        //   Street:'',Country:'',State:'',City:'',ZipCode:''
-
-        //   },
 
         PickUpAddressDetails: pickUpAddressDetails[0],
-        // DestinationAddressDetails:{Street:'',Country:'',State:'',City:'',ZipCode:''},
+
         DestinationAddressDetails: destUpAddressDetails[0],
         RateQueryDim: multiCBMData,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
@@ -3421,7 +3357,7 @@ class RateTable extends Component {
         PickUpAddress: pickUpAddress,
         DestinationAddress: destinationAddress,
         Total_Weight_Unit: "Kgs",
-        SalesPerson: 1452494145,
+
         HazMat: param.HazMat,
         ChargeableWt: param.ChargeableWeight,
         PickUpAddressDetails: pickUpAddressDetails[0],
@@ -3447,7 +3383,7 @@ class RateTable extends Component {
         PickUpAddress: pickUpAddress,
         DestinationAddress: destinationAddress,
         Total_Weight_Unit: "Kgs",
-        SalesPerson: 1452494145,
+
         HazMat: param.HazMat,
         ChargeableWt: param.ChargeableWeight,
         PickUpAddressDetails: pickUpAddressDetails[0],
@@ -4515,9 +4451,7 @@ class RateTable extends Component {
                                   return (
                                     <>
                                       <p className="details-title">Container</p>
-                                      <p className="details-para">
-                                      {value}
-                                      </p>
+                                      <p className="details-para">{value}</p>
                                     </>
                                   );
                                 },

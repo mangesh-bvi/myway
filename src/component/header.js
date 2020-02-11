@@ -119,7 +119,7 @@ class Header extends Component {
       this.setState({ profileImgURL });
     }
     this.handleCurrencyBind();
-    debugger;
+   
     var iscurrencydrp = false;
     var pathName = this.props.location.pathname;
     if (pathName !== "/rate-table") {

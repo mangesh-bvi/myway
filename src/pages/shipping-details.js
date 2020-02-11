@@ -3,34 +3,25 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
-import "../assets/css/react-table.css"; 
+import "../assets/css/react-table.css";
 import { Button, Modal, ModalBody } from "reactstrap";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-
 import Rail from "./../assets/img/rail.png";
-
 import PlaneColor from "./../assets/img/AirShipment-color.png";
 import OceanColor from "./../assets/img/OceanShipment-color.png";
 import TruckColor from "./../assets/img/DelayShipment-color.png";
-
 import { encryption } from "../helpers/encryption";
-
 import Delivered from "./../assets/img/delivered.png";
-
 import ArrivedStatusColor from "./../assets/img/Arrived-b.png";
-
 import InlandTransportStatusColor from "./../assets/img/InlandTransportation-b.png";
 import TransshippedStatus from "./../assets/img/transshipped-status.png";
 import InTransitStatus from "./../assets/img/in-transit-status.png";
 import GateInStatus from "./../assets/img/gate-in-status.png";
-
 import DepartedStatusColor from "./../assets/img/Departed-b.png";
-
 import DeliveredStatusColor from "./../assets/img/Delivered-b.png";
 import BookedStatusColor from "./../assets/img/Booked-b.png";
-
 import ApprovedStatusColor from "./../assets/img/Approved-b.png";
 import "font-awesome/css/font-awesome.css";
 import ReactTable from "react-table";
@@ -38,15 +29,13 @@ import "react-table/react-table.css";
 import matchSorter from "match-sorter";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import makeAnimated from "react-select/animated";
 
 import Autocomplete from "react-autocomplete";
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
-
-const animatedComponents = makeAnimated();
+import moment from "moment";
 
 class ShippingDetails extends Component {
   constructor(props) {
@@ -56,9 +45,7 @@ class ShippingDetails extends Component {
       listDis: "none",
       mapDis: "block",
       copied: false,
-
       shareLink: "http://mywayqa.demo.brainvire.net/track-shipment?",
-
       filterAll: "",
       filtered: [],
       modalAdvSearch: false,
@@ -107,7 +94,6 @@ class ShippingDetails extends Component {
     this.toggleAdvSearch = this.toggleAdvSearch.bind(this);
     this.BindShipmentStage = this.BindShipmentStage.bind(this);
     this.toggleShare = this.toggleShare.bind(this);
-    // this.onShare = this.onShare.bind(this);
   }
 
   componentDidMount() {
@@ -146,7 +132,6 @@ class ShippingDetails extends Component {
       shareLink: shareLink + hblNo
     }));
   }
-
   onFilteredChange(filtered) {
     debugger;
     if (filtered.length > 1 && this.state.filterAll.length) {
@@ -166,7 +151,6 @@ class ShippingDetails extends Component {
 
     this.setState({ filterAll, filtered });
   }
-
   HandleListShipmentSummey(shiptype) {
     debugger;
     let self = this;
@@ -182,7 +166,6 @@ class ShippingDetails extends Component {
       headers: authHeader()
     }).then(function(response) {
       debugger;
-     
 
       var data = response.data.Table1;
       var inland = data.filter(x => x.ModeOfTransport === "Inland").length;
@@ -195,14 +178,12 @@ class ShippingDetails extends Component {
           data = [{ POL: "No record found" }];
         }
       }
+      debugger;
       self.setState({ shipmentSummary: data });
-      
 
       window.localStorage.setItem("aircount", air);
       window.localStorage.setItem("oceancount", ocean);
       window.localStorage.setItem("inlandcount", inland);
-
-      
     });
   }
 
@@ -246,8 +227,6 @@ class ShippingDetails extends Component {
   listButn() {
     this.setState({ listDis: "none", mapDis: "block" });
   }
-
-   
 
   toggleAdvSearch() {
     this.setState(prevState => ({
@@ -676,7 +655,7 @@ class ShippingDetails extends Component {
 
   render() {
     const { shipmentSummary } = this.state;
-    
+
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
@@ -706,7 +685,7 @@ class ShippingDetails extends Component {
                     onChange={this.filterAll}
                     placeholder="Search here"
                   />
-                
+
                   <a
                     href="#!"
                     onClick={this.listButn}
@@ -932,7 +911,25 @@ class ShippingDetails extends Component {
                         },
                         {
                           Header: "ETA",
-                          accessor: "ETA"
+                          accessor: "ETA",
+                          sortMethod: (a, b) => {
+                            var a1 = new Date(a).getTime();
+                            var b1 = new Date(b).getTime();
+                          if(a1<b1)
+                          return 1;
+                          else if(a1>b1)
+                          return -1;
+                          else
+                          return 0;
+                          }
+                       
+                          // Cell: row => {
+                          //   return (
+                          //     <span>
+                          //       {moment.utc(row.value).format("MM/DD/YYYY")}
+                          //     </span>
+                          //   );
+                          // }
                         },
                         {
                           Header: "Event",
@@ -1137,7 +1134,7 @@ class ShippingDetails extends Component {
                               >
                                 Consignee
                               </label>
-                             
+
                               <div className="position-relative">
                                 <div className="auto-comp-drp-dwn auto-comp-drp-dwn-adv">
                                   <Autocomplete
@@ -1159,7 +1156,6 @@ class ShippingDetails extends Component {
                                       this,
                                       "Consignee"
                                     )}
-                                    //menuStyle={this.state.menuStyle}
                                     onSelect={this.handleSelectCon.bind(
                                       this,
                                       item => item.Company_ID,
@@ -1253,7 +1249,6 @@ class ShippingDetails extends Component {
                                       this,
                                       "Shipper"
                                     )}
-                                    //menuStyle={this.state.menuStyle}
                                     onSelect={this.handleSelectCon.bind(
                                       this,
                                       item => item.Company_ID,

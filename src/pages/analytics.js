@@ -424,11 +424,13 @@ class Analytics extends Component {
         }
 
         if (Segregatedby == "Count Chart") {
+          // Table = response.data.Table.sort(compare);
+
+          Table = response.data.Table;
           debugger;
-          Table = response.data.Table.sort(compare);
           arrayAir = Table.filter(item => item.Modeoftransport == "Air");
           // arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
-          // arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
+          // arrayTruck = Table.filter(item => item.Modeoftransport land");
 
           // arrayOcean = Table.filter(
           //   item =>
@@ -485,6 +487,7 @@ class Analytics extends Component {
           } else {
             arraylabel.push(Table[i].ShipmentPeriod);
           }
+
           self.setState({ grafShipmentlabels: arraylabel });
         }
 
@@ -563,7 +566,7 @@ class Analytics extends Component {
             });
           }
         }
-
+        debugger;
         self.setState({ graphShipmentdataset: graphdataset });
       })
       .catch(error => {
@@ -684,7 +687,7 @@ class Analytics extends Component {
         toggleFclLcl: true,
         cargoTypeLCL: false,
         checkFTL: false,
-        checkLTL:false,
+        checkLTL: false
       });
     } else {
       this.setState({
@@ -900,6 +903,7 @@ class Analytics extends Component {
         var temperror = error.response.data;
         var err = temperror.split(":");
         // alert(err[1].replace("}", ""));
+        NotificationManager.error(err);
         self.setState({ setSupplierdrop: [] });
       });
   }
@@ -931,6 +935,7 @@ class Analytics extends Component {
           } else {
             arraylabel.push(response.data.Table[i].ShipmentPeriod);
           }
+          debugger;
           self.setState({ graflabels: arraylabel });
         }
 
@@ -1013,11 +1018,12 @@ class Analytics extends Component {
         self.setState({ graphdataset: graphdataset });
       })
       .catch(error => {
+        debugger;
         var temperror = error;
         console.log(temperror);
-        // var err = temperror.split(":");
+        var err = temperror.split(":");
         // alert(err[1].replace("}", ""));
-        // NotificationManager.error(err[1].replace("}", ""));
+        NotificationManager.error(err);
         self.setState({ graphdataset: [], loding: false });
       });
   }
@@ -1096,13 +1102,22 @@ class Analytics extends Component {
     });
   }
   render() {
-    console.log(this.state.loding);
-
     var buyerShipmentData = {
       labels: this.state.grafShipmentlabels,
       datasets: this.state.graphShipmentdataset
     };
-    console.log(buyerShipmentData);
+    console.log(
+      this.state.grafShipmentlabels,
+      "------------grafShipmentlabels"
+    );
+
+    console.log(
+      this.state.graphShipmentdataset,
+      "------------grafShipmentlabels"
+    );
+
+    console.log(this.state.graflabels, "------------graflabels");
+
     var buyerData = {
       labels: this.state.graflabels,
       datasets: this.state.graphdataset

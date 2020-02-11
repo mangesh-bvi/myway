@@ -1,47 +1,30 @@
 import React, { Component } from "react";
 import "../styles/custom.css";
 import axios from "axios";
-import { Button, Modal, ModalBody, UncontrolledTooltip } from "reactstrap";
+import { Modal, ModalBody } from "reactstrap";
 import DatePicker from "react-datepicker";
 import Moment from "react-moment";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
-import { Capitalize } from "../helpers/Capitalize";
 import "react-datepicker/dist/react-datepicker.css";
-// import {GoogleMapReact,Polyline} from "google-map-react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import Truck from "./../assets/img/truck.png";
 import Plane from "./../assets/img/plane.png";
 import Ship from "./../assets/img/ship.png";
-import GreenCircle from "./../assets/img/green-circle.png";
-import RedCircle from "./../assets/img/red-circle.png";
-import ShipBig from "./../assets/img/ship-big.png";
-import ShipWhite from "./../assets/img/ship-white.png";
-import Booked from "./../assets/img/booked.png";
-import Departed from "./../assets/img/departed.png";
-import Arrived from "./../assets/img/arrived.png";
-import Inland from "./../assets/img/inland.png";
-import Delivery from "./../assets/img/delivery.png";
-import Edit from "./../assets/img/pencil.png";
-import Delete from "./../assets/img/red-delete-icon.png";
 import Calen from "./../assets/img/calendar.png";
-import Download from "./../assets/img/csv.png";
 
-import YellowFlag from "./../assets/img/yellow-flag.png";
 import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
   Marker,
-  InfoWindow,
-  Polyline,
-  google
+  InfoWindow
 } from "react-google-maps";
 
 const { compose } = require("recompose");
-
+////create defualt map on page load
 const MapWithAMakredInfoWindow = compose(
   withScriptjs,
   withGoogleMap
@@ -68,233 +51,6 @@ const MapWithAMakredInfoWindow = compose(
             </InfoWindow>
           )}
         </Marker>
-      );
-    })}
-  </GoogleMap>
-));
-function animateCircle(line) {
-  var count = 0;
-  window.setInterval(function() {
-    count = (count + 1) % 200;
-
-    // var icons = line.props.options.icons[0].icon;
-    var icons = line.props.options.icons[0];
-    line.props.options.icons[0].offset = count / 2 + "%";
-    // line.set("options", icons);
-    line.props.options.icons[0] = icons;
-  }, 20);
-}
-
-const MapWithAMakredInfoWindowLine = compose(
-  withScriptjs,
-  withGoogleMap
-)(props => (
-  <GoogleMap
-    defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
-    defaultZoom={3}
-  >
-    {props.transitpopupData.length > 0 ? (
-      <Polyline
-        path={props.transitpopupData}
-        geodesic={true}
-        style={{ zIndex: 2 }}
-        className="overlay"
-        options={{
-          strokeColor: "#39b54a",
-          strokeOpacity: 0.75,
-          strokeWeight: 5
-        }}
-      />
-    ) : null}
-
-    {props.markers.map((marker, i) => {
-      var map = GoogleMap;
-
-      var iCount = props.markers.length;
-      var start = marker.StartLatLng;
-      var end = marker.EndLatLng;
-      var cRouteLatLong = marker.CRouteLatLong;
-      const onClick = props.onClick.bind(this, i);
-
-      var lineSymbol = {
-        path: window.google.maps.SymbolPath.CIRCLE,
-        scale: 8,
-        strokeColor: "#393"
-      };
-      var line = new window.google.maps.Polyline({
-        strokeColor: "#FF0000",
-        strokeWeight: 3,
-        icons: [
-          {
-            icon: lineSymbol,
-            offset: "0",
-            repeat: "20px"
-          }
-        ]
-      });
-      line.set("icons", [
-        {
-          icon: line.icons[0].icon,
-          offset: line.icons[0].offset,
-          repeat: "50px"
-        }
-      ]);
-
-      let iconMarker = new window.google.maps.MarkerImage(
-        YellowFlag,
-        null /* size is determined at runtime */,
-        null /* origin is 0,0 */,
-        null /* anchor is bottom center of the scaled image */,
-        new window.google.maps.Size(32, 32)
-      );
-
-      var line2 = (
-        <Polyline
-          path={props.routerData}
-          geodesic={true}
-          style={{ zIndex: 1 }}
-          options={{
-            strokeColor: "#ff0022",
-            strokeOpacity: 1.75,
-            strokeWeight: 2,
-            icons: [
-              {
-                icon: lineSymbol,
-                offset: "0%",
-                repeat: "20px"
-              }
-            ]
-          }}
-        />
-      );
-
-      animateCircle(line2);
-      return (
-        <>
-          {line2}
-          {marker.CTransShipPort != "" ? (
-            <Marker
-              icon={iconMarker}
-              key={marker.CTransShipPort}
-              title={marker.CTransShipPort}
-              position={{
-                lat: cRouteLatLong[0].lat,
-                lng: cRouteLatLong[0].lng
-              }}
-            />
-          ) : null}
-          {marker.ORDERID == 1 ? (
-            <>
-              <Marker
-                key={start[0].lat}
-                title={marker.StartLocation}
-                //icon={GreenCircle}
-                onClick={props.onClick.bind(this, start[0].lat)}
-                position={{
-                  lat: start[0].lat,
-                  lng: start[0].lng
-                }}
-              >
-                {props.selectedMarker == start[0].lat && (
-                  <InfoWindow>
-                    <div>
-                      <h4>{marker.ShipperName}</h4>
-                      <br />
-                      <b>{marker.StartLocation}</b>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-              <Marker
-                key={end[0].lat}
-                icon={iconMarker}
-                onClick={props.onClick.bind(this, end[0].lat)}
-                position={{
-                  lat: end[0].lat,
-                  lng: end[0].lng
-                }}
-              >
-                {props.selectedMarker === end[0].lat && (
-                  <InfoWindow>
-                    <div>
-                      <h4>{marker.EndLocation}</h4>
-                      <br />
-                      <p>
-                        Transit time From {marker.StartLocation} To{" "}
-                        {marker.EndLocation} is:
-                        <b>
-                          {" "}
-                          {marker.NTransit_Time} (Max {marker.NMax_Transit_Time}
-                          , Min {marker.NMin_Transit_Time}) days
-                        </b>
-                      </p>
-                    </div>
-                  </InfoWindow>
-                )}
-              </Marker>
-            </>
-          ) : null}
-          {marker.EndLatLng[0].lat != props.markers[i].StartLocation[0].lat &&
-          marker.EndLatLng[0].lng != props.markers[i].StartLocation[0].lng &&
-          iCount != marker.ORDERID ? (
-            <Marker
-              key={end[0].lat}
-              icon={iconMarker}
-              onClick={props.onClick.bind(this, end[0].lat)}
-              position={{
-                lat: end[0].lat,
-                lng: end[0].lng
-              }}
-            >
-              {props.selectedMarker === end[0].lat && (
-                <InfoWindow>
-                  <div>
-                    <h4>{marker.EndLocation}</h4>
-                    <br />
-                    <p>
-                      Transit time From {marker.StartLocation} To{" "}
-                      {marker.EndLocation} is:
-                      <b>
-                        {" "}
-                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
-                        Min {marker.NMin_Transit_Time}) days
-                      </b>
-                    </p>
-                  </div>
-                </InfoWindow>
-              )}
-            </Marker>
-          ) : (
-            <Marker
-              key={end[0].lat}
-              //icon={RedCircle}
-              title={marker.EndLocation}
-              onClick={props.onClick.bind(this, end[0].lat)}
-              position={{
-                lat: end[0].lat,
-                lng: end[0].lng
-              }}
-            >
-              {props.selectedMarker === end[0].lat && (
-                <InfoWindow>
-                  <div>
-                    <h4>{marker.EndLocation}</h4>
-                    <br />
-                    <p>
-                      Transit time From {marker.StartLocation} To{" "}
-                      {marker.EndLocation} is:
-                      <b>
-                        {" "}
-                        {marker.NTransit_Time} (Max {marker.NMax_Transit_Time},
-                        Min {marker.NMin_Transit_Time}) days
-                      </b>
-                    </p>
-                  </div>
-                </InfoWindow>
-              )}
-            </Marker>
-          )}
-        </>
       );
     })}
   </GoogleMap>
@@ -329,21 +85,13 @@ class ShipmentPlanner extends Component {
       secondAvg: "",
       secondmgmt: "",
       via: "",
-      visualCarrier: "",
       imageClass: "air",
       thirdAvg: "",
-      zoom: 4,
-      center: {
-        lat: 25.37852,
-        lng: 75.02354
-      },
       mapsData: [],
-      MapsDetailsData: [],
       showingMaps: true,
       selectedMarker: false,
       mappingId: 0,
       transitpopupData: [],
-      routerMapData: [],
       loading: true,
       iframeKey: 0
     };
@@ -377,127 +125,10 @@ class ShipmentPlanner extends Component {
   }
 
   handleClick = (marker, event) => {
-    debugger;
     this.setState({ selectedMarker: "" });
     this.setState({ selectedMarker: marker });
   };
   HandleSubmitDetailsData(submitdata) {
-    // let self = this;
-    // var DetailsData = submitdata.data.Table;
-
-    // var PinModalData = [];
-    // var RouteData = [];
-
-    // for (let i = 0; i < DetailsData.length; i++) {
-    //   var finalList = new Object();
-    //   var cRoute = new Object();
-    //   // var orderId = DetailsData[i].ORDERID;
-    //   finalList.ORDERID = DetailsData[i].ORDERID;
-    //   finalList.CModeOfTransport = DetailsData[i].CModeOfTransport;
-    //   finalList.StartLocation = DetailsData[i].StartLocation;
-    //   finalList.ShipperName = DetailsData[i].ShipperName;
-    //   finalList.EndLocation = DetailsData[i].EndLocation;
-    //   finalList.ConsigneeName = DetailsData[i].ConsigneeName;
-    //   finalList.NTransit_Time = DetailsData[i].NTransit_Time;
-    //   finalList.NMax_Transit_Time = DetailsData[i].NMax_Transit_Time;
-    //   finalList.NMin_Transit_Time = DetailsData[i].NMin_Transit_Time;
-    //   finalList.CTransShipPort = DetailsData[i].CTransShipPort;
-    //   finalList.CType = DetailsData[i].CType;
-    //   finalList.Line = DetailsData[i].Line;
-    //   finalList.NEdLocationID = DetailsData[i].NEdLocationID;
-    //   finalList.NStLocationID = DetailsData[i].NStLocationID;
-    //   finalList.NTransRouteID = DetailsData[i].NTransRouteID;
-    //   finalList.SLinerID = DetailsData[i].SLinerID;
-    //   finalList.TransitType = DetailsData[i].TransitType;
-
-    //   //Start Location Lat lng
-    //   var CStLatLong = DetailsData[i].CStLatLong;
-    //   var startlatlng = [];
-    //   var startlatlnglst = new Object();
-    //   startlatlnglst.lat = Number(CStLatLong.split(",")[0]);
-    //   startlatlnglst.lng = Number(CStLatLong.split(",")[1]);
-    //   startlatlng.push(startlatlnglst);
-
-    //   finalList.StartLatLng = startlatlng;
-
-    //   // End Location Lat Lng
-    //   var CEdLatLong = DetailsData[i].CEdLatLong;
-    //   var endlatlng = [];
-    //   var endlatlnglst = new Object();
-    //   endlatlnglst.lat = Number(CEdLatLong.split(",")[0]);
-    //   endlatlnglst.lng = Number(CEdLatLong.split(",")[1]);
-    //   endlatlng.push(endlatlnglst);
-    //   finalList.EndLatLng = endlatlng;
-
-    //   //CRouteLatLong Lat Lng
-    //   // Rounting line
-    //   var cRouteLatLong = DetailsData[i].CRouteLatLong;
-    //   if (cRouteLatLong.length > 0) {
-    //     var routeArray = [];
-    //     var ComplexData = [];
-    //     routeArray.push(cRouteLatLong.split(";"));
-
-    //     var routlen = routeArray[0];
-    //     for (let k = 0; k < routlen.length; k++) {
-    //       var routelatlng = new Object();
-    //       var latlngvar = routlen[k];
-    //       routelatlng.lat = Number(latlngvar.split(",")[0]);
-    //       routelatlng.lng = Number(latlngvar.split(",")[1]);
-    //       ComplexData.push(routelatlng);
-    //     }
-    //     finalList.CRouteLatLong = ComplexData;
-    //   } else {
-    //     finalList.CRouteLatLong = null;
-    //   }
-
-    //   // if (orderId == 1) {
-    //   //   PinModalData.push(finalList);
-    //   //   PinModalData.push(finalList);
-    //   // } else {
-    //   //   PinModalData.push(finalList);
-    //   // }
-    //   PinModalData.push(finalList);
-
-    //   // Rounting line
-    //   var RouteLatLong = DetailsData[i].RouteLatLong;
-    //   var RouteArray = [];
-    //   // var ComplexData = [];
-    //   RouteArray.push(RouteLatLong.split(";"));
-
-    //   var routlen = RouteArray[0];
-    //   for (let k = 0; k < routlen.length; k++) {
-    //     var routelatlng = new Object();
-    //     var latlngvar = routlen[k];
-    //     routelatlng.lat = Number(latlngvar.split(",")[0]);
-    //     routelatlng.lng = Number(latlngvar.split(",")[1]);
-    //     RouteData.push(routelatlng);
-    //   }
-    // }
-    // localStorage.removeItem("finalDataMap");
-    // localStorage.removeItem("routeData");
-    // // var redPinData=[];
-    // // var flagPinData=[];
-    // // var cTransShipPortPin=[];
-
-    // // var orderCount=PinModalData.length;
-    // // for (var i = 0; i < orderCount; i++) {
-    // //    var oDetails=PinModalData[i];
-    // //    if(oDetails.ORDERID===1)
-    // //    {
-
-    // //    }
-
-    // // }
-
-    // localStorage.setItem("finalDataMap", JSON.stringify(PinModalData));
-    // localStorage.setItem("routeData", JSON.stringify(RouteData));
-    // self.setState({
-    //   MapsDetailsData: PinModalData,
-    //   showingMaps: false,
-    //   routerMapData: RouteData
-    // });
-
-    debugger;
     var mydata = submitdata.data.Table;
     let self = this;
     /////Baloon with First's Start
@@ -576,7 +207,6 @@ class ShipmentPlanner extends Component {
         BlocationData.lat = endLatLong.split(",")[0];
         BlocationData.long = endLatLong.split(",")[1];
         BlocationData.addr = Econtent;
-        ////balloons.push(endLatLong);
 
         balloons.push(BlocationData);
       }
@@ -628,8 +258,6 @@ class ShipmentPlanner extends Component {
         lineData.lng = Number(tempSData[1]);
         allLineData.push(lineData);
       }
-
-      //mainLineData = allLineData;
     }
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
@@ -644,6 +272,7 @@ class ShipmentPlanner extends Component {
     });
   }
 
+  //Page Load event in RegCompanyLocation API
   HandleOnPageLoad() {
     let self = this;
     self.setState({ loading: true });
@@ -695,7 +324,6 @@ class ShipmentPlanner extends Component {
             );
             if (index >= 0) {
               var tempCompData = finalDataForMap[index]["RegCompanyName"];
-              //finalDataForMap[index]["RegCompanyName"] //=finalDataForMap[index]["RegCompanyName"] + "," +
               finalDataForMap[index]["RegCompanyName"] =
                 tempCompData + "," + compName;
             }
@@ -710,18 +338,12 @@ class ShipmentPlanner extends Component {
     });
   }
 
+  //Handle change company drop-down
   companyChange = e => {
     debugger;
     let self = this;
     var selectComp = document.getElementById("drpCompany").selectedIndex;
     let compArray = this.state.companydrp[selectComp - 1];
-
-    // for (let index = 0; index < this.state.companydrp.length; index++) {
-    //   if (this.state.companydrp[index].MyCompID == e.target.value) {
-    //     compArray = this.state.companydrp[index];
-    //     break;
-    //   }
-    // }
     self.setState({ consigneedrp: [], linerdrp: [], transportModedrp: [] });
     if (compArray !== null) {
       axios({
@@ -747,6 +369,7 @@ class ShipmentPlanner extends Component {
     }
   };
 
+  //Handle change consignee change
   consigneeChange = e => {
     let self = this;
     let supconsid = e.target.value;
@@ -767,6 +390,7 @@ class ShipmentPlanner extends Component {
     });
   };
 
+  //Handle transport mode change
   transportModeChange = e => {
     let self = this;
     let transportmode = e.target.value;
@@ -774,7 +398,7 @@ class ShipmentPlanner extends Component {
     self.setState({ modeofTransport: transportmode, linerdrp: [] });
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/FetchLiners`,
+      url: `${appSettings.APIURL}/l`,
       data: {
         Type: 2,
         SupConsID: self.state.supConsId,
@@ -800,8 +424,8 @@ class ShipmentPlanner extends Component {
     });
   };
 
+  //Handle Submit button to call FetchShipmentPlannerMapData API
   handleSubmit = () => {
-    var supConsId = this.state.supConsId;
     var sailingDate = document.getElementById("saleDate").value;
     let self = this;
     self.setState({ transitpopupData: [], loading: true });
@@ -816,7 +440,6 @@ class ShipmentPlanner extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      // self.setState({ showingMaps: true });
       var totalAvg = 0;
       var totalMin = 0;
       var totalMax = 0;
@@ -920,27 +543,8 @@ class ShipmentPlanner extends Component {
     this.HandleOnPageLoad();
   }
 
-  renderTableHeader() {
-    return (
-      <div>
-        <div>1223333</div>
-      </div>
-    );
-  }
-
   render() {
-    const {
-      mapsData,
-      transitpopup,
-      deliveryPopup,
-      firstAvg,
-      secondAvg,
-      thirdAvg,
-      carriar,
-      MapsDetailsData,
-      transitpopupData,
-      routerMapData
-    } = this.state;
+    const { mapsData, transitpopup, deliveryPopup } = this.state;
 
     let optionItems = this.state.companydrp.map((planet, i) => (
       <option
@@ -965,18 +569,10 @@ class ShipmentPlanner extends Component {
       }
     }
 
-    function DeliveryPopupCheck(props) {
-      const data = props.noData;
-      if (data == "nodata") {
-        return "No schedule available";
-      }
-    }
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true" === "true") {
-      debugger;
+    if ((localStorage.getItem("isColepse") === "true") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -1060,11 +656,6 @@ class ShipmentPlanner extends Component {
                   <div className="full-map-cntr">
                     <div className="ship-detail-maps full-map mt-0">
                       <div className="ship-detail-map">
-                        {/* {this.state.loading === true ? (
-                          <div className="loader-icon"></div>
-                        ) : (
-                          ""
-                        )} */}
                         {this.state.showingMaps ? (
                           <>
                             {this.state.loading === true ? (
@@ -1376,75 +967,6 @@ class ShipmentPlanner extends Component {
                             </div>
                           </div>
                         </div>
-
-                        {/* <div className="Transitnew">
-                        <ul className="progressk">
-                             <li className="progress1">
-                               <span className="grey">
-                                 <img src={Ship} alt="" className="" />
-                               </span>
-                               <label className="turkey">Istanbul,Turkey</label>
-                              </li>
-                              <li className="progress1">
-                               <span className="grey">1</span>
-                               <button type="button" className="min1">Min.Days</button>
-                               <button type="button" className="min1">Min.Days</button>
-                               <button type="button" className="min1">Min.Days</button>
-                              </li>
-                              <li className="progress1">
-                               <span className="grey">
-                                 <span className="red"></span>
-                               </span>
-                               <label className="turkey1">Istanbul,Turkey</label>
-                              </li> 
-                        </ul>
-                      </div>
-                      <div className="Transitnew">
-                        <ul className="progressk">
-                             <li className="progress1">
-                               <span className="grey">
-                                 <img src={Ship} alt="" className="" />
-                               </span>
-                               <label className="turkey">Istanbul,Turkey</label>
-                              </li>
-                              <li className="progress1">
-                               <span className="grey">1</span>
-                               <button type="button" className="min1">Min.Days</button>
-                               <button type="button" className="min1">Min.Days</button>
-                               <button type="button" className="min1">Min.Days</button>
-                              </li>
-                              <li className="progress1">
-                               <span className="grey">
-                                 <span className="red"></span>
-                               </span>
-                               <label className="turkey1">Istanbul,Turkey</label>
-                              </li> 
-                        </ul>
-                      </div>
-
-                      <div className="Transitnew">
-                        <ul className="progressk">
-                             <li className="progress1">
-                               <span className="grey">
-                                 <img src={Ship} alt="" className="" />
-                               </span>
-                               <label className="turkey">Istanbul,Turkey</label>
-                              </li>
-                              <li className="progress1">
-                               <span className="grey">1</span>
-                               <button type="button" className="min1">Min.Days</button>
-                               <button type="button" className="min1">Min.Days</button>
-                               <button type="button" className="min1">Min.Days</button>
-                              </li>
-                              <li className="progress1">
-                               <span className="grey">
-                                 <span className="red"></span>
-                               </span>
-                               <label className="turkey1">Istanbul,Turkey</label>
-                              </li> 
-                        </ul>
-                      </div> */}
-
                         <div className="transit-sect-overflow px-2">
                           {transitpopup.map((cell, i) => {
                             var imgSrc = "";
@@ -1512,28 +1034,6 @@ class ShipmentPlanner extends Component {
                     </div>
                   </ModalBody>
                 </Modal>
-                {/* <Modal
-                  className="delete-popup"
-                  isOpen={this.state.modalEdit}
-                  toggle={this.toggleEdit}
-                  centered={true}
-                >
-                  <ModalBody>
-                    <div className="rename-cntr login-fields">
-                      <label>Rename your document</label>
-                      <input type="text" placeholder="Rename here..." />
-                    </div>
-                    <Button className="butn" onClick={this.toggleEdit}>
-                      Done
-                    </Button>
-                    <Button
-                      className="butn cancel-butn"
-                      onClick={this.toggleEdit}
-                    >
-                      Cancel
-                    </Button>
-                  </ModalBody>
-                </Modal> */}
               </div>
             </div>
           </div>
