@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-
 import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
@@ -27,15 +25,15 @@ class myWayMessage extends Component {
       selectedItem: {}
     };
 
-    this.bindMyWayMessage = this.bindMyWayMessage.bind(this);
-    this.handlechange = this.handlechange.bind(this);
+    this.BindMyWayMessage = this.BindMyWayMessage.bind(this);
+    this.HandleChange = this.HandleChange.bind(this);
   }
 
   componentDidMount() {
-    this.bindMyWayMessage();
+    this.BindMyWayMessage();
   }
-
-  bindMyWayMessage() {
+  ////Bind My Way Meassage Data
+  BindMyWayMessage() {
     let self = this;
     axios({
       method: "post",
@@ -46,25 +44,25 @@ class myWayMessage extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        
         var Message = "";
         var MessageArr = [];
 
         self.setState({
           MessageArr: response.data.Table
         });
-        self.bindMyWayMessageById(response.data.Table[0]);
+        self.BindMyWayMessageById(response.data.Table[0]);
       })
       .catch(error => {
-        debugger;
+        
         var temperror = error.response.data;
         var err = temperror.split(":");
         NotificationManager.error(err[1].replace("}", ""));
       });
   }
-
-  bindMyWayMessageById(item, e) {
-    debugger;
+  ////bind message by id data
+  BindMyWayMessageById(item, e) {
+    
     let self = this;
     self.setState({ selectedItem: item });
     axios({
@@ -78,7 +76,7 @@ class myWayMessage extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        
         self.setState({
           CommunicationUser: item.LastCommunicationUser,
           MessageLogArr: response.data,
@@ -86,25 +84,25 @@ class myWayMessage extends Component {
         });
       })
       .catch(error => {
-        debugger;
+        
         var temperror = error.response.data;
         var err = temperror.split(":");
         NotificationManager.error(err[1].replace("}", ""));
       });
   }
-
+  ////Handle Send replay to Common message
   SendMessage = () => {
-    debugger;
+    
     let self = this;
     var hbllNo = this.state.ReferenceNo;
     var msgg = this.state.msgg;
- 
+
     var paramdata = {
       UserID: encryption(window.localStorage.getItem("userid"), "desc"),
       ReferenceNo: this.state.ReferenceNo,
       TypeOfMessage: this.state.selectedItem.MessageType,
       Message: this.state.msgg,
-      SubjectMessage: this.state.selectedItem.MessageTitle||"",
+      SubjectMessage: this.state.selectedItem.MessageTitle || "",
       MessageID: this.state.selectedItem.MessageId
     };
 
@@ -117,20 +115,18 @@ class myWayMessage extends Component {
         data: paramdata,
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
         if (response != null) {
           if (response.data != null) {
             if (response.data.length > 0) {
               if (response.data[0] != null) {
                 var message = response.data[0].Result;
-
                 if (response.data[0].Result === "Message Send Successfully") {
                   NotificationManager.success(response.data[0].Result);
-                  
                 }
                 var item = self.state.selectedItem;
-                  self.setState({ msgg: "" });
-                  self.bindMyWayMessageById(item);
+                self.setState({ msgg: "" });
+                self.BindMyWayMessageById(item);
               }
             }
           }
@@ -138,11 +134,8 @@ class myWayMessage extends Component {
       });
     }
   };
-
-  handlechange(e) {
-    debugger;
-    //let fields = this.state.fields;
-    // msgg = e.target.value;
+  ////handle Change Message Text Filed
+  HandleChange(e) {
     this.setState({
       msgg: e.target.value
     });
@@ -150,11 +143,9 @@ class myWayMessage extends Component {
 
   render() {
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -179,7 +170,7 @@ class myWayMessage extends Component {
                           {this.state.MessageArr.map((item, i) => (
                             <div
                               class="chat_list active_chat"
-                              onClick={this.bindMyWayMessageById.bind(
+                              onClick={this.BindMyWayMessageById.bind(
                                 this,
                                 item
                               )}
@@ -231,7 +222,7 @@ class myWayMessage extends Component {
                               class="write_msg"
                               placeholder="Type a message"
                               value={this.state.msgg}
-                              onChange={this.handlechange.bind(this)}
+                              onChange={this.HandleChange.bind(this)}
                             />
                             <button
                               class="msg_send_btn"
@@ -253,7 +244,7 @@ class myWayMessage extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </div>
     );
   }

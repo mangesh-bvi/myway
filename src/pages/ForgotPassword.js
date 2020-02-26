@@ -15,19 +15,23 @@ class ForgotPassword extends React.Component {
     this.state = {
       email: ""
     };
-    this.handlechange = this.handlechange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.HandleChange = this.HandleChange.bind(this);
+    this.HandleSubmit = this.HandleSubmit.bind(this);
   }
-
+////Handle Back To Login Page 
   HandleCancel(){
     this.props.history.push("/");
   }
-  handlechange(e) {
+
+  ////Handle Change Text Filed
+  HandleChange(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {
+  
+  ////Handle Submit button Click  
+  HandleSubmit(e) {
     this.setState({ submitted: true });
     const { email } = this.state;
     if (email !== "") {
@@ -52,7 +56,7 @@ class ForgotPassword extends React.Component {
                   <input
                     type="email"
                     name={"email"}
-                    onChange={this.handlechange}
+                    onChange={this.HandleChange}
                     placeholder="Enter Your Email ID"
                   />
                 </div>
@@ -61,7 +65,7 @@ class ForgotPassword extends React.Component {
                 <button
                   type="button"
                   className="butn"
-                  onClick={() => this.handleSubmit()}
+                  onClick={() => this.HandleSubmit()}
                 >
                   Submit
                 </button>
@@ -75,11 +79,13 @@ class ForgotPassword extends React.Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </section>
     );
   }
 }
+
+////Handle Change Password Check with Emil Address
 function ChangePasswordCheck(email) {
   const requestOptions = {
     method: "POST",
@@ -95,16 +101,13 @@ function ChangePasswordCheck(email) {
     
 }
 
-function handleResponse(response) {
-  
-  return response.text().then(text => {
-    
+function handleResponse(response) {  
+  return response.text().then(text => {    
     if(text.includes('No Record Found') === true)
     {
       NotificationManager.error('Please enter valid Email Id');      
       return false;
     }
-
     const data = text && JSON.parse(text);
     if (!response.ok) {
     } else {

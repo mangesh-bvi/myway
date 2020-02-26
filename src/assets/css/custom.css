@@ -3619,7 +3619,7 @@ input[type="range"]::-moz-range-track {
 .react-rate-tab.react-rate-table .ReactTable .rt-th,
 .react-rate-tab.react-rate-table .ReactTable .rt-tbody .rt-td {
   padding-right: 10px !important;
-  padding-left: 10px !important;
+  padding-left: 0px !important;
 }
 .less-left-rate {
   padding-left: 0;
@@ -4437,7 +4437,7 @@ progress::-webkit-progress-bar {
   height: 115px;
 }
 
-.CurrencyCodecss{
+.CurrencyCodecss {
   width: 150px;
 }
 .shidat .react-datepicker-popper {
@@ -4452,15 +4452,15 @@ progress::-webkit-progress-bar {
 .large-popupka1 {
   max-width: 60%;
 }
-.spotcustomer{
- text-align: left !important;
- display: inline-block;    
+.spotcustomer {
+  text-align: left !important;
+  display: inline-block;
 }
-.spotcustdrop div:first-child, .spotcustdrop div:first-child input {
+.spotcustdrop div:first-child,
+.spotcustdrop div:first-child input {
   width: 100%;
 }
-.lbltxtclr .spotcustdrop
-{
+.lbltxtclr .spotcustdrop {
   color: #000;
 }
 .AirColor {
@@ -4469,7 +4469,7 @@ progress::-webkit-progress-bar {
 .ana-reset {
   display: flex;
 }
-.colap .menu-optio .op{
+.colap .menu-optio .op {
   padding: 10px 5px;
 }
 .menu-optio .op:hover,
@@ -4494,6 +4494,36 @@ progress::-webkit-progress-bar {
 .ra-font .ReactTable .rt-tbody .rt-td {
   padding: 10px 10px !important;
 }
-.locawid .cont-costs .remember-forgot label{
+.locawid .cont-costs .remember-forgot label {
   width: 100px;
 }
+
+.currncybtn {
+  padding: 0px 0px 30px 0px;
+}
+.msgdate {
+  font-size: 10px;
+  font-weight: bold;
+}
+.mainTrackTypediv {
+  position: relative;
+ 
+  display: flex;
+  margin-top: 15px;
+}
+
+.clearSearch{
+  display: flex;
+  align-items: center;
+}
+
+.clearSearch h2 {
+  margin-right: 20px;  
+}
+ 
+.clearSearch span {
+  color:#265EB5 ;
+  cursor: pointer;
+}
+ 
+

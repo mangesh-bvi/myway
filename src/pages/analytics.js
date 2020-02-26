@@ -3,7 +3,7 @@ import Headers from "../component/header";
 import PlaneBlue from "./../assets/img/plane-blue.svg";
 import PlaneWhite from "./../assets/img/plane-white.svg";
 import TruckBlue from "./../assets/img/truck-blue.svg";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import TruckWhite from "./../assets/img/truck-white.svg";
 import ShipBlue from "./../assets/img/ship-blue.svg";
 import ShipWhite from "./../assets/img/ship-white.svg";
@@ -18,7 +18,6 @@ import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import axios from "axios";
-
 var volumeOptions = {
   title: {
     display: true,
@@ -41,7 +40,6 @@ var volumeOptions = {
     }
   },
   scales: {
-    //volumeOptions.scales.yAxes.scaleLabel.labelString
     yAxes: [
       {
         ticks: {
@@ -76,29 +74,9 @@ var volumeOptions = {
   }
 };
 
-var greencounterOption = {
-  title: {
-    display: true,
-    text: "Total: $455k",
-    fontSize: 16,
-    fontFamily: "Bold Font",
-    fontColor: "#000",
-    padding: 20
-  },
-  legend: {
-    display: false
-  },
-  tooltips: {
-    enabled: false
-  },
-  rotation: 0.5 * Math.PI,
-  cutoutPercentage: 0
-};
-
 class Analytics extends Component {
   constructor(props) {
     var someDate = new Date();
-
     super(props);
     this.state = {
       startDate: someDate.setMonth(someDate.getMonth() - 6),
@@ -132,28 +110,17 @@ class Analytics extends Component {
       selectedtab: "shipment",
       ReportType: "Count chart"
     };
-    this.handleAnalyticsShipment = this.handleAnalyticsShipment.bind(this);
+    this.HandleAnalyticsShipment = this.HandleAnalyticsShipment.bind(this);
   }
 
   componentDidMount() {
-    this.handleAnalyticsShipment(null);
+    this.HandleAnalyticsShipment(null);
   }
 
-  handleAnalyticsShipment(event) {
+  ////Handle Analytics Shipemt Data
+  HandleAnalyticsShipment(event) {
     let self = this;
-    debugger;
 
-    // if (
-    //   this.state.toggleShipShip === true &&
-    //   this.state.toggleFclLcl === false
-    // ) {
-    //   NotificationManager.error("Please select FCL or LCL");
-    // } else if (
-    //   this.state.toggleRoadShip === true &&
-    //   this.state.toggleFtlLtl === false
-    // ) {
-    //   NotificationManager.error("Please select FTL or LTL");
-    // } else {
     this.setState({
       toggleAIR: false,
       toggleShipShip: false,
@@ -172,14 +139,11 @@ class Analytics extends Component {
     var DatedBy = document.getElementById("Datedbydrp").value;
 
     if (event != null) {
-      // alert(event.target.id)
-
       if (event.target.id == "shipment-view-btn") {
         var ActiveFlagele = document.getElementsByName("ship-type");
         for (var i = 0; i < ActiveFlagele.length; i++) {
           if (ActiveFlagele[i].checked) ActiveFlag = ActiveFlagele[i].value;
         }
-
         var Modeele = document.getElementsByName("ship-way");
         var modegetElementsByName = "";
         if (Modeele.length > 0) {
@@ -250,17 +214,14 @@ class Analytics extends Component {
       ActiveFlag: ActiveFlag,
       Mode: Mode,
       period: period,
-      //ShipperID:1340354108
       DatedBy: DatedBy
     };
 
     this.setShipmentGraph(axiosdata);
-    // }
   }
-
-  handleViewAnalyticsShipment(event) {
+  ////Handle view Analatics shipment data
+  HandleViewAnalyticsShipment(event) {
     let self = this;
-    debugger;
 
     var chartType = document.getElementById("SegregatedBydrp").value;
     if (chartType == "Volume Chart") {
@@ -280,17 +241,6 @@ class Analytics extends Component {
     } else {
     }
 
-    // if (
-    //   this.state.toggleShipShip === true &&
-    //   this.state.toggleFclLcl === false
-    // ) {
-    //   NotificationManager.error("Please select FCL or LCL");
-    // } else if (
-    //   this.state.toggleRoadShip === true &&
-    //   this.state.toggleFtlLtl === false
-    // ) {
-    //   NotificationManager.error("Please select FTL or LTL");
-    // } else {
     var FromDate = "";
     var ToDate = "";
     var ActiveFlag = "D";
@@ -300,8 +250,6 @@ class Analytics extends Component {
     var DatedBy = document.getElementById("Datedbydrp").value;
 
     if (event != null) {
-      // alert(event.target.id)
-
       if (event.target.id == "shipment-view-btn") {
         var ActiveFlagele = document.getElementsByName("ship-type");
         for (var i = 0; i < ActiveFlagele.length; i++) {
@@ -398,8 +346,6 @@ class Analytics extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
-
         self.setState({ graphShipmentdataset: [], loding: false });
         var Segregatedby = document.getElementById("SegregatedBydrp").value;
         //ValueChart
@@ -409,40 +355,10 @@ class Analytics extends Component {
         var arrayOcean = [];
         var arrayTruck = [];
 
-        function compare(a, b) {
-          // Use toUpperCase() to ignore character casing
-          const bandA = a.ShipmentPeriod.toUpperCase();
-          const bandB = b.ShipmentPeriod.toUpperCase();
-
-          let comparison = 0;
-          if (bandA > bandB) {
-            comparison = 1;
-          } else if (bandA < bandB) {
-            comparison = -1;
-          }
-          return comparison;
-        }
-
         if (Segregatedby == "Count Chart") {
-          // Table = response.data.Table.sort(compare);
-
           Table = response.data.Table;
-          debugger;
           arrayAir = Table.filter(item => item.Modeoftransport == "Air");
-          // arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
-          // arrayTruck = Table.filter(item => item.Modeoftransport land");
-
-          // arrayOcean = Table.filter(
-          //   item =>
-          //     item.Modeoftransport == "Fcl" || item.Modeoftransport == "Lcl"
-          // );
           arrayOcean = Table.filter(item => item.Modeoftransport == "Ocean");
-
-          // arrayTruck = Table.filter(
-          //   item =>
-          //     item.Modeoftransport == "Ftl" || item.Modeoftransport == "Ltl"
-          // );
-
           arrayTruck = Table.filter(item => item.Modeoftransport == "Inland");
 
           volumeOptions.title.text = "Total Amount of Shipments";
@@ -450,8 +366,6 @@ class Analytics extends Component {
         } else if (Segregatedby == "Volume Chart") {
           Table = response.data.Table;
           arrayAir = Table.filter(item => item.ModeOfTransport == "Air");
-          // arrayOcean = Table.filter(item => item.ModeOfTransport == "Ocean");
-          // arrayTruck = Table.filter(item => item.ModeOfTransport == "Inland");
           arrayOcean = Table.filter(
             item =>
               item.ModeOfTransport == "Fcl" || item.ModeOfTransport == "Lcl"
@@ -462,7 +376,7 @@ class Analytics extends Component {
           );
           volumeOptions.title.text = "Total Volume of Shipments";
           var ylable = "";
-          debugger;
+
           if (self.state.toggleAIR == true) {
             ylable = "KGS";
           } else if (self.state.cargoTypeFCL == true) {
@@ -509,7 +423,6 @@ class Analytics extends Component {
         }
 
         if (arrayOcean != null) {
-          debugger;
           if (arrayOcean.length > 0) {
             for (var i = 0; i < arrayOcean.length; i++) {
               if (Segregatedby == "Volume Chart") {
@@ -518,8 +431,6 @@ class Analytics extends Component {
                 arrayOceandata.push(arrayOcean[i].NoOfShipment);
               }
             }
-            // arrayOcean[0].Modeoftransport
-            debugger;
             var label = "";
             if (self.state.cargoTypeLCL == true) {
               label = "LCL";
@@ -543,7 +454,7 @@ class Analytics extends Component {
 
         if (arrayTruck != null) {
           if (arrayTruck.length > 0) {
-            debugger;
+            
             for (var i = 0; i < arrayTruck.length; i++) {
               if (Segregatedby == "Volume Chart") {
                 arrayTruckdata.push(arrayTruck[i].Volume);
@@ -566,11 +477,11 @@ class Analytics extends Component {
             });
           }
         }
-        debugger;
+        
         self.setState({ graphShipmentdataset: graphdataset });
       })
       .catch(error => {
-        debugger;
+        
         var temperror = "";
         var err = "";
         if (error.response != undefined) {
@@ -647,7 +558,7 @@ class Analytics extends Component {
   };
 
   toggleBtnsShip = e => {
-    debugger;
+    
     if (e.target.id === "ship-ship") {
       this.setState({
         toggleShipShip: true,
@@ -766,17 +677,7 @@ class Analytics extends Component {
       loding: true,
       selectedtab: "Invoice"
     });
-    // if (
-    //   this.state.toggleShipInv === true &&
-    //   this.state.toggleInvFclLcl === false
-    // ) {
-    //   NotificationManager.error("Please select FCL or LCL");
-    // } else if (
-    //   this.state.toggleRoadInv === true &&
-    //   this.state.toggleInvFtlLtl === false
-    // ) {
-    //   NotificationManager.error("Please select FTL or LTL");
-    // } else {
+
     var ActiveFlag = "A";
     //var Mode = "A,O,I";
     var Mode = "A,FCL,LCL,FTL,LTL";
@@ -858,9 +759,8 @@ class Analytics extends Component {
       ActiveFlag: ActiveFlag,
       Mode: Mode,
       period: period
-      //ShipperID:1340354108
     };
-    debugger;
+
     if (event.target.id == "invoices-view-btn") {
       axiosdata.ShipperID = document.getElementById(
         "drp-supplie-invoice"
@@ -869,7 +769,6 @@ class Analytics extends Component {
     } else {
       this.setSupplierdrop(axiosdata);
     }
-    // }
   }
 
   setSupplierdrop(axiosdata) {
@@ -884,7 +783,7 @@ class Analytics extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        
         self.setState({ setSupplierdrop: response.data.Table });
 
         if (response != null) {
@@ -902,15 +801,13 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-        // alert(err[1].replace("}", ""));
+
         NotificationManager.error(err);
         self.setState({ setSupplierdrop: [] });
       });
   }
 
   setgrafval(axiosdata) {
-    debugger;
-
     let self = this;
     self.setState({ loding: true });
     axios({
@@ -920,7 +817,6 @@ class Analytics extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         self.setState({ graphdataset: [], loding: false });
         volumeOptions.scales.yAxes[0].scaleLabel.labelString = "USD";
 
@@ -935,7 +831,7 @@ class Analytics extends Component {
           } else {
             arraylabel.push(response.data.Table[i].ShipmentPeriod);
           }
-          debugger;
+
           self.setState({ graflabels: arraylabel });
         }
 
@@ -1018,11 +914,11 @@ class Analytics extends Component {
         self.setState({ graphdataset: graphdataset });
       })
       .catch(error => {
-        debugger;
+        
         var temperror = error;
-        console.log(temperror);
+
         var err = temperror.split(":");
-        // alert(err[1].replace("}", ""));
+
         NotificationManager.error(err);
         self.setState({ graphdataset: [], loding: false });
       });
@@ -1044,9 +940,8 @@ class Analytics extends Component {
     }
     return arr;
   }
-
-  handleAnalyticsReset() {
-    debugger;
+////Handle Analytics Reset Data
+  HandleAnalyticsResetData() {
     var someDate = new Date();
     setTimeout(() => {
       this.setState({
@@ -1075,22 +970,15 @@ class Analytics extends Component {
       });
     }, 500);
 
-    this.handleAnalyticsShipment(null);
+    this.HandleAnalyticsShipment(null);
   }
-  handleReportClick() {
-    // if (
-    //   this.state.toggleAIR == true ||
-    //   this.state.toggleShipShip == true ||
-    //   this.state.toggleRoadShip == true
-    // ) {
+  ////Handle Report Button Click
+  HandleReportClick() {
     this.props.history.push("reports");
-    // } else {
-    //   NotificationManager.error("please select atlest one Mode of transport");
-    // }
   }
 
   handleSegregated(e) {
-    debugger;
+    
     var value = e.target.value;
 
     this.setState({
@@ -1106,41 +994,15 @@ class Analytics extends Component {
       labels: this.state.grafShipmentlabels,
       datasets: this.state.graphShipmentdataset
     };
-    console.log(
-      this.state.grafShipmentlabels,
-      "------------grafShipmentlabels"
-    );
-
-    console.log(
-      this.state.graphShipmentdataset,
-      "------------grafShipmentlabels"
-    );
-
-    console.log(this.state.graflabels, "------------graflabels");
-
     var buyerData = {
       labels: this.state.graflabels,
       datasets: this.state.graphdataset
     };
-
-    let greenCounterdata = {
-      labels: ["Green", "Red"],
-      datasets: [
-        {
-          data: [40, 10, 50],
-          backgroundColor: ["#4a99e7", "#50ad84", "#3357ac"]
-          // hoverBackgroundColor: ["#63CD16", "#EF1617"]
-          // borderWidth: 0
-        }
-      ],
-      text: "23%"
-    };
-
     let optionSupplierName = this.state.setSupplierdrop.map((item, i) => (
       <option value={item.ShipperID}>{item.ShipperName}</option>
     ));
     var colClassName = "";
-    // if (localStorage.getItem("isColepse")==="true"==="true") {
+
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
@@ -1154,7 +1016,7 @@ class Analytics extends Component {
             <SideMenu />
           </div>
           <div className="cls-rt">
-            <NotificationContainer />
+             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
             <ul className="nav cust-tabs pt-2" role="tablist">
               <li>
                 <a
@@ -1165,7 +1027,7 @@ class Analytics extends Component {
                   role="tab"
                   aria-controls="shipments"
                   aria-selected="true"
-                  onClick={this.handleAnalyticsShipment.bind(this)}
+                  onClick={this.HandleAnalyticsShipment.bind(this)}
                 >
                   Shipments
                 </a>
@@ -1185,7 +1047,7 @@ class Analytics extends Component {
               </li>
               <li style={{ margin: "-3px 15px 0px auto" }}>
                 <button
-                  onClick={this.handleReportClick.bind(this)}
+                  onClick={this.HandleReportClick.bind(this)}
                   href="/reports"
                   className="butn mt-0 blue-butn"
                 >
@@ -1346,25 +1208,18 @@ class Analytics extends Component {
                   <div className="ana-rep ana-reset">
                     <button
                       className="butn mt-0"
-                      onClick={this.handleAnalyticsReset.bind(this)}
+                      onClick={this.HandleAnalyticsResetData.bind(this)}
                       id="shipment-view-btn"
                     >
                       Reset
                     </button>
                     <button
                       className="butn mt-0"
-                      onClick={this.handleViewAnalyticsShipment.bind(this)}
+                      onClick={this.HandleViewAnalyticsShipment.bind(this)}
                       id="shipment-view-btn"
                     >
                       view
                     </button>
-                    {/* <button
-                      onClick={this.handleReportClick.bind(this)}
-                      href="/reports"
-                      className="butn mt-0 blue-butn"
-                    >
-                      Reports
-                    </button> */}
                   </div>
                 </div>
                 <div className="ana-radio-cntr">
@@ -1380,14 +1235,7 @@ class Analytics extends Component {
                       <option value="Y">Yearly</option>
                     </select>
                   </div>
-                  {/* <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>Supplier </span>
-                    <select>
-                      <option>Supplier Name</option>
-                      <option>Supplier Name</option>
-                      <option>Supplier Name</option>
-                    </select>
-                  </div> */}
+
                   <div className="login-fields mb-0 d-flex align-items-center">
                     <span>Segregated&nbsp;by </span>
                     <select
@@ -1397,7 +1245,6 @@ class Analytics extends Component {
                     >
                       <option value="Count Chart">Count Chart</option>
                       <option value="Volume Chart">Volume Chart</option>
-                      {/* <option value="ValueChart">Value Chart</option> */}
                     </select>
                   </div>
 
@@ -1472,96 +1319,8 @@ class Analytics extends Component {
                       )}
                     </div>
                   )}
-                  {/* <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>Values </span>
-                    <select>
-                      <option>$1 - $100</option>
-                      <option>$101 - $200</option>
-                      <option>$201 - $300</option>
-                    </select>
-                  </div> */}
                 </div>
-                {/* <div className="ana-radio-cntr">
-                  <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>Dated&nbsp;by </span>
-                    <select id="Datedbydrp">
-                      <option value="Delivery Date" seected>
-                        Delivery Date
-                      </option>
-                      <option value="Booking Date">Booking Date</option>
-                      <option value="Dispatched Date">Dispatched Date</option>
-                    </select>
-                  </div>
-                  {this.state.toggleShipmentYearDate && (
-                    <div className="login-fields mb-0 d-flex align-items-center">
-                      <span>Year</span>
-                      <select id="date-year-shipment">
-                        {this.buildOptions()}
-                      </select>
-                    </div>
-                  )}
-                  {!this.state.toggleShipmentYearDate && (
-                    <div className="login-fields mb-0 d-flex align-items-center">
-                      <span>From </span>
 
-                      {this.state.toggleShipmentWeekDate && (
-                        <DatePicker
-                          id="datpicker-from-shipment"
-                          className="ana-to"
-                          selected={this.state.startDate}
-                          onChange={this.handleChangeStart}
-                          maxDate={new Date()}
-                          showWeekNumbers
-                        />
-                      )}
-                      {this.state.toggleShipmentMonthDate && (
-                        <DatePicker
-                          id="datpicker-from-shipment"
-                          className="ana-to"
-                          selected={this.state.startDate}
-                          onChange={this.handleChangeStart}
-                          dateFormat="MM/yyyy"
-                          maxDate={new Date()}
-                          showMonthYearPicker
-                        />
-                      )}
-                    </div>
-                  )}
-                  {!this.state.toggleShipmentYearDate && (
-                    <div className="login-fields mb-0 d-flex align-items-center">
-                      <span>To </span>
-                      {this.state.toggleShipmentWeekDate && (
-                        <DatePicker
-                          id="datpicker-to-shipment"
-                          className="ana-to"
-                          selected={this.state.endDate}
-                          onChange={this.handleChangeEnd}
-                          maxDate={new Date()}
-                          showWeekNumbers
-                        />
-                      )}
-                      {this.state.toggleShipmentMonthDate && (
-                        <DatePicker
-                          id="datpicker-to-shipment"
-                          className="ana-to"
-                          selected={this.state.endDate}
-                          onChange={this.handleChangeEnd}
-                          dateFormat="MM/yyyy"
-                          maxDate={new Date()}
-                          showMonthYearPicker
-                        />
-                      )}
-                    </div>
-                  )}
-                  <div className="login-fields mb-0 d-flex align-items-center">
-                    <span>Values </span>
-                    <select>
-                      <option>$1 - $100</option>
-                      <option>$101 - $200</option>
-                      <option>$201 - $300</option>
-                    </select>
-                  </div>
-                </div> */}
                 {this.state.loding === true ? (
                   <div className="loader-icon"></div>
                 ) : (
@@ -1727,9 +1486,6 @@ class Analytics extends Component {
                     >
                       view
                     </button>
-                    {/* <a href="/reports" className="butn mt-0 blue-butn">
-                      Reports
-                    </a> */}
                   </div>
                 </div>
                 <div className="ana-radio-cntr">

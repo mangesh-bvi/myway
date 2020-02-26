@@ -11,7 +11,7 @@ import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
 import Download from "./../assets/img/csv.png";
 import { withRouter } from "react-router";
-import { encryption, convertToPlain } from "../helpers/encryption";
+import { encryption } from "../helpers/encryption";
 import PDF from "./../assets/img/pdf.png";
 const imageAsset = "./../assets/img";
 const fetch = require("node-fetch");
@@ -29,7 +29,6 @@ class BookingView extends Component {
       showContent: false,
       modalBook: false,
       BookingNo: "",
-
       shiperVal: "",
       consigneeval: "",
       commodityData: [],
@@ -55,17 +54,13 @@ class BookingView extends Component {
       Notify_AddressID: 0,
       Notify_Displayas: "",
       NotifyName: "",
-
       BuyerID: 0,
       Buyer_AddressID: 0,
       Buyer_Displayas: "",
       BuyerName: "",
-
       consineeData: {},
       shipperData: {},
       buyerId: 0,
-
-      //---------------sales quotation details
       multiCBM: [],
       ContainerLoad: "",
       salesQuotaNo: "",
@@ -107,7 +102,7 @@ class BookingView extends Component {
   }
 
   componentDidUpdate() {
-    debugger;
+    
     if (this.props.location.state) {
       var status = this.props.location.state.status;
       if (status) {
@@ -119,12 +114,11 @@ class BookingView extends Component {
         }
       }
     } else {
-      // this.HandleBookingList();
     }
   }
 
   componentDidMount() {
-    debugger;
+    
     if (this.props.location.state.BookingNo && this.props.location.state.Mode) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -195,20 +189,6 @@ class BookingView extends Component {
         this.props.history.push("/booking-table");
       }
     }
-  }
-
-  HandleCommodityDropdown() {
-    let self = this;
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/CommodityDropdown`,
-      data: {},
-      headers: authHeader()
-    }).then(function(response) {
-      var commodityData = response.data.Table;
-      self.setState({ commodityData }); ///problem not working setstat undefined
-    });
   }
 
   ////file upload method for booking
@@ -350,7 +330,6 @@ class BookingView extends Component {
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
     let self = this;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/CommodityDropdown`,
@@ -358,22 +337,9 @@ class BookingView extends Component {
       headers: authHeader()
     }).then(function(response) {
       var commodityData = response.data.Table;
-      self.setState({ commodityData }); ///problem not working setstat undefined
+      self.setState({ commodityData });
     });
   }
-
-  toggleProfit() {
-    this.setState(prevState => ({
-      modalProfit: !prevState.modalProfit
-    }));
-  }
-
-  toggleRequest() {
-    this.setState(prevState => ({
-      modalRequest: !prevState.modalRequest
-    }));
-  }
-
   onDocumentChangeHandler = event => {
     var FileData = event.target.files;
     var filesArr = this.state.selectedFile;
@@ -386,30 +352,10 @@ class BookingView extends Component {
     }
   };
 
-  GetImageURL(imageObj) {
-    //debugger
-    let URL = imageAsset + "/ATAFreight_console.png";
-    new Promise(resolve => {
-      const img = new Image();
-      img.onload = () => {
-        URL = imageAsset + "/" + imageObj.Linename + ".png";
-        imageObj.preparedImageURl = URL;
-        resolve({ status: "ok" });
-      };
-      img.onerror = () => {
-        URL = imageAsset + "/ATAFreight_console.png";
-        imageObj.preparedImageURl = URL;
-        resolve({ status: "error" });
-      };
-      img.src = imageAsset + "/" + imageObj.Linename + ".png";
-    });
-  }
-
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
     this.setState({ loding: true });
     let self = this;
-
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (bookingId !== "" && bookingId !== null) {
@@ -417,12 +363,11 @@ class BookingView extends Component {
         method: "post",
         url: `${appSettings.APIURL}/BookigGridDetailsList`,
         data: {
-          UserID: userId, //874654, //userId, //874654, ,
-          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
+          UserID: userId,
+          BookingID: bookingId
         },
         headers: authHeader()
       }).then(function(response) {
-        //debugger
         QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -614,18 +559,13 @@ class BookingView extends Component {
             HAZMAT
           });
         }
-        // self.setState({
-        //   HazMat: "",
-        //   Unstackable: ""
-        // });
       });
     }
   }
-
+  ////Get Booking Details list AIR
   BookigGridDetailsListAIR() {
     this.setState({ loding: true });
     let self = this;
-
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (bookingId !== "" && bookingId !== null) {
@@ -633,12 +573,11 @@ class BookingView extends Component {
         method: "post",
         url: `${appSettings.APIURL}/BookigGridDetailsList`,
         data: {
-          UserID: userId, //874654, //userId, //874654, ,
-          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
+          UserID: userId,
+          BookingID: bookingId
         },
         headers: authHeader()
       }).then(function(response) {
-        //debugger
         QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -729,7 +668,6 @@ class BookingView extends Component {
             self.setState({
               loding: false,
               DefaultEntityTypeID,
-
               ModeofTransport,
               multiCBM: CargoDetails,
               cargoType: Booking[0].CargoType,
@@ -769,7 +707,6 @@ class BookingView extends Component {
             self.setState({ FileData: [{ FileName: "No File Found" }] });
           }
         }
-
         if (Table6.length > 0) {
           var Customs_Clearance = Table6[0].Customs_Clearance;
           Company_Address = Table6[0].Company_Address;
@@ -787,19 +724,13 @@ class BookingView extends Component {
             HAZMAT
           });
         }
-        // self.setState({
-        //   HazMat: "",
-        //   Unstackable: ""
-        // });
       });
     }
   }
-
-  HandleFileOpen(filePath) {
-    //debugger
+  ////Handle to Download Booking Document
+  HandleBookingDocDwonload(filePath) {
     var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/DownloadFTPFile`,
@@ -817,10 +748,6 @@ class BookingView extends Component {
         link.download = FileName;
         link.click();
       }
-      //   window.open(
-      //     "data:application/octet-stream;charset=utf-16le;base64," + response.data
-      //   );
-      //   window.open(response.data);
     });
   }
 
@@ -830,7 +757,7 @@ class BookingView extends Component {
       <div key={i}>
         <span
           onClick={e => {
-            this.HandleFileOpen(el.FilePath);
+            this.HandleBookingDocDwonload(el.FilePath);
           }}
         >
           <p className="file-name book-view-file mt-2">{el.FileName}</p>
@@ -839,7 +766,6 @@ class BookingView extends Component {
     ));
   }
   ////end methos for multiple file element
-
   HandleChangeBuyer(e) {
     var BuyerName = e.target.selectedOptions[0].innerText;
     if (BuyerName !== "select") {
@@ -861,7 +787,6 @@ class BookingView extends Component {
   }
 
   ////this method for party change value
-
   HandleChangeParty(e) {
     var NotifyName = e.target.selectedOptions[0].innerText;
     if (NotifyName !== "select") {
@@ -881,6 +806,7 @@ class BookingView extends Component {
       });
     }
   }
+  ////Hanlde Click back button
   handleChangePage() {
     window.history.back();
   }
@@ -891,10 +817,8 @@ class BookingView extends Component {
   }
 
   render() {
-    console.log(this.state.BookingNostr);
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
-      //debugger
       commodityName = this.state.commodityData.filter(
         x => x.id === this.state.selectedCommodity
       )[0].Commodity;
@@ -924,8 +848,7 @@ class BookingView extends Component {
               <h2>
                 {this.state.loding === true
                   ? "Booking View"
-                  : "Booking View " + this.state.BookingNostr+" "}
-                  
+                  : "Booking View " + this.state.BookingNostr + " "}
               </h2>
               <h2>{this.state.Status}</h2>
               <button
@@ -953,7 +876,7 @@ class BookingView extends Component {
                                 {
                                   Cell: ({ original, row }) => {
                                     i++;
-                                    //debugger
+                                  
                                     var lname = "";
                                     var olname = "";
                                     if (row._original.Linename) {
@@ -1120,32 +1043,52 @@ class BookingView extends Component {
                                   filterable: true
                                   // minWidth: 80
                                 },
-
                                 {
-                                  accessor: "ContainerType",
                                   Cell: row => {
+                                    var header = "";
                                     var value = "";
-                                    if (row.original.ContainerType) {
-                                      value = row.original.ContainerType;
-                                    }
-                                    if (row.original.ContainerQuantity) {
-                                      value +=
-                                        " (" +
-                                        row.original.ContainerQuantity +
-                                        ")";
+                                    if (this.state.CargoType == "FCL") {
+                                      header = "Container";
+                                      if (row.original.ContainerType) {
+                                        value = row.original.ContainerType;
+                                      }
+                                      if (row.original.ContainerQuantity) {
+                                        value +=
+                                          " (" +
+                                          row.original.ContainerQuantity +
+                                          ")";
+                                      }
+                                    } else if (this.state.CargoType == "LCL") {
+                                      header = "CBM";
+                                      if (row.original.CBM) {
+                                        value = row.original.CBM;
+                                      }
+                                    } else if (this.state.CargoType == "AIR") {
+                                      header = "Chargeable Weight";
+                                      if (row.original["Chargable Weight"]) {
+                                        value =
+                                          row.original["Chargable Weight"];
+                                      }
+                                    } else {
+                                      header = "Chargeable Weight";
+                                      if (row.original["Chargable Weight"]) {
+                                        value =
+                                          row.original["Chargable Weight"];
+                                      }
                                     }
 
                                     return (
-                                      <React.Fragment>
+                                      <>
                                         <p className="details-title">
-                                          Container
+                                          {header}
                                         </p>
-                                        <p className="details-para">
-                                          {value}
-                                        </p>
-                                      </React.Fragment>
+                                        <p className="details-para">{value}</p>
+                                      </>
                                     );
-                                  }
+                                  },
+                                  accessor: "ContainerType",
+                                  filterable: true
+                                  //minWidth: 175
                                 },
                                 {
                                   accessor: "ExpiryDate",
@@ -1645,12 +1588,20 @@ class BookingView extends Component {
                                   Header: "File name",
                                   accessor: "FileName",
                                   Cell: row => {
-                                    if (row.original.FileName !== "No File Found") {
-                                    return (
-                                      <div><img src={PDF} alt="PDF icon" className="cls-pdf"/>{row.original.FileName}</div>
-                                    )
-                                    }
-                                    else{
+                                    if (
+                                      row.original.FileName !== "No File Found"
+                                    ) {
+                                      return (
+                                        <div>
+                                          <img
+                                            src={PDF}
+                                            alt="PDF icon"
+                                            className="cls-pdf"
+                                          />
+                                          {row.original.FileName}
+                                        </div>
+                                      );
+                                    } else {
                                       return <>{row.original.FileName}</>;
                                     }
                                   }
@@ -1667,7 +1618,7 @@ class BookingView extends Component {
                                         <div className="action-cntr">
                                           <a
                                             onClick={e =>
-                                              this.HandleFileOpen(
+                                              this.HandleBookingDocDwonload(
                                                 row.original.FilePath
                                               )
                                             }

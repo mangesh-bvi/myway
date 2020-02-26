@@ -29,7 +29,7 @@
       var routeData = JSON.parse(localStorage.getItem("routeData"));
       var beaches = JSON.parse(localStorage.getItem("finalDataMap"));
 
-      debugger;
+      
 
       function initMap() {
         var map = new google.maps.Map(document.getElementById("map"), {
@@ -102,7 +102,7 @@
           coords: [1, 1, 1, 20, 18, 20, 18, 1],
           type: "poly"
         };
-        debugger;
+        
         var beachesLen = beaches.length;
         for (var i = 0; i < beachesLen; i++) {
           var beach = beaches[i];

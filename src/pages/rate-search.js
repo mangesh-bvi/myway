@@ -47,12 +47,9 @@ class RateSearch extends Component {
   }
 
   componentDidMount() {
-    debugger;
-    // document.getElementById("SearchRate").classList.add("disableRates");
-
     document.getElementById("SearchRate").classList.add("disableRates");
   }
-
+  ////Handle TO redirect new rate search page
   HandelPageredireact() {
     this.props.history.push({
       pathname: "new-rate-search",
@@ -65,8 +62,8 @@ class RateSearch extends Component {
       }
     });
   }
+  //// Handle Change to Sales Customer
   HandleChangeCon(field, e) {
-    debugger;
     let self = this;
     self.state.error = "";
     var customertxtlen = e.target.value;
@@ -88,8 +85,6 @@ class RateSearch extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
-
         if (response.data.Table.length != 0) {
           if (field == "CustomerList") {
             self.setState({
@@ -116,8 +111,9 @@ class RateSearch extends Component {
       });
     }
   }
+
   HandleChangeSelect(field, e) {
-    debugger;
+    
     let fields = this.state.fields;
     if (e.target.value == "Select") {
       fields[field] = "";
@@ -128,8 +124,9 @@ class RateSearch extends Component {
       fields
     });
   }
+  ////Handle Select Sales Customer
   handleSelectCon(field, value, e) {
-    debugger;
+    
     let fields = this.state.fields;
     fields[field] = value;
     var compId = e.Company_ID;
@@ -149,7 +146,7 @@ class RateSearch extends Component {
   }
 
   EnableRates = e => {
-    debugger;
+    
     this.HandleCustomerList(e);
     if (e.target.value == "") {
       document.getElementById("SearchRate").classList.add("disableRates");
@@ -158,7 +155,7 @@ class RateSearch extends Component {
     }
   };
   HandleRadioBtn(e) {
-    debugger;
+    
     var cType = e.target.value;
     if (cType == "Existing Customer") {
       document.getElementById("SearchRate").classList.add("disableRates");
@@ -168,8 +165,6 @@ class RateSearch extends Component {
       this.setState({ customerType: false });
     }
   }
-
-   
 
   render() {
     var colClassName = "";
@@ -227,13 +222,6 @@ class RateSearch extends Component {
                 </div>
               </div>
               <div className="login-fields mt-5 mb-0">
-                {/* <input
-                  id="searchtxt"
-                  type="text"
-                  onChange={this.EnableRates}
-                  placeholder="Search Account/Consignee"
-                  name="search-rate"
-                /> */}
                 <div className="autocom">
                   {this.state.customerType == true ? (
                     <Autocomplete
@@ -267,7 +255,6 @@ class RateSearch extends Component {
               >
                 Search Rates
               </button>
-              {/* <Link id="SearchRate" className="butn blue-butn" to="new-rate-search" params={ {companyId: this.state.companyId }}>Search Rates</Link> */}
             </div>
           </div>
         </div>

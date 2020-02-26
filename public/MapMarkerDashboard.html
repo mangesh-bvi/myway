@@ -2,8 +2,7 @@
 
 <html>
   <head>
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <link rel="stylesheet" href="../src/assets/css/responsive.css" />
+    <link rel="stylesheet" href="./../src/assets/css/responsive.css" />
     <style type="text/css">
       html {
         height: 100%;
@@ -27,35 +26,14 @@
       }
 
       .dash-search-cntr2 input {
-        width: 93px;
         height: 40px;
         padding-left: 16px;
         border: 0px;
         border-radius: 50px;
         padding-right: 45px;
-        position: relative;
-        padding: 12px 20px 12px 10px;
-        -webkit-transition: width 0.4s ease-in-out;
-        transition: width 0.4s ease-in-out;
         /* box-shadow: 3px 5px 28.16px 3.84px rgba(234, 229, 229, 1); */
       }
-      .dash-search-cntr2 input:focus{
-        width: 150px !important;
-        transition: all .5s ease;
-      }
-      .searchimg {
-        position: relative;
-      }
-      /* .searchimg::before {
-        content: url('img/searchicon.png');
-        position: absolute;
-        right: 7px;
-        top: 7px;
-        width: 30px;
-        height: 30px;
-        z-index: 9999;
-        padding: 0;
-      } */
+
       .dash-search-cntr2 .fa-search {
         background: #002d73;
         border-radius: 50%;
@@ -220,13 +198,7 @@
 
       var myOptions;
       var map;
-      var blueShip,
-        bluePlane,
-        bookingBlue,
-        delayBlue,
-        road,
-        roadDelay,
-        bluePlaneDelay;
+      var blueShip, bluePlane, bookingBlue, delayBlue;
 
       $(document).ready(function() {
         initMap();
@@ -274,14 +246,6 @@
           new google.maps.Size(32, 32)
         );
 
-        bluePlaneDelay = new google.maps.MarkerImage(
-          "img/blue-plane-delay.png",
-          null /* size is determined at runtime */,
-          null /* origin is 0,0 */,
-          null /* anchor is bottom center of the scaled image */,
-          new google.maps.Size(32, 32)
-        );
-
         bookingBlue = new google.maps.MarkerImage(
           "img/blue-booking.png",
           null /* size is determined at runtime */,
@@ -291,23 +255,7 @@
         );
 
         delayBlue = new google.maps.MarkerImage(
-          "img/blue-ship-delay.png",
-          null /* size is determined at runtime */,
-          null /* origin is 0,0 */,
-          null /* anchor is bottom center of the scaled image */,
-          new google.maps.Size(32, 32)
-        );
-
-        road = new google.maps.MarkerImage(
-          "img/blue-delay.png",
-          null /* size is determined at runtime */,
-          null /* origin is 0,0 */,
-          null /* anchor is bottom center of the scaled image */,
-          new google.maps.Size(32, 32)
-        );
-
-        roadDelay = new google.maps.MarkerImage(
-          "img/blue-delay-delay.png",
+          "blue-delay.png",
           null /* size is determined at runtime */,
           null /* origin is 0,0 */,
           null /* anchor is bottom center of the scaled image */,
@@ -316,13 +264,13 @@
 
         //setMarkers(map, locations)
 
-        // //debugger;
+        // //
         /////This bind all the marker data
         getDashboardMarkerData(map);
       }
 
       function setMarkers(map, locations) {
-        debugger;
+        //
         var marker, i;
 
         for (i = 0; i < locations.length; i++) {
@@ -337,8 +285,6 @@
           if (shipmentType == "Booking") image = bookingBlue;
           if (shipmentType == "Booking-Ocean") image = bookingBlue;
           if (shipmentType == "Delay-Ocean") image = delayBlue;
-          if (shipmentType == "Inland") image = road;
-          if (shipmentType == "Delay-Inland") image = roadDelay;
 
           var latlngset = new google.maps.LatLng(lat, lng);
 
@@ -358,7 +304,7 @@
             "click",
             (function(marker, content, infowindow) {
               return function() {
-                //debugger;
+                //
                 ////////Ajax call to get content data //////////////
                 content = "";
                 var selectedLat = marker
@@ -384,9 +330,7 @@
                     Authorization: token
                   },
                   success: function(data) {
-                    debugger;
-                    //alert('Success-2');
-                    //debugger;
+                 
                     var datas = data.Table1;
                     var filterData = [];
                     for (var j = 0; j < datas.length; j++) {
@@ -410,18 +354,15 @@
                     var innerConsolidateData = "";
                     if (filterData.length > 0) {
                       for (var k = 0; k < filterData.length; k++) {
-                        debugger;
+                        //
 
                         var CinnerContentDatas = "";
-                        var ContNo = filterData[k].replace(/ +/g, "");;
-                        var fContNo= filterData[k];
+                        var ContNo = filterData[k];
                         var tempData = datas.filter(
                           x =>
-                            (x.ContainerNo === fContNo) &
+                            (x.ContainerNo === ContNo) &
                             (x.CargoType === "Consolidated")
                         );
-
-
                         CinnerContentDatas =
                           "<div class='pinmodal'><div id='accordion'><div class='card'><div class='card-header' id='heading-1'><h5 class='mb-0'>";
                         CinnerContentDatas =
@@ -433,7 +374,7 @@
                           "'>";
                         CinnerContentDatas =
                           CinnerContentDatas +
-                          "<span class='dash-map-label abc405'>Container No. :</span><a href='#'> " +
+                          "<span class='dash-map-label'>Container No. :</span><a href='#'> " +
                           "<p title='Container No.' class='mapcontainerno'>" +
                           ContNo +
                           "</p></a></div></h5></div>"; //<hr/>
@@ -473,17 +414,17 @@
                         innerConsolidateData =
                           innerConsolidateData + CinnerContentDatas; //+ "<br/> </div>";
                       }
-                      //alert(innerConsolidateData);
+                     
                     }
 
-                    //debugger;
+                    //
                     if (datas.length > 0) {
-                      debugger
+                      console.log(datas.length);
                       var marketContent = "<div id='rootElement'>";
                       var marketInnerContent = "";
                       for (var i = 0; i < datas.length; i++) {
                         var HBLNum = datas[i]["HBL#"];
-                        var ContainerNo = datas[i]["ContainerNo"].replace(/%20/g, " ");
+                        var ContainerNo = datas[i]["ContainerNo"];
                         var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                         var myDatacontainerType = datas[i]["CargoType"];
                         if (myDatacontainerType != "Consolidated") {
@@ -499,7 +440,7 @@
                             "'>";
                           innerContentDatas =
                             innerContentDatas +
-                            "<span class='dash-map-label abc471' style=''>Container No. :</span><a href='shipment-details?hblno=" +
+                            "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
                             HBLNum +
                             "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
                             ContainerNo +
@@ -544,7 +485,7 @@
                           marketContent + marketInnerContent + "</div>";
                       }
 
-                      //alert(marketContent);
+                   
                       content = marketContent;
                     }
 
@@ -561,7 +502,7 @@
       }
 
       $(document).ajaxStart(function() {
-        // alert("AJAX request started");
+        
         $("#loader-icon").show();
       });
 
@@ -571,17 +512,14 @@
 
       ///When click on the text box got the info window
       function ShowMarker() {
-        //debugger;
+        //
 
         var enteredHBLNum = $("#dataNumber").val();
-        ///Clear input AQTY158984
+     
         $("#dataNumber").val("");
 
         var titleData = "";
-        //var lat = locations[4][1];
-        //var long = locations[4][2];
-        //var add = locations[4][3];
-        //var shipmentType = locations[4][4];
+      
         var lat = "";
         var long = "";
         var add = "";
@@ -590,7 +528,12 @@
         var content = "";
 
         var image = blueShip;
- 
+        if (shipmentType == "Ocean") image = blueShip;
+        if (shipmentType == "Air") image = bluePlane;
+        if (shipmentType == "Booking") image = bookingBlue;
+        if (shipmentType == "Booking-Ocean") image = bookingBlue;
+        if (shipmentType == "Delay-Ocean") image = delayBlue;
+
         ////////Get Lat long from the Enter text ////////////////////
         /////////////////////////////////////////////////////////////
         $.ajax({
@@ -605,24 +548,15 @@
             Authorization: token
           },
           success: function(data) {
-            debugger;
-            //alert('Success-Receive Lat:' + data.Table[0].LastLocation_Lat + ' | long:' + data.Table[0].LastLocation_Lon);
+            //
+             
 
-            // $("#loader-icon").show();
+          
             var lat = data.Table[0].LastLocation_Lat;
             var lng = data.Table[0].LastLocation_Lon;
             titleData = data.Table[0].Vessel;
-
-            if (data.Table[0].ModeOfTransport == "Ocean") image = blueShip;
-          if (data.Table[0].ModeOfTransport == "Air") image = bluePlane;
-          if (data.Table[0].ModeOfTransport == "Booking") image = bookingBlue;
-          if (data.Table[0].ModeOfTransport == "Booking-Ocean") image = bookingBlue;
-          if (data.Table[0].ModeOfTransport == "Delay-Ocean") image = delayBlue;
-          if (data.Table[0].ModeOfTransport == "Inland") image = road;
-          if (data.Table[0].ModeOfTransport == "Delay-Inland") image = roadDelay;
-
-
-             ////////////////////////////////////////////////////////////
+ 
+            ////////////////////////////////////////////////////////////
             latlngset = new google.maps.LatLng(lat, lng);
             var marker = new google.maps.Marker({
               map: map,
@@ -649,7 +583,7 @@
                 Authorization: token
               },
               success: function(data) {
-                debugger;
+                //
                 var datas = data.Table1;
                 var filterData = [];
                 for (var j = 0; j < datas.length; j++) {
@@ -673,14 +607,13 @@
                 var innerConsolidateData = "";
                 if (filterData.length > 0) {
                   for (var k = 0; k < filterData.length; k++) {
-                    debugger;
+                    //
 
                     var CinnerContentDatas = "";
-                    var ContNo = filterData[k].replace(/ +/g, "");;
-                    var fContNo = filterData[k];
+                    var ContNo = filterData[k];
                     var tempData = datas.filter(
                       x =>
-                        (x.ContainerNo === fContNo) &
+                        (x.ContainerNo === ContNo) &
                         (x.CargoType === "Consolidated")
                     );
                     CinnerContentDatas =
@@ -694,7 +627,7 @@
                       "'>";
                     CinnerContentDatas =
                       CinnerContentDatas +
-                      "<span class='dash-map-label abc663'>Container No. :</span><a href='#'> " +
+                      "<span class='dash-map-label'>Container No. :</span><a href='#'> " +
                       "<p title='Container No.' class='mapcontainerno'>" +
                       ContNo +
                       "</p></a></div></h5></div>"; //<hr/>
@@ -732,18 +665,18 @@
                     innerConsolidateData =
                       innerConsolidateData + CinnerContentDatas; //+ "<br/> </div>";
                   }
-                  //alert(innerConsolidateData);
+                  
                 }
 
-                //debugger;
-                //alert('Success - Receive content on search');
+                //
+                
                 //var datas = data.Table1;
                 if (datas.length > 0) {
                   var marketContent = "<div id='rootElement'>";
                   var marketInnerContent = "";
                   for (var i = 0; i < datas.length; i++) {
                     var HBLNum = datas[i]["HBL#"];
-                    var ContainerNo = datas[i]["ContainerNo"].replace(/%20/g, " ");
+                    var ContainerNo = datas[i]["ContainerNo"];
                     var invoiceIds = datas[i]["InvoiceNumber/Productid"];
                     var myDatacontainerType = datas[i]["CargoType"];
                     if (myDatacontainerType != "Consolidated") {
@@ -759,7 +692,7 @@
                         "'>";
                       innerContentDatas =
                         innerContentDatas +
-                        "<span class='dash-map-label abc728'>Container No. :</span><a href='shipment-details?hblno=" +
+                        "<span class='dash-map-label'>Container No. :</span><a href='shipment-details?hblno=" +
                         HBLNum +
                         "' target='_parent'><p title='Container No.' class='mapcontainerno'>" +
                         ContainerNo +
@@ -815,13 +748,13 @@
                       marketContent + marketInnerContent + "</div>";
                   }
 
-                  //alert(marketContent);
+                  
                   content = marketContent;
                 }
               }
             });
 
-            //debugger;
+            //
             var infowindow = new google.maps.InfoWindow({
               content: content
             });
@@ -838,17 +771,15 @@
               })(marker, content, infowindow)
             );
 
-            /////////////////////////////////////////////////////////////////////////
+          
           }
         });
-
-        ///////////////////////////////////////////////////////////////////////////
-        //debugger;
+ 
       }
 
       ////Get Dashboard Marker Data on load
       function getDashboardMarkerData(map) {
-        console.log("Request - Start" + new Date());
+        
         if (1 == 1) {
           $.ajax({
             type: "POST",
@@ -862,8 +793,7 @@
               Authorization: token
             },
             success: function(response) {
-              //debugger;
-              console.log("Response - Received" + new Date());
+      
               if (response.length > 0) {
                 var arrarSelectPin = [
                   "Ocean",
@@ -883,9 +813,9 @@
                   );
                   shippingLocations.push(shipMarkerData);
                 }
-                //debugger;
+                //
                 setMarkers(map, shippingLocations);
-                console.log("Render - Done" + new Date());
+                 
               }
             },
             complete: function() {
@@ -895,103 +825,14 @@
         }
       }
 
-      // var isOceanOn = 1,
-      //   isAirOn = 1;
-      // isDelayShipment = 1;
-      // isNewBooking = 1;
-      // function toggleMapdata(toogleData) {
-      //   debugger;
-
-      //   ////alert(1);
-      //   if (toogleData === "Ocean") {
-      //     if (isOceanOn === 1) {
-      //       isOceanOn = 0;
-      //     } else {
-      //       isOceanOn = 1;
-      //     }
-
-      //     if (toogleData === "Ocean" && isOceanOn !== 0) {
-      //       $("div > img[src='img/blue-ship.png']").hide();
-      //       $("#mapOcean").css("opacity", "0.5");
-      //       // isOceanOn = 1;
-      //     } else {
-      //       $("div > img[src='img/blue-ship.png']").show();
-      //       $("#mapOcean").css("opacity", "1");
-
-      //       // isOceanOn = 0;
-      //     }
-      //   }
-
-      //   if (toogleData === "Air") {
-      //     if (isAirOn === 1) {
-      //       isAirOn = 0;
-      //     } else {
-      //       isAirOn = 1;
-      //     }
-
-      //     if (toogleData === "Air" && isAirOn !== 0) {
-      //       $("div > img[src='img/blue-plane.png']").hide();
-      //       $("#mapAir").css("opacity", "0.5");
-      //       // isAirOn = 1;
-      //     } else {
-      //       $("div > img[src='img/blue-plane.png']").show();
-      //       $("#mapAir").css("opacity", "1");
-      //       // isAirOn = 0;
-      //     }
-      //   }
-
-      //   if (toogleData === "DelayShipment") {
-      //     if (isDelayShipment === 1) {
-      //       isDelayShipment = 0;
-      //     } else {
-      //       isDelayShipment = 1;
-      //     }
-
-      //     if (toogleData === "DelayShipment" && isDelayShipment !== 0) {
-      //       $("div > img[src='img/delay-shipment.png']").hide();
-      //       $("#mapDelay").css("opacity", "0.5");
-      //       // isDelayShipment = 1;
-      //     } else {
-      //       $("div > img[src='img/delay-shipment.png']").show();
-      //       $("#mapDelay").css("opacity", "1");
-      //       // isDelayShipment = 0;
-      //     }
-      //   }
-
-      //   if (toogleData === "NewBooking") {
-      //     if (isNewBooking === 1) {
-      //       isNewBooking = 0;
-      //     } else {
-      //       isNewBooking = 1;
-      //     }
-
-      //     if (toogleData === "NewBooking" && isNewBooking !== 0) {
-      //       $("div > img[src='img/blue-booking.png']").hide();
-      //       $("#mapBooking").css("opacity", "0.5");
-      //       // isNewBooking = 1;
-      //     } else {
-      //       $("div > img[src='img/blue-booking.png']").show();
-      //       $("#mapBooking").css("opacity", "1");
-      //       // isNewBooking = 0;
-      //     }
-      //   }
-
-      //   $("#mapOcean").show();
-      //   $("#mapAir").show();
-      //   $("#mapDelay").show();
-      //   $("#mapBooking").show();
-      // }
-
       var isOceanOn = 1,
-        isAirOn = 1,
-        isDelayShipment = 1,
-        isNewBooking = 1,
-        isRoad = 1;
-
+        isAirOn = 1;
+      isDelayShipment = 1;
+      isNewBooking = 1;
       function toggleMapdata(toogleData) {
-        debugger;
+        
 
-        ////alert(1);
+        
         if (toogleData === "Ocean") {
           if (isOceanOn === 1) {
             isOceanOn = 0;
@@ -999,69 +840,13 @@
             isOceanOn = 1;
           }
 
-          if (toogleData === "Ocean" && isOceanOn === 0) {
-            $("div > img[src='img/blue-ship.png']").show();
-            $("#mapOcean").css("opacity", "1");
-            $("div > img[src='img/blue-ship-delay.png']").show();
-            if (isAirOn == 0) {
-              $("div > img[src='img/blue-plane.png']").show();
-              $("div > img[src='img/blue-plane-delay.png']").show();
-              $("#mapAir").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-plane.png']").hide();
-              $("div > img[src='img/blue-plane-delay.png']").hide();
-              $("#mapAir").css("opacity", "0.5");
-            }
-
-            if (isNewBooking == 0) {
-              $("div > img[src='img/blue-booking.png']").show();
-              $("#mapBooking").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-booking.png']").hide();
-              $("#mapBooking").css("opacity", "0.5");
-            }
-
-            if (isDelayShipment == 0) {
-              $("div > img[src='img/blue-delay.png']").show();
-              $("div > img[src='img/blue-delay-delay.png']").show();
-              $("#mapDelay").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-delay.png']").hide();
-              $("div > img[src='img/blue-delay-delay.png']").hide();
-              $("#mapDelay").css("opacity", "0.5");
-            }
-            // isOceanOn = 1;
-          } else {
+          if (toogleData === "Ocean" && isOceanOn !== 0) {
             $("div > img[src='img/blue-ship.png']").hide();
             $("#mapOcean").css("opacity", "0.5");
-            $("div > img[src='img/blue-ship-delay.png']").hide();
-            if (isAirOn == 0) {
-              $("div > img[src='img/blue-plane.png']").show();
-              $("div > img[src='img/blue-plane-delay.png']").show();
-              $("#mapAir").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-plane.png']").hide();
-              $("div > img[src='img/blue-plane-delay.png']").hide();
-              $("#mapAir").css("opacity", "0.5");
-            }
-
-            if (isNewBooking == 0) {
-              $("div > img[src='img/blue-booking.png']").show();
-              $("#mapBooking").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-booking.png']").hide();
-              $("#mapBooking").css("opacity", "0.5");
-            }
-
-            if (isDelayShipment == 0) {
-              $("div > img[src='img/blue-delay.png']").show();
-              $("div > img[src='img/blue-delay-delay.png']").show();
-              $("#mapDelay").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-delay.png']").hide();
-              $("div > img[src='img/blue-delay-delay.png']").hide();
-              $("#mapDelay").css("opacity", "0.5");
-            }
+            // isOceanOn = 1;
+          } else {
+            $("div > img[src='img/blue-ship.png']").show();
+            $("#mapOcean").css("opacity", "1");
 
             // isOceanOn = 0;
           }
@@ -1074,71 +859,14 @@
             isAirOn = 1;
           }
 
-          if (toogleData === "Air" && isAirOn === 0) {
-            $("div > img[src='img/blue-plane.png']").show();
-            $("div > img[src='img/blue-plane-delay.png']").show();
-            $("#mapAir").css("opacity", "1");
-
-
-            if (isOceanOn == 0) {
-              $("div > img[src='img/blue-ship.png']").show();
-              $("#mapOcean").css("opacity", "1");
-              $("div > img[src='img/blue-ship-delay.png']").show();
-            } else {
-              $("div > img[src='img/blue-ship.png']").hide();
-              $("#mapOcean").css("opacity", "0.5");
-              $("div > img[src='img/blue-ship-delay.png']").hide();
-            }
-
-            if (isNewBooking == 0) {
-              $("div > img[src='img/blue-booking.png']").show();
-              $("#mapBooking").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-booking.png']").hide();
-              $("#mapBooking").css("opacity", "0.5");
-            }
-
-            if (isDelayShipment == 0) {
-              $("div > img[src='img/blue-delay.png']").show();
-              $("div > img[src='img/blue-delay-delay.png']").show();
-              $("#mapDelay").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-delay.png']").hide();
-              $("div > img[src='img/blue-delay-delay.png']").hide();
-              $("#mapDelay").css("opacity", "0.5");
-            }
-            // isAirOn = 1;
-          } else {
+          if (toogleData === "Air" && isAirOn !== 0) {
             $("div > img[src='img/blue-plane.png']").hide();
             $("#mapAir").css("opacity", "0.5");
-            $("div > img[src='img/blue-plane-delay.png']").hide();
-            if (isOceanOn == 0) {
-              $("div > img[src='img/blue-ship.png']").show();
-              $("#mapOcean").css("opacity", "1");
-              $("div > img[src='img/blue-ship-delay.png']").show();
-            } else {
-              $("div > img[src='img/blue-ship.png']").hide();
-              $("#mapOcean").css("opacity", "0.5");
-              $("div > img[src='img/blue-ship-delay.png']").hide();
-            }
-
-            if (isNewBooking == 0) {
-              $("div > img[src='img/blue-booking.png']").show();
-              $("#mapBooking").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-booking.png']").hide();
-              $("#mapBooking").css("opacity", "0.5");
-            }
-
-            if (isDelayShipment == 0) {
-              $("div > img[src='img/blue-delay.png']").show();
-              $("div > img[src='img/blue-delay-delay.png']").show();
-              $("#mapDelay").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-delay.png']").hide();
-              $("div > img[src='img/blue-delay-delay.png']").hide();
-              $("#mapDelay").css("opacity", "0.5");
-            }
+            // isAirOn = 1;
+          } else {
+            $("div > img[src='img/blue-plane.png']").show();
+            $("#mapAir").css("opacity", "1");
+            // isAirOn = 0;
           }
         }
 
@@ -1149,72 +877,13 @@
             isDelayShipment = 1;
           }
 
-          if (toogleData === "DelayShipment" && isDelayShipment === 0) {
-           
-
-            $("div > img[src='img/blue-delay.png']").show();
-            $("div > img[src='img/blue-delay-delay.png']").show();
-            $("#mapDelay").css("opacity", "1");
-            if (isOceanOn == 0) {
-              $("div > img[src='img/blue-ship.png']").show();
-              $("#mapOcean").css("opacity", "1");
-              $("div > img[src='img/blue-ship-delay.png']").show();
-            } else {
-              $("div > img[src='img/blue-ship.png']").hide();
-              $("#mapOcean").css("opacity", "0.5");
-              $("div > img[src='img/blue-ship-delay.png']").hide();
-            }
-
-            if (isNewBooking == 0) {
-              $("div > img[src='img/blue-booking.png']").show();
-              $("#mapBooking").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-booking.png']").hide();
-              $("#mapBooking").css("opacity", "0.5");
-            }
-
-            if (isAirOn == 0) {
-              $("div > img[src='img/blue-plane.png']").show();
-              $("div > img[src='img/blue-plane-delay.png']").show();
-              $("#mapAir").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-plane.png']").hide();
-              $("div > img[src='img/blue-plane-delay.png']").hide();
-              $("#mapAir").css("opacity", "0.5");
-            }
+          if (toogleData === "DelayShipment" && isDelayShipment !== 0) {
+            $("div > img[src='img/delay-shipment.png']").hide();
+            $("#mapDelay").css("opacity", "0.5");
             // isDelayShipment = 1;
           } else {
-            $("div > img[src='img/blue-delay-delay.png']").hide();
-            $("#mapDelay").css("opacity", "0.5");
-            $("div > img[src='img/blue-delay.png']").hide();
-
-            if (isOceanOn == 0) {
-              $("div > img[src='img/blue-ship.png']").show();
-              $("#mapOcean").css("opacity", "1");
-              $("div > img[src='img/blue-ship-delay.png']").show();
-            } else {
-              $("div > img[src='img/blue-ship.png']").hide();
-              $("#mapOcean").css("opacity", "0.5");
-              $("div > img[src='img/blue-ship-delay.png']").hide();
-            }
-
-            if (isNewBooking == 0) {
-              $("div > img[src='img/blue-booking.png']").show();
-              $("#mapBooking").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-booking.png']").hide();
-              $("#mapBooking").css("opacity", "0.5");
-            }
-
-            if (isAirOn == 0) {
-              $("div > img[src='img/blue-plane.png']").show();
-              $("div > img[src='img/blue-plane-delay.png']").show();
-              $("#mapAir").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-plane.png']").hide();
-              $("div > img[src='img/blue-plane-delay.png']").hide();
-              $("#mapAir").css("opacity", "0.5");
-            }
+            $("div > img[src='img/delay-shipment.png']").show();
+            $("#mapDelay").css("opacity", "1");
             // isDelayShipment = 0;
           }
         }
@@ -1226,7 +895,7 @@
             isNewBooking = 1;
           }
 
-          if (toogleData === "NewBooking" && isNewBooking === 0) {
+          if (toogleData === "NewBooking" && isNewBooking !== 0) {
             $("div > img[src='img/blue-booking.png']").hide();
             $("#mapBooking").css("opacity", "0.5");
             // isNewBooking = 1;
@@ -1234,28 +903,6 @@
             $("div > img[src='img/blue-booking.png']").show();
             $("#mapBooking").css("opacity", "1");
             // isNewBooking = 0;
-            if (isOceanOn == 1) {
-              $("div > img[src='img/blue-ship.png']").show();
-              $("#mapOcean").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-ship.png']").hide();
-              $("#mapOcean").css("opacity", "0.5");
-            }
-
-            if (isAirOn == 1) {
-              $("div > img[src='img/blue-plane.png']").show();
-              $("#mapAir").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-plane.png']").hide();
-              $("#mapAir").css("opacity", "0.5");
-            }
-            if (isDelayShipment == 1) {
-              $("div > img[src='img/blue-ship-delay.png']").show();
-              $("#mapDelay").css("opacity", "1");
-            } else {
-              $("div > img[src='img/blue-ship-delay.png']").hide();
-              $("#mapDelay").css("opacity", "0.5");
-            }
           }
         }
 
@@ -1300,14 +947,12 @@
     <!-- AQTY158984 -->
     <div style="position: relative;">
       <div class="dash-search-cntr2">
-        <div class="searchimg">
-          <input
+        <input
           type="text"
           id="dataNumber"
           placeholder="Search here..."
           value=""
         />
-        </div>
         <i
           class="fa fa-search"
           aria-hidden="true"

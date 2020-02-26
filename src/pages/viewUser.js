@@ -8,26 +8,20 @@ import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
-
 import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
-
 import Deactivate from "./../assets/img/deactivate.png";
 import DeactivateGray from "./../assets/img/deactivate-gray.png";
-
 import "react-input-range/lib/css/index.css";
 import ReactTable from "react-table";
-
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
 import matchSorter from "match-sorter";
-
 class ViewUser extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       modalDel: false,
       modalEdit: false,
@@ -35,35 +29,24 @@ class ViewUser extends Component {
       viewData: [],
       deactivateId: ""
     };
-
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleDeactivate = this.toggleDeactivate.bind(this);
-    this.handleViewUserData = this.handleViewUserData.bind(this);
+    this.BindViewUserData = this.BindViewUserData.bind(this);
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
-  }
-
-  static defaultProps = {
-    center: {
-      lat: 59.95,
-      lng: 30.33
-    },
-    zoom: 11
-  };
-
+  } 
   toggleEdit() {
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
     }));
   }
-
   toggleDel() {
     this.setState(prevState => ({
       modalDel: !prevState.modalDel
     }));
   }
-
+////toggle Details User
   toggleDeactivate() {
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -76,8 +59,8 @@ class ViewUser extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-      self.handleViewUserData();
+      
+      self.BindViewUserData();
       NotificationManager.success(response.data.Table[0].Result);
     });
 
@@ -85,19 +68,19 @@ class ViewUser extends Component {
       modalDel: !prevState.modalDel
     }));
   }
-
-  HandleDocumentDelete(evt, row) {
-    debugger;
-    var HblNo = row.original["HBL#"];
+////Handle Detactive User
+  HandleDeactiveUser(evt, row) {
+    
+    
     var UserId = row.original["UserId"];
     this.setState({ modalDel: true, deactivateId: UserId });
   }
 
   componentDidMount() {
-    this.handleViewUserData();
+    this.BindViewUserData();
   }
-
-  handleViewUserData() {
+////Bind User Data List
+  BindViewUserData() {
     let self = this;
     axios({
       method: "post",
@@ -108,16 +91,14 @@ class ViewUser extends Component {
         UserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
-    }).then(function(response) {
-      debugger;
+    }).then(function(response) {      
       self.setState({ viewData: response.data });
     });
   }
-
-  HandleDocumentView(evt, row) {
-    debugger;
+////Handle Edit User Detials
+  HandleEditUserDetails(evt, row) {    
     var userId = row.original["UserId"];
-    if (row.original["UserType"] == "Sales User") {
+    if (row.original["UserType"] === "Sales User") {
       this.props.history.push({
         pathname: "Add-sales-user",
         state: { detail: userId, page: "Edit" }
@@ -134,7 +115,7 @@ class ViewUser extends Component {
     if (filtered.length > 1 && this.state.filterAll.length) {
       const filterAll = "";
       this.setState({
-        filtered: filtered.filter(item => item.id != "all"),
+        filtered: filtered.filter(item => item.id !== "all"),
         filterAll
       });
     } else this.setState({ filtered });
@@ -150,11 +131,9 @@ class ViewUser extends Component {
 
   render() {
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -165,7 +144,7 @@ class ViewUser extends Component {
             <AdminSideMenu />
           </div>
           <div className="cls-rt no-bg min-hei-auto">
-            <NotificationContainer />
+             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
             <div className="title-sect">
               <h2>View Users</h2>
               <div className="col-12 col-sm-4">
@@ -201,7 +180,7 @@ class ViewUser extends Component {
                         Header: "Is Enabled",
                         accessor: "IsEnabled",
                         Cell: row => {
-                          debugger;
+                          
                           if (row.row.IsEnabled !== "No Record Found") {
                             return (
                               <>{row.original.IsEnabled ? "True" : "False"}</>
@@ -228,7 +207,7 @@ class ViewUser extends Component {
                                     src={Pencil}
                                     alt="view-icon"
                                     onClick={e =>
-                                      this.HandleDocumentView(e, row)
+                                      this.HandleEditUserDetails(e, row)
                                     }
                                   />
                                 </span>
@@ -253,7 +232,7 @@ class ViewUser extends Component {
                                     }
                                     alt="deactivate-icon"
                                     onClick={e =>
-                                      this.HandleDocumentDelete(e, row)
+                                      this.HandleDeactiveUser(e, row)
                                     }
                                   />
                                 </span>

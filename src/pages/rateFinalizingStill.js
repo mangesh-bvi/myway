@@ -3,7 +3,7 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import FileUpload from "./../assets/img/file.png";
 import ReactTable from "react-table";
-import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
+import { Button, Modal, ModalBody } from "reactstrap";
 import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -14,7 +14,6 @@ import {
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import { encryption } from "../helpers/encryption";
-
 import Moment from "react-moment";
 import ATA from "./../assets/img/ATAFreight_console.png";
 import Download from "./../assets/img/csv.png";
@@ -40,6 +39,8 @@ class RateFinalizingStill extends Component {
       accountcustname: "",
       custAddress: "",
       custNotification: "",
+      Contact_Email: "",
+      Contact_Phone: "",
       ModeOfTransport: "",
       ShipmentType: "",
       ContainerLoad: "",
@@ -83,7 +84,8 @@ class RateFinalizingStill extends Component {
       loding: true,
       btnloding: false,
       rtnloding: false,
-      cbmVal: 0
+      cbmVal: 0,
+      RejectedReason: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -92,50 +94,32 @@ class RateFinalizingStill extends Component {
     this.HandlePackgeTypeData = this.HandlePackgeTypeData.bind(this);
     this.HandleCommodityDropdown = this.HandleCommodityDropdown.bind(this);
     this.togglePreview = this.togglePreview.bind(this);
-    // this.isAcceptModal = this.isAcceptModal.bind(this);
-    // this.isRejectModal = this.isRejectModal.bind(this);
   }
 
   componentDidMount() {
-    // debugger;
-
     if (
       encryption(window.localStorage.getItem("usertype"), "desc") != "Customer"
     ) {
       this.setState({ toggleCustomerType: false });
     }
-
     if (typeof this.props.location.state.detail != undefined) {
       var qData = this.props.location.state;
       this.HandleSalesQuoteView(qData);
       this.HandlePackgeTypeData();
       this.HandleCommodityDropdown();
-      //this.HandleDowloadFile();
     } else {
       this.props.history.push("quote-table");
     }
   }
 
   componentDidUpdate() {
-    // debugger;
     var QuoteNumber = this.state.QuoteNumber;
     if (QuoteNumber !== this.props.location.state.detail.Quotes) {
       var qData = this.props.location.state;
       this.HandleSalesQuoteView(qData);
       this.HandlePackgeTypeData();
       this.HandleCommodityDropdown();
-      //this.HandleDowloadFile();
     }
-
-    // if (typeof this.props.location.state.detail != undefined) {
-    //   var qData = this.props.location.state;
-    //   this.HandleSalesQuoteView(qData);
-    //   this.HandlePackgeTypeData();
-    //   this.HandleCommodityDropdown();
-    //   //this.HandleDowloadFile();
-    // } else {
-    //   this.props.history.push("quote-table");
-    // }
   }
 
   //////toggleAcceptModal method
@@ -150,12 +134,8 @@ class RateFinalizingStill extends Component {
   };
 
   HandleSalesQuoteView(param) {
-    debugger;
     var SalesQuoteNumber = param.detail.Quotes;
     var type = param.detail.Type;
-    //alert(param.detail.Status)
-    // "SHA-SQFCL-NOV19-05020"
-
     if (param.detail.Status != "Pending") {
       this.setState({ QuoteStatus: false });
     }
@@ -165,7 +145,6 @@ class RateFinalizingStill extends Component {
 
     var SalesQuoteViewdata = {
       Mode: type,
-      //SalesQuoteNumber: param.Quotes,
       SalesQuoteNumber: SalesQuoteNumber
     };
     this.setState({
@@ -175,12 +154,12 @@ class RateFinalizingStill extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
-      // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
+
       data: SalesQuoteViewdata,
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        console.log(response.data.Table);
         var RateDetails = response.data.Table1;
         var SubRateDetails = response.data.Table2;
         var multiCBM = response.data.Table3;
@@ -189,7 +168,7 @@ class RateFinalizingStill extends Component {
         var IncoTerms = "";
         var CargoDetailsArr = [];
         var SaleQuoteID = "";
-        //accountcustname
+        var RejectedReason = "";
         if (response != null) {
           if (response.data != null) {
             if (response.data.Table != null) {
@@ -197,7 +176,9 @@ class RateFinalizingStill extends Component {
                 TypeofMove = response.data.Table[0].TypeOfMove;
                 IncoTerms = response.data.Table[0].IncoTerm;
                 SaleQuoteID = response.data.Table[0].SaleQuoteID;
+                RejectedReason = response.data.Table[0].RejectedReason;
                 self.setState({
+                  RejectedReason,
                   loding: false,
                   SaleQuoteID,
                   HazMat: response.data.Table[0].HAZMAT,
@@ -210,6 +191,10 @@ class RateFinalizingStill extends Component {
                     response.data.Table[0].ContactName == undefined
                       ? response.data.Table[0].contact_name
                       : response.data.Table[0].ContactName,
+                  Contact_Email: response.data.Table[0].Contact_Email,
+
+                  Contact_Phone: response.data.Table[0].Contact_Phone,
+
                   ModeOfTransport: response.data.Table[0].ModeOfTransport,
                   ShipmentType:
                     response.data.Table[0].ShipmentType == null
@@ -266,7 +251,6 @@ class RateFinalizingStill extends Component {
 
                 self.setState({
                   IncoTerms: IncoTerms,
-                  // TypeofMove: TypeofMove,
                   EquipmentTypes: response.data.Table1[0].ContainerCode,
                   Commodity: response.data.Table1[0].Commodity,
                   selectedCommodity: response.data.Table1[0].Commodity
@@ -328,16 +312,13 @@ class RateFinalizingStill extends Component {
         //console.log(response);
       })
       .catch(error => {
-        debugger;
         console.log(error.response);
       });
   }
 
   toggleBook(e) {
     e.stopPropagation();
-    // this.setState(prevState => ({
-    //   modalBook: !prevState.modalBook
-    // }));
+
     this.props.history.push({
       pathname: "/booking-insert",
       state: {
@@ -379,7 +360,7 @@ class RateFinalizingStill extends Component {
     } else {
       return false;
     }
-    debugger;
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteApprove`,
@@ -392,7 +373,6 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         if (response != null) {
           if (response.data != null) {
             if (response.data.Table != null) {
@@ -414,10 +394,9 @@ class RateFinalizingStill extends Component {
         self.SendMail(SalesQuoteNumber, Messagebody);
       })
       .catch(error => {
-        debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-        //alert(err[1].replace("}", ""))
+
         NotificationManager.error(err[1].replace("}", ""));
       });
   }
@@ -433,7 +412,7 @@ class RateFinalizingStill extends Component {
       return false;
     }
     var RejectResontxt = document.getElementById("RejectResontxt").value;
-    debugger;
+
     if (RejectResontxt !== "") {
       this.setState({ rbtnloding: true });
       axios({
@@ -449,10 +428,6 @@ class RateFinalizingStill extends Component {
         headers: authHeader()
       })
         .then(function(response) {
-          debugger;
-
-          //self.toggleRejectPop();
-
           if (response != null) {
             if (response.data != null) {
               if (response.data.Table != null) {
@@ -460,25 +435,21 @@ class RateFinalizingStill extends Component {
                   self.setState({ rbtnloding: false });
                   NotificationManager.success(response.data.Table[0].Message);
                   self.toggleRejectModal();
+                  var Messagebody =
+                    "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
+
+                  self.SendMail(SalesQuoteNumber, Messagebody);
                   setTimeout(function() {
                     window.location.href = "quote-table";
-                  }, 1000);
+                  }, 5000);
                 }
               }
             }
           }
-
-          var Messagebody =
-            "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
-
-          self.SendMail(SalesQuoteNumber, Messagebody);
         })
         .catch(error => {
-          debugger;
           var temperror = error.response.data;
           var err = temperror.split(":");
-          //alert(err[1].replace("}", ""))
-          NotificationManager.error(err[1].replace("}", ""));
         });
     } else {
       var errorRejReson = "Please enter rejection reason";
@@ -489,7 +460,6 @@ class RateFinalizingStill extends Component {
   }
 
   SendMail(SalesQuoteNumber, Messagebody) {
-    debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteMailAPI`,
@@ -503,7 +473,6 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         if (response != null) {
           if (response.data != null) {
             if (response.data.length > 0) {
@@ -513,20 +482,16 @@ class RateFinalizingStill extends Component {
         }
       })
       .catch(error => {
-        debugger;
         var temperror = error.response.data;
         var err = temperror.split(":");
-        //alert(err[1].replace("}", ""))
+
         NotificationManager.error(err[1].replace("}", ""));
       });
   }
 
-  // Shlok Start workingf
-
   //// start dynamic element for LCL-AIR-LTL
 
   CreateMultiCBM() {
-    debugger;
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -555,7 +520,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="QTY"
               value={"" + el.Quantity || ""}
-              //onKeyUp={this.cbmChange}
             />
           </div>
         </div>
@@ -568,7 +532,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="Length"
               value={"" + el.Length || ""}
-              // onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -581,7 +544,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="Width"
               value={"" + el.Width || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -594,7 +556,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="Height"
               value={"" + el.height || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -611,33 +572,7 @@ class RateFinalizingStill extends Component {
             />
           </div>
         </div>
-        <div className="col-md">
-          {/* <div className="spe-equ">
-            <input
-              type="text"
-              disabled
-              name={
-                this.state.containerLoadType === "LCL"
-                  ? "Volume"
-                  : "VolumeWeight"
-              }
-              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={
-                this.state.containerLoadType === "LCL"
-                  ? "KG"
-                  : this.state.containerLoadType === "AIR"
-                  ? "CW"
-                  : "VW"
-              }
-              value={
-                this.state.containerLoadType === "LCL"
-                  ? "" + el.Volume
-                  : "" + el.VolumeWeight || ""
-              }
-              className="w-100 weight-icon"
-            />
-          </div> */}
-        </div>
+        <div className="col-md"></div>
         {i === 0 ? (
           <div className="">
             <div className="spe-equ">
@@ -659,23 +594,11 @@ class RateFinalizingStill extends Component {
             </div>
           </div>
         )}
-        {/* {this.state.multiCBM.length > 1 ? (
-          <div className="">
-            <div className="spe-equ">
-              <i
-                className="fa fa-minus mt-2"
-                aria-hidden="true"
-                onClick={this.removeMultiCBM.bind(this)}
-              ></i>
-            </div>
-          </div>
-        ) : null} */}
       </div>
     ));
   }
 
   HandleChangeMultiCBM(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -693,35 +616,6 @@ class RateFinalizingStill extends Component {
     }
 
     this.setState({ multiCBM });
-    // if (this.state.containerLoadType !== "LCL") {
-    //   var decVolumeWeight =
-    //     (multiCBM[i].Quantity *
-    //       (multiCBM[i].Length * multiCBM[i].Width * multiCBM[i].height)) /
-    //     6000;
-    //   if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
-    //     multiCBM[i] = {
-    //       ...multiCBM[i],
-    //       ["VolumeWeight"]: multiCBM[i].GrossWt
-    //     };
-    //   } else {
-    //     multiCBM[i] = {
-    //       ...multiCBM[i],
-    //       ["VolumeWeight"]: parseFloat(decVolumeWeight)
-    //     };
-    //   }
-    // } else {
-    //   var decVolume =
-    //     multiCBM[i].Quantity *
-    //     ((multiCBM[i].Length / 100) *
-    //       (multiCBM[i].Width / 100) *
-    //       (multiCBM[i].height / 100));
-    //   multiCBM[i] = {
-    //     ...multiCBM[i],
-    //     ["Volume"]: parseFloat(decVolume)
-    //   };
-    // }
-
-    // this.setState({ multiCBM });
   }
   addMultiCBM() {
     this.setState(prevState => ({
@@ -743,7 +637,6 @@ class RateFinalizingStill extends Component {
     }));
   }
   removeMultiCBM(type, i) {
-    debugger;
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(type, 1);
     this.setState({ multiCBM });
@@ -754,7 +647,6 @@ class RateFinalizingStill extends Component {
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
     let self = this;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/CommodityDropdown`,
@@ -767,7 +659,6 @@ class RateFinalizingStill extends Component {
   }
   HandlePackgeTypeData() {
     let self = this;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/PackageTypeListDropdown`,
@@ -793,8 +684,6 @@ class RateFinalizingStill extends Component {
   }
 
   toggleRejectPop() {
-    debugger;
-
     this.setState(prevState => ({
       modalRejectPop: !prevState.modalRejectPop
     }));
@@ -807,7 +696,7 @@ class RateFinalizingStill extends Component {
           <label name="TypeName">
             {el.TypeName} <span className="into-quant">X</span>
           </label>
-          {/* <div className="spe-equ"> */}
+
           <input
             type="number"
             name="Quantity"
@@ -863,7 +752,6 @@ class RateFinalizingStill extends Component {
   }
 
   onDocumentSaleQuoteHandler = () => {
-    debugger;
     const docData = new FormData();
     var docName = this.state.selectedFileName;
 
@@ -872,8 +760,6 @@ class RateFinalizingStill extends Component {
       return false;
     }
 
-    debugger;
-    //docData.append();
     docData.append("QuoteID", this.state.RateDetails[0].SaleQuoteID);
     docData.append("DocumentID", 0);
     docData.append(
@@ -891,13 +777,10 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         NotificationManager.success(response.data.Table[0].Result);
       })
       .catch(error => {
-        debugger;
         NotificationManager.error(error.response.data.split("'")[1]);
-        console.log(error.response);
       });
 
     var qData = this.props.location.state;
@@ -905,7 +788,6 @@ class RateFinalizingStill extends Component {
   };
 
   HandleDowloadFile = (e, item) => {
-    debugger;
     axios({
       method: "post",
       url: `${appSettings.APIURL}/DownloadFTPFile`,
@@ -917,7 +799,6 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         if (response.data) {
           var blob = new Blob([response.data], { type: "application/pdf" });
           var link = document.createElement("a");
@@ -925,10 +806,8 @@ class RateFinalizingStill extends Component {
           link.download = item.original.FileName;
           link.click();
         }
-        //NotificationManager.success(response.data.Table[0].Result);
       })
       .catch(error => {
-        debugger;
         NotificationManager.error(error.response.data.split("'")[1]);
         console.log(error.response);
       });
@@ -1031,16 +910,8 @@ class RateFinalizingStill extends Component {
   //// start flattack type and openTop type dynamic elememnt
 
   MultiCreateCBM() {
-    debugger;
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
-        <div className="col-md">
-          <div className="spe-equ">
-            <label className="mr-0 mt-2" name="SpecialContainerCode">
-              {el.SpecialContainerCode}
-            </label>
-          </div>
-        </div>
         <div className="col-md">
           <div className="spe-equ">
             <select
@@ -1067,7 +938,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="Quantity"
               value={el.Quantity}
-              //onKeyUp={this.cbmChange}
             />
           </div>
         </div>
@@ -1080,7 +950,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="length"
               value={el.length || ""}
-              // onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1093,7 +962,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="width"
               value={el.Width || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1106,7 +974,6 @@ class RateFinalizingStill extends Component {
               className="w-100"
               name="height"
               value={el.height || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1151,7 +1018,7 @@ class RateFinalizingStill extends Component {
 
   newMultiCBMHandleChange(i, e) {
     const { name, value } = e.target;
-    debugger;
+
     let flattack_openTop = [...this.state.flattack_openTop];
     if (name === "PackageType") {
       flattack_openTop[i] = {
@@ -1187,7 +1054,6 @@ class RateFinalizingStill extends Component {
     this.setState({ flattack_openTop });
   }
   addClickMultiCBM(optionsVal) {
-    debugger;
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
@@ -1367,7 +1233,6 @@ class RateFinalizingStill extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       if (response.data.Table.length > 0) {
         self.setState({
           ConditionDesc: response.data.Table[0].conditionDesc
@@ -1381,7 +1246,6 @@ class RateFinalizingStill extends Component {
   // Shlok End working
 
   HandleDocumentDelete(e, row) {
-    debugger;
     var MywayUserID = encryption(window.localStorage.getItem("userid"), "desc");
     var documentData = {
       QuoteID: row.original.QuoteID,
@@ -1393,11 +1257,9 @@ class RateFinalizingStill extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/DeleteSalesQuotedocument`,
-      // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
       data: documentData,
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       NotificationManager.success(response.data.Table[0].Result);
 
       setTimeout(() => {
@@ -1410,7 +1272,6 @@ class RateFinalizingStill extends Component {
   }
 
   printModalPopUp() {
-    debugger;
     var divToPrint = document.getElementById("printDiv");
     var newWin = window.open("", "Print-Window");
     newWin.document.open();
@@ -1440,7 +1301,6 @@ class RateFinalizingStill extends Component {
     let status;
     if (this.props.location.state) {
       status = this.props.location.state.detail.Status;
-      // this.HandleShipmentDetails(bookingNo);
     }
     var DocumentCharges = [];
     var i = 0;
@@ -1461,19 +1321,14 @@ class RateFinalizingStill extends Component {
           <div className="cls-rt no-bg">
             <div className="rate-fin-tit title-sect mb-4">
               {(() => {
-                // debugger;
-                // if (this.props.location.state.detail[1] == "Quotes") {
                 return (
                   <h2>
                     Quotes Details{" "}
                     {this.state.loding === true ? "" : this.state.QuoteNumber}
                   </h2>
                 );
-                // } else {
-                //   return <h2>Booking Details</h2>;
-                //  }
               })()}
-              {/* <h2>Rate Query Details</h2> */}{" "}
+
               <h2>{this.state.loding === true ? "" : status}</h2>
               <button
                 onClick={this.handleChangePage.bind(this)}
@@ -1487,91 +1342,13 @@ class RateFinalizingStill extends Component {
             ) : (
               <>
                 <div className="row">
-                  {/* <div className="col-md-4">
-                <div className="rate-table-left rate-final-left">
-                  <div>
-                    <h3>Locals</h3>
-                    <div className="cont-costs">
-                      <div className="remember-forgot d-block m-0">
-                        <div>
-                          <div className="d-flex">
-                            <input id="ugm" type="checkbox" name={"local"} />
-                            <label htmlFor="ugm">UGM</label>
-                          </div>
-                          <span>50$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input id="bl" type="checkbox" name={"local"} />
-                            <label htmlFor="bl">B/L</label>
-                          </div>
-                          <span>25$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="stuffing"
-                              type="checkbox"
-                              name={"local"}
-                            />
-                            <label htmlFor="stuffing">Stuffing</label>
-                          </div>
-                          <span>100$</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h3>Subcharges</h3>
-                    <div className="cont-costs">
-                      <div className="remember-forgot d-block m-0">
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="cont-clean"
-                              type="checkbox"
-                              name={"subcharges"}
-                            />
-                            <label htmlFor="cont-clean">Container Clean</label>
-                          </div>
-                          <span>50$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="fumi"
-                              type="checkbox"
-                              name={"subcharges"}
-                            />
-                            <label htmlFor="fumi">Fumigation</label>
-                          </div>
-                          <span>25$</span>
-                        </div>
-                        <div>
-                          <div className="d-flex">
-                            <input
-                              id="tarpau"
-                              type="checkbox"
-                              name={"subcharges"}
-                            />
-                            <label htmlFor="tarpau">Tarpaulin</label>
-                          </div>
-                          <span>100$</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
                   <div className="col-md-12 ra-font">
                     <div className="pb-4" style={{ backgroundColor: "#fff" }}>
                       <div className="rate-final-contr">
                         <div className="title-border d-flex align-items-center justify-content-between py-3">
                           <h3>Quotation Price</h3>
                           <div>
-                            {/* {this.state.toggleCustomerType && */}
                             {this.state.QuoteStatus && (
-                              //QuoteStatus
                               <button
                                 className="butn m-0 mr-3"
                                 onClick={this.toggleAcceptModal}
@@ -1579,11 +1356,10 @@ class RateFinalizingStill extends Component {
                                 Accept
                               </button>
                             )}
-                            {/* {this.state.toggleCustomerType && */}
+
                             {this.state.QuoteStatus && (
                               <button
                                 className="butn m-0"
-                                // onClick={this.RejectQuotes.bind(this)}
                                 onClick={this.toggleRejectModal}
                               >
                                 Reject
@@ -1685,7 +1461,6 @@ class RateFinalizingStill extends Component {
                                       }
                                     },
                                     accessor: "lineName"
-                                    // minWidth: 200
                                   },
                                   {
                                     Cell: row => {
@@ -1712,7 +1487,7 @@ class RateFinalizingStill extends Component {
                                       );
                                     },
                                     accessor: "POLName",
-                                    //  minWidth: 175
+
                                     filterable: true
                                   },
                                   {
@@ -1743,7 +1518,6 @@ class RateFinalizingStill extends Component {
                                     },
                                     accessor: "PODName",
                                     filterable: true
-                                    // minWidth: 175
                                   },
                                   {
                                     Cell: row => {
@@ -1782,42 +1556,56 @@ class RateFinalizingStill extends Component {
                                     filterable: true,
                                     minWidth: 90
                                   },
+
                                   {
                                     Cell: row => {
+                                      var header = "";
                                       var value = "";
-                                      if (row.original.ContainerType) {
-                                        value = row.original.ContainerType;
-                                      }
-                                      if (row.original.ContainerQuantity) {
-                                        value +=
-                                          " (" +
-                                          row.original.ContainerQuantity +
-                                          ")";
+                                      if (this.state.ContainerLoad == "FCL") {
+                                        header = "Container";
+                                        if (row.original.ContainerType) {
+                                          value = row.original.ContainerType;
+                                        }
+                                        if (row.original.ContainerQuantity) {
+                                          value +=
+                                            " (" +
+                                            row.original.ContainerQuantity +
+                                            ")";
+                                        }
+                                      } else if (
+                                        this.state.ContainerLoad == "LCL"
+                                      ) {
+                                        header = "CBM";
+                                        if (row.original.CBM) {
+                                          value = row.original.CBM;
+                                        }
+                                      } else if (
+                                        this.state.ContainerLoad == "AIR"
+                                      ) {
+                                        header = "C.W";
+                                        if (row.original["ChgWeight"]) {
+                                          value = row.original["ChgWeight"];
+                                        }
+                                      } else {
+                                        header = "C.W";
+                                        if (row.original["ChgWeight"]) {
+                                          value = row.original["ChgWeight"];
+                                        }
                                       }
 
                                       return (
                                         <>
                                           <p className="details-title">
-                                            Container
+                                            {header}
                                           </p>
-                                          {this.state.ContainerLoad !==
-                                          "INLAND" ? (
-                                            <p className="details-para">
-                                              {/* {row.original.ContainerType +
-                                          " (" +
-                                          row.original.ContainerQuantity +
-                                          ")"} */}
-                                              {value}
-                                            </p>
-                                          ) : (
-                                            <p className="details-para"></p>
-                                          )}
+                                          <p className="details-para">
+                                            {value}
+                                          </p>
                                         </>
                                       );
                                     },
                                     accessor: "ContainerType",
                                     filterable: true
-                                    //minWidth: 175
                                   },
                                   {
                                     Cell: row => {
@@ -1858,7 +1646,6 @@ class RateFinalizingStill extends Component {
                                       );
                                     },
                                     accessor: "TransitTime"
-                                    // minWidth: 60
                                   },
                                   {
                                     Cell: row => {
@@ -1907,14 +1694,6 @@ class RateFinalizingStill extends Component {
                               }
                             ]}
                             filterable
-                            // expanded={this.state.expanded}
-                            // onExpandedChange={(expand, event) => {
-                            //   this.setState({
-                            //     expanded: {
-                            //       [event]: {}
-                            //     }
-                            //   });
-                            // }}
                             data={this.state.RateDetails}
                             defaultPageSize={1000}
                             className="-striped -highlight no-mid-align"
@@ -1934,43 +1713,13 @@ class RateFinalizingStill extends Component {
                                           : d =>
                                               d.saleQuoteLineID ===
                                               row.original.saleQuoteLineID
-                                        : // ||
-                                          // d.SaleQuoteIDLineID
-
-                                          d =>
+                                        : d =>
                                             d.SaleQuoteIDLineID ===
                                             row.original.SaleQuoteIDLineID
                                     )}
-                                    // data={this.state.SubRateDetails}
                                     columns={[
                                       {
                                         columns: [
-                                          // {
-                                          //   Header: "C. Description",
-                                          //   accessor:
-                                          //     this.state.ContainerLoad ===
-                                          //     "INLAND"
-                                          //       ? "ChargeDesc"
-                                          //       : "Type",
-                                          //   Cell: row => {
-                                          //     debugger;
-                                          //     if (
-                                          //       row.original.Type !==
-                                          //         undefined &&
-                                          //       row.original.Type !== ""
-                                          //     ) {
-                                          //       return <>{row.original.Type}</>;
-                                          //     }
-                                          //     if (
-                                          //       row.original.ChargeDesc !==
-                                          //       undefined
-                                          //     ) {
-                                          //       return (
-                                          //         <>{row.original.ChargeDesc}</>
-                                          //       );
-                                          //     }
-                                          //   }
-                                          // },
                                           {
                                             Header: "C. Description",
                                             accessor: "ChargeDesc"
@@ -1995,7 +1744,6 @@ class RateFinalizingStill extends Component {
                                             Header: "Unit Price",
                                             accessor: "Amount",
                                             Cell: row => {
-                                              debugger;
                                               if (
                                                 row.original.Amount !== null
                                               ) {
@@ -2007,16 +1755,6 @@ class RateFinalizingStill extends Component {
                                               }
                                             }
                                           },
-
-                                          // {
-                                          //   Header: "Tax",
-                                          //   accessor: 0
-                                          // },
-
-                                          // {
-                                          //   Header: "Exrate",
-                                          //   accessor: 1
-                                          // },
 
                                           {
                                             Cell: row => {
@@ -2160,26 +1898,18 @@ class RateFinalizingStill extends Component {
                                   {this.state.TypeofMove}
                                 </p>
                               </div>
-                              {/* <div className="col-md-4">
-                            <p className="details-title">POL</p>
-                            <p className="details-para">Mumbai</p>
-                          </div>
-                          <div className="col-md-4">
-                            <p className="details-title">POD</p>
-                            <p className="details-para">Vadodra</p>
-                          </div>
-                          <div className="col-md-4">
-                            <p className="details-title">PU Address</p>
-                            <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p>
-                          </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Delivery Address</p>
-                            <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p>
-                          </div> */}
+                              {this.state.RejectedReason ? (
+                                <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
+                                  <p className="details-title">
+                                    Rejected Reasone
+                                  </p>
+                                  <p className="details-para">
+                                    {this.state.RejectedReason}
+                                  </p>
+                                </div>
+                              ) : (
+                                ""
+                              )}
                             </div>
                           </div>
                         </Collapse>
@@ -2233,16 +1963,7 @@ class RateFinalizingStill extends Component {
                             </div>
                           </div>
                         </div>
-                        {/* <div className="row">
-                      <div className="col-md-6 login-fields">
-                        <p className="details-title">Commodity</p>
-                        <input type="text" value="Dummy" disabled />
-                      </div>
-                      {/* <div className="col-md-6 login-fields">
-                        <p className="details-title">Cargo Details</p>
-                        <input type="text" value="Dummy" disabled />
-                      </div>  
-                    </div> */}
+
                         <div className="row">
                           <div className="col-md-4 login-fields">
                             <p className="details-title">Commodity</p>
@@ -2262,19 +1983,6 @@ class RateFinalizingStill extends Component {
                         <div className="row">
                           {" "}
                           <div className="col-md-12 login-fields">
-                            {/* <div className="d-flex justify-content-between">
-                              <p className="details-title">Cargo Details</p>
-                              {this.state.ContainerLoad === "AIR" ||
-                              this.state.ContainerLoad === "LCL" ||
-                              this.state.ContainerLoad === "LTL" ? (
-                                <p className="details-title">
-                                  CBM:-{this.state.cbmVal}
-                                </p>
-                              ) : (
-                                ""
-                              )}
-                            </div> */}
-
                             <div className="ag-fresh redirect-row">
                               <ReactTable
                                 data={CargoDetailsArr}
@@ -2305,11 +2013,25 @@ class RateFinalizingStill extends Component {
                                   {
                                     Header: "Gross Weight",
                                     accessor: "Weight"
-                                    //editable: this.state.containerLoadType == "Air" ? true : false
                                   },
                                   {
-                                    Header: "CBM",
-                                    accessor: "CBM",
+                                    Header:
+                                      this.state.ContainerLoad == "AIR" ||
+                                      this.state.ContainerLoad == "LTL"
+                                        ? "CW"
+                                        : "CBM",
+                                    accessor: "ChgWeight",
+                                    Cell: row => {
+                                      debugger
+                                      if (
+                                        this.state.ContainerLoad === "AIR" ||
+                                        this.state.ContainerLoad === "LTL"
+                                      ) {
+                                        return <p>{row.original.VolumeWeight}</p>;
+                                      } else {
+                                        return <p>{row.original.CBM}</p>;
+                                      }
+                                    },
                                     show:
                                       this.state.ContainerLoad == "AIR" ||
                                       this.state.ContainerLoad == "LTL" ||
@@ -2327,31 +2049,14 @@ class RateFinalizingStill extends Component {
                                         ? true
                                         : false
                                   }
-
-                                  // {
-                                  //   Header: "Temp.",
-                                  //   accessor: "Temperature"
-                                  // },
-
-                                  // {
-                                  //   Header: "Action",
-                                  //   sortable: false,
-                                  //   accessor: "Editable"
-                                  // }
                                 ]}
                                 className="-striped -highlight"
                                 defaultPageSize={2000}
-                                //getTrProps={this.HandleRowClickEvt}
-                                //minRows={1}
                               />
                             </div>
                           </div>
                         </div>
-                        {/* <div className="text-right">
-                      <a href="quote-table" className="butn">
-                        Send
-                      </a>
-                    </div> */}
+
                         <div className="rename-cntr login-fields d-block">
                           <div className="d-flex w-100 mt-4 align-items-center">
                             <div className="w-100">
@@ -2369,9 +2074,7 @@ class RateFinalizingStill extends Component {
                               </label>
                             </div>
                           </div>
-                          <p className="file-name w-100 text-center mt-1">
-                            {/* {this.state.selectedFileName} */}
-                          </p>
+                          <p className="file-name w-100 text-center mt-1"></p>
                         </div>
 
                         <div className="row">
@@ -2457,23 +2160,12 @@ class RateFinalizingStill extends Component {
                                 ]}
                                 className="-striped -highlight"
                                 defaultPageSize={2000}
-                                //getTrProps={this.HandleRowClickEvt}
-                                //minRows={1}
                               />
                             </div>
                           </div>
                         </div>
 
                         <center>
-                          {/* <Button
-                      className="butn"
-                      onClick={() => {
-                        this.onDocumentClickHandler();
-                      }}
-                    >
-                      Save File
-                    </Button> */}
-
                           {this.state.Bookingcreation && (
                             <>
                               <button
@@ -2497,8 +2189,9 @@ class RateFinalizingStill extends Component {
                   </div>
                 </div>
               </>
-            )}{" "}
+            )}
           </div>
+          {/* -------------------------------------Manage Profit Modal---------------------------------------- */}
           <Modal
             className="amnt-popup"
             isOpen={this.state.modalProfit}
@@ -2519,119 +2212,7 @@ class RateFinalizingStill extends Component {
               </div>
             </ModalBody>
           </Modal>
-          <Modal
-            className="delete-popup pol-pod-popup"
-            isOpen={this.state.modalBook}
-            toggle={this.toggleBook}
-            centered={true}
-          >
-            <ModalBody>
-              <h3 className="mb-4">Create Booking</h3>
-              <div className="rename-cntr login-fields">
-                <label>Quotation Price</label>
-                <input type="text" value="5000" disabled />
-              </div>
-              <div className="rate-radio-cntr justify-content-center mb-3">
-                <div>
-                  <input
-                    className="d-none"
-                    type="radio"
-                    name="cons-ship"
-                    id="consignee"
-                  />
-                  <label className="m-0" htmlFor="consignee">
-                    Consignee
-                  </label>
-                </div>
-                <div>
-                  <input
-                    className="d-none"
-                    type="radio"
-                    name="cons-ship"
-                    id="shipper"
-                  />
-                  <label className="m-0" htmlFor="shipper">
-                    Shipper
-                  </label>
-                </div>
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Consignee Details</label>
-                <select>
-                  <option>Name</option>
-                  <option>Name</option>
-                  <option>Name</option>
-                  <option>Name</option>
-                </select>
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Notify Party</label>
-                <select>
-                  <option>Name</option>
-                  <option>Name</option>
-                  <option>Name</option>
-                  <option>Name</option>
-                </select>
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Cargo Details</label>
-                <input type="text" placeholder="Enter Cargo Details" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Length</label>
-                <input type="text" placeholder="Enter Length" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Width</label>
-                <input type="text" placeholder="Enter Width" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Height</label>
-                <input type="text" placeholder="Enter Height" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Weight</label>
-                <input type="text" placeholder="Enter Weight" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Gross Weight</label>
-                <input type="text" placeholder="Enter Gross Weight" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>CBM</label>
-                <input type="text" placeholder="Enter CBM" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Cargo Size</label>
-                <input type="text" placeholder="Enter Cargo Size" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Cargo Weight</label>
-                <input type="text" placeholder="Enter Cargo Weight" />
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Buyer Name</label>
-                <select>
-                  <option>Name</option>
-                  <option>Name</option>
-                  <option>Name</option>
-                  <option>Name</option>
-                </select>
-              </div>
-              <div className="rename-cntr login-fields">
-                <label>Address</label>
-                <textarea className="txt-add"></textarea>
-              </div>
-              <a
-                href="/booking-table"
-                className="butn"
-                onClick={this.toggleBook}
-              >
-                Create Booking
-              </a>
-            </ModalBody>
-          </Modal>
-
+          {/* -------------------------------------Reject Modal---------------------------------------- */}
           <Modal
             className=""
             isOpen={this.state.modalRequest}
@@ -2649,7 +2230,6 @@ class RateFinalizingStill extends Component {
             <ModalBody>
               <h3 className="mb-4">Reject Reason</h3>
               <div className="rename-cntr login-fields">
-                {/* <label>Reject Reason</label> */}
                 <input type="text" id="RejectResontxt" />
               </div>
               <Button className="butn" onClick={this.RejectQuotes.bind(this)}>
@@ -2678,7 +2258,6 @@ class RateFinalizingStill extends Component {
                 className="butn"
                 onClick={this.AcceptQuotes.bind(this)}
                 disabled={this.state.btnloding === true ? true : false}
-                //onClick={this.hanleProfitAmountSubmit.bind(this)}
               >
                 {this.state.btnloding == true ? (
                   <>
@@ -2693,11 +2272,7 @@ class RateFinalizingStill extends Component {
                 )}
               </Button>
 
-              <Button
-                onClick={this.toggleAcceptModal}
-                className="butn"
-                //onClick={this.hanleProfitAmountRemove.bind(this)}
-              >
+              <Button onClick={this.toggleAcceptModal} className="butn">
                 No
               </Button>
             </div>
@@ -2722,7 +2297,6 @@ class RateFinalizingStill extends Component {
                 className="butn"
                 onClick={this.RejectQuotes.bind(this)}
                 disabled={this.state.rbtnloding === true ? true : false}
-                //onClick={this.hanleProfitAmountSubmit.bind(this)}
               >
                 {this.state.rbtnloding == true ? (
                   <>
@@ -2737,27 +2311,19 @@ class RateFinalizingStill extends Component {
                 )}
               </Button>
 
-              <Button
-                className="butn"
-                onClick={this.toggleRejectModal}
-                //onClick={this.hanleProfitAmountRemove.bind(this)}
-              >
+              <Button className="butn" onClick={this.toggleRejectModal}>
                 No
               </Button>
             </div>
           </ModalBody>
         </Modal>
+        {/* -------------------------------------Preview quote Modal---------------------------------------- */}
         <Modal
           className="popupbox"
           isOpen={this.state.modalPreview}
           toggle={this.togglePreview}
         >
           <ModalBody>
-            {/* <div className="modal popupbox" id="myModal">
-        <div className="modal-dialog">
-          <div className="modal-content">
-
-            <div className="modal-body"> */}
             <button
               type="button"
               className="close"
@@ -2766,7 +2332,7 @@ class RateFinalizingStill extends Component {
             >
               <span>&times;</span>
             </button>
-            {/* <button onClick={this.printModalPopUp.bind(this)}>Print</button> */}
+
             <div id="printDiv">
               <div className="row" style={{ margin: 0 }}>
                 <div className="logohheader">
@@ -2793,15 +2359,6 @@ class RateFinalizingStill extends Component {
               <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
-                    {/* <h3>
-                    From,{" "}
-                    <span>
-                      {encryption(
-                        window.localStorage.getItem("companyname"),
-                        "desc"
-                      )}
-                    </span>
-                  </h3> */}
                     <label>
                       Sales Person :{" "}
                       <span>
@@ -2830,23 +2387,17 @@ class RateFinalizingStill extends Component {
                 </div>
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
-                    {/* <h3>
-                      To, <span>{this.state.CompanyName}</span>
-                    </h3> */}
                     <label>
-                      ATNN : <span>{this.state.ContactName}</span>
+                      ATNN : <span>{this.state.custNotification}</span>
                     </label>
                     <label>
-                      E-Mail : <span>{this.state.ContactEmail}</span>
+                      E-Mail : <span>{this.state.Contact_Email}</span>
                     </label>
                     <label>
-                      Phone : <span></span>
+                      Phone : <span>{this.state.Contact_Phone}</span>
                     </label>
                     <label>
                       Fax : <span></span>
-                    </label>
-                    <label>
-                      &nbsp;<span></span>
                     </label>
                   </div>
                 </div>
@@ -2919,30 +2470,6 @@ class RateFinalizingStill extends Component {
                         </div>
                       </>
                     ) : null}
-                    {/* // this.state.containerLoadType === "FTL" ? (
-                    //   <>
-                    //     <h3>Dimensions</h3>
-                    //     <div className="table-responsive">
-                    //       <table className="table table-responsive">
-                    //         <thead>
-                    //           <tr>
-                    //             <th>Truck Type</th>
-                    //             <th>Quantity</th>
-                    //           </tr>
-                    //         </thead>
-                    //         <tbody>
-                    //           {this.state.TruckTypeData.map(item1 => (
-                    //             <tr>
-                    //               <td>{item1.TruckDesc}</td>
-                    //               <td>{item1.Quantity}</td>
-                    //             </tr>
-                    //           ))}
-                    //         </tbody>
-                    //       </table>
-                    //     </div>
-                    //   </>
-                    // ) : 
-                    // null} */}
                   </div>
                 </div>
               </div>
@@ -2957,27 +2484,13 @@ class RateFinalizingStill extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-4">
                             <label>
-                              Type of Move :
-                              <span>
-                                {this.state.TypeofMove}
-                                {/* {this.state.typeofMove === 1
-                                ? "Port To Port"
-                                : this.state.typeofMove === 2
-                                ? "Door To Port"
-                                : this.state.typeofMove === 4
-                                ? "Door To Door"
-                                : this.state.typeofMove === 3
-                                ? "Port To Door"
-                                : ""} */}
-                              </span>
+                              Type of Move :<span>{this.state.TypeofMove}</span>
                             </label>
                             <label>
                               POL : <span>{item.POL}</span>
-                              {/* <span>{this.state.PickUpAddress}</span> */}
                             </label>
                             <label>
                               POD : <span>{item.POD}</span>
-                              {/* <span>{this.state.DestinationAddress}</span> */}
                             </label>
                           </div>
                           <div className="col-12 col-sm-4">
@@ -2987,7 +2500,6 @@ class RateFinalizingStill extends Component {
                                 {item.TransshipmentPort === null
                                   ? "Direct"
                                   : "Transit"}
-                                {/* // : item.TransshipmentPort} */}
                               </span>
                             </label>
                             <label>

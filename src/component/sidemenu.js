@@ -10,29 +10,21 @@ import RatesIcon from "./../assets/img/rates-side.png";
 import AdminIcon from "./../assets/img/admin-side.png";
 import ChatIcon from "./../assets/img/chat.png";
 import sideArrow from "./../assets/img/side-arr.png";
-
-import PlaneColor from "./../assets/img/AirShipment-color.png";
 import PlaneWhite from "./../assets/img/hamb-plane.png";
-import OceanColor from "./../assets/img/OceanShipment-color.png";
 import ShipWhite from "./../assets/img/ship-white.png";
-import TruckColor from "./../assets/img/DelayShipment-color.png";
 import TruckWhite from "./../assets/img/shipments.png";
-
 import ShipmentPlannerIcon from "./../assets/img/shipment-planner-side.png";
 import ShipmentsIcon from "./../assets/img/shipment-side.png";
 import DashboardIcon from "./../assets/img/dashboard-side.png";
 import PhoneIcon from "./../assets/img/phone.png";
 import QRCode from "../pages/QRCode";
-
 import ProfileSettingIcon from "./../assets/img/profilesetting.png";
-
 import QuotesIcon from "./../assets/img/quotes-side.png";
 import InfoIcon from "./../assets/img/info.png";
 import SettingIcon from "./../assets/img/Settings.png";
 import "font-awesome/css/font-awesome.css";
 import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
-import LoginActore from "./../assets/img/login-actore.jfif";
 import { Modal, ModalBody } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -56,17 +48,18 @@ class SideMenu extends Component {
       isColClick: false,
       profileImgURL: "",
       imageFile: {},
-      loading: false
+      loading: false,
+      QrModal: false
     };
 
     this.highlightClass = this.highlightClass.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
+    this.toggleQRModal = this.toggleQRModal.bind(this);
   }
   shouldComponentUpdate(nextProps, nextState) {
     return true;
   }
   componentDidMount() {
-    
     var previousAir = window.localStorage.getItem("aircount");
     var previousQuotePending = window.localStorage.getItem("quotepending");
     var previousBookPending = window.localStorage.getItem("bookpending");
@@ -99,7 +92,7 @@ class SideMenu extends Component {
 
   clickShipmentType(e) {
     var value = e.target.getAttribute("data-shptye");
-    //  alert(value)
+
     if (value === "" || value === null) {
       window.location.href = "shipment-summary";
     } else {
@@ -113,7 +106,6 @@ class SideMenu extends Component {
     } else {
       window.location.href = "quote-table?Qtype=" + value;
     }
-    // this.highlightClass();
   }
 
   toggleProfile() {
@@ -158,13 +150,12 @@ class SideMenu extends Component {
       });
     }
   }
-
-  handleSubmit() {
-    ////debugger;
+  ////Handle Submit Profile Pic
+  HandleSubmitProfilePic() {
     this.setState({ loading: true });
     let self = this;
     var formData = new FormData();
-    // if (Object.keys(this.state.imageFile).length>0) {
+
     var userid = parseInt(
       encryption(window.localStorage.getItem("userid"), "desc")
     );
@@ -183,7 +174,6 @@ class SideMenu extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        ////debugger;
         if (response.data.Table.length > 0) {
           self.setState({
             profileImgURL: response.data.Table[0].UserLogo
@@ -208,8 +198,9 @@ class SideMenu extends Component {
         NotificationManager.error(error.response.data);
       });
   }
-  handleFile(e) {
-    //debugger;
+
+  ////Handle File Input Data
+  HandleFileInput(e) {
     var file = e.target.files[0];
     var t = file.type
       .split("/")
@@ -231,6 +222,10 @@ class SideMenu extends Component {
       reader.readAsDataURL(file);
       this.setState({ imageFile: file });
     }
+  }
+  ////toggle QR Code Modal
+  toggleQRModal() {
+    this.setState({ QrModal: !this.state.QrModal });
   }
   render() {
     var urlShipSum = window.location.pathname;
@@ -284,7 +279,7 @@ class SideMenu extends Component {
         className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
         id="sidemenubar"
       >
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
         <div className="side-arrow" onClick={this.sidebarCollapse.bind(this)}>
           <img src={sideArrow} alt="side arrow" />
         </div>
@@ -338,7 +333,10 @@ class SideMenu extends Component {
                           data-shptye="Air"
                           onClick={this.clickShipmentType.bind(this)}
                         >
-                        <img src={PlaneWhite} className="header-greencounter-icon AirColor" />
+                          <img
+                            src={PlaneWhite}
+                            className="header-greencounter-icon AirColor"
+                          />
                           Air
                         </label>
                         <label className="shipment-ul-lilbl2">
@@ -351,7 +349,10 @@ class SideMenu extends Component {
                           data-shptye="Ocean"
                           onClick={this.clickShipmentType.bind(this)}
                         >
-                        <img src={ShipWhite} className="header-greencounter-icon AirColor" />
+                          <img
+                            src={ShipWhite}
+                            className="header-greencounter-icon AirColor"
+                          />
                           Ocean
                         </label>
                         <label className="shipment-ul-lilbl2">
@@ -364,7 +365,10 @@ class SideMenu extends Component {
                           data-shptye="Inland"
                           onClick={this.clickShipmentType.bind(this)}
                         >
-                        <img src={TruckWhite} className="header-greencounter-icon AirColor" />
+                          <img
+                            src={TruckWhite}
+                            className="header-greencounter-icon AirColor"
+                          />
                           Inland
                         </label>
                         <label className="shipment-ul-lilbl2">
@@ -377,110 +381,96 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          <li
-            className="sidemenu-ul-li shipmentli"
-            style={{ borderTop: "1px solid #265eb5" }}
-          >
-            <Accordion
-              defaultActiveKey={window.localStorage.getItem("defActKey")}
-              // defaultActiveKey={window.localStorage.getItem("defspotActKey")}
+          {encryption(window.localStorage.getItem("usertype"), "desc") ===
+          "Sales User" ? (
+            <li
+              className="sidemenu-ul-li shipmentli"
+              style={{ borderTop: "1px solid #265eb5" }}
             >
-              <Card>
-                <Card.Header>
-                  {encryption(
-                    window.localStorage.getItem("usertype"),
-                    "desc"
-                  ) === "Sales User" ? (
-                    <Link to="/rate-search" style={{ display: "block" }}>
-                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                        <img
-                          src={RatesIcon}
-                          alt="green-counter-icon"
-                          className="header-greencounter-icon"
-                        />
-                        Rates
-                      </Accordion.Toggle>
-                    </Link>
-                  ) : (
-                    <Link to="/new-rate-search" style={{ display: "block" }}>
-                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                        <img
-                          src={RatesIcon}
-                          alt="green-counter-icon"
-                          className="header-greencounter-icon"
-                        />
-
-                        <span className="menuname">Rates</span>
-                      </Accordion.Toggle>
-                    </Link>
-                  )}
-                </Card.Header>
-                <Accordion.Collapse eventKey="1">
-                  <Card.Body>
-                    <ul className="shipment-ul sidemenu">
-                      <li>
-                        {/* <label className="shipment-ul-lilbl1">Rate Search</label> */}
-                        {encryption(
-                          window.localStorage.getItem("usertype"),
-                          "desc"
-                        ) === "Sales User" ? (
-                          <a
-                            href="rate-search"
-                            className={this.state.activeRateSearch}
-                          >
-                            {/* <img
-                            src={RatesIcon}
-                            alt="green-counter-icon"
-                            className="header-greencounter-icon"
-                          /> */}
-                            Rate Search
-                          </a>
-                        ) : (
-                          <a
-                            href="new-rate-search"
-                            className={this.state.activeRateSearch}
-                          >
-                            {/* <img
-                              src={RatesIcon}
-                              alt="green-counter-icon"
-                              className="header-greencounter-icon"
-                            /> */}
-                            Rate Search
-                          </a>
-                        )}
-                      </li>
-                      <li>
-                        <a
-                          href="spot-rate-table"
-                          className={this.state.activeSpotList}
+              <Accordion
+                defaultActiveKey={window.localStorage.getItem("defActKey")}
+              >
+                <Card>
+                  <Card.Header>
+                    {encryption(
+                      window.localStorage.getItem("usertype"),
+                      "desc"
+                    ) === "Sales User" ? (
+                      <Link to="/rate-search" style={{ display: "block" }}>
+                        <Accordion.Toggle
+                          as={Button}
+                          variant="link"
+                          eventKey="1"
                         >
-                          {/* <img
+                          <img
                             src={RatesIcon}
                             alt="green-counter-icon"
                             className="header-greencounter-icon"
-                          /> */}
-                          Spot Rate Listing
-                        </a>
-                      </li>
-                    </ul>
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            </Accordion>
-          </li>
+                          />
+                          Rates
+                        </Accordion.Toggle>
+                      </Link>
+                    ) : (
+                      <Link to="/new-rate-search" style={{ display: "block" }}>
+                        <Accordion.Toggle
+                          as={Button}
+                          variant="link"
+                          eventKey="1"
+                        >
+                          <img
+                            src={RatesIcon}
+                            alt="green-counter-icon"
+                            className="header-greencounter-icon"
+                          />
+
+                          <span className="menuname">Rates</span>
+                        </Accordion.Toggle>
+                      </Link>
+                    )}
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="1">
+                    <Card.Body>
+                      <ul className="shipment-ul sidemenu">
+                        <li>
+                          {encryption(
+                            window.localStorage.getItem("usertype"),
+                            "desc"
+                          ) === "Sales User" ? (
+                            <a
+                              href="rate-search"
+                              className={this.state.activeRateSearch}
+                            >
+                              Rate Search
+                            </a>
+                          ) : (
+                            <a
+                              href="new-rate-search"
+                              className={this.state.activeRateSearch}
+                            >
+                              Rate Search
+                            </a>
+                          )}
+                        </li>
+                        <li>
+                          <a
+                            href="spot-rate-table"
+                            className={this.state.activeSpotList}
+                          >
+                            Spot Rate Listing
+                          </a>
+                        </li>
+                      </ul>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              </Accordion>
+            </li>
+          ) : null}
           <li
             className="sidemenu-ul-li shipmentli"
             style={{ borderTop: "1px solid #265eb5" }}
             onClick={this.highlightClass.bind(this)}
           >
-            {/* <Link to="/quote-table">
-              <img
-                src={QuotesIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Quotes
-            </Link> */}
             <Accordion
               defaultActiveKey={window.localStorage.getItem("quoteKey")}
             >
@@ -706,7 +696,7 @@ class SideMenu extends Component {
             }
           })()}
         </ul>
-        <div class="dropdown">
+        <div className="dropdown">
           <ul className="sidemenu-ul2 m-0 menu-optio">
             <li className="op" style={{ width: "100%" }}>
               <img src={InfoIcon} className="inofIcon imgop1" alt="info-icon" />
@@ -718,7 +708,7 @@ class SideMenu extends Component {
                 alt="setting-icon"
               />
             </li>
-            <div class="dropdown-menu">
+            <div className="dropdown-menu">
               <ul className="profile-ul">
                 <li className="profile-setting-li">
                   <Link to="mywayMessage">
@@ -749,7 +739,10 @@ class SideMenu extends Component {
                   />
                   Profile Settings
                 </li>
-                <li className="profile-setting-li dropdown">
+                <li
+                  className="profile-setting-li dropdown"
+                  onClick={this.toggleQRModal}
+                >
                   {/* <a href=""> */}
                   <img
                     className="header-phone-icon dropdown-toggle"
@@ -821,7 +814,7 @@ class SideMenu extends Component {
                       id="file-upload"
                       className="file-upload d-none"
                       type="file"
-                      onChange={this.handleFile.bind(this)}
+                      onChange={this.HandleFileInput.bind(this)}
                     />
                     <label htmlFor="file-upload">
                       <div className="file-icon">
@@ -833,12 +826,10 @@ class SideMenu extends Component {
                 </div>
                 <p className="file-name">{this.state.selectedFileName}</p>
               </div>
-              {/* <Button className="butn" onClick={this.handleSubmit.bind(this)}>
-                Submit
-              </Button> */}
+
               <button
                 className="butn btn btn-secondary"
-                onClick={this.handleSubmit.bind(this)}
+                onClick={this.HandleSubmitProfilePic.bind(this)}
               >
                 {this.state.loading == true ? (
                   <i
@@ -859,6 +850,36 @@ class SideMenu extends Component {
             </div>
           </ModalBody>
         </Modal>
+
+        {/*----------------------------- QR Code Modal--------------------- */}
+        <Modal
+          className="delete-popup pol-pod-popup"
+          isOpen={this.state.QrModal}
+          toggle={this.toggleQRModal}
+          centered={true}
+        >
+          <ModalBody>
+            <button
+              type="button"
+              className="close"
+              data-dismiss="modal"
+              onClick={this.toggleQRModal}
+            >
+              <span>&times;</span>
+            </button>
+            <div
+              style={{
+                background: "#fff",
+                padding: "15px",
+                borderRadius: "15px"
+              }}
+            >
+              <h3>QR Code</h3>
+              <QRCode />
+            </div>
+          </ModalBody>
+        </Modal>
+        {/*----------------------------- QR Code Modal--------------------- */}
       </div>
     );
   }

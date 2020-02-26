@@ -14,16 +14,14 @@ import ReactTable from "react-table";
 class EventManagement extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       modalEdit: false,
       value: 50,
       viewData: []
     };
 
-    this.handleAdd = this.handleAdd.bind(this);
+    this.HandleAddEvent = this.HandleAddEvent.bind(this);
   }
-
   componentDidMount() {
     let self = this;
     axios({
@@ -34,35 +32,33 @@ class EventManagement extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       self.setState({ viewData: response.data });
     });
   }
 
-  HandleDocumentView(evt, row) {
-    debugger;
+
+  ////Handle Edit To Envet
+  HandleEditEvent(evt, row) {
+    
     var data = row.original;
     this.props.history.push({
       pathname: "Add-Event-Management",
       state: { detail: data, page: "Edit" }
     });
   }
-
-  handleAdd() {
+  ////Handle Click to Add Event
+  HandleAddEvent() {
     this.props.history.push({
       pathname: "add-Event-Management",
       state: { detail: false }
     });
   }
-
-
   render() {
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse")==="true") {      
       colClassName = "cls-flside colap";
-    } else {
-      debugger;
+    } else {      
       colClassName = "cls-flside";
     }
     return (
@@ -79,7 +75,7 @@ class EventManagement extends Component {
                 <button
                   type="button"
                   className="butn evt-add-btn"
-                  onClick={this.handleAdd}
+                  onClick={this.HandleAddEvent}
                 >
                   Add
                 </button>
@@ -131,7 +127,7 @@ class EventManagement extends Component {
                                 className="actionicon"
                                 src={Pencil}
                                 alt="view-icon"
-                                onClick={e => this.HandleDocumentView(e, row)}
+                                onClick={e => this.HandleEditEvent(e, row)}
                               />
                             </div>
                           );

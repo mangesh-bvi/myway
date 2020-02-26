@@ -133,14 +133,16 @@
           null /* anchor is bottom center of the scaled image */,
           new google.maps.Size(48, 48)
         );
-        setVesselMarkers(map);
+        if (VesselDatalatlng) {
+          setVesselMarkers(map);
+        }
       }
       function setVesselMarkers(map) {
-        var image=ocean;
-        if(imgType==="AIR")image=air;
-        if(imgType==="OCEAN")image=ocean;
-        if(imgType==="ROAD")image=road;
-        
+        var image = ocean;
+        if (imgType === "AIR") image = air;
+        if (imgType === "OCEAN") image = ocean;
+        if (imgType === "ROAD") image = road;
+
         var VesselData = new google.maps.Marker({
           position: VesselDatalatlng,
           icon: image,

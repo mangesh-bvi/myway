@@ -17,22 +17,23 @@ class ChangePassword extends React.Component {
       password: "",
       newpassword: ""
     };
-    this.handlechange = this.handlechange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.HandleChange = this.HandleChange.bind(this);
+    this.HandleSubmit = this.HandleSubmit.bind(this);
   }
   componentDidMount() {
-    //debugger;
+ 
     if (encryption(window.localStorage.getItem("username"),"desc") == null) {
       window.location.href = "./";
     }
   }
-  handlechange(e) {
+  ////Handle Change Text Filed
+  HandleChange(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {
-   //debugger;
+////  Handle Submit button click  
+  HandleSubmit(e) {  
     //  e.preventDefault();
     var oldpwd =encryption(window.localStorage.getItem("password"),"desc");
     this.setState({ submitted: true });
@@ -43,7 +44,7 @@ class ChangePassword extends React.Component {
     }
     if (password === newpassword) {
       ChangePasswordCheck(oldpwd, newpassword);
-    //debugger;
+    
     } else {
       NotificationManager.error("Confirmed password is not matched");
     }
@@ -64,7 +65,7 @@ class ChangePassword extends React.Component {
                   <input
                     type="password"
                     name={"oldpassword"}
-                    onChange={this.handlechange}
+                    onChange={this.HandleChange}
                     placeholder="Enter Your Old Password"
                   />
                 </div>
@@ -73,7 +74,7 @@ class ChangePassword extends React.Component {
                   <input
                     id="password"
                     name={"password"}
-                    onChange={this.handlechange}
+                    onChange={this.HandleChange}
                     placeholder="Enter Your New Password"
                     type="password"
                   />
@@ -83,7 +84,7 @@ class ChangePassword extends React.Component {
                   <input
                     id="newpassword"
                     name={"newpassword"}
-                    onChange={this.handlechange}
+                    onChange={this.HandleChange}
                     placeholder="Re Enter Your New Password"
                     type="password"
                   />
@@ -93,7 +94,7 @@ class ChangePassword extends React.Component {
                 <button
                   type="button"
                   className="butn"
-                  onClick={() => this.handleSubmit()}
+                  onClick={() => this.HandleSubmit()}
                 >
                   Submit
                 </button>
@@ -106,9 +107,8 @@ class ChangePassword extends React.Component {
     );
   }
 }
-
-function ChangePasswordCheck(password, newpassword) {
-  //debugger;
+////Handle Chagen Password Check 
+function ChangePasswordCheck(password, newpassword) {  
   const requestOptions = {
     method: "POST",
     headers: authHeader(),
@@ -121,18 +121,14 @@ function ChangePasswordCheck(password, newpassword) {
     })
   };
   return fetch(`${appSettings.APIURL}/ChangeUserPassword`, requestOptions)
-    .then(handleResponse
-      
+    .then(handleResponse      
       )
     .catch(error => {
-      ////debugger;
-      console.log(error);
+       
     });
 }
-
+//// Handle Response
 function handleResponse(response) {
-//debugger;
-  console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
@@ -141,7 +137,6 @@ function handleResponse(response) {
       NotificationManager.success("Password change successfully");
       window.location.href = "./";
     }
-
     return data;
   });
 }

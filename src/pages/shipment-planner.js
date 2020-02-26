@@ -139,7 +139,7 @@ class ShipmentPlanner extends Component {
 
     var allLineData = [];
     for (var i = 0; i < mydata.length; i++) {
-      debugger;
+      
       var BlocationData = {};
       var flagsData = {};
 
@@ -262,8 +262,10 @@ class ShipmentPlanner extends Component {
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
     localStorage.removeItem("AllLineData");
+    localStorage.removeItem("imgType");
+    // localStorage.removeItem("VesselData");
 
-    debugger;
+    
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
@@ -340,7 +342,7 @@ class ShipmentPlanner extends Component {
 
   //Handle change company drop-down
   companyChange = e => {
-    debugger;
+    
     let self = this;
     var selectComp = document.getElementById("drpCompany").selectedIndex;
     let compArray = this.state.companydrp[selectComp - 1];
@@ -357,7 +359,7 @@ class ShipmentPlanner extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
         let optionItems = response.data.map(comp => (
           <option value={comp.MappingID}>{comp.MappedCompName}</option>
         ));
@@ -398,7 +400,7 @@ class ShipmentPlanner extends Component {
     self.setState({ modeofTransport: transportmode, linerdrp: [] });
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/l`,
+      url: `${appSettings.APIURL}/FetchLiners`,
       data: {
         Type: 2,
         SupConsID: self.state.supConsId,
@@ -472,7 +474,7 @@ class ShipmentPlanner extends Component {
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
-      debugger;
+      
       var deliveryData = response.data.Table1;
       if (deliveryData != "undefined" && deliveryData != null) {
         self.setState({ deliveryPopup: deliveryData });
@@ -507,7 +509,7 @@ class ShipmentPlanner extends Component {
     }
   }
   toggleDelivery() {
-    debugger;
+    
     if (this.state.deliveryPopup != null) {
       // if (this.state.deliveryPopup.length > 0) {
       this.setState(prevState => ({
@@ -528,7 +530,7 @@ class ShipmentPlanner extends Component {
   }
 
   componentDidMount() {
-    debugger;
+    
     let self = this;
     axios({
       method: "post",
@@ -569,8 +571,8 @@ class ShipmentPlanner extends Component {
       }
     }
 
-    var colClassName = "";
-    if ((localStorage.getItem("isColepse") === "true") === "true") {
+   var colClassName = "";
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
       colClassName = "cls-flside";
@@ -817,7 +819,7 @@ class ShipmentPlanner extends Component {
                     >
                       {deliveryPopup.length > 0 ? (
                         deliveryPopup.map((cell, i) => {
-                          debugger;
+                          
                           if (cell.POLLocation == "") {
                             return (
                               <div className="container-fluid p-0 no-sched-avail">

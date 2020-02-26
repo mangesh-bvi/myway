@@ -1,14 +1,7 @@
 import React, { Component } from "react";
-import "../styles/custom.css";
-import { Accordion, Button, Card } from "react-bootstrap";
-import GreenCounterIcon from "./../assets/img/green-counter.png";
-import AnalyticsIcon from "./../assets/img/analytics.png";
-import RatesIcon from "./../assets/img/rates.png";
-import ShipmentsIcon from "./../assets/img/shipments.png";
+import "../styles/custom.css"; 
 import DashboardIcon from "./../assets/img/dashboard.png";
-import QuotesIcon from "./../assets/img/quotes.png";
-import InfoIcon from "./../assets/img/info.png";
-import SettingIcon from "./../assets/img/Settings.png";
+import QuotesIcon from "./../assets/img/quotes.png"; 
 import { Link } from "react-router-dom";
 
 class AdminSideMenu extends Component {
@@ -75,50 +68,7 @@ class AdminSideMenu extends Component {
               Activity Log
             </Link>
           </li>
-          {/* <li className="sidemenu-ul-li">
-              <img
-                src={GreenCounterIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Add Sales User
-            </li>
-            <li className="sidemenu-ul-li">
-              <img
-                src={RatesIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              View Banners
-            </li>
-            <li className="sidemenu-ul-li">
-              <img
-                src={AnalyticsIcon}
-                alt="green-counter-icon"
-                className="header-greencounter-icon"
-              />
-              Add Banners
-            </li>
-            <li className="sidemenu-ul-li">
-              <a href="green-counter">
-                <img
-                  src={GreenCounterIcon}
-                  alt="green-counter-icon"
-                  className="header-greencounter-icon"
-                />
-                Activity Log
-              </a>
-            </li>
-            <li className="sidemenu-ul-li">
-              <a href="green-counter">
-                <img
-                  src={GreenCounterIcon}
-                  alt="green-counter-icon"
-                  className="header-greencounter-icon"
-                />
-                Event Management
-              </a>
-            </li> */}
+           
         </ul>
         <ul className="sidemenu-ul2 m-0"></ul>
       </div>

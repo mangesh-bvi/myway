@@ -10,7 +10,6 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import CheckboxTree from "react-checkbox-tree";
 
@@ -32,171 +31,77 @@ class Login extends React.Component {
     };
 
     this.handlechange = this.handlechange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.HandleLoginSubmit = this.HandleLoginSubmit.bind(this);
     this.toggleSalesLogin = this.toggleSalesLogin.bind(this);
     this.toggleSalesLoginPage = this.toggleSalesLoginPage.bind(this);
     this.HandleDisplaySalesPersonData = this.HandleDisplaySalesPersonData.bind(
       this
     );
   }
-
+  ////Handle Display Sales Person Data
   HandleDisplaySalesPersonData(sData) {
-    debugger;
+    
     //get Companies
     let self = this;
     var mydata = sData; //JSON.parse(data);
-    //alert(mydata.length);
 
     //get Companies
     const finalNode = [];
     const checkedNode = [];
-    const distinctOffice = [];
-    const distinctContactDisName = [];
-    const distinctAssociateComp = [];
 
-    const Compmaps = new Map();
-    const ContactDismap = new Map();
-    const distinctAssociateCompmap = new Map();
+    for (let i = 0; i < mydata.length; i++) {
+      var checkparenttempData = finalNode.filter(
+        data => data.value == mydata[i].OfficeID
+      );
+      if (checkparenttempData.length == 0 || i == 0) {
+        var OfficeIDData = mydata.filter(
+          x => x.OfficeID === mydata[i].OfficeID
+        );
 
-    for (const item of mydata) {
-      var officeName = item.OfficeShortName;
-      var OfficeID = item.OfficeID;
-      if (!Compmaps.has(officeName)) {
-        Compmaps.set(officeName, true); // set any value to Map
-        distinctOffice.push({
-          OfficeShortName: officeName,
-          OfficeID: OfficeID
-        });
-      }
+        var parentTempObj = {};
+        var child1tempData = [];
 
-      //Contact display
-
-      var contactDName = item.ContactDisplayName;
-      var ContactID = item.ContactID;
-      if (!ContactDismap.has(contactDName)) {
-        ContactDismap.set(contactDName, true); // set any value to Map
-        distinctContactDisName.push({
-          officeName: officeName,
-          value: ContactID,
-          label: contactDName
-          // child: [
-          //   { value: 1, label: 2 },
-          //   { value: 1, label: 2 }
-          // ]
-        });
-      }
-
-      //Contact Company data
-      //officeName
-      //Company_Name
-      //Company_ID
-      ////debugger;
-      var Company_Name = item.Company_Name;
-      var Company_ID = item.Company_ID;
-      var Company_Name = item.Company_Name;
-      var ContactDisplayName = item.ContactDisplayName;
-      var ContactID = item.ContactID;
-      var nOfficeID = item.OfficeID;
-      var boolMap = item.ISCompMapped;
-      if (
-        !distinctAssociateCompmap.has(officeName) &&
-        !distinctAssociateCompmap.has(Company_Name) &&
-        !distinctAssociateCompmap.has(Company_ID)
-      ) {
-        distinctAssociateCompmap.set(contactDName, true); // set any value to Map
-        distinctAssociateComp.push({
-          officeName: officeName,
-          Company_Name: Company_Name,
-          Company_ID: Company_ID,
-          ContactDisplayName: ContactDisplayName,
-          ContactID: ContactID,
-          OfficeID: nOfficeID,
-          ISCompMapped: boolMap
-        });
-      }
-    }
-
-    var iCompanies = distinctOffice.length;
-    var iContacts = distinctContactDisName.length;
-    var iAssocCompany = distinctAssociateComp.length;
-
-    ////Company
-    for (var i = 0; i < iCompanies; i++) {
-      //for (var i = 0; i < 15; i++) {
-      ////debugger;
-
-      debugger;
-      var selectedoffId = distinctOffice[i]["OfficeID"];
-
-      var salesPersonDataByComp = {};
-      salesPersonDataByComp.value = distinctOffice[i]["OfficeID"];
-      salesPersonDataByComp.label = distinctOffice[i]["OfficeShortName"];
-      salesPersonDataByComp.children = [];
-
-      var salesPersondata = [];
-
-      for (var j = 0; j < distinctContactDisName.length; j++) {
-        var salesPersonName = {};
-        var salesPersonChildData = [];
-
-        var iSelectedSalesPersonId = distinctContactDisName[j]["value"];
-        salesPersonName.value = distinctContactDisName[j]["value"];
-        salesPersonName.label = distinctContactDisName[j]["label"];
-
-        ///////For loop for the Sales Person's ///////Company
-        for (var k = 0; k < iAssocCompany; k++) {
-          var associateCompData = {};
-
-          var ofID = distinctAssociateComp[k]["OfficeID"];
-          //var cnID = distinctAssociateComp[k]["ContactID"];
-          //var cotName = distinctAssociateComp[k]["ContactDisplayName"];
-          var cnID = distinctAssociateComp[k]["ContactID"];
-
-          //Check same or not
-          if (ofID === selectedoffId && iSelectedSalesPersonId == cnID) {
-            //Inside
-
-            var cvId = distinctAssociateComp[k]["Company_ID"];
-            var cnName = distinctAssociateComp[k]["Company_Name"];
-            var bMapped = distinctAssociateComp[k]["ISCompMapped"];
-
-            associateCompData.value = cvId;
-            associateCompData.label = cnName;
-            salesPersonChildData.push(associateCompData);
-
-            ///Set checked Node
-            //if(bMapped.toString() == "true")
-            if (bMapped === true) {
-              debugger;
-              var tData = cvId.toString();
-              checkedNode.push(tData);
+        for (let j = 0; j < OfficeIDData.length; j++) {
+          var checkchild1tempData = child1tempData.filter(
+            data => data.value == OfficeIDData[j].ContactID
+          );
+          if (checkchild1tempData.length == 0 || j == 0) {
+            var child1tempObj = {};
+            var ContactIDData = OfficeIDData.filter(
+              x => x.ContactID === OfficeIDData[j].ContactID
+            );
+            var Company_IDTempData = [];
+            for (let k = 0; k < ContactIDData.length; k++) {
+              var CompanyDataObj = {};
+              CompanyDataObj.label = ContactIDData[k].Company_Name;
+              CompanyDataObj.value = ContactIDData[k].Company_ID;
+              Company_IDTempData.push(CompanyDataObj);
+              if (ContactIDData[k].ISCompMapped) {
+                checkedNode.push(ContactIDData[k].Company_ID);
+              }
             }
-            // else
-            // {
-            //     var a =0;
-            // }
+            child1tempObj.label = OfficeIDData[j].ContactDisplayName;
+            child1tempObj.value = OfficeIDData[j].ContactID;
+            child1tempObj.children = Company_IDTempData;
+            child1tempData.push(child1tempObj);
           }
         }
-
-        //associateCompData.value = j;
-        //associateCompData.label = j;
-        //salesPersonChildData.push(associateCompData);
-
-        salesPersonName.children = salesPersonChildData;
-        salesPersondata.push(salesPersonName);
+        parentTempObj.label = mydata[i].OfficeShortName;
+        parentTempObj.value = mydata[i].OfficeID;
+        parentTempObj.children = child1tempData;
+        finalNode.push(parentTempObj);
       }
-      salesPersonDataByComp.children = salesPersondata;
-
-      finalNode.push(salesPersonDataByComp);
     }
-    debugger;
 
     self.setState({ nodes: finalNode, checked: checkedNode });
   }
+  ////toggle sales person modal popup
   toggleSalesLogin() {
     let self = this;
     self.setState({ modalSalesLogin: false, loading: false });
   }
+
+  ////Handle selected sales person to pass API
   toggleSalesLoginPage() {
     var checkedCompData = this.state.checked;
     var finalselectedData = [];
@@ -204,19 +109,16 @@ class Login extends React.Component {
     for (var i = 0; i < checkedCompData.length; i++) {
       finalselectedData.push(parseInt(checkedCompData[i]));
     }
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-
         CompanyID: finalselectedData
       },
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         self.props.history.push("/rate-search");
       })
       .catch(error => {});
@@ -227,8 +129,10 @@ class Login extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {
-    ////debugger;
+
+  ////Handle Login Button Click
+  HandleLoginSubmit(e) {
+    ////
     let self = this;
     e.preventDefault();
     this.setState({ submitted: true, loading: true });
@@ -236,7 +140,6 @@ class Login extends React.Component {
     window.localStorage.setItem("password", encryption(password, "enc"));
     if (username !== "" && password !== "") {
       var ipaddress = window.localStorage.getItem("ipaddress");
-
       axios({
         method: "post",
         url: `${appSettings.APIURL}/Login`,
@@ -249,11 +152,8 @@ class Login extends React.Component {
         headers: authHeader("no")
       })
         .then(function(response) {
-          debugger;
-
           var data = response.data;
           window.localStorage.setItem("st", new Date());
-
           window.localStorage.setItem(
             "username",
             encryption(data.Table[0].UserName, "enc")
@@ -284,18 +184,13 @@ class Login extends React.Component {
             "userid",
             encryption(data.Table[0].UserId, "enc")
           );
-
           var obj = new Object();
-
           obj.CurrencyCode = "USD";
           obj.BaseCurrencyName = "US Dollars";
-
           window.localStorage.setItem("currencyObj", JSON.stringify(obj));
-
           window.localStorage.setItem("currencyCode", "USD");
           window.localStorage.removeItem("myUserId");
           window.localStorage.setItem("myUserId", data.Table[0].UserId);
-
           window.localStorage.removeItem("APIUrl");
           window.localStorage.setItem("APIUrl", `${appSettings.APIURL}`);
           window.localStorage.setItem(
@@ -316,7 +211,6 @@ class Login extends React.Component {
               encryption(data.Table[0].UserLogo, "enc")
             );
           }
-
           if (data.Table[0].UserType == "Customer") {
             window.localStorage.setItem(
               "contactname",
@@ -331,29 +225,26 @@ class Login extends React.Component {
               encryption(data.Table[0].CompanyID, "enc")
             );
           }
-
           window.localStorage.setItem(
             "emailid",
             encryption(data.Table[0].email_id, "enc")
           );
-          ////debugger;
+          ////
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
-
           var userType = response.data.Table;
           var userTypeName = userType[0].UserType;
-
           var ProfileTypen = userType[0].ProfileType;
           var SalesCompanyPopupFlag = userType[0].SalesCompanyPopupFlag;
           if (userTypeName === "Sales User" && SalesCompanyPopupFlag === 1) {
-            //debugger;
+            //
             if (
               userTypeName === "Sales User" &&
               ProfileTypen &&
               SalesCompanyPopupFlag === 1
             ) {
               var sData = response.data.Table3;
-              //debugger;
+              //
               self.HandleDisplaySalesPersonData(sData);
               self.setState({
                 modalSalesLogin: !self.state.modalSalesLogin
@@ -371,8 +262,6 @@ class Login extends React.Component {
               window.location.href = "./dashboard";
             }, 300);
           }
-
-          //window.location.href = "./user-agreement";
         })
         .catch(error => {
           this.setState({ loading: false });
@@ -391,13 +280,13 @@ class Login extends React.Component {
           setTimeout(5000);
         });
     } else {
-      //debugger;
+      //
       this.setState({ settoaste: true, loading: true });
 
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the password" : "";
-      // alert(error);
-      //  window.location='./Dashboard'
+      
+      
       NotificationManager.error(error);
       setTimeout(function() {
         window.location.href = "./";
@@ -407,21 +296,13 @@ class Login extends React.Component {
 
   componentDidMount() {
     localStorage.clear();
-    
-
     const publicIp = require("public-ip");
     (async () => {
       window.localStorage.setItem("ipaddress", await publicIp.v4());
     })();
   }
-
-  componentWillMount()
-  {
-    // window.location.reload(false); 
-  }
   render() {
     let self = this;
-    //  const { username, password } = this.state;
     const { loading } = this.state;
     return (
       <section className="login-between">
@@ -430,10 +311,8 @@ class Login extends React.Component {
             <img src={Logo} alt="logo" />
             <br />
             <br />
-
-            {/* <img src="./../assets/img/ATAFreight_console.png" alt="logo" /> */}
           </div>
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.HandleLoginSubmit}>
             <div className="login-cntr">
               <h2>
                 Welcome <span>Login to get started!</span>
@@ -463,19 +342,14 @@ class Login extends React.Component {
                   </div>
                 </div>
                 <div className="remember-forgot-1">
-                  {/* <div>
-                    <input id="remember" type="checkbox" name={"remember me"} />
-                    <label htmlFor="remember">Remember Me</label>
-                  </div> */}
                   <a href="./forgotPassword">Forgot Password?</a>
                 </div>
                 <div className="text-right">
                   {self.state.modalSalesLogin != true ? (
                     <button
-                      onClick={this.handleSubmit}
+                      onClick={this.HandleLoginSubmit}
                       type="submit"
                       className="butn login-butn"
-                      //onClick={}
                       disabled={
                         self.state.modalSalesLogin != true ? loading : null
                       }
@@ -492,10 +366,9 @@ class Login extends React.Component {
                     </button>
                   ) : (
                     <button
-                      onClick={this.handleSubmit}
+                      onClick={this.HandleLoginSubmit}
                       type="submit"
                       className="butn login-butn"
-                      //onClick={}
                     >
                       Login
                     </button>
@@ -520,7 +393,7 @@ class Login extends React.Component {
             >
               <span>&times;</span>
             </button>
-            <ModalHeader>Sales customers</ModalHeader>
+            <ModalHeader>Sales User</ModalHeader>
             <ModalBody>
               <div>
                 <CheckboxTree
@@ -547,19 +420,18 @@ class Login extends React.Component {
             </ModalFooter>
           </Modal>
         </div>
-        <NotificationContainer />
+        <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </section>
     );
   }
 }
-
+////Generate Token
 function GenerateToken(username, password) {
   var details = {
     username: username,
     password: password,
     grant_type: "password"
   };
-
   var formBody = [];
   for (var property in details) {
     var encodedKey = encodeURIComponent(property);
@@ -578,39 +450,30 @@ function GenerateToken(username, password) {
     .then(TokenhandleResponse)
     .catch(error => {});
 }
-
+////Token Handle Response
 function TokenhandleResponse(response) {
-  //debugger;
-  //alert(1);
   return response.text().then(text => {
-    //debugger;
     const data = text && JSON.parse(text);
     if (!response.ok) {
-      //alert('oops!error occured');
     } else {
       window.localStorage.removeItem("token");
       window.localStorage.setItem(
         "token",
         encryption(data.access_token, "enc")
       );
-
       window.localStorage.removeItem("myToken");
       window.localStorage.setItem("myToken", data.access_token);
-
       if (window.localStorage.getItem("IsEnabled") == "true") {
         if (
           encryption(window.localStorage.getItem("usertype"), "desc") ==
           "Sales User"
         ) {
         } else {
-          // window.location.href = "./Dashboard";
         }
       } else {
         window.location.href = "./user-agreement";
       }
     }
-
-    // return data;
   });
 }
 export default Login;

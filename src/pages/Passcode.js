@@ -25,19 +25,15 @@ class Passcode extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {    
-    //  e.preventDefault();
-    debugger;
+  handleSubmit(e) {   
+
     var username = encryption(window.localStorage.getItem("email"),"desc");
     var passcode=encryption(window.localStorage.getItem("passcode"),"desc");
 
     this.setState({ submitted: true });
-    // const { emailaddress, passcode } = this.state;
     if (username !== "" && passcode !== "") {
       ValidatePassCode(username, passcode);
-    } else {
-      // var error= username===''?'Please enter the username\n':'';
-      //     error+=password===''?'Please enter the passowrd':'';
+    } else {      
       NotificationManager.error("error");
     }
   }
@@ -75,13 +71,14 @@ class Passcode extends React.Component {
             </div>
           </div>
         </div>
+        <NotificationContainer/>
       </section>
     );
   }
 }
 
 function ValidatePassCode(emailaddress, passcode) {
-  debugger;
+  
   const requestOptions = {
     method: "POST",
     headers: authHeader("no"),

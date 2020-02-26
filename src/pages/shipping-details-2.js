@@ -1,10 +1,8 @@
-import React, { Component, Fragment } from "react";
+import React, { Component} from "react";
 import "../styles/custom.css";
 import { UncontrolledCollapse, Button, Modal, ModalBody } from "reactstrap";
-
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-// import ShipBig from "./../assets/img/ship-big.png";
 import ShipWhite from "./../assets/img/ship-white.png";
 import FileUpload from "./../assets/img/file.png";
 import Booked from "./../assets/img/booked.png";
@@ -80,11 +78,9 @@ class ShippingDetailsTwo extends Component {
     this.toggleDocu = this.toggleDocu.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     this.togglePackage = this.togglePackage.bind(this);
-    this.handleActivityList = this.handleActivityList.bind(this);
+    this.BindActivityMessageData = this.BindActivityMessageData.bind(this);
     this.HandleShipmentDocument = this.HandleShipmentDocument.bind(this);
     this.HandleDownloadFile = this.HandleDownloadFile.bind(this);
-    // this.HandleShowHideFun=this.HandleShowHideFun.bind(this);
-    // this.HandleShipmentDetailsMap=this.HandleShipmentDetailsMap.bind(this);
   }
 
   componentDidMount() {
@@ -113,14 +109,13 @@ class ShippingDetailsTwo extends Component {
       }
       self.setState({ HblNo: hblno, pageName });
       self.HandleShipmentDetails(hblno);
-      //self.handleActivityList();
     } else {
       this.props.history.push("shipment-summary");
     }
   }
-
-  SendMessage = () => {
-    debugger;
+  ////Handle Click Send message Button
+  HandleClickSend = () => {
+    
     let self = this;
     var hbllNo = document.getElementById("popupHBLNO").value;
     var msgg = document.getElementById("addMess").value;
@@ -152,14 +147,11 @@ class ShippingDetailsTwo extends Component {
             if (response.data.length > 0) {
               if (response.data[0] != null) {
                 var message = response.data[0].Result;
-                // self.setState({ MessagesActivityDetails });
+
                 if (response.data[0].Result === "Message Send Successfully") {
-                  // setTimeout(() => {
-                  // this.handleActivityList();
-                  // }, 100);
                   NotificationManager.success(response.data[0].Result);
                 }
-                self.handleActivityList();
+                self.BindActivityMessageData();
               }
             }
           }
@@ -168,22 +160,13 @@ class ShippingDetailsTwo extends Component {
     }
   };
 
-  handleClick = (marker, event) => {
-    debugger;
-    this.setState({ selectedMarker: "" });
-    this.setState({ selectedMarker: marker });
-  };
+  ////Handle Map Detials Data
   HandleMapDetailsData(mdetails) {
     var mydata = mdetails.Table;
     let self = this;
-    /////Baloon with First's Start
-    //// and Last order's end address
     var balloons = [];
     var flags = [];
-    //var mainLineData = [];
-
     var allLineData = [];
-    debugger;
     for (var i = 0; i < mydata.length; i++) {
       var BlocationData = {};
       var flagsData = {};
@@ -318,6 +301,7 @@ class ShippingDetailsTwo extends Component {
         VesselData = allLineData[allLineData.length - 1];
       }
     }
+    
 
     var imgType = "";
     if (this.state.ModeType.toUpperCase() === "AIR") {
@@ -341,14 +325,15 @@ class ShippingDetailsTwo extends Component {
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
     self.setState({ iframeKey: self.state.iframeKey + 1 });
   }
-  HandleShipmentDetailsMap(sid, cid) {
+  ////Bind Shipment Details Map Data
+  BindShipmentDetailsMap(sid, cid) {
     localStorage.removeItem(
       "AllLineData",
       "FlagsData",
       "BaloonData",
       "GreenLineData"
     );
-    debugger;
+    
     let self = this;
     var shipperId = sid;
     var consigneeId = cid;
@@ -362,34 +347,25 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindShipmentSummaryMap`,
       data: {
-        ShipperID: shipperId, //1340354108, //shipperId,  //shipperId,
-        ConsigneeID: consigneeId, // 1340464123, //consigneeId,  //consigneeId,
+        ShipperID: shipperId,
+        ConsigneeID: consigneeId,
         SwitchConsigneeID: 0,
         SwitchShipperID: 0,
-        HBLNo: hblno //"BOM 237730" //hblno
+        HBLNo: hblno
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
 
       var resdata = response.data;
 
       self.HandleMapDetailsData(resdata);
     });
   }
-  HandleDocumentDownloadFile(evt, row) {
-    debugger;
-    var filePath = row.original["HBL#"];
-  }
 
-  HandleDocumentView(evt, row) {
-    debugger;
-    var HblNo = row.original["HBL#"];
-    var viewFilePath = row.original["FilePath"];
-    this.setState({ modalEdit: true, viewFilePath });
-  }
+  ////Handle Download Document Data
   HandleDownloadFile(evt, row) {
-    debugger;
+    
     let self = this;
     var HblNo = row.original["HBL#"];
     var downloadFilePath = row.original["FilePath"];
@@ -406,12 +382,6 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
-        // var documentdata = [];
-        // documentdata = response.config.data;
-        // documentdata.forEach(function(file, i) {
-        //   file.sr_no = i + 1;
-        // });
         if (response.data) {
           var blob = new Blob([response.data], { type: "application/pdf" });
           var link = document.createElement("a");
@@ -419,22 +389,11 @@ class ShippingDetailsTwo extends Component {
           link.download = fileName;
           link.click();
         }
-
-        // self.setState({ documentData: documentdata });
       })
-      .catch(error => {
-        debugger;
-        // var temperror = error.response.data;
-        // var err = temperror.split(":");
-        // // NotificationManager.error("No Data Found");
-        // var actData = [];
-        // actData.push({ DocumentDescription: "No Data Found" });
-
-        // self.setState({ documentData: actData });
-      });
+      .catch(error => {});
   }
   HandleDocumentDelete(evt, row) {
-    debugger;
+    
     var HblNo = row.original["HBL#"];
     var delDocuId = row.original["DocumentID"];
     var delFileName = row.original["FileName"];
@@ -442,7 +401,7 @@ class ShippingDetailsTwo extends Component {
   }
 
   HandleShipmentDocument() {
-    debugger;
+    
     let self = this;
     var HblNo;
     if (typeof this.props.location.state != "undefined") {
@@ -460,7 +419,7 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        
         var documentdata = [];
         documentdata = response.data;
         documentdata.forEach(function(file, i) {
@@ -470,10 +429,9 @@ class ShippingDetailsTwo extends Component {
         self.setState({ documentData: documentdata });
       })
       .catch(error => {
-        debugger;
+        
         var temperror = error.response.data;
         var err = temperror.split(":");
-        // NotificationManager.error("No Data Found");
         var actData = [];
         actData.push({ DocumentDescription: "No Data Found" });
 
@@ -482,7 +440,7 @@ class ShippingDetailsTwo extends Component {
   }
 
   HandleShipmentDetails(hblno) {
-    debugger;
+    
     let self = this;
     localStorage.removeItem(
       "AllLineData",
@@ -496,8 +454,6 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ShipmentSummaryDetailsAPI`,
       data: {
-        // UserId: encryption(window.localStorage.getItem("userid"), "desc"), //874588, // userid,
-        // HBLNo: HblNo //HblNo
         UserId: parseFloat(
           encryption(window.localStorage.getItem("userid"), "desc")
         ),
@@ -505,7 +461,7 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       var shipmentdata = response.data;
       var ModeType = response.data.Table[0].ModeOfTransport;
       var POLPODData = response.data.Table5;
@@ -533,11 +489,11 @@ class ShippingDetailsTwo extends Component {
       }
       var sid = shipmentdata.Table[0].ShipperId;
       var cid = shipmentdata.Table[0].ConsigneeID;
-      self.HandleShipmentDetailsMap(sid, cid);
+      self.BindShipmentDetailsMap(sid, cid);
     });
   }
   onDocumentChangeHandler = event => {
-    debugger;
+    
     if (event.target.files[0].type === "application/pdf") {
       this.setState({
         selectedFile: event.target.files[0],
@@ -549,12 +505,11 @@ class ShippingDetailsTwo extends Component {
   };
   onDocumentConsignee = event => {
     this.setState({
-      // selectedFile: event.target.files[0],
       consigneeFileName: event.target.files[0].name
     });
   };
   onDocumentClickHandler = () => {
-    debugger;
+    
     let self = this;
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
@@ -567,7 +522,7 @@ class ShippingDetailsTwo extends Component {
       NotificationManager.error("Please enter document description");
       return false;
     }
-    debugger;
+    
 
     docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
@@ -577,7 +532,6 @@ class ShippingDetailsTwo extends Component {
       "CreatedBy",
       encryption(window.localStorage.getItem("userid"), "desc")
     );
-    // docData.append()
 
     axios({
       method: "post",
@@ -585,7 +539,7 @@ class ShippingDetailsTwo extends Component {
       data: docData,
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       NotificationManager.success(response.data[0].Result);
       self.setState({ selectedFileName: "" });
       self.toggleDocu();
@@ -623,7 +577,7 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        
         NotificationManager.success(response.data[0].Result);
         self.HandleShipmentDocument();
       })
@@ -631,7 +585,7 @@ class ShippingDetailsTwo extends Component {
   }
 
   togglePackage(cargoId) {
-    debugger;
+    
     let self = this;
     let packageTable = [];
 
@@ -673,7 +627,7 @@ class ShippingDetailsTwo extends Component {
   }
 
   handleAddToWatchList = () => {
-    debugger;
+    
     let self = this;
     var hbll = "";
     if (self.state.addWat !== null && self.state.addWat !== "") {
@@ -695,8 +649,9 @@ class ShippingDetailsTwo extends Component {
     });
   };
 
-  handleActivityList() {
-    debugger;
+  //// Bind Activity Message Data
+  BindActivityMessageData() {
+    
     let self = this;
     var HblNo = this.state.HblNo;
     if (typeof this.props.location.state != "undefined") {
@@ -711,23 +666,25 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     })
-      .then(function(response) {
-        debugger;
-        //alert("Sucess")
+      .then(function(response) {        
         self.setState({ MessagesActivityDetails: response.data });
         document.getElementById("addMess").value = "";
       })
       .catch(error => {
-        debugger;
+        
         var temperror = error.response.data;
         var err = temperror.split(":");
       });
   }
-  handleBackBtn = () => {
+
+  ////Handle Click Back Button
+  HandleBackBtn = () => {
     window.history.back();
   };
-  handleRemoveWatchList = () => {
-    debugger;
+
+  ////Handle Remove watch list
+  HandleRemoveWatchList = () => {
+    
     let self = this;
     var hbll = "";
     if (self.state.addWat !== null && self.state.addWat !== "") {
@@ -744,7 +701,7 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       NotificationManager.success(response.data[0].Result);
       self.setState({ ShipmentExistsInWatchList: 0 });
     });
@@ -752,19 +709,15 @@ class ShippingDetailsTwo extends Component {
 
   render() {
     let self = this;
-    console.log(this.state.POLPODData);
 
     const {
       detailsData,
       addressData,
       containerData,
       containerDetails,
-
       documentData,
       bookedStatus,
-
       packageDetails,
-
       packageTable,
       POLPODData
     } = this.state;
@@ -789,7 +742,6 @@ class ShippingDetailsTwo extends Component {
         containerData[1].DeparturePortName
           ? containerData[0].DestinationPortName.split(",")[0]
           : null;
-      // console.log(destinationPortName, "-------------destinationPortName");
     }
     for (let index = 0; index < bookedStatus.length; index++) {
       if (bookedStatus[index].Status == "Approved") {
@@ -870,7 +822,7 @@ class ShippingDetailsTwo extends Component {
     }
 
     if (this.state.Table9.length > 0) {
-      debugger;
+      
       var Transshipped = this.state.Table9.filter(
         x => x.Status === "Transshipped"
       ).length;
@@ -921,8 +873,6 @@ class ShippingDetailsTwo extends Component {
         var per = 100 / (this.state.POLPODData.length + 1);
 
         perBooking = per + per / 2 + "";
-
-        // perBooking="50"
       }
 
       if (Transshipped >= 1 && Arriveddata >= 1) {
@@ -956,10 +906,10 @@ class ShippingDetailsTwo extends Component {
     } else {
       Watchlist = (
         <>
-          <button onClick={this.handleBackBtn} className="butn mt-0">
+          <button onClick={this.HandleBackBtn} className="butn mt-0">
             Back
           </button>
-          <button onClick={this.handleRemoveWatchList} className="butn mt-0">
+          <button onClick={this.HandleRemoveWatchList} className="butn mt-0">
             Remove Watchlist
           </button>
         </>
@@ -974,16 +924,7 @@ class ShippingDetailsTwo extends Component {
             {this.state.MessagesActivityDetails.map(team => (
               <div class="p-2">
                 <p>{team.Message}</p>
-                <div class="d-flex justify-content-between">
-                  {/* <div>
-                    <span>
-                      Created by:
-                      {encryption(
-                        window.localStorage.getItem("username"),
-                        "desc"
-                      )}
-                    </span>
-                  </div> */}
+                <div class="d-flex justify-content-between msgdate">
                   {team.MessageCreationTime}
                 </div>
                 <hr />
@@ -1056,7 +997,7 @@ class ShippingDetailsTwo extends Component {
                         role="tab"
                         aria-controls="activity"
                         aria-selected="false"
-                        onClick={this.handleActivityList.bind(this)}
+                        onClick={this.BindActivityMessageData.bind(this)}
                       >
                         Activity
                       </a>
@@ -1135,8 +1076,6 @@ class ShippingDetailsTwo extends Component {
                       <div className="sect-padd">
                         <div className="row">
                           {addressData.map(function(addkey, i) {
-                            //  <p className="details-heading" key={i}>{addkey.EntityType}</p>
-
                             return (
                               <div
                                 className="col-md-6 details-border shipper-details"
@@ -1149,10 +1088,6 @@ class ShippingDetailsTwo extends Component {
                                   {addkey.CustomerName}
                                 </p>
 
-                                {/* <p className="details-title">
-                                  Blueground Turizm Ve Services Hizmetleri
-                                  Ticaret A.S.
-                                </p> */}
                                 <p className="details-para">
                                   {addkey.Address1}
                                 </p>
@@ -1160,13 +1095,6 @@ class ShippingDetailsTwo extends Component {
                             );
                           })}
                         </div>
-                        {/* <div className="row">
-                          <div className="col-md-12">
-                            <a href="#!" className="butn view-btn">
-                              View more
-                            </a>
-                          </div>
-                        </div> */}
                       </div>
                       <div className="progress-sect">
                         <div className="d-flex align-items-center">
@@ -1174,7 +1102,10 @@ class ShippingDetailsTwo extends Component {
 
                           <span
                             className="clr-green"
-                            style={{ overflow: "initial", marginTop: "20px" }}
+                            style={{
+                              overflow: "initial",
+                              marginTop: "20px"
+                            }}
                           >
                             POL
                           </span>
@@ -1184,7 +1115,6 @@ class ShippingDetailsTwo extends Component {
                                 this.state.POLPODData.map(function(id, i) {
                                   var wid = 100 / (POLPODDatalen - 1);
                                   var wid1 = 100 / POLPODDatalen;
-                                  // var fwid = wid + wid / 2 + "%";
 
                                   if (i === 0) {
                                     return (
@@ -1192,7 +1122,6 @@ class ShippingDetailsTwo extends Component {
                                         className="resol"
                                         style={{ width: wid1 + "%" }}
                                       >
-                                        {/* <span className="line-resol" style={{left: wid + "%"}}></span> */}
                                         <span
                                           className="progspan"
                                           style={{
@@ -1202,9 +1131,7 @@ class ShippingDetailsTwo extends Component {
                                                 ? "left"
                                                 : "none"
                                           }}
-                                        >
-                                          {/* {id["POL/POD"]} */}
-                                        </span>
+                                        ></span>
                                       </label>
                                     );
                                   }
@@ -1217,7 +1144,9 @@ class ShippingDetailsTwo extends Component {
                                       >
                                         <span
                                           className="line-resol"
-                                          style={{ left: fwidth + "%" }}
+                                          style={{
+                                            left: fwidth + "%"
+                                          }}
                                         ></span>
                                         <span
                                           className="progspan"
@@ -1236,7 +1165,6 @@ class ShippingDetailsTwo extends Component {
                                           width: wid1 + "%"
                                         }}
                                       >
-                                        {/* <span className="line-resol"></span> */}
                                         <span
                                           className="progspan"
                                           style={{
@@ -1246,15 +1174,13 @@ class ShippingDetailsTwo extends Component {
                                                 ? "right"
                                                 : "none"
                                           }}
-                                        >
-                                          {/* {id["POL/POD"]} */}
-                                        </span>
+                                        ></span>
                                       </label>
                                     );
                                   }
                                 })}
                             </div>
-                            {/* <Progress className="ticket-progress" color={eventColor} value={perBooking} /> */}
+
                             <progress
                               className={
                                 "ticket-progress progress-" + eventColor
@@ -1271,7 +1197,10 @@ class ShippingDetailsTwo extends Component {
                           </div>
                           <span
                             className="clr-green"
-                            style={{ overflow: "initial", marginTop: "20px" }}
+                            style={{
+                              overflow: "initial",
+                              marginTop: "20px"
+                            }}
                           >
                             POD
                           </span>
@@ -1577,18 +1506,7 @@ class ShippingDetailsTwo extends Component {
                                         href="#!"
                                         id={"toggler" + i}
                                         className="butn view-btn"
-                                        // onClick={() =>
-                                        //   self.setState({
-                                        //     showContent: !self.state.showContent
-                                        //   })
-                                        // }
-                                      >
-                                        {/* {self.state.showContent ? (
-                                      <span>VIEW LESS</span>
-                                    ) : (
-                                      <span>VIEW MORE</span>
-                                    )} */}
-                                      </a>
+                                      ></a>
                                     </div>
                                   </div>
                                 </div>
@@ -1646,7 +1564,6 @@ class ShippingDetailsTwo extends Component {
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Length</p>
                                       <p className="details-para">
-                                        {/* {packData.Length} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.Length.toFixed(2) + " cm"
                                           : packData.Length.toFixed(2) + " in"}
@@ -1657,7 +1574,6 @@ class ShippingDetailsTwo extends Component {
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Width</p>
                                       <p className="details-para">
-                                        {/* {packData.Width} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.Width.toFixed(2) + " cm"
                                           : packData.Width.toFixed(2) + " in"}
@@ -1666,7 +1582,6 @@ class ShippingDetailsTwo extends Component {
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Height</p>
                                       <p className="details-para">
-                                        {/* {packData.Height} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.Height.toFixed(2) + " cm"
                                           : packData.Height.toFixed(2) + " in"}
@@ -1677,7 +1592,6 @@ class ShippingDetailsTwo extends Component {
                                         Net Weight
                                       </p>
                                       <p className="details-para">
-                                        {/* {packData.NetWeight} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.NetWeight.toFixed(2) +
                                             " kgs"
@@ -1690,7 +1604,6 @@ class ShippingDetailsTwo extends Component {
                                         Gross Weight
                                       </p>
                                       <p className="details-para">
-                                        {/* {packData.GrossWeight} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.GrossWeight.toFixed(2) +
                                             " kgs"
@@ -1703,7 +1616,6 @@ class ShippingDetailsTwo extends Component {
                                     <div className="col-12 col-sm-6 col-md-6 col-lg-3 details-border">
                                       <p className="details-title">Volume</p>
                                       <p className="details-para">
-                                        {/* {packData.Volume} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.Volume.toFixed(2) + " cbm"
                                           : packData.Volume.toFixed(2) + " ft"}
@@ -1714,7 +1626,6 @@ class ShippingDetailsTwo extends Component {
                                         Volume Weight
                                       </p>
                                       <p className="details-para">
-                                        {/* {packData.VolumeWeight} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.VolumeWeight.toFixed(2) +
                                             " kgs"
@@ -1727,7 +1638,6 @@ class ShippingDetailsTwo extends Component {
                                         Total Net Weight
                                       </p>
                                       <p className="details-para">
-                                        {/* {packData.TotalNetWeight} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.TotalNetWeight.toFixed(2) +
                                             " kgs"
@@ -1740,7 +1650,6 @@ class ShippingDetailsTwo extends Component {
                                         Total Gross Weight
                                       </p>
                                       <p className="details-para">
-                                        {/* {packData.TotalGrossWeight} */}
                                         {packData.UnitType === "Metric"
                                           ? packData.TotalGrossWeight.toFixed(
                                               2
@@ -1759,9 +1668,7 @@ class ShippingDetailsTwo extends Component {
                                     href="#!"
                                     id={"package" + i}
                                     className="butn view-btn mr-2"
-                                  >
-                                    {/* Show Less */}
-                                  </a>
+                                  ></a>
                                   <button
                                     onClick={() =>
                                       self.togglePackage(packData.CargoPackID)
@@ -1831,14 +1738,6 @@ class ShippingDetailsTwo extends Component {
                                     } else {
                                       return (
                                         <div>
-                                          {/* <img
-                                            className="actionicon"
-                                            src={Eye}
-                                            alt="view-icon"
-                                            onClick={e =>
-                                              this.HandleDocumentView(e, row)
-                                            }
-                                          /> */}
                                           {row.original["DocumentType"] ==
                                           "Uploaded" ? (
                                             <img
@@ -1869,7 +1768,6 @@ class ShippingDetailsTwo extends Component {
                               ]
                             }
                           ]}
-                          // getTrProps={this.HandleDEDFile.bind(this)}
                           defaultPageSize={5}
                           className="-striped -highlight"
                           minRows={1}
@@ -1889,7 +1787,7 @@ class ShippingDetailsTwo extends Component {
                           id="addMess"
                         ></textarea>
                         <div className="text-right">
-                          <span onClick={this.SendMessage} className="butn">
+                          <span onClick={this.HandleClickSend} className="butn">
                             Post
                           </span>
                         </div>
@@ -1901,22 +1799,6 @@ class ShippingDetailsTwo extends Component {
                 <div className="col-12 col-sm-12 col-md-12 col-lg-5">
                   <div className="ship-detail-maps">
                     <div className="ship-detail-map">
-                      {/* <MapWithAMakredInfoWindow
-                        markers={MapsDetailsData}
-                        onClick={this.handleClick}
-                        selectedMarker={this.state.selectedMarker}
-                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&libraries=geometry,drawing,places"
-                        containerElement={
-                          <div style={{ height: `100%`, width: "100%" }} />
-                        }
-                        mapElement={<div style={{ height: `100%` }} />}
-                        loadingElement={<div style={{ height: `100%` }} />}
-                      ></MapWithAMakredInfoWindow> */}
-                      {/* <object
-                        width="100%"
-                        height="100%"
-                        data="/MapHtmlPage.html"
-                      ></object> */}
                       <iframe
                         key={this.state.iframeKey}
                         src="/MapHtmlPage.html"
@@ -1929,7 +1811,6 @@ class ShippingDetailsTwo extends Component {
                           <p className="est-title">Estimated Time of Arrival</p>
                           <div className="d-flex justify-content-between">
                             <p className="est-time">
-                              {/* {this.state.containerData[0].DepartureDate} */}
                               {this.state.DData}
                               {/* 4545 */}
                             </p>
@@ -2117,16 +1998,7 @@ class ShippingDetailsTwo extends Component {
                               <span>Arrived : </span>
                             </p>
                           </div>
-                          {/* <div class="track-hide">
-                        <div class="track-img-cntr">
-                          <div class="track-img">
-                            <img src="" alt="inland icon" />
-                          </div>
-                        </div>
-                        <p>
-                          <span>Inland Transportation : </span>
-                        </p>
-                      </div> */}
+
                           <div class="track-line-cntr">
                             <div class="track-img-cntr">
                               <div class="track-img">
@@ -2371,16 +2243,7 @@ class ShippingDetailsTwo extends Component {
                               <span>Arrived : </span>
                             </p>
                           </div>
-                          {/* <div class="track-hide">
-                        <div class="track-img-cntr">
-                          <div class="track-img">
-                            <img src="" alt="inland icon" />
-                          </div>
-                        </div>
-                        <p>
-                          <span>Inland Transportation : </span>
-                        </p>
-                      </div> */}
+
                           <div class="track-line-cntr">
                             <div class="track-img-cntr">
                               <div class="track-img">
@@ -2404,7 +2267,6 @@ class ShippingDetailsTwo extends Component {
                   <ModalBody>
                     <ReactTable
                       data={packageTable}
-                      // noDataText="<i className='fa fa-refresh fa-spin'></i>"
                       noDataText=""
                       columns={[
                         {
@@ -2525,10 +2387,6 @@ class ShippingDetailsTwo extends Component {
                         />
                       </div>
                       <div className="rename-cntr login-fields d-block">
-                        {/* <input
-                        type="file"
-                        onChange={this.onDocumentChangeHandler}
-                      ></input> */}
                         <div className="d-flex w-100 align-items-center">
                           <label>Document File</label>
                           <div className="w-100">
@@ -2536,7 +2394,6 @@ class ShippingDetailsTwo extends Component {
                               id="file-upload"
                               className="file-upload d-none"
                               type="file"
-                              //accept="application/pdf"
                               onChange={this.onDocumentChangeHandler}
                             />
                             <label htmlFor="file-upload">
@@ -2555,7 +2412,6 @@ class ShippingDetailsTwo extends Component {
                       <Button
                         className="butn"
                         onClick={() => {
-                          // this.toggleDocu();
                           this.onDocumentClickHandler();
                         }}
                       >
@@ -2573,7 +2429,6 @@ class ShippingDetailsTwo extends Component {
                   <ModalBody>
                     <div className="rename-cntr login-fields">
                       <iframe
-                        // src="https://vizio.atafreight.com/WebVizio_3_0/TAndC/ClickToAccept.pdf#toolbar=0&navpanes=0&scrollbar=0"
                         src={
                           this.state.viewFilePath +
                           "#toolbar=0&navpanes=0&scrollbar=0"
@@ -2592,7 +2447,9 @@ class ShippingDetailsTwo extends Component {
                   </ModalBody>
                 </Modal>
               </div>
-              <NotificationContainer leaveTimeout="3000" />
+              <NotificationContainer
+                leaveTimeout={appSettings.NotficationTime}
+              />
             </div>
           </div>
         </div>

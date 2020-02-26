@@ -16,21 +16,21 @@ class Updateforgotpassword extends React.Component {
       password: "",
       confirmPassword: ""
     };
-    this.handlechange = this.handlechange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.Handlechange = this.Handlechange.bind(this);
+    this.HandleSubmit = this.HandleSubmit.bind(this);
   }
 
-  handlechange(e) {
+  ////Handle Change Text Filed Data
+  Handlechange(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {
-    debugger;
+
+  ////Handle Submit Data
+  HandleSubmit(e) {
     this.setState({ submitted: true });
-
     var userid = window.localStorage.getItem("userid");
-
     if (this.state.password === this.state.confirmPassword) {
       ValidatePassCode(userid, this.state.password);
     } else {
@@ -53,7 +53,7 @@ class Updateforgotpassword extends React.Component {
                   <input
                     type="password"
                     name={"password"}
-                    onChange={this.handlechange}
+                    onChange={this.Handlechange}
                     placeholder="Enter Your New Password"
                   />
                 </div>
@@ -62,7 +62,7 @@ class Updateforgotpassword extends React.Component {
                   <input
                     id="confirmpassword"
                     name={"confirmPassword"}
-                    onChange={this.handlechange}
+                    onChange={this.Handlechange}
                     placeholder="Confirm Your New Password"
                     type="password"
                   />
@@ -72,7 +72,7 @@ class Updateforgotpassword extends React.Component {
                 <button
                   type="button"
                   className="butn"
-                  onClick={() => this.handleSubmit()}
+                  onClick={() => this.HandleSubmit()}
                 >
                   Submit
                 </button>
@@ -80,14 +80,15 @@ class Updateforgotpassword extends React.Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </section>
     );
   }
 }
 
+////Validate pass code funcation
 function ValidatePassCode(UserId, Password) {
-  debugger;
+  
   const requestOptions = {
     method: "POST",
     headers: authHeader("no"),
@@ -97,14 +98,13 @@ function ValidatePassCode(UserId, Password) {
     })
   };
   return fetch(`${appSettings.APIURL}/UpdatePassword`, requestOptions)
-    .then(handleResponse)
+    .then(HandleResponse)
     .catch(error => {
       console.log(error);
     });
 }
-
-function handleResponse(response) {
-  console.log(response);
+//// Handle response for update password
+function HandleResponse(response) {
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
@@ -112,9 +112,8 @@ function handleResponse(response) {
     } else {
       NotificationManager.success("Password has been updated successfully");
       setTimeout(() => {
-        window.location.href = "./login";  
+        window.location.href = "./login";
       }, 1000);
-      
     }
 
     return data;

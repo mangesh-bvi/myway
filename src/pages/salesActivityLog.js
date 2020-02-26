@@ -28,19 +28,16 @@ class SalesActivityLog extends Component {
       this
     );
     this.filterAll = this.filterAll.bind(this);
-
     this.onFilteredChange = this.onFilteredChange.bind(this);
   }
 
   componentDidMount() {
     this.HandleListShipmentSummey();
-    // this.HandleListSalesActivityLog('312');
   }
 
   onFilteredChange(filtered) {
-    debugger;
+    
     if (filtered.length > 1 && this.state.filterAll.length) {
-      // NOTE: this removes any FILTER ALL filter
       const filterAll = "";
       this.setState({
         filtered: filtered.filter(item => item.id != "all"),
@@ -52,9 +49,10 @@ class SalesActivityLog extends Component {
     const { value } = e.target;
     const filterAll = value;
     const filtered = [{ id: "all", value: filterAll }];
-    // NOTE: this completely clears any COLUMN filters
+
     this.setState({ filterAll, filtered });
   }
+  ////Handle List Shipment Summey Data
   HandleListShipmentSummey() {
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -63,16 +61,14 @@ class SalesActivityLog extends Component {
       method: "post",
       url: `${appSettings.APIURL}/SalesActivityLogdropdown`,
       data: {
-        //UserId: userid
-        UserId: 2679
-        // PageNo: 1
+        UserId: userid
       },
       headers: authHeader()
     })
       .then(function(response) {
         var actData = [];
         actData = response.data;
-        self.setState({ actLog: actData }); ///problem not working setstat undefined
+        self.setState({ actLog: actData });
         if (actData.length > 0) {
           self.HandleListSalesActivityLog(actData[0].UserId);
         }
@@ -95,12 +91,10 @@ class SalesActivityLog extends Component {
 
         var temperror = error.response.data;
         var err = temperror.split(":");
-
-        // alert(err[1].replace("}", ""));
       });
   }
   HandleListSalesActivityLog(fileruserid) {
-    debugger;
+    
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -136,28 +130,9 @@ class SalesActivityLog extends Component {
         self.setState({ gridData: actData });
         var temperror = error.response.data;
         var err = temperror.split(":");
-        //alert(err[1].replace("}", ""));
+        
       });
   }
-
-  /* HandleChangeShipmentDetails(HblNo) {
-    this.props.history.push({
-      pathname: "shipment-details",
-      state: { detail: HblNo }
-    });
-  }
-
-  HandleRowClickEvt = (rowInfo, column) => {
-    return {
-      onClick: e => {
-        var hblNo = column.original["HBL#"];
-     //   if(hblNo != undefined)
-        {
-        this.HandleChangeShipmentDetails(hblNo);
-        }
-      }
-    };
-  };*/
 
   selectLogChange = e => {
     let self = this;
@@ -168,25 +143,10 @@ class SalesActivityLog extends Component {
   render() {
     const { gridData } = this.state;
 
-    const optionsOrigin = [
-      { value: "AFGHANISTAN", label: "AFGHANISTAN" },
-      { value: "ALGERIA", label: "ALGERIA" },
-      { value: "ANGOLA", label: "ANGOLA" },
-      { value: "ARGENTINA", label: "ARGENTINA" },
-      { value: "AUSTRALIA", label: "AUSTRALIA" },
-      { value: "AUSTRIA", label: "AUSTRIA" },
-      { value: "BAHAMAS", label: "BAHAMAS" },
-      { value: "BAHRAIN", label: "BAHRAIN" },
-      { value: "BANGLADESH", label: "BANGLADESH" },
-      { value: "BELGIUM", label: "BELGIUM" },
-      { value: "BELIZE", label: "BELIZE" }
-    ];
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
 
@@ -221,7 +181,6 @@ class SalesActivityLog extends Component {
             <div style={{ display: this.state.mapDis }} className="ag-fresh">
               <ReactTable
                 data={gridData}
-                // noDataText="<i className='fa fa-refresh fa-spin'></i>"
                 noDataText="No Data"
                 onFilteredChange={this.onFilteredChange.bind(this)}
                 filtered={this.state.filtered}
@@ -260,11 +219,6 @@ class SalesActivityLog extends Component {
                     ]
                   },
                   {
-                    // NOTE - this is a "filter all" DUMMY column
-                    // you can't HIDE it because then it wont FILTER
-                    // but it has a size of ZERO with no RESIZE and the
-                    // FILTER component is NULL (it adds a little to the front)
-                    // You culd possibly move it to the end
                     show: false,
                     Header: "All",
                     id: "all",
@@ -278,9 +232,6 @@ class SalesActivityLog extends Component {
                       };
                     },
                     filterMethod: (filter, rows) => {
-                      // using match-sorter
-                      // it will take the content entered into the "filter"
-                      // and search for it in EITHER the firstName or lastName
                       const result = matchSorter(rows, filter.value, {
                         keys: ["BL/HBL", "Consignee", "ConsigneeID"],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH

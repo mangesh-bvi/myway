@@ -3,7 +3,6 @@ import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import FileUpload from "./../assets/img/file.png";
 import ReactTable from "react-table";
-
 import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -17,11 +16,10 @@ import { encryption } from "../helpers/encryption";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Download from "./../assets/img/csv.png";
 import Delete from "./../assets/img/red-delete-icon.png";
-
+import Comman from "../helpers/Comman";
 class BookingInsert extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       cSelectedRow: {},
       copy: false,
@@ -31,7 +29,6 @@ class BookingInsert extends Component {
       showContent: false,
       modalBook: false,
       BookingNo: "",
-
       shiperVal: "",
       consigneeval: "",
       commodityData: [],
@@ -59,30 +56,24 @@ class BookingInsert extends Component {
       Notify_AddressID: 0,
       Notify_Displayas: "",
       NotifyName: "",
-
       BuyerID: 0,
       Buyer_AddressID: 0,
       Buyer_Displayas: "",
       BuyerName: "",
-
       ConsineeID: 0,
       Consinee_AddressID: 0,
       Consinee_Displayas: "",
       ConsineeName: "",
-
       ShipperID: 0,
       Shipper_AddressID: 0,
       Shipper_Displayas: "",
       ShipperName: "",
-
       consineeData: {},
       shipperData: {},
       notifyData: {},
       buyerData: {},
-
       buyerId: 0,
       errormessage: "",
-      //---------------sales quotation details
       multiCBM: [],
       addmultiCBM: [],
       ContainerLoad: "",
@@ -109,7 +100,6 @@ class BookingInsert extends Component {
       Shipper_Displayas: "",
       Shipper_Name: "",
       CargoType: "",
-
       Commodity: "",
       companyID: 0,
       company_name: "",
@@ -153,19 +143,14 @@ class BookingInsert extends Component {
       cbmVal: "",
       newloding: false
     };
-    // this.HandleFileOpen = this.HandleFileOpen.bind(this);
+
     this.toggleEdit = this.toggleEdit.bind(this);
     this.toggleRow = this.toggleRow.bind(this);
   }
   componentDidMount() {
-    debugger;
+    
     var rData = this.props.location.state;
-    if (
-      // typeof rData.ContainerLoad !== "" &&
-      // typeof rData.salesQuotaNo !== "" &&
-      rData.ContainerLoad !== undefined &&
-      rData.salesQuotaNo !== undefined
-    ) {
+    if (rData.ContainerLoad !== undefined && rData.salesQuotaNo !== undefined) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
         "desc"
@@ -205,23 +190,21 @@ class BookingInsert extends Component {
         }, 100);
       }
     }
-    
   }
-
+  ////Handle Get Sales Quote Inland Details
   HandleGetSalesQuotaionINLAND() {
     this.setState({ newloding: true });
     let self = this;
-    debugger;
+    
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -232,7 +215,6 @@ class BookingInsert extends Component {
       if (CargoDetails.length > 0) {
         for (let i = 0; i < CargoDetails.length; i++) {
           var objcargo = new Object();
-
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
           objcargo.PackageType = CargoDetails[i].PackageType || "";
           objcargo.Quantity = CargoDetails[i].Quantity || 0;
@@ -243,7 +225,6 @@ class BookingInsert extends Component {
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
           objcargo.Volume = CargoDetails[i].Volume || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
-
           multiCargo.push(objcargo);
         }
       }
@@ -307,46 +288,43 @@ class BookingInsert extends Component {
       }
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
-
       for (let i = 0; i < QuotationData.length; i++)
-      for (let i = 0; i < QuotationData.length; i++) {
-        if (!isNaN(QuotationData[i].saleQuoteLineID)) {
-          newSelected[QuotationData[i].saleQuoteLineID] = !self.state
-            .cSelectedRow[QuotationData[i].saleQuoteLineID];
-          selectedRow.push(QuotationData[i]);
-          self.setState({
-            cSelectedRow: newSelected,
-            selectedDataRow: selectedRow
-          });
-        } else {
-          newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
-            .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
-          selectedRow.push(QuotationData[i]);
-          self.setState({
-            cSelectedRow: QuotationData[i].SaleQuoteIDLineID
-              ? newSelected
-              : false,
-            selectedDataRow: selectedRow
-          });
+        for (let i = 0; i < QuotationData.length; i++) {
+          if (!isNaN(QuotationData[i].saleQuoteLineID)) {
+            newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+              .cSelectedRow[QuotationData[i].saleQuoteLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: newSelected,
+              selectedDataRow: selectedRow
+            });
+          } else {
+            newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
+              .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
+            selectedRow.push(QuotationData[i]);
+            self.setState({
+              cSelectedRow: QuotationData[i].SaleQuoteIDLineID
+                ? newSelected
+                : false,
+              selectedDataRow: selectedRow
+            });
+          }
         }
-      }
     });
   }
-
+  ////Handle Get Sales Quote LCL Details
   HandleGetSalesQuotaionLCL() {
     this.setState({ newloding: true });
     let self = this;
-    debugger;
+    
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -356,7 +334,6 @@ class BookingInsert extends Component {
       if (CargoDetails.length > 0) {
         for (let i = 0; i < CargoDetails.length; i++) {
           var objcargo = new Object();
-
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
           objcargo.PackageType = CargoDetails[i].PackageType || "";
           objcargo.Quantity = CargoDetails[i].Quantity || 0;
@@ -367,7 +344,6 @@ class BookingInsert extends Component {
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
           objcargo.Volume = CargoDetails[i].Volume || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
-
           multiCargo.push(objcargo);
         }
       }
@@ -413,7 +389,6 @@ class BookingInsert extends Component {
         var HAZMAT = Booking[0].HAZMAT;
         var NonStackable = Booking[0].NonStackable;
         var Company_AddressID = Booking[0].Company_AddressID;
-
         self.setState({
           Company_AddressID,
           newloding: false,
@@ -431,7 +406,6 @@ class BookingInsert extends Component {
       }
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
-
       for (let i = 0; i < QuotationData.length; i++)
         for (let i = 0; i < QuotationData.length; i++) {
           if (!isNaN(QuotationData[i].saleQuoteLineID)) {
@@ -456,12 +430,11 @@ class BookingInsert extends Component {
         }
     });
   }
-
+  ////Handle Get Sales Quote FCL Details
   HandleGetSalesQuotaionFCL() {
     this.setState({ newloding: true });
-
     let self = this;
-    debugger;
+    
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
 
@@ -471,20 +444,17 @@ class BookingInsert extends Component {
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
       var CargoDetails = response.data.Table3;
       var FileData = response.data.Table4;
       var addmultiCBM = response.data.Table3;
-
       var multiCargo = [];
       if (CargoDetails.length > 0) {
-        debugger;
+        
         for (let i = 0; i < CargoDetails.length; i++) {
           var objcargo = new Object();
-
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
           objcargo.PackageType = CargoDetails[i].PackageType || "";
           objcargo.Quantity = CargoDetails[i].Quantity || 0;
@@ -495,11 +465,9 @@ class BookingInsert extends Component {
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
           objcargo.Volume = CargoDetails[i].Volume || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
-
           multiCargo.push(objcargo);
         }
       }
-      //   var EquipmentTypes = QuotationData[0].ContainerCode || "";
       if (FileData.length > 0) {
         self.setState({ FileData });
       } else {
@@ -512,12 +480,10 @@ class BookingInsert extends Component {
         var contact_name = Booking[0].contact_name;
         var Company_Address = Booking[0].Company_Address;
         var Company_AddressID = Booking[0].Company_AddressID;
-
         var ShipmentType = Booking[0].ShipmentType;
         var TypeofMove = Booking[0].TypeOfMove;
         var IncoTerms = Booking[0].IncoTerm;
         var HAZMAT = Booking[0].HAZMAT;
-
         self.setState({
           newloding: false,
           selectedRow: QuotationData,
@@ -536,7 +502,6 @@ class BookingInsert extends Component {
           IncoTerms
         });
       }
-
       if (QuotationData.length > 0) {
         var selectedCommodity = QuotationData[0].Commodity;
         var POL = QuotationData[0].POL;
@@ -560,43 +525,43 @@ class BookingInsert extends Component {
       }
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
- 
-        for (let i = 0; i < QuotationData.length; i++) {
-          if (!isNaN(QuotationData[i].saleQuoteLineID)) {
-            newSelected[QuotationData[i].saleQuoteLineID] = !self.state
-              .cSelectedRow[QuotationData[i].saleQuoteLineID];
-            selectedRow.push(QuotationData[i]);
-          
-          } else {
-            newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
-              .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
-            selectedRow.push(QuotationData[i]);
-            
-          }
-          
+
+      for (let i = 0; i < QuotationData.length; i++) {
+        if (!isNaN(QuotationData[i].saleQuoteLineID)) {
+          newSelected[QuotationData[i].saleQuoteLineID] = !self.state
+            .cSelectedRow[QuotationData[i].saleQuoteLineID];
+          selectedRow.push(QuotationData[i]);
+        } else {
+          newSelected[QuotationData[i].SaleQuoteIDLineID] = !self.state
+            .cSelectedRow[QuotationData[i].SaleQuoteIDLineID];
+          selectedRow.push(QuotationData[i]);
         }
-        self.setState({
-          cSelectedRow:  newSelected,
-          selectedDataRow: selectedRow
-        });
+      }
+      self.setState({
+        cSelectedRow: newSelected,
+        selectedDataRow: selectedRow
+      });
     });
   }
-
+  ////Handle Get Sales Quote AIR Details
   HandleGetSalesQuotaionAIR() {
     this.setState({ newloding: true });
     let self = this;
-    debugger;
+    
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
-    var MyWayUserID=encryption(window.localStorage.getItem("userid"), "desc");
+    var MyWayUserID = encryption(window.localStorage.getItem("userid"), "desc");
 
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteView`,
-      data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo,MyWayUserID:MyWayUserID },
+      data: {
+        Mode: ContainerLoad,
+        SalesQuoteNumber: salesQuotaNo,
+        MyWayUserID: MyWayUserID
+      },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -607,7 +572,6 @@ class BookingInsert extends Component {
       if (CargoDetails.length > 0) {
         for (let i = 0; i < CargoDetails.length; i++) {
           var objcargo = new Object();
-
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
           objcargo.PackageType = CargoDetails[i].PackageType || "";
           objcargo.Quantity = CargoDetails[i].Quantity || 0;
@@ -653,7 +617,6 @@ class BookingInsert extends Component {
           TypeofMove
         });
       }
-
       if (Booking.length > 0) {
         var ModeofTransport = Booking[0].ModeOfTransport;
         var companyID = Booking[0].companyID;
@@ -661,10 +624,8 @@ class BookingInsert extends Component {
         var contact_name = Booking[0].contact_name;
         var Company_Address = Booking[0].Company_Address;
         var Company_AddressID = Booking[0].Company_AddressID;
-
         var SaleQuoteNo = Booking[0].SaleQuoteID;
         var ShipmentType = Booking[0].ShipmentType;
-
         self.setState({
           newloding: false,
           Company_AddressID,
@@ -680,7 +641,6 @@ class BookingInsert extends Component {
       }
       var selectedRow = [];
       const newSelected = Object.assign({}, self.state.cSelectedRow);
-
       for (let i = 0; i < QuotationData.length; i++)
         for (let i = 0; i < QuotationData.length; i++) {
           if (!isNaN(QuotationData[i].saleQuoteLineID)) {
@@ -707,7 +667,6 @@ class BookingInsert extends Component {
   }
 
   ////booking insert
-
   HandleBookingInsert() {
     let self = this;
     if (this.state.selectedDataRow.length === 1) {
@@ -717,15 +676,10 @@ class BookingInsert extends Component {
         this.state.isBuyer === true ||
         this.state.isNotify === true
       ) {
-        debugger;
-
         this.setState({ loding: true });
         var userId = encryption(window.localStorage.getItem("userid"), "desc");
-
         var MyWayUserID = Number(userId);
-
-        var DefaultEntityTypeID = this.state.companyID; ////ask to way it give parameter
-
+        var DefaultEntityTypeID = this.state.companyID;
         var ConsigneeID = 0;
         var ConsigneeName = "";
         var Consignee_AddressID = 0;
@@ -756,12 +710,10 @@ class BookingInsert extends Component {
           Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
           Shipper_Displayas = this.state.Shipper_Displayas || "";
         }
-
         var BuyerID = 0;
         var Buyer_AddressID = 0;
         var Buyer_Displayas = "";
         var BuyerName = "";
-
         if (this.state.isBuyer === true) {
           BuyerID = DefaultEntityTypeID;
           Buyer_AddressID = this.state.Company_AddressID;
@@ -773,12 +725,10 @@ class BookingInsert extends Component {
           Buyer_Displayas = this.state.Buyer_Displayas;
           BuyerName = this.state.buyerData.Company_Name;
         }
-
         var NotifyID = 0;
         var Notify_AddressID = 0;
         var Notify_Displayas = "";
         var NotifyName = "";
-
         if (this.state.isNotify === true) {
           NotifyID = DefaultEntityTypeID;
           Notify_AddressID = this.state.this.state.Company_AddressID;
@@ -790,7 +740,6 @@ class BookingInsert extends Component {
           Notify_Displayas = this.state.Notify_Displayas || "";
           NotifyName = this.state.notifyData.Company_Name || "";
         }
-
         var Mode = this.state.ContainerLoad;
         var Commodity = 0;
         if (this.state.selectedCommodity) {
@@ -798,19 +747,12 @@ class BookingInsert extends Component {
             x => x.Commodity === this.state.selectedCommodity
           )[0].id;
         }
-        // var Commodity = Number(
-        //   this.state.commodityData.filter(
-        //     x => x.Commodity === this.state.Commodity
-        //   )[0].id || 0
-        // );
-        // var Commodity = 49;
-
         var saleQuoteID = 0;
         var saleQuoteNo = this.state.salesQuotaNo || "";
         var saleQuoteLineID = 0;
         if (this.state.QuotationData) {
           if (this.state.ContainerLoad === "INLAND") {
-            debugger;
+            
             var qdata = this.state.QuotationData.filter(
               x =>
                 x.SaleQuoteIDLineID ===
@@ -828,14 +770,11 @@ class BookingInsert extends Component {
             saleQuoteID = qdata[0].SaleQuoteID;
           }
         }
-        
-
         var BookingDim = [];
         if (this.state.cmbTypeRadio == "ALL") {
           if (this.state.multiCBM.length > 0) {
             for (let i = 0; i < this.state.multiCBM.length; i++) {
               var cargoData = new Object();
-
               cargoData.BookingPackID =
                 this.state.multiCBM[i].BookingPackID || 0;
               cargoData.PackageType = this.state.multiCBM[i].PackageType || "";
@@ -851,25 +790,19 @@ class BookingInsert extends Component {
             }
           }
         } else {
-         
-            
-              var cargoData = new Object();
+          var cargoData = new Object();
+          cargoData.BookingPackID = 0;
+          cargoData.PackageType = "";
+          cargoData.Quantity = 0;
+          cargoData.Lengths = 0;
+          cargoData.Width = 0;
+          cargoData.Height = 0;
+          cargoData.GrossWt = 0;
+          cargoData.VolumeWeight = 0;
+          cargoData.Volume = this.state.cbmVal || 0;
 
-              cargoData.BookingPackID =0;
-              cargoData.PackageType =  "";
-              cargoData.Quantity =  0;
-              cargoData.Lengths = 0;
-              cargoData.Width = 0;
-              cargoData.Height = 0;
-              cargoData.GrossWt =  0;
-              cargoData.VolumeWeight =  0;
-              cargoData.Volume = this.state.cbmVal || 0;
-
-              BookingDim.push(cargoData);
-           
+          BookingDim.push(cargoData);
         }
-         
-
         var BookingDocs = [];
         for (let i = 0; i < this.state.FileData.length; i++) {
           if (this.state.FileData[i].QuoteID) {
@@ -916,7 +849,7 @@ class BookingInsert extends Component {
 
           headers: authHeader()
         }).then(function(response) {
-          debugger;
+          
           if (response.data.Table) {
             var BookingNo = response.data.Table[0].BookingID;
             NotificationManager.success(response.data.Table[0].Message);
@@ -931,7 +864,6 @@ class BookingInsert extends Component {
           }
         });
       } else {
-        // self.setState({ errormessage: "Please atleas one select quotation." });
         NotificationManager.error(
           "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer"
         );
@@ -941,9 +873,9 @@ class BookingInsert extends Component {
       return false;
     }
   }
-
+  ////Hanlde File Booking File Upload
   HandleFileUpload() {
-    debugger;
+    
     var BookingID = this.state.BookingNo;
     var DocumentID = 0;
     var DocumnetFile = this.state.FileDataArry;
@@ -962,18 +894,18 @@ class BookingInsert extends Component {
       data: formdata,
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       NotificationManager.success(response.data.Table[0].Result);
       // this.props.history.push("./booking-table");
       self.props.history.push("booking-table");
     });
   }
-
+  ////toggle edit cargo details
   toggleEdit(e) {
-    debugger;
+    
 
     if (!this.state.modalEdit) {
-      debugger;
+      
       var multiCBM = this.state.multiCargo;
       if (multiCBM.length > 0) {
         this.setState({ multiCBM });
@@ -982,48 +914,17 @@ class BookingInsert extends Component {
       }
     } else {
     }
-
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
     }));
   }
-
-  HandleCommodityDropdown() {
-    let self = this;
-
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/CommodityDropdown`,
-      data: {},
-      headers: authHeader()
-    }).then(function(response) {
-      var commodityData = response.data.Table;
-      self.setState({ commodityData }); ///problem not working setstat undefined
-    });
-  }
-
-  ////file upload method for booking
-  HandleFileUload() {
-    let self = this;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookigFileUpload`,
-
-      headers: authHeader()
-    }).then(function(response) {
-      var data = response.data.Table;
-      self.setState({ packageTypeData: data });
-    });
-  }
+ 
   ////Package Type Dropdata DataBind Methos
-
   HandlePackgeTypeData() {
     let self = this;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/PackageTypeListDropdown`,
-
       headers: authHeader()
     }).then(function(response) {
       var data = response.data.Table;
@@ -1043,9 +944,9 @@ class BookingInsert extends Component {
     });
     this.BindShipmentStage();
   }
-
-  HandleChangeCon(field, e) {
-    debugger;
+  //// Bind Non Customer List
+  BindChangeNonCustomer(field, e) {
+    
     let self = this;
     var customerName = "";
     let fields = this.state.fields;
@@ -1070,7 +971,7 @@ class BookingInsert extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
 
         if (response.data.Table.length > 1) {
           if (field == "Consignee") {
@@ -1164,10 +1065,6 @@ class BookingInsert extends Component {
                 buyerData: response.data.Table[0]
               });
             }
-
-            // self.setState({
-            //   fields
-            // });
           }
         }
       });
@@ -1200,31 +1097,31 @@ class BookingInsert extends Component {
   }
 
   handleSelectCon(e, field, value, id) {
-    debugger;
+    
     let fields = this.state.fields;
     fields[field] = value;
     if (field == "Consignee") {
       this.state.ConsigneeID = id.Company_ID;
       var Consignee_Displayas = id.Company_Address;
       this.setState({ consineeData: id, Consignee_Displayas });
-      this.HandleCompanyAddress(field, id.Company_ID);
+      this.BindCompanyAddress(field, id.Company_ID);
     }
     if (field == "Shipper") {
       var Shipper_Displayas = id.Company_Address;
       this.setState({ shipperData: id, Shipper_Displayas });
       this.state.ShipperID = id.Company_ID;
-      this.HandleCompanyAddress(field, id.Company_ID);
+      this.BindCompanyAddress(field, id.Company_ID);
     }
     if (field == "Notify") {
       var Notify_Displayas = id.Company_Address;
       this.setState({ notifyData: id, Notify_Displayas });
       this.state.NotifyID = id.Company_ID;
-      this.HandleCompanyAddress(field, id.Company_ID);
+      this.BindCompanyAddress(field, id.Company_ID);
     } else {
       var Buyer_AddressID = id.Company_Address;
       this.setState({ buyerData: id, Buyer_AddressID });
       this.state.BuyerID = id.Company_ID;
-      this.HandleCompanyAddress(field, id.Company_ID);
+      this.BindCompanyAddress(field, id.Company_ID);
     }
 
     this.setState({
@@ -1233,8 +1130,8 @@ class BookingInsert extends Component {
       ShipperID: this.state.ShipperID
     });
   }
-
-  HandleCompanyAddress(type, cid) {
+  ////Bind Customer Address List
+  BindCompanyAddress(type, cid) {
     var ctype = type;
     var compId = cid;
     let self = this;
@@ -1265,7 +1162,7 @@ class BookingInsert extends Component {
   }
 
   AddressChange(type, e) {
-    debugger;
+    
     var companyID = e.target.value;
     if (e.target.selectedOptions[0].label === "Other") {
       if (type == "Consignee") {
@@ -1359,7 +1256,7 @@ class BookingInsert extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    debugger;
+    
     if (event.target.files[0].type === "application/pdf") {
       if (this.state.FileData[0].FileName === "No File Found") {
         var Fdata = this.state.FileData.splice(0);
@@ -1381,8 +1278,7 @@ class BookingInsert extends Component {
     }
   };
 
-  ////this methos for bookig details BookigGridDetailsList
-
+  ////Handle Sales Document Download
   HandleFileOpen(filePath) {
     if (filePath) {
       return false;
@@ -1536,7 +1432,6 @@ class BookingInsert extends Component {
                 className="w-100"
                 name="Quantity"
                 value={el.Quantity || ""}
-                //onKeyUp={this.cbmChange}
               />
             </div>
           </div>
@@ -1552,7 +1447,6 @@ class BookingInsert extends Component {
               className="w-100"
               name="Length"
               value={el.Length || ""}
-              // onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1565,7 +1459,6 @@ class BookingInsert extends Component {
               className="w-100"
               name="Width"
               value={el.Width || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1578,7 +1471,6 @@ class BookingInsert extends Component {
               className="w-100"
               name="height"
               value={el.height || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1607,7 +1499,6 @@ class BookingInsert extends Component {
                     ? "Volume"
                     : "VolumeWeight"
                 }
-                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
                 placeholder={
                   this.state.containerLoadType === "LCL"
                     ? "KG"
@@ -1653,7 +1544,7 @@ class BookingInsert extends Component {
     ));
   }
   addMultiCBM() {
-    debugger;
+    
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -1677,14 +1568,14 @@ class BookingInsert extends Component {
   }
 
   removeMultiCBM(i) {
-    debugger;
+    
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
     this.setState({ multiCBM });
   }
 
   HandleChangeMultiCBM(i, e) {
-    debugger;
+    
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -1797,12 +1688,12 @@ class BookingInsert extends Component {
 
     this.setState({ multiCBM });
   }
-
+  ////Handle Submit Cargo Details
   SubmitCargoDetails(e) {
-    debugger;
+    
     var data = this.state.multiCBM;
     var multiCBM = [];
-    debugger;
+    
     for (let i = 0; i < data.length; i++) {
       var objcargo = new Object();
       if (data[i].PackageType !== "") {
@@ -1826,7 +1717,7 @@ class BookingInsert extends Component {
   }
 
   HandleRadioBtn(type, e) {
-    debugger;
+    
     var selectedType = e.target.checked;
 
     if (type === "Conshinee") {
@@ -1882,7 +1773,7 @@ class BookingInsert extends Component {
   ////this method for party change value
 
   HandleConsineeAddressChange(e) {
-    debugger;
+    
     var addval = e.target.value;
 
     this.setState({ Consinee_Displayas: addval });
@@ -1899,15 +1790,10 @@ class BookingInsert extends Component {
     var addval = e.target.value;
     this.setState({ Buyer_Displayas: addval });
   }
-
+  ////create Dynamic file elememt
   CreateFileElement() {
     return this.state.FileData.map((el, i) => (
       <div key={i}>
-        {/* <a href={el.FilePath || ""}>
-          <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
-
-
-        </a> */}
         <span
           onClick={e => {
             this.HandleFileOpen(el.FilePath);
@@ -1918,13 +1804,12 @@ class BookingInsert extends Component {
       </div>
     ));
   }
- 
-
+  ////Handle Quote toggle check box
   toggleRow(rateID, rowData) {
-    debugger;
+    
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
-   
+
     var selectedRow = [];
 
     if (this.state.selectedDataRow.length == 0) {
@@ -1968,7 +1853,7 @@ class BookingInsert extends Component {
   }
 
   cmbTypeRadioChange(e) {
-    debugger;
+    
     var value = e.target.value;
 
     this.setState({ cmbTypeRadio: value });
@@ -1978,8 +1863,10 @@ class BookingInsert extends Component {
 
     this.setState({ cbmVal: Textvalue });
   }
+
+  ////Handle Sales Document Delete
   HandleDocumentDelete(e, row) {
-    debugger;
+    
     if (row.original.FilePath) {
       var MywayUserID = encryption(
         window.localStorage.getItem("userid"),
@@ -1995,11 +1882,11 @@ class BookingInsert extends Component {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/DeleteSalesQuotedocument`,
-        // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
+
         data: documentData,
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
         NotificationManager.success(response.data.Table[0].Result);
       });
     } else {
@@ -2019,6 +1906,7 @@ class BookingInsert extends Component {
       }
     }
   }
+  ////Handle Click Back Button
   handleChangePage() {
     window.history.back();
   }
@@ -2027,6 +1915,12 @@ class BookingInsert extends Component {
       "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
   }
 
+  callbackFunction = callBackObj => {
+    
+
+    var multiCBM = callBackObj;
+    this.setState({ multiCBM });
+  };
   render() {
     let i = 0;
     let className = "butn m-0";
@@ -2037,10 +1931,8 @@ class BookingInsert extends Component {
     }
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
-      // debugger;
       colClassName = "cls-flside colap";
     } else {
-      // debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -2078,7 +1970,7 @@ class BookingInsert extends Component {
                                 {
                                   Cell: row => {
                                     i++;
-                                    debugger;
+                                    
                                     var olname = "";
                                     var lname = "";
                                     if (row.original.Linename) {
@@ -2140,7 +2032,7 @@ class BookingInsert extends Component {
                                         </React.Fragment>
                                       );
                                     } else if (mode == "Air" && lname !== "") {
-                                      debugger;
+                                      
                                       return (
                                         <React.Fragment>
                                           <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -2308,32 +2200,57 @@ class BookingInsert extends Component {
                                   filterable: true,
                                   minWidth: 80
                                 },
-                                {
-                                  accessor: "ContainerType",
-                                  Cell: row => {
 
+                                {
+                                  Cell: row => {
+                                    var header = "";
                                     var value = "";
-                                    if (row.original.ContainerType) {
-                                      value = row.original.ContainerType;
+                                    if (this.state.ContainerLoad == "FCL") {
+                                      header = "Container";
+                                      if (row.original.ContainerType) {
+                                        value = row.original.ContainerType;
+                                      }
+                                      if (row.original.ContainerQuantity) {
+                                        value +=
+                                          " (" +
+                                          row.original.ContainerQuantity +
+                                          ")";
+                                      }
+                                    } else if (
+                                      this.state.ContainerLoad == "LCL"
+                                    ) {
+                                      header = "CBM";
+                                      if (row.original.CBM) {
+                                        value = row.original.CBM;
+                                      }
+                                    } else if (
+                                      this.state.ContainerLoad == "AIR"
+                                    ) {
+                                      header = "Chargeable Weight";
+                                      if (row.original["Chargable Weight"]) {
+                                        value =
+                                          row.original["Chargable Weight"];
+                                      }
+                                    } else {
+                                      header = "Chargeable Weight";
+                                      if (row.original["Chargable Weight"]) {
+                                        value =
+                                          row.original["Chargable Weight"];
+                                      }
                                     }
-                                    if (row.original.ContainerQuantity) {
-                                      value +=
-                                        " (" +
-                                        row.original.ContainerQuantity +
-                                        ")";
-                                    }
-  
+
                                     return (
-                                      <React.Fragment>
+                                      <>
                                         <p className="details-title">
-                                          Container
+                                          {header}
                                         </p>
-                                        <p className="details-para">
-                                        {value}
-                                        </p>
-                                      </React.Fragment>
+                                        <p className="details-para">{value}</p>
+                                      </>
                                     );
-                                  }
+                                  },
+                                  accessor: "ContainerType",
+                                  filterable: true
+                                  //minWidth: 175
                                 },
                                 {
                                   minWidth: 90,
@@ -2529,18 +2446,6 @@ class BookingInsert extends Component {
                               <p className="details-title">POD</p>
                               <p className="details-para">{this.state.POD}</p>
                             </div>
-                            {/* <div className="col-md-4">
-                            <p className="details-title">PU Address</p>
-                            <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p>
-                          </div>
-                          <div className="col-md-4">
-                            <p className="details-title">Delivery Address</p>
-                            <p className="details-para">
-                              Lotus Park, Goregaon (E), Mumbai : 400099
-                            </p>
-                          </div> */}
                           </div>
                         </div>
                       </Collapse>
@@ -2618,7 +2523,7 @@ class BookingInsert extends Component {
                             value="Consignee"
                           />
                           <label className="d-flex" htmlFor="Conshinee">
-                            Consignee
+                            Same as Customer
                           </label>
                         </div>
                         <div>
@@ -2642,7 +2547,7 @@ class BookingInsert extends Component {
                                       {item.Company_Name}
                                     </div>
                                   )}
-                                  onChange={this.HandleChangeCon.bind(
+                                  onChange={this.BindChangeNonCustomer.bind(
                                     this,
                                     "Consignee"
                                   )}
@@ -2715,14 +2620,6 @@ class BookingInsert extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                                <p className="details-title">
-                                  Notification Person
-                                </p>
-                                <p className="details-para">
-                                  {this.state.contact_name}
-                                </p>
-                              </div> */}
                               </div>
                             </div>
                           )}
@@ -2747,7 +2644,7 @@ class BookingInsert extends Component {
                               className="d-flex flex-column align-items-center"
                               htmlFor="Shipper"
                             >
-                              Shipper
+                              Same as Customer
                             </label>
                           </div>
                         </div>
@@ -2771,7 +2668,7 @@ class BookingInsert extends Component {
                                     </div>
                                   )}
                                   value={this.state.fields["Shipper"]}
-                                  onChange={this.HandleChangeCon.bind(
+                                  onChange={this.BindChangeNonCustomer.bind(
                                     this,
                                     "Shipper"
                                   )}
@@ -2841,14 +2738,6 @@ class BookingInsert extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                                <p className="details-title">
-                                  Notification Person
-                                </p>
-                                <p className="details-para">
-                                  {this.state.contact_name}
-                                </p>
-                              </div> */}
                               </div>
                             </div>
                           )}
@@ -2867,7 +2756,7 @@ class BookingInsert extends Component {
                             value="Buyer"
                           />
                           <label className="d-flex" htmlFor="Buyer">
-                            Buyer
+                            Same as Customer
                           </label>
                         </div>
                         <div>
@@ -2891,7 +2780,7 @@ class BookingInsert extends Component {
                                       </div>
                                     )}
                                     value={this.state.fields["Buyer"]}
-                                    onChange={this.HandleChangeCon.bind(
+                                    onChange={this.BindChangeNonCustomer.bind(
                                       this,
                                       "Buyer"
                                     )}
@@ -2961,14 +2850,6 @@ class BookingInsert extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                              <p className="details-title">
-                                Notification Person
-                              </p>
-                              <p className="details-para">
-                                {this.state.contact_name}
-                              </p>
-                            </div> */}
                               </div>
                             </div>
                           )}
@@ -2986,7 +2867,7 @@ class BookingInsert extends Component {
                             value="Notify"
                           />
                           <label className="d-flex" htmlFor="Notify">
-                            Notify
+                            Same as Customer
                           </label>
                         </div>
                         <div>
@@ -3012,7 +2893,7 @@ class BookingInsert extends Component {
                                       </div>
                                     )}
                                     value={this.state.fields["Notify"]}
-                                    onChange={this.HandleChangeCon.bind(
+                                    onChange={this.BindChangeNonCustomer.bind(
                                       this,
                                       "Notify"
                                     )}
@@ -3086,14 +2967,6 @@ class BookingInsert extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                            <p className="details-title">
-                              Notification Person
-                            </p>
-                            <p className="details-para">
-                              {this.state.contact_name}
-                            </p>
-                          </div> */}
                               </div>
                             </div>
                           )}
@@ -3341,88 +3214,13 @@ class BookingInsert extends Component {
               }}
             >
               <h3 className="mb-4">Edit Cargo Details</h3>
-              <>
-                <>
-                  {this.state.containerLoadType === "FCL" ? (
-                    ""
-                  ) : this.state.containerLoadType === "FTL" ? (
-                    ""
-                  ) : (
-                    <>
-                      <div className="rate-radio-cntr justify-content-center">
-                        <div>
-                          <input
-                            type="radio"
-                            name="cmbTypeRadio"
-                            id="exist-cust"
-                            value="ALL"
-                            style={{ display: "none" }}
-                            checked={
-                              this.state.cmbTypeRadio === "ALL" ? true : false
-                            }
-                            // onChange={
-                            //   this.state.containerLoadType !== "FTL"
-                            //     ? this.cmbTypeRadioChange.bind(this)
-                            //     : null
-                            // }
-                            onChange={this.cmbTypeRadioChange.bind(this)}
-                          />
-                          <label
-                            className="d-flex flex-column align-items-center"
-                            htmlFor="exist-cust"
-                          >
-                            Dimensions
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="cmbTypeRadio"
-                            id="new-cust"
-                            value="CBM"
-                            style={{ display: "none" }}
-                            checked={
-                              this.state.cmbTypeRadio !== "ALL" ? true : false
-                            }
-                            onChange={this.cmbTypeRadioChange.bind(this)}
-                          />
-                          <label
-                            className="d-flex flex-column align-items-center"
-                            htmlFor="new-cust"
-                          >
-                            {this.state.ContainerLoad === "AIR"
-                              ? "Chargable Weight"
-                              : "CBM"}
-                          </label>
-                        </div>
-                      </div>
-                      {this.state.cmbTypeRadio === "ALL" ? (
-                        this.CreateMultiCBM()
-                      ) : (
-                        <div className="col-md-4 m-auto">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              minLength={1}
-                              onChange={this.HandleCMBtextChange.bind(this)}
-                              placeholder={
-                                this.state.modeoftransport != "AIR"
-                                  ? "CBM"
-                                  : "KG"
-                              }
-                              className="w-100"
-                              value={this.state.cbmVal}
-                            />
-                          </div>
-                          <span className="equip-error">
-                            {/* {this.state.errors["CBM"]} */}
-                          </span>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </>
-              </>
+
+              <Comman
+                parentCallback={this.callbackFunction}
+                multiCBM={this.state.multiCBM}
+                packageTypeData={this.state.packageTypeData}
+                containerLoadType={this.state.ContainerLoad}
+              />
 
               <div className="text-center">
                 <Button

@@ -21,12 +21,7 @@ class AddSalesUser extends React.Component {
     this.state = {
       loading: false,
       values: [],
-      selectCountry: [
-        // { key: "1", value: "India" },
-        // { key: "2", value: "USA" },
-        // { key: "3", value: "UK" },
-        // { key: "4", value: "Russia" },
-      ],
+      selectCountry:[],
       selectIsEnable: [
         { key: false, value: "False" },
         { key: true, value: "True" }
@@ -74,9 +69,9 @@ class AddSalesUser extends React.Component {
       ]
     };
 
-    this.handlechange = this.handlechange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
+    this.HandleChangeInput = this.HandleChangeInput.bind(this);
+    this.HandleCreateSalesUser = this.HandleCreateSalesUser.bind(this);
+    this.HandleUpdateSalesUser = this.HandleUpdateSalesUser.bind(this);
   }
 
   HandleChangeSelect(field, e) {
@@ -102,8 +97,6 @@ class AddSalesUser extends React.Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-      console.log(response);
       let MOD = [];
       let arr = [];
       let arrDoc = [];
@@ -112,7 +105,6 @@ class AddSalesUser extends React.Component {
       arrDoc = self.state.Documents;
       arrAcc = self.state.AccessIDs.slice(0, -1).split(",");
       for (const [index, value] of response.data.Table3.entries()) {
-        debugger;
         if (arr.includes(value.ID)) {
           MOD.push({ ID: value.ID, Value: value.Value, IsSelected: 1 });
         } else {
@@ -134,9 +126,7 @@ class AddSalesUser extends React.Component {
           });
         }
       }
-
       for (const [index, value] of response.data.Table7.entries()) {
-        debugger;
         if (arrAcc.includes(value.id.toString())) {
           self.state.accessrights.push({
             id: value.id,
@@ -151,7 +141,6 @@ class AddSalesUser extends React.Component {
           });
         }
       }
-
       self.setState({
         selectCountry: response.data.Table,
         selectUserType: response.data.Table1,
@@ -168,7 +157,6 @@ class AddSalesUser extends React.Component {
   }
 
   removeClick(i) {
-    debugger;
     let values = [...this.state.values];
     values.splice(i, 1);
     if (this.state.editRegCompany.length > i) {
@@ -176,9 +164,8 @@ class AddSalesUser extends React.Component {
     }
     this.setState({ values, editRegCompan: this.state.editRegCompany });
   }
-
-  handlechange(field, e) {
-    debugger;
+  ////Handle Change Input Filed
+  HandleChangeInput(field, e) {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     this.setState({
@@ -187,7 +174,6 @@ class AddSalesUser extends React.Component {
   }
 
   handleBlur(field, e) {
-    debugger;
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -205,7 +191,6 @@ class AddSalesUser extends React.Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       if (
         response.data[0].CanCreateUser == 0 &&
         response.data[0].Result == "Employee Not Found"
@@ -219,9 +204,6 @@ class AddSalesUser extends React.Component {
           IsEmailExist: true,
           errorMessage: response.data[0].Result
         });
-        // if(!fields["emailid"]){
-
-        // }
       }
       formIsValid = false;
       errors["emailid"] = self.state.errorMessage;
@@ -230,12 +212,12 @@ class AddSalesUser extends React.Component {
     });
   }
 
-  handleBlurUser(field, e) {
+  ////Handle Check User Name Exists Or Not
+  HandleCheckUserName(field, e) {
     if (this.props.location.state) {
       return false;
     }
 
-    debugger;
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -253,7 +235,6 @@ class AddSalesUser extends React.Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         self.setState({
           IsUserExist: true,
           errorMessage1: response.data[0].UserName + " already exists"
@@ -263,7 +244,6 @@ class AddSalesUser extends React.Component {
         self.setState({ errors: errors });
       })
       .catch(error => {
-        debugger;
         self.setState({
           IsUserExist: false,
           errorMessage1: ""
@@ -299,7 +279,6 @@ class AddSalesUser extends React.Component {
   }
 
   toggleChangeAccRight(index, e) {
-    debugger;
     if ([this.state.accessrights[index].IsSelected] == 0) {
       this.setState({
         [this.state.accessrights[index].IsSelected]: [
@@ -316,7 +295,6 @@ class AddSalesUser extends React.Component {
   }
 
   toggleChangeHideDoc(index, e) {
-    debugger;
     if ([this.state.hideDocument[index].IsSelected] == 0) {
       this.setState({
         [this.state.hideDocument[index].IsSelected]: [
@@ -331,8 +309,8 @@ class AddSalesUser extends React.Component {
       });
     }
   }
-  handleValidation() {
-    debugger;
+  ////Handle Check Validation
+  HandleCheckValidation() {
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;
@@ -384,16 +362,14 @@ class AddSalesUser extends React.Component {
     this.setState({ errors: errors });
     return formIsValid;
   }
-
-  handleSubmit(e) {
-    debugger;
+  ////Handle Create Sales User
+  HandleCreateSalesUser(e) {
     const docData = new FormData();
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     this.setState({ submitted: true });
     let ModeOfTransport = "";
     let Document = "";
-    let HideInvoiceDetails = "";
-    var RegisteredCompany = "";
+
     this.setState({ loading: true });
 
     var Modules = "";
@@ -412,7 +388,6 @@ class AddSalesUser extends React.Component {
     ModeOfTransport = ModeOfTransport.slice(0, -1);
 
     for (const [index, value] of this.state.editRegCompany.entries()) {
-      debugger;
       if (value.IsDelete == false) {
         if (value.CompType.includes("C") && value.CompType.includes("S")) {
           this.state.RegCompany.push(value.RegCompID + ":C");
@@ -425,7 +400,8 @@ class AddSalesUser extends React.Component {
       }
     }
 
-    RegisteredCompany = this.state.RegCompany.toString();
+
+   var RegisteredCompany = this.state.RegCompany.toString();
     this.state.hideDocument.map((hideDocument, index) => {
       if (this.state.hideDocument[index].IsSelected == true) {
         Document += this.state.hideDocument[index].DocumentID + ",";
@@ -501,9 +477,9 @@ class AddSalesUser extends React.Component {
     docData.append("IsHideHBLShowMBLDocument", true);
     docData.append("Logo", this.state.selectedFile);
     docData.append("RegisteredCompany", "");
-    // var docDesc = document.getElementById("docDesc").value;
+
     let self = this;
-    if (this.handleValidation()) {
+    if (this.HandleCheckValidation()) {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/CreateUserWithDoc`,
@@ -511,7 +487,6 @@ class AddSalesUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          debugger;
           NotificationManager.success(response.data[0].Message);
           self.setState({ loading: false });
           setTimeout(() => {
@@ -520,12 +495,11 @@ class AddSalesUser extends React.Component {
         })
         .catch(error => console.log(error.response));
     } else {
-      debugger;
       this.setState({ settoaste: true, loading: false });
     }
   }
-
-  handleUpdate(e) {
+  /////Handle Update Sales User with Document
+  HandleUpdateSalesUser(e) {
     const docData = new FormData();
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     this.setState({ submitted: true });
@@ -614,7 +588,7 @@ class AddSalesUser extends React.Component {
     );
     docData.append("Logo", this.state.selectedFile);
     docData.append("RegisteredCompany", RegisteredCompany);
-    if (this.handleValidation()) {
+    if (this.HandleCheckValidation()) {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/UpdateUserWithDoc`,
@@ -622,24 +596,19 @@ class AddSalesUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          debugger;
           NotificationManager.success(response.data[0].Result);
         })
         .catch(error => console.log(error.response));
     } else {
-      debugger;
       this.setState({ settoaste: true });
     }
   }
 
   componentDidMount() {
-    debugger;
     if (this.props.location.state != undefined) {
       var userId = this.props.location.state.detail;
       let fields = this.state.fields;
       this.setState({ srnos: userId });
-      let errors = {};
-      let formIsValid = true;
 
       let self = this;
       axios({
@@ -650,7 +619,6 @@ class AddSalesUser extends React.Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
         fields["username"] = response.data.Table[0].UserName;
         fields["emailid"] = response.data.Table[0].email_id;
         fields["firstname"] = response.data.Table[0].FirstName;
@@ -709,7 +677,6 @@ class AddSalesUser extends React.Component {
             IsDelete: false
           });
         }
-        // self.state.hideDocument.push({"DocumentID":value.DocumentID, "DocumentName":value.DocumentName, "IsSelected":1})
 
         self.setState({
           fields,
@@ -723,7 +690,6 @@ class AddSalesUser extends React.Component {
   }
 
   fileChangedHandler = event => {
-    debugger;
     this.setState({
       selectedFile: event.target.files[0],
       selectedFileName: event.target.files[0].name
@@ -770,16 +736,11 @@ class AddSalesUser extends React.Component {
               </div>
 
               <div className="container add-user-cntr">
-                {" "}
-                {/* login-input-cntr */}
                 <div className="row mt-3 title-border">
                   <div className="login-fields col-12 col-sm-4 col-md-4">
                     <label>Sales User Type</label>
 
-                    <select
-                      // onChange={this.HandleChangeSelect.bind(this)}
-                      name={"salesUserType"}
-                    >
+                    <select name={"salesUserType"}>
                       {this.state.selectSalesUserType.map(team => (
                         <option key={team.key} value={team.value}>
                           {team.value}
@@ -792,10 +753,10 @@ class AddSalesUser extends React.Component {
                     <input
                       type="text"
                       name={"username"}
-                      onChange={this.handlechange.bind(this, "username")}
+                      onChange={this.HandleChangeInput.bind(this, "username")}
                       placeholder="Enter Your User Name"
                       value={this.state.fields["username"]}
-                      onBlur={this.handleBlurUser.bind(this, "username")}
+                      onBlur={this.HandleCheckUserName.bind(this, "username")}
                     />
                     <span style={{ color: "red" }}>
                       {this.state.errors["username"]}
@@ -806,7 +767,7 @@ class AddSalesUser extends React.Component {
                     <input
                       type="password"
                       name={"password"}
-                      onChange={this.handlechange.bind(this, "password")}
+                      onChange={this.HandleChangeInput.bind(this, "password")}
                       placeholder="Enter Your Password"
                       value={this.state.fields["password"]}
                     />
@@ -819,7 +780,7 @@ class AddSalesUser extends React.Component {
                     <input
                       type="text"
                       name={"emailid"}
-                      onChange={this.handlechange.bind(this, "emailid")}
+                      onChange={this.HandleChangeInput.bind(this, "emailid")}
                       placeholder="Enter Your Email Id"
                       value={this.state.fields["emailid"]}
                       onBlur={this.handleBlur.bind(this, "emailid")}
@@ -835,7 +796,7 @@ class AddSalesUser extends React.Component {
                     <input
                       type="text"
                       name={"firstname"}
-                      onChange={this.handlechange.bind(this, "firstname")}
+                      onChange={this.HandleChangeInput.bind(this, "firstname")}
                       placeholder="Enter Your First Name"
                       value={this.state.fields["firstname"]}
                     />
@@ -848,7 +809,7 @@ class AddSalesUser extends React.Component {
                     <input
                       type="text"
                       name={"lastname"}
-                      onChange={this.handlechange.bind(this, "lastname")}
+                      onChange={this.HandleChangeInput.bind(this, "lastname")}
                       placeholder="Enter Your Last Name"
                       value={this.state.fields["lastname"]}
                     />
@@ -865,8 +826,8 @@ class AddSalesUser extends React.Component {
                       value={this.state.fields["country"]}
                     >
                       {" "}
-                      <option key={"Select"} value={"Select"}>
-                        --Select--
+                      <option value="Select">
+                        select
                       </option>
                       {this.state.selectCountry.map(team => (
                         <option key={team.SUCountry} value={team.SUCountry}>
@@ -877,22 +838,6 @@ class AddSalesUser extends React.Component {
                     <span style={{ color: "red" }}>
                       {this.state.errors["country"]}
                     </span>
-                    {/* <div>
-                    Selected Value: {JSON.stringify(this.state.value)}
-                </div> */}
-                    {/* <input
-                    type="text"
-                    name={"username"}
-                    onChange={this.handlechange}
-                    placeholder="Select Country"
-                  /> */}
-                    {/* <DropDownList
-                    data={this.Country}
-                    textField="text"
-                    dataItemKey="id"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                   /> */}
                   </div>
                 </div>
                 <div className="row title-border">
@@ -902,7 +847,10 @@ class AddSalesUser extends React.Component {
                       type="text"
                       name={"refreshtime"}
                       value={this.state.fields["refreshtime"]}
-                      onChange={this.handlechange.bind(this, "refreshtime")}
+                      onChange={this.HandleChangeInput.bind(
+                        this,
+                        "refreshtime"
+                      )}
                       placeholder="Enter Dashboard Refresh Time"
                     />
                     <span style={{ color: "red" }}>
@@ -1160,7 +1108,6 @@ class AddSalesUser extends React.Component {
                 </div>
                 <div className="row">
                   <div className="login-fields mb-0 col-md-12">
-                    {/* <input type="file" onChange={this.fileChangedHandler}/> */}
                     <input
                       id="file-upload"
                       className="file-upload d-none"
@@ -1189,7 +1136,7 @@ class AddSalesUser extends React.Component {
                         <button
                           type="button"
                           className="butn mb-2"
-                          onClick={this.handleUpdate}
+                          onClick={this.HandleUpdateSalesUser}
                         >
                           Update
                         </button>
@@ -1199,7 +1146,7 @@ class AddSalesUser extends React.Component {
                         <button
                           type="button"
                           className="butn mb-2"
-                          onClick={this.handleSubmit}
+                          onClick={this.HandleCreateSalesUser}
                           disabled={this.state.loading != true ? false : true}
                         >
                           {this.state.loading == true ? (
@@ -1216,6 +1163,7 @@ class AddSalesUser extends React.Component {
                 </div>
               </div>
             </div>
+             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
           </div>
         </div>
       </div>

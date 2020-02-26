@@ -6,18 +6,14 @@ import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-// import { Button, Modal, ModalBody } from "reactstrap";
-// import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
-// import ReactTable from "react-table";
-// import maersk from "./../assets/img/maersk.png";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-// import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
+import { encryption } from "../helpers/encryption";
 
 const animatedComponents = makeAnimated();
 
@@ -75,8 +71,7 @@ class Reports extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ReportListAPI`,
       data: {
-        // UserID: encryption(window.localStorage.getItem("userid"), "desc")
-        UserID: 341
+        UserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
     })
@@ -101,10 +96,10 @@ class Reports extends Component {
         self.setState({ reportName: optionItems });
       })
       .catch(error => {
-        debugger;
+        
         var temperror = error.response.data;
         var err = temperror.split(":");
-        //alert(err[1].replace("}", ""))
+        
         var optionItems = [];
         optionItems.push({ value: 0, label: "No Data Found" });
         self.setState({
@@ -128,15 +123,12 @@ class Reports extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ReportFiltersAPI`,
       data: {
-        // UserID: encryption(window.localStorage.getItem("userid"), "desc")
-        UserID: 341,
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
         ReportID: val.value
       },
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
-
         var ModeOfTransport = [];
         var OriginCountry = [];
         var DestinationCountry = [];
@@ -145,7 +137,6 @@ class Reports extends Component {
         var RegCompany = [];
         var PortOfLoading = [];
         var PortOfDeparture = [];
-
         var InvoiceNo = false;
         var ModeTransport = false;
 
@@ -339,19 +330,19 @@ class Reports extends Component {
         self.setState({ toggleExtraInvoiceNoFilter: InvoiceNo });
         self.setState({ toggleExtraModeTransportFilter: ModeTransport });
 
-        // alert(ModeTransport)
+        
       })
       .catch(error => {
-        debugger;
+        
         var temperror = error.response.data;
         var err = temperror.split(":");
-        //alert(err[1].replace("}", ""))
+        
         var optionItems = [];
       });
   }
 
   changesModeOfTransport(val) {
-    debugger;
+    
 
     this.setState({ valModeOfTransport: val.value });
 
@@ -380,7 +371,7 @@ class Reports extends Component {
   }
 
   changesOriginCountry(val) {
-    debugger;
+    
     var OriginCountryarr = "";
     var filterpo = [];
     if (val != null) {
@@ -498,15 +489,15 @@ class Reports extends Component {
     }
     this.setState({ valPortOfLoading: PortOfLoadingearr.replace(/,\s*$/, "") });
   }
-
-  handleSubmit = () => {
+  ///Handle Submit Data
+  HandleSubmit = () => {
     if (this.state.valReportName == null || this.state.valReportName == "") {
-      //alert("Select Report Name")
+      
       NotificationManager.error("Select Report Name");
       return false;
     }
     if (this.state.valRegCompany == null || this.state.valRegCompany == "") {
-      //alert("Select Reg. Company")
+      
       NotificationManager.error("Select Reg. Company");
       return false;
     }
@@ -548,8 +539,8 @@ class Reports extends Component {
       state: { detail: detailid }
     });
   };
-
-  handleChangePage() {
+  ////Handle Back button click
+  HandleBackButtonClick() {
     window.history.back();
   }
 
@@ -571,7 +562,7 @@ class Reports extends Component {
             <div className="rate-fin-tit title-border title-sect mb-4">
               <h2>Scheduler Report</h2>
               <button
-                onClick={this.handleChangePage.bind(this)}
+                onClick={this.HandleBackButtonClick.bind(this)}
                 className="butn mt-0"
               >
                 Back
@@ -725,9 +716,7 @@ class Reports extends Component {
                       <label>Registered Company</label>
                       <Select
                         className="rate-dropdown w-100 m-0"
-                        //closeMenuOnSelect={false}
                         components={animatedComponents}
-                        //isMulti
                         options={this.state.RegCompany}
                         onChange={this.changesRegCompany.bind(this)}
                       />
@@ -736,10 +725,7 @@ class Reports extends Component {
                 </div>
                 <div className="row">
                   <div className="col-md-12">
-                    {/* <a href="#!" onClick={this.handleView}  className="butn mt-3">
-                      View
-                    </a> */}
-                    <button onClick={this.handleSubmit} className="butn mt-3">
+                    <button onClick={this.HandleSubmit} className="butn mt-3">
                       View
                     </button>
                   </div>
@@ -748,7 +734,7 @@ class Reports extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </div>
     );
   }

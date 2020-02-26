@@ -71,7 +71,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      // debugger;
+      // 
       var bookData = response.data.Table;
       self.setState({
         BookingData: bookData,
@@ -135,7 +135,7 @@ class Dashboard extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      //debugger;
+      //
       var quotesdata = response.data.Table;
       selt.setState({
         QuotesData: quotesdata,

@@ -13,13 +13,4 @@ export function encryption(plainText, type = "enc") {
     }
   }
 }
-
-export function convertToPlain(rtf) {
-  debugger;
-  if (rtf !== "" && rtf !== null && rtf !== undefined) {
-    rtf = rtf.replace(/\\par[d]?/g, "");
-    return rtf
-      .replace(/\{\*?\\[^{}]+}|[{}]|\\\n?[A-Za-z]+\n?(?:-?\d+)?[ ]?/g, "")
-      .trim();
-  }
-}
+ 

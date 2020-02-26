@@ -9,8 +9,7 @@ class UserAgreement extends Component {
     super(props);   
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleSubmit(e) {
-    //VerifyAgreement();
+  handleSubmit(e) {   
     window.location.href='./dashboard';
   }
   
@@ -47,7 +46,7 @@ class UserAgreement extends Component {
               <a
                 href="/"
                 className="butn cancel-butn"
-                // onClick={() => this.handleSubmit()}
+             
               >
                 Close
               </a>
@@ -62,7 +61,7 @@ class UserAgreement extends Component {
 }
 function VerifyAgreement()
 {
-  debugger;
+  
   var userName=encryption(window.localStorage.getItem("username"),"desc");
   const requestOptions = {
     method: "POST",
@@ -83,19 +82,15 @@ function VerifyAgreement()
 
  
 
-function handleResponse(response) {
-  console.log(response);
- debugger;
+function handleResponse(response) {  
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
       localStorage.clear();
       window.location.href='./login';
     } else {      
-     // window.location.href = "./dashboard";
-    }
-
-    // return data;
+     
+    }    
   });
 }
 export default UserAgreement;

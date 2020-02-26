@@ -1,20 +1,17 @@
 import React from "react";
 import appSettings from "../helpers/appSetting";
-// import Logo from "./../assets/img/logo.png";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
 import FileUpload from "./../assets/img/file.png";
 import Delete from "./../assets/img/red-delete-icon.png";
-import { is } from "@babel/types";
 import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import { bool } from "prop-types";
 
 var string = "";
 class AddUser extends React.Component {
@@ -23,12 +20,7 @@ class AddUser extends React.Component {
     this.state = {
       loading: false,
       values: [],
-      selectCountry: [
-        // { key: "1", value: "India" },
-        // { key: "2", value: "USA" },
-        // { key: "3", value: "UK" },
-        // { key: "4", value: "Russia" },
-      ],
+      selectCountry:[],
       selectIsEnable: [
         { key: false, value: "False" },
         { key: true, value: "True" }
@@ -55,9 +47,6 @@ class AddUser extends React.Component {
       username: "",
       password: "",
       submitted: false,
-      // isAir: false,
-      // isOcean: false,
-      // isLand: false,
       modeoftrans: "",
       companies: [],
       isConsignee: false,
@@ -81,9 +70,9 @@ class AddUser extends React.Component {
       selectedFileName: ""
     };
 
-    this.handlechange = this.handlechange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
+    this.HandleChangeInput = this.HandleChangeInput.bind(this);
+    this.HandleCreateUser = this.HandleCreateUser.bind(this);
+    this.HandleUpdateUser = this.HandleUpdateUser.bind(this);
   }
 
   createUI() {
@@ -118,13 +107,6 @@ class AddUser extends React.Component {
                 {(() => {
                   if (i > 0) {
                     return (
-                      // <input
-                      //   type="button"
-                      //   value="remove"
-                      //   id={"remove" + (index + 1)}
-                      //   className="dynamic-remove"
-                      //   onClick={this.removeClick.bind(this, index)}
-                      // />
                       <button
                         id={"remove" + (index + 1)}
                         className="dynamic-remove"
@@ -309,7 +291,7 @@ class AddUser extends React.Component {
                 </option>
               ))}
             </select>
-            {/* <input type='button' value='remove' id={"remove" + (index+1)} className='dynamic-remove' onClick={this.removeClick.bind(this, index)}/> */}
+
             <div className="remember-forgot">
               <div>
                 <input
@@ -434,7 +416,6 @@ class AddUser extends React.Component {
   }
 
   HandleChangeCompany(e) {
-    debugger;
     if (this.state.editRegCompany.length < 1) {
       this.state.companies[0] = e.target.value;
       this.state.editRegCompany.push({
@@ -452,7 +433,6 @@ class AddUser extends React.Component {
   }
 
   HandleChangeCompany1(e, index) {
-    debugger;
     if (e.target.value == "Select") {
       this.state.disabled = true;
       this.state.editRegCompany[index].CompType = "";
@@ -489,8 +469,7 @@ class AddUser extends React.Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
-      console.log(response);
+      
       let MOD = [];
       let arr = [];
       let arrDoc = [];
@@ -499,7 +478,6 @@ class AddUser extends React.Component {
       arrDoc = self.state.Documents;
       arrAcc = self.state.AccessIDs.slice(0, -1).split(",");
       for (const [index, value] of response.data.Table3.entries()) {
-        debugger;
         if (arr.includes(value.ID)) {
           MOD.push({ ID: value.ID, Value: value.Value, IsSelected: 1 });
         } else {
@@ -523,7 +501,6 @@ class AddUser extends React.Component {
       }
 
       for (const [index, value] of response.data.Table7.entries()) {
-        debugger;
         if (arrAcc.includes(value.id.toString())) {
           self.state.accessrights.push({
             id: value.id,
@@ -549,22 +526,17 @@ class AddUser extends React.Component {
         miscelleneous: response.data.Table6,
         accessrights: self.state.accessrights
       });
+    }).catch(response=>{
+      console.log(response)
     });
 
-    // axios
-    //   .post("http://vizio.atafreight.com/MyWayAPI/BindUserCreationDropdown?UserID=41")
-    //   .then(response => {
-    //     console.log(response);
-    //     this.setState({ data: response.data });
-    //   })
-    //   .catch(error => console.log(error.response));
+    
   }
   addClick() {
     this.setState(prevState => ({ values: [...prevState.values, ""] }));
   }
 
   removeClick(i) {
-    debugger;
     let values = [...this.state.values];
     values.splice(i, 1);
     if (this.state.editRegCompany.length > i) {
@@ -572,18 +544,16 @@ class AddUser extends React.Component {
     }
     this.setState({ values, editRegCompan: this.state.editRegCompany });
   }
-
-  handlechange(field, e) {
-    debugger;
+  /////Handle Change Input Filed
+  HandleChangeInput(field, e) {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     this.setState({
       fields
     });
   }
-
-  handleBlur(field, e) {
-    debugger;
+  ////Handle Check Mail Address exiest or not
+  HandleCheckEmail(field, e) {
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -601,7 +571,6 @@ class AddUser extends React.Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       if (
         response.data[0].CanCreateUser == 1 &&
         response.data[0].Result == "User Not Found"
@@ -618,17 +587,13 @@ class AddUser extends React.Component {
         formIsValid = false;
         errors["emailid"] = self.state.errorMessage;
         self.setState({ errors: errors });
-        // if(!fields["emailid"]){
-
-        // }
       }
 
       return formIsValid;
     });
   }
-
-  handleBlurUser(field, e) {
-     
+  ////Handle Check User Name exists or not
+  HandleCheckUserName(field, e) {
     let self = this;
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -646,7 +611,6 @@ class AddUser extends React.Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         self.setState({
           IsUserExist: true,
           errorMessage1: response.data[0].UserName + " already exists"
@@ -656,7 +620,6 @@ class AddUser extends React.Component {
         self.setState({ errors: errors });
       })
       .catch(error => {
-        debugger;
         self.setState({
           IsUserExist: false,
           errorMessage1: ""
@@ -680,20 +643,9 @@ class AddUser extends React.Component {
         ]
       });
     }
-    // if(name == "Air"){
-    //   this.setState({isAir: !this.state.isAir});
-
-    // }
-    // if (name == "Ocean") {
-    //   this.setState({isOcean: !this.state.isOcean});
-    // }
-    // if (name == "Land") {
-    //   this.setState({isLand: !this.state.isLand});
-    // }
   }
 
   toggleMobileChange(field, e) {
-    debugger;
     let fields = this.state.fields;
     fields[field] = !this.state.IsMobileEnabled;
     this.setState({
@@ -703,24 +655,19 @@ class AddUser extends React.Component {
   }
 
   toggleChangeCon(name, event) {
-    debugger;
     if (this.state.editRegCompany[0].CompType.includes("C") != true) {
       this.state.editRegCompany[0].CompType += "," + name;
       this.setState({
-        // [this.state.companies[0]]: this.state.companies[0]+=":"+name,
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
     } else {
       if (this.state.editRegCompany[0].CompType.includes("S")) {
-        // this.state.companies[0] =this.state.companies[0].split(':')[0]+":S"
         this.state.editRegCompany[0].CompType = ",S";
       } else {
-        // this.state.companies[0] =this.state.companies[0].split(':')[0]
         this.state.editRegCompany[0].CompType = "";
       }
       this.setState({
-        // [this.state .companies[0]]: this.state.companies[0],
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
@@ -728,32 +675,22 @@ class AddUser extends React.Component {
   }
 
   toggleChangeCon1(index, name, event) {
-    debugger;
     if (this.state.editRegCompany[index].CompType.includes("C") != true) {
       this.state.editRegCompany[index].CompType += "," + name;
       this.setState({
-        // [this.state.companies[index]]: this.state.companies[index]+=":"+name,
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
     } else {
       if (this.state.editRegCompany[index].CompType.includes("S")) {
-        // this.state.companies[index] =this.state.companies[index+1].split(':')[0]+":S"
-        // this.state.editRegCompany.push({CompType:"",RegCompID:parseInt(this.state.companies[index+1]),IsEnable:true})
         this.state.editRegCompany[index].CompType = ",S";
       } else {
-        // this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]
         this.state.editRegCompany[index].CompType = "";
       }
       this.setState({
-        // [this.state .companies[index+1]]: this.state.companies[index+1],
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
-      // this.setState({
-      //   [this.state.companies[index+1]]: this.state.companies[index+1],
-      //   isConsignee: !this.state.isConsignee
-      // })
     }
   }
 
@@ -761,20 +698,16 @@ class AddUser extends React.Component {
     if (this.state.editRegCompany[0].CompType.includes("S") != true) {
       this.state.editRegCompany[0].CompType += "," + name;
       this.setState({
-        // [this.state.companies[0]]: this.state.companies[0]+=":"+name,
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
     } else {
       if (this.state.editRegCompany[0].CompType.includes("C")) {
-        // this.state.companies[0] =this.state.companies[0].split(':')[0]+":C"
         this.state.editRegCompany[0].CompType = "C,";
       } else {
-        // this.state.companies[0] =this.state.companies[0].split(':')[0]
         this.state.editRegCompany[0].CompType = "";
       }
       this.setState({
-        // [this.state .companies[0]]: this.state.companies[0],
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
@@ -782,36 +715,26 @@ class AddUser extends React.Component {
   }
 
   toggleChangeShip1(index, name, event) {
-    debugger;
     if (this.state.editRegCompany[index].CompType.includes("S") != true) {
       this.state.editRegCompany[index].CompType += "," + name;
       this.setState({
-        // [this.state.companies[index]]: this.state.companies[index]+=":"+name,
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
     } else {
       if (this.state.editRegCompany[index].CompType.includes("C")) {
         this.state.editRegCompany[index].CompType = "C,";
-        // this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]+":C"
       } else {
         this.state.editRegCompany[index].CompType = "";
-        // this.state.companies[index+1] =this.state.companies[index+1].split(':')[0]
       }
       this.setState({
-        // [this.state .companies[index+1]]: this.state.companies[index+1],
         isConsignee: !this.state.isConsignee,
         editRegCompany: this.state.editRegCompany
       });
-      // this.setState({
-      //   [this.state.companies[index+1]]: this.state.companies[index+1],
-      //   isConsignee: !this.state.isConsignee
-      // })
     }
   }
 
   toggleChangeAccRight(index, e) {
-    debugger;
     if ([this.state.accessrights[index].IsSelected] == 0) {
       this.setState({
         [this.state.accessrights[index].IsSelected]: [
@@ -828,7 +751,6 @@ class AddUser extends React.Component {
   }
 
   toggleChangeHideDoc(index, e) {
-    debugger;
     if ([this.state.hideDocument[index].IsSelected] == 0) {
       this.setState({
         [this.state.hideDocument[index].IsSelected]: [
@@ -844,7 +766,6 @@ class AddUser extends React.Component {
     }
   }
   handleValidation() {
-    debugger;
     let fields = this.state.fields;
     let errors = this.state.errors;
     let formIsValid = true;
@@ -898,27 +819,17 @@ class AddUser extends React.Component {
     this.setState({ errors: errors });
     return formIsValid;
   }
-
-  handleSubmit(e) {
-    debugger;
+  ////Handle Create User with Document
+  HandleCreateUser(e) {
     const docData = new FormData();
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     this.setState({ submitted: true });
     let ModeOfTransport = "";
     let Document = "";
-    let HideInvoiceDetails = "";
     var RegisteredCompany = "";
     var Modules = "";
     this.setState({ loading: true });
-    // if (this.state.isAir === true) {
-    //   ModeOfTransport+="A";
-    // }
-    // if (this.state.isOcean === true) {
-    //   ModeOfTransport+=",O";
-    // }
-    // if (this.state.isLand === true) {
-    //   ModeOfTransport+=",L";
-    // }
+
     for (const [index, value] of this.state.chkModeOfTrans.entries()) {
       if (value.ID == "A" && value.IsSelected == 1) {
         ModeOfTransport += "A,";
@@ -933,7 +844,6 @@ class AddUser extends React.Component {
     ModeOfTransport = ModeOfTransport.slice(0, -1);
 
     for (const [index, value] of this.state.editRegCompany.entries()) {
-      debugger;
       if (value.IsDelete == false) {
         if (value.CompType.includes("C") && value.CompType.includes("S")) {
           this.state.RegCompany.push(value.RegCompID + ":C");
@@ -945,20 +855,7 @@ class AddUser extends React.Component {
         }
       }
     }
-    // for(const[index,value] of this.state.companies.entries())
-    // {
-    //   debugger;
-    //   let arr = value.includes(":C")
-    //   if(value.includes(":C") && value.includes(":S"))
-    //   {
-    //     this.state.RegCompany.push(value.split(':')[0]+":C")
-    //     this.state.RegCompany.push(value.split(':')[0]+":S")
-    //   }
-    //   else
-    //   {
-    //     this.state.RegCompany.push(value)
-    //   }
-    // }
+
     RegisteredCompany = this.state.RegCompany.toString();
     this.state.hideDocument.map((hideDocument, index) => {
       if (this.state.hideDocument[index].IsSelected == true) {
@@ -1016,41 +913,7 @@ class AddUser extends React.Component {
     ) {
       this.state.fields["usercreation"] = this.state.selectUserCreate[0].key;
     }
-    // if (this.state.fields["isenabled"] == undefined || this.state.fields["isenabled"]=="") {
-    //   this.state.fields["isenabled"] = this.state.selectIsEnable[0].value;
-    // }
 
-    // docData.append("UserName",this.state.fields["username"]);
-    // docData.append("Password",this.state.fields["password"]);
-    // docData.append("IsEnabled",this.state.fields["isenabled"]);
-    // docData.append("ClientAdminID",0);
-    // docData.append("DisplayAsShipper",this.state.fields["displayShipper"]);
-    // docData.append("DisplayAsConsignee",this.state.fields["displayConsignee"]);
-    // docData.append("UserType",this.state.fields["usertype"]);
-    // docData.append("ModeOfTransport",ModeOfTransport);
-    // docData.append("CanCreateUser",this.state.fields["usercreation"]);
-    // docData.append("CreatedBy",userid);
-    // docData.append("EmailID",this.state.fields["emailid"]);
-    // docData.append("ImpExp",this.state.fields["ImpExp"]);
-    // docData.append("IsAdmin",this.state.fields["isadmin"]);
-    // docData.append("IsMywayUser","Y");
-    // docData.append("MywayUserName",this.state.fields["username"]);
-    // docData.append("MywayPassword","");
-    // docData.append("FirstName",this.state.fields["firstname"]);
-    // docData.append("LastName",this.state.fields["lastname"]);
-    // docData.append("CountryCode",this.state.fields["country"]);
-    // docData.append("RefreshTime",this.state.fields["refreshtime"]);
-    // docData.append("IsNew",true);
-    // docData.append("IsMobileEnabled",false);
-    // docData.append("ProfileType",1);
-    // docData.append("ProfileSubType",0);
-    // docData.append("HasMobileAccess",true);
-    // docData.append("ModuleID","1,2,3");
-    // docData.append("DocumentID",Document);
-    // docData.append("IsHideInvoiceDetails",this.state.miscelleneous[0].IsSelected);
-    // docData.append("IsHideHBLShowMBLDocument",this.state.miscelleneous[1].IsSelected);
-    // docData.append("Logo",this.state.selectedFile);
-    // docData.append("RegisteredCompany",RegisteredCompany);
     docData.append("UserName", this.state.fields["username"]);
     docData.append("Password", this.state.fields["password"]);
     docData.append("IsEnabled", this.state.fields["isenabled"]);
@@ -1082,7 +945,7 @@ class AddUser extends React.Component {
     docData.append("IsHideHBLShowMBLDocument", true);
     docData.append("Logo", this.state.selectedFile);
     docData.append("RegisteredCompany", RegisteredCompany);
-    // var docDesc = document.getElementById("docDesc").value;
+
     if (this.handleValidation()) {
       axios({
         method: "post",
@@ -1092,41 +955,29 @@ class AddUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          debugger;
           NotificationManager.success(response.data[0].Message);
           setTimeout(function() {
             window.location.href = "/add-user";
           }, 1000);
         })
         .catch(error => {
-          debugger;
           NotificationManager.error(error.response.data.split("'")[1]);
           console.log(error.response);
         });
     } else {
-      debugger;
       this.setState({ settoaste: true, loading: false });
     }
   }
-
-  handleUpdate(e) {
+  ////Handle Update User With Document
+  HandleUpdateUser(e) {
     const docData = new FormData();
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     this.setState({ submitted: true });
     let ModeOfTransport = "";
     let Document = "";
-    let HideInvoiceDetails = "";
     var RegisteredCompany = "";
     var Modules = "";
-    // if (this.state.isAir === true) {
-    //   ModeOfTransport+="A";
-    // }
-    // if (this.state.isOcean === true) {
-    //   ModeOfTransport+=",O";
-    // }
-    // if (this.state.isLand === true) {
-    //   ModeOfTransport+=",L";
-    // }
+
     for (const [index, value] of this.state.chkModeOfTrans.entries()) {
       if (value.ID == "A" && value.IsSelected == 1) {
         ModeOfTransport += "A,";
@@ -1152,20 +1003,7 @@ class AddUser extends React.Component {
         }
       }
     }
-    // for(const[index,value] of this.state.companies.entries())
-    // {
-    //   debugger;
-    //   let arr = value.includes(":C")
-    //   if(value.includes(":C") && value.includes(":S"))
-    //   {
-    //     this.state.RegCompany.push(value.split(':')[0]+":C")
-    //     this.state.RegCompany.push(value.split(':')[0]+":S")
-    //   }
-    //   else
-    //   {
-    //     this.state.RegCompany.push(value)
-    //   }
-    // }
+
     RegisteredCompany = this.state.RegCompany.toString();
     this.state.hideDocument.map((hideDocument, index) => {
       if (this.state.hideDocument[index].IsSelected == true) {
@@ -1229,33 +1067,26 @@ class AddUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          debugger;
           NotificationManager.success(response.data[0].Result);
-          // var tempsucc = response.data[0].Result;
-          // NotificationManager.error(tempsucc);
+
           setTimeout(function() {
             window.location.href = "/view-user";
           }, 1000);
         })
         .catch(error => {
-          debugger;
           NotificationManager.error(error.response.data.split("'")[1]);
           console.log(error.response);
         });
     } else {
-      debugger;
       this.setState({ settoaste: true, loading: true });
     }
   }
 
   componentDidMount() {
-    debugger;
     if (this.props.location.state != undefined) {
       var userId = this.props.location.state.detail;
       let fields = this.state.fields;
       this.setState({ srnos: userId });
-      let errors = {};
-      let formIsValid = true;
 
       let self = this;
       axios({
@@ -1266,7 +1097,6 @@ class AddUser extends React.Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
         fields["username"] = response.data.Table[0].UserName;
         fields["emailid"] = response.data.Table[0].email_id;
         fields["firstname"] = response.data.Table[0].FirstName;
@@ -1280,13 +1110,13 @@ class AddUser extends React.Component {
         } else {
           fields["usercreation"] = 0;
         }
-        // fields["usercreation"] = response.data.Table[0].CanCreateUser;
+
         fields["isadmin"] = response.data.Table[0].IsAdmin;
         fields["ImpExp"] = response.data.Table[0].ImpExp;
         fields["displayShipper"] = response.data.Table[0].DisplayAsShipper;
         fields["displayConsignee"] = response.data.Table[0].DisplayAsConsignee;
         fields["MobileEnabled"] = response.data.Table[0].HasMobileAccess;
-        // this.state.IsMobileEnabled = response.data.Table[0].HasMobileAccess;
+
         for (const [index, value] of response.data.Table3.entries()) {
           self.state.Documents += value.DocumentID + ",";
         }
@@ -1331,7 +1161,6 @@ class AddUser extends React.Component {
             IsDelete: false
           });
         }
-        // self.state.hideDocument.push({"DocumentID":value.DocumentID, "DocumentName":value.DocumentName, "IsSelected":1})
 
         self.setState({
           fields,
@@ -1345,7 +1174,6 @@ class AddUser extends React.Component {
   }
 
   fileChangedHandler = event => {
-    debugger;
     this.setState({
       selectedFile: event.target.files[0],
       selectedFileName: event.target.files[0].name
@@ -1368,7 +1196,7 @@ class AddUser extends React.Component {
             <AdminSideMenu />
           </div>
           <div className="cls-rt">
-            <NotificationContainer />
+             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
             <div>
               <div className="title-sect title-border title-secpad">
                 {(() => {
@@ -1392,10 +1220,10 @@ class AddUser extends React.Component {
                     <input
                       type="text"
                       name={"username"}
-                      onChange={this.handlechange.bind(this, "username")}
+                      onChange={this.HandleChangeInput.bind(this, "username")}
                       placeholder="Enter Your User Name"
                       value={this.state.fields["username"]}
-                      onBlur={this.handleBlurUser.bind(this, "username")}
+                      onBlur={this.HandleCheckUserName.bind(this, "username")}
                     />
                     <span style={{ color: "red" }}>
                       {this.state.errors["username"]}
@@ -1409,7 +1237,7 @@ class AddUser extends React.Component {
                     <input
                       type="password"
                       name={"password"}
-                      onChange={this.handlechange.bind(this, "password")}
+                      onChange={this.HandleChangeInput.bind(this, "password")}
                       placeholder="Enter Your Password"
                       value={this.state.fields["password"]}
                     />
@@ -1425,10 +1253,10 @@ class AddUser extends React.Component {
                     <input
                       type="text"
                       name={"emailid"}
-                      onChange={this.handlechange.bind(this, "emailid")}
+                      onChange={this.HandleChangeInput.bind(this, "emailid")}
                       placeholder="Enter Your Email Id"
                       value={this.state.fields["emailid"]}
-                      onBlur={this.handleBlur.bind(this, "emailid")}
+                      onBlur={this.HandleCheckEmail.bind(this, "emailid")}
                     />
                     <span style={{ color: "red" }}>
                       {this.state.errors["emailid"]}
@@ -1444,7 +1272,7 @@ class AddUser extends React.Component {
                     <input
                       type="text"
                       name={"firstname"}
-                      onChange={this.handlechange.bind(this, "firstname")}
+                      onChange={this.HandleChangeInput.bind(this, "firstname")}
                       placeholder="Enter Your First Name"
                       value={this.state.fields["firstname"]}
                     />
@@ -1460,7 +1288,7 @@ class AddUser extends React.Component {
                     <input
                       type="text"
                       name={"lastname"}
-                      onChange={this.handlechange.bind(this, "lastname")}
+                      onChange={this.HandleChangeInput.bind(this, "lastname")}
                       placeholder="Enter Your Last Name"
                       value={this.state.fields["lastname"]}
                     />
@@ -1479,11 +1307,9 @@ class AddUser extends React.Component {
                       name={"country"}
                       value={this.state.fields["country"]}
                     >
-                      {" "}
-                      <option key={"Select"} value={"Select"}>
-                        --Select--
-                      </option>
+                      <option value="select" selected>select</option>
                       {this.state.selectCountry.map(team => (
+                        
                         <option key={team.SUCountry} value={team.SUCountry}>
                           {team.CountryName}
                         </option>
@@ -1492,22 +1318,6 @@ class AddUser extends React.Component {
                     <span style={{ color: "red" }}>
                       {this.state.errors["country"]}
                     </span>
-                    {/* <div>
-                    Selected Value: {JSON.stringify(this.state.value)}
-                </div> */}
-                    {/* <input
-                    type="text"
-                    name={"username"}
-                    onChange={this.handlechange}
-                    placeholder="Select Country"
-                  /> */}
-                    {/* <DropDownList
-                    data={this.Country}
-                    textField="text"
-                    dataItemKey="id"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                   /> */}
                   </div>
                 </div>
                 <div className="row title-border">
@@ -1517,7 +1327,10 @@ class AddUser extends React.Component {
                       type="text"
                       name={"refreshtime"}
                       value={this.state.fields["refreshtime"]}
-                      onChange={this.handlechange.bind(this, "refreshtime")}
+                      onChange={this.HandleChangeInput.bind(
+                        this,
+                        "refreshtime"
+                      )}
                       placeholder="Enter Dashboard Refresh Time"
                     />
                     <span style={{ color: "red" }}>
@@ -1710,65 +1523,8 @@ class AddUser extends React.Component {
                 <div class="row title-border">
                   <div className="col-12 col-sm-6 col-md-9 col-lg-9 login-fields dynamic-fields m0-p15 r-border">
                     <label>Company Name</label>
-                    {/* {(() => {
-                    if (this.props.location.state == undefined) {
-                  return <div>
-                  <select
-                    onChange={this.HandleChangeCompany.bind(this)}
-                    name={"Companys"}
-                  >
-                    <option key={"Select"} value={"Select"}>--Select--</option>
-                    {this.state.selectCompany.map(team => (
-                      <option key={team.RegCompID} value={team.RegCompID}>
-                        {team.RegCompName}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="remember-forgot col-md-1">
-                   <div>
-                     <input id="Consignee" type="checkbox" name="Consignee" onChange={this.toggleChangeCon.bind(this, "C")}/>
-                       <label htmlFor="Consignee">Consignee</label>
-                   </div>
-                   <div>
-                     <input id="Shipper" type="checkbox" name="Shipper" onChange={this.toggleChangeShip.bind(this, "S")}/>
-                       <label htmlFor="Shipper">Shipper</label>
-                   </div>
-                   
-                 </div>
-                  </div>
-                  }
-                  })()} */}
-                    {/* {this.state.editRegCompany.map(team => (
-                  <div>
-                  <select
-                    onChange={this.HandleChangeCompany.bind(this)}
-                    name={"Company"}
-                    value={team.RegCompID}
-                  >
-                    <option key={"Select"} value={"Select"}>--Select--</option>
-                    {this.state.selectCompany.map(team => (
-                      <option key={team.RegCompID} value={team.RegCompID}>
-                        {team.RegCompName}
-                      </option>
-                    ))}
-                    
-                  </select>
-                  <div className="remember-forgot col-md-1">
-                   <div>
-                     <input id="Consignee" type="checkbox" name="Consignee" defaultChecked={true} onChange={this.toggleChangeCon.bind(this, "C")}/>
-                       <label htmlFor="Consignee">Consignee</label>
-                   </div>
-                   <div>
-                     <input id="Shipper" type="checkbox" name="Shipper" onChange={this.toggleChangeShip.bind(this, "S")}/>
-                       <label htmlFor="Shipper">Shipper</label>
-                   </div>
-                   
-                 </div>
-                  </div>
-                  
-                  ))} */}
+
                     {this.createUI()}
-                    {/* {this.state.values} */}
                   </div>
                   <div className="col-12 col-sm-6 col-md-3 col-lg-3">
                     <input
@@ -1868,7 +1624,6 @@ class AddUser extends React.Component {
                 </div>
                 <div className="row">
                   <div className="login-fields mb-0 col-md-12">
-                    {/* <input type="file" onChange={this.fileChangedHandler}/> */}
                     <input
                       id="file-upload"
                       className="file-upload d-none"
@@ -1898,7 +1653,7 @@ class AddUser extends React.Component {
                         <button
                           type="button"
                           className="butn mb-2"
-                          onClick={this.handleUpdate}
+                          onClick={this.HandleUpdateUser}
                         >
                           Update
                         </button>
@@ -1908,7 +1663,7 @@ class AddUser extends React.Component {
                         <button
                           type="button"
                           className="butn mb-2"
-                          onClick={this.handleSubmit}
+                          onClick={this.HandleCreateUser}
                         >
                           {this.state.loading != true
                             ? this.state.loading && (

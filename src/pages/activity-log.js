@@ -4,7 +4,6 @@ import "../styles/custom.css";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
-import { encryption } from "../helpers/encryption";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import "react-input-range/lib/css/index.css";
@@ -25,7 +24,7 @@ class ActivityLog extends Component {
 
   componentDidMount() {
     let self = this;
-    let fields = this.state.fields;
+
     var searchValue = "";
     if (this.state.fields["action"] != undefined) {
       searchValue = this.state.fields["action"];
@@ -38,7 +37,6 @@ class ActivityLog extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       self.setState({ viewData: response.data.Table });
     });
   }
@@ -50,11 +48,10 @@ class ActivityLog extends Component {
       url: `${appSettings.APIURL}/BindActivityLogDropdown`,
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       self.setState({ selectAction: response.data.Table });
     });
   }
-
+  ////Handle Change Input Field
   HandleChangeSelect(field, e) {
     let fields = this.state.fields;
     fields[field] = e.target.value;
@@ -66,14 +63,12 @@ class ActivityLog extends Component {
   handleSearch(e) {
     this.componentDidMount();
   }
- 
+
   render() {
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (

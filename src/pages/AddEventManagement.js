@@ -5,7 +5,7 @@ import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
-import { is } from "@babel/types";
+
 import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
@@ -29,24 +29,16 @@ class AddEventManagement extends Component {
       errors: {}
     };
 
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.HandleSubmit = this.HandleSubmit.bind(this);
   }
-
-  handleSubmit(e) {
-    debugger;
-    // const docData = new FormData();
+  ////Handle Save Event Management Data
+  HandleSubmit(e) {
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     var ActionModes = 0;
-    if (this.props.location.state == undefined) {
+    if (this.props.location.state === undefined) {
       ActionModes = 1;
     }
-    // docData.append("ContainerNo",this.state.fields["ContainerNo"]);
-    // docData.append("Status",this.state.fields["Status"]);
-    // docData.append("Differenceindays",this.state.fields["DiffInDays"]);
-    // docData.append("PTTP",this.state.fields["PTTP"]);
-    // docData.append("ActionModes",ActionModes)
-    // docData.append("UserID",userid)
-    if (this.handleValidation()) {
+    if (this.HandleValidation()) {
       axios({
         method: "post",
         url: `${appSettings.APIURL}/SaveEventManagementData`,
@@ -61,21 +53,15 @@ class AddEventManagement extends Component {
         headers: authHeader()
       })
         .then(function(response) {
-          debugger;
           NotificationManager.success(response.data[0].Column1);
           window.location.href = "event-management";
-          //    setTimeout(function(){ window.location.href="/add-event" }, 1000);
         })
-        .catch(error => {
-          //   alert(error.response.data.split("'")[1]);
-          console.log(error.response);
-        });
+        .catch(error => {});
     }
   }
 
   componentDidMount() {
-    debugger;
-    if (this.props.location.state != undefined) {
+    if (this.props.location.state !== undefined) {
       var data = this.props.location.state.detail;
       let fields = this.state.fields;
       fields["ContainerNo"] = data.ContainerNo;
@@ -92,7 +78,7 @@ class AddEventManagement extends Component {
 
   HandleChangeSelect(field, e) {
     let fields = this.state.fields;
-    if (e.target.value == "SELECTED") {
+    if (e.target.value === "SELECTED") {
       fields[field] = "";
     } else {
       fields[field] = e.target.value;
@@ -103,16 +89,14 @@ class AddEventManagement extends Component {
   }
 
   handlechange(field, e) {
-    debugger;
     let fields = this.state.fields;
     fields[field] = e.target.value;
     this.setState({
       fields
     });
   }
-
-  handleValidation() {
-    debugger;
+  ////Handle Input Filed Validation
+  HandleValidation() {
     let fields = this.state.fields;
     let errors = this.state.errors;
     let formIsValid = true;
@@ -138,8 +122,8 @@ class AddEventManagement extends Component {
     this.setState({ errors: errors });
     return formIsValid;
   }
-
-  handleBlurContNo(field, e) {
+  ////Bind Event Management Data
+  HandleEventMangData(field, e) {
     let self = this;
     let IsExists = false;
     let errors = this.state.errors;
@@ -154,7 +138,6 @@ class AddEventManagement extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
       IsExists = true;
       fields["ContainerNo"] = response.data[0].ContainerNo;
       fields["Status"] = response.data[0].EventmanagementStatus;
@@ -169,16 +152,16 @@ class AddEventManagement extends Component {
 
     return IsExists;
   }
-  handleChangePage() {
+
+  ////Handle Back Button click
+  HandleBackButton() {
     window.history.back();
   }
   render() {
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -191,9 +174,9 @@ class AddEventManagement extends Component {
           <div className="cls-rt">
             <div class="title-sect title-border">
               <h2>Manage Event</h2>
-              {this.props.location.state != undefined ? (
+              {this.props.location.state !== undefined ? (
                 <button
-                  onClick={this.handleChangePage.bind(this)}
+                  onClick={this.HandleBackButton.bind(this)}
                   className="butn mt-0"
                 >
                   Back
@@ -212,8 +195,7 @@ class AddEventManagement extends Component {
                     onChange={this.handlechange.bind(this, "ContainerNo")}
                     placeholder="Container No"
                     value={this.state.fields["ContainerNo"]}
-                    // disabled={this.state.disabled}
-                    onBlur={this.handleBlurContNo.bind(this, "username")}
+                    onBlur={this.HandleEventMangData.bind(this, "username")}
                   />
                   <span style={{ color: "red" }}>
                     {this.state.errors["ContainerNo"]}
@@ -246,7 +228,6 @@ class AddEventManagement extends Component {
                     onChange={this.handlechange.bind(this, "DiffInDays")}
                     placeholder="Diff in days"
                     value={this.state.fields["DiffInDays"]}
-                    //onBlur={this.handleBlurUser.bind(this, "username")}
                   />
                   <span style={{ color: "red" }}>
                     {this.state.errors["DiffInDays"]}
@@ -260,7 +241,6 @@ class AddEventManagement extends Component {
                     onChange={this.handlechange.bind(this, "PTTP")}
                     placeholder="PTTP"
                     value={this.state.fields["PTTP"]}
-                    //onBlur={this.handleBlurUser.bind(this, "username")}
                   />
                   <span style={{ color: "red" }}>
                     {this.state.errors["PTTP"]}
@@ -273,26 +253,20 @@ class AddEventManagement extends Component {
                   <input
                     type="text"
                     name={"POL"}
-                    // onChange={this.handlechange.bind(this, "POL")}
                     placeholder="POL"
                     value={this.state.fields["POL"]}
                     disabled="true"
-                    //onBlur={this.handleBlurUser.bind(this, "username")}
                   />
-                  {/* <span style={{color: "red"}}>{this.state.errors["username"]}</span> */}
                 </div>
                 <div className="login-fields col-12 col-sm-6 col-md-6 col-lg-4">
                   <label>POD</label>
                   <input
                     type="text"
                     name={"POD"}
-                    // onChange={this.handlechange.bind(this, "POD")}
                     placeholder="POD"
                     value={this.state.fields["POD"]}
                     disabled="true"
-                    //onBlur={this.handleBlurUser.bind(this, "username")}
                   />
-                  {/* <span style={{color: "red"}}>{this.state.errors["username"]}</span> */}
                 </div>
               </div>
               <div className="row">
@@ -301,20 +275,17 @@ class AddEventManagement extends Component {
                   <input
                     type="text"
                     name={"Shipper/Consignee"}
-                    //onChange={this.handlechange.bind(this, "username")}
                     placeholder="Shipper/Consignee"
                     value={this.state.fields["Shipper/Consignee"]}
                     disabled="true"
-                    //onBlur={this.handleBlurUser.bind(this, "username")}
                   />
-                  {/* <span style={{color: "red"}}>{this.state.errors["username"]}</span> */}
                 </div>
               </div>
               <div className="text-center pb-4">
                 <button
                   type="button"
                   className="butn my-2"
-                  onClick={this.handleSubmit}
+                  onClick={this.HandleSubmit}
                 >
                   Submit
                 </button>
@@ -322,7 +293,7 @@ class AddEventManagement extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer />
+         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </div>
     );
   }

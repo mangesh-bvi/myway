@@ -5,9 +5,7 @@ import SideMenu from "../component/sidemenu";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
-import VizioMyWay from "./../assets/img/greencounterchart.png";
 import Logo from "./../assets/img/logo.png";
-import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
 import { encryption } from "../helpers/encryption";
 import CountUp from "react-countup";
@@ -21,6 +19,9 @@ var carboneOptions = {
   scales: {
     yAxes: [
       {
+        gridLines: {
+          drawOnChartArea: false
+        },
         ticks: {
           fontColor: "white",
           fontSize: 14
@@ -29,6 +30,9 @@ var carboneOptions = {
     ],
     xAxes: [
       {
+        gridLines: {
+          drawOnChartArea: false
+        },
         ticks: {
           fontColor: "white",
           fontSize: 14
@@ -45,6 +49,9 @@ var volumeOptions = {
   scales: {
     yAxes: [
       {
+        gridLines: {
+          drawOnChartArea: false
+        },
         ticks: {
           fontColor: "black",
           fontSize: 14
@@ -53,6 +60,9 @@ var volumeOptions = {
     ],
     xAxes: [
       {
+        gridLines: {
+          drawOnChartArea: false
+        },
         ticks: {
           fontColor: "black",
           fontSize: 14
@@ -97,10 +107,10 @@ class GreenCounter extends Component {
   }
 
   componentWillMount() {
-    this.HandleVolumeChartData();
-    this.HandleCarboneChartData();
-    this.HandleGreenCounterChartData();
-    this.TreePlantaiondata();
+    this.BindVolumeChartData();
+    this.BindCarboneChartData();
+    this.BindGreenCounterChartData();
+    this.BindTreePlantaionData();
   }
   handleOnChange = value => {
     this.setState({
@@ -109,12 +119,13 @@ class GreenCounter extends Component {
   };
 
   HandleVolumeChangeSelect(event) {
-    this.HandleVolumeChartData(event.target.value);
+    this.BindVolumeChartData(event.target.value);
   }
   HandleCarboneChangeSelect(event) {
-    this.HandleCarboneChartData(event.target.value);
+    this.BindCarboneChartData(event.target.value);
   }
-  HandleVolumeChartData(selectval) {
+  ////Handle Volume Chart Data
+  BindVolumeChartData(selectval) {
     let self = this;
     var selectvalnew = this.state.volumeselectType;
 
@@ -137,7 +148,8 @@ class GreenCounter extends Component {
       self.setState({ volumechartData: response.data.Table });
     });
   }
-  HandleCarboneChartData(selectval) {
+  /////Bind Carbone Chart Data
+  BindCarboneChartData(selectval) {
     let self = this;
     var selectcartype = this.state.carboneselectType;
     if (typeof selectval != "undefined") {
@@ -162,8 +174,8 @@ class GreenCounter extends Component {
       });
     });
   }
-
-  TreePlantaiondata() {
+  ////Bind Tree Plantaion Data
+  BindTreePlantaionData() {
     let self = this;
     var d = new Date();
     var year = d.getFullYear();
@@ -176,14 +188,15 @@ class GreenCounter extends Component {
       },
       headers: authHeader()
     }).then(response => {
-      debugger;
       self.setState({
         totalTreePlanted: response.data[0].TreePlanted,
         totalTreeCO2: response.data[0].CO2Emmision
       });
     });
   }
-  HandleGreenCounterChartData() {
+
+  ///Bind Green Couneter Emission Chart Data
+  BindGreenCounterChartData() {
     let self = this;
     var ipaddress = window.localStorage.getItem("ipaddress");
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -198,8 +211,6 @@ class GreenCounter extends Component {
       },
       headers: authHeader()
     }).then(response => {
-      debugger;
-      console.log(response);
       self.setState({ greencounterData: response.data.Table });
       var greendata = response.data.Table;
       self.setState({
@@ -209,7 +220,7 @@ class GreenCounter extends Component {
     });
   }
   render() {
-    let { volume, totalTreePlanted, totalTreeCO2 } = this.state;
+    let { totalTreePlanted, totalTreeCO2 } = this.state;
     let vollabel = [];
     let carlabel = [];
     let volumnedata = [];
@@ -275,11 +286,9 @@ class GreenCounter extends Component {
     };
     var lbl = { 1: "1M", 2: "2M", 3: "3M" };
     var colClassName = "";
-    if (localStorage.getItem("isColepse")==="true") {
-      debugger;
+    if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
-      debugger;
       colClassName = "cls-flside";
     }
     return (
@@ -290,7 +299,7 @@ class GreenCounter extends Component {
             <SideMenu />
           </div>
 
-          <div className="cls-rt" style={{backgroundColor:"transparent"}}>
+          <div className="cls-rt" style={{ backgroundColor: "transparent" }}>
             <div className="row grncuntr">
               <div className="col-md-6">
                 <div className="card carbonechart">
@@ -322,12 +331,7 @@ class GreenCounter extends Component {
                       <label className="grncuntr-lbl">
                         Trees Planted by ATAFreight
                       </label>
-                      <img
-                        src={Image}
-                        alt="vizio-icon"
-                        // className="greenchart-img"
-                        className="tree-img"
-                      />
+                      <img src={Image} alt="vizio-icon" className="tree-img" />
                       <div className="tree-dv">
                         <CountUp start={1} end={totalTreePlanted}></CountUp>
                       </div>
@@ -340,12 +344,7 @@ class GreenCounter extends Component {
                       <label className="grncuntr-lbl">
                         Total CO<sub>2</sub> Offset from Trees Planted
                       </label>
-                      <img
-                        src={Image1}
-                        alt="vizio-icon"
-                        // className="greenchart-img"
-                        className="tree-img"
-                      />
+                      <img src={Image1} alt="vizio-icon" className="tree-img" />
                       <div className="tree-dv">
                         <CountUp
                           start={1}
@@ -390,8 +389,6 @@ class GreenCounter extends Component {
                   <div className="row" style={{ "margin-left": "107px" }}>
                     <div className="col-md-7">
                       <div className="dot">
-                        {/* <div className="dot1"></div> */}
-
                         <Doughnut
                           data={greenCounterdata}
                           width={700}
@@ -412,20 +409,6 @@ class GreenCounter extends Component {
                         </label>
                       </div>
                     </div>
-                    {/* <div className="col-md-4">
-                    <div className="grncntrsld">
-                      <Slider
-                        value={volume}
-                        orientation="vertical"
-                        onChange={this.handleOnChange}
-                        min={1}
-                        max={3}
-                        step={1}
-                        labels={lbl}
-                        reverse={false}
-                      />
-                    </div>
-                  </div> */}
                   </div>
                   <label className="greenchartlbl1">
                     {this.state.treecount} trees Planted

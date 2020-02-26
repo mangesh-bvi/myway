@@ -11,8 +11,7 @@ import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
 import Download from "./../assets/img/csv.png";
 import Delete from "./../assets/img/red-delete-icon.png";
-import { encryption, convertToPlain } from "../helpers/encryption";
-
+import { encryption } from "../helpers/encryption";
 import {
   NotificationContainer,
   NotificationManager
@@ -165,7 +164,7 @@ class RateFinalizingStillBooking extends Component {
   }
   componentDidMount() {
     var rData = this.props.location.state;
-    debugger;
+    
     if (rData) {
       if (rData.Copy === true) {
         var userType = encryption(
@@ -263,6 +262,8 @@ class RateFinalizingStillBooking extends Component {
     });
     this.BindShipmentStage();
   }
+
+  ////Bind Non Customer List Data
   HandleChangeCon(field, e) {
     let self = this;
     var customerName = "";
@@ -449,7 +450,6 @@ class RateFinalizingStillBooking extends Component {
   ////this method for Commodity drop-down bind
   HandleCommodityDropdown() {
     let self = this;
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/CommodityDropdown`,
@@ -460,11 +460,9 @@ class RateFinalizingStillBooking extends Component {
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
   }
+
   ////Handel Update Booking Details
   HandleBookingUpdate() {
-    //const formData = new FormData();
-    debugger;
-
     if (
       this.state.isConshinee === true ||
       this.state.isShipper === true ||
@@ -591,7 +589,6 @@ class RateFinalizingStillBooking extends Component {
       if (this.state.multiCBM.length > 0) {
         for (let i = 0; i < this.state.multiCBM.length; i++) {
           var cargoData = new Object();
-
           cargoData.BookingPackID = self.state.multiCBM[i].BookingPackID || 0;
           cargoData.PackageType = self.state.multiCBM[i].PackageType || "";
           cargoData.Quantity = self.state.multiCBM[i].Quantity || 0;
@@ -605,7 +602,6 @@ class RateFinalizingStillBooking extends Component {
           BookingDim.push(cargoData);
         }
       }
-
       var paramData = {
         MyWayUserID: MyWayUserID,
         BookingNo: this.state.strBooking_No,
@@ -642,7 +638,7 @@ class RateFinalizingStillBooking extends Component {
         headers: authHeader(),
         data: paramData
       }).then(function(response) {
-        debugger;
+        
         NotificationManager.success(response.data.Table[0].Message);
         self.setState({ loding: false });
         self.HandleFileUpload();
@@ -653,37 +649,27 @@ class RateFinalizingStillBooking extends Component {
       );
     }
   }
-
+  ////Handle Booking Document Upload
   HandleFileUpload() {
-    debugger;
     let self = this;
     if (self.state.selectedFile.length > 0) {
       var BookingID = self.state.BookingNo;
       var DocumentID = 0;
       var DocumnetFile = self.state.selectedFile[0];
-
       var userId = encryption(window.localStorage.getItem("userid"), "desc");
       var formdata = new FormData();
       formdata.append("BookingID", BookingID);
       formdata.append("DocumentID", DocumentID);
       formdata.append("BookingDoc", DocumnetFile);
       formdata.append("MyWayUserID", userId);
-
       axios({
         method: "post",
         url: `${appSettings.APIURL}/BookigFileUpload`,
-        // data: {
-        //   BookingID: BookingID,
-        //   DocumentID: DocumentID,
-        //   BookingDoc: DocumnetFile,
-        //   MyWayUserID: userId
-        // },
         data: formdata,
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
         NotificationManager.success(response.data.Table[0].Result);
-        // this.props.history.push("./booking-table");
         self.props.history.push("booking-table");
       });
     } else {
@@ -703,7 +689,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    debugger;
+    
     if (event.target.files[0].type === "application/pdf") {
       if (this.state.FileData[0].FileName === "File Not Found") {
         var Fdata = this.state.FileData.splice(0);
@@ -785,7 +771,7 @@ class RateFinalizingStillBooking extends Component {
   ////this methos for bookig details HandleBookigClone
   HandleBookigClone() {
     let self = this;
-    debugger;
+    
     this.setState({ loding: true });
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
@@ -954,7 +940,7 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       NotificationManager.success(response.data.Table[0].Message);
       self.setState({ loding: false });
       setTimeout(() => {
@@ -963,229 +949,11 @@ class RateFinalizingStillBooking extends Component {
     });
   }
 
-  BookigGridDetailsListAIR() {
-    this.setState({ newloding: true });
-    let self = this;
-
-    var bookingId = self.state.BookingNo;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    if (bookingId !== "" && bookingId !== null) {
-      axios({
-        method: "post",
-        url: `${appSettings.APIURL}/BookigGridDetailsList`,
-        data: {
-          UserID: userId, //874654, //userId, //874654, ,
-          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
-        },
-        headers: authHeader()
-      }).then(function(response) {
-        debugger;
-        var QuotationData = response.data.Table4;
-        var QuotationSubData = response.data.Table5;
-        var Booking = response.data.Table;
-        var CargoDetails = response.data.Table2;
-        var FileData = response.data.Table3;
-        var eqmtType = response.data.Table1;
-        var Table6 = response.data.Table6;
-        var ModeofTransport = response.data.Table[0].ModeofTransport;
-        var Company_Address = "";
-        var contact_name = "";
-        var company_name = "";
-        var HAZMAT = 0;
-        var ShipmentType = "";
-        if (FileData.length > 0) {
-          self.setState({ FileData });
-        } else {
-          self.setState({ FileData: [{ FileName: "File Not Found" }] });
-        }
-        if (typeof QuotationData !== "undefined") {
-          if (QuotationData.length > 0 && QuotationSubData.length > 0) {
-            self.setState({
-              QuotationData,
-              QuotationSubData,
-              Booking,
-
-              ModeofTransport
-            });
-          }
-        }
-        if (typeof eqmtType !== "undefined") {
-          if (eqmtType.length > 0) {
-            self.setState({ eqmtType });
-          }
-        }
-        if (typeof Booking !== "undefined") {
-          var typeofMove = "";
-          if (Booking.length > 0) {
-            if (Booking[0].typeofMove === 1) {
-              typeofMove = "Port To Port";
-            }
-            if (Booking[0].typeofMove === 2) {
-              typeofMove = "Door To Port";
-            }
-            if (Booking[0].typeofMove === 3) {
-              typeofMove = "Port To Door";
-            }
-            if (Booking[0].typeofMove === 4) {
-              typeofMove = "Door To Door";
-            }
-
-            var NotifyID = Booking[0].NotifyID;
-            var Notify_AddressID = Booking[0].Notify_AddressID;
-            var Notify_Displayas = Booking[0].Notify_Displayas;
-            var NotifyName = Booking[0].NotifyName;
-
-            var ConsigneeID = Booking[0].Consignee;
-            var Consignee_AddressID = Booking[0].Consignee_AddressID;
-            var Consignee_Displayas = Booking[0].Consignee_Displayas;
-            var ConsigneeName = Booking[0].Consignee_Name;
-
-            var BuyerID = Booking[0].BuyerID;
-            var Buyer_AddressID = Booking[0].Buyer_AddressID;
-            var Buyer_Displayas = Booking[0].Buyer_Displayas;
-            var BuyerName = Booking[0].Buyer_Name;
-
-            var ShipperID = Booking[0].ShipperID;
-            var Shipper_AddressID = Booking[0].Shipper_AddressID;
-            var Shipper_Displayas = Booking[0].Shipper_Displayas;
-            var ShipperName = Booking[0].Shipper_Name;
-            var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
-
-            // var DefaultEntityTypeID = Booking[0].DefaultEntityTypeID;
-            var companyID = 0;
-            var CompanyAddress = "";
-            var Company_Name = "";
-            var Company_AddressID = 0;
-            var isNotify = false;
-            var isBuyer = false;
-            var isConshinee = false;
-            var isShipper = false;
-            if (DefaultEntityTypeID === ShipperID || ShipperID === 0) {
-              isShipper = true;
-              companyID = Table6[0].companyID;
-              CompanyAddress = Shipper_Displayas;
-              Company_Name = Table6[0].company_name;
-              Company_AddressID = Shipper_AddressID;
-            }
-            if (DefaultEntityTypeID === BuyerID || BuyerID === 0) {
-              isBuyer = true;
-              companyID = Table6[0].companyID;
-              CompanyAddress = Buyer_Displayas;
-              Company_Name = Table6[0].company_name;
-              Company_AddressID = Buyer_AddressID;
-            }
-
-            if (DefaultEntityTypeID === ConsigneeID || ConsigneeID === 0) {
-              isConshinee = true;
-              companyID = Table6[0].companyID;
-              CompanyAddress = Consignee_Displayas;
-              Company_Name = Table6[0].company_name;
-              Company_AddressID = Consignee_AddressID;
-            }
-
-            if (DefaultEntityTypeID === NotifyID || NotifyID === 0) {
-              isNotify = true;
-              companyID = Table6[0].companyID;
-              CompanyAddress = Notify_Displayas;
-              Company_Name = Table6[0].company_name;
-              Company_AddressID = Notify_AddressID;
-            }
-            self.setState({
-              typeofMove,
-              isConshinee,
-              isShipper,
-              isBuyer,
-              isNotify,
-              companyID,
-              CompanyAddress,
-              Company_Name,
-              Company_AddressID,
-              DefaultEntityTypeID,
-              multiCBM: CargoDetails,
-              cargoType: Booking[0].CargoType,
-              selectedCommodity: Booking[0].Commodity,
-
-              NotifyID,
-              Notify_AddressID,
-              Notify_Displayas,
-              NotifyName,
-
-              ConsigneeName,
-              ConsigneeID,
-              Consignee_AddressID,
-              Consignee_Displayas,
-
-              ShipperID,
-              Shipper_AddressID,
-              Shipper_Displayas,
-              ShipperName,
-
-              BuyerID,
-              Buyer_AddressID,
-              Buyer_Displayas,
-              BuyerName,
-              fields: {
-                Consignee: Booking[0].Consignee_Name,
-                Shipper: Booking[0].Shipper_Name,
-                Notify: NotifyName,
-                Buyer: BuyerName
-              }
-            });
-
-            if (Consignee_AddressID) {
-              setTimeout(() => {
-                self.conshineeAddressList(ConsigneeID, Consignee_AddressID);
-              }, 200);
-            }
-            if (Shipper_AddressID) {
-              setTimeout(() => {
-                self.shipperAddressList(ShipperID, Shipper_AddressID);
-              }, 400);
-            }
-            if (Buyer_AddressID) {
-              setTimeout(() => {
-                self.buyerAddressList(BuyerID, Buyer_AddressID);
-              }, 600);
-            }
-            if (Notify_AddressID) {
-              setTimeout(() => {
-                self.notifyPartyAddressList(NotifyID, Notify_AddressID);
-              }, 800);
-            }
-          }
-        }
-
-        if (Table6.length > 0) {
-          var Customs_Clearance = Table6[0].Customs_Clearance;
-          Company_Address = Table6[0].Company_Address;
-          contact_name = Table6[0].contact_name;
-          company_name = Table6[0].company_name;
-          ShipmentType = Table6[0].ShipmentType;
-          HAZMAT = Table6[0].HAZMAT;
-          var typeofMove = Table6[0].TypeOfMove;
-          var NonStackable = Table6[0].NonStackable;
-          var IncoTerm = Table6[0].IncoTerm;
-          self.setState({
-            IncoTerm,
-            typeofMove,
-            Customs_Clearance,
-            NonStackable,
-            Company_Address,
-            contact_name,
-            company_name,
-            ShipmentType,
-            HAZMAT
-          });
-        }
-      });
-    }
-  }
-
   ////this methos for bookig details BookigGridDetailsList
   BookigGridDetailsList() {
     this.setState({ newloding: true });
     let self = this;
-    debugger;
+    
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (bookingId !== "" && bookingId !== null) {
@@ -1193,12 +961,12 @@ class RateFinalizingStillBooking extends Component {
         method: "post",
         url: `${appSettings.APIURL}/BookigGridDetailsList`,
         data: {
-          UserID: userId, //874654, //userId, //874654, ,
-          BookingID: bookingId //830651 //bookingNo//830651 // 830651 // bookingNo
+          UserID: userId,
+          BookingID: bookingId
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
         var QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -1215,7 +983,7 @@ class RateFinalizingStillBooking extends Component {
         var Customs_Clearance = 0;
         var ShipmentType = "";
         var multiCargo = [];
-        debugger;
+        
 
         if (Booking[0].Mode == "FCL") {
           var type = QuotationData[0].ContainerType;
@@ -1402,22 +1170,22 @@ class RateFinalizingStillBooking extends Component {
           }
           if (Consignee_AddressID) {
             setTimeout(() => {
-              self.conshineeAddressList(ConsigneeID, Consignee_AddressID);
+              self.BindConsigneeAddressList(ConsigneeID, Consignee_AddressID);
             }, 200);
           }
           if (Shipper_AddressID) {
             setTimeout(() => {
-              self.shipperAddressList(ShipperID, Shipper_AddressID);
+              self.BindShipperAddressList(ShipperID, Shipper_AddressID);
             }, 400);
           }
           if (Buyer_AddressID) {
             setTimeout(() => {
-              self.buyerAddressList(BuyerID, Buyer_AddressID);
+              self.BindBuyerAddressList(BuyerID, Buyer_AddressID);
             }, 600);
           }
           if (Notify_AddressID) {
             setTimeout(() => {
-              self.notifyPartyAddressList(NotifyID, Notify_AddressID);
+              self.BindNotifyPartyAddressList(NotifyID, Notify_AddressID);
             }, 800);
           }
 
@@ -1474,6 +1242,8 @@ class RateFinalizingStillBooking extends Component {
       this.setState({ shiperVal: value });
     }
   };
+
+  ////Handle Customer Address List
   HandleCompanyAddress(type, cid) {
     var ctype = type;
     var compId = cid;
@@ -1567,16 +1337,15 @@ class RateFinalizingStillBooking extends Component {
     }
   }
 
-  // file download
-  HandleFileOpen(e, filePath) {
-    debugger;
+  //Handle booking Document download
+  HandleBookingDocDownload(e, filePath) {
+    
     if (filePath === undefined) {
       NotificationManager.error("Invalid File Path");
       return false;
     } else {
       var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
       var userId = encryption(window.localStorage.getItem("userid"), "desc");
-
       axios({
         method: "post",
         url: `${appSettings.APIURL}/DownloadFTPFile`,
@@ -1594,10 +1363,6 @@ class RateFinalizingStillBooking extends Component {
           link.download = FileName;
           link.click();
         }
-        //   window.open(
-        //     "data:application/octet-stream;charset=utf-16le;base64," + response.data
-        //   );
-        //   window.open(response.data);
       });
     }
   }
@@ -1613,7 +1378,7 @@ class RateFinalizingStillBooking extends Component {
         </a> */}
         <span
           onClick={e => {
-            this.HandleFileOpen(el.FilePath);
+            this.HandleBookingDocDownload(el.FilePath);
           }}
         >
           <p className="file-name w-100 text-center mt-1">{el.FileName}</p>
@@ -1622,7 +1387,6 @@ class RateFinalizingStillBooking extends Component {
     ));
   }
   ////end methos for multiple file element
-
   HandleChangeBuyer(e) {
     var BuyerName = e.target.selectedOptions[0].innerText;
     if (BuyerName !== "select") {
@@ -1644,18 +1408,15 @@ class RateFinalizingStillBooking extends Component {
   }
 
   ////this method for party change value
-
   HandleChangeParty(e) {
     var NotifyName = e.target.selectedOptions[0].innerText;
     if (NotifyName !== "select") {
       var NotifyID = Number(e.target.selectedOptions[0].value);
-
       var cutomerdata = this.state.NonCustomerData.filter(
         x => x.Company_ID === NotifyID
       );
       var Notify_AddressID = cutomerdata[0].Company_AddressID;
       var Notify_Displayas = cutomerdata[0].Company_Address;
-
       this.setState({
         NotifyID,
         NotifyName,
@@ -1664,8 +1425,8 @@ class RateFinalizingStillBooking extends Component {
       });
     }
   }
-
-  notifyPartyAddressList(NotifyID, Notify_AddressID) {
+  ////Bind Notify Party Address Data
+  BindNotifyPartyAddressList(NotifyID, Notify_AddressID) {
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     var cusID = NotifyID;
@@ -1677,7 +1438,6 @@ class RateFinalizingStillBooking extends Component {
         UserID: userId,
         CustomerID: cusID
       },
-
       headers: authHeader()
     }).then(function(response) {
       var notifyAddData = response.data.Table;
@@ -1687,8 +1447,8 @@ class RateFinalizingStillBooking extends Component {
       }
     });
   }
-
-  buyerAddressList(BuyerID, Buyer_AddressID) {
+  ////Bind Buyer Address Data
+  BindBuyerAddressList(BuyerID, Buyer_AddressID) {
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     var cusID = BuyerID;
@@ -1700,7 +1460,6 @@ class RateFinalizingStillBooking extends Component {
         UserID: userId,
         CustomerID: cusID
       },
-
       headers: authHeader()
     }).then(function(response) {
       var buyerAddData = response.data.Table;
@@ -1710,8 +1469,8 @@ class RateFinalizingStillBooking extends Component {
       }
     });
   }
-
-  conshineeAddressList(ConsigneeID, Conshinee_AddressID) {
+  ////Bind Consignee Address Data
+  BindConsigneeAddressList(ConsigneeID, Conshinee_AddressID) {
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     var cusID = ConsigneeID;
@@ -1738,8 +1497,8 @@ class RateFinalizingStillBooking extends Component {
       }
     });
   }
-
-  shipperAddressList(ShipperID, Shipper_AddressID) {
+  ////Bind Shipper Address Data
+  BindShipperAddressList(ShipperID, Shipper_AddressID) {
     let self = this;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     var cusID = ShipperID;
@@ -1766,7 +1525,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   HandleChangeMultiCBM(i, e) {
-    debugger;
+    
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -1827,7 +1586,7 @@ class RateFinalizingStillBooking extends Component {
 
     this.setState({ multiCBM });
     if (this.state.ContainerLoad !== "LCL") {
-      debugger;
+      
       if (
         this.state.ContainerLoad === "FCL" ||
         this.state.ContainerLoad === "FTL"
@@ -1856,7 +1615,7 @@ class RateFinalizingStillBooking extends Component {
         }
       }
     } else {
-      debugger;
+      
       if (
         this.state.ContainerLoad === "FCL" ||
         this.state.ContainerLoad === "FTL"
@@ -1883,7 +1642,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   CreateMultiCBM() {
-    debugger;
+    
     return this.state.multiCBM.map((el, i) => (
       <div className="row cbm-space" key={i}>
         <div className="col-md">
@@ -1914,7 +1673,6 @@ class RateFinalizingStillBooking extends Component {
                 className="w-100"
                 name="Quantity"
                 value={el.Quantity || ""}
-                //onKeyUp={this.cbmChange}
               />
             </div>
           </div>
@@ -1930,7 +1688,6 @@ class RateFinalizingStillBooking extends Component {
               className="w-100"
               name="Lengths"
               value={this.state.isCopy == true ? el.Lengths : el.Lengths || ""}
-              // onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1943,7 +1700,6 @@ class RateFinalizingStillBooking extends Component {
               className="w-100"
               name="Width"
               value={el.Width || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1956,7 +1712,6 @@ class RateFinalizingStillBooking extends Component {
               className="w-100"
               name="Height"
               value={this.state.isCopy == true ? el.Height : el.Height || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -1984,7 +1739,6 @@ class RateFinalizingStillBooking extends Component {
                     ? "Volume"
                     : "VolumeWeight"
                 }
-                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
                 placeholder={
                   this.state.containerLoadType === "LCL"
                     ? "KG"
@@ -2031,7 +1785,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   addMultiCBM() {
-    debugger;
+    
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -2052,7 +1806,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   removeMultiCBM(i) {
-    debugger;
+    
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
     this.setState({ multiCBM });
@@ -2088,7 +1842,6 @@ class RateFinalizingStillBooking extends Component {
               className="w-100"
               name="Quantity"
               value={el.Quantity || ""}
-              //onKeyUp={this.cbmChange}
             />
           </div>
         </div>
@@ -2101,7 +1854,6 @@ class RateFinalizingStillBooking extends Component {
               className="w-100"
               name="Lengths"
               value={this.state.isCopy == true ? el.Lengths : el.Lengths || ""}
-              // onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -2114,7 +1866,6 @@ class RateFinalizingStillBooking extends Component {
               className="w-100"
               name="Width"
               value={el.Width || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -2127,7 +1878,6 @@ class RateFinalizingStillBooking extends Component {
               className="w-100"
               name="Height"
               value={this.state.isCopy == true ? el.Height : el.Height || ""}
-              //onBlur={this.cbmChange}
             />
           </div>
         </div>
@@ -2154,7 +1904,6 @@ class RateFinalizingStillBooking extends Component {
                   ? "Volume"
                   : "VolumeWeight"
               }
-              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
               placeholder={
                 this.state.containerLoadType === "LCL"
                   ? "KG"
@@ -2198,14 +1947,12 @@ class RateFinalizingStillBooking extends Component {
   }
 
   removeFCLMultiCBM(i) {
-    debugger;
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
     this.setState({ multiCBM });
   }
 
   addFCLMultiCBM() {
-    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -2224,10 +1971,11 @@ class RateFinalizingStillBooking extends Component {
       ]
     }));
   }
+  ////Handle Submit Cargo details
   SubmitCargoDetails(e) {
     var data = this.state.multiCBM;
     var multiCBM = [];
-    debugger;
+    
     for (let i = 0; i < data.length; i++) {
       var cargoData = new Object();
       if (data[i].PackageType !== "") {
@@ -2244,28 +1992,23 @@ class RateFinalizingStillBooking extends Component {
         multiCBM.push(cargoData);
       }
     }
-
     this.setState({ multiCargo: multiCBM });
     this.toggleEdit();
   }
 
   toggleEdit(e) {
     if (!this.state.modalEdit) {
-      debugger;
-
       var multiCBM = this.state.multiCargo;
-
       this.setState({ multiCBM });
     } else {
     }
-
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
     }));
   }
-
+  ////Hanlde delete Sales Quote Document
   HandleDocumentDelete(e, row) {
-    debugger;
+    
     if (row.original.FilePath) {
       var MywayUserID = encryption(
         window.localStorage.getItem("userid"),
@@ -2276,16 +2019,14 @@ class RateFinalizingStillBooking extends Component {
         DocumentID: row.original.DocumentID,
         MyWayUserID: MywayUserID
       };
-
       let self = this;
       axios({
         method: "post",
         url: `${appSettings.APIURL}/DeleteSalesQuotedocument`,
-        // data:  {Mode:param.Type, SalesQuoteNumber:param.Quotes},
         data: documentData,
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
         NotificationManager.success(response.data.Table[0].Result);
         if (
           response.data.Table[0].Result === "Docuement deleted successfully"
@@ -2320,26 +2061,28 @@ class RateFinalizingStillBooking extends Component {
     this.setState({ cbmVal: Textvalue });
   }
   cmbTypeRadioChange(e) {
-    debugger;
+    
     var value = e.target.value;
 
     this.setState({ cmbTypeRadio: value });
   }
+
+  onErrorImg(e) {
+    return (e.target.src =
+      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+  }
   render() {
     const { Booking } = this.state;
-
     var bNumber = "";
     if (Booking.length > 0) {
       bNumber = Booking[0].strBooking_No;
     }
-    // var selectedCommodity = "";
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
     } else {
       className = "butn m-0";
     }
-
     let i = 0;
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
@@ -2420,6 +2163,9 @@ class RateFinalizingStillBooking extends Component {
                                             <img
                                               title={olname}
                                               alt={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
                                                 lname
@@ -2438,6 +2184,9 @@ class RateFinalizingStillBooking extends Component {
                                             <img
                                               title={olname}
                                               alt={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
                                                 lname
@@ -2452,6 +2201,9 @@ class RateFinalizingStillBooking extends Component {
                                           <div className="rate-tab-img">
                                             <img
                                               title={olname}
+                                              onError={this.onErrorImg.bind(
+                                                this
+                                              )}
                                               src={
                                                 "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
                                               }
@@ -2556,32 +2308,57 @@ class RateFinalizingStillBooking extends Component {
                                   },
                                   accessor: "freeTime",
                                   filterable: true
-                                  // minWidth: 80
                                 },
-
                                 {
-                                  accessor: "ContainerType",
                                   Cell: row => {
+                                    var header = "";
                                     var value = "";
-                                    if (row.original.ContainerType) {
-                                      value = row.original.ContainerType;
-                                    }
-                                    if (row.original.ContainerQuantity) {
-                                      value +=
-                                        " (" +
-                                        row.original.ContainerQuantity +
-                                        ")";
+                                    if (this.state.ContainerLoad == "FCL") {
+                                      header = "Container";
+                                      if (row.original.ContainerType) {
+                                        value = row.original.ContainerType;
+                                      }
+                                      if (row.original.ContainerQuantity) {
+                                        value +=
+                                          " (" +
+                                          row.original.ContainerQuantity +
+                                          ")";
+                                      }
+                                    } else if (
+                                      this.state.ContainerLoad == "LCL"
+                                    ) {
+                                      header = "CBM";
+                                      if (row.original.CBM) {
+                                        value = row.original.CBM;
+                                      }
+                                    } else if (
+                                      this.state.ContainerLoad == "AIR"
+                                    ) {
+                                      header = "Chargeable Weight";
+                                      if (row.original["Chargable Weight"]) {
+                                        value =
+                                          row.original["Chargable Weight"];
+                                      }
+                                    } else {
+                                      header = "Chargeable Weight";
+                                      if (row.original["Chargable Weight"]) {
+                                        value =
+                                          row.original["Chargable Weight"];
+                                      }
                                     }
 
                                     return (
-                                      <React.Fragment>
+                                      <>
                                         <p className="details-title">
-                                          Container
+                                          {header}
                                         </p>
                                         <p className="details-para">{value}</p>
-                                      </React.Fragment>
+                                      </>
                                     );
-                                  }
+                                  },
+                                  accessor: "ContainerType",
+                                  filterable: true
+                                  //minWidth: 175
                                 },
                                 {
                                   accessor: "ExpiryDate",
@@ -2906,7 +2683,7 @@ class RateFinalizingStillBooking extends Component {
                             value="Consignee"
                           />
                           <label className="d-flex" htmlFor="Conshinee">
-                            Consignee
+                            Same as Customer
                           </label>
                         </div>
                         <div>
@@ -2985,7 +2762,10 @@ class RateFinalizingStillBooking extends Component {
                                 {this.state.conshineeother === true ? (
                                   <textarea
                                     className="form-control"
-                                    style={{ width: "100%", resize: "none" }}
+                                    style={{
+                                      width: "100%",
+                                      resize: "none"
+                                    }}
                                     value={this.state.Consignee_Displayas}
                                     onChange={this.HandleConsineeAddressChange.bind(
                                       this
@@ -3031,7 +2811,12 @@ class RateFinalizingStillBooking extends Component {
                           className="title-border title-border-t py-3 remember-forgot book-ins-sect rate-checkbox"
                         >
                           <h3 style={{ display: "inline" }}>Shipper Details</h3>
-                          <div style={{ display: "inline", float: "left" }}>
+                          <div
+                            style={{
+                              display: "inline",
+                              float: "left"
+                            }}
+                          >
                             <input
                               type="checkbox"
                               onChange={this.HandleRadioBtn.bind(
@@ -3047,7 +2832,7 @@ class RateFinalizingStillBooking extends Component {
                               className="d-flex flex-column align-items-center"
                               htmlFor="Shipper"
                             >
-                              Shipper
+                              Same as Customer
                             </label>
                           </div>
                         </div>
@@ -3128,7 +2913,10 @@ class RateFinalizingStillBooking extends Component {
                                 {this.state.shipperother === true ? (
                                   <textarea
                                     className="form-control"
-                                    style={{ width: "100%", resize: "none" }}
+                                    style={{
+                                      width: "100%",
+                                      resize: "none"
+                                    }}
                                     value={this.state.Shipper_Displayas}
                                     onChange={this.HandleShipperAddressChange.bind(
                                       this
@@ -3182,7 +2970,7 @@ class RateFinalizingStillBooking extends Component {
                             value="Buyer"
                           />
                           <label className="d-flex" htmlFor="Buyer">
-                            Buyer
+                            Same as Customer
                           </label>
                         </div>
                         <div>
@@ -3246,7 +3034,10 @@ class RateFinalizingStillBooking extends Component {
                                 {this.state.buyerother === true ? (
                                   <textarea
                                     className="form-control"
-                                    style={{ width: "100%", resize: "none" }}
+                                    style={{
+                                      width: "100%",
+                                      resize: "none"
+                                    }}
                                     value={this.state.Buyer_Displayas}
                                     onChange={this.HandleBuyerAddressChange.bind(
                                       this
@@ -3299,7 +3090,7 @@ class RateFinalizingStillBooking extends Component {
                             value="Notify"
                           />
                           <label className="d-flex" htmlFor="Notify">
-                            Notify
+                            Same as Customer
                           </label>
                         </div>
                         <div>
@@ -3372,7 +3163,10 @@ class RateFinalizingStillBooking extends Component {
                                 {this.state.notiother === true ? (
                                   <textarea
                                     className="form-control"
-                                    style={{ width: "100%", resize: "none" }}
+                                    style={{
+                                      width: "100%",
+                                      resize: "none"
+                                    }}
                                     value={this.state.Notify_Displayas}
                                     onChange={this.HandleNotifyAddressChange.bind(
                                       this
@@ -3424,7 +3218,10 @@ class RateFinalizingStillBooking extends Component {
                       <div>
                         <div
                           className="title-border title-border-t py-3"
-                          style={{ width: "100%", marginBottom: "15px" }}
+                          style={{
+                            width: "100%",
+                            marginBottom: "15px"
+                          }}
                         >
                           <h3>Cargo Details</h3>
                         </div>
@@ -3529,8 +3326,7 @@ class RateFinalizingStillBooking extends Component {
                                         <div className="action-cntr">
                                           <a
                                             onClick={e =>
-                                              // this.HandleDowloadFile(e, row)
-                                              this.HandleFileOpen(
+                                              this.HandleBookingDocDownload(
                                                 e,
                                                 row.original.FilePath
                                               )
