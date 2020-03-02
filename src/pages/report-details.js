@@ -6,7 +6,7 @@ import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-import "react-input-range/lib/css/index.css";
+
 import ReactTable from "react-table";
 import { encryption } from "../helpers/encryption";
 import makeAnimated from "react-select/animated";

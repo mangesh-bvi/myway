@@ -274,7 +274,7 @@ class TrackShipment extends Component {
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
-    self.setState({ iframeKey: self.state.iframeKey + 1 });
+    self.setState({ iframeKey: self.state.iframeKey + 1 ,loading:false});
   }
 
   ////Handle Shipement Details Map Data
@@ -288,11 +288,11 @@ class TrackShipment extends Component {
       params: {
         Token: Encodedhblno.replace("%20", " ")
       }
-      //headers: authHeader()
+      
     }).then(function(response) {
       
       var resdata = response.data;
-      self.setState({ loading: false, showData: true });
+      self.setState({  showData: true });
       self.HandleMapDetailsData(resdata);
     });
   }
@@ -347,7 +347,7 @@ class TrackShipment extends Component {
           var err = temperror.split(":");
 
           NotificationManager.error(err[1].replace("}", ""));
-          this.setState({ loading: false, showData: false });
+          this.setState({ showData: false });
         });
     } else {
       NotificationManager.error("Please enter #HBL");
@@ -633,7 +633,7 @@ class TrackShipment extends Component {
 
         perBooking = per + per / 2 + "";
 
-        // perBooking="50"
+        
       }
 
       if (Transshipped >= 1 && Arriveddata >= 1) {

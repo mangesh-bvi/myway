@@ -165,6 +165,7 @@ class RateFinalizing extends Component {
     debugger;
     if (typeof this.props.location.state !== "undefined") {
       if (this.props.location.state.Quote == undefined) {
+        debugger;
         var rateDetails = this.props.location.state.selectedDataRow;
         var newrateDetailsData = this.props.location.state.selectedDataRow;
 
@@ -383,10 +384,7 @@ class RateFinalizing extends Component {
           if (multiCBM != null) {
             if (multiCBM.length > 0) {
               for (var i = 0; i < multiCBM.length; i++) {
-                if (
-                  multiCBM[i].PackageType != "" &&
-                  multiCBM[i].PackageType != null
-                ) {
+                
                   PackageDetailsArr.push({
                     PackageType: multiCBM[i].PackageType,
                     Quantity: multiCBM[i].Quantity,
@@ -395,9 +393,9 @@ class RateFinalizing extends Component {
                     Height: multiCBM[i].Height,
                     GrossWt: multiCBM[i].GrossWt,
                     VolumeWeight: multiCBM[i].VolumeWeight,
-                    Volume: 0
-                  });
-                }
+                    Volume: multiCBM[i].Volume
+                   
+                })
               }
             }
           }
@@ -1889,9 +1887,9 @@ class RateFinalizing extends Component {
         DestGeoCordinate: this.props.location.state.DestGeoCordinate,
         BaseCurrency: rateSubDetailsarr[0].BaseCurrency,
         NonStackable: this.props.location.state.NonStackable == false ? 0 : 1,
-        MyWayComments: txtRequestComments,
-        MyWayDiscount: parseFloat(txtRequestDiscount),
-        MyWayFreeTime: parseFloat(txtRequestFreeTime),
+        MyWayComments: txtRequestComments||"",
+        MyWayDiscount: parseFloat(txtRequestDiscount)||0,
+        MyWayFreeTime: parseFloat(txtRequestFreeTime)||0,
         IsRequestForChange: 1,
         SQCharges: FCLSQCharges,
         RateTypes: FCLSQBaseFreight
@@ -2761,6 +2759,7 @@ class RateFinalizing extends Component {
   }
 
   SendRequestCopy() {
+    debugger;
     if (this.state.selectedDataRow.length > 0) {
       //;
       if (this.state.CompanyID !== 0 || this.state.companyID !== 0) {
@@ -3597,7 +3596,7 @@ class RateFinalizing extends Component {
     return json;
   }
   ////toggle local and surcharge check box
-  HandleLocalSearchCharges(element, e) {
+  HandleLocalSearchCharges(element, index,e) {
     debugger;
     var rateDetailsarr = this.state.selectedDataRow;
     var getindex = 0;
@@ -3945,6 +3944,7 @@ class RateFinalizing extends Component {
                   TotalAmount: parseFloat(element.AmountInBaseCurrency),
                   BaseCurrency: element.BaseCurrency
                 };
+                SurchargeLocalchargeID = this.state.SurchargeLocalchargeID;
                 var objSurchargeLocal = {};
                 objSurchargeLocal.RateQueryid = this.state.rateDetails[
                   getindex
@@ -3957,8 +3957,8 @@ class RateFinalizing extends Component {
                   {},
                   this.state.cSelectChackBox
                 );
-                newSelected[element.ChargeID] = !this.state.cSelectChackBox[
-                  element.ChargeID
+                newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
+                  element.ChargeID+index
                 ];
 
                 this.setState({
@@ -4026,7 +4026,6 @@ class RateFinalizing extends Component {
                 profitLossPer: finalprofitLossPer
               });
 
-              
               var newrateSubDetails = {
                 ChargeID: element.ChargeID,
                 BuyRate: element.Buying,
@@ -4042,6 +4041,7 @@ class RateFinalizing extends Component {
                 TotalAmount: parseFloat(element.AmountInBaseCurrency),
                 BaseCurrency: element.BaseCurrency
               };
+              SurchargeLocalchargeID = this.state.SurchargeLocalchargeID;
               var objSurchargeLocal = {};
               objSurchargeLocal.RateQueryid = this.state.rateDetails[
                 getindex
@@ -4050,12 +4050,9 @@ class RateFinalizing extends Component {
               objSurchargeLocal.ChargeType = e.target.name;
               SurchargeLocalchargeID.push(objSurchargeLocal);
 
-              const newSelected = Object.assign(
-                {},
-                this.state.cSelectChackBox
-              );
-              newSelected[element.ChargeID] = !this.state.cSelectChackBox[
-                element.ChargeID
+              const newSelected = Object.assign({}, this.state.cSelectChackBox);
+              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
+                element.ChargeID+index
               ];
               this.setState({
                 localsurAmount,
@@ -4123,7 +4120,6 @@ class RateFinalizing extends Component {
                 profitLossPer: finalprofitLossPer
               });
 
-              
               var newrateSubDetails = {
                 ChargeID: element.ChargeID,
                 BuyRate: element.Buying,
@@ -4139,8 +4135,7 @@ class RateFinalizing extends Component {
                 TotalAmount: parseFloat(element.AmountInBaseCurrency),
                 BaseCurrency: element.BaseCurrency
               };
-
-
+              SurchargeLocalchargeID = this.state.SurchargeLocalchargeID;
               var objSurchargeLocal = {};
               objSurchargeLocal.RateQueryid = this.state.rateDetails[
                 getindex
@@ -4149,12 +4144,9 @@ class RateFinalizing extends Component {
               objSurchargeLocal.ChargeType = e.target.name;
               SurchargeLocalchargeID.push(objSurchargeLocal);
 
-              const newSelected = Object.assign(
-                {},
-                this.state.cSelectChackBox
-              );
-              newSelected[element.ChargeID] = !this.state.cSelectChackBox[
-                element.ChargeID
+              const newSelected = Object.assign({}, this.state.cSelectChackBox);
+              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
+                element.ChargeID+index
               ];
               this.setState({
                 localsurAmount,
@@ -4353,9 +4345,7 @@ class RateFinalizing extends Component {
                 x =>
                   x.RateLineID === this.state.rateDetails[getindex].RateLineId
               );
-             
-          
-            
+
               var newprofitLossAmt = 0;
               var BuyRate = 0;
               var finalAmountInBaseCurrency =
@@ -4383,17 +4373,15 @@ class RateFinalizing extends Component {
               });
 
               this.setState({ localsurAmount });
-              const newSelected = Object.assign(
-                {},
-                this.state.cSelectChackBox
-              );
-              newSelected[element.ChargeID] = !this.state.cSelectChackBox[
-                element.ChargeID
+              const newSelected = Object.assign({}, this.state.cSelectChackBox);
+              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
+                element.ChargeID+index
               ];
-              this.setState({                 
+              this.setState({
                 cSelectChackBox: newSelected
               });
-              var getindexLocal=this.state.SurchargeLocalchargeID.findIndex(x=>x.RatequeryID===this.state.rateDetails[getindex].RateLineId && x.SurchargeId===element.ChargeID)
+              debugger;
+            var getindexLocal=  this.state.SurchargeLocalchargeID.findIndex(x=>x.RateQueryid===this.state.rateDetails[getindex].RateLineId && x.SurchargeId===element.ChargeID)
               this.state.SurchargeLocalchargeID.splice(getindexLocal, 1);
               for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                 if (
@@ -4403,7 +4391,7 @@ class RateFinalizing extends Component {
                     this.state.rateSubDetails[j]["RateLineID"]
                 ) {
                   this.state.rateSubDetails.splice(j, 1);
-                  
+
                   break;
                 }
               }
@@ -4452,13 +4440,18 @@ class RateFinalizing extends Component {
                   {},
                   this.state.cSelectChackBox
                 );
-                newSelected[element.ChargeID] = !this.state.cSelectChackBox[
-                  element.ChargeID
+                newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
+                  element.ChargeID+index
                 ];
-                this.setState({                 
+                this.setState({
                   cSelectChackBox: newSelected
                 });
-                var getindexLocal=this.state.SurchargeLocalchargeID.findIndex(x=>x.RatequeryID===this.state.rateDetails[getindex].RateLineId && x.SurchargeId===element.ChargeID)
+                var getindexLocal = this.state.SurchargeLocalchargeID.findIndex(
+                  x =>
+                    x.RatequeryID ===
+                      this.state.rateDetails[getindex].RateLineId &&
+                    x.SurchargeId === element.ChargeID
+                );
                 this.state.SurchargeLocalchargeID.splice(getindexLocal, 1);
 
                 for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
@@ -4575,14 +4568,11 @@ class RateFinalizing extends Component {
                 profitLossPer: finalprofitLossPer
               });
               this.setState({ localsurAmount });
-              const newSelected = Object.assign(
-                {},
-                this.state.cSelectChackBox
-              );
-              newSelected[element.ChargeID] = !this.state.cSelectChackBox[
-                element.ChargeID
+              const newSelected = Object.assign({}, this.state.cSelectChackBox);
+              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
+                element.ChargeID+index
               ];
-              this.setState({                 
+              this.setState({
                 cSelectChackBox: newSelected
               });
               // var getindexLocal=this.state.SurchargeLocalchargeID.findIndex(x=>x.RatequeryID===this.state.rateDetails[getindex].RateLineId && x.SurchargeId===element.ChargeID)
@@ -5552,8 +5542,12 @@ class RateFinalizing extends Component {
     if (this.state.containerLoadType === "FTL") {
       var TruckTypeData = callBackObj;
       this.setState({ TruckTypeData });
+      var multiCBM = callBackObj;
+      this.setState({ multiCBM });
     }
     if (this.state.containerLoadType === "FCL") {
+      var multiCBM = callBackObj;
+      this.setState({ multiCBM });
     }
   };
 
@@ -5631,7 +5625,15 @@ class RateFinalizing extends Component {
         self.setState({ rateDetails, rateSubDetails, newloding: false });
       })
       .catch(response => {
-        NotificationManager.error(response.data);
+        if(response.message)
+        {
+          NotificationManager.error(response.message);
+        }
+        else
+        {
+          NotificationManager.error(response.data);
+        }
+        
         this.setState({ newloding: false });
       });
   }
@@ -5671,8 +5673,8 @@ class RateFinalizing extends Component {
                 value={item.Amount}
                 type="checkbox"
                 name={"localCharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID]===true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
+                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
               />
               <label title={item.LineName} htmlFor={"local" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5706,8 +5708,8 @@ class RateFinalizing extends Component {
                 value={item.Amount}
                 type="checkbox"
                 name={"localCharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID]===true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
+                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
               />
               <label title={item.LineName} htmlFor={"local" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5741,8 +5743,8 @@ class RateFinalizing extends Component {
                 value={item.Amount}
                 type="checkbox"
                 name={"localCharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID]===true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
+                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
               />
               <label title={item.LineName} htmlFor={"local" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5787,9 +5789,9 @@ class RateFinalizing extends Component {
               <input
                 id={"Sur" + (index + 1)}
                 type="checkbox"
-                name={"surcharges"}                
-                checked={this.state.cSelectChackBox[item.ChargeID]===true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+                name={"surcharge"}
+                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
+                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5821,9 +5823,9 @@ class RateFinalizing extends Component {
               <input
                 id={"Sur" + (index + 1)}
                 type="checkbox"
-                name={"surcharges"}               
-                checked={this.state.cSelectChackBox[item.ChargeID]===true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+                name={"surcharge"}
+                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
+                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5854,9 +5856,9 @@ class RateFinalizing extends Component {
               <input
                 id={"Sur" + (index + 1)}
                 type="checkbox"
-                name={"surcharges"}
-                checked={this.state.cSelectChackBox[item.ChargeID]===true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item)}
+                name={"surcharge"}
+                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
+                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
                 {item.ChargeDesc}

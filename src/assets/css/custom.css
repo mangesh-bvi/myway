@@ -1469,7 +1469,7 @@ table tbody tr:last-child {
 }
 .equip-plus-cntr {
   position: relative;
-  width: 30%;
+  width: auto;
   margin: auto;
   display: flex;
   margin-top: 15px;
@@ -2262,8 +2262,7 @@ input[type="range"]::-moz-range-track {
   position: absolute;
   top: 0;
   right: 0;
-  left: 0;
-  /* height: 100vh; */
+  left: 0;  
   bottom: 0;
   background: transparent url("../img/loader.gif") no-repeat center center;
   background-size: 60px;
@@ -4524,6 +4523,20 @@ progress::-webkit-progress-bar {
 .clearSearch span {
   color:#265EB5 ;
   cursor: pointer;
+}
+.details-para input {
+  width: 100%;
+    border-radius: 0;
+    border: 0;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    background-color: #ededed;
+    padding: 10px 7px;
+    font-family: "Medium Font";
+} 
+.spmodwi {
+  width: 45%;
+  max-width: inherit !important;
 }
  
 

@@ -7,7 +7,7 @@ import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import { Button, Modal, ModalBody } from "reactstrap";
-import "react-input-range/lib/css/index.css";
+
 import ReactTable from "react-table";
 import Select from "react-select";
 import {
@@ -664,12 +664,28 @@ class RateTable extends Component {
     var compID = 0;
     var baseCurrency = "";
     var multiCBM;
+    var multiCBMData = [];
+    debugger;
     if (this.props.location.state.isViewRate) {
+      debugger;
       multiCBM = this.props.location.state.spotrateresponseTbl3;
-      this.setState({ multiCBM });
+
+      for (let i = 0; i < multiCBM.length; i++) {
+        var ObjMultiCMB = new Object();
+        ObjMultiCMB.PackageType = multiCBM[i].ObjMultiCMB || "";
+        ObjMultiCMB.Quantity = multiCBM[i].Quantity || 0;
+        ObjMultiCMB.Lengths = multiCBM[i].Lengths || 0;
+        ObjMultiCMB.Width = multiCBM[i].Width || 0;
+        ObjMultiCMB.Height = multiCBM[i].Height || 0;
+        ObjMultiCMB.GrossWt = multiCBM[i].GrossWt || 0;
+        ObjMultiCMB.VolumeWeight = multiCBM[i].VolumeWT || 0;
+        ObjMultiCMB.Volume = multiCBM[i].Volume || 0;
+        multiCBMData.push(ObjMultiCMB);
+      }
+      this.setState({ multiCBM:multiCBMData });
     } else {
-      multiCBM = this.state.multiCBM;
-      this.setState({ multiCBM });
+      multiCBMData = this.state.multiCBM;
+      this.setState({ multiCBM:multiCBMData });
     }
 
     this.setState({ loading: true });
@@ -718,7 +734,7 @@ class RateTable extends Component {
         MultiplePOL: multiPOL,
         MultiplePOD: multiPOD,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        RateQueryDim: multiCBM,
+        RateQueryDim: multiCBMData,
         Commodity: this.state.CommodityID,
         CustomerId: compID,
         PickUpAddressDetails: {
@@ -744,7 +760,6 @@ class RateTable extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      console.log(response);
       var ratetable = response.data.Table;
       var ratetable1 = response.data.Table1;
       var commodityData = response.data.Table2;
@@ -936,6 +951,7 @@ class RateTable extends Component {
   }
 
   HandleRateDetailsFCL(paramData) {
+    debugger;
     var dataParameter = {};
     var pickUpAddress = {
       Street: "",
@@ -1252,7 +1268,7 @@ class RateTable extends Component {
         companyAddress: paramData.companyAddress,
         contactName: paramData.contactName,
         contactEmail: paramData.contactEmail,
-        loading:true
+        loading: true
       });
     }
 
@@ -1264,6 +1280,7 @@ class RateTable extends Component {
       headers: authHeader()
     })
       .then(function(response) {
+        debugger;
         var ratetable = response.data.Table;
         var ratetable1 = response.data.Table1;
         var ratetable2 = response.data.Table2;
@@ -1283,6 +1300,7 @@ class RateTable extends Component {
               MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]));
               AmtArray.push(ratetable[i].TotalAmount);
             }
+
             self.setState({
               RateDetails: ratetable,
               tempRateDetails: ratetable,
@@ -1303,7 +1321,15 @@ class RateTable extends Component {
           }
         } else {
           self.setState({
-            loading: false
+            tempRateDetails: [{ lineName: "No Record Found" }],
+            RateSubDetails: [{ ChargeDesc: "No Record Found" }],
+            loading: false,
+            MinTT: 0,
+            MaxTT: 0,
+            MinAmt: 0,
+            MaxAmt: 0,
+            value: 0,
+            valueAmt: 0
           });
         }
       })
@@ -2659,6 +2685,7 @@ class RateTable extends Component {
     } else this.setState({ filtered });
   }
   filterAll(e) {
+    debugger;
     var CommodityID = parseInt(e.target.value);
     this.setState({
       loading: true,
@@ -2722,7 +2749,7 @@ class RateTable extends Component {
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
-        RateSubDetails: [{ ChargeType: "No Record Found" }]
+        RateSubDetails: [{ ChargeDesc: "No Record Found" }]
       });
     }
   }
@@ -2762,7 +2789,7 @@ class RateTable extends Component {
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
-        RateSubDetails: [{ ChargeType: "No Record Found" }]
+        RateSubDetails: [{ ChargeDesc: "No Record Found" }]
       });
     }
   }
@@ -3519,7 +3546,7 @@ class RateTable extends Component {
       selectedCommodity: "",
       tempRateDetails: [],
       polpodData: [],
-       
+
       TruckType: [],
       TruckTypeData: [],
       CommodityID: 49,
@@ -3586,9 +3613,8 @@ class RateTable extends Component {
       isNotData: ""
     });
     setTimeout(() => {
-      this.componentDidMount();  
+      this.componentDidMount();
     }, 200);
-    
   };
   render() {
     var i = 0;
@@ -3957,17 +3983,10 @@ class RateTable extends Component {
                               {
                                 Cell: ({ original, row }) => {
                                   i++;
-
                                   var mode = this.state.modeoftransport;
                                   var type = this.state.containerLoadType;
-                                  // if(row._original.Type==="LCL")
-                                  // {
-
-                                  //   mode=row._original.Type;
-                                  // }
                                   var lname = "";
                                   var olname = "";
-
                                   if (row._original.lineName) {
                                     olname = row._original.lineName;
                                     lname =
@@ -3975,7 +3994,6 @@ class RateTable extends Component {
                                         .replace(" ", "_")
                                         .replace("  ", "_") + ".png";
                                   }
-
                                   if (
                                     row._original.lineName !==
                                       "No Record Found" &&
@@ -4345,23 +4363,28 @@ class RateTable extends Component {
                               },
                               {
                                 Cell: row => {
-                                  return (
-                                    <>
-                                      <p className="details-title">Price</p>
-                                      <p className="details-para">
-                                        {row.original.TotalAmount !== "" &&
-                                        row.original.TotalAmount !== null
-                                          ? row.original.TotalAmount.toFixed(
-                                              2
-                                            ) +
-                                            " " +
-                                            (row.original.BaseCurrency !== null
-                                              ? row.original.BaseCurrency
-                                              : "")
-                                          : ""}
-                                      </p>
-                                    </>
-                                  );
+                                  if (row.original.TotalAmount) {
+                                    return (
+                                      <>
+                                        <p className="details-title">Price</p>
+                                        <p className="details-para">
+                                          {row.original.TotalAmount !== "" &&
+                                          row.original.TotalAmount !== null
+                                            ? row.original.TotalAmount.toFixed(
+                                                2
+                                              ) +
+                                              " " +
+                                              (row.original.BaseCurrency !==
+                                              null
+                                                ? row.original.BaseCurrency
+                                                : "")
+                                            : ""}
+                                        </p>
+                                      </>
+                                    );
+                                  } else {
+                                    return <></>;
+                                  }
                                 },
                                 accessor: "baseFreightFee",
                                 filterable: true,
@@ -4485,19 +4508,29 @@ class RateTable extends Component {
 
                                       {
                                         Cell: row => {
-                                          return (
-                                            <>
-                                              {row.original.TotalAmount !==
-                                                "" &&
-                                              row.original.TotalAmount !== null
-                                                ? row.original.TotalAmount +
-                                                  " " +
-                                                  row.original.BaseCurrency
-                                                : 0 +
-                                                  " " +
-                                                  row.original.BaseCurrency}
-                                            </>
-                                          );
+                                          debugger;
+
+                                          if (
+                                            row.original.ChargeDesc !==
+                                            "No Record Found"
+                                          ) {
+                                            return (
+                                              <>
+                                                {row.original.TotalAmount !==
+                                                  "" &&
+                                                row.original.TotalAmount !==
+                                                  null
+                                                  ? row.original.TotalAmount +
+                                                    " " +
+                                                    row.original.BaseCurrency
+                                                  : 0 +
+                                                    " " +
+                                                    row.original.BaseCurrency}
+                                              </>
+                                            );
+                                          } else {
+                                            return <></>;
+                                          }
                                         },
                                         Header: "Final Payment",
                                         accessor: "TotalAmount"
@@ -4839,8 +4872,8 @@ class RateTable extends Component {
             <Modal
               className={
                 this.state.containerLoadType === "FTL"
-                  ? "delete-popup text-left spot-rate-popup pol-pod-popup"
-                  : "delete-popup text-left spot-rate-popup big-popup pol-pod-popup"
+                  ? "delete-popup text-left spot-rate-popup pol-pod-popup spmodwi"
+                  : "delete-popup text-left spot-rate-popup big-popup pol-pod-popup big-popupka"
               }
               isOpen={this.state.modalSpot}
               toggle={this.toggleSpot}

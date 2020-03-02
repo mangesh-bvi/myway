@@ -40,7 +40,6 @@ class Login extends React.Component {
   }
   ////Handle Display Sales Person Data
   HandleDisplaySalesPersonData(sData) {
-    
     //get Companies
     let self = this;
     var mydata = sData; //JSON.parse(data);
@@ -112,7 +111,7 @@ class Login extends React.Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
-      data: {
+      dl̥ata: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
         CompanyID: finalselectedData
       },
@@ -132,7 +131,6 @@ class Login extends React.Component {
 
   ////Handle Login Button Click
   HandleLoginSubmit(e) {
-    ////
     let self = this;
     e.preventDefault();
     this.setState({ submitted: true, loading: true });
@@ -285,8 +283,7 @@ class Login extends React.Component {
 
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the password" : "";
-      
-      
+
       NotificationManager.error(error);
       setTimeout(function() {
         window.location.href = "./";

@@ -34,6 +34,7 @@ const MapWithAMakredInfoWindow = compose(
     defaultZoom={2}
   >
     {props.markers.map((marker, i) => {
+      debugger;
       const onClick = props.onClick.bind(this, marker);
       return (
         <Marker
@@ -139,7 +140,6 @@ class ShipmentPlanner extends Component {
 
     var allLineData = [];
     for (var i = 0; i < mydata.length; i++) {
-      
       var BlocationData = {};
       var flagsData = {};
 
@@ -265,7 +265,6 @@ class ShipmentPlanner extends Component {
     localStorage.removeItem("imgType");
     // localStorage.removeItem("VesselData");
 
-    
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
@@ -278,7 +277,6 @@ class ShipmentPlanner extends Component {
   HandleOnPageLoad() {
     let self = this;
     self.setState({ loading: true });
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RegCompanyLocation`,
@@ -342,7 +340,6 @@ class ShipmentPlanner extends Component {
 
   //Handle change company drop-down
   companyChange = e => {
-    
     let self = this;
     var selectComp = document.getElementById("drpCompany").selectedIndex;
     let compArray = this.state.companydrp[selectComp - 1];
@@ -359,7 +356,6 @@ class ShipmentPlanner extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        
         let optionItems = response.data.map(comp => (
           <option value={comp.MappingID}>{comp.MappedCompName}</option>
         ));
@@ -377,19 +373,23 @@ class ShipmentPlanner extends Component {
     let supconsid = e.target.value;
     document.getElementById("drpMode").selectedIndex = "0";
     self.setState({ supConsId: supconsid, linerdrp: [], transportModedrp: [] });
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/FetchTransportMode`,
-      data: {
-        SupConsID: supconsid
-      },
-      headers: authHeader()
-    }).then(function(response) {
-      let optionItems = response.data.map(comp => (
-        <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
-      ));
-      self.setState({ transportModedrp: optionItems });
-    });
+    if (supconsid > 0) {
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/FetchTransportMode`,
+        data: {
+          SupConsID: supconsid
+        },
+        headers: authHeader()
+      }).then(function(response) {
+        let optionItems = response.data.map(comp => (
+          <option value={comp.CModeOfTransport}>{comp.CModeOfTransport}</option>
+        ));
+        self.setState({ transportModedrp: optionItems });
+      });
+    } else {
+      return false
+    }
   };
 
   //Handle transport mode change
@@ -474,7 +474,7 @@ class ShipmentPlanner extends Component {
         totalMin += parseInt(response.data.Table[index].NMin_Transit_Time);
         totalMax += parseInt(response.data.Table[index].NMax_Transit_Time);
       }
-      
+
       var deliveryData = response.data.Table1;
       if (deliveryData != "undefined" && deliveryData != null) {
         self.setState({ deliveryPopup: deliveryData });
@@ -509,7 +509,6 @@ class ShipmentPlanner extends Component {
     }
   }
   toggleDelivery() {
-    
     if (this.state.deliveryPopup != null) {
       // if (this.state.deliveryPopup.length > 0) {
       this.setState(prevState => ({
@@ -530,7 +529,6 @@ class ShipmentPlanner extends Component {
   }
 
   componentDidMount() {
-    
     let self = this;
     axios({
       method: "post",
@@ -571,7 +569,7 @@ class ShipmentPlanner extends Component {
       }
     }
 
-   var colClassName = "";
+    var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
     } else {
@@ -819,7 +817,6 @@ class ShipmentPlanner extends Component {
                     >
                       {deliveryPopup.length > 0 ? (
                         deliveryPopup.map((cell, i) => {
-                          
                           if (cell.POLLocation == "") {
                             return (
                               <div className="container-fluid p-0 no-sched-avail">

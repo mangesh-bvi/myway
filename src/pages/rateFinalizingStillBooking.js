@@ -16,6 +16,7 @@ import {
   NotificationContainer,
   NotificationManager
 } from "react-notifications";
+import Comman from "../helpers/Comman";
 
 class RateFinalizingStillBooking extends Component {
   constructor(props) {
@@ -164,7 +165,7 @@ class RateFinalizingStillBooking extends Component {
   }
   componentDidMount() {
     var rData = this.props.location.state;
-    
+
     if (rData) {
       if (rData.Copy === true) {
         var userType = encryption(
@@ -638,7 +639,6 @@ class RateFinalizingStillBooking extends Component {
         headers: authHeader(),
         data: paramData
       }).then(function(response) {
-        
         NotificationManager.success(response.data.Table[0].Message);
         self.setState({ loding: false });
         self.HandleFileUpload();
@@ -668,7 +668,6 @@ class RateFinalizingStillBooking extends Component {
         data: formdata,
         headers: authHeader()
       }).then(function(response) {
-        
         NotificationManager.success(response.data.Table[0].Result);
         self.props.history.push("booking-table");
       });
@@ -689,7 +688,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    
     if (event.target.files[0].type === "application/pdf") {
       if (this.state.FileData[0].FileName === "File Not Found") {
         var Fdata = this.state.FileData.splice(0);
@@ -771,7 +769,7 @@ class RateFinalizingStillBooking extends Component {
   ////this methos for bookig details HandleBookigClone
   HandleBookigClone() {
     let self = this;
-    
+
     this.setState({ loding: true });
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
@@ -940,7 +938,6 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      
       NotificationManager.success(response.data.Table[0].Message);
       self.setState({ loding: false });
       setTimeout(() => {
@@ -953,7 +950,7 @@ class RateFinalizingStillBooking extends Component {
   BookigGridDetailsList() {
     this.setState({ newloding: true });
     let self = this;
-    
+
     var bookingId = self.state.BookingNo;
     var userId = encryption(window.localStorage.getItem("userid"), "desc");
     if (bookingId !== "" && bookingId !== null) {
@@ -966,7 +963,6 @@ class RateFinalizingStillBooking extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        
         var QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -983,7 +979,6 @@ class RateFinalizingStillBooking extends Component {
         var Customs_Clearance = 0;
         var ShipmentType = "";
         var multiCargo = [];
-        
 
         if (Booking[0].Mode == "FCL") {
           var type = QuotationData[0].ContainerType;
@@ -1339,7 +1334,6 @@ class RateFinalizingStillBooking extends Component {
 
   //Handle booking Document download
   HandleBookingDocDownload(e, filePath) {
-    
     if (filePath === undefined) {
       NotificationManager.error("Invalid File Path");
       return false;
@@ -1523,459 +1517,12 @@ class RateFinalizingStillBooking extends Component {
       }
     });
   }
-
-  HandleChangeMultiCBM(i, e) {
-    
-    const { name, value } = e.target;
-
-    let multiCBM = [...this.state.multiCBM];
-
-    if ("PackageType" === name) {
-      multiCBM[i] = {
-        ...multiCBM[i],
-        [name]: value
-      };
-    } else {
-      if (
-        name === "Lengths" ||
-        name === "Length" ||
-        name === "Width" ||
-        name === "Height" ||
-        name === "height" ||
-        name === "GrossWt" ||
-        name === "GrossWeight"
-      ) {
-        var jiji = value;
-
-        if (isNaN(jiji)) {
-          return false;
-        }
-        var splitText = jiji.split(".");
-        var index = jiji.indexOf(".");
-        if (index != -1) {
-          if (splitText) {
-            if (splitText[1].length <= 2) {
-              if (index != -1 && splitText.length === 2) {
-                multiCBM[i] = {
-                  ...multiCBM[i],
-                  [name]: value === "" ? 0 : value
-                };
-              }
-            } else {
-              return false;
-            }
-          } else {
-            multiCBM[i] = {
-              ...multiCBM[i],
-              [name]: value === "" ? 0 : value
-            };
-          }
-        } else {
-          multiCBM[i] = {
-            ...multiCBM[i],
-            [name]: value === "" ? 0 : value
-          };
-        }
-      } else {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          [name]: value === "" ? 0 : parseFloat(value)
-        };
-      }
-    }
-
-    this.setState({ multiCBM });
-    if (this.state.ContainerLoad !== "LCL") {
-      
-      if (
-        this.state.ContainerLoad === "FCL" ||
-        this.state.ContainerLoad === "FTL"
-      ) {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: 0
-        };
-      } else {
-        var decVolumeWeight =
-          (multiCBM[i].Quantity *
-            (parseFloat(multiCBM[i].Lengths) *
-              parseFloat(multiCBM[i].Width) *
-              parseFloat(multiCBM[i].Height))) /
-          6000;
-        if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
-          multiCBM[i] = {
-            ...multiCBM[i],
-            ["VolumeWeight"]: parseFloat(multiCBM[i].GrossWt).toFixed(2)
-          };
-        } else {
-          multiCBM[i] = {
-            ...multiCBM[i],
-            ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
-          };
-        }
-      }
-    } else {
-      
-      if (
-        this.state.ContainerLoad === "FCL" ||
-        this.state.ContainerLoad === "FTL"
-      ) {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["Volume"]: 0
-        };
-      } else {
-        var decVolume =
-          multiCBM[i].Quantity *
-          ((parseFloat(multiCBM[i].Lengths) / 100) *
-            (parseFloat(multiCBM[i].Width) / 100) *
-            (parseFloat(multiCBM[i].Height) / 100));
-
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["Volume"]: parseFloat(decVolume.toFixed(2))
-        };
-      }
-    }
-
-    this.setState({ multiCBM });
-  }
-
-  CreateMultiCBM() {
-    
-    return this.state.multiCBM.map((el, i) => (
-      <div className="row cbm-space" key={i}>
-        <div className="col-md">
-          <div className="spe-equ">
-            <select
-              className="select-text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              name="PackageType"
-              value={el.PackageType}
-            >
-              <option selected>Select</option>
-              {this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageName}>
-                  {item.PackageName}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        {this.state.ContainerLoad !== "FCL" &&
-        this.state.ContainerLoad !== "FTL" ? (
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                onChange={this.HandleChangeMultiCBM.bind(this, i)}
-                placeholder="QTY"
-                className="w-100"
-                name="Quantity"
-                value={el.Quantity || ""}
-              />
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"L (cm)"}
-              className="w-100"
-              name="Lengths"
-              value={this.state.isCopy == true ? el.Lengths : el.Lengths || ""}
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"W (cm)"}
-              className="w-100"
-              name="Width"
-              value={el.Width || ""}
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="H (cm)"
-              className="w-100"
-              name="Height"
-              value={this.state.isCopy == true ? el.Height : el.Height || ""}
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.GrossWeight === 0 ? "GW(Kg)" : "GW(Kg)"}
-              name="GrossWt"
-              value={el.GrossWt || ""}
-              className="w-100"
-            />
-          </div>
-        </div>
-        {this.state.ContainerLoad !== "FCL" &&
-        this.state.ContainerLoad !== "FTL" ? (
-          <div className="col-md">
-            <div className="spe-equ">
-              <input
-                type="text"
-                disabled
-                name={
-                  this.state.containerLoadType === "LCL"
-                    ? "Volume"
-                    : "VolumeWeight"
-                }
-                placeholder={
-                  this.state.containerLoadType === "LCL"
-                    ? "KG"
-                    : this.state.containerLoadType === "AIR"
-                    ? "CW"
-                    : "VW"
-                }
-                value={
-                  this.state.containerLoadType === "LCL"
-                    ? el.Volume
-                    : el.VolumeWeight || ""
-                }
-                className="w-100 weight-icon"
-              />
-            </div>
-          </div>
-        ) : (
-          ""
-        )}{" "}
-        {i === 0 ? (
-          <div className="">
-            <div className="spe-equ">
-              <i
-                className="fa fa-plus mt-2"
-                aria-hidden="true"
-                onClick={this.addMultiCBM.bind(this)}
-              ></i>
-            </div>
-          </div>
-        ) : null}
-        {this.state.multiCBM.length > 1 ? (
-          <div className="">
-            <div className="spe-equ">
-              <i
-                className="fa fa-minus mt-2"
-                aria-hidden="true"
-                onClick={this.removeMultiCBM.bind(this, i)}
-              ></i>
-            </div>
-          </div>
-        ) : null}
-      </div>
-    ));
-  }
-
-  addMultiCBM() {
-    
-    this.setState(prevState => ({
-      multiCBM: [
-        ...prevState.multiCBM,
-        {
-          BookingPackID: 0,
-          PackageType: "",
-          Quantity: 0,
-          Lengths: 0,
-          Width: 0,
-          Height: 0,
-          Weight: 0,
-          GrossWt: 0,
-          VolumeWeight: 0,
-          Volume: 0
-        }
-      ]
-    }));
-  }
-
-  removeMultiCBM(i) {
-    
-    let multiCBM = [...this.state.multiCBM];
-    multiCBM.splice(i, 1);
-    this.setState({ multiCBM });
-  }
-
-  // ------------------------For FCL ----------------
-  CreateFCLMultiCBM() {
-    return this.state.multiCBM.map((el, i) => (
-      <div className="row cbm-space" key={i}>
-        <div className="col-md">
-          <div className="spe-equ">
-            <select
-              className="select-text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              name="PackageType"
-              value={el.PackageType}
-            >
-              <option selected>Select</option>
-              {this.state.packageTypeData.map((item, i) => (
-                <option key={i} value={item.PackageName}>
-                  {item.PackageName}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="QTY"
-              className="w-100"
-              name="Quantity"
-              value={el.Quantity || ""}
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"L (cm)"}
-              className="w-100"
-              name="Lengths"
-              value={this.state.isCopy == true ? el.Lengths : el.Lengths || ""}
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={"W (cm)"}
-              className="w-100"
-              name="Width"
-              value={el.Width || ""}
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder="H (cm)"
-              className="w-100"
-              name="Height"
-              value={this.state.isCopy == true ? el.Height : el.Height || ""}
-            />
-          </div>
-        </div>
-
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              onChange={this.HandleChangeMultiCBM.bind(this, i)}
-              placeholder={el.Gross_Weight === 0 ? "GW(Kg)" : "GW(Kg)"}
-              name="GrossWt"
-              value={this.state.isCopy == true ? el.GrossWt : el.GrossWt || ""}
-              className="w-100"
-            />
-          </div>
-        </div>
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              disabled
-              name={
-                this.state.containerLoadType === "LCL"
-                  ? "Volume"
-                  : "VolumeWeight"
-              }
-              placeholder={
-                this.state.containerLoadType === "LCL"
-                  ? "KG"
-                  : this.state.containerLoadType === "AIR"
-                  ? "CW"
-                  : "VW"
-              }
-              value={
-                this.state.containerLoadType === "LCL"
-                  ? el.Volume
-                  : el.VolumeWeight || ""
-              }
-              className="w-100 weight-icon"
-            />
-          </div>
-        </div>
-        {i === 0 ? (
-          <div className="">
-            <div className="spe-equ">
-              <i
-                className="fa fa-plus mt-2"
-                aria-hidden="true"
-                onClick={this.addMultiCBM.bind(this)}
-              ></i>
-            </div>
-          </div>
-        ) : null}
-        {this.state.multiCBM.length > 1 ? (
-          <div className="">
-            <div className="spe-equ">
-              <i
-                className="fa fa-minus mt-2"
-                aria-hidden="true"
-                onClick={this.removeMultiCBM.bind(this, i)}
-              ></i>
-            </div>
-          </div>
-        ) : null}
-      </div>
-    ));
-  }
-
-  removeFCLMultiCBM(i) {
-    let multiCBM = [...this.state.multiCBM];
-    multiCBM.splice(i, 1);
-    this.setState({ multiCBM });
-  }
-
-  addFCLMultiCBM() {
-    this.setState(prevState => ({
-      multiCBM: [
-        ...prevState.multiCBM,
-        {
-          BookingPackID: 0,
-          PackageType: "",
-          Quantity: 0,
-          Lengths: 0,
-          Width: 0,
-          Height: 0,
-          Weight: 0,
-          GrossWt: 0,
-          VolumeWeight: 0,
-          Volume: 0
-        }
-      ]
-    }));
-  }
+ 
   ////Handle Submit Cargo details
   SubmitCargoDetails(e) {
     var data = this.state.multiCBM;
     var multiCBM = [];
-    
+
     for (let i = 0; i < data.length; i++) {
       var cargoData = new Object();
       if (data[i].PackageType !== "") {
@@ -1997,6 +1544,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   toggleEdit(e) {
+    debugger;
     if (!this.state.modalEdit) {
       var multiCBM = this.state.multiCargo;
       this.setState({ multiCBM });
@@ -2008,7 +1556,6 @@ class RateFinalizingStillBooking extends Component {
   }
   ////Hanlde delete Sales Quote Document
   HandleDocumentDelete(e, row) {
-    
     if (row.original.FilePath) {
       var MywayUserID = encryption(
         window.localStorage.getItem("userid"),
@@ -2026,7 +1573,6 @@ class RateFinalizingStillBooking extends Component {
         data: documentData,
         headers: authHeader()
       }).then(function(response) {
-        
         NotificationManager.success(response.data.Table[0].Result);
         if (
           response.data.Table[0].Result === "Docuement deleted successfully"
@@ -2061,7 +1607,6 @@ class RateFinalizingStillBooking extends Component {
     this.setState({ cbmVal: Textvalue });
   }
   cmbTypeRadioChange(e) {
-    
     var value = e.target.value;
 
     this.setState({ cmbTypeRadio: value });
@@ -2071,6 +1616,11 @@ class RateFinalizingStillBooking extends Component {
     return (e.target.src =
       "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
   }
+
+  callbackFunction = callBackObj => {
+    var multiCBM = callBackObj;
+    this.setState({ multiCBM });
+  };
   render() {
     const { Booking } = this.state;
     var bNumber = "";
@@ -2358,7 +1908,6 @@ class RateFinalizingStillBooking extends Component {
                                   },
                                   accessor: "ContainerType",
                                   filterable: true
-                                  //minWidth: 175
                                 },
                                 {
                                   accessor: "ExpiryDate",
@@ -2396,7 +1945,6 @@ class RateFinalizingStillBooking extends Component {
                                     );
                                   },
                                   accessor: "TransitTime"
-                                  // minWidth: 60
                                 },
                                 {
                                   accessor: "Total",
@@ -2454,7 +2002,6 @@ class RateFinalizingStillBooking extends Component {
                                       ]
                                     }
                                   ]}
-                                  // defaultPageSize={3}
                                   minRows={1}
                                   showPagination={false}
                                 />
@@ -2477,25 +2024,18 @@ class RateFinalizingStillBooking extends Component {
                             <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                               <p className="details-title">Shipment Type</p>
                               <p className="details-para">
-                                {/* {Booking.length > 0
-                                ? Booking[0].ShipmentType
-                                : null} */}
                                 {this.state.ShipmentType}
                               </p>
                             </div>
                             <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                               <p className="details-title">Mode of Transport</p>
                               <p className="details-para">
-                                {/* {Booking.length > 0
-                                ? Booking[0].ModeOfTransport
-                                : null} */}
                                 {this.state.ModeofTransport}
                               </p>
                             </div>
                             <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                               <p className="details-title">Container Load</p>
                               <p className="details-para">
-                                {/* {Booking.length > 0 ? Booking[0].CargoType : null} */}
                                 {this.state.ContainerLoad !== ""
                                   ? this.state.ContainerLoad
                                   : ""}
@@ -2524,14 +2064,12 @@ class RateFinalizingStillBooking extends Component {
                             <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                               <p className="details-title">HazMat</p>
                               <p className="details-para">
-                                {/* {this.state.EquipmentTypes} */}
                                 {this.state.HazMat === 0 ? "No" : "Yes"}
                               </p>
                             </div>
                             <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                               <p className="details-title">Customs Clearance</p>
                               <p className="details-para">
-                                {/* {this.state.EquipmentTypes} */}
                                 {this.state.Customs_Clearance === 0
                                   ? "No"
                                   : "Yes"}
@@ -2543,7 +2081,6 @@ class RateFinalizingStillBooking extends Component {
                               <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
                                 <p className="details-title">Unstackable</p>
                                 <p className="details-para">
-                                  {/* {this.state.EquipmentTypes} */}
                                   {this.state.Unstackable === 0 ? "No" : "Yes"}
                                 </p>
                               </div>
@@ -2581,12 +2118,6 @@ class RateFinalizingStillBooking extends Component {
                                   : ""}
                               </p>
                             </div>
-                            {/* <div className="col-12 col-sm-4 col-md-4 col-lg-3 r-border">
-                            <p className="details-title">PU Address</p>
-                          </div>
-                          <div className="col-12 col-sm-4 col-md-3 col-lg-3">
-                            <p className="details-title">Delivery Address</p>
-                          </div> */}
                           </div>
                         </div>
                       </Collapse>
@@ -2626,24 +2157,12 @@ class RateFinalizingStillBooking extends Component {
                               <p className="details-title">Account/Customer</p>
 
                               <p className="details-para">
-                                {/* {selectedType === "Shipper"
-                                ? Booking[0].Shipper_Name
-                                : selectedType === "Consignee"
-                                ? Booking[0].Consignee_Name
-                                : null} */}
-                                {/* {Booking.length > 0
-                                ? Booking[0].company_name
-                                : ""} */}
-
                                 {this.state.company_name}
                               </p>
                             </div>
                             <div className="col-12 col-sm-6 col-md-4 r-border">
                               <p className="details-title">Address</p>
                               <p className="details-para">
-                                {/* {Booking.length > 0
-                                ? Booking[0].Company_Address
-                                : ""} */}
                                 {this.state.Company_Address}
                               </p>
                             </div>
@@ -2652,10 +2171,6 @@ class RateFinalizingStillBooking extends Component {
                                 Notification Person
                               </p>
                               <p className="details-para">
-                                {/* {Booking.length > 0
-                                ? Booking[0].contact_name
-                                : ""}
-                               */}
                                 {this.state.contact_name}
                               </p>
                             </div>
@@ -2704,7 +2219,6 @@ class RateFinalizingStillBooking extends Component {
                                     renderItem={(item, isHighlighted) => (
                                       <div
                                         style={{
-                                          // width:"100%",
                                           background: isHighlighted
                                             ? "lightgray"
                                             : "white"
@@ -2718,7 +2232,6 @@ class RateFinalizingStillBooking extends Component {
                                       this,
                                       "Consignee"
                                     )}
-                                    // menuStyle={this.state.menuStyle}
                                     onSelect={this.handleSelectCon.bind(
                                       this,
                                       item => item.Company_ID,
@@ -2751,9 +2264,7 @@ class RateFinalizingStillBooking extends Component {
                                           </option>
                                         )
                                       )
-                                    : ""
-                                  //<option>Other</option>
-                                  }
+                                    : ""}
                                   <option>Other</option>
                                 </select>
                               </div>
@@ -2792,14 +2303,6 @@ class RateFinalizingStillBooking extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                              <p className="details-title">
-                                Notification Person
-                              </p>
-                              <p className="details-para">
-                                {this.state.contact_name}
-                              </p>
-                            </div> */}
                               </div>
                             </div>
                           )}
@@ -2868,7 +2371,6 @@ class RateFinalizingStillBooking extends Component {
                                       this,
                                       "Shipper"
                                     )}
-                                    // menuStyle={this.state.menuStyle}
                                     onSelect={this.handleSelectCon.bind(
                                       this,
                                       item => item.Company_ID,
@@ -2876,9 +2378,6 @@ class RateFinalizingStillBooking extends Component {
                                     )}
                                   />
                                 )}
-                                {/* <p className="details-para">
-                              {Booking3.length > 0 ? Booking3[0].Shipper : null}
-                            </p> */}
                               </div>
 
                               <div className="col-12 col-sm-6 col-md-4 login-fields r-border">
@@ -2941,14 +2440,6 @@ class RateFinalizingStillBooking extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                              <p className="details-title">
-                                Notification Person
-                              </p>
-                              <p className="details-para">
-                                {this.state.contact_name}
-                              </p>
-                            </div> */}
                               </div>
                             </div>
                           )}{" "}
@@ -2998,7 +2489,6 @@ class RateFinalizingStillBooking extends Component {
                                       this,
                                       "Buyer"
                                     )}
-                                    // menuStyle={this.state.menuStyle}
                                     onSelect={this.handleSelectCon.bind(
                                       this,
                                       item => item.Company_ID,
@@ -3062,14 +2552,6 @@ class RateFinalizingStillBooking extends Component {
                                     {this.state.Company_Address}
                                   </p>
                                 </div>
-                                {/* <div className="col-12 col-sm-6 col-md-4">
-                            <p className="details-title">
-                              Notification Person
-                            </p>
-                            <p className="details-para">
-                              {this.state.contact_name}
-                            </p>
-                          </div> */}
                               </div>
                             </div>
                           )}
@@ -3120,7 +2602,6 @@ class RateFinalizingStillBooking extends Component {
                                       this,
                                       "Notify"
                                     )}
-                                    // menuStyle={this.state.menuStyle}
                                     onSelect={this.handleSelectCon.bind(
                                       this,
                                       item => item.Company_ID,
@@ -3284,10 +2765,6 @@ class RateFinalizingStillBooking extends Component {
                       <div className="row cargodetailsB"></div>
 
                       <div className="rename-cntr login-fields d-block">
-                        {/* <input
-                        type="file"
-                        onChange={this.onDocumentChangeHandler}
-                      ></input> */}
                         <div className="d-flex w-100 mt-4 align-items-center">
                           <div className="w-100">
                             <input
@@ -3376,9 +2853,6 @@ class RateFinalizingStillBooking extends Component {
                           minRows={0}
                           showPagination={false}
                         />
-                        {/* {this.state.FileData.length > 0
-                        ? this.CreateFileElement()
-                        : null} */}
                       </div>
 
                       <center>
@@ -3442,82 +2916,13 @@ class RateFinalizingStillBooking extends Component {
               }}
             >
               <h3 className="mb-4">Edit Cargo Details</h3>
-              <>
-                <div className="rate-radio-cntr justify-content-center">
-                  <div>
-                    <input
-                      type="radio"
-                      name="cmbTypeRadio"
-                      id="exist-cust"
-                      value="ALL"
-                      style={{ display: "none" }}
-                      checked={this.state.cmbTypeRadio === "ALL" ? true : false}
-                      // onChange={
-                      //   this.state.containerLoadType !== "FTL"
-                      //     ? this.cmbTypeRadioChange.bind(this)
-                      //     : null
-                      // }
-                      onChange={this.cmbTypeRadioChange.bind(this)}
-                    />
-                    <label
-                      className="d-flex flex-column align-items-center"
-                      htmlFor="exist-cust"
-                    >
-                      Dimensions
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="cmbTypeRadio"
-                      id="new-cust"
-                      value="CBM"
-                      style={{ display: "none" }}
-                      checked={this.state.cmbTypeRadio !== "ALL" ? true : false}
-                      onChange={this.cmbTypeRadioChange.bind(this)}
-                    />
-                    <label
-                      className="d-flex flex-column align-items-center"
-                      htmlFor="new-cust"
-                    >
-                      {this.state.ContainerLoad === "AIR"
-                        ? "Chargable Weight"
-                        : "CBM"}
-                    </label>
-                  </div>
-                </div>
-                {this.state.containerLoadType === "FCL" ? (
-                  ""
-                ) : this.state.containerLoadType === "FTL" ? (
-                  ""
-                ) : (
-                  <>
-                    {this.state.cmbTypeRadio === "ALL" ? (
-                      this.CreateMultiCBM()
-                    ) : (
-                      <div className="col-md-4 m-auto">
-                        <div className="spe-equ">
-                          <input
-                            type="text"
-                            minLength={1}
-                            onChange={this.HandleCMBtextChange.bind(this)}
-                            placeholder={
-                              this.state.modeoftransport != "AIR" ? "CBM" : "KG"
-                            }
-                            className="w-100"
-                            value={this.state.cbmVal}
-                          />
-                        </div>
-                        <span className="equip-error">
-                          {/* {this.state.errors["CBM"]} */}
-                        </span>
-                      </div>
-                    )}
-                  </>
-                )
-                // this.CreateMultiCBM()}
-                }
-              </>
+
+              <Comman
+                parentCallback={this.callbackFunction}
+                multiCBM={this.state.multiCBM}
+                containerLoadType={this.state.ContainerLoad}
+                packageTypeData={this.state.packageTypeData}
+              />
 
               <div className="text-center">
                 <Button

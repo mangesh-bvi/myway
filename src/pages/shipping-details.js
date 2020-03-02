@@ -28,6 +28,7 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import matchSorter from "match-sorter";
 import DatePicker from "react-datepicker";
+
 import "react-datepicker/dist/react-datepicker.css";
 
 import Autocomplete from "react-autocomplete";
@@ -165,7 +166,7 @@ class ShippingDetails extends Component {
       var air = data.filter(x => x.ModeOfTransport === "Air").length;
       var ocean = data.filter(x => x.ModeOfTransport === "Ocean").length;
 
-      if (shiptype!=="") {
+      if (shiptype !== "") {
         data = data.filter(item => item.ModeOfTransport === shiptype);
         if (data.length === 0) {
           data = [{ POL: "No record found" }];
@@ -266,28 +267,30 @@ class ShippingDetails extends Component {
     if (fields[field].length >= 3) {
       axios({
         method: "post",
-        url: `${appSettings.APIURL}/CustomerList`,
+        url: `${appSettings.APIURL}/CustomerAutoSearchMessage`,
         data: {
-          CustomerName: e.target.value,
-          CustomerType: "Existing",
-          MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+          CompanyName: fields[field],
+          
+          UserID: encryption(window.localStorage.getItem("userid"), "desc")
         },
         headers: authHeader()
       })
         .then(function(response) {
+          debugger;
           if (field === "Consignee") {
             self.setState({
-              Consignee: response.data.Table,
+              Consignee: response.data,
               fields
             });
           } else {
             self.setState({
-              Shipper: response.data.Table,
+              Shipper: response.data,
               fields
             });
           }
         })
         .catch(error => {
+          debugger;
           var temperror = error.response.data;
           var err = temperror.split(":");
         });
@@ -641,7 +644,7 @@ class ShippingDetails extends Component {
     //   window.localStorage.setItem("oceancount", ocean);
     //   window.localStorage.setItem("inlandcount", inland);
     // });
-    window.location.href="shipment-summary"
+    window.location.href = "shipment-summary";
     // this.props.history.push("shipment-summary")
   }
 
@@ -1125,7 +1128,6 @@ class ShippingDetails extends Component {
                                             ? "lightgray"
                                             : "white"
                                         }}
-                                        //value={item.Company_ID}
                                       >
                                         {item.Company_Name}
                                       </div>
@@ -1144,11 +1146,7 @@ class ShippingDetails extends Component {
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          {/* </div> */}
-
-                          {/* </div> */}
-
+                          </div>            
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3">
                             <div className="login-fields">
                               <div>

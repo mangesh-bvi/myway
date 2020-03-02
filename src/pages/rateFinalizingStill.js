@@ -752,6 +752,7 @@ class RateFinalizingStill extends Component {
   }
 
   onDocumentSaleQuoteHandler = () => {
+    debugger;
     const docData = new FormData();
     var docName = this.state.selectedFileName;
 
@@ -2022,12 +2023,14 @@ class RateFinalizingStill extends Component {
                                         : "CBM",
                                     accessor: "ChgWeight",
                                     Cell: row => {
-                                      debugger
+                                      debugger;
                                       if (
                                         this.state.ContainerLoad === "AIR" ||
                                         this.state.ContainerLoad === "LTL"
                                       ) {
-                                        return <p>{row.original.VolumeWeight}</p>;
+                                        return (
+                                          <p>{row.original.VolumeWeight}</p>
+                                        );
                                       } else {
                                         return <p>{row.original.CBM}</p>;
                                       }

@@ -211,6 +211,7 @@ class GreenCounter extends Component {
       },
       headers: authHeader()
     }).then(response => {
+      debugger;
       self.setState({ greencounterData: response.data.Table });
       var greendata = response.data.Table;
       self.setState({

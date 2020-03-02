@@ -74,7 +74,18 @@ class BookingInsert extends Component {
       buyerData: {},
       buyerId: 0,
       errormessage: "",
-      multiCBM: [],
+      multiCBM: [
+        {
+          PackageType: "",
+          Quantity: 0,
+          Lengths: 0,
+          Width: 0,
+          Height: 0,
+          GrossWt: 0,
+          VolumeWeight: 0,
+          Volume: 0
+        }
+      ],
       addmultiCBM: [],
       ContainerLoad: "",
       salesQuotaNo: "",
@@ -148,7 +159,6 @@ class BookingInsert extends Component {
     this.toggleRow = this.toggleRow.bind(this);
   }
   componentDidMount() {
-    
     var rData = this.props.location.state;
     if (rData.ContainerLoad !== undefined && rData.salesQuotaNo !== undefined) {
       var userType = encryption(
@@ -195,7 +205,7 @@ class BookingInsert extends Component {
   HandleGetSalesQuotaionINLAND() {
     this.setState({ newloding: true });
     let self = this;
-    
+
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
     axios({
@@ -204,7 +214,6 @@ class BookingInsert extends Component {
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
-      
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -233,6 +242,10 @@ class BookingInsert extends Component {
         self.setState({ FileData });
       } else {
         self.setState({ FileData: [{ FileName: "No File Found" }] });
+      }
+      if (multiCargo > 0) {
+      } else {
+        multiCargo.push({ PackageType: "No Record Found" });
       }
       if (QuotationData.length > 0) {
         var selectedCommodity = QuotationData[0].Commodity;
@@ -316,7 +329,7 @@ class BookingInsert extends Component {
   HandleGetSalesQuotaionLCL() {
     this.setState({ newloding: true });
     let self = this;
-    
+
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
     axios({
@@ -351,6 +364,10 @@ class BookingInsert extends Component {
         self.setState({ FileData });
       } else {
         self.setState({ FileData: [{ FileName: "No File Found" }] });
+      }
+      if (multiCargo > 0) {
+      } else {
+        multiCargo.push({ PackageType: "No Record Found" });
       }
       if (QuotationData.length > 0) {
         var selectedCommodity = QuotationData[0].Commodity;
@@ -434,7 +451,7 @@ class BookingInsert extends Component {
   HandleGetSalesQuotaionFCL() {
     this.setState({ newloding: true });
     let self = this;
-    
+
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
 
@@ -444,6 +461,7 @@ class BookingInsert extends Component {
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -452,7 +470,6 @@ class BookingInsert extends Component {
       var addmultiCBM = response.data.Table3;
       var multiCargo = [];
       if (CargoDetails.length > 0) {
-        
         for (let i = 0; i < CargoDetails.length; i++) {
           var objcargo = new Object();
           objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
@@ -473,6 +490,11 @@ class BookingInsert extends Component {
       } else {
         self.setState({ FileData: [{ FileName: "No File Found" }] });
       }
+      if (multiCargo.length > 0) {
+      } else {
+        multiCargo.push({ PackageType: "No Record Found" });
+      }
+
       if (Booking.length > 0) {
         var ModeofTransport = Booking[0].ModeOfTransport;
         var companyID = Booking[0].companyID;
@@ -484,6 +506,7 @@ class BookingInsert extends Component {
         var TypeofMove = Booking[0].TypeOfMove;
         var IncoTerms = Booking[0].IncoTerm;
         var HAZMAT = Booking[0].HAZMAT;
+
         self.setState({
           newloding: false,
           selectedRow: QuotationData,
@@ -547,7 +570,7 @@ class BookingInsert extends Component {
   HandleGetSalesQuotaionAIR() {
     this.setState({ newloding: true });
     let self = this;
-    
+
     var ContainerLoad = this.state.ContainerLoad;
     var salesQuotaNo = this.state.salesQuotaNo;
     var MyWayUserID = encryption(window.localStorage.getItem("userid"), "desc");
@@ -562,6 +585,7 @@ class BookingInsert extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
+      debugger;
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -585,6 +609,10 @@ class BookingInsert extends Component {
           objcargo.ChgWeight = CargoDetails[i].ChgWeight || 0;
           multiCargo.push(objcargo);
         }
+      }
+      if (multiCargo.length > 0) {
+      } else {
+        multiCargo.push({ PackageType: "No Record Found" });
       }
       if (FileData.length > 0) {
         self.setState({ FileData });
@@ -629,7 +657,6 @@ class BookingInsert extends Component {
         self.setState({
           newloding: false,
           Company_AddressID,
-
           ModeofTransport,
           companyID,
           company_name,
@@ -752,7 +779,6 @@ class BookingInsert extends Component {
         var saleQuoteLineID = 0;
         if (this.state.QuotationData) {
           if (this.state.ContainerLoad === "INLAND") {
-            
             var qdata = this.state.QuotationData.filter(
               x =>
                 x.SaleQuoteIDLineID ===
@@ -849,7 +875,6 @@ class BookingInsert extends Component {
 
           headers: authHeader()
         }).then(function(response) {
-          
           if (response.data.Table) {
             var BookingNo = response.data.Table[0].BookingID;
             NotificationManager.success(response.data.Table[0].Message);
@@ -875,7 +900,6 @@ class BookingInsert extends Component {
   }
   ////Hanlde File Booking File Upload
   HandleFileUpload() {
-    
     var BookingID = this.state.BookingNo;
     var DocumentID = 0;
     var DocumnetFile = this.state.FileDataArry;
@@ -894,7 +918,6 @@ class BookingInsert extends Component {
       data: formdata,
       headers: authHeader()
     }).then(function(response) {
-      
       NotificationManager.success(response.data.Table[0].Result);
       // this.props.history.push("./booking-table");
       self.props.history.push("booking-table");
@@ -902,23 +925,13 @@ class BookingInsert extends Component {
   }
   ////toggle edit cargo details
   toggleEdit(e) {
-    
+    debugger;
 
-    if (!this.state.modalEdit) {
-      
-      var multiCBM = this.state.multiCargo;
-      if (multiCBM.length > 0) {
-        this.setState({ multiCBM });
-      } else {
-        this.addMultiCBM();
-      }
-    } else {
-    }
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
     }));
   }
- 
+
   ////Package Type Dropdata DataBind Methos
   HandlePackgeTypeData() {
     let self = this;
@@ -946,7 +959,6 @@ class BookingInsert extends Component {
   }
   //// Bind Non Customer List
   BindChangeNonCustomer(field, e) {
-    
     let self = this;
     var customerName = "";
     let fields = this.state.fields;
@@ -971,8 +983,6 @@ class BookingInsert extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        
-
         if (response.data.Table.length > 1) {
           if (field == "Consignee") {
             self.setState({
@@ -1097,7 +1107,6 @@ class BookingInsert extends Component {
   }
 
   handleSelectCon(e, field, value, id) {
-    
     let fields = this.state.fields;
     fields[field] = value;
     if (field == "Consignee") {
@@ -1162,7 +1171,7 @@ class BookingInsert extends Component {
   }
 
   AddressChange(type, e) {
-    
+    debugger;
     var companyID = e.target.value;
     if (e.target.selectedOptions[0].label === "Other") {
       if (type == "Consignee") {
@@ -1256,7 +1265,6 @@ class BookingInsert extends Component {
   }
 
   onDocumentChangeHandler = event => {
-    
     if (event.target.files[0].type === "application/pdf") {
       if (this.state.FileData[0].FileName === "No File Found") {
         var Fdata = this.state.FileData.splice(0);
@@ -1544,7 +1552,6 @@ class BookingInsert extends Component {
     ));
   }
   addMultiCBM() {
-    
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -1568,14 +1575,12 @@ class BookingInsert extends Component {
   }
 
   removeMultiCBM(i) {
-    
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
     this.setState({ multiCBM });
   }
 
   HandleChangeMultiCBM(i, e) {
-    
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -1690,24 +1695,23 @@ class BookingInsert extends Component {
   }
   ////Handle Submit Cargo Details
   SubmitCargoDetails(e) {
-    
+    debugger;
+    // this.callbackFunction()
     var data = this.state.multiCBM;
     var multiCBM = [];
-    
+
     for (let i = 0; i < data.length; i++) {
       var objcargo = new Object();
       if (data[i].PackageType !== "") {
-        objcargo.BookingPackID = data[i].BookingPackID || 0;
+        
         objcargo.PackageType = data[i].PackageType || "";
         objcargo.Quantity = data[i].Quantity || 0;
-        objcargo.Length = data[i].Length || 0;
+        objcargo.Lengths = data[i].Lengths || 0;
         objcargo.Width = data[i].Width || 0;
-        objcargo.height = data[i].height || 0;
-        objcargo.GrossWeight = data[i].GrossWeight || 0;
+        objcargo.Height = data[i].Height || 0;
+        objcargo.GrossWt = data[i].GrossWt || 0;
         objcargo.VolumeWeight = data[i].VolumeWeight || 0;
-        objcargo.Volume = data[i].Volume || 0;
-        objcargo.TotalGrossWeight = data[i].NetWeight || 0;
-
+        objcargo.Volume = data[i].Volume || 0;        
         multiCBM.push(objcargo);
       }
     }
@@ -1717,7 +1721,6 @@ class BookingInsert extends Component {
   }
 
   HandleRadioBtn(type, e) {
-    
     var selectedType = e.target.checked;
 
     if (type === "Conshinee") {
@@ -1773,7 +1776,6 @@ class BookingInsert extends Component {
   ////this method for party change value
 
   HandleConsineeAddressChange(e) {
-    
     var addval = e.target.value;
 
     this.setState({ Consinee_Displayas: addval });
@@ -1806,7 +1808,6 @@ class BookingInsert extends Component {
   }
   ////Handle Quote toggle check box
   toggleRow(rateID, rowData) {
-    
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
 
@@ -1853,7 +1854,6 @@ class BookingInsert extends Component {
   }
 
   cmbTypeRadioChange(e) {
-    
     var value = e.target.value;
 
     this.setState({ cmbTypeRadio: value });
@@ -1866,7 +1866,6 @@ class BookingInsert extends Component {
 
   ////Handle Sales Document Delete
   HandleDocumentDelete(e, row) {
-    
     if (row.original.FilePath) {
       var MywayUserID = encryption(
         window.localStorage.getItem("userid"),
@@ -1886,7 +1885,6 @@ class BookingInsert extends Component {
         data: documentData,
         headers: authHeader()
       }).then(function(response) {
-        
         NotificationManager.success(response.data.Table[0].Result);
       });
     } else {
@@ -1916,8 +1914,7 @@ class BookingInsert extends Component {
   }
 
   callbackFunction = callBackObj => {
-    
-
+    debugger;
     var multiCBM = callBackObj;
     this.setState({ multiCBM });
   };
@@ -1970,7 +1967,7 @@ class BookingInsert extends Component {
                                 {
                                   Cell: row => {
                                     i++;
-                                    
+
                                     var olname = "";
                                     var lname = "";
                                     if (row.original.Linename) {
@@ -2032,7 +2029,6 @@ class BookingInsert extends Component {
                                         </React.Fragment>
                                       );
                                     } else if (mode == "Air" && lname !== "") {
-                                      
                                       return (
                                         <React.Fragment>
                                           <div className="cont-costs rate-tab-check p-0 d-inline-block">
@@ -3022,7 +3018,7 @@ class BookingInsert extends Component {
                                 },
                                 {
                                   Header: "Length",
-                                  accessor: "Length"
+                                  accessor: "Lengths"
                                 },
                                 {
                                   Header: "Width",
@@ -3030,18 +3026,24 @@ class BookingInsert extends Component {
                                 },
                                 {
                                   Header: "Height",
-                                  accessor: "height"
+                                  accessor: "Height"
                                 },
                                 {
                                   Header: "Gross Weight",
-                                  accessor: "GrossWeight"
+                                  accessor: "GrossWt"
                                 },
                                 {
                                   Header:
                                     this.state.ChgWeight == 0
                                       ? "Volume Weight"
                                       : "ChgWeight",
-                                  accessor: "VolumeWeight"
+                                  accessor: "VolumeWeight",
+                                  show:this.state.containerLoadType!="LCL"?true:false
+                                },
+                                {
+                                Header:"Volume",
+                                accessor: "Volume",
+                                show:this.state.containerLoadType=="LCL"?true:false
                                 }
                               ]
                             }
@@ -3190,7 +3192,7 @@ class BookingInsert extends Component {
         </div>
         <NotificationContainer leaveTimeout="3000" />
 
-        {/* -------------------------------------Edit Modal----------------------------- */}
+        {/* -------------------------------------Edit Cargo Details Modal----------------------------- */}
         <Modal
           className="delete-popup pol-pod-popup large-popup large-popupka"
           isOpen={this.state.modalEdit}

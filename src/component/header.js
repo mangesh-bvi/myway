@@ -62,7 +62,10 @@ class Header extends Component {
     this.toggleProfile = this.toggleProfile.bind(this);
     this.BindCurrencyData = this.BindCurrencyData.bind(this);
   }
-  
+
+  componentWillUnmount() {
+    clearTimeout(this.BindNotificationData);
+  }
   componentDidMount() {
     if (encryption(window.localStorage.getItem("username"), "desc") == null) {
       window.location.href = "./login";
@@ -92,8 +95,10 @@ class Header extends Component {
     if (window.location.pathname === "/rate-search") {
       this.setState({ searchButn: false });
     }
-
     this.BindNotificationData();
+    setInterval(() => {
+      this.BindNotificationData();
+    }, appSettings.RefershTime);
 
     let self = this;
     axios({
@@ -117,10 +122,10 @@ class Header extends Component {
       this.setState({ profileImgURL });
     }
     this.BindCurrencyData();
-
+    debugger;
     var iscurrencydrp = false;
     var pathName = this.props.location.pathname;
-    if (pathName !== "/rate-table") {
+    if (pathName !== "/rate-table" && pathName !== "/rate-finalizing") {
       iscurrencydrp = true;
       this.setState({ iscurrencydrp });
     } else {
@@ -134,20 +139,17 @@ class Header extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/IncoTermsAPI`,
-
       headers: authHeader()
     }).then(function(response) {
       var currencyData = response.data.Table4;
       self.setState({
         currencyData
       });
-
       var currencyObj = window.localStorage.getItem("currencyObj");
       var currencyCode = window.localStorage.getItem("currencyObj");
 
       if (currencyCode && currencyObj) {
         var data = JSON.parse(currencyCode);
-
         self.setState({ currencyObj: data, currencyCode });
       }
     });
@@ -160,13 +162,11 @@ class Header extends Component {
 
     var sPath = window.location.pathname;
     var sPage = sPath.substring(sPath.lastIndexOf("/") + 1);
-    
 
     if (sPage == "shipment-details") {
       this.setState({
         popupHBLNO: document.getElementById("popupHBLNO").value
       });
-      
     }
   }
 
@@ -175,8 +175,28 @@ class Header extends Component {
       modalProfile: !prevState.modalProfile
     }));
   }
+
+  HandleCheckNotificationView() {
+    debugger;
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TopNotificationData`,
+      data: {
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
+        IsRead: 1
+      },
+      headers: authHeader()
+    })
+      .then(function(response) {
+        console.log(response.data);
+      })
+      .catch(response => {
+        console.log(response.data);
+      });
+  }
+
   ////Bind Notification Data
-  BindNotificationData() {
+  BindNotificationData = async () => {
     let self = this;
 
     axios({
@@ -186,37 +206,38 @@ class Header extends Component {
         UserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
-    }).then(function(response) {
-      
+    })
+      .then(function(response) {
+        var today = new Date();
+        today.setDate(today.getDate() - 8);
 
-      
-      var today = new Date();
-      today.setDate(today.getDate() - 8);
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.Table != null) {
+              if (response.data.Table.length > 0) {
+                var date = today.toJSON();
+                date = "2019-10-21";
+                self.setState({
+                  notificationData: response.data.Table.filter(
+                    item => item.ActivityDate > date
+                  )
+                });
 
-      if (response != null) {
-        if (response.data != null) {
-          if (response.data.Table != null) {
-            if (response.data.Table.length > 0) {
-              var date = today.toJSON();
-              date = "2019-10-21";
-              self.setState({
-                notificationData: response.data.Table.filter(
-                  item => item.ActivityDate > date
-                )
-              });
-
-              document.getElementById("Notificationcount").innerHTML =
-                self.state.notificationData.length;
-              self.forceUpdate();
+                document.getElementById("Notificationcount").innerHTML =
+                  self.state.notificationData.length;
+                self.forceUpdate();
+              }
             }
           }
         }
-      }
-    });
-  }
+      })
+      .catch(response => {
+        // NotificationManager.error(response);
+        console.log(response);
+      });
+  };
   ////Bind Activity Data
   BindActivityDetails() {
-    
     let self = this;
     var UserID = encryption(window.localStorage.getItem("userid"), "desc");
 
@@ -228,7 +249,6 @@ class Header extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-    
       var ActivityDateArry = response.data.Table;
       if (ActivityDateArry.length > 0) {
         self.setState({
@@ -257,20 +277,17 @@ class Header extends Component {
   };
   ////Handle Send message
   SendMessage = () => {
-    
     var drpshipment = document.getElementById("drpshipment");
     var txtShipmentNo = document.getElementById("txtShipmentNo");
     var txtshipmentcomment = document.getElementById("txtshipmentcomment");
 
     if (drpshipment.value.trim() == "0") {
-      
       NotificationManager.error("Please Select Type");
       drpshipment.focus();
       return false;
     }
 
     if (txtShipmentNo.value.trim() == "") {
-      
       NotificationManager.error(
         this.state.selectedType === "Subject"
           ? "Please Enter Subject"
@@ -280,7 +297,6 @@ class Header extends Component {
       return false;
     }
     if (txtshipmentcomment.value.trim() == "") {
-      
       NotificationManager.error("Please enter shipment comment.");
       txtshipmentcomment.focus();
       return false;
@@ -291,7 +307,6 @@ class Header extends Component {
     } else {
       CustomerID = this.state.CompanyID;
     }
-    
 
     let self = this;
 
@@ -329,7 +344,6 @@ class Header extends Component {
 
       var sPath = window.location.pathname;
       var sPage = sPath.substring(sPath.lastIndexOf("/") + 1);
-      
 
       if (sPage == "shipment-details") {
         document.getElementById("activity-tab").click();
@@ -345,8 +359,6 @@ class Header extends Component {
   };
 
   RedirectoShipment(RefNo, ID, Type, Product, ProductStatus) {
-    
-
     if (Type === "Booking") {
       this.props.history.push({
         pathname: "booking-view",
@@ -382,7 +394,6 @@ class Header extends Component {
   }
   ////Handle Activity Click
   HandleActivityClick(ActivityTypeID, MODE, CSV) {
-    
     var ActivityTypeID = ActivityTypeID;
     var MODE = MODE;
 
@@ -478,7 +489,6 @@ class Header extends Component {
   }
 
   HandleChangeType(e) {
-    
     var value = e.target.value;
 
     document.getElementById("txtshipmentcomment").value = "";
@@ -491,12 +501,14 @@ class Header extends Component {
   }
 
   HandleCurrencyChange(e) {
-    debugger
     this.setState({
       currencyCode: e.CurrencyCode,
       currencyObj: e
     });
-    window.localStorage.setItem("prevCurrencyCode", window.localStorage.getItem("currencyCode"));
+    window.localStorage.setItem(
+      "prevCurrencyCode",
+      window.localStorage.getItem("currencyCode")
+    );
     window.localStorage.setItem("currencyCode", e.CurrencyCode);
     window.localStorage.setItem("currencyObj", JSON.stringify(e));
     this.props.parentCallback(e.CurrencyCode);
@@ -616,7 +628,7 @@ class Header extends Component {
                           </Link>
                         </li>
                       )
-                    :  null}
+                    : null}
                   <li>
                     <Select
                       className="rate-dropdown mt-0 CurrencyCodecss "
@@ -625,7 +637,7 @@ class Header extends Component {
                       getOptionValue={option => option.CurrencyCode}
                       value={this.state.currencyObj}
                       isSearchable={false}
-                      // isDisabled={this.state.iscurrencydrp}
+                      isDisabled={this.state.iscurrencydrp}
                       options={this.state.currencyData}
                       onChange={this.HandleCurrencyChange.bind(this)}
                       defaultValue={{
@@ -641,13 +653,13 @@ class Header extends Component {
                         alt="bell-icon"
                         className="header-bell-icon"
                         data-toggle="dropdown"
+                        onClick={this.HandleCheckNotificationView.bind(this)}
                       />
                       <a id="Notificationcount" className="notificationss">
                         0
                       </a>
                       <div className="dropdown-menu noti-drop-down">
                         {optionNotificationItems}
-                        
                       </div>
                     </div>
                   </li>
@@ -958,7 +970,7 @@ class Header extends Component {
               <div className="active-log-pop">{adataval}</div>
             </PopoverBody>
           </UncontrolledPopover>
-           <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
+          <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
         </div>
       </div>
     );

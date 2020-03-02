@@ -80,7 +80,7 @@ class BookingTable extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
+      debugger;
       var data = [];
       var pending = 0,
         approved = 0,
@@ -212,6 +212,7 @@ class BookingTable extends Component {
 
   render() {
     const { bookingData } = this.state;
+    
     var dataQuote = [];
     var finalFilterData = [];
     const Moment = require("moment");
@@ -220,6 +221,7 @@ class BookingTable extends Component {
         new Moment(b.CreatedDate).format("YYYYMMDD") -
         new Moment(a.CreatedDate).format("YYYYMMDD")
     );
+    
     if (dataQuote.length > 0) {
       finalFilterData = dataQuote.filter(
         d =>
@@ -231,6 +233,7 @@ class BookingTable extends Component {
     } else {
       finalFilterData = [{ POL: "No Record Found" }];
     }
+    
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";

@@ -1,4 +1,4 @@
-import React, { Component} from "react";
+import React, { Component } from "react";
 import "../styles/custom.css";
 import { UncontrolledCollapse, Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
@@ -71,7 +71,8 @@ class ShippingDetailsTwo extends Component {
       delFileName: "",
       downloadFilePath: "",
       POLPODData: [],
-      Table9: []
+      Table9: [],
+      loding: false
     };
 
     this.toggleDel = this.toggleDel.bind(this);
@@ -90,6 +91,7 @@ class ShippingDetailsTwo extends Component {
       "BaloonData",
       "GreenLineData"
     );
+    this.setState({iframeKey:this.state.iframeKey+1});
     let self = this;
     var url = window.location.href
       .slice(window.location.href.indexOf("?") + 1)
@@ -115,7 +117,6 @@ class ShippingDetailsTwo extends Component {
   }
   ////Handle Click Send message Button
   HandleClickSend = () => {
-    
     let self = this;
     var hbllNo = document.getElementById("popupHBLNO").value;
     var msgg = document.getElementById("addMess").value;
@@ -301,7 +302,6 @@ class ShippingDetailsTwo extends Component {
         VesselData = allLineData[allLineData.length - 1];
       }
     }
-    
 
     var imgType = "";
     if (this.state.ModeType.toUpperCase() === "AIR") {
@@ -311,7 +311,7 @@ class ShippingDetailsTwo extends Component {
     } else {
       imgType = "ROAD";
     }
-
+debugger;
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
     localStorage.removeItem("AllLineData");
@@ -323,7 +323,7 @@ class ShippingDetailsTwo extends Component {
     localStorage.setItem("VesselData", JSON.stringify(VesselData));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
-    self.setState({ iframeKey: self.state.iframeKey + 1 });
+    self.setState({ iframeKey: self.state.iframeKey + 1, loding: false });
   }
   ////Bind Shipment Details Map Data
   BindShipmentDetailsMap(sid, cid) {
@@ -333,7 +333,7 @@ class ShippingDetailsTwo extends Component {
       "BaloonData",
       "GreenLineData"
     );
-    
+
     let self = this;
     var shipperId = sid;
     var consigneeId = cid;
@@ -355,8 +355,6 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
-
       var resdata = response.data;
 
       self.HandleMapDetailsData(resdata);
@@ -365,7 +363,6 @@ class ShippingDetailsTwo extends Component {
 
   ////Handle Download Document Data
   HandleDownloadFile(evt, row) {
-    
     let self = this;
     var HblNo = row.original["HBL#"];
     var downloadFilePath = row.original["FilePath"];
@@ -393,7 +390,6 @@ class ShippingDetailsTwo extends Component {
       .catch(error => {});
   }
   HandleDocumentDelete(evt, row) {
-    
     var HblNo = row.original["HBL#"];
     var delDocuId = row.original["DocumentID"];
     var delFileName = row.original["FileName"];
@@ -401,7 +397,6 @@ class ShippingDetailsTwo extends Component {
   }
 
   HandleShipmentDocument() {
-    
     let self = this;
     var HblNo;
     if (typeof this.props.location.state != "undefined") {
@@ -409,7 +404,6 @@ class ShippingDetailsTwo extends Component {
     } else {
       HblNo = this.state.addWat || this.state.HblNo;
     }
-
     axios({
       method: "post",
       url: `${appSettings.APIURL}/ViewUploadShipmentDocument`,
@@ -419,7 +413,6 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        
         var documentdata = [];
         documentdata = response.data;
         documentdata.forEach(function(file, i) {
@@ -429,7 +422,6 @@ class ShippingDetailsTwo extends Component {
         self.setState({ documentData: documentdata });
       })
       .catch(error => {
-        
         var temperror = error.response.data;
         var err = temperror.split(":");
         var actData = [];
@@ -440,7 +432,8 @@ class ShippingDetailsTwo extends Component {
   }
 
   HandleShipmentDetails(hblno) {
-    
+    this.setState({ loding: true });
+    debugger;
     let self = this;
     localStorage.removeItem(
       "AllLineData",
@@ -460,40 +453,44 @@ class ShippingDetailsTwo extends Component {
         HBLNo: HblNo
       },
       headers: authHeader()
-    }).then(function(response) {
-      
-      var shipmentdata = response.data;
-      var ModeType = response.data.Table[0].ModeOfTransport;
-      var POLPODData = response.data.Table5;
-      var Table9 = response.data.Table9;
-      var eve = response.data.Table[0].Event;
+    })
+      .then(function(response) {
+        debugger;
+        var shipmentdata = response.data;
+        var ModeType = response.data.Table[0].ModeOfTransport;
+        var POLPODData = response.data.Table5;
+        var Table9 = response.data.Table9;
+        var eve = response.data.Table[0].Event;
 
-      self.setState({
-        eve,
-        detailsData: shipmentdata.Table[0],
-        ShipperID: shipmentdata.Table[0].ShipperId,
-        addressData: shipmentdata.Table1,
-        containerData: shipmentdata.Table2,
-        DData:
-          shipmentdata.Table2[shipmentdata.Table2.length - 1]["Arrival Date"],
-        containerDetails: shipmentdata.Table3,
-        bookedStatus: shipmentdata.Table4,
-        packageDetails: shipmentdata.Table7,
-        ShipmentExistsInWatchList:
-          shipmentdata.Table6[0].ShipmentExistsInWatchList,
-        packageViewMore: shipmentdata.Table8,
-        ModeType
+        self.setState({
+          eve,
+
+          detailsData: shipmentdata.Table[0],
+          ShipperID: shipmentdata.Table[0].ShipperId,
+          addressData: shipmentdata.Table1,
+          containerData: shipmentdata.Table2,
+          DData:
+            shipmentdata.Table2[shipmentdata.Table2.length - 1]["Arrival Date"],
+          containerDetails: shipmentdata.Table3,
+          bookedStatus: shipmentdata.Table4,
+          packageDetails: shipmentdata.Table7,
+          ShipmentExistsInWatchList:
+            shipmentdata.Table6[0].ShipmentExistsInWatchList,
+          packageViewMore: shipmentdata.Table8,
+          ModeType
+        });
+        if (POLPODData.length > 0) {
+          self.setState({ POLPODData, Table9 });
+        }
+        var sid = shipmentdata.Table[0].ShipperId;
+        var cid = shipmentdata.Table[0].ConsigneeID;
+        self.BindShipmentDetailsMap(sid, cid);
+      })
+      .catch(response => {
+        console.log(response);
       });
-      if (POLPODData.length > 0) {
-        self.setState({ POLPODData, Table9 });
-      }
-      var sid = shipmentdata.Table[0].ShipperId;
-      var cid = shipmentdata.Table[0].ConsigneeID;
-      self.BindShipmentDetailsMap(sid, cid);
-    });
   }
   onDocumentChangeHandler = event => {
-    
     if (event.target.files[0].type === "application/pdf") {
       this.setState({
         selectedFile: event.target.files[0],
@@ -509,7 +506,7 @@ class ShippingDetailsTwo extends Component {
     });
   };
   onDocumentClickHandler = () => {
-    
+    debugger;
     let self = this;
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
@@ -522,7 +519,6 @@ class ShippingDetailsTwo extends Component {
       NotificationManager.error("Please enter document description");
       return false;
     }
-    
 
     docData.append("HBLNo", this.state.HblNo.trim());
     docData.append("DocDescription", docDesc);
@@ -539,7 +535,6 @@ class ShippingDetailsTwo extends Component {
       data: docData,
       headers: authHeader()
     }).then(function(response) {
-      
       NotificationManager.success(response.data[0].Result);
       self.setState({ selectedFileName: "" });
       self.toggleDocu();
@@ -577,7 +572,6 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        
         NotificationManager.success(response.data[0].Result);
         self.HandleShipmentDocument();
       })
@@ -585,7 +579,6 @@ class ShippingDetailsTwo extends Component {
   }
 
   togglePackage(cargoId) {
-    
     let self = this;
     let packageTable = [];
 
@@ -627,7 +620,6 @@ class ShippingDetailsTwo extends Component {
   }
 
   handleAddToWatchList = () => {
-    
     let self = this;
     var hbll = "";
     if (self.state.addWat !== null && self.state.addWat !== "") {
@@ -651,7 +643,6 @@ class ShippingDetailsTwo extends Component {
 
   //// Bind Activity Message Data
   BindActivityMessageData() {
-    
     let self = this;
     var HblNo = this.state.HblNo;
     if (typeof this.props.location.state != "undefined") {
@@ -666,12 +657,11 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     })
-      .then(function(response) {        
+      .then(function(response) {
         self.setState({ MessagesActivityDetails: response.data });
         document.getElementById("addMess").value = "";
       })
       .catch(error => {
-        
         var temperror = error.response.data;
         var err = temperror.split(":");
       });
@@ -684,7 +674,6 @@ class ShippingDetailsTwo extends Component {
 
   ////Handle Remove watch list
   HandleRemoveWatchList = () => {
-    
     let self = this;
     var hbll = "";
     if (self.state.addWat !== null && self.state.addWat !== "") {
@@ -701,7 +690,6 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
       NotificationManager.success(response.data[0].Result);
       self.setState({ ShipmentExistsInWatchList: 0 });
     });
@@ -822,7 +810,6 @@ class ShippingDetailsTwo extends Component {
     }
 
     if (this.state.Table9.length > 0) {
-      
       var Transshipped = this.state.Table9.filter(
         x => x.Status === "Transshipped"
       ).length;
@@ -919,6 +906,7 @@ class ShippingDetailsTwo extends Component {
     let MsgActivityTab = "";
     if (this.state.MessagesActivityDetails != null) {
       if (this.state.MessagesActivityDetails.length > 0) {
+        debugger;
         MsgActivityTab = (
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
@@ -954,7 +942,8 @@ class ShippingDetailsTwo extends Component {
           <div className={colClassName}>
             <SideMenu />
           </div>
-          <div className="cls-rt">
+          
+          <div className={this.state.loding ?"loader-icon cls-rt":"cls-rt"}>
             <div className="container-fluid">
               <div className="row">
                 <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0 ship-dtls-ui">
@@ -2348,6 +2337,8 @@ class ShippingDetailsTwo extends Component {
                     </Button>
                   </ModalBody>
                 </Modal>
+
+                {/* ///doucment upload modal */}
                 <Modal
                   className="delete-popup pol-pod-popup"
                   isOpen={this.state.modalDocu}

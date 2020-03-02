@@ -12,7 +12,7 @@ import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
 import Deactivate from "./../assets/img/deactivate.png";
 import DeactivateGray from "./../assets/img/deactivate-gray.png";
-import "react-input-range/lib/css/index.css";
+
 import ReactTable from "react-table";
 import {
   NotificationContainer,

@@ -6,7 +6,7 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
-import "react-input-range/lib/css/index.css";
+
 import ReactTable from "react-table";
 
 class ActivityLog extends Component {

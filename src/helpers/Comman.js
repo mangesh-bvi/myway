@@ -7,7 +7,6 @@ class Comman extends Component {
       packageTypeData: [],
       NonStackable: false,
       containerLoadType: "",
-
       multiCBM: [
         {
           PackageType: "",
@@ -24,6 +23,7 @@ class Comman extends Component {
     };
   }
   componentDidMount() {
+    debugger;
     if (
       this.props.containerLoadType == "LCL" ||
       this.props.containerLoadType == "AIR" ||
@@ -41,22 +41,24 @@ class Comman extends Component {
       });
     }
     if (this.props.containerLoadType == "FCL") {
+      this.setState({ multiCBM: this.props.multiCBM });
     }
   }
 
   componentDidUpdate() {
-    
-    if (this.props.NonStackable) {
+    if (this.props.NonStackable !== this.state.NonStackable) {
       this.toggleNonStackable();
     } else {
     }
   }
   ////send back value in parent componenet data
   SendData = () => {
+    debugger;
     if (
       this.props.containerLoadType === "LCL" ||
       this.props.containerLoadType === "AIR" ||
-      this.props.containerLoadType === "LTL"
+      this.props.containerLoadType === "LTL" ||
+      this.props.containerLoadType === "FCL"
     ) {
       this.props.parentCallback(this.state.multiCBM);
     }
@@ -223,6 +225,7 @@ class Comman extends Component {
   }
 
   addMultiCBM() {
+    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -238,6 +241,12 @@ class Comman extends Component {
         }
       ]
     }));
+    if (this.state.NonStackable) {
+      setTimeout(() => {
+        this.toggleNonStackable();
+        this.SendData();
+      }, 100);
+    }
   }
 
   ////Handle Change Muti CMB
@@ -331,9 +340,8 @@ class Comman extends Component {
     this.setState({ multiCBM });
 
     setTimeout(() => {
-      this.SendData();  
+      this.SendData();
     }, 100);
-    
 
     var pathName = window.location.pathname;
     if (pathName === "/new-rate-search") {
@@ -351,38 +359,38 @@ class Comman extends Component {
   }
 
   removeMultiCBM(i) {
-    
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
     this.setState({ multiCBM });
+    this.SendData();
   }
   ////toggle Non stackable check box
   toggleNonStackable() {
-    
-    for (var i = 0; i < this.props.heightData.length; i++) {
-      if (
-        this.props.heightData[i].Mode.toUpperCase() ==
-        this.props.containerLoadType.toUpperCase()
-      ) {
-        for (var j = 0; j < this.state.multiCBM.length; j++) {
-          if (this.props.NonStackable) {
-            this.state.multiCBM[j].Height = this.props.heightData[i].Height;
-          } else {
-            this.state.multiCBM[j].Height = 0;
+    if (this.props.heightData) {
+      for (var i = 0; i < this.props.heightData.length; i++) {
+        if (
+          this.props.heightData[i].Mode.toUpperCase() ==
+          this.props.containerLoadType.toUpperCase()
+        ) {
+          for (var j = 0; j < this.state.multiCBM.length; j++) {
+            if (this.props.NonStackable) {
+              this.state.multiCBM[j].Height = this.props.heightData[i].Height;
+            } else {
+              this.state.multiCBM[j].Height = 0;
+            }
           }
         }
       }
+      this.setState({
+        NonStackable: !this.state.NonStackable,
+        multiCBM: this.state.multiCBM
+      });
+      this.SendData();
     }
-    this.setState({
-      NonStackable: !this.state.NonStackable,
-      multiCBM: this.state.multiCBM
-    });
-    this.SendData();
   }
 
   //// create dynamic truck type UI
   createUITruckType() {
-    
     return this.state.TruckTypeData.map((el, i) => {
       return (
         <div key={i} className="equip-plus-cntr">
@@ -502,9 +510,7 @@ class Comman extends Component {
         this.props.containerLoadType == "LTL"
           ? this.CreateMultiCBM()
           : null}
-        {this.props.containerLoadType === "FCL"
-          ? this.createUITruckType()
-          : null}
+        {this.props.containerLoadType === "FCL" ? this.CreateMultiCBM() : null}
 
         {this.props.containerLoadType === "FTL"
           ? this.createUITruckType()

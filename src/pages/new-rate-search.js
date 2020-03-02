@@ -1616,7 +1616,7 @@ class NewRateSearch extends Component {
         <div className="spe-equ">
           <input
             type="text"
-            min={1}
+            min={1}l̥
             placeholder="QTY"
             name="ContainerQuantity"
             style={{ width: "40px" }}
@@ -2627,6 +2627,7 @@ class NewRateSearch extends Component {
   }
 
   callbackFunction = callBackObj => {
+    debugger;
     if (
       this.state.containerLoadType === "LCL" ||
       this.state.containerLoadType === "AIR" ||

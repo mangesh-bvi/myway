@@ -20,8 +20,7 @@ class ChangePassword extends React.Component {
     this.HandleChange = this.HandleChange.bind(this);
     this.HandleSubmit = this.HandleSubmit.bind(this);
   }
-  componentDidMount() {
- 
+  componentDidMount() { 
     if (encryption(window.localStorage.getItem("username"),"desc") == null) {
       window.location.href = "./";
     }
@@ -33,8 +32,7 @@ class ChangePassword extends React.Component {
     });
   }
 ////  Handle Submit button click  
-  HandleSubmit(e) {  
-    //  e.preventDefault();
+  HandleSubmit(e) {      
     var oldpwd =encryption(window.localStorage.getItem("password"),"desc");
     this.setState({ submitted: true });
     const { oldpassword, password, newpassword } = this.state;
@@ -43,8 +41,7 @@ class ChangePassword extends React.Component {
       return false;
     }
     if (password === newpassword) {
-      ChangePasswordCheck(oldpwd, newpassword);
-    
+      ChangePasswordCheck(oldpwd, newpassword);    
     } else {
       NotificationManager.error("Confirmed password is not matched");
     }
